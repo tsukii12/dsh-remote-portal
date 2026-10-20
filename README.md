@@ -189,6 +189,9 @@ $ node --test
 | `test/qr.test.mjs` | 二维码正确性由**独立解码器**验证（不是自己解自己） |
 | `test/mobile.test.mjs` | 打**真实页面**：抽屉 API、44px 点击区、320→900 六档 × 深浅两套的溢出审计，外加长代码 / 宽表格 / 超大图片的探针（测试自己起一个 `dsh web`） |
 
+三项浏览器测试需要本机有 Chrome/Chromium（`CHROME_PATH` 可指定）；没装时会**显式跳过**而不是失败，
+所以 `node --test` 在没有浏览器的 Linux 服务器上同样是绿的（69 项通过 + 3 项跳过）。
+
 布局与性能的实测数据（8 组宽度×主题 0 溢出、登录页 48px 控件且 320×844 不需滚动、
 `mobile.css` 20,783B→5,808B gzip、重载 304 零字节、网关每请求多 5–10ms）与复现命令见
 [**docs/PERFORMANCE.md**](docs/PERFORMANCE.md)。
@@ -235,6 +238,7 @@ Issue / PR 都欢迎。改动前请先跑 `node --test`；网络路径上的行�
 ## 许可
 
 [MIT](LICENSE)
+
 
 
 

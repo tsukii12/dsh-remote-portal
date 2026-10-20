@@ -37,7 +37,27 @@ const CSS_PATH = join(PLUGIN, "assets", "mobile.css");
 const JS_PATH = join(PLUGIN, "assets", "mobile.js");
 const CDP = join(PLUGIN, "tools", "cdp.mjs");
 
-const CHROME = process.env.CHROME_PATH || "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
+/** First Chrome/Chromium we can find; `CHROME_PATH` always wins. */
+function resolveChrome() {
+  if (process.env.CHROME_PATH) return process.env.CHROME_PATH;
+  const candidates = process.platform === "win32"
+    ? [
+      "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+      "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+      "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe",
+    ]
+    : process.platform === "darwin"
+      ? ["/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"]
+      : [
+        "/usr/bin/google-chrome",
+        "/usr/bin/google-chrome-stable",
+        "/usr/bin/chromium",
+        "/usr/bin/chromium-browser",
+        "/snap/bin/chromium",
+      ];
+  return candidates.find((p) => existsSync(p)) || candidates[0];
+}
+const CHROME = resolveChrome();
 
 /**
  * The live half of this suite needs a running dsh web UI **and its launch
@@ -355,7 +375,7 @@ describe("mobile layer against the live dsh web UI", () => {
   let tmp = "";
 
   before(async () => {
-    if (!existsSync(CHROME)) { skipReason = `Chrome not installed at ${CHROME}`; return; }
+    if (!existsSync(CHROME)) { skipReason = `no Chrome/Chromium found (looked for ${CHROME}); set CHROME_PATH to enable these tests`; return; }
     if (!existsSync(CDP)) { skipReason = `driver missing at ${CDP}`; return; }
     if (ENV_BASE && ENV_TOKEN) {
       BASE = ENV_BASE.endsWith("/") ? ENV_BASE : ENV_BASE + "/";
@@ -594,6 +614,7 @@ describe("mobile layer against the live dsh web UI", () => {
     }
   });
 });
+
 
 
 

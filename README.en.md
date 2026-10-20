@@ -110,6 +110,10 @@ $ node --test
 ℹ tests 72   ℹ pass 72   ℹ fail 0   ℹ skipped 0
 ```
 
+The three browser tests need Chrome/Chromium (`CHROME_PATH` overrides the lookup) and
+**skip explicitly** when it is missing, so `node --test` is green on a headless
+Linux box too (69 pass + 3 skipped).
+
 Layout and transfer measurements (8 width × theme configs with zero overflow, a
 login page that fits 320 × 844 without scrolling, `mobile.css` 20,783 B → 5,808 B
 gzip, `304` on reload, 5–10 ms of proxy overhead per request) are in
@@ -123,6 +127,7 @@ the suite starts itself.
 ## License
 
 [MIT](LICENSE)
+
 
 
 
