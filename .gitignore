@@ -23,3 +23,5 @@ token
 docs/screenshots/*.tmp.png
 .out/
 node_modules/
+*.tgz
+
