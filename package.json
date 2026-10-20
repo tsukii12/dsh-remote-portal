@@ -1,0 +1,67 @@
+{
+  "name": "dsh-remote-portal",
+  "version": "0.2.0",
+  "description": "Remote access for DeepSeek Harness: an authenticated gateway in front of the Web GUI (password / one-time QR pairing), a self-hosted relay for public access, and a phone-shaped UI layer. 远程访问门户：给 dsh Web 界面一个带登录鉴权的入口，局域网扫码即用，也可经自建服务器中转从公网访问。",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "lib",
+    "assets",
+    "client.js",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg",
+    "install.ps1",
+    "tools",
+    "docs/*.md",
+    "docs/screenshots/*.png",
+    "CHANGELOG.md",
+    "README.md",
+    "README.en.md",
+    "ARCHITECTURE.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test",
+    "test:host": "node --test test/host.test.mjs",
+    "test:relay": "node --test test/relay.test.mjs",
+    "relay": "node tools/relay.mjs"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true
+    }
+  },
+  "engines": {
+    "node": ">=20",
+    "dsh": ">=0.2.0-0 <0.3.0-0"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "remote-access",
+    "reverse-proxy",
+    "tunnel",
+    "relay",
+    "mobile",
+    "gateway",
+    "qr-pairing"
+  ],
+  "license": "MIT",
+  "author": "dsh-remote-portal contributors"
+}

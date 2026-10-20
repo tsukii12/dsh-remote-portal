@@ -1,0 +1,450 @@
+/*
+ * dsh-remote-portal — assets/mobile.js
+ *
+ * The *behaviour* half of the mobile presentation layer. `mobile.css` is inert
+ * unless `<html data-drp-mobile>` is present, so everything here is fail-closed:
+ * if this file never runs (route missing, blocked script, old browser) the
+ * shipped desktop UI is untouched.
+ *
+ * What it does, and why:
+ *   - `matchMedia("(max-width: 900px)")` is the single source of truth, and it
+ *     uses the *same* boundary as the stylesheet. Crossing it in either
+ *     direction fully activates or fully tears down the layer.
+ *   - `data-drp-mobile` on <html> is the stylesheet's gate.
+ *   - A floating 44×44 drawer button + a full-height scrim are the only nodes
+ *     this file adds. Nothing else in the React tree is touched: the drawer is
+ *     the app's own `[data-slot="sidebar"]` column, moved off-canvas by CSS.
+ *   - Opening the drawer clicks the app's *own* sidebar toggle so React renders
+ *     the expanded sidebar (labels, workspace list, search) instead of the
+ *     56 px icon rail. The click is a normal DOM click on an existing control —
+ *     no React internals are patched and no framework node is reparented.
+ *   - Closing slides the drawer out first and collapses the rail afterwards,
+ *     so you never see the rail pop in while the drawer is still on screen.
+ *   - The viewport meta gains `viewport-fit=cover` (so `env(safe-area-inset-*)`
+ *     actually resolves to something on iOS) and the original value is put
+ *     back verbatim when the media query stops matching.
+ *
+ * Public surface for tests and for client.js:
+ *   window.__DRP_MOBILE__ = { open, close, toggle, refresh, active }
+ */
+(function () {
+  "use strict";
+
+  // Second load of the same script: just re-sync, never double-inject.
+  if (window.__DRP_MOBILE__) {
+    try { window.__DRP_MOBILE__.refresh(); } catch (_) { /* ignore */ }
+    return;
+  }
+
+  var QUERY = "(max-width: 900px)";
+  var DRAWER_ATTR = "data-drp-drawer";
+  var MOBILE_ATTR = "data-drp-mobile";
+  var SIDEBAR_ID = "drp-sidebar";
+  var VIEWPORT_VALUE = "width=device-width, initial-scale=1, viewport-fit=cover";
+
+  var mql = typeof window.matchMedia === "function" ? window.matchMedia(QUERY) : null;
+
+  var state = {
+    active: false,
+    open: false,
+    button: null,
+    scrim: null,
+    collapseTimer: 0,
+    viewportMeta: null,
+    viewportOriginal: null,
+    sidebarIdAdded: false,
+    routeHooked: false,
+    historyPatched: false,
+    observers: [],
+  };
+
+  // ---------------------------------------------------------------- helpers
+
+  function doc() { return document; }
+
+  function rootSlot() { return doc().querySelector('[data-slot="root"]'); }
+
+  /** The grid frame that owns the three columns (`.…_frame`). */
+  function frameEl() {
+    var root = rootSlot();
+    if (!root) return null;
+    for (var i = 0; i < root.children.length; i++) {
+      if (root.children[i].nodeType === 1) return root.children[i];
+    }
+    return null;
+  }
+
+  function slotEl(name) { return doc().querySelector('[data-slot="' + name + '"]'); }
+
+  /** The grid column that wraps a slot (slots themselves are display:contents). */
+  function columnOf(name) {
+    var slot = slotEl(name);
+    return slot ? slot.parentElement : null;
+  }
+
+  /**
+   * The app's sidebar expand/collapse control. Preferred hook is the keyboard
+   * shortcut marker the app puts on the toggle (`Alt+Meta+B`); the CSS-module
+   * class is the fallback. Returns null when the sidebar is not mounted.
+   */
+  function toggleButton() {
+    var sidebar = slotEl("sidebar");
+    if (!sidebar) return null;
+    var buttons = sidebar.querySelectorAll("button");
+    for (var i = 0; i < buttons.length; i++) {
+      var keys = buttons[i].getAttribute("aria-keyshortcuts") || "";
+      if (/(^|[+\s])B$/i.test(keys) && !/shift/i.test(keys)) return buttons[i];
+    }
+    for (var j = 0; j < buttons.length; j++) {
+      var cls = buttons[j].className;
+      if (typeof cls === "string" && cls.indexOf("_toggle") !== -1) return buttons[j];
+    }
+    return null;
+  }
+
+  /**
+   * `true` when the app believes the sidebar is expanded, `false` when it is the
+   * icon rail, `null` when there is no frame (first paint, logged-out shell).
+   */
+  function appSidebarExpanded() {
+    var frame = frameEl();
+    if (!frame) return null;
+    var attr = frame.getAttribute("data-sidebar-collapsed");
+    return attr !== "true";
+  }
+
+  function setAppSidebarExpanded(want) {
+    var current = appSidebarExpanded();
+    if (current === null || current === want) return;
+    var button = toggleButton();
+    if (button) button.click();
+  }
+
+  function isZh() {
+    return /^zh/i.test(doc().documentElement.lang || navigator.language || "");
+  }
+
+  function drawerLabel() {
+    return isZh() ? "打开侧边栏" : "Open sidebar";
+  }
+
+  // ------------------------------------------------------------ DOM nodes
+
+  var ICON =
+    '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" ' +
+    'stroke-width="1.6" stroke-linecap="round" aria-hidden="true" focusable="false">' +
+    '<path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg>';
+
+  function buildButton() {
+    var button = doc().createElement("button");
+    button.type = "button";
+    button.className = "drp-drawer-btn";
+    button.setAttribute("aria-label", drawerLabel());
+    button.setAttribute("aria-expanded", state.open ? "true" : "false");
+    button.setAttribute("aria-controls", SIDEBAR_ID);
+    button.innerHTML = ICON;
+    button.addEventListener("click", onButtonClick);
+    return button;
+  }
+
+  function buildScrim() {
+    var scrim = doc().createElement("div");
+    // Namespaced under `drp-drawer-`: client.js already owns a scrim node inside
+    // its own sheet overlay, and the two must never style each other.
+    scrim.className = "drp-drawer-scrim";
+    scrim.setAttribute("aria-hidden", "true");
+    scrim.addEventListener("click", onScrimClick);
+    return scrim;
+  }
+
+  // ------------------------------------------------------------- behaviour
+
+  function onButtonClick(event) {
+    event.preventDefault();
+    toggle();
+  }
+
+  function onScrimClick() { close(); }
+
+  function onKeyDown(event) {
+    if (event.key === "Escape" && state.open) {
+      event.stopPropagation();
+      close();
+    }
+  }
+
+  function onRouteChange() {
+    if (state.open) close();
+  }
+
+  function onMediaChange() { refresh(); }
+
+  /**
+   * SPA navigation is invisible to `popstate` for pushState/replaceState, so both
+   * are wrapped once. The wrapper keeps the original return value and dispatches
+   * a plain DOM event that the activation listeners can react to.
+   */
+  function patchHistory() {
+    if (state.historyPatched) return;
+    var h = window.history;
+    if (!h || typeof h.pushState !== "function") return;
+    var originalPush = h.pushState;
+    var originalReplace = h.replaceState;
+    var notify = function () {
+      try { window.dispatchEvent(new Event("drp:navigate")); } catch (_) { /* ignore */ }
+    };
+    h.pushState = function () {
+      var out = originalPush.apply(this, arguments);
+      notify();
+      return out;
+    };
+    h.replaceState = function () {
+      var out = originalReplace.apply(this, arguments);
+      notify();
+      return out;
+    };
+    state.historyPatched = true;
+    state.restoreHistory = function () {
+      // Only undo our own patch: if something else wrapped history afterwards,
+      // restoring our originals would throw their wrapper away.
+      if (h.pushState === state.wrappedPush) h.pushState = originalPush;
+      if (h.replaceState === state.wrappedReplace) h.replaceState = originalReplace;
+      state.historyPatched = false;
+      state.restoreHistory = null;
+    };
+    state.wrappedPush = h.pushState;
+    state.wrappedReplace = h.replaceState;
+  }
+
+  function open() {
+    if (!state.active) return;
+    clearTimeout(state.collapseTimer);
+    state.open = true;
+    setAppSidebarExpanded(true);
+    doc().documentElement.setAttribute(DRAWER_ATTR, "open");
+    if (state.button) {
+      state.button.setAttribute("aria-expanded", "true");
+      state.button.setAttribute("aria-label", isZh() ? "关闭侧边栏" : "Close sidebar");
+    }
+  }
+
+  function close() {
+    if (!state.active) return;
+    var wasOpen = state.open;
+    state.open = false;
+    doc().documentElement.removeAttribute(DRAWER_ATTR);
+    if (state.button) {
+      state.button.setAttribute("aria-expanded", "false");
+      state.button.setAttribute("aria-label", drawerLabel());
+    }
+    if (!wasOpen) return;
+    // Let the 240 ms slide finish before collapsing the rail underneath it.
+    clearTimeout(state.collapseTimer);
+    state.collapseTimer = setTimeout(function () {
+      if (!state.open) setAppSidebarExpanded(false);
+    }, 260);
+  }
+
+  function toggle() {
+    if (state.open) close();
+    else open();
+  }
+
+  // ------------------------------------------------------------- lifecycle
+
+  function applyViewport() {
+    var meta = doc().querySelector('meta[name="viewport"]');
+    if (!meta) {
+      meta = doc().createElement("meta");
+      meta.setAttribute("name", "viewport");
+      doc().head.appendChild(meta);
+      state.createdViewport = true;
+    }
+    state.viewportMeta = meta;
+    state.viewportOriginal = meta.getAttribute("content");
+    meta.setAttribute("content", VIEWPORT_VALUE);
+  }
+
+  function restoreViewport() {
+    if (!state.viewportMeta) return;
+    if (state.createdViewport) {
+      if (state.viewportMeta.parentNode) state.viewportMeta.parentNode.removeChild(state.viewportMeta);
+    } else if (state.viewportOriginal === null) {
+      state.viewportMeta.removeAttribute("content");
+    } else {
+      state.viewportMeta.setAttribute("content", state.viewportOriginal);
+    }
+    state.viewportMeta = null;
+    state.viewportOriginal = null;
+    state.createdViewport = false;
+  }
+
+  /**
+   * iOS standalone hint. Added once and intentionally left in place: it only
+   * matters when the page is saved to the home screen, and rewriting it on every
+   * breakpoint change would be pointless churn (no manifest is rewritten).
+   */
+  function applyAppleHints() {
+    var wanted = [
+      ["apple-mobile-web-app-title", "DeepSeek Harness"],
+      ["apple-mobile-web-app-status-bar-style", "black-translucent"],
+    ];
+    for (var i = 0; i < wanted.length; i++) {
+      if (doc().querySelector('meta[name="' + wanted[i][0] + '"]')) continue;
+      var meta = doc().createElement("meta");
+      meta.setAttribute("name", wanted[i][0]);
+      meta.setAttribute("content", wanted[i][1]);
+      doc().head.appendChild(meta);
+    }
+  }
+
+  function mount() {
+    var frame = frameEl();
+    if (!frame) return false;
+    state.button = buildButton();
+    state.scrim = buildScrim();
+    frame.appendChild(state.scrim);
+    frame.appendChild(state.button);
+
+    // `aria-controls` needs a stable id on the drawer column.
+    var column = columnOf("sidebar");
+    if (column) {
+      if (!column.id) {
+        column.id = SIDEBAR_ID;
+        state.sidebarIdAdded = true;
+      } else if (column.id !== SIDEBAR_ID) {
+        state.button.setAttribute("aria-controls", column.id);
+      }
+
+      // The user can also collapse the drawer with the app's own control; when
+      // React reports the rail again the overlay drawer must follow.
+      if (typeof MutationObserver === "function") {
+        var observer = new MutationObserver(function () {
+          if (state.open && appSidebarExpanded() === false) close();
+        });
+        observer.observe(frame, { attributes: true, attributeFilter: ["data-sidebar-collapsed"] });
+        state.observers.push(observer);
+      }
+    }
+    return true;
+  }
+
+  function unmount() {
+    clearTimeout(state.collapseTimer);
+    state.collapseTimer = 0;
+    if (state.button) {
+      state.button.removeEventListener("click", onButtonClick);
+      if (state.button.parentNode) state.button.parentNode.removeChild(state.button);
+      state.button = null;
+    }
+    if (state.scrim) {
+      state.scrim.removeEventListener("click", onScrimClick);
+      if (state.scrim.parentNode) state.scrim.parentNode.removeChild(state.scrim);
+      state.scrim = null;
+    }
+    for (var i = 0; i < state.observers.length; i++) state.observers[i].disconnect();
+    state.observers.length = 0;
+    if (state.sidebarIdAdded) {
+      var column = columnOf("sidebar");
+      if (column && column.id === SIDEBAR_ID) column.removeAttribute("id");
+      state.sidebarIdAdded = false;
+    }
+    doc().documentElement.removeAttribute(DRAWER_ATTR);
+  }
+
+  function activate() {
+    if (state.active) return;
+    state.active = true;
+    doc().documentElement.setAttribute(MOBILE_ATTR, "");
+    applyViewport();
+    applyAppleHints();
+    mount();
+    // Opening moves the sidebar off-canvas; if React already had it expanded
+    // (desktop → narrow resize) show the drawer instead of an invisible panel.
+    if (appSidebarExpanded() === true) open();
+    else close();
+    window.addEventListener("keydown", onKeyDown, true);
+    window.addEventListener("popstate", onRouteChange);
+    window.addEventListener("drp:navigate", onRouteChange);
+    patchHistory();
+    state.routeHooked = true;
+  }
+
+  function deactivate() {
+    if (!state.active) return;
+    state.active = false;
+    state.open = false;
+    unmount();
+    doc().documentElement.removeAttribute(MOBILE_ATTR);
+    restoreViewport();
+    window.removeEventListener("keydown", onKeyDown, true);
+    window.removeEventListener("popstate", onRouteChange);
+    window.removeEventListener("drp:navigate", onRouteChange);
+    state.routeHooked = false;
+    if (state.restoreHistory) state.restoreHistory();
+  }
+
+  /** Re-evaluate the breakpoint and re-attach to the current React tree. */
+  function refresh() {
+    var matches = mql ? mql.matches : window.innerWidth <= 900;
+    if (!matches) { deactivate(); return; }
+    if (!state.active) { activate(); return; }
+    // Still mobile: the shell may have re-rendered (logout/login swaps the
+    // frame). Re-mount the nodes if they fell out of the tree.
+    var frame = frameEl();
+    if (!frame) return;
+    if (!state.button || state.button.parentNode !== frame) {
+      unmount();
+      mount();
+      if (appSidebarExpanded() === true) open();
+    }
+  }
+
+  // The React shell mounts asynchronously: watch the DOM for the frame to appear
+  // (and for a logout/login that throws it away) and re-sync. The observer is
+  // rAF-throttled and its callback is a couple of boolean checks, so streaming
+  // chat output costs nothing measurable.
+  function watchShell() {
+    if (typeof MutationObserver !== "function") return;
+    var host = doc().body || doc().documentElement;
+    var pending = false;
+    var observer = new MutationObserver(function () {
+      if (pending) return;
+      pending = true;
+      requestAnimationFrame(function () {
+        pending = false;
+        // A modal opened over the app (the host's own dialogs live on <body>,
+        // the panel sheet inside the shell overlay): step out of the way.
+        if (state.open && overlayIsUp()) close();
+        var frame = frameEl();
+        if (!state.active || !frame || !state.button || !state.button.isConnected) refresh();
+      });
+    });
+    observer.observe(host, { childList: true, subtree: true });
+  }
+
+  /** True when a modal surface is on screen above the frame. */
+  function overlayIsUp() {
+    return doc().querySelector('[role="dialog"][aria-modal="true"], [data-drp-overlay="1"]') !== null;
+  }
+
+  window.__DRP_MOBILE__ = {
+    open: open,
+    close: close,
+    toggle: toggle,
+    refresh: refresh,
+    get active() { return state.active; },
+    get isOpen() { return state.open; },
+    get query() { return QUERY; },
+  };
+
+  if (mql && typeof mql.addEventListener === "function") mql.addEventListener("change", onMediaChange);
+  else if (mql && typeof mql.addListener === "function") mql.addListener(onMediaChange);
+
+  watchShell();
+  if (doc().readyState === "loading") {
+    doc().addEventListener("DOMContentLoaded", refresh, { once: true });
+  } else {
+    refresh();
+  }
+})();

@@ -1,0 +1,23 @@
+# dsh-remote-portal — bundle patch.
+#
+# One host row. Its `config` is the *initial* configuration only: values changed in
+# Settings → 远程访问 are persisted to <DSH_HOME>/dsh-remote-portal/state.json and
+# take precedence on the next boot, so a toggle made in the panel never gets
+# resurrected (or ignored) by this file.
+#
+# host:  0.0.0.0 listens on every interface; "auto" binds the primary LAN IPv4;
+#        127.0.0.1 keeps the portal loopback-only (for an external tunnel).
+# port:  the gateway listener, independent of the dsh Web port.
+- insert:
+    - id: dsh-remote-portal
+      name: dsh-remote-portal
+      config:
+        enabled: true
+        host: '0.0.0.0'
+        port: 3081
+        mobile: true
+        auth:
+          mode: password
+          sessionDays: 30
+          maxFailures: 5
+          lockSeconds: 60

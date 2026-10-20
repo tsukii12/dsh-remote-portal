@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Remote Portal",
+    "description": "Put a password-protected LAN gateway in front of the dsh Web GUI — pair a phone by QR code."
+  }
+}

@@ -1,0 +1,11 @@
+[req]
+distinguished_name=dn
+x509_extensions=v3
+prompt=no
+[dn]
+CN=10.150.23.97
+[v3]
+subjectAltName=IP:10.150.23.97,IP:127.0.0.1,DNS:localhost
+basicConstraints=critical,CA:FALSE
+keyUsage=critical,digitalSignature,keyEncipherment
+extendedKeyUsage=serverAuth

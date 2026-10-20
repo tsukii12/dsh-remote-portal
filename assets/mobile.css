@@ -1,0 +1,576 @@
+/*
+ * dsh-remote-portal — assets/mobile.css
+ *
+ * The presentation half of the mobile layer for a stock DeepSeek Harness Web UI
+ * that ships without *any* responsive rules (the only @media blocks in 77 KB of
+ * app CSS are `prefers-reduced-motion` guards).
+ *
+ * Contract with mobile.js
+ * -----------------------
+ * Nothing here applies unless `<html data-drp-mobile>` is set, which mobile.js
+ * does when `matchMedia("(max-width: 900px)")` matches — the same 900 px
+ * boundary used below. No script, no layout change: a stylesheet that lost its
+ * script can never damage the desktop UI.
+ *
+ * Stable hooks only
+ * -----------------
+ * The framework's own DOM is addressed through slots and data attributes, never
+ * through the CSS-module class names (`BynINW_frame`, `Dc7zOa_header`, …):
+ * those are build-generated content hashes that change on any dsh patch. Where
+ * a slot host is `display: contents`, the real box is found structurally:
+ *
+ *   [data-slot="root"] > div                            the three-column frame
+ *   [data-slot="root"] > div > div:has(> [data-slot="sidebar"])    left column
+ *   [data-slot="root"] > div > div:has(> [data-slot="main"])       centre column
+ *   [data-slot="root"] > div > div:has(> [data-slot="rightbar"])   right column
+ *   [data-slot="root"] > div > div:has(> [data-slot="shell.bottom"]) bottom row
+ *   [data-slot="sidebar"] > :first-child                the sidebar surface
+ *   [data-slot="conversation.header"] > header          the conversation bar
+ *   [data-composer-seat]                                the composer dock
+ *   [data-conversation-scroll]                          the message scroller
+ *   [data-sidebar-right-panel]                          the right panel
+ *   [role="dialog"] [role="menu"] [role="switch"] button textarea pre table
+ *
+ * `:has()` is required for the column lookups above; it is supported by every
+ * browser a 2026 phone runs (Chrome 105+, Safari 15.4+, Firefox 121+), and the
+ * rest of the file degrades gracefully without it — you would get a desktop
+ * layout at phone width, never a broken one.
+ *
+ * Two cosmetic rules still key off a class-name *fragment* (`[class*="_…"]`).
+ * They are marked, and if a future build renames them the only loss is a
+ * clipped icon / an unreduced hero headline — never a broken layout.
+ *
+ * Colours
+ * -------
+ * Everything reads `--dsw-alias-*` / `--dsw-specific-*` tokens. The user's
+ * dark-gold skin redeclares those tokens on `body` with `!important`; consuming
+ * them (never redefining them) means the skin keeps winning, and light mode —
+ * which uses the same token names — works unchanged. `prefers-color-scheme` is
+ * deliberately NOT used: the app owns the theme, not the OS.
+ *
+ * `!important` policy
+ * -------------------
+ * Only three declarations need it, all because the layout solver writes the
+ * value inline: `grid-template-columns` on the frame, the right panel's `width`
+ * and its matching `--dsh-sidebar-width`, plus the sidebar surface's inline
+ * `width`. Everything else wins on specificity (`html[data-drp-mobile] …`) or
+ * source order. test/mobile.test.mjs lints exactly this.
+ */
+
+@media (max-width: 900px) {
+  /* =====================================================================
+   * 0. Document-level behaviour
+   * ===================================================================== */
+  html[data-drp-mobile] {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    /* keep the ribbon / pull-to-refresh gesture from fighting the chat scroller */
+    overscroll-behavior-y: contain;
+
+    --drp-drawer-width: min(86vw, 320px);
+    --drp-gutter: 14px;
+    --drp-touch: 44px;
+    --drp-drawer-z: 18;
+    --drp-ease: cubic-bezier(0.32, 0.72, 0, 1);
+    --drp-dur: 240ms;
+    --drp-safe-top: env(safe-area-inset-top, 0px);
+    --drp-safe-bottom: env(safe-area-inset-bottom, 0px);
+    --drp-safe-left: env(safe-area-inset-left, 0px);
+    --drp-safe-right: env(safe-area-inset-right, 0px);
+  }
+
+  /* =====================================================================
+   * 1. Frame → one full-width column
+   * ===================================================================== */
+  html[data-drp-mobile] [data-slot="root"] > div {
+    /* The solver writes e.g. `grid-template-columns: 56px minmax(0px,1fr)
+       minmax(0px,0px)` inline; an inline style only loses to !important.
+       One track means the centre column is the whole screen. */
+    grid-template-columns: minmax(0, 1fr) !important;
+    height: 100dvh;
+    /* the conversation header reserves this much leading space: room for the
+       floating drawer button (see §3) */
+    --dsh-frame-leading-clearance: 68px;
+  }
+
+  /* Explicit placement: the drawer leaves the flow, the right panel stacks on
+     top of the centre column, the bottom row keeps its own row. */
+  html[data-drp-mobile] [data-slot="root"] > div > div:has(> [data-slot="main"]) {
+    grid-area: 1 / 1 / 2 / 2;
+    min-width: 0;
+  }
+
+  html[data-drp-mobile]
+    [data-slot="root"]
+    > div
+    > div:has(> [data-slot="rightbar"]) {
+    grid-area: 1 / 1 / 2 / 2;
+    min-width: 0;
+  }
+
+  html[data-drp-mobile]
+    [data-slot="root"]
+    > div
+    > div:has(> [data-slot="shell.bottom"]) {
+    grid-area: 2 / 1 / 3 / 2;
+    padding-bottom: var(--drp-safe-bottom);
+  }
+
+  /* =====================================================================
+   * 2. Sidebar → off-canvas drawer
+   * ===================================================================== */
+  html[data-drp-mobile]
+    [data-slot="root"]
+    > div
+    > div:has(> [data-slot="sidebar"]) {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: var(--drp-drawer-width);
+    height: 100dvh;
+    z-index: var(--drp-drawer-z);
+    box-sizing: border-box;
+    padding-top: var(--drp-safe-top);
+    padding-bottom: var(--drp-safe-bottom);
+    padding-left: var(--drp-safe-left);
+    background: var(--dsw-specific-sidebar-fill);
+    border-right: 0.5px solid var(--dsw-alias-border-l3);
+    box-shadow: 12px 0 34px -16px rgb(0 0 0 / 0.55);
+    overflow: hidden;
+    /* closed: parked off the left edge and out of the focus order */
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition: transform var(--drp-dur) var(--drp-ease),
+      visibility 0s linear var(--drp-dur);
+    will-change: transform;
+  }
+
+  html[data-drp-mobile][data-drp-drawer="open"]
+    [data-slot="root"]
+    > div
+    > div:has(> [data-slot="sidebar"]) {
+    transform: translateX(0);
+    visibility: visible;
+    transition: transform var(--drp-dur) var(--drp-ease),
+      visibility 0s linear 0s;
+  }
+
+  /* Thumb-sized rows and icon buttons inside the drawer. */
+  html[data-drp-mobile] [data-slot="sidebar"] button {
+    min-height: 40px;
+  }
+
+  html[data-drp-mobile]
+    [data-slot="sidebar"]
+    button[aria-label]:not(:has(> span:not(:empty))) {
+    min-width: 40px;
+  }
+
+  /* The sidebar surface receives its pixel width inline from the layout solver
+     (`style="width: 280px"`, the desktop track). Inside the drawer the column
+     is the authority, so that inline width has to go. Scoped to the open state
+     so the closed rail keeps its own metrics. */
+  html[data-drp-mobile][data-drp-drawer="open"]
+    [data-slot="sidebar"]
+    > :first-child {
+    width: 100% !important;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Cosmetic fragment rule: the workspace header's action cluster is capped at
+     60 px — exactly three 28 px desktop buttons. With 40 px touch targets the
+     cap would clip the third icon, so lift it inside the drawer. If a future
+     build renames the class the cap simply comes back. */
+  html[data-drp-mobile][data-drp-drawer="open"]
+    [data-slot="sidebar"]
+    [class*="_headerActions"] {
+    max-width: none;
+  }
+
+  /* =====================================================================
+   * 3. Scrim + floating drawer button (nodes created by mobile.js)
+   * ===================================================================== */
+  html[data-drp-mobile] .drp-drawer-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: calc(var(--drp-drawer-z) - 1);
+    background: rgb(0 0 0 / 0.45);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    visibility: hidden;
+    touch-action: manipulation;
+    transition: opacity var(--drp-dur) ease, visibility 0s linear var(--drp-dur);
+  }
+
+  html[data-drp-mobile][data-drp-drawer="open"] .drp-drawer-scrim {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity var(--drp-dur) ease, visibility 0s linear 0s;
+  }
+
+  html[data-drp-mobile] .drp-drawer-btn {
+    position: fixed;
+    z-index: calc(var(--drp-drawer-z) - 2);
+    top: calc(var(--drp-safe-top) + 8px);
+    left: calc(var(--drp-safe-left) + 8px);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--drp-touch);
+    height: var(--drp-touch);
+    margin: 0;
+    padding: 0;
+    color: var(--dsw-alias-label-primary);
+    background: var(--dsw-alias-bg-layer-1);
+    border: 0.5px solid var(--dsw-alias-border-l2);
+    border-radius: 12px;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.14), 0 8px 22px -10px rgb(0 0 0 / 0.5);
+    font: inherit;
+    line-height: 0;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: transform 120ms ease, background-color 120ms ease,
+      opacity 120ms ease;
+  }
+
+  html[data-drp-mobile] .drp-drawer-btn:active {
+    transform: scale(0.94);
+    background: var(--dsw-alias-interactive-bg-hover);
+  }
+
+  html[data-drp-mobile] .drp-drawer-btn svg {
+    display: block;
+  }
+
+  html[data-drp-mobile][data-drp-drawer="open"] .drp-drawer-btn {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* =====================================================================
+   * 4. Conversation header — room for the drawer button
+   * ===================================================================== */
+  html[data-drp-mobile] [data-slot="conversation.header"] > header {
+    min-height: 52px;
+    /* The right-panel toggle in the header corner carries `margin-right:-16px`
+       by design; the right padding is 16 px wider so that margin still lands
+       on a 14 px gutter instead of 2 px past the viewport edge. */
+    padding: 6px calc(var(--drp-gutter) + 16px) 0 var(--drp-gutter);
+  }
+
+  /* =====================================================================
+   * 5. Chat content — phone gutters, nothing wider than the viewport
+   * ===================================================================== */
+  html[data-drp-mobile] [data-conversation-scroll] {
+    /* the app adds `clearance + 16px` padding on each side of the message
+       column; a phone wants the 16 px, not 32 px */
+    --dsh-composer-side-clearance: 0px;
+  }
+
+  html[data-drp-mobile] img,
+  html[data-drp-mobile] video,
+  html[data-drp-mobile] canvas {
+    max-width: 100%;
+    height: auto;
+  }
+
+  html[data-drp-mobile] pre,
+  html[data-drp-mobile] [class*="_tableScroll"],
+  html[data-drp-mobile] table {
+    max-width: 100%;
+  }
+
+  /* A long unbroken line of code is normal in this product (paths, JSON, curl).
+     It must scroll inside the block, never widen the page: on a phone that is
+     the difference between "readable" and "the whole conversation slides
+     sideways". `overflow-x:auto` is what keeps the page width stable. */
+  html[data-drp-mobile] pre {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* The app wraps markdown tables in `_tableScroll`, but a table that arrives
+     any other way (a tool result, a plugin panel) still has to be pan-able
+     rather than clipped. */
+  html[data-drp-mobile] table:not([class*="_tableScroll"] *) {
+    display: block;
+    overflow-x: auto;
+  }
+
+  /* Wide tables only scroll on hover in the desktop UI (`md-table-wide`), which
+     is unreachable by thumb. Every table scroller pans on mobile, whether or not
+     the app decided the table was "wide" at desktop width — that decision was
+     made for a 1400 px column, and re-measuring it here is not worth a layout
+     read on every render. */
+  html[data-drp-mobile] [class*="_tableScroll"],
+  html[data-drp-mobile] .md-table-wide {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0;
+  }
+
+  html[data-drp-mobile] [role="dialog"] table {
+    display: block;
+    overflow-x: auto;
+  }
+
+  /* A hair tighter than the desktop setting for body copy (-1 px). The two
+     `--dsh-*` font variables live in an inline style on <body>, so scaling the
+     consumer is both sufficient and cheaper than an !important redeclaration. */
+  html[data-drp-mobile] [data-slot="conversation.chat.flow"] {
+    font-size: calc(var(--dsh-content-font-size, 14px) - 1px);
+  }
+
+  /* =====================================================================
+   * 6. Composer — real 16 px inputs (no iOS zoom) + safe area
+   * ===================================================================== */
+  html[data-drp-mobile] [data-composer-seat] {
+    padding-bottom: var(--drp-safe-bottom);
+  }
+
+  html[data-drp-mobile] textarea,
+  html[data-drp-mobile] input,
+  html[data-drp-mobile] select,
+  html[data-drp-mobile] [contenteditable="true"] {
+    /* < 16 px makes Safari zoom on focus and never zoom back out */
+    font-size: 16px;
+  }
+
+  /* =====================================================================
+   * 7. Right panel — full screen when open, own close affordance visible
+   * ===================================================================== */
+  html[data-drp-mobile] [data-sidebar-right-panel] {
+    /* the solver writes width + the matching slide distance inline */
+    width: 100vw !important;
+    --dsh-sidebar-width: 100vw !important;
+    max-width: 100vw;
+    border-left: 0;
+  }
+
+  html[data-drp-mobile] [data-sidebar-right-panel] button[aria-label] {
+    min-width: 40px;
+    min-height: 40px;
+  }
+
+  /* =====================================================================
+   * 8. Dialogs — bounded, scrollable, thumb-sized
+   * ===================================================================== */
+  html[data-drp-mobile] [role="presentation"]:has(> [role="dialog"]) {
+    box-sizing: border-box;
+    align-items: center;
+    padding: max(12px, var(--drp-safe-top)) 12px max(12px, var(--drp-safe-bottom));
+  }
+
+  html[data-drp-mobile] [role="dialog"] {
+    box-sizing: border-box;
+    max-width: calc(100vw - 24px);
+    max-height: calc(100dvh - 24px);
+    overflow-x: hidden;
+    /* One scroll container only: the dialog. The app's dialog modules each put
+       their own scroller inside (`overflow-y:auto` + `max-height:100%`), which
+       on a phone produces a second scrollbar and a pinned action row that
+       cannot reach the visual bottom (the inner scroller's padding stays
+       visible below it). Handing the scrolling to the dialog fixes both. */
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  html[data-drp-mobile] [role="dialog"] > * {
+    min-height: 0;
+    max-height: none;
+    overflow: visible;
+  }
+
+  /* The action row stays reachable while the body scrolls. */
+  html[data-drp-mobile] [role="dialog"] [class*="_actions"],
+  html[data-drp-mobile] [role="dialog"] [class*="_footer"] {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    background: var(--dsw-alias-bg-layer-2);
+    padding-bottom: max(6px, var(--drp-safe-bottom));
+  }
+
+  html[data-drp-mobile] [role="dialog"] button {
+    min-height: var(--drp-touch);
+  }
+
+  html[data-drp-mobile] [role="dialog"] button[aria-label] {
+    min-width: var(--drp-touch);
+  }
+
+  /* ---------------------------------------------------------------------
+   * 8b. dsh-remote-portal's own control panel.
+   *
+   * client.js renders it as a sheet inside [data-slot="shell.overlay"]:
+   *   .drp-overlay > .drp-scrim + .drp-sheet[role="dialog"][data-drp="panel"]
+   *     > .drp-sheet-body (the scroller)
+   * It is a full-screen sheet, not a modal: the generic bounds above would
+   * squash it to 100vw-24 / 100dvh-24 and add a second scroll container on top
+   * of .drp-sheet-body. Give it the whole screen and let it own its scrolling.
+   * --------------------------------------------------------------------- */
+  html[data-drp-mobile] [role="dialog"][data-drp="panel"] {
+    max-width: none;
+    max-height: none;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 0;
+    border: 0;
+  }
+
+  html[data-drp-mobile] [role="dialog"][data-drp="panel"] > * {
+    min-height: 0;
+  }
+
+  html[data-drp-mobile] [role="dialog"][data-drp="panel"] .drp-sheet-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: calc(24px + var(--drp-safe-bottom));
+  }
+
+  /* Nothing inside the sheet may be wider than the sheet. */
+  html[data-drp-mobile] [data-drp="panel"] :is(pre, table, img) {
+    max-width: 100%;
+  }
+
+  /* =====================================================================
+   * 9. Menus / popovers
+   * ===================================================================== */
+  html[data-drp-mobile] [role="menu"],
+  html[data-drp-mobile] [role="listbox"] {
+    max-width: calc(100vw - 16px);
+    max-height: min(70dvh, 460px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  html[data-drp-mobile] [role="menuitem"],
+  html[data-drp-mobile] [role="option"],
+  html[data-drp-mobile] [role="treeitem"] {
+    min-height: 40px;
+  }
+
+  /* =====================================================================
+   * 10. Touch affordances
+   * ===================================================================== */
+  html[data-drp-mobile] button,
+  html[data-drp-mobile] [role="button"],
+  html[data-drp-mobile] [role="switch"],
+  html[data-drp-mobile] a[href],
+  html[data-drp-mobile] summary,
+  html[data-drp-mobile] label {
+    touch-action: manipulation;
+  }
+
+  /* Hover-only reveals are already guarded by the app's own
+     `@media (hover: hover)` blocks, which stop matching on touch — nothing to
+     undo. What is missing on touch is a pressed state for those controls. */
+  html[data-drp-mobile] button[aria-label]:active {
+    background: var(--dsw-alias-interactive-bg-hover);
+  }
+
+  /* =====================================================================
+   * 10b. Conversation header: the session title must stay readable
+   * =====================================================================
+   *
+   * Measured at 390 px: the title row is 346 px wide, but the "N subagents"
+   * badge inside the title cluster is `flex: 0 0 auto` and takes 92 of the
+   * cluster's 116 px, so the breadcrumb — the only thing that says *which*
+   * conversation you are in — collapses to 14 px behind an ellipsis.
+   *
+   * Hooks are structural on purpose (no CSS-module hashes, see the file head):
+   *   header > nav                  the breadcrumbs holding the session title
+   *   header div:has(> nav)         the cluster: title + badge + actions
+   *   header nav + div              the badge that sits next to the title
+   */
+  html[data-drp-mobile] [data-slot="conversation.header"] > header nav {
+    min-width: 84px;
+  }
+  html[data-drp-mobile]
+    [data-slot="conversation.header"]
+    > header
+    div:has(> nav) {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  /* The badge is the first thing to yield: it clips instead of pushing the
+     title out of the row. */
+  html[data-drp-mobile] [data-slot="conversation.header"] > header nav + div {
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  /* Phones: there is not enough width for a badge *and* a readable title, and
+     the title wins — the badge is a secondary indicator, still reachable from
+     the session's own surfaces. */
+  @media (max-width: 430px) {
+    html[data-drp-mobile]
+      [data-slot="conversation.header"]
+      > header
+      nav
+      + div {
+      display: none;
+    }
+    html[data-drp-mobile] [data-slot="conversation.header"] > header nav {
+      min-width: 110px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    /* Reclaim the last few tens of pixels for the title: the drawer button ends
+       at x=56, so 60 px of leading clearance is still enough, and the two
+       selector chips (workspace + model) cap at 112 px instead of 130. */
+    html[data-drp-mobile] {
+      --dsh-frame-leading-clearance: 60px;
+    }
+    html[data-drp-mobile]
+      [data-slot="conversation.header"]
+      > header
+      div:has(> nav)
+      + div {
+      max-width: 112px;
+      overflow: hidden;
+    }
+  }
+
+  /* =====================================================================
+   * 11. Reduced motion — the drawer snaps instead of sliding
+   * ===================================================================== */
+  @media (prefers-reduced-motion: reduce) {
+    html[data-drp-mobile][data-drp-drawer="open"]
+      [data-slot="root"]
+      > div
+      > div:has(> [data-slot="sidebar"]),
+    html[data-drp-mobile]
+      [data-slot="root"]
+      > div
+      > div:has(> [data-slot="sidebar"]),
+    html[data-drp-mobile] .drp-drawer-scrim,
+    html[data-drp-mobile][data-drp-drawer="open"] .drp-drawer-scrim,
+    html[data-drp-mobile] .drp-drawer-btn {
+      transition: none;
+    }
+  }
+}
+
+/* Coarse pointers only: grow icon-only hit areas to a comfortable 40 px. Kept
+   separate so a hybrid laptop with a mouse keeps the dense desktop metrics
+   while a touch screen gets thumbs. */
+@media (max-width: 900px) and (pointer: coarse) {
+  html[data-drp-mobile]
+    button[aria-label]:not(:has(> span:not(:empty))):not(
+      [class*="_composer"]
+    ) {
+    min-width: 40px;
+    min-height: 40px;
+  }
+}
+
+

@@ -1,0 +1,25 @@
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+*.log
+
+# Runtime state that must never be committed
+state.json
+state.json.bak
+state.json.corrupt-*
+*.pem
+*.key
+token
+.relay-token
+
+# The TLS fixtures are a throwaway self-signed pair the relay tests need.
+!test/fixtures/tls/cert.pem
+!test/fixtures/tls/key.pem
+
+# Scratch output from the local tools
+docs/screenshots/*.tmp.png
+.out/
+node_modules/

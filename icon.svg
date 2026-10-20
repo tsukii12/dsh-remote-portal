@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="drpIconTitle">
+  <title id="drpIconTitle">Remote Portal</title>
+  <!--
+    Original 64×64 mark: a screen (the dsh Web GUI) emitting two signal arcs
+    (the LAN listener reaching a phone). Drawn with currentColor only, no
+    external references. The artwork fills the box (≈49×53 of 64) and keeps
+    ~5px of stroke, so it still reads as "screen + signal" at 20 px.
+  -->
+  <g fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="9" y="8" width="30" height="48" rx="9" />
+    <path d="M47.9 22.2a12 12 0 0 1 0 19.6" />
+    <path d="M52.5 15.6a20 20 0 0 1 0 32.8" />
+  </g>
+  <circle cx="43" cy="32" r="3.6" fill="currentColor" />
+</svg>
