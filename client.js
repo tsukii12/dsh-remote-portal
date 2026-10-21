@@ -56,7 +56,7 @@ window.__ModuleLoader__.load({
     // prefix. An absolute path here would break remote access through a tunnel.
     var BASE = "./dsh-remote-portal";
   // Must match package.json: it is what busts the browser cache for the layer.
-  var CLIENT_VERSION = "0.3.2";
+  var CLIENT_VERSION = "0.3.3";
     var POLL_MS = 3000;         // status poll while the settings page is visible
     var MIN_PW = 8;             // matches the host's "≥8 recommended" rule (§3)
     var COPY_FEEDBACK_MS = 1600;
@@ -537,12 +537,12 @@ window.__ModuleLoader__.load({
       /* QR */
       ".drp-qr{display:flex;flex-direction:column;gap:12px}",
       ".drp-qr-frame{position:relative;display:flex;align-items:center;justify-content:center;",
-      "background:#fff;border-radius:12px;padding:12px;border:1px solid var(--drp-line);",
-      "width:100%;max-width:280px;margin:0 auto}",
+      "width:100%;max-width:216px;margin:0 auto}",
+      ".drp-qr-frame:has(.drp-qr-img){background:#fff;border-radius:10px;padding:10px}",
       ".drp-qr-img{display:block;width:100%;max-width:216px;height:auto;aspect-ratio:1/1}",
       ".drp-qr-empty{display:flex;align-items:center;justify-content:center;width:100%;max-width:216px;",
-      "aspect-ratio:1/1;padding:12px;border-radius:8px;background:#fff;color:#81858c;",
-      "font-size:12px;line-height:1.5;text-align:center}",
+      "aspect-ratio:1/1;padding:16px;border-radius:10px;background:transparent;color:var(--drp-fg3);",
+      "border:1px dashed var(--drp-line);font-size:13px;line-height:1.55;text-align:center}",
       ".drp-qr-veil{position:absolute;inset:12px;display:flex;align-items:center;justify-content:center;",
       "border-radius:8px;background:rgba(255,255,255,.9);color:#0f1115;font-size:12.5px;font-weight:500}",
       ".drp-qr-note{font-size:12px;line-height:1.55;color:var(--drp-fg3);max-width:280px;margin:0 auto}",
@@ -643,14 +643,30 @@ window.__ModuleLoader__.load({
       ".drp-page .drp-card{background:transparent;border:0;border-top:0.5px solid var(--drp-line);border-radius:0;padding:20px 0}",
       ".drp-page .drp-card:first-of-type{border-top:0}",
       ".drp-page .drp-card-head{margin:0 0 14px}",
-      ".drp-page .drp-card-title{font-size:16px;font-weight:500;line-height:24px}",
-      ".drp-page .drp-label{font-size:14px;color:var(--drp-fg2)}",
-      ".drp-page .drp-hint{font-size:14px;line-height:22px;color:var(--drp-fg2)}",
+      ".drp-page .drp-card-title{font-size:15px;font-weight:600;line-height:22px;letter-spacing:0}",
+      ".drp-page .drp-label{font-size:13.5px;color:var(--drp-fg2);font-weight:400}",
+      ".drp-page .drp-hint{font-size:13px;line-height:20px;color:var(--drp-fg3)}",
+      ".drp-page .drp-input{height:36px;font-size:14px;border-radius:7px}",
+      ".drp-page .drp-btn{height:34px;font-size:13.5px;border-radius:7px;padding:0 14px}",
+      ".drp-page .drp-btn-sm{height:28px;font-size:12.5px}",
+      ".drp-page .drp-url-box{height:36px;font-size:13px;border-radius:7px}",
+      ".drp-page .drp-card-head{margin:0 0 12px;align-items:center}",
+      ".drp-page .drp-card{padding:18px 0}",
+      ".drp-page .drp-chip{height:22px;font-size:11.5px;padding:0 8px}",
+      ".drp-page .drp-sub{font-size:15px;line-height:23px;color:var(--drp-fg2)}",
       /* Two columns when the page is wide enough, one when it is not — the same
          behaviour the host's own pages have. */
-      ".drp-page .drp-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 40px;align-items:start}",
+      ".drp-page .drp-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:0 56px;align-items:start}",
+      "@media (max-width:1080px){.drp-page .drp-grid{grid-template-columns:minmax(0,1fr);gap:0}}",
       ".drp-page .drp-head{padding:0 0 8px}",
       ".drp-page .drp-head-top{justify-content:flex-end}",
+      ".drp-connect{display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:0 40px;align-items:start;border-bottom:0.5px solid var(--drp-line)}",
+      ".drp-connect > .drp-card{border-top:0}",
+      ".drp-connect .drp-qr{gap:10px}",
+      ".drp-connect .drp-qr-frame,.drp-connect .drp-qr-empty{max-width:180px}",
+      ".drp-connect .drp-qr-actions{max-width:180px;flex-direction:column}",
+      ".drp-connect .drp-qr-note{max-width:180px;text-align:center}",
+      "@media (max-width:1080px){.drp-connect{grid-template-columns:minmax(0,1fr)}}",
       "@media (max-width:900px){.drp-page{padding:0 20px 32px}.drp-page-head{padding:18px 0 14px}}",
       /* directory picker */
       ".drp-picker-body{display:flex;flex-direction:column;min-height:0;overflow:hidden}",
@@ -1242,27 +1258,8 @@ window.__ModuleLoader__.load({
 
       // Diagnostics: one snapshot of what the gateway thinks the network looks
       // like. Loaded on mount and on demand — never polled.
-      function loadDiagnose() {
-        patch({ diagBusy: true });
-        return api(BASE + "/diagnose?lang=" + lang(), { timeout: 10000 }).then(function (r) {
-          if (r.ok && r.data && r.data.report) {
-            patch({ diag: r.data.report, diagBusy: false });
-            return;
-          }
-          patch({ diagBusy: false, diag: { unreachable: true, error: r.error || "unavailable" } });
-        }).catch(function () {
-          patch({ diagBusy: false, diag: { unreachable: true } });
-        });
-      }
 
       /** The last N requests that actually reached the gate. */
-      function loadAccessLog() {
-        return api(BASE + "/access-log", { timeout: 10000 }).then(function (r) {
-          if (!r.ok || !r.data) return;
-          var entries = Array.isArray(r.data.entries) ? r.data.entries : [];
-          patch({ log: entries });
-        }).catch(function () { /* the card simply stays empty */ });
-      }
 
       // ── polling: every 3 s, paused while the tab is hidden ────────────────
       useEffect(function () {
@@ -1331,10 +1328,6 @@ window.__ModuleLoader__.load({
       useEffect(function () { patch({ qrBroken: false }); }, [qrSrc]);
 
       useEffect(function () {
-        // One shot each: the diagnose snapshot and the access log are static
-        // until something happens, and the cards offer their own refresh.
-        loadDiagnose();
-        loadAccessLog();
         return function () {
           try { if (noticeTimer.current) clearTimeout(noticeTimer.current); } catch (e) { /* ignore */ }
           try { if (copyTimer.current) clearTimeout(copyTimer.current); } catch (e2) { /* ignore */ }
@@ -1519,8 +1512,7 @@ window.__ModuleLoader__.load({
           },
             h(Icon, { name: st.copied ? "check" : "copy", size: 14 }),
             h("span", null, st.copied ? t("copied") : t("copy")))),
-        loop ? h("p", { className: "drp-hint drp-hint-warn" }, t("loopHint")) : null,
-        h("p", { className: "drp-hint" }, t("fwHint", { port: port })));
+        loop ? h("p", { className: "drp-hint drp-hint-warn" }, t("loopHint")) : null);
 
       // A pairing code is only meaningful while the gateway is listening: a phone
       // that scans one before that gets a dead address. Gating the card on
@@ -1810,77 +1802,8 @@ window.__ModuleLoader__.load({
         }
       }
 
-      var diagCard = h("section", { className: "drp-card", "data-drp": "diag", key: "diag" },
-        h("div", { className: "drp-card-head" },
-          h("h3", { className: "drp-card-title" }, t("cardDiag")),
-          h("button", {
-            type: "button",
-            className: "drp-btn drp-btn-ghost drp-btn-sm",
-            disabled: !!st.diagBusy,
-            onClick: function () { loadDiagnose(); loadAccessLog(); }
-          },
-            h(Icon, { name: "refresh", size: 13 }),
-            h("span", null, st.diagBusy ? t("diagBusy") : t("diagRefresh")))),
-        diag && diag.unreachable
-          ? h("p", { className: "drp-empty" }, t("diagUnavailable"))
-          : null,
-        diagRows.length
-          ? h("div", { className: "drp-kv" }, diagRows.map(function (row, i) {
-              return h("div", { className: "drp-kv-row", key: "kv" + i },
-                h("span", { className: "drp-kv-k" }, row[0]),
-                h("span", { className: "drp-kv-v" }, row[1]));
-            }))
-          : null,
-        diag && diag.firewallHint
-          ? h("div", { className: "drp-sub" },
-              h("div", { className: "drp-label drp-label-wrap" }, t("diagFirewall")),
-              h("div", { className: "drp-url drp-url-sm" }, String(diag.firewallHint)),
-              h("div", { className: "drp-row-actions" },
-                h("button", {
-                  type: "button",
-                  className: "drp-btn drp-btn-ghost drp-btn-sm",
-                  onClick: function () {
-                    copyText(String(diag.firewallHint), function (ok) {
-                      flash(ok ? "ok" : "err", ok ? t("copied") : t("copyFail"));
-                    });
-                  }
-                },
-                  h(Icon, { name: "copy", size: 13 }),
-                  h("span", null, t("copyCmd")))))
-          : null,
-        diag && Array.isArray(diag.notes) && diag.notes.length
-          ? h("ul", { className: "drp-notes" }, diag.notes.slice(0, 4).map(function (n, i) {
-              return h("li", { key: "n" + i }, String(n));
-            }))
-          : null);
-
-      // ── recent access ─────────────────────────────────────────────────────
-      var log = Array.isArray(st.log) ? st.log : [];
-      var shown = log.slice(0, 8);
-      var logCard = h("section", { className: "drp-card", "data-drp": "log", key: "log" },
-        h("div", { className: "drp-card-head" },
-          h("h3", { className: "drp-card-title" }, t("cardLog")),
-          // Count what is displayed, not what was fetched: the chip is a row
-          // count, and "50" next to eight rows reads as a rendering bug.
-          h("span", { className: "drp-chip" }, String(shown.length))),
-        shown.length === 0
-          ? h("p", { className: "drp-empty" }, t("logEmpty"))
-          : h("div", { className: "drp-log" }, shown.map(function (e, i) {
-              var when = "";
-              try {
-                when = new Date(Number(e.at) || 0).toLocaleTimeString(lang() === "zh" ? "zh-CN" : "en-US", { hour12: false });
-              } catch (err) { when = ""; }
-              var status = Number(e.status) || 0;
-              var statusClass = status >= 500 ? " drp-log-bad"
-                : status >= 400 ? " drp-log-warn"
-                  : "";
-              return h("div", { className: "drp-log-row", key: "l" + i },
-                h("span", { className: "drp-log-time" }, when.slice(0, 5)),
-                h("span", { className: "drp-log-path", title: String(e.path || "") },
-                  String(e.method || "GET") + " " + String(e.path || "/")),
-                h("span", { className: "drp-log-meta" + statusClass },
-                  String(e.ip || "") + " · " + String(status || "—")));
-            })));
+    // Diagnostics and the recent-access list were removed from the panel: the
+    // page shows what a user acts on, and both cards were read-only noise.
 
       // ── frame ─────────────────────────────────────────────────────────────
       return h("div", {
@@ -1905,8 +1828,7 @@ window.__ModuleLoader__.load({
               // Only the sheet instance claims the dialog's label id, so the
               // inline section can never collide with it.
               id: inSheet ? "drp-sheet-title" : undefined
-            }, t("section")),
-            h(StatusPill, { tone: tone })),
+            }, t("section"))),
           isPage ? null : h("p", { className: "drp-sub" }, t("subtitle"))),
 
         alerts.length ? h("div", { className: "drp-alerts" }, alerts) : null,
@@ -1935,9 +1857,10 @@ window.__ModuleLoader__.load({
               }, t("firstRunCta")))
           : null,
 
+        h("div", { className: "drp-connect" }, addrCard, qrCard),
         h("div", { className: "drp-grid" },
-          h("div", { className: "drp-col" }, addrCard, accessCard, devicesCard),
-          h("div", { className: "drp-col" }, qrCard, publicCard, diagCard, logCard)));
+          h("div", { className: "drp-col" }, accessCard, devicesCard),
+          h("div", { className: "drp-col" }, publicCard)));
     }
 
     /** One place that turns a failed response into a sentence. */
@@ -2435,6 +2358,7 @@ window.__ModuleLoader__.load({
     return { inject: ["slots"], apply: apply };
   }
 });
+
 
 
 

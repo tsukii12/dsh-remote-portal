@@ -3,6 +3,30 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.3.3 — 2026-10-21
+
+### Changed — the panel is smaller, and only shows what you act on
+Recomposed around the two things a user does: **connect a device**, and **change
+a setting**.
+
+- **A connect banner at the top**: the LAN address and the pairing code sit side
+  by side, because they are two halves of the same action.
+- **Two columns below**: 访问控制 + 已授权设备 on the left, 公网访问 on the right.
+- **Removed**: the "运行中 / 出错" status pill, 连接诊断, 最近访问, and the firewall
+  hint. The state is still visible where it matters (the first-run banner, the
+  pairing note) but the page no longer carries a read-only diagnostics dump.
+  Their loaders and fetches are gone too, so no request is made for a card that
+  does not exist.
+- **Typography tightened** to settings-page scale: 15 px section titles, 13.5 px
+  labels, 13 px hints, 36 px inputs, 34 px buttons (`drp-btn-sm` at 28 px), 7 px
+  radii. The page header keeps the host's 20/500 title.
+- **The empty pairing slot is a dashed well**, not a white QR plate — a blank
+  white square reads as a broken image. The white plate now appears only around
+  an actual code (`:has(.drp-qr-img)`).
+
+### Tests
+- 76 tests green (~66 s).
+
 ## 0.3.2 — 2026-10-21
 
 ### Added
@@ -455,6 +479,7 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
+
 
 
 
