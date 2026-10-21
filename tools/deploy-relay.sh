@@ -35,7 +35,10 @@ DOMAIN=""
 PUBLIC_URL=""
 PREFIX=/__t
 WITH_CADDY=0
-# The agent port is plain TCP unless this script was given a certificate pair.
+WITH_NGINX=0
+TLS_CERT=""
+TLS_KEY=""
+# The agent port is plain TCP unless a certificate pair is supplied.
 AGENT_SCHEME=tcp
 WITH_SYSTEMD=1
 UNINSTALL=0
@@ -58,7 +61,10 @@ while [ $# -gt 0 ]; do
     --agent-port) AGENT_PORT=$2; shift 2 ;;
     --port) HTTP_PORT=$2; shift 2 ;;
     --prefix) PREFIX=$2; shift 2 ;;
+    --tls-cert) TLS_CERT=$2; shift 2 ;;
+    --tls-key) TLS_KEY=$2; shift 2 ;;
     --caddy) WITH_CADDY=1; shift ;;
+    --nginx) WITH_NGINX=1; shift ;;
     --no-systemd) WITH_SYSTEMD=0; shift ;;
     --uninstall) UNINSTALL=1; shift ;;
     -h|--help) usage ;;
@@ -93,6 +99,14 @@ ok "node $(node -v) at $(command -v node)"
 
 [ -f "$(dirname "$0")/relay.mjs" ] || die "relay.mjs not found next to this script — run it from the plugin's tools/ directory"
 ok "relay.mjs found"
+
+if [ -n "$TLS_CERT" ] || [ -n "$TLS_KEY" ]; then
+  [ -n "$TLS_CERT" ] && [ -n "$TLS_KEY" ] || die "give both --tls-cert and --tls-key"
+  [ -r "$TLS_CERT" ] || die "cannot read $TLS_CERT"
+  [ -r "$TLS_KEY" ] || die "cannot read $TLS_KEY"
+  AGENT_SCHEME=tls
+  ok "agent port will speak TLS ($TLS_CERT)"
+fi
 
 if [ "$WITH_SYSTEMD" = 1 ] && ! as_root; then
   die "systemd setup needs root. Re-run with sudo, or pass --no-systemd for a foreground run"
@@ -152,6 +166,13 @@ ok "agent endpoint host: $PUBLIC_HOST"
 # ── 4. service ──────────────────────────────────────────────────────────────
 if [ "$WITH_SYSTEMD" = 1 ]; then
   say "Installing the systemd unit"
+  # One line, no continuations: a stray backslash in a heredoc is a silent
+  # unit-file corruption that only shows up when systemd tries to parse it.
+  RELAY_ARGS="$RELAY_DIR/relay.mjs --token-file $TOKEN_FILE --agent-port $AGENT_PORT --http-port 127.0.0.1:$HTTP_PORT --prefix $PREFIX --public-url $PUBLIC_URL"
+  if [ -n "$TLS_CERT" ]; then
+    RELAY_ARGS="$RELAY_ARGS --tls-cert $TLS_CERT --tls-key $TLS_KEY"
+  fi
+
   cat > "$UNIT" <<UNIT_EOF
 [Unit]
 Description=dsh-remote-portal relay
@@ -162,12 +183,7 @@ Wants=network-online.target
 Type=simple
 User=dsh-relay
 Group=dsh-relay
-ExecStart=/usr/bin/env node $RELAY_DIR/relay.mjs \\
-  --token-file $TOKEN_FILE \\
-  --agent-port $AGENT_PORT \\
-  --http-port 127.0.0.1:$HTTP_PORT \\
-  --prefix $PREFIX \\
-  --public-url $PUBLIC_URL
+ExecStart=/usr/bin/env node $RELAY_ARGS
 Restart=always
 RestartSec=3
 NoNewPrivileges=true
@@ -182,7 +198,10 @@ ReadWritePaths=$STATE_DIR
 WantedBy=multi-user.target
 UNIT_EOF
   systemctl daemon-reload
-  systemctl enable --now "$SERVICE" >/dev/null
+  systemctl enable "$SERVICE" >/dev/null
+  # `enable --now` is a no-op on an already-running unit, so a re-run with new
+  # flags (ports, TLS certificates) would silently keep the OLD process. Restart.
+  systemctl restart "$SERVICE"
   sleep 1
   systemctl is-active --quiet "$SERVICE" || {
     journalctl -u "$SERVICE" -n 20 --no-pager || true
@@ -240,6 +259,87 @@ CADDY_EOF
   fi
 fi
 
+# ── 5b. nginx / openresty ───────────────────────────────────────────────────
+if [ "$WITH_NGINX" = 1 ]; then
+  say "Configuring nginx"
+  NGINX_DONE=0
+  # 1Panel keeps its sites in a mounted directory and runs nginx in a container;
+  # a plain install keeps them in /etc/nginx/conf.d. Support both.
+  if [ -d /opt/1panel/www/conf.d ]; then
+    NGINX_CONF_DIR=/opt/1panel/www/conf.d
+    NGINX_RUN="$(command -v docker >/dev/null 2>&1 && docker ps --format '{{.Names}}' 2>/dev/null | grep -i openresty | head -1 || true)"
+  elif [ -d /etc/nginx/conf.d ]; then
+    NGINX_CONF_DIR=/etc/nginx/conf.d
+    NGINX_RUN=""
+  else
+    NGINX_CONF_DIR=""
+    warn "no nginx conf.d found. Add this to your server by hand:"
+    printf '    location /__t/ { proxy_pass http://127.0.0.1:%s; proxy_buffering off; }\n' "$HTTP_PORT"
+  fi
+
+  if [ -n "$NGINX_CONF_DIR" ]; then
+    NGINX_TARGET="$NGINX_CONF_DIR/dsh-relay.conf"
+    cat > "$NGINX_TARGET" <<"NGINX_EOF"
+# dsh-remote-portal relay -- public entry for the tunnel (added by deploy-relay.sh).
+# Scoped to this host: nothing else on the server is touched.
+map $http_upgrade $dsh_relay_upgrade {
+    default upgrade;
+    ""      close;
+}
+
+server {
+    listen 80;
+    server_name __PUBLIC_HOST__;
+
+    location /__t/ {
+        proxy_pass http://127.0.0.1:__HTTP_PORT__;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $dsh_relay_upgrade;
+        # dsh streams responses and upgrades to WebSocket.
+        proxy_buffering off;
+        proxy_cache off;
+        proxy_read_timeout 3600s;
+        proxy_send_timeout 3600s;
+    }
+}
+NGINX_EOF
+    sed -i "s/__PUBLIC_HOST__/$PUBLIC_HOST/; s/__HTTP_PORT__/$HTTP_PORT/" "$NGINX_TARGET"
+    ok "wrote $NGINX_TARGET"
+
+    # Validate with the *running* server, then reload that same one: a config that
+    # fails validation must never reach a reload.
+    if [ -n "$NGINX_RUN" ]; then
+      if docker exec "$NGINX_RUN" nginx -t >/tmp/nginx-t.log 2>&1; then
+        docker exec "$NGINX_RUN" nginx -s reload
+        ok "reloaded nginx inside container $NGINX_RUN"
+        NGINX_DONE=1
+      else
+        rm -f "$NGINX_TARGET"
+        tail -3 /tmp/nginx-t.log
+        die "nginx rejected the configuration; file removed, nothing reloaded"
+      fi
+    elif command -v nginx >/dev/null 2>&1; then
+      if nginx -t >/tmp/nginx-t.log 2>&1; then
+        nginx -s reload
+        ok "reloaded nginx"
+        NGINX_DONE=1
+      else
+        rm -f "$NGINX_TARGET"
+        tail -3 /tmp/nginx-t.log
+        die "nginx rejected the configuration; file removed, nothing reloaded"
+      fi
+    else
+      warn "wrote $NGINX_TARGET but found no running nginx to reload"
+    fi
+  fi
+  [ "$NGINX_DONE" = 1 ] && ok "public entry ready: http://$PUBLIC_HOST$PREFIX/<id>/"
+fi
+
 # ── 6. health + next steps ──────────────────────────────────────────────────
 say "Checking the relay"
 if [ "$WITH_SYSTEMD" != 1 ]; then
@@ -272,8 +372,8 @@ Firewall (only these two need to be reachable from the internet):
   ufw allow 443/tcp        # visitors, through Caddy or the relay's own TLS
   ufw allow $AGENT_PORT/tcp        # the dsh host dials OUT to this port
 
-  # nginx/openresty instead of Caddy? Proxy to 127.0.0.1:$HTTP_PORT with
-  # proxy_buffering off; and make sure websocket upgrades are forwarded.
+  # nginx/openresty instead of Caddy? Re-run with --nginx and this script writes
+  # the site itself (validated first, then reloaded).
 
 Everything this script created:
 

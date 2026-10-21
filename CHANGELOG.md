@@ -3,6 +3,33 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.3.6 — 2026-10-21
+
+### Fixed — three bugs that together made public access impossible
+1. **A re-run never applied its new flags.** The installer used
+   `systemctl enable --now`, which is a no-op on an already-running unit, so
+   `--tls-cert` (or a new port) was written into the unit file and then ignored:
+   the old process kept serving. It now restarts the unit.
+2. **TLS could not be configured at all.** `--tls-cert` / `--tls-key` were not
+   accepted, so the agent port could only ever be plain TCP. Both flags exist now,
+   the pair is validated, and `tls://` is printed when TLS is on.
+3. **The nginx snippet was unusable.** The unit heredoc was unquoted, so nginx's
+   own `$http_upgrade` was expanded by the shell (`unbound variable`).
+
+### Added
+- **`--nginx`**: writes a scoped `dsh-relay.conf` (one `server` block for this
+  host, `/__t/` only), validates it **with the running server** — inside the
+  1Panel/openresty container when that is how nginx runs — and only then reloads.
+  A config that fails validation is removed instead of reloaded.
+
+Verified end to end on a real server: `tls://<ip>:9443` accepted a hand-built
+HELLO (`REPLY 174B type=2`), the panel reported the tunnel **online**, and
+`http://<ip>/__t/<id>/` returned the login page (200, 29,666 B, Harness mark) and
+then the app (200, `__DSH_BOOT__` present) after a pairing login.
+
+### Tests
+- 76 tests green.
+
 ## 0.3.5 — 2026-10-21
 
 ### Fixed
@@ -524,6 +551,7 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
+
 
 
 
