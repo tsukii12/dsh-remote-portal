@@ -3,6 +3,25 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.3.5 — 2026-10-21
+
+### Fixed
+- **The script addresses a copy that lost its mode bits.** A checkout, a paste or a
+  tar from a Windows host arrives as `-rw-r--r--`, so `./deploy-relay.sh` fails
+  with `command not found` even though the file is fine. It now re-applies its own
+  exec bit before doing anything else.
+- **The endpoint line prints the real host.** It used to say
+  `tcp://<this-server-ip>:9443`, which is not something you can paste; it now
+  derives the host from the resolved public URL, so the line reads
+  `tcp://43.153.152.119:9443`.
+
+Verified on the deployment host: service `active` + `enabled`, 9443 plain TCP,
+8080 loopback-only, and a hand-built HELLO frame answered with
+`REPLY 174B type=2` (WELCOME).
+
+### Tests
+- 10 relay tests green.
+
 ## 0.3.4 — 2026-10-21
 
 ### Fixed — the relay endpoint printed the wrong scheme
@@ -505,6 +524,7 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
+
 
 
 

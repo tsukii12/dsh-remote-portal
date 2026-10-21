@@ -20,6 +20,10 @@
 #
 set -euo pipefail
 
+# A copy that arrived without mode bits (Windows checkout, paste, some tars) fails
+# as "command not found" when invoked as ./deploy-relay.sh. Fix it once and carry on.
+if [ ! -x "$0" ] && [ -f "$0" ]; then chmod +x "$0" 2>/dev/null || true; fi
+
 RELAY_DIR=/opt/dsh-relay
 STATE_DIR=/var/lib/dsh-relay
 UNIT=/etc/systemd/system/dsh-relay.service
@@ -139,7 +143,11 @@ if [ -z "$PUBLIC_URL" ]; then
     PUBLIC_URL="http://${IP:-127.0.0.1}"
   fi
 fi
-ok "public URL: $PUBLIC_URL$PREFIX/$TUNNEL_ID/"
+# Host portion, used for the agent endpoint below. `PUBLIC_URL` is already
+# "https://domain" or "http://<ip>" by now, so this is always concrete.
+PUBLIC_HOST=$(printf '%s' "$PUBLIC_URL" | sed -E 's#^[a-z]+://##; s#/.*$##; s#:[0-9]+$##')
+[ -n "$PUBLIC_HOST" ] || PUBLIC_HOST=127.0.0.1
+ok "agent endpoint host: $PUBLIC_HOST"
 
 # ── 4. service ──────────────────────────────────────────────────────────────
 if [ "$WITH_SYSTEMD" = 1 ]; then
@@ -248,7 +256,7 @@ cat <<DONE_EOF
 ────────────────────────────────────────────────────────────────────────
 Paste these two values into dsh → 侧栏「远程访问」→ 公网访问:
 
-  中转服务器   $AGENT_SCHEME://$( [ -n "$DOMAIN" ] && printf '%s' "$DOMAIN" || printf '<this-server-ip>' ):$AGENT_PORT
+  中转服务器   $AGENT_SCHEME://$PUBLIC_HOST:$AGENT_PORT
   隧道令牌     $TOKEN
 
 （中转服务器用 tcp:// 还是 tls://，取决于服务器上的 agent 端口有没有配证书。
