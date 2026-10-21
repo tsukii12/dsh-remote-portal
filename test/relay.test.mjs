@@ -223,6 +223,18 @@ test("serves the relay's own health endpoint without touching the tunnel", async
   assert.equal(health.tunnels[0].connected, false, "nothing is connected yet");
 });
 
+test("a tunnel URL without its trailing slash redirects to one", async () => {
+  // Relative links resolve against the parent directory, so /__t/<id> would make
+  // the login form post to /__t/__portal/login and the relay would read
+  // "__portal" as a tunnel id.
+  const token = "test-token-slash";
+  const id = tunnelIdFor(token);
+  const { httpPort } = await startRelay([token]);
+  const res = await request(httpPort, `/__t/${id}`);
+  assert.equal(res.status, 301);
+  assert.equal(res.headers.location, `/__t/${id}/`);
+});
+
 test("an unknown tunnel id gets a page, not a proxy attempt", async () => {
   const { httpPort } = await startRelay(["only-this-token"]);
   const res = await request(httpPort, "/__t/doesnotexist/");

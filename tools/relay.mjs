@@ -374,7 +374,7 @@ function createRelay(config) {
         send(FRAME.WELCOME, 0, JSON.stringify({
           tunnelId: tunnel.id,
           publicPath,
-          publicUrl: `${config.publicUrl.replace(/\/$/, "")}${publicPath}`,
+          publicUrl: `${config.publicUrl.replace(/\/$/, "")}${publicPath}/`,
           limits: { maxStreams: config.maxStreams, requestTimeout: config.requestTimeout },
         }));
         log.info(`tunnel ${tunnel.id} connected from ${peer}`);
@@ -532,6 +532,26 @@ function createRelay(config) {
       return;
     }
 
+    // A tunnel URL without its trailing slash breaks every relative link on the
+    // page (the browser resolves them against the parent directory), so the
+    // login form would POST to /__t/__portal/login and the relay would read
+    // "__portal" as a tunnel id. Redirect once instead of asking people to
+    // remember the slash.
+    const bare = `${config.prefix}/`;
+    if (url.pathname.startsWith(bare)) {
+      const rest = url.pathname.slice(bare.length);
+      if (rest !== "" && !rest.includes("/") && tunnels.has(rest)) {
+        res.writeHead(301, {
+          ...LOCAL_HEADERS,
+          location: `${bare}${rest}/${url.search}`.replace(/\?$/, ""),
+          "content-length": 0,
+          "cache-control": "no-store",
+        });
+        res.end();
+        return;
+      }
+    }
+
     const route = routeFor(url.pathname);
     if (!route) {
       sendPage(res, 404, "Not found", "This relay only serves tunnel links.");
@@ -553,6 +573,9 @@ function createRelay(config) {
     // here is the *public* authority so its own same-origin check passes.
     const upstreamHeaders = { ...headers, "x-forwarded-proto": config.publicUrl.startsWith("https") ? "https" : "http" };
     if (!upstreamHeaders["x-forwarded-for"]) upstreamHeaders["x-forwarded-for"] = clientIp(req);
+    // The app is mounted under this prefix; it needs it to build correct
+    // redirects and form actions (the relay strips the prefix before proxying).
+    upstreamHeaders["x-forwarded-prefix"] = publicPathFor(route.id);
 
     let headSent = false;
     const stream = openStream(route.tunnel, {

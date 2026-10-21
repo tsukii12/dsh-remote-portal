@@ -1177,6 +1177,46 @@ test("the login page speaks the visitor's language and never stores a theme", as
   assert.match(en.body, /access password|Remote access/i);
 });
 
+test("redirects stay inside the mount prefix a proxy reports", async () => {
+  // The relay strips its prefix before forwarding and tells us where we are
+  // mounted. Every redirect we emit has to come back with that prefix, or the
+  // browser lands outside the tunnel (the relay's own 404).
+  const { gw } = await startPortal();
+  await gw.setPassword("correct horse battery");
+  await gw.start();
+  const port = gw.status().port;
+
+  const mounted = { "x-forwarded-prefix": "/__t/abc123" };
+  const page = await request(port, "/", {
+    headers: { accept: "text/html", ...mounted },
+  });
+  assert.equal(page.status, 200);
+  // The form action is relative on purpose: it resolves under whatever prefix
+  // the page was served from.
+  assert.match(page.body, /action="__portal\/login"/);
+
+  const login = await request(port, "/__portal/login", {
+    method: "POST",
+    headers: {
+      accept: "text/html",
+      "content-type": "application/x-www-form-urlencoded",
+      ...mounted,
+    },
+    body: "password=correct+horse+battery",
+  });
+  assert.equal(login.status, 303);
+  assert.equal(login.headers.location, "/__t/abc123/", "redirect must carry the prefix");
+
+  // Without the header nothing changes for a direct visitor.
+  const direct = await request(port, "/__portal/login", {
+    method: "POST",
+    headers: { accept: "text/html", "content-type": "application/x-www-form-urlencoded" },
+    body: "password=correct+horse+battery",
+  });
+  assert.equal(direct.status, 303);
+  assert.equal(direct.headers.location, "/");
+});
+
 test("session cookies are bound to the user agent and to the HMAC secret", () => {
   const secret = "a".repeat(43);
   const issued = issueSession({ secret, ttlSeconds: 3600, ua: "UA/1" });

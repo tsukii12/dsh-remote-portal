@@ -3,6 +3,35 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.3.9 — 2026-10-21
+
+### Fixed — the public URL worked only if you typed it exactly right
+Accessing `/__t/<id>` **without the trailing slash** produced
+`Unknown tunnel: No tunnel named __portal is registered here.` The page loads, but
+relative links resolve against the parent directory, so the login form posted to
+`/__t/__portal/login` — and the relay read `__portal` as a tunnel id.
+
+- The relay now **301-redirects** `/__t/<id>` to `/__t/<id>/` before proxying.
+- The URL it reports (and the panel shows, and the QR encodes) carries the
+  trailing slash.
+
+### Fixed — redirects escaped the tunnel
+After a pairing login the browser was sent to `/`, i.e. the relay's own root page
+instead of the app. The relay strips its prefix before forwarding, so the gateway
+had no idea it was mounted somewhere.
+
+- The relay now sends `X-Forwarded-Prefix: /__t/<id>`.
+- The gateway prefixes its redirects with it (`withMount`), so login, logout and
+  stray `/__portal/*` paths all land back on the app — and a direct visitor (no
+  header) still gets plain `/`.
+
+Verified through the live relay on port 10003: bare URL 301 → `/__t/<id>/`, login
+page 200 (29,666 B), pairing 303 → `/__t/<id>/`, app 200 with `__DSH_BOOT__`.
+
+### Tests
+- 78 tests (two new: the relay's slash redirect, and the gateway prefixing its
+  redirects when a proxy reports a mount point).
+
 ## 0.3.8 — 2026-10-21
 
 ### Changed — the installer asks, it does not require arguments
@@ -607,6 +636,7 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
+
 
 
 
