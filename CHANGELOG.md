@@ -3,6 +3,43 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.2.3 — 2026-10-21
+
+Fixes from a real phone session on the public link.
+
+### Fixed
+- **Scanned pairing links landed on a JSON 404.** The post-login redirect was
+  relative (`"./"`), so a browser resolved it against `/__portal/pair` →
+  `/__portal/`, which is not an endpoint: the phone showed
+  `{"ok":false,"code":"not-found"}` and the app only opened after typing the
+  origin by hand. The redirect is now absolute (`"/"`), and a browser that lands
+  on any portal path that is not an endpoint is sent to the app instead of
+  getting JSON. Both login and logout were affected. Locked with assertions —
+  the old tests only checked the status code, which is why this slipped through.
+- **"在用文件资源管理器打开" / "更多打开方式" survived** the native-action filter:
+  they are header *triggers*, not menu items, so the text scan never saw them
+  (the label is on `aria-label`). Both are hidden now, and so is the menu they
+  open. `下载 Session 日志` and `反馈` — dead buttons on a phone — are hidden too.
+- **"添加工作区…" is hidden on mobile.** It opens the *browser's* directory
+  picker: on Android it selects a directory on the phone (which the host cannot
+  use), on iOS Safari the API does not exist and the entry does nothing. A
+  server-side picker is a separate feature (see 0.3.0 notes in the README).
+- **Settings panes clipped on both edges**: their children could exceed the pane
+  and it clipped them instead of wrapping. Long paths/URLs now wrap and flex
+  children may shrink (`min-width: 0`).
+
+### Changed
+- **The panel is a page, not a card**: full width/height from 900 px down (it was
+  only edge-to-edge below 640), so a tablet or a landscape phone gets the whole
+  screen.
+- **Sidebar entry redrawn**: a broadcast glyph (dot + two arcs, legible at 16 px)
+  in a 20 px box, 40 px row height, 14 px/500 label — the same rhythm as the
+  app's own footer rows instead of a pasted-in 13 px row.
+
+### Tests
+- 74 tests, ~68 s. The pairing test now asserts the redirect *target*, and a new
+  case covers a browser landing on `/__portal/`.
+
 ## 0.2.2 — 2026-10-21
 
 Remote-only UI pass. The layer stops being "the desktop UI at phone width" and
@@ -190,6 +227,7 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
+
 
 
 

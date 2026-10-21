@@ -341,7 +341,7 @@ window.__ModuleLoader__.load({
       alert: ["M12 8.2v5.1", "M12 16.6h.01", "M10.4 3.9 2.7 17.3a1.9 1.9 0 0 0 1.6 2.9h15.4a1.9 1.9 0 0 0 1.6-2.9L13.6 3.9a1.9 1.9 0 0 0-3.2 0Z"],
       refresh: ["M20 12a8 8 0 1 1-2.3-5.7", "M20 4.2v5.4h-5.4"],
       close: ["M6.5 6.5 17.5 17.5", "M17.5 6.5 6.5 17.5"],
-      portal: ["M2.6 6.4h10.6a2.4 2.4 0 0 1 2.4 2.4v10.8a2.4 2.4 0 0 1-2.4 2.4H2.6a2.4 2.4 0 0 1-2.4-2.4V8.8a2.4 2.4 0 0 1 2.4-2.4Z", "M15.8 9.4a4.8 4.8 0 0 1 0 9.2", "M19.3 5.4a10 10 0 0 1 0 17.2"]
+      portal: ["M12 10.6a1.4 1.4 0 1 1 0 2.8 1.4 1.4 0 0 1 0-2.8Z", "M8.9 15.6a4.9 4.9 0 0 1 0-7.2", "M15.1 8.4a4.9 4.9 0 0 1 0 7.2", "M6.2 18.2a9 9 0 0 1 0-12.4", "M17.8 5.8a9 9 0 0 1 0 12.4"]
     };
 
     function Icon(props) {
@@ -562,12 +562,16 @@ window.__ModuleLoader__.load({
       
 
       /* sidebar entry */
-      ".drp-nav{display:flex;align-items:center;gap:8px;width:100%;padding:6px 8px;border:0;border-radius:8px;",
-      "background:transparent;color:var(--drp-fg2);font-family:inherit;font-size:13px;line-height:1.4;",
-      "text-align:left;cursor:pointer}",
-      ".drp-nav:hover{background:rgba(127,127,127,.14);color:var(--drp-fg)}",
+      /* Sidebar entry: same rhythm as the app's own footer rows (40 px tall,
+         14 px label, 20 px icon box) so it does not look pasted in. */
+      ".drp-nav{display:flex;align-items:center;gap:10px;width:100%;min-height:36px;padding:7px 10px;",
+      "border:0;border-radius:9px;background:transparent;color:var(--drp-fg);font-family:inherit;",
+      "font-size:14px;font-weight:500;letter-spacing:.01em;line-height:1.35;text-align:left;cursor:pointer;",
+      "transition:background-color .12s ease,color .12s ease}",
+      ".drp-nav:hover{background:rgba(127,127,127,.14)}",
       ".drp-nav:focus-visible{outline:2px solid var(--drp-link);outline-offset:1px}",
-      ".drp-nav .drp-ico{flex:none}",
+      ".drp-nav .drp-ico{flex:none;width:20px;height:20px;color:var(--drp-fg3)}",
+      ".drp-nav:hover .drp-ico{color:var(--drp-fg2)}",
       ".drp-nav-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
 
       /* overlay sheet (shell.overlay): the host's overlay layer is
@@ -613,6 +617,15 @@ window.__ModuleLoader__.load({
       ".drp-card[data-drp='access']{order:3}",
       ".drp-card[data-drp='devices']{order:4}",
       "}}",
+      "@media (max-width:900px){",
+      /* A phone or a tablet is not a desktop with a narrow window: the panel is
+         a page, edge to edge, not a card floating over the chat. */
+      ".drp-overlay{padding:0}",
+      ".drp-sheet{width:100%;max-height:100vh;max-height:100dvh;border-radius:0;border:0}",
+      ".drp-sheet-body{padding:16px 14px calc(24px + env(safe-area-inset-bottom))}",
+      ".drp-sheet-x{top:10px;right:10px;width:40px;height:40px}",
+      ".drp-sheet .drp-head-top{padding-right:48px}",
+      "}",
       "@media (max-width:640px){",
       ".drp-root{gap:12px}",
       ".drp-grid,.drp-col{gap:12px}",
@@ -2025,6 +2038,8 @@ window.__ModuleLoader__.load({
     return { inject: ["slots"], apply: apply };
   }
 });
+
+
 
 
 

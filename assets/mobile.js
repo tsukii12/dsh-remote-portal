@@ -45,7 +45,14 @@
   // remote link they either do nothing or open something only the host can see,
   // so the mobile layer removes them from the menu it is in.
   var HIDDEN_CLASS = "drp-hidden";
-  var NATIVE_LABEL = /(资源管理器|文件管理器|访达|Finder|Explorer|终端|Terminal|VS ?Code|Cursor|系统默认应用|默认应用|打开配置文件|打开数据目录|打开日志)/;
+  var NATIVE_LABEL = /(资源管理器|文件管理器|访达|Finder|Explorer|终端|Terminal|VS ?Code|Cursor|系统默认应用|默认应用|打开配置文件|打开数据目录|打开日志|下载 ?Session ?日志|反馈)/;
+  // Triggers (not menu items): the "open with…" cluster in the session header.
+  // They lead to the host's desktop, which the phone cannot see.
+  var NATIVE_ARIA = /(文件资源管理器|更多打开方式|open (in|with)|reveal in|show in)/i;
+  // "添加工作区…" opens the browser's own directory picker, which resolves paths
+  // on the *client* device — the host cannot use them. Until the plugin ships a
+  // server-side browser, the entry is a trap on a phone.
+  var CLIENT_SIDE_PICK = /添加工作区|Add workspace/i;
   var NATIVE_LABEL_EN = /(open|show|reveal)\s+(in|with)\s+(finder|explorer|terminal|vs ?code|cursor|default)/i;
   var SHORTCUT_ONLY = /^[⌘⌥⇧⌃⌫←→↑↓,.\s]+$/;
   var VIEWPORT_VALUE = "width=device-width, initial-scale=1, viewport-fit=cover";
@@ -314,6 +321,21 @@
    */
   function markNativeActions() {
     if (!state.active) return;
+
+    // Header triggers. Scoped to the two header slots so a scan stays cheap.
+    var triggers = doc().querySelectorAll(
+      '[data-slot="conversation.header"] [aria-label], [data-slot="conversation.session.header.utilities"] [aria-label]'
+    );
+    for (var k = 0; k < triggers.length; k++) {
+      if (NATIVE_ARIA.test(String(triggers[k].getAttribute("aria-label") || ""))) {
+        triggers[k].classList.add(HIDDEN_CLASS);
+        var cluster = triggers[k].parentElement;
+        // Both the "main" button and its chevron live in one cluster: hiding only
+        // one leaves a stray arrow.
+        if (cluster && cluster.querySelectorAll("button").length <= 2) cluster.classList.add(HIDDEN_CLASS);
+      }
+    }
+
     var surfaces = doc().querySelectorAll('[role="menu"], [role="listbox"], [role="dialog"]');
     for (var i = 0; i < surfaces.length; i++) {
       var items = surfaces[i].querySelectorAll('[role="menuitem"], [role="option"], button');
@@ -323,7 +345,7 @@
         if (text === "" || text.length > 64) continue;
         var key = item.querySelector("kbd");
         if (key && SHORTCUT_ONLY.test((key.textContent || "").trim())) key.classList.add(HIDDEN_CLASS);
-        if (NATIVE_LABEL.test(text) || NATIVE_LABEL_EN.test(text)) item.classList.add(HIDDEN_CLASS);
+        if (NATIVE_LABEL.test(text) || NATIVE_LABEL_EN.test(text) || CLIENT_SIDE_PICK.test(text)) item.classList.add(HIDDEN_CLASS);
       }
     }
   }
@@ -506,6 +528,8 @@
     refresh();
   }
 })();
+
+
 
 
 

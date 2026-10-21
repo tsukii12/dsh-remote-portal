@@ -374,7 +374,9 @@ test("password login sets an HttpOnly session cookie; a wrong password is 401", 
 
   const ok = await login(port, "correct horse battery");
   assert.equal(ok.response.status, 303);
-  assert.equal(ok.response.headers.location, "./");
+  // Absolute on purpose: a relative "./" resolves against /__portal/login and
+  // lands on /__portal/, which is not the app.
+  assert.equal(ok.response.headers.location, "/");
   assert.ok(ok.portal.startsWith("dsh_portal="), "expected a portal session cookie");
   const joined = ok.all.join("\n");
   assert.match(joined, /HttpOnly/);
@@ -485,6 +487,9 @@ test("a pairing token works exactly once", async () => {
     headers: { accept: "text/html" },
   });
   assert.equal(first.status, 303);
+  // The redirect must be absolute: a relative "./" resolves against
+  // /__portal/pair → /__portal/, which is not the app (that was the bug).
+  assert.equal(first.headers.location, "/", "a scanned pairing link must land on the app");
   assert.ok(cookieHeaderFrom(first).portal.startsWith("dsh_portal="));
 
   const second = await request(port, `/__portal/pair?t=${encodeURIComponent(pairing.token)}`, {
@@ -495,6 +500,11 @@ test("a pairing token works exactly once", async () => {
 
   const unknown = await request(port, "/__portal/pair?t=definitely-not-a-token", { headers: { accept: "text/html" } });
   assert.equal(unknown.status, 401);
+
+  // A browser landing on a portal path that is not an endpoint goes to the app.
+  const stray = await request(port, "/__portal/", { headers: { accept: "text/html" } });
+  assert.equal(stray.status, 303);
+  assert.equal(stray.headers.location, "/");
 
   // The same token posted through the login form (auth-page's pair button) is
   // refused too: redemption is single-use across both entry points.
@@ -1280,6 +1290,7 @@ test("config normalization clamps hostile values and keeps tls on a partial patc
   assert.equal(bogus.port, 0);
   assert.equal(bogus.auth.mode, "pair-only");
 });
+
 
 
 
