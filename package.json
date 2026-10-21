@@ -1,6 +1,6 @@
 {
   "name": "dsh-remote-portal",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Remote access for DeepSeek Harness: an authenticated gateway in front of the Web GUI (password / one-time QR pairing), a self-hosted relay for public access, and a phone-shaped UI layer. 远程访问门户：给 dsh Web 界面一个带登录鉴权的入口，局域网扫码即用，也可经自建服务器中转从公网访问。",
   "type": "module",
   "main": "index.js",
@@ -65,3 +65,4 @@
   "license": "MIT",
   "author": "dsh-remote-portal contributors"
 }
+

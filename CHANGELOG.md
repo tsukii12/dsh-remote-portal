@@ -3,6 +3,33 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.2.1 — 2026-10-21
+
+Mobile hotfix, reported from a phone on the public link.
+
+### Fixed
+- **The page could not be scrolled with a thumb.** With a session open, the
+  right column's wrapper (a full-size, transparent grid cell that the mobile
+  layer stacks over the centre column) was the topmost hit target for the whole
+  screen: every swipe ended on it, and since it has no scrollable ancestor
+  nothing moved — the app looked frozen. The wrapper no longer takes pointer
+  events; only its actual pane does, and that pane is 0 × 0 while the panel is
+  closed. Verified with an input-level touch gesture: before, `scrollTop` stayed
+  put and `document.elementFromPoint` returned the wrapper; after, the same
+  swipe moves the conversation by 385 px. A regression test reproduces the
+  stacked shape in the real shell and fails if the wrapper ever takes input
+  again.
+- **The drawer clipped its own content.** It is exactly one screen tall, so a
+  long workspace/session list ran past the fold with no way to scroll; it now
+  scrolls inside itself (`overflow-y: auto`).
+
+### Tooling
+- `tools/cdp.mjs gesture <url> --x --y --dy` dispatches a real touch swipe
+  (synthesised gesture, then a raw touch sequence) and reports whether anything
+  scrolled — the only way to test "can a finger scroll this". Touch emulation is
+  enabled first, because without it a synthesised touch is silently dropped and
+  every layout looks unscrollable.
+
 ## 0.2.0 — 2026-10-21
 
 First release shaped as a product: public access through a self-hosted relay,
@@ -131,6 +158,9 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
+
+
+
 
 
 

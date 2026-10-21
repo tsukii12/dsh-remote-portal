@@ -465,7 +465,7 @@ export function apply(ctx, config = {}) {
       stateDir,
       log,
       pluginDir: HERE,
-      pluginVersion: "0.2.0",
+      pluginVersion: "0.2.1",
     });
   } catch (error) {
     // A construction failure must not cost the user their Web UI: report it and
@@ -539,6 +539,7 @@ export function apply(ctx, config = {}) {
 
   log.info(`ready — state in ${stateDir}, panel at ${PREFIX}/status`);
 }
+
 
 
 

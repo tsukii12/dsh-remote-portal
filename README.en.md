@@ -107,7 +107,7 @@ built on, and [SECURITY.md](SECURITY.md) for reporting.
 
 ```console
 $ node --test
-ℹ tests 72   ℹ pass 72   ℹ fail 0   ℹ skipped 0
+ℹ tests 73   ℹ pass 73   ℹ fail 0   ℹ skipped 0
 ```
 
 The three browser tests need Chrome/Chromium (`CHROME_PATH` overrides the lookup) and
@@ -127,6 +127,7 @@ the suite starts itself.
 ## License
 
 [MIT](LICENSE)
+
 
 
 

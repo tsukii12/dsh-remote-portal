@@ -301,6 +301,80 @@ try {
     writeFileSync(target, JSON.stringify(rows, null, 2), "utf8");
     const bad = rows.filter((r) => !r.ok);
     console.log(`ok audit -> ${target} rows=${rows.length} failing=${bad.length}`);
+  } else if (cmd === "gesture") {
+    // Dispatch a REAL touch scroll and report what moved. Synthetic TouchEvents
+    // created in JS do not drive the compositor, so "can the user scroll this"
+    // can only be answered by an input-level gesture.
+    const gx = Number(args.x || Math.round(width / 2));
+    const gy = Number(args.y || Math.round(height / 2));
+    const dy = Number(args.dy || 400);
+    const findScroller = `(() => {
+      const probe = (el) => {
+        const out = [];
+        for (let n = el; n && n !== document.documentElement; n = n.parentElement) {
+          if (n.scrollHeight - n.clientHeight > 8) {
+            out.push({
+              tag: n.tagName.toLowerCase(),
+              slot: n.getAttribute("data-slot") || "",
+              cls: String(n.className || "").slice(0, 28),
+              sh: n.scrollHeight, ch: n.clientHeight, st: n.scrollTop,
+              oy: getComputedStyle(n).overflowY,
+              touchAction: getComputedStyle(n).touchAction,
+            });
+          }
+        }
+        return out;
+      };
+      const el = document.elementFromPoint(${gx}, ${gy});
+      return {
+        atPoint: el ? (el.tagName.toLowerCase() + "." + String(el.className || "").slice(0, 28)) : null,
+        chain: el ? probe(el) : [],
+        doc: { sh: document.scrollingElement.scrollHeight, ch: document.scrollingElement.clientHeight, st: document.scrollingElement.scrollTop },
+      };
+    })()`;
+    const before = await evaluate(findScroller);
+    // A synthesised touch gesture is ignored unless touch emulation is on; with
+    // it off the page behaves like a desktop with a mouse and every swipe is a
+    // no-op, which reads exactly like "the layout blocks scrolling".
+    try { await cdp.send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 1 }, sessionId); } catch { /* older builds */ }
+
+    let method = "synthesizeScrollGesture";
+    await cdp.send("Input.synthesizeScrollGesture", {
+      x: gx, y: gy, yDistance: -dy, speed: 800, gestureSourceType: "touch", preventFling: true,
+    }, sessionId);
+    await sleep(400);
+    let after = await evaluate(findScroller);
+    let moved = (before.chain[0]?.st ?? 0) !== (after.chain[0]?.st ?? 0) || before.doc.st !== after.doc.st;
+
+    if (!moved) {
+      // Fallback: a raw touch sequence (start → N moves → end), which is what a
+      // finger actually produces.
+      method = "dispatchTouchEvent";
+      const steps = 10;
+      await cdp.send("Input.dispatchTouchEvent", {
+        type: "touchStart", touchPoints: [{ x: gx, y: gy }],
+      }, sessionId);
+      for (let i = 1; i <= steps; i++) {
+        await cdp.send("Input.dispatchTouchEvent", {
+          type: "touchMove",
+          touchPoints: [{ x: gx, y: gy + Math.round((dy * i) / steps) }],
+        }, sessionId);
+        await sleep(16);
+      }
+      await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] }, sessionId);
+      await sleep(400);
+      after = await evaluate(findScroller);
+      moved = (before.chain[0]?.st ?? 0) !== (after.chain[0]?.st ?? 0) || before.doc.st !== after.doc.st;
+    }
+
+    console.log(JSON.stringify({
+      point: { x: gx, y: gy },
+      atPoint: before.atPoint,
+      method,
+      moved,
+      before: { chain: before.chain.slice(0, 3), doc: before.doc },
+      after: { chain: after.chain.slice(0, 3), doc: after.doc },
+    }, null, 2));
   } else {
     console.error("unknown command " + cmd);
     process.exitCode = 2;
@@ -313,4 +387,6 @@ try {
   cleanup();
   setTimeout(() => process.exit(process.exitCode || 0), 100);
 }
+
+
 

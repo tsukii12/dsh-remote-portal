@@ -524,6 +524,55 @@ describe("mobile layer against the live dsh web UI", () => {
     assert.equal(m.aspectKept, true, "a clamped image must keep its aspect ratio");
   });
 
+  test("the right column never intercepts touches", async (t) => {
+    if (skipReason) return t.skip(skipReason);
+    // The real bug: with a session open, the right column's wrapper is a
+    // full-size transparent grid cell stacked over the conversation, and it
+    // swallowed every touch — the page looked frozen and could not be scrolled.
+    // The page under test has no session, so the probe reproduces that shape
+    // (wrapper + 0×0 pane) inside the real shell and checks the rule.
+    const expr = `(async () => {
+      const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+      const frame = document.querySelector('[data-slot="root"] > div');
+      if (!frame) return JSON.stringify({ error: "no shell frame found" });
+      const cover = document.createElement('div');
+      cover.id = 'drp-cover-probe';
+      cover.style.position = 'fixed';
+      cover.style.inset = '0';
+      cover.style.zIndex = '5';
+      const pane = document.createElement('div');
+      pane.setAttribute('data-slot', 'rightbar');
+      pane.style.width = '0';
+      pane.style.height = '0';
+      cover.appendChild(pane);
+      frame.appendChild(cover);
+      await sleep(150);
+      const x = Math.round(innerWidth / 2);
+      const y = Math.round(innerHeight * 0.45);
+      const hit = () => {
+        const el = document.elementFromPoint(x, y);
+        return el ? String(el.id || el.className || el.tagName) : null;
+      };
+      const fixed = { pointerEvents: getComputedStyle(cover).pointerEvents, hit: hit() };
+      // Defeat the rule: if the probe is not on top now, the assertion above
+      // proves nothing (it would pass even without the fix).
+      cover.style.pointerEvents = 'auto';
+      const broken = { pointerEvents: getComputedStyle(cover).pointerEvents, hit: hit() };
+      cover.remove();
+      return JSON.stringify({ fixed, broken });
+    })()`;
+    const { code, stdout, stderr } = await runCdp(["eval", BASE, expr, "--token", TOKEN_URL, "--wait", "4000", "--w", "390", "--h", "844", "--mobile", "--pre-file", join(tmp, "pre.js"), "--settle", "1500"]);
+    assert.equal(code, 0, "eval run failed: " + (stderr || "").slice(-800));
+    const line = stdout.trim().split("\n").filter((l) => l.trim().startsWith("{")).pop();
+    assert.ok(line, "no measurement returned: " + stdout.slice(-400));
+    const m = JSON.parse(line);
+    assert.equal(m.error, undefined, m.error || "");
+    assert.equal(m.fixed.pointerEvents, "none", "the stacked wrapper must not take pointer events");
+    assert.equal(String(m.fixed.hit).includes("drp-cover-probe"), false, `a touch at the centre hits the wrapper (${m.fixed.hit})`);
+    assert.equal(m.broken.pointerEvents, "auto");
+    assert.equal(m.broken.hit, "drp-cover-probe", "the probe must be on top when the rule is defeated");
+  });
+
   test("activates at 390px and exposes a working drawer API", async (t) => {
     if (skipReason) return t.skip(skipReason);
     const expr = `(async () => {
@@ -614,6 +663,7 @@ describe("mobile layer against the live dsh web UI", () => {
     }
   });
 });
+
 
 
 

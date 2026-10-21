@@ -180,7 +180,8 @@ Verified against dsh `0.2.1-rc.2`; each one cost time to discover.
 | `test/qr.test.mjs` | QR correctness against an *independent* decoder (not a round-trip through the same tables) |
 | `test/mobile.test.mjs` | the mobile layer against a **live** dsh instance the suite starts itself: drawer API, hit sizes, and a 12-configuration overflow audit |
 
-`node --test` → 72 tests, ~47 s, no mocks on the network paths.
+`node --test` → 73 tests, ~56 s, no mocks on the network paths.
+
 
 
 

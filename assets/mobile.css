@@ -106,6 +106,20 @@
     > div:has(> [data-slot="rightbar"]) {
     grid-area: 1 / 1 / 2 / 2;
     min-width: 0;
+    /* The right column's wrapper is a full-size, transparent grid cell. Stacked
+       over the centre column it would be the topmost hit target for the whole
+       screen — which is exactly what made the conversation unscrollable and
+       every tap a no-op. Only its actual content may take input: when the panel
+       is closed that content is 0×0, so nothing intercepts anything. */
+    pointer-events: none;
+  }
+
+  html[data-drp-mobile]
+    [data-slot="root"]
+    > div
+    > div:has(> [data-slot="rightbar"])
+    > * {
+    pointer-events: auto;
   }
 
   html[data-drp-mobile]
@@ -135,7 +149,13 @@
     background: var(--dsw-specific-sidebar-fill);
     border-right: 0.5px solid var(--dsw-alias-border-l3);
     box-shadow: 12px 0 34px -16px rgb(0 0 0 / 0.55);
-    overflow: hidden;
+    /* The drawer is exactly one screen tall, so its own content has to scroll:
+       with a long workspace/session list the rows past the fold were simply
+       clipped and unreachable by thumb. */
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
     /* closed: parked off the left edge and out of the focus order */
     transform: translateX(-100%);
     visibility: hidden;
@@ -572,5 +592,7 @@
     min-height: 40px;
   }
 }
+
+
 
 

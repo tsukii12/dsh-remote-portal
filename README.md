@@ -8,7 +8,7 @@
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-0f1115.svg)](LICENSE)
 [![dsh](https://img.shields.io/badge/dsh-0.2.x-4176e6.svg)](#兼容性)
-[![tests](https://img.shields.io/badge/tests-72%20passing-22c55e.svg)](#测试)
+[![tests](https://img.shields.io/badge/tests-73%20passing-22c55e.svg)](#测试)
 [![runtime deps](https://img.shields.io/badge/runtime%20deps-0-22c55e.svg)](#)
 
 [功能](#功能) · [快速开始](#快速开始) · [公网访问](#公网访问人不在局域网) · [配置](#配置) · [安全](#安全模型) · [设计](ARCHITECTURE.md) · [开发](#开发)
@@ -174,11 +174,11 @@ dsh.example.com { reverse_proxy 127.0.0.1:8080 { flush_interval -1 } }
 
 ```console
 $ node --test
-ℹ tests 72
-ℹ pass 72
+ℹ tests 73
+ℹ pass 73
 ℹ fail 0
 ℹ skipped 0
-ℹ duration_ms ~47000
+ℹ duration_ms ~56000
 ```
 
 | 套件 | 覆盖 |
@@ -238,6 +238,7 @@ Issue / PR 都欢迎。改动前请先跑 `node --test`；网络路径上的行�
 ## 许可
 
 [MIT](LICENSE)
+
 
 
 
