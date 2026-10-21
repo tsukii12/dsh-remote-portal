@@ -3,6 +3,28 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.3.7 — 2026-10-21
+
+### Added
+- **"信任自签名证书（跳过证书校验）"** in the 公网访问 card. A relay with a
+  self-signed certificate cannot be verified by name, so TLS was impossible to use
+  from the UI at all — the only way was the config API. The choice is sent with the
+  endpoint, persisted, and `status.public.insecure` reports it back so the box shows
+  what is actually in effect after a reload.
+
+### Fixed
+- **Re-running the installer silently downgraded encryption.** `./deploy-relay.sh`
+  without `--tls-cert/--tls-key` rewrote the unit as plain TCP, so a relay that was
+  serving `tls://` came back as `tcp://` and every client that had been told to use
+  `tls://` started getting `ECONNRESET`. The script now reuses the certificate pair
+  already installed in `/var/lib/dsh-relay/tls` when no flags are given, and says so.
+
+Verified: `status.public.insecure = true`, tunnel `online`, `http://<ip>/__t/<id>/`
+serving the login page (200), and the checkbox rendering checked on reload.
+
+### Tests
+- 76 tests green.
+
 ## 0.3.6 — 2026-10-21
 
 ### Fixed — three bugs that together made public access impossible
@@ -551,6 +573,7 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
+
 
 
 

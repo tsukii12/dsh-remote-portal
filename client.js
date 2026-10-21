@@ -56,7 +56,7 @@ window.__ModuleLoader__.load({
     // prefix. An absolute path here would break remote access through a tunnel.
     var BASE = "./dsh-remote-portal";
   // Must match package.json: it is what busts the browser cache for the layer.
-  var CLIENT_VERSION = "0.3.6";
+  var CLIENT_VERSION = "0.3.7";
     var POLL_MS = 3000;         // status poll while the settings page is visible
     var MIN_PW = 8;             // matches the host's "≥8 recommended" rule (§3)
     var COPY_FEEDBACK_MS = 1600;
@@ -160,6 +160,7 @@ window.__ModuleLoader__.load({
         tunnelCleared: "已断开公网访问",
         tunnelUrlRequired: "请填写中转服务器地址",
         tunnelUrlScheme: "地址需要以 tls:// 或 tcp:// 开头",
+        tunnelInsecure: "信任自签名证书（跳过证书校验）",
         tunnelTokenRequired: "首次连接需要填写隧道令牌",
         tunnelNote: "中转服务器运行 tools/relay.mjs，填入代理端口与隧道令牌。",
         cardDiag: "连接诊断",
@@ -286,6 +287,7 @@ window.__ModuleLoader__.load({
         tunnelCleared: "Public access removed",
         tunnelUrlRequired: "Enter the relay endpoint",
         tunnelUrlScheme: "The endpoint must start with tls:// or tcp://",
+        tunnelInsecure: "Trust a self-signed certificate (skip verification)",
         tunnelTokenRequired: "A tunnel token is required the first time",
         tunnelNote: "Run tools/relay.mjs on your server, then enter its agent endpoint and token.",
         cardDiag: "Connectivity",
@@ -1168,6 +1170,8 @@ window.__ModuleLoader__.load({
       // Public relay form. The token is write-only: the host never sends it back.
       tunnelUrl: "",
       tunnelToken: "",
+      // Trust a self-signed relay certificate; seeded from status on first poll.
+      tunnelInsecure: false,
       tunnelBusy: ""
     };
 
@@ -1316,7 +1320,8 @@ window.__ModuleLoader__.load({
           port: String(s.port || 3081),
           // The endpoint is derived from the stored URL, so it is safe (and
           // useful) to show; the token never comes back from the host.
-          tunnelUrl: endpoint || st.tunnelUrl
+          tunnelUrl: endpoint || st.tunnelUrl,
+          tunnelInsecure: pub.insecure === undefined ? st.tunnelInsecure : !!pub.insecure
         });
       }, [st.status && st.status.bindHost, st.status && st.status.port]);
 
@@ -1359,7 +1364,11 @@ window.__ModuleLoader__.load({
           return;
         }
         patch({ tunnelBusy: "save" });
-        var body = { tunnel: token ? { url: url, token: token } : { url: url } };
+        // `insecure` matches what the user ticked: a self-signed certificate cannot be
+    // verified by name, so the choice travels with the endpoint.
+    var tunnel = token ? { url: url, token: token } : { url: url };
+    if (st.tunnelInsecure) tunnel.insecure = true;
+    var body = { tunnel: tunnel };
         api(BASE + "/config", { method: "POST", body: body }).then(function (r) {
           patch({ tunnelBusy: "", tunnelToken: "" });
           if (!r.ok) { flash("err", r.error); return; }
@@ -1757,6 +1766,13 @@ window.__ModuleLoader__.load({
                 "aria-label": t("tunnelTokenLabel"),
                 onChange: function (e) { patch({ tunnelToken: e.target.value }); }
               })),
+            h("label", { className: "drp-check" },
+              h("input", {
+                type: "checkbox",
+                checked: !!st.tunnelInsecure,
+                onChange: function (e) { patch({ tunnelInsecure: !!e.target.checked }); }
+              }),
+              h("span", null, t("tunnelInsecure"))),
             h("div", { className: "drp-row-actions" },
               h("button", {
                 type: "button",
@@ -2358,6 +2374,7 @@ window.__ModuleLoader__.load({
     return { inject: ["slots"], apply: apply };
   }
 });
+
 
 
 

@@ -100,6 +100,16 @@ ok "node $(node -v) at $(command -v node)"
 [ -f "$(dirname "$0")/relay.mjs" ] || die "relay.mjs not found next to this script — run it from the plugin's tools/ directory"
 ok "relay.mjs found"
 
+# Re-running the installer must never silently downgrade encryption. If a
+# certificate pair is already installed and no flags were given, keep using it.
+INSTALLED_CERT="$STATE_DIR/tls/agent-cert.pem"
+INSTALLED_KEY="$STATE_DIR/tls/agent-key.pem"
+if [ -z "$TLS_CERT" ] && [ -z "$TLS_KEY" ] && [ -r "$INSTALLED_CERT" ] && [ -r "$INSTALLED_KEY" ]; then
+  TLS_CERT="$INSTALLED_CERT"
+  TLS_KEY="$INSTALLED_KEY"
+  ok "keeping the installed certificate ($INSTALLED_CERT)"
+fi
+
 if [ -n "$TLS_CERT" ] || [ -n "$TLS_KEY" ]; then
   [ -n "$TLS_CERT" ] && [ -n "$TLS_KEY" ] || die "give both --tls-cert and --tls-key"
   [ -r "$TLS_CERT" ] || die "cannot read $TLS_CERT"
