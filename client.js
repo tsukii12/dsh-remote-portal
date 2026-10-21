@@ -56,7 +56,7 @@ window.__ModuleLoader__.load({
     // prefix. An absolute path here would break remote access through a tunnel.
     var BASE = "./dsh-remote-portal";
   // Must match package.json: it is what busts the browser cache for the layer.
-  var CLIENT_VERSION = "0.2.9";
+  var CLIENT_VERSION = "0.3.0";
     var POLL_MS = 3000;         // status poll while the settings page is visible
     var MIN_PW = 8;             // matches the host's "≥8 recommended" rule (§3)
     var COPY_FEEDBACK_MS = 1600;
@@ -632,6 +632,26 @@ window.__ModuleLoader__.load({
       ".drp-x:hover{background:rgba(127,127,127,.14);color:var(--drp-fg)}",
       ".drp-x:focus-visible{outline:2px solid var(--drp-link);outline-offset:2px}",
       ".drp-sheet-x{position:absolute;top:12px;right:12px;z-index:5;width:36px;height:36px;background:transparent;border:0;display:grid;place-items:center;color:var(--drp-fg2);border-radius:9px}",
+      /* main-area page (the panel's home) */
+      ".drp-page{height:100%;overflow-y:auto;overscroll-behavior:contain;padding:0 48px 48px}",
+      ".drp-page-inner{width:100%;max-width:100%;margin:0}",
+      /* The host page header: 20px/500 title, 16px supporting line. */
+      ".drp-page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:28px 0 20px}",
+      ".drp-page-title{margin:0;font-size:20px;font-weight:500;line-height:28px;letter-spacing:0}",
+      ".drp-page-sub{margin:6px 0 0;font-size:16px;line-height:24px;color:var(--drp-fg2)}",
+      /* Groups, not cards: the host uses a divider and a group label. */
+      ".drp-page .drp-card{background:transparent;border:0;border-top:0.5px solid var(--drp-line);border-radius:0;padding:20px 0}",
+      ".drp-page .drp-card:first-of-type{border-top:0}",
+      ".drp-page .drp-card-head{margin:0 0 14px}",
+      ".drp-page .drp-card-title{font-size:16px;font-weight:500;line-height:24px}",
+      ".drp-page .drp-label{font-size:14px;color:var(--drp-fg2)}",
+      ".drp-page .drp-hint{font-size:14px;line-height:22px;color:var(--drp-fg2)}",
+      /* Two columns when the page is wide enough, one when it is not — the same
+         behaviour the host's own pages have. */
+      ".drp-page .drp-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 40px;align-items:start}",
+      ".drp-page .drp-head{padding:0 0 8px}",
+      ".drp-page .drp-head-top{justify-content:flex-end}",
+      "@media (max-width:900px){.drp-page{padding:0 20px 32px}.drp-page-head{padding:18px 0 14px}}",
       /* directory picker */
       ".drp-picker-body{display:flex;flex-direction:column;min-height:0;overflow:hidden}",
       ".drp-picker{flex:1 1 auto;min-height:0;width:100%;max-width:880px;margin:0 auto;display:flex;flex-direction:column;gap:10px}",
@@ -1139,6 +1159,7 @@ window.__ModuleLoader__.load({
       // The same component renders in two surfaces: inline in Settings, and
       // inside the shell.overlay sheet (props.sheet + props.onClose).
       var inSheet = !!(props && props.sheet);
+      var isPage = !!(props && props.page);
       var stateRef = useState(INITIAL);
       var st = stateRef[0];
       var setSt = stateRef[1];
@@ -1878,14 +1899,15 @@ window.__ModuleLoader__.load({
           // owns the full width underneath, so a long sentence never pushes the
           // pill onto a line of its own on a phone.
           h("div", { className: "drp-head-top" },
-            h("h2", {
+            // In page mode the page header owns the title; the section keeps the pill.
+            isPage ? null : h("h2", {
               className: "drp-title",
               // Only the sheet instance claims the dialog's label id, so the
               // inline section can never collide with it.
               id: inSheet ? "drp-sheet-title" : undefined
             }, t("section")),
             h(StatusPill, { tone: tone })),
-          h("p", { className: "drp-sub" }, t("subtitle"))),
+          isPage ? null : h("p", { className: "drp-sub" }, t("subtitle"))),
 
         alerts.length ? h("div", { className: "drp-alerts" }, alerts) : null,
 
@@ -2353,57 +2375,68 @@ window.__ModuleLoader__.load({
       // 0) Global stylesheet first: every surface below depends on it.
       try { mountBaseCss(ctx); } catch (e) { /* never fatal */ }
 
-      // 1) Settings → 远程访问: deliberately not registered. The sidebar entry is
-      //    the single home; a second copy inside Settings duplicated every control
-      //    and read as a different destination.
-
-      // 2) Sidebar footer shortcut. Older hosts have no such slot; inject() is
-      //    a no-op there, and any throw is swallowed.
+      // 1) A real page in the main column, exactly like 插件 / 自动化任务.
+      //
+      //    The host dispatches `main` by the sidebar entry's id: registering the
+      //    same id in `sidebar.panellist` (the button) and `main` (the page) is
+      //    what makes it a page switch rather than an overlay — the sidebar keeps
+      //    working and selecting a session or another panel closes it by itself.
+      var PANEL_ID = "dsh-remote-portal";
       try {
         if (ctx && ctx.slots && typeof ctx.slots.inject === "function") {
-          ctx.slots.inject("sidebar.footer.action", function () {
+          ctx.slots.inject("sidebar.panellist", function () {
             return ctx.slots.register({
-              name: "sidebar.footer.action",
-              id: "dsh-remote-portal-nav",
-              order: 60,
+              name: "sidebar.panellist",
+              id: PANEL_ID,
+              order: 90,
               label: function () { return t("navLabel"); }
-            }, NavEntry);
+            }, function PanelIcon(props) {
+              return h(Icon, { name: "portal", size: (props && props.size) || 18 });
+            });
+          });
+          ctx.slots.inject("main", function () {
+            return ctx.slots.register({ name: "main", key: PANEL_ID }, function PanelPage() {
+              return h("div", { className: "drp-ui drp-page" },
+                h("div", { className: "drp-page-inner" },
+                  h("header", { className: "drp-page-head" },
+                    h("div", null,
+                      h("h1", { className: "drp-page-title" }, t("navLabel")),
+                      h("p", { className: "drp-page-sub" }, t("subtitle")))),
+                  h(RemotePortalSection, { page: true })));
+            });
           });
         }
-      } catch (e) { /* slot absent: the settings entry still works */ }
-
-      // 3) The sheet the sidebar entry opens. Kept in its own try/catch: a host
-      //    without shell.overlay only loses the shortcut, never the panel.
-      try {
-        if (ctx && ctx.slots && typeof ctx.slots.inject === "function") {
-          ctx.slots.inject("shell.overlay", function () {
-            return ctx.slots.register({
-              name: "shell.overlay",
-              id: "dsh-remote-portal-sheet",
-              order: 95
-            }, PortalOverlayRouter);
-          });
-        }
-      } catch (e) { /* slot absent: the settings section remains the home */ }
+      } catch (e) { /* slot absent: nothing to attach to */ }
 
       // 4) App-wide mobile layer.
       try { mountAssets(ctx); } catch (e) { /* never fatal */ }
 
-      // 5) Deep link: `?panel=1` opens the sheet on load.
+      // 5) Deep link: `?panel=1` selects the panel, the same way a click would.
       //
-      //    A query parameter, not a hash: the Harness shell routes on the hash and
-      //    an unknown value there stops the whole client tree from mounting (the
-      //    plugin then looks broken rather than unopened). Query parameters are
-      //    ignored by the shell, so this stays a harmless no-op when absent.
+      //    A query parameter, not a hash: the shell routes on the hash and an
+      //    unknown value there stops the client tree from mounting. Selecting the
+      //    sidebar entry (rather than forcing a view) keeps one navigation path:
+      //    switching to 插件 or a session afterwards behaves exactly like a click.
       try {
         var params = new URLSearchParams(String(location.search || ""));
-        if (params.get("panel") === "1") setOverlayOpen(true);
+        if (params.get("panel") === "1") {
+          var selectEntry = function () {
+            var nav = doc().querySelectorAll("nav button, nav [role=button]");
+            for (var i = 0; i < nav.length; i++) {
+              if (String(nav[i].textContent || "").trim() === t("navLabel")) { nav[i].click(); return true; }
+            }
+            return false;
+          };
+          if (!selectEntry()) setTimeout(selectEntry, 900);
+        }
       } catch (e) { /* no window: ignore */ }
     }
 
     return { inject: ["slots"], apply: apply };
   }
 });
+
+
 
 
 

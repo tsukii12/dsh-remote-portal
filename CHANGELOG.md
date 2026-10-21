@@ -3,6 +3,38 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.3.0 — 2026-10-21
+
+### Changed — the panel is a real page, not an overlay
+The host exposes two slots that together make a page: `sidebar.panellist` (the
+button) and `main` (a keyed slot dispatched by that entry's **id**). Registering
+the same id in both — which is exactly what `client-ui-plugin-manager` and
+`client-ui-schedule` do — gives a page switch with no overlay at all:
+
+- selecting 插件 or a session now **leaves** the panel by itself; the X is gone
+- the conversation DOM is replaced instead of being covered, so the sidebar and
+  every navigation path keep working
+- the sidebar entry is a first-class row with the Harness mark, next to 插件 /
+  自动化任务, and shows the active state the host gives it
+- `?panel=1` selects that row instead of forcing a view
+
+Verified in a live instance: `pageRendered: true`, `conversationGone: true`,
+`sidebarWidth: 280`, and `panelGoneAfterSwitch: true` after clicking 插件.
+
+### Changed — the page follows the host's own typography
+Measured off the 插件 page and applied: 48 px page gutters, **20 px/500 title**
+with a 16 px supporting line, sections as divider-separated groups instead of
+cards, 16 px body text, 14 px labels and hints, full-width inputs, two columns
+when the page is wide and one when it is not. The duplicate title (page header +
+section header) is gone.
+
+### Removed
+- the `shell.overlay` sheet and the `sidebar.footer.action` entry: one home, one
+  navigation path.
+
+### Tests
+- 76 tests green (~64 s).
+
 ## 0.2.9 — 2026-10-21
 
 ### Changed
@@ -388,6 +420,7 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
+
 
 
 
