@@ -382,7 +382,9 @@
     padding: max(12px, var(--drp-safe-top)) 12px max(12px, var(--drp-safe-bottom));
   }
 
-  html[data-drp-mobile] [role="dialog"] {
+  /* Our own surfaces (the panel, the picker) are pages, not app dialogs: they
+     opt out of the dialog sizing below by carrying `data-drp`. */
+  html[data-drp-mobile] [role="dialog"]:not([data-drp]) {
     box-sizing: border-box;
     max-width: calc(100vw - 24px);
     max-height: calc(100dvh - 24px);
@@ -397,7 +399,7 @@
     -webkit-overflow-scrolling: touch;
   }
 
-  html[data-drp-mobile] [role="dialog"] > * {
+  html[data-drp-mobile] [role="dialog"]:not([data-drp]) > * {
     min-height: 0;
     max-height: none;
     overflow: visible;
@@ -413,11 +415,11 @@
     padding-bottom: max(6px, var(--drp-safe-bottom));
   }
 
-  html[data-drp-mobile] [role="dialog"] button {
+  html[data-drp-mobile] [role="dialog"]:not([data-drp]) button {
     min-height: var(--drp-touch);
   }
 
-  html[data-drp-mobile] [role="dialog"] button[aria-label] {
+  html[data-drp-mobile] [role="dialog"]:not([data-drp]) button[aria-label] {
     min-width: var(--drp-touch);
   }
 
@@ -701,6 +703,9 @@
 html[data-drp-remote] .drp-hidden {
   display: none;
 }
+
+
+
 
 
 

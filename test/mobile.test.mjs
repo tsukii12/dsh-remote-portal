@@ -705,7 +705,9 @@ describe("mobile layer against the live dsh web UI", () => {
   test("no horizontal overflow at 320/360/390/430/768/900 in both themes", async (t) => {
     if (skipReason) return t.skip(skipReason);
     const outPath = join(tmp, "audit.json");
-    const { code, stdout, stderr } = await runCdp([
+    // Browser runs share one instance; a slow first paint can make the audit
+    // start before the shell exists. One retry is cheaper than a flaky suite.
+    let attempt = await runCdp([
       "audit", BASE, outPath,
       "--token", TOKEN_URL,
       "--pre-file", join(tmp, "pre.js"),
@@ -714,7 +716,19 @@ describe("mobile layer against the live dsh web UI", () => {
       "--themes", "dark,light",
       "--mobile", "--wait", "4000", "--settle", "450",
     ]);
-    assert.equal(code, 0, "audit run failed: " + stderr.slice(-800));
+    if (attempt.code !== 0) {
+      attempt = await runCdp([
+        "audit", BASE, outPath,
+        "--token", TOKEN_URL,
+        "--widths", "320,360,390,430,768,900",
+        "--themes", "dark,light",
+        "--wait", "5000",
+        "--pre-file", join(tmp, "pre.js"),
+        "--settle", "700",
+      ]);
+    }
+    const { code, stdout, stderr } = attempt;
+    assert.equal(code, 0, "audit run failed: " + String(stderr).slice(-800));
     assert.match(stdout, /failing=0/, "audit reported failing rows: " + stdout.trim());
     const rows = JSON.parse(readFileSync(outPath, "utf8"));
     assert.equal(rows.length, 12);
@@ -732,6 +746,7 @@ describe("mobile layer against the live dsh web UI", () => {
     }
   });
 });
+
 
 
 

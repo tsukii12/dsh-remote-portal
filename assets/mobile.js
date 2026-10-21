@@ -52,7 +52,10 @@
   var NATIVE_LABEL = /(资源管理器|文件管理器|访达|Finder|Explorer|终端|Terminal|VS ?Code|Cursor|系统默认应用|默认应用|打开配置文件|打开数据目录|打开日志|下载 ?Session ?日志|反馈)/;
   // Triggers (not menu items): the "open with…" cluster in the session header.
   // They lead to the host's desktop, which the phone cannot see.
-  var NATIVE_ARIA = /(文件资源管理器|更多打开方式|open (in|with)|reveal in|show in)/i;
+  // `更多操作` is the session header's "…": in this build its only entries are
+  // "下载 Session 日志" and "反馈", both dead on a phone. Hiding the trigger up
+  // front beats hiding it after the first click (which left an empty popover).
+  var NATIVE_ARIA = /(文件资源管理器|更多打开方式|更多操作|open (in|with)|reveal in|show in)/i;
   // "添加工作区…" is backed by the plugin's own server-side picker (client.js
   // registers `__DSH_DIRECTORY_PICKER__`), so the entry stays.
   var NATIVE_LABEL_EN = /(open|show|reveal)\s+(in|with)\s+(finder|explorer|terminal|vs ?code|cursor|default)/i;
@@ -583,6 +586,7 @@
     refresh();
   }
 })();
+
 
 
 

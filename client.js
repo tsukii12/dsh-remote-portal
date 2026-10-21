@@ -55,7 +55,7 @@ window.__ModuleLoader__.load({
     // prefix. An absolute path here would break remote access through a tunnel.
     var BASE = "./dsh-remote-portal";
   // Must match package.json: it is what busts the browser cache for the layer.
-  var CLIENT_VERSION = "0.2.5";
+  var CLIENT_VERSION = "0.2.6";
     var POLL_MS = 3000;         // status poll while the settings page is visible
     var MIN_PW = 8;             // matches the host's "≥8 recommended" rule (§3)
     var COPY_FEEDBACK_MS = 1600;
@@ -136,6 +136,7 @@ window.__ModuleLoader__.load({
         pickLoading: "正在读取目录…",
         pickEmpty: "这里没有子目录",
         pickUse: "使用此目录",
+        pickHostOld: "宿主未加载该接口：请重启 dsh 后重试。",
         cancel: "取消",
 
         tunnelOnline: "已连接",
@@ -256,6 +257,7 @@ window.__ModuleLoader__.load({
         pickLoading: "Reading directory…",
         pickEmpty: "No subdirectories here",
         pickUse: "Use this folder",
+        pickHostOld: "The host has not loaded this endpoint yet — restart dsh and retry.",
         cancel: "Cancel",
 
         tunnelOnline: "Online",
@@ -614,16 +616,18 @@ window.__ModuleLoader__.load({
       ".drp-x:focus-visible{outline:2px solid var(--drp-link);outline-offset:2px}",
       ".drp-sheet-x{position:absolute;top:12px;right:12px;z-index:5;width:36px;height:36px;background:transparent;border:0;display:grid;place-items:center;color:var(--drp-fg2);border-radius:9px}",
       /* directory picker */
-      ".drp-picker{display:flex;flex-direction:column;gap:10px}",
-      ".drp-picker-head{display:flex;align-items:center;justify-content:space-between;position:relative;min-height:40px}",
+      ".drp-picker-body{display:flex;flex-direction:column;min-height:0;overflow:hidden}",
+      ".drp-picker{flex:1 1 auto;min-height:0;width:100%;max-width:880px;margin:0 auto;display:flex;flex-direction:column;gap:10px}",
+      ".drp-sheet-body > .drp-root{width:100%;max-width:1120px;margin:0 auto}",
+      ".drp-picker-head{display:flex;align-items:center;justify-content:space-between;position:relative;min-height:40px;flex:0 0 auto}",
       ".drp-picker-title{margin:0;font-size:18px;font-weight:600;letter-spacing:-.01em}",
-      ".drp-picker-path{display:flex;align-items:center;gap:8px;min-width:0}",
+      ".drp-picker-path{display:flex;align-items:center;gap:8px;min-width:0;flex:0 0 auto}",
       ".drp-picker-cwd{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;",
       "font-family:var(--drp-mono);font-size:12px;color:var(--drp-fg2);background:var(--drp-soft);",
       "padding:8px 10px;border-radius:8px}",
-      ".drp-picker-roots{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}",
+      ".drp-picker-roots{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;flex:0 0 auto}",
       ".drp-chip-root{flex:0 0 auto;font-size:12px}",
-      ".drp-picker-list{flex:1 1 auto;min-height:120px;overflow-y:auto;-webkit-overflow-scrolling:touch;",
+      ".drp-picker-list{flex:1 1 auto;min-height:120px;overflow-y:auto;-webkit-overflow-scrolling:touch;flex-shrink:1;",
       "border:1px solid var(--drp-line);border-radius:10px;background:var(--drp-card)}",
       ".drp-picker-row{display:flex;align-items:center;gap:10px;width:100%;min-height:44px;padding:0 12px;",
       "background:transparent;border:0;border-bottom:1px solid var(--drp-line);color:var(--drp-fg);",
@@ -634,11 +638,12 @@ window.__ModuleLoader__.load({
       ".drp-picker-name{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
       ".drp-picker-empty{padding:28px 12px;text-align:center;color:var(--drp-fg3);font-size:13px}",
       ".drp-picker-error{display:flex;align-items:center;gap:8px;color:var(--drp-err);font-size:12.5px}",
-      ".drp-picker-foot{display:flex;gap:8px;justify-content:flex-end;padding-top:2px}",
+      ".drp-picker-foot{display:flex;gap:8px;justify-content:flex-end;padding-top:2px;flex:0 0 auto}",
       /* Page, not a card: the panel replaces the view (no floating frame, no
          transparent scrim showing the chat behind it). */
       ".drp-overlay{padding:0}",
-      ".drp-sheet{width:100%;max-width:100%;max-height:100vh;max-height:100dvh;border-radius:0;border:0;box-shadow:none;background:var(--dsw-alias-bg-base,var(--drp-card))}",
+      ".drp-overlay{align-items:stretch;justify-content:flex-start}",
+      ".drp-sheet{position:relative;flex:1 1 auto;width:100%;max-width:none;height:100%;max-height:none;margin:0;border-radius:0;border:0;box-shadow:none;background:var(--dsw-alias-bg-base,var(--drp-card))}",
       ".drp-sheet-x{top:8px;right:8px}",
       ".drp-sheet-x:hover{background:var(--drp-soft);color:var(--drp-fg)}",
       ".drp-sheet-x:focus{outline:none}",
@@ -1872,8 +1877,14 @@ window.__ModuleLoader__.load({
         var url = BASE + "/fs" + (path ? "?path=" + encodeURIComponent(path) : "");
         api(url, { timeout: 15000 }).then(function (r) {
           if (!r.ok) {
+            var message = r && typeof r.error === "string" && r.error !== "" ? r.error : "";
+            if (!message && r && r.data && typeof r.data.error === "string") message = r.data.error;
+            // 404 from the app (not from the portal) means the host half of the
+            // plugin is older than the client half: it has no /fs route yet.
+            if (!message && r && r.status === 404) message = t("pickHostOld");
+            if (!message) message = t("network");
             setView(function (prev) {
-              return { loading: false, path: prev.path, listing: prev.listing, error: friendlyError(r) };
+              return { loading: false, path: prev.path, listing: prev.listing, error: friendlyError(message) };
             });
             return;
           }
@@ -1906,7 +1917,8 @@ window.__ModuleLoader__.load({
 
       return h("div", { className: "drp-overlay", "data-drp-overlay": "1", "data-drp": "picker" },
         h("div", { className: "drp-ui drp-sheet", role: "dialog", "aria-modal": "true", "aria-label": t("pickTitle") },
-          h("div", { className: "drp-sheet-body drp-picker" },
+          h("div", { className: "drp-sheet-body drp-picker-body" },
+          h("div", { className: "drp-picker" },
             h("header", { className: "drp-picker-head" },
               h("h2", { className: "drp-picker-title" }, t("pickTitle")),
               h("button", {
@@ -1970,7 +1982,7 @@ window.__ModuleLoader__.load({
                 className: "drp-btn drp-btn-primary",
                 disabled: !path || view.loading,
                 onClick: function () { finishPicker(path); }
-              }, t("pickUse"))))));
+              }, t("pickUse")))))));
     }
 
     // ── overlay sheet (shell.overlay) ────────────────────────────────────────
@@ -2284,6 +2296,10 @@ window.__ModuleLoader__.load({
     return { inject: ["slots"], apply: apply };
   }
 });
+
+
+
+
 
 
 

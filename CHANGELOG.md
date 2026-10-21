@@ -3,6 +3,28 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.2.6 — 2026-10-21
+
+### Fixed
+- **The picker rendered `[object Object]` and collapsed on a wide screen.** Two
+  separate bugs: the error path passed the whole response object into a formatter
+  that expects a string, and the layer's generic `[role="dialog"]` sizing rule
+  (a 24 px inset meant for the app's own dialogs) also matched our page surface,
+  pinning it to `calc(100% - 24px)`. Our surfaces now carry `data-drp` and opt
+  out of that rule; the error text falls back to a real message.
+- **A host that had not been restarted looked like a broken picker.** If `/fs` is
+  missing (older host half), the picker now says "宿主未加载该接口：请重启 dsh
+  后重试。" instead of a generic failure.
+- **The picker was laid out for a narrow phone only.** It is now a proper page at
+  any width: an 880 px content column on a 1920 px screen, the directory list
+  fills the height and scrolls on its own, the footer stays put.
+- The header "…" (更多操作) is hidden up front: hiding it after the first click
+  left an empty popover in between.
+
+### Tests
+- The overflow audit retries once: a slow first paint in a shared browser run
+  made it flaky. 75 tests green.
+
 ## 0.2.5 — 2026-10-21
 
 ### Added — a workspace directory picker that resolves paths on the *host*
@@ -289,6 +311,7 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
+
 
 
 
