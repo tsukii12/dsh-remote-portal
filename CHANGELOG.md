@@ -3,6 +3,26 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.4.1 — 2026-10-21
+
+### Fixed — the bare IP started showing the panel's default site
+After switching from proxy mode to direct mode, `http://<ip>/` displayed the
+1Panel welcome page instead of being refused. The cause was a **stale nginx
+config**: the generated `dsh-relay.conf` had been deleted but nginx was never
+reloaded, so it kept serving the old block — which handled only `/__t/` and let
+every other path fall through to the default site.
+
+- Direct mode now deletes a leftover proxy block **and reloads** nginx.
+- The generated nginx block ends with `location / { return 404; }`, so even in
+  proxy mode the rest of that host answers 404 instead of the default site.
+
+Verified from outside: `http://<ip>/` closes the connection (444, the rule the
+server already had for direct IP access), while
+`http://<ip>:10003/__t/<id>/` still returns the login page.
+
+### Tests
+- 78 tests green.
+
 ## 0.4.0 — 2026-10-21
 
 ### Changed — the panel is redesigned around density
@@ -680,6 +700,7 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
+
 
 
 

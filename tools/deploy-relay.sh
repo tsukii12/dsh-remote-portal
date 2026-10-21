@@ -398,6 +398,10 @@ server {
         proxy_read_timeout 3600s;
         proxy_send_timeout 3600s;
     }
+
+    # Everything else on this host answers 404 instead of falling through to the
+    # default site.
+    location / { return 404; }
 }
 NGINX_EOF
   if [ -n "$NGINX_RUN" ]; then
@@ -438,7 +442,18 @@ CADDY_EOF
 case "$PROXY_MODE" in
   nginx) write_nginx ;;
   caddy) write_caddy ;;
-  direct) ok "$(t "the relay serves the public port directly" "relay 直接对外监听") ($PUBLIC_PORT)" ;;
+  direct)
+    ok "$(t "the relay serves the public port directly" "relay 直接对外监听") ($PUBLIC_PORT)"
+    # A block left over from a previous proxy-mode install would keep handling this
+    # host (and serve the default site on /). Remove it and reload.
+    stale="$NGINX_CONF_DIR/dsh-relay.conf"
+    if [ -n "$NGINX_CONF_DIR" ] && [ -f "$stale" ]; then
+      rm -f "$stale"
+      if [ -n "$NGINX_RUN" ]; then docker exec "$NGINX_RUN" nginx -s reload >/dev/null 2>&1 || true
+      elif command -v nginx >/dev/null 2>&1; then nginx -s reload >/dev/null 2>&1 || true; fi
+      ok "$(t "removed the previous proxy block" "已移除上次的反代站点")"
+    fi
+    ;;
 esac
 
 # Remember the answers so the next run offers the same thing.
