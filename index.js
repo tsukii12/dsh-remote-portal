@@ -22,7 +22,7 @@
  */
 import { dirname, extname, join, normalize, sep } from "node:path";
 import { fileURLToPath } from "node:url";
-import { readFile, readdir, realpath, stat as stat_ } from "node:fs/promises";
+import { mkdir, readFile, readdir, realpath, stat as stat_ } from "node:fs/promises";
 import { gzipSync } from "node:zlib";
 import { homedir } from "node:os";
 import { statSync } from "node:fs";
@@ -33,7 +33,7 @@ export const inject = ["webServer"];
 
 const PLUGIN_NAME = "dsh-remote-portal";
 // Bumped with package.json; also used to invalidate the injected asset URLs.
-const PLUGIN_VERSION = "0.2.6";
+const PLUGIN_VERSION = "0.2.7";
 const PREFIX = "/dsh-remote-portal";
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ASSET_DIR = join(HERE, "assets");
@@ -333,6 +333,47 @@ async function listDirectories(rawPath) {
   };
 }
 
+/**
+ * Create one directory inside `parent`.
+ *
+ * The name must be a single path segment: no separators, no dot-dot, and the
+ * resolved target has to stay inside `parent`. `mkdir` without `recursive` so an
+ * existing folder is an error rather than a silent success.
+ */
+async function createDirectory(rawParent, rawName) {
+  const parent = String(rawParent || "").trim();
+  const name = String(rawName || "").trim();
+  if (parent === "" || name === "") {
+    throw Object.assign(new Error("parent and name are required"), { status: 400, code: "bad-request" });
+  }
+  if (name.length > 120 || /[\\/:*?"<>|\u0000-\u001f]/.test(name) || name === "." || name === "..") {
+    throw Object.assign(new Error("invalid folder name"), { status: 400, code: "bad-name" });
+  }
+  let resolvedParent;
+  try {
+    resolvedParent = await realpath(parent);
+  } catch {
+    throw Object.assign(new Error(`not found: ${parent}`), { status: 404, code: "not-found" });
+  }
+  const parentInfo = await stat_(resolvedParent).catch(() => null);
+  if (!parentInfo || !parentInfo.isDirectory()) {
+    throw Object.assign(new Error("parent is not a directory"), { status: 400, code: "not-a-directory" });
+  }
+  const target = join(resolvedParent, name);
+  if (dirname(target) !== resolvedParent) {
+    throw Object.assign(new Error("invalid folder name"), { status: 400, code: "bad-name" });
+  }
+  try {
+    await mkdir(target);
+  } catch (error) {
+    if (error && error.code === "EEXIST") {
+      throw Object.assign(new Error("a folder with that name already exists"), { status: 409, code: "exists" });
+    }
+    throw Object.assign(new Error(`cannot create folder: ${error?.code || "error"}`), { status: 400, code: "mkdir-failed" });
+  }
+  return { name, path: target };
+}
+
 function routeTable(portal, log) {
   const wrap = (fn) => async (req, res) => {
     try {
@@ -436,6 +477,15 @@ function routeTable(portal, log) {
       // Test hook + panel footer: proves which build is loaded without a reload.
       kind: "exact", path: `${PREFIX}/version`, methods: ["GET"],
       run: wrap(async () => ({ version: portal.version, plugin: PLUGIN_NAME })),
+    },
+    {
+      // Create a folder while picking a workspace: the phone has no way to make a
+      // directory on the host otherwise, and "pick a folder that does not exist
+      // yet" is the common case.
+      kind: "exact", path: `${PREFIX}/fs/mkdir`, methods: ["POST"],
+      run: wrap(async (req, _res, body) => ({
+        created: await createDirectory(String(body.parent || ""), String(body.name || "")),
+      })),
     },
     {
       // Directory browser for the workspace picker. It lists directories on
@@ -644,6 +694,8 @@ export function apply(ctx, config = {}) {
 
   log.info(`ready — state in ${stateDir}, panel at ${PREFIX}/status`);
 }
+
+
 
 
 

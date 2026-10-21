@@ -3,6 +3,36 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.2.7 — 2026-10-21
+
+### Added
+- **New folder while picking a workspace.** `POST /dsh-remote-portal/fs/mkdir`
+  creates one directory inside a parent: the name has to be a single path
+  segment (no separators, no `..`, resolved target must stay inside the parent),
+  and an existing name is a 409 rather than a silent success. The picker grows a
+  "新建文件夹" action that creates the folder and walks straight into it.
+- Verified live: name a folder → create → the picker's cwd becomes the new
+  directory; `..\evil` and `a/b` are refused with 400.
+
+### Changed
+- **The login page uses the Harness mark** (the whale the app serves as its
+  favicon, inlined so it needs no request and follows the theme) instead of the
+  generic rounded square.
+- **Gateway codes are translated.** `session-unauthorized` and friends are now
+  sentences in the page's language — "登录状态已失效，请重新输入访问密码。" — and
+  the raw code no longer leaks into the UI (it stays in the JSON response).
+- **The setup hint is gone** ("密码在桌面端…"), per report.
+- **The login page no longer stores a theme.** The toggle lasts for the visit and
+  the page follows the system scheme; nothing it does can change the desktop
+  app's appearance.
+- The eyebrow reads as one label ("远程访问" / "Remote access") instead of a
+  mixed-language pair.
+
+### Tests
+- 76 tests: the login page is asserted to be localized, to carry the mark, and to
+  contain no `localStorage`; the previously asserted raw `session-unauthorized`
+  text is now asserted *absent*.
+
 ## 0.2.6 — 2026-10-21
 
 ### Fixed
@@ -311,6 +341,7 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
+
 
 
 

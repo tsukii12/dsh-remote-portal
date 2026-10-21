@@ -949,7 +949,10 @@ test("serves the login page instead of dsh's 401 text when re-minting cannot hel
   // No connection service → no mint → the retry cannot succeed.
   const page = await request(port, "/needs-dsh-cookie", { headers: { cookie: portal, accept: "text/html" } });
   assert.equal(page.status, 200);
-  assert.match(page.body, /session-unauthorized/);
+  // The rendered page says it in words. The code itself belongs in the JSON
+  // response (below) and in logs, not on a login screen.
+  assert.equal(/session-unauthorized/.test(page.body), false, "codes are not user-facing text");
+  assert.match(page.body, /no longer valid/i, "the page explains the state");
   assert.match(page.headers["content-type"], /text\/html/);
   assert.doesNotMatch(page.body, /dsh web authentication required/);
 
@@ -1155,6 +1158,25 @@ test("the directory picker endpoint is behind the portal gate", async () => {
   assert.equal(authed.status === 401 || authed.status === 200, true, "a session may reach the route");
 });
 
+test("the login page speaks the visitor's language and never stores a theme", async () => {
+  const { gw } = await startPortal();
+  await gw.setPassword("correct horse battery");
+  await gw.start();
+  const port = gw.status().port;
+
+  const zh = await request(port, "/", { headers: { accept: "text/html", "accept-language": "zh-CN,zh;q=0.9" } });
+  assert.equal(zh.status, 200);
+  // Codes from the gateway are translated: a raw "session-unauthorized" on a
+  // login screen is a bug report, not a message.
+  assert.match(zh.body, /访问密码/, "Chinese page expected");
+  assert.equal(/密码在桌面端/.test(zh.body), false, "the setup hint must be gone");
+  assert.equal(/localStorage/.test(zh.body), false, "the page must not persist a theme");
+  assert.match(zh.body, /viewBox="0 0 50 50"/, "the Harness mark is inlined");
+
+  const en = await request(port, "/", { headers: { accept: "text/html", "accept-language": "en-US,en;q=0.9" } });
+  assert.match(en.body, /access password|Remote access/i);
+});
+
 test("session cookies are bound to the user agent and to the HMAC secret", () => {
   const secret = "a".repeat(43);
   const issued = issueSession({ secret, ttlSeconds: 3600, ua: "UA/1" });
@@ -1314,6 +1336,7 @@ test("config normalization clamps hostile values and keeps tls on a partial patc
   assert.equal(bogus.port, 0);
   assert.equal(bogus.auth.mode, "pair-only");
 });
+
 
 
 

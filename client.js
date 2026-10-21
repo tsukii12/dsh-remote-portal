@@ -55,7 +55,7 @@ window.__ModuleLoader__.load({
     // prefix. An absolute path here would break remote access through a tunnel.
     var BASE = "./dsh-remote-portal";
   // Must match package.json: it is what busts the browser cache for the layer.
-  var CLIENT_VERSION = "0.2.6";
+  var CLIENT_VERSION = "0.2.7";
     var POLL_MS = 3000;         // status poll while the settings page is visible
     var MIN_PW = 8;             // matches the host's "≥8 recommended" rule (§3)
     var COPY_FEEDBACK_MS = 1600;
@@ -137,6 +137,11 @@ window.__ModuleLoader__.load({
         pickEmpty: "这里没有子目录",
         pickUse: "使用此目录",
         pickHostOld: "宿主未加载该接口：请重启 dsh 后重试。",
+        pickNew: "新建文件夹",
+        pickNewHint: "文件夹名称",
+        pickCreate: "创建",
+        pickExists: "同名文件夹已存在。",
+        pickMkdirFailed: "创建文件夹失败，请检查名称或权限。",
         cancel: "取消",
 
         tunnelOnline: "已连接",
@@ -258,6 +263,11 @@ window.__ModuleLoader__.load({
         pickEmpty: "No subdirectories here",
         pickUse: "Use this folder",
         pickHostOld: "The host has not loaded this endpoint yet — restart dsh and retry.",
+        pickNew: "New folder",
+        pickNewHint: "Folder name",
+        pickCreate: "Create",
+        pickExists: "A folder with that name already exists.",
+        pickMkdirFailed: "Could not create the folder — check the name or permissions.",
         cancel: "Cancel",
 
         tunnelOnline: "Online",
@@ -359,6 +369,7 @@ window.__ModuleLoader__.load({
       up: ["M12 19V5", "M5.5 11.5 12 5l6.5 6.5"],
       folder: ["M3.6 7.6a2 2 0 0 1 2-2h3.1l1.8 2h7.9a2 2 0 0 1 2 2v8.2a2 2 0 0 1-2 2H5.6a2 2 0 0 1-2-2z"],
       chevron: ["M9.5 6.5 15 12l-5.5 5.5"],
+      plus: ["M12 5.5v13", "M5.5 12h13"],
       alert: ["M12 8.2v5.1", "M12 16.6h.01", "M10.4 3.9 2.7 17.3a1.9 1.9 0 0 0 1.6 2.9h15.4a1.9 1.9 0 0 0 1.6-2.9L13.6 3.9a1.9 1.9 0 0 0-3.2 0Z"],
       refresh: ["M20 12a8 8 0 1 1-2.3-5.7", "M20 4.2v5.4h-5.4"],
       close: ["M6.5 6.5 17.5 17.5", "M17.5 6.5 6.5 17.5"],
@@ -638,7 +649,10 @@ window.__ModuleLoader__.load({
       ".drp-picker-name{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
       ".drp-picker-empty{padding:28px 12px;text-align:center;color:var(--drp-fg3);font-size:13px}",
       ".drp-picker-error{display:flex;align-items:center;gap:8px;color:var(--drp-err);font-size:12.5px}",
-      ".drp-picker-foot{display:flex;gap:8px;justify-content:flex-end;padding-top:2px;flex:0 0 auto}",
+      ".drp-picker-foot{display:flex;gap:8px;align-items:center;padding-top:2px;flex:0 0 auto}",
+      ".drp-picker-new{display:flex;gap:8px;align-items:center;flex:0 0 auto}",
+      ".drp-picker-new-input{flex:1 1 auto;min-width:0;height:40px;font-size:16px}",
+      ".drp-spacer{flex:1 1 auto}",
       /* Page, not a card: the panel replaces the view (no floating frame, no
          transparent scrim showing the chat behind it). */
       ".drp-overlay{padding:0}",
@@ -1862,6 +1876,16 @@ window.__ModuleLoader__.load({
           h("div", { className: "drp-col" }, qrCard, publicCard, diagCard, logCard)));
     }
 
+    /** One place that turns a failed response into a sentence. */
+    function pickError(r, fallbackKey) {
+      var message = r && typeof r.error === "string" && r.error !== "" ? r.error : "";
+      if (!message && r && r.data && typeof r.data.error === "string") message = r.data.error;
+      if (r && r.data && r.data.code === "exists") return t("pickExists");
+      if (!message && r && r.status === 404) message = t("pickHostOld");
+      if (!message) message = t(fallbackKey || "network");
+      return friendlyError(message);
+    }
+
     // ── directory picker ─────────────────────────────────────────────────────
     // A full-screen page in the same visual language as the panel: parent chip,
     // current path, the roots, then one directory level at a time.
@@ -1869,6 +1893,12 @@ window.__ModuleLoader__.load({
       var pair = useState({ loading: true, path: "", listing: null, error: null });
       var view = pair[0];
       var setView = pair[1];
+      var createPair = useState(false);
+      var creating = createPair[0];
+      var setCreating = createPair[1];
+      var draftPair = useState("");
+      var draft = draftPair[0];
+      var setDraft = draftPair[1];
 
       var load = function (path) {
         setView(function (prev) {
@@ -1877,14 +1907,8 @@ window.__ModuleLoader__.load({
         var url = BASE + "/fs" + (path ? "?path=" + encodeURIComponent(path) : "");
         api(url, { timeout: 15000 }).then(function (r) {
           if (!r.ok) {
-            var message = r && typeof r.error === "string" && r.error !== "" ? r.error : "";
-            if (!message && r && r.data && typeof r.data.error === "string") message = r.data.error;
-            // 404 from the app (not from the portal) means the host half of the
-            // plugin is older than the client half: it has no /fs route yet.
-            if (!message && r && r.status === 404) message = t("pickHostOld");
-            if (!message) message = t("network");
             setView(function (prev) {
-              return { loading: false, path: prev.path, listing: prev.listing, error: friendlyError(message) };
+              return { loading: false, path: prev.path, listing: prev.listing, error: pickError(r) };
             });
             return;
           }
@@ -1895,6 +1919,23 @@ window.__ModuleLoader__.load({
       };
 
       useEffect(function () { load(pickerState.start || ""); }, []);
+
+      var create = function (rawName) {
+        var name = String(rawName || "").trim();
+        if (name === "") return;
+        api(BASE + "/fs/mkdir", { method: "POST", body: { parent: path, name: name } }).then(function (r) {
+          var folder = r.ok && r.data && r.data.created ? r.data.created : null;
+          setCreating(false);
+          setDraft("");
+          if (!folder) {
+            setView(function (prev) {
+              return { loading: false, path: prev.path, listing: prev.listing, error: pickError(r, "pickMkdirFailed") };
+            });
+            return;
+          }
+          load(folder.path);
+        });
+      };
 
       useEffect(function () {
         var onKey = function (e) {
@@ -1974,7 +2015,38 @@ window.__ModuleLoader__.load({
                         h(Icon, { name: "chevron", size: 14 }));
                     })),
 
+            creating
+              ? h("form", {
+                  className: "drp-picker-new",
+                  onSubmit: function (e) {
+                    try { e.preventDefault(); } catch (e2) { /* ignore */ }
+                    create(draft);
+                  }
+                },
+                  h("input", {
+                    className: "drp-input drp-picker-new-input",
+                    type: "text",
+                    value: draft,
+                    autoFocus: true,
+                    placeholder: t("pickNewHint"),
+                    "aria-label": t("pickNew"),
+                    onChange: function (e) { setDraft(e.target.value); },
+                    onKeyDown: function (e) {
+                      if (e && (e.key === "Escape" || e.key === "Esc")) { setCreating(false); setDraft(""); }
+                    }
+                  }),
+                  h("button", { type: "submit", className: "drp-btn drp-btn-primary", disabled: draft.trim() === "" }, t("pickCreate")),
+                  h("button", { type: "button", className: "drp-btn drp-btn-ghost", onClick: function () { setCreating(false); setDraft(""); } }, t("cancel")))
+              : null,
+
             h("footer", { className: "drp-picker-foot" },
+              h("button", {
+                type: "button",
+                className: "drp-btn drp-btn-ghost",
+                disabled: !listing || creating,
+                onClick: function () { setCreating(true); setDraft(""); }
+              }, h(Icon, { name: "plus", size: 14 }), h("span", null, t("pickNew"))),
+              h("span", { className: "drp-spacer" }),
               h("button", { type: "button", className: "drp-btn drp-btn-ghost", onClick: function () { finishPicker(null); } },
                 t("cancel")),
               h("button", {
@@ -2296,6 +2368,7 @@ window.__ModuleLoader__.load({
     return { inject: ["slots"], apply: apply };
   }
 });
+
 
 
 
