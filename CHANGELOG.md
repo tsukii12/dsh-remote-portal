@@ -3,6 +3,30 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.3.2 — 2026-10-21
+
+### Added
+- **`tools/deploy-relay.sh` — one command to put the relay on a server.** It
+  checks Node, installs to `/opt/dsh-relay`, generates the tunnel token, writes
+  and starts a systemd unit, optionally adds a Caddy site with `--caddy` (no
+  buffering), then prints the two values to paste into the panel and the public
+  address. `--no-systemd` installs beside the script for a rootless trial;
+  `--uninstall` reverses everything. Verified on Debian 12: a relay installed by
+  the script carried a real tunnel end to end — login page 200 (29,802 B, whale
+  mark), pairing 303 → `/`, app 200 with `__DSH_BOOT__`, `/__relay/health` green.
+
+### Fixed
+- **`--http-port 127.0.0.1:8080` was silently ignored** and fell back to
+  `0.0.0.0:8080` — the opposite of what the flag asked for, and the form the
+  documents told people to use. All three listener flags now accept `port` or
+  `host:port`, the HTTP visitor port defaults to **loopback**, and a malformed
+  value is an error instead of a silent default.
+- The generated usage text contained a backtick inside a template literal, which
+  broke the module at load time.
+
+### Tests
+- 76 tests green.
+
 ## 0.3.1 — 2026-10-21
 
 ### Reverted
@@ -431,6 +455,7 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
+
 
 
 

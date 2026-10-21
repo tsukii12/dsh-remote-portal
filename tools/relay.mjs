@@ -129,6 +129,31 @@ function sameSecret(a, b) {
 // configuration
 // ───────────────────────────────────────────────────────────────────────────
 
+/**
+ * Parse "port" or "host:port" (also `[::1]:port`).
+ *
+ * Returns { port, host } with host undefined when the flag carried no address.
+ * Throws on nonsense: a mistyped bind must be loud, never silently defaulted.
+ */
+function parseBind(value, label) {
+  const raw = String(value ?? "").trim();
+  if (raw === "") return { port: undefined, host: undefined };
+  const v6 = /^\[([^\]]+)\]:(\d+)$/.exec(raw);
+  const pair = v6 ? [raw, v6[1], v6[2]] : /^([^:]+):(\d+)$/.exec(raw);
+  if (pair) {
+    const port = Number(pair[2]);
+    if (!Number.isInteger(port) || port < 0 || port > 65535) {
+      throw new Error(`${label}: invalid port in "${raw}"`);
+    }
+    return { port, host: pair[1] };
+  }
+  const port = Number(raw);
+  if (!Number.isInteger(port) || port < 0 || port > 65535) {
+    throw new Error(`${label}: expected a port or host:port, got "${raw}"`);
+  }
+  return { port, host: undefined };
+}
+
 function parseArgs(argv) {
   const out = { tokens: [] };
   for (let i = 0; i < argv.length; i++) {
@@ -140,11 +165,11 @@ function parseArgs(argv) {
     switch (key) {
       case "token": out.tokens.push(String(take())); break;
       case "token-file": out.tokenFile = String(take()); break;
-      case "agent-port": out.agentPort = Number(take()); break;
+      case "agent-port": out.agentPort = String(take()); break;
       case "agent-host": out.agentHost = String(take()); break;
-      case "http-port": out.httpPort = Number(take()); break;
+      case "http-port": out.httpPort = String(take()); break;
       case "http-host": out.httpHost = String(take()); break;
-      case "tls-port": out.tlsPort = Number(take()); break;
+      case "tls-port": out.tlsPort = String(take()); break;
       case "tls-cert": out.tlsCert = String(take()); break;
       case "tls-key": out.tlsKey = String(take()); break;
       case "public-url": out.publicUrl = String(take()); break;
@@ -161,10 +186,12 @@ function parseArgs(argv) {
 const USAGE = `
 dsh-remote-portal relay
 
-  --agent-port <n>       port the dsh host dials OUT to (TLS when --tls-cert is set)
-  --agent-host <addr>    bind address for that port           (default 0.0.0.0)
-  --http-port <n>        visitor port, plain HTTP             (default 8080)
-  --tls-port <n>         visitor port, direct HTTPS           (optional)
+  --agent-port <p>       port the dsh host dials OUT to; "port" or "host:port"
+                         (TLS when --tls-cert is set)        (default 0.0.0.0:9443)
+  --agent-host <addr>    bind address when the flag carries a bare port
+  --http-port <p>        visitor port, plain HTTP; "port" or "host:port"
+                         (default 127.0.0.1:8080 — loopback unless you say otherwise)
+  --tls-port <p>         visitor port, direct HTTPS; "port" or "host:port" (optional)
   --tls-cert/--tls-key   PEM files used by both TLS listeners
   --token <secret>       one tunnel token (repeatable)
   --token-file <path>    file with one token per line ("#" comments allowed)
@@ -681,13 +708,16 @@ function main() {
       args.tokens.push(value);
     }
   }
+  const agentBind = parseBind(args.agentPort, "--agent-port");
+  const visitorHttp = parseBind(args.httpPort, "--http-port");
+  const visitorHttps = parseBind(args.tlsPort, "--tls-port");
   const config = {
     tokens: args.tokens.filter(Boolean),
-    agentPort: Number.isInteger(args.agentPort) ? args.agentPort : 9443,
-    agentHost: args.agentHost || "0.0.0.0",
-    httpPort: Number.isInteger(args.httpPort) ? args.httpPort : 8080,
-    httpHost: args.httpHost || "0.0.0.0",
-    tlsPort: Number.isInteger(args.tlsPort) ? args.tlsPort : 0,
+    agentPort: agentBind.port === undefined ? 9443 : agentBind.port,
+    agentHost: agentBind.host || args.agentHost || "0.0.0.0",
+    httpPort: visitorHttp.port === undefined ? 8080 : visitorHttp.port,
+    httpHost: visitorHttp.host || args.httpHost || "127.0.0.1",
+    tlsPort: visitorHttps.port === undefined ? 0 : visitorHttps.port,
     tlsCert: args.tlsCert || "",
     tlsKey: args.tlsKey || "",
     publicUrl: args.publicUrl || `http://localhost:${Number.isInteger(args.httpPort) ? args.httpPort : 8080}`,

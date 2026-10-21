@@ -29,6 +29,50 @@
 
 ---
 
+## 0. 最快的方式：一键脚本
+
+服务器上跑一条命令（Debian/Ubuntu/CentOS 都行，需要 root 和 Node 20+）：
+
+```bash
+# 把插件里的两个文件传上去，然后：
+chmod +x deploy-relay.sh          # 从 git 拉下来就已经是可执行的，解压/复制后可能需要一次
+sudo ./deploy-relay.sh --domain dsh.example.com --caddy
+```
+
+脚本会：检查 Node → 装 relay 到 `/opt/dsh-relay` → 生成令牌 → 写 systemd 单元并启动 →
+（带 `--caddy` 时）给 Caddy 加一个站点并 reload → 打印**要粘贴进面板的两个值**和公网地址。
+
+它**不碰**你已有的服务：自己的端口、自己的 unit、自己的目录，结尾会列出它创建了哪些文件
+以及一键撤销的命令。
+
+没有域名也能用（走 HTTP，自己在前端套 TLS）：
+
+```bash
+sudo ./deploy-relay.sh              # 自动探测公网 IP，打印 http://<ip>/__t/<id>/
+```
+
+想先试不想装服务：
+
+```bash
+./deploy-relay.sh --no-systemd --port 18080
+# 它会把东西放在当前目录的 .relay-run / .relay-state，并打印一条前台启动命令
+```
+
+常用参数：
+
+| 参数 | 作用 |
+|---|---|
+| `--domain <域名>` | 生成 `https://<域名>` 的公网地址，配合 `--caddy` 自动签证书 |
+| `--caddy` | 自动写 Caddy 站点（含 `flush_interval -1`，不加缓冲） |
+| `--agent-port <端口>` | 家里那台机器拨入的端口，默认 9443 |
+| `--port <端口>` | 访客端口，默认 8080，**只绑 127.0.0.1**（由反代对外） |
+| `--no-systemd` | 不装服务，只准备文件并打印前台启动命令 |
+| `--uninstall` | 停服务、删 `/opt/dsh-relay`（保留令牌目录并提示） |
+
+> 需要 nginx/openresty？脚本会打印一段可直接用的反代配置要点（`proxy_buffering off` + WebSocket）。
+
+下面的 1–6 节是**手动版**：脚本做的事逐步展开，便于你按自己的规范改造。
+
 ## 1. 服务器准备
 
 一台 Linux VPS（1 核 512 MB 足够：中继本身只转发字节，不做任何计算），假设：
@@ -334,3 +378,5 @@ secrets:
 ```
 
 Caddy 容器里把 `reverse_proxy dsh-relay:8080` 指向上面的服务名即可。
+
+
