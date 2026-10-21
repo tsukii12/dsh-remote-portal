@@ -21,9 +21,10 @@
 //     shell.overlay sheet, so no host control is clicked or guessed at.
 //
 // Surfaces:
-//   settings.section          — the panel inline in Settings (the home).
-//   sidebar.footer.action     — a shortcut that opens the sheet below.
-//   shell.overlay  (order 95) — a right-hand sheet wrapping the same panel.
+//   sidebar.footer.action     — the entry that opens the panel.
+//   shell.overlay  (order 95) — the panel and the directory picker, both framed
+//                               to the centre column so they read as pages of the
+//                               main area rather than full-screen covers.
 //
 // Host routes used (same-origin control routes registered by index.js):
 //   GET  /dsh-remote-portal/status          → Status (ARCHITECTURE §4.1)
@@ -55,7 +56,7 @@ window.__ModuleLoader__.load({
     // prefix. An absolute path here would break remote access through a tunnel.
     var BASE = "./dsh-remote-portal";
   // Must match package.json: it is what busts the browser cache for the layer.
-  var CLIENT_VERSION = "0.2.8";
+  var CLIENT_VERSION = "0.2.9";
     var POLL_MS = 3000;         // status poll while the settings page is visible
     var MIN_PW = 8;             // matches the host's "≥8 recommended" rule (§3)
     var COPY_FEEDBACK_MS = 1600;
@@ -2352,20 +2353,9 @@ window.__ModuleLoader__.load({
       // 0) Global stylesheet first: every surface below depends on it.
       try { mountBaseCss(ctx); } catch (e) { /* never fatal */ }
 
-      // 1) Settings → 远程访问. order 31 puts it right below the host's own
-      //    sections; the id is the package name so nothing can collide.
-      try {
-        if (ctx && ctx.slots && typeof ctx.slots.inject === "function") {
-          ctx.slots.inject("settings.section", function () {
-            return ctx.slots.register({
-              name: "settings.section",
-              id: "dsh-remote-portal",
-              order: 31,
-              label: function () { return t("section"); }
-            }, RemotePortalSection);
-          });
-        }
-      } catch (e) { /* never let the panel take the app down */ }
+      // 1) Settings → 远程访问: deliberately not registered. The sidebar entry is
+      //    the single home; a second copy inside Settings duplicated every control
+      //    and read as a different destination.
 
       // 2) Sidebar footer shortcut. Older hosts have no such slot; inject() is
       //    a no-op there, and any throw is swallowed.
@@ -2414,6 +2404,7 @@ window.__ModuleLoader__.load({
     return { inject: ["slots"], apply: apply };
   }
 });
+
 
 
 

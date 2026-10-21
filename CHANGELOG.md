@@ -3,6 +3,32 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.2.9 — 2026-10-21
+
+### Changed
+- **One home for the panel.** The Settings → 远程访问 section is gone: the sidebar
+  entry is the destination, and a second copy inside Settings duplicated every
+  control and read like a different page.
+- **The folder picker is framed like the panel** — it measures the centre column
+  too, so a desktop window keeps its sidebar instead of getting a full-screen
+  cover. Phones still get the whole screen (there is no sidebar there).
+- **The phone status line is trimmed.** "16 轮 1270 步 · 263 tok/s" loses the round
+  and step counters, and "缓存命中" becomes "缓存": those two segments are what
+  pushed the numbers off a 390 px screen, and the rest of the line already carries
+  the useful information. Rewritten at the text level — the host component has no
+  stable hook, so the pattern is the contract.
+- **README rewritten to a publishable shape** (zh + en, same structure): centred
+  header with badges and a table of contents, one screenshot of the real panel, a
+  features table, a three-step quick start, a "how it works" section that explains
+  *why* each layer exists, a security model, a real test table, an FAQ with
+  collapsible answers (restart, dead buttons, LAN/public troubleshooting, device
+  revocation, shared `DSH_HOME`), the file map, and known limitations — including
+  the honest one: the panel presents as a main-area page without replacing the
+  host's DOM.
+
+### Tests
+- 76 tests green (~68 s).
+
 ## 0.2.8 — 2026-10-21
 
 ### Changed
@@ -362,6 +388,7 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
+
 
 
 
