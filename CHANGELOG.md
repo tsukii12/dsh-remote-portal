@@ -3,6 +3,27 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.2.8 — 2026-10-21
+
+### Changed
+- **The panel is a page of the main area, not a full-screen cover.** It is
+  measured against the centre column (`--drp-main-*` published from the live
+  geometry) so it occupies exactly the region that 插件 / 自动化任务 use, and the
+  sidebar stays visible and clickable. The entry reads as the active row while it
+  is open, like the host's own panel rows.
+- **Plugin metadata rewritten** — "为 DeepSeek Harness 添加远程访问能力，支持局域网和
+  公网访问。" — and the plugin icon is now the Harness mark itself, so the plugin
+  manager shows it as part of the product.
+- **The login page's favicon is the Harness whale** (inline data URI, no extra
+  request), matching the mark in the page header.
+
+### Fixed
+- `frameOverlay()` referenced a helper that does not exist in that closure, so the
+  framing silently did nothing and the panel still covered the window.
+
+### Tests
+- 76 tests green.
+
 ## 0.2.7 — 2026-10-21
 
 ### Added
@@ -341,6 +362,7 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
+
 
 
 

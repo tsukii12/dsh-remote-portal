@@ -55,7 +55,7 @@ window.__ModuleLoader__.load({
     // prefix. An absolute path here would break remote access through a tunnel.
     var BASE = "./dsh-remote-portal";
   // Must match package.json: it is what busts the browser cache for the layer.
-  var CLIENT_VERSION = "0.2.7";
+  var CLIENT_VERSION = "0.2.8";
     var POLL_MS = 3000;         // status poll while the settings page is visible
     var MIN_PW = 8;             // matches the host's "≥8 recommended" rule (§3)
     var COPY_FEEDBACK_MS = 1600;
@@ -601,6 +601,7 @@ window.__ModuleLoader__.load({
       "font-size:14px;font-weight:500;letter-spacing:.01em;line-height:1.35;text-align:left;cursor:pointer;",
       "transition:background-color .12s ease,color .12s ease}",
       ".drp-nav:hover{background:rgba(127,127,127,.14)}",
+      "html[data-drp-overlay-up] .drp-nav{background:rgba(127,127,127,.18);color:var(--drp-fg)}",
       ".drp-nav:focus-visible{outline:2px solid var(--drp-link);outline-offset:1px}",
       ".drp-nav .drp-ico{flex:none;width:24px;height:24px;color:var(--drp-fg3)}",
       ".drp-nav:hover .drp-ico{color:var(--drp-fg2)}",
@@ -608,8 +609,12 @@ window.__ModuleLoader__.load({
 
       /* overlay sheet (shell.overlay): the host's overlay layer is
          pointer-events:none, so the root re-enables them for our sheet. */
-      ".drp-overlay{position:fixed;inset:0;z-index:20;display:flex;align-items:flex-start;",
-      "justify-content:flex-end;padding:16px;pointer-events:auto}",
+      /* Frame the centre column: the panel occupies the main area, never the
+         sidebar. `--drp-main-*` are set by client.js from the live geometry
+         (see frameOverlay()), with a full-window fallback. */
+      ".drp-overlay{position:fixed;z-index:20;display:flex;align-items:stretch;justify-content:stretch;",
+      "top:var(--drp-main-top,0px);left:var(--drp-main-left,0px);right:var(--drp-main-right,0px);",
+      "bottom:var(--drp-main-bottom,0px);padding:0;pointer-events:auto}",
       ".drp-scrim{position:absolute;inset:0;background:rgba(0,0,0,.45);animation:drp-fade .16s ease-out}",
       ".drp-sheet{position:relative;display:flex;flex-direction:column;width:min(720px,100%);",
       "max-height:calc(100vh - 32px);background:var(--drp-card);border:1px solid var(--drp-line);",
@@ -964,6 +969,42 @@ window.__ModuleLoader__.load({
       }, []);
       return pair[0];
     }
+
+    /**
+     * Publish the centre column's box as `--drp-main-*`, so the overlay can sit
+     * exactly where a main-area page would. Re-measured on resize and whenever
+     * the panel opens; a hidden column falls back to the full window.
+     */
+    /**
+     * Publish the centre column's box as `--drp-main-*`, so the overlay sits
+     * exactly where a main-area page would (插件 / 自动化任务), leaving the sidebar
+     * reachable. Re-measured on open and on resize; a missing column or a narrow
+     * window falls back to the whole viewport.
+     */
+    var frameOverlay = function () {
+      try {
+        var root = document.documentElement;
+        // The column's local class name first: a descendant `:has()` also matches
+        // the outer frame, which spans the window and would defeat the framing.
+        var col = document.querySelector('div[class*="centerCol"]');
+        if (!col || !col.getBoundingClientRect().width) {
+          col = document.querySelector('div:has(> [data-slot="main"])');
+        }
+        var box = col ? col.getBoundingClientRect() : null;
+        var wide = window.innerWidth > 900;
+        if (!box || !wide || box.width < 240) {
+          root.style.removeProperty("--drp-main-top");
+          root.style.removeProperty("--drp-main-left");
+          root.style.removeProperty("--drp-main-right");
+          root.style.removeProperty("--drp-main-bottom");
+          return;
+        }
+        root.style.setProperty("--drp-main-top", Math.round(box.top) + "px");
+        root.style.setProperty("--drp-main-left", Math.round(box.left) + "px");
+        root.style.setProperty("--drp-main-right", Math.round(window.innerWidth - box.right) + "px");
+        root.style.setProperty("--drp-main-bottom", Math.round(window.innerHeight - box.bottom) + "px");
+      } catch (e) { /* layout is a nicety: never break the panel over it */ }
+    };
 
     // ── directory picker store ───────────────────────────────────────────────
     // The app's "add workspace" flow asks for a path. Its native picker resolves
@@ -2068,11 +2109,16 @@ window.__ModuleLoader__.load({
       var open = pickerOpen || sheetOpen;
       useEffect(function () {
         try {
+          frameOverlay();
           if (open) document.documentElement.setAttribute("data-drp-overlay-up", "");
           else document.documentElement.removeAttribute("data-drp-overlay-up");
+          window.addEventListener("resize", frameOverlay);
         } catch (e) { /* ignore */ }
         return function () {
-          try { document.documentElement.removeAttribute("data-drp-overlay-up"); } catch (e2) { /* ignore */ }
+          try {
+            window.removeEventListener("resize", frameOverlay);
+            document.documentElement.removeAttribute("data-drp-overlay-up");
+          } catch (e2) { /* ignore */ }
         };
       }, [open]);
       if (pickerOpen) return h(DirPicker, { key: "picker" });
@@ -2368,6 +2414,7 @@ window.__ModuleLoader__.load({
     return { inject: ["slots"], apply: apply };
   }
 });
+
 
 
 
