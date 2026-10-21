@@ -3,6 +3,17 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.3.1 — 2026-10-21
+
+### Reverted
+- **The session status line is untouched again.** 0.2.9 shortened it ("16 轮 1270
+  步" removed, "缓存命中" → "缓存"); the host's own wording is back, verbatim, on
+  every width. The rewriting helper and its call site are gone rather than
+  disabled, so no future change can bring it back by accident.
+
+### Tests
+- 76 tests green.
+
 ## 0.3.0 — 2026-10-21
 
 ### Changed — the panel is a real page, not an overlay
@@ -420,6 +431,7 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
+
 
 
 

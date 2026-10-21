@@ -346,46 +346,7 @@
     nativeTimer = setTimeout(function () {
       nativeTimer = 0;
       markNativeActions();
-      try { trimStatusLine(); } catch (e) { /* cosmetic only */ }
     }, 200);
-  }
-
-  /**
-   * Trim the session status line on a phone.
-   *
-   * The shipped line reads "16 轮 1270 步 · 263 tok/s" and "524M tok·缓存命中
-   * 99.5%": the round and step counters are the two segments that push the rest
-   * off a 390 px screen, and "命中" is jargon. Both are rewritten here rather
-   * than hidden, so no information is lost that the numbers below do not already
-   * carry. Text-level on purpose: the element is a host component with no stable
-   * hook, and the pattern is the contract.
-   */
-  var STATUS_ROUNDS = /^\s*\d+\s*轮\s*\d+\s*步\s*[·|]\s*/;
-  var STATUS_ROUNDS_EN = /^\s*\d+\s*rounds?\s*\d+\s*steps?\s*[·|]\s*/i;
-
-  function trimStatusLine() {
-    if (!state.active && !state.remote) return;
-    var nodes = doc().querySelectorAll("span, div, p");
-    for (var i = 0; i < nodes.length; i++) {
-      var el = nodes[i];
-      if (el.children.length > 2) continue;
-      var text = (el.textContent || "").trim();
-      if (text.length === 0 || text.length > 90) continue;
-      if (!/tok\/s|tok\b|缓存/.test(text)) continue;
-      var next = text.replace(STATUS_ROUNDS, "").replace(STATUS_ROUNDS_EN, "");
-      next = next.replace(/缓存命中/g, "缓存").replace(/cache hit/gi, "cache");
-      if (next === text) continue;
-      // Rewrite only the direct text nodes: any icon or unit markup stays intact.
-      var wrote = false;
-      for (var j = 0; j < el.childNodes.length; j++) {
-        var node = el.childNodes[j];
-        if (node.nodeType !== 3) continue;
-        var value = node.nodeValue || "";
-        var trimmed = value.replace(STATUS_ROUNDS, "").replace(STATUS_ROUNDS_EN, "").replace(/缓存命中/g, "缓存").replace(/cache hit/gi, "cache");
-        if (trimmed !== value) { node.nodeValue = trimmed; wrote = true; }
-      }
-      if (!wrote) el.textContent = next;
-    }
   }
 
   function markNativeActions() {
@@ -625,6 +586,7 @@
     refresh();
   }
 })();
+
 
 
 
