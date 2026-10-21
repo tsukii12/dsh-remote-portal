@@ -3,6 +3,22 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.4.4 — 2026-10-21
+
+### Fixed — the desktop app lost its "open in …" actions
+The mobile layer engaged purely on window width, so a narrow desktop window was
+treated as a phone: the remote-only trimming then hid "在资源管理器/VS Code 中打开",
+"打开配置文件" and similar entries **inside the local Electron app**, where they are
+perfectly valid.
+
+- `activate()` now returns immediately when the page is loaded from `file:`
+  (or `chrome-extension:`): the desktop shell is never a phone, at any width
+- the remote path was already origin-gated and is unchanged
+- a regression test asserts both guards so this cannot come back
+
+### Tests
+- 79 tests green (one new).
+
 ## 0.4.3 — 2026-10-21
 
 ### Removed
@@ -737,6 +753,7 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
+
 
 
 

@@ -338,6 +338,16 @@ describe("assets/mobile.js — source contract", () => {
     assert.match(js, /\(function \(\) \{/, "wrapped in an IIFE");
   });
 
+  test("never engages inside the desktop shell", () => {
+    // The Electron app loads from file:// and needs its OS actions ("open in
+    // Explorer", "open config file") at any window size. Gating the layer on
+    // width alone hid them as soon as the window got narrow.
+    assert.match(js, /function isDesktopShell\(\)/);
+    assert.match(js, /if \(isDesktopShell\(\)\) return;/, "activate() must bail out");
+    assert.match(js, /p === "file:"/, "file:// is the desktop shell");
+    assert.match(js, /function activateRemote\(\) \{\n\s*if \(!isRemoteOrigin\(\)\) return;/);
+  });
+
   test("uses the same 900px boundary as the stylesheet", () => {
     assert.match(js, /\(max-width: 900px\)/);
     assert.match(clean, /max-width: 900px/);

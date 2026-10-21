@@ -476,7 +476,20 @@
     doc().documentElement.removeAttribute(DRAWER_ATTR);
   }
 
+  /**
+   * The desktop shell itself. It loads from file://, where every "open in …"
+   * action is meaningful — a narrow window is still a desktop app, so the mobile
+   * layer must not engage and hide them.
+   */
+  function isDesktopShell() {
+    try {
+      var p = String(location.protocol || "");
+      return p === "file:" || p === "chrome-extension:";
+    } catch (e) { return false; }
+  }
+
   function activate() {
+    if (isDesktopShell()) return;
     if (state.active) return;
     state.active = true;
     doc().documentElement.setAttribute(MOBILE_ATTR, "");
