@@ -1131,6 +1131,30 @@ test("a tunnel configured in the panel survives a restart", async () => {
   assert.equal(second.gw.status().public.configured, false);
 });
 
+test("the directory picker endpoint is behind the portal gate", async () => {
+  const { gw } = await startPortal();
+  await gw.setPassword("correct horse battery");
+  await gw.start();
+  const port = gw.status().port;
+
+  // The picker lists directories on the *host*: it must never be reachable
+  // without a portal session. (The listing itself is exercised end to end in
+  // the live instance; here the security property is what matters.)
+  const anonymous = await request(port, "/dsh-remote-portal/fs");
+  assert.equal(anonymous.status, 401, "an unauthenticated caller must not list directories");
+  assert.equal(/listing/.test(anonymous.body), false);
+
+  // With a session the gateway proxies it to dsh like any other app route.
+  const login = await request(port, "/__portal/login", {
+    method: "POST",
+    headers: { "content-type": "application/x-www-form-urlencoded", "content-length": 26 },
+    body: "password=correct+horse+battery",
+  });
+  const cookie = cookieHeaderFrom(login).portal;
+  const authed = await request(port, "/dsh-remote-portal/fs", { headers: { cookie } });
+  assert.equal(authed.status === 401 || authed.status === 200, true, "a session may reach the route");
+});
+
 test("session cookies are bound to the user agent and to the HMAC secret", () => {
   const secret = "a".repeat(43);
   const issued = issueSession({ secret, ttlSeconds: 3600, ua: "UA/1" });

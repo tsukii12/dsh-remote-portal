@@ -3,6 +3,35 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.2.5 — 2026-10-21
+
+### Added — a workspace directory picker that resolves paths on the *host*
+"Add workspace" used the browser's own directory picker, so a phone either got
+nothing (Safari has no `showDirectoryPicker`) or a directory on the phone — which
+the host cannot open. The plugin now takes the pick over:
+
+- `GET /dsh-remote-portal/fs?path=…` lists one directory level on the host:
+  directories only, entry cap, 4 s timeout, no file contents. Unknown path → 404
+  `not-found`, a file → 400 `not-a-directory`.
+- The picker is registered through `globalThis.__DSH_DIRECTORY_PICKER__`, the
+  hook the shipped native picker already consults
+  (`@deepseek-ai/dsh-client-ui-directory-picker-native`), so the app's own
+  "Add workspace" calls it and receives an absolute host path.
+- The UI is a full page in the panel's language: up button, monospace path, root
+  chips (home, drives), folder rows with chevrons, 取消 / 使用此目录.
+- Verified end to end on a live instance: menu → 添加工作区… → picker opens at the
+  home directory → navigate → 使用此目录 resolves with `C:\Users\Tsuki\.agents`.
+- The entry is no longer hidden on mobile — it works now.
+
+### Fixed
+- A menu whose entries were all removed left an empty "…" popover behind; the
+  trigger is hidden with it.
+- The drawer button no longer floats on top of the panel/picker header.
+
+### Tests
+- 75 tests: the picker endpoint is asserted to be behind the portal gate (an
+  anonymous caller gets 401 and no listing).
+
 ## 0.2.4 — 2026-10-21
 
 Second pass on the phone report: the previous build hid native entries only when
@@ -260,6 +289,7 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
+
 
 
 

@@ -643,6 +643,13 @@
     min-width: 0;
   }
 
+  /* Our own full-page surfaces (the panel, the directory picker) are modal: the
+     floating drawer button must not sit on top of their header. */
+  html[data-drp-mobile][data-drp-overlay-up] .drp-drawer-btn,
+  html[data-drp-mobile][data-drp-overlay-up] .drp-drawer-scrim {
+    display: none;
+  }
+
   /* 11.4 Items the layer removes from the menu it belongs to. Set by mobile.js;
      the class is inert as soon as the layer is off. */
   html[data-drp-mobile] .drp-hidden {
@@ -694,3 +701,6 @@
 html[data-drp-remote] .drp-hidden {
   display: none;
 }
+
+
+

@@ -55,7 +55,7 @@ window.__ModuleLoader__.load({
     // prefix. An absolute path here would break remote access through a tunnel.
     var BASE = "./dsh-remote-portal";
   // Must match package.json: it is what busts the browser cache for the layer.
-  var CLIENT_VERSION = "0.2.4";
+  var CLIENT_VERSION = "0.2.5";
     var POLL_MS = 3000;         // status poll while the settings page is visible
     var MIN_PW = 8;             // matches the host's "≥8 recommended" rule (§3)
     var COPY_FEEDBACK_MS = 1600;
@@ -131,6 +131,13 @@ window.__ModuleLoader__.load({
         pwRevoke: "同时退出所有已登录设备",
         cardDev: "已授权设备",
         cardPublic: "公网访问",
+        pickTitle: "选择工作区目录",
+        pickUp: "上级",
+        pickLoading: "正在读取目录…",
+        pickEmpty: "这里没有子目录",
+        pickUse: "使用此目录",
+        cancel: "取消",
+
         tunnelOnline: "已连接",
         tunnelConnecting: "连接中",
         tunnelRetrying: "重连中",
@@ -244,6 +251,13 @@ window.__ModuleLoader__.load({
         pwRevoke: "Sign out every paired device",
         cardDev: "Authorised devices",
         cardPublic: "Public access",
+        pickTitle: "Choose a workspace folder",
+        pickUp: "Up",
+        pickLoading: "Reading directory…",
+        pickEmpty: "No subdirectories here",
+        pickUse: "Use this folder",
+        cancel: "Cancel",
+
         tunnelOnline: "Online",
         tunnelConnecting: "Connecting",
         tunnelRetrying: "Reconnecting",
@@ -340,6 +354,9 @@ window.__ModuleLoader__.load({
     var ICON_PATHS = {
       copy: ["M9.5 9.5h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-8a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2Z", "M6.5 15.2A2 2 0 0 1 5 13.2v-8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 1.5"],
       check: ["M4.5 12.5 9.5 17.5 19.5 6.5"],
+      up: ["M12 19V5", "M5.5 11.5 12 5l6.5 6.5"],
+      folder: ["M3.6 7.6a2 2 0 0 1 2-2h3.1l1.8 2h7.9a2 2 0 0 1 2 2v8.2a2 2 0 0 1-2 2H5.6a2 2 0 0 1-2-2z"],
+      chevron: ["M9.5 6.5 15 12l-5.5 5.5"],
       alert: ["M12 8.2v5.1", "M12 16.6h.01", "M10.4 3.9 2.7 17.3a1.9 1.9 0 0 0 1.6 2.9h15.4a1.9 1.9 0 0 0 1.6-2.9L13.6 3.9a1.9 1.9 0 0 0-3.2 0Z"],
       refresh: ["M20 12a8 8 0 1 1-2.3-5.7", "M20 4.2v5.4h-5.4"],
       close: ["M6.5 6.5 17.5 17.5", "M17.5 6.5 6.5 17.5"],
@@ -596,6 +613,28 @@ window.__ModuleLoader__.load({
       ".drp-x:hover{background:rgba(127,127,127,.14);color:var(--drp-fg)}",
       ".drp-x:focus-visible{outline:2px solid var(--drp-link);outline-offset:2px}",
       ".drp-sheet-x{position:absolute;top:12px;right:12px;z-index:5;width:36px;height:36px;background:transparent;border:0;display:grid;place-items:center;color:var(--drp-fg2);border-radius:9px}",
+      /* directory picker */
+      ".drp-picker{display:flex;flex-direction:column;gap:10px}",
+      ".drp-picker-head{display:flex;align-items:center;justify-content:space-between;position:relative;min-height:40px}",
+      ".drp-picker-title{margin:0;font-size:18px;font-weight:600;letter-spacing:-.01em}",
+      ".drp-picker-path{display:flex;align-items:center;gap:8px;min-width:0}",
+      ".drp-picker-cwd{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;",
+      "font-family:var(--drp-mono);font-size:12px;color:var(--drp-fg2);background:var(--drp-soft);",
+      "padding:8px 10px;border-radius:8px}",
+      ".drp-picker-roots{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}",
+      ".drp-chip-root{flex:0 0 auto;font-size:12px}",
+      ".drp-picker-list{flex:1 1 auto;min-height:120px;overflow-y:auto;-webkit-overflow-scrolling:touch;",
+      "border:1px solid var(--drp-line);border-radius:10px;background:var(--drp-card)}",
+      ".drp-picker-row{display:flex;align-items:center;gap:10px;width:100%;min-height:44px;padding:0 12px;",
+      "background:transparent;border:0;border-bottom:1px solid var(--drp-line);color:var(--drp-fg);",
+      "font-family:inherit;font-size:14px;text-align:left;cursor:pointer}",
+      ".drp-picker-row:last-child{border-bottom:0}",
+      ".drp-picker-row:hover{background:var(--drp-soft)}",
+      ".drp-picker-row.is-hidden{opacity:.55}",
+      ".drp-picker-name{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
+      ".drp-picker-empty{padding:28px 12px;text-align:center;color:var(--drp-fg3);font-size:13px}",
+      ".drp-picker-error{display:flex;align-items:center;gap:8px;color:var(--drp-err);font-size:12.5px}",
+      ".drp-picker-foot{display:flex;gap:8px;justify-content:flex-end;padding-top:2px}",
       /* Page, not a card: the panel replaces the view (no floating frame, no
          transparent scrim showing the chat behind it). */
       ".drp-overlay{padding:0}",
@@ -903,6 +942,59 @@ window.__ModuleLoader__.load({
       var pair = useState(getOverlayOpen);
       useEffect(function () {
         return subscribeOverlay(function () { pair[1](getOverlayOpen()); });
+      }, []);
+      return pair[0];
+    }
+
+    // ── directory picker store ───────────────────────────────────────────────
+    // The app's "add workspace" flow asks for a path. Its native picker resolves
+    // paths on the *client* device, which a phone cannot use, so this plugin
+    // takes the pick over (see __DSH_DIRECTORY_PICKER__ below) and answers with
+    // a path on the host.
+    var pickerState = { open: false, listeners: [], resolve: null, start: "" };
+
+    function subscribePicker(listener) {
+      pickerState.listeners.push(listener);
+      return function () {
+        var i = pickerState.listeners.indexOf(listener);
+        if (i >= 0) pickerState.listeners.splice(i, 1);
+      };
+    }
+
+    function getPickerOpen() { return pickerState.open; }
+
+    function notifyPicker() {
+      var list = pickerState.listeners.slice();
+      for (var i = 0; i < list.length; i++) {
+        try { list[i](); } catch (e) { /* a listener must never break the app */ }
+      }
+    }
+
+    function finishPicker(value) {
+      var resolve = pickerState.resolve;
+      pickerState.resolve = null;
+      pickerState.open = false;
+      notifyPicker();
+      if (typeof resolve === "function") {
+        try { resolve(value); } catch (e) { /* ignore */ }
+      }
+    }
+
+    /** @returns {Promise<string|null>} an absolute path on this host, or null. */
+    function openPicker() {
+      if (pickerState.open) return Promise.resolve(null);
+      return new Promise(function (resolve) {
+        pickerState.resolve = resolve;
+        pickerState.open = true;
+        notifyPicker();
+      });
+    }
+
+    function usePickerOpen() {
+      if (useSyncExternalStore) return useSyncExternalStore(subscribePicker, getPickerOpen, getPickerOpen);
+      var pair = useState(getPickerOpen);
+      useEffect(function () {
+        return subscribePicker(function () { pair[1](getPickerOpen()); });
       }, []);
       return pair[0];
     }
@@ -1765,10 +1857,144 @@ window.__ModuleLoader__.load({
           h("div", { className: "drp-col" }, qrCard, publicCard, diagCard, logCard)));
     }
 
+    // ── directory picker ─────────────────────────────────────────────────────
+    // A full-screen page in the same visual language as the panel: parent chip,
+    // current path, the roots, then one directory level at a time.
+    function DirPicker() {
+      var pair = useState({ loading: true, path: "", listing: null, error: null });
+      var view = pair[0];
+      var setView = pair[1];
+
+      var load = function (path) {
+        setView(function (prev) {
+          return { loading: true, path: path || prev.path, listing: prev.listing, error: null };
+        });
+        var url = BASE + "/fs" + (path ? "?path=" + encodeURIComponent(path) : "");
+        api(url, { timeout: 15000 }).then(function (r) {
+          if (!r.ok) {
+            setView(function (prev) {
+              return { loading: false, path: prev.path, listing: prev.listing, error: friendlyError(r) };
+            });
+            return;
+          }
+          var listing = (r.data && r.data.listing) || null;
+          if (listing) pickerState.start = listing.path;
+          setView({ loading: false, path: listing ? listing.path : path, listing: listing, error: null });
+        });
+      };
+
+      useEffect(function () { load(pickerState.start || ""); }, []);
+
+      useEffect(function () {
+        var onKey = function (e) {
+          if (!e) return;
+          var key = e.key || "";
+          if (key !== "Escape" && key !== "Esc" && e.keyCode !== 27) return;
+          try { e.preventDefault(); e.stopPropagation(); } catch (e2) { /* ignore */ }
+          finishPicker(null);
+        };
+        try { document.addEventListener("keydown", onKey, true); } catch (e3) { /* ignore */ }
+        return function () {
+          try { document.removeEventListener("keydown", onKey, true); } catch (e4) { /* ignore */ }
+        };
+      }, []);
+
+      var listing = view.listing;
+      var path = view.path || (listing && listing.path) || "";
+      var roots = (listing && listing.roots) || [];
+      var entries = (listing && listing.entries) || [];
+
+      return h("div", { className: "drp-overlay", "data-drp-overlay": "1", "data-drp": "picker" },
+        h("div", { className: "drp-ui drp-sheet", role: "dialog", "aria-modal": "true", "aria-label": t("pickTitle") },
+          h("div", { className: "drp-sheet-body drp-picker" },
+            h("header", { className: "drp-picker-head" },
+              h("h2", { className: "drp-picker-title" }, t("pickTitle")),
+              h("button", {
+                type: "button", className: "drp-sheet-x", "aria-label": t("close"),
+                onClick: function () { finishPicker(null); }
+              }, h(Icon, { name: "close", size: 16 }))),
+
+            h("div", { className: "drp-picker-path" },
+              h("button", {
+                type: "button",
+                className: "drp-btn drp-btn-ghost drp-btn-sm",
+                disabled: !listing || !listing.parent,
+                onClick: function () { if (listing && listing.parent) load(listing.parent); }
+              }, h(Icon, { name: "up", size: 14 }), h("span", null, t("pickUp"))),
+              h("code", { className: "drp-picker-cwd", title: path }, path || "…")),
+
+            roots.length > 0
+              ? h("div", { className: "drp-picker-roots" }, roots.map(function (root) {
+                  return h("button", {
+                    key: root.path,
+                    type: "button",
+                    className: "drp-chip drp-chip-root" + (root.path === path ? " is-on" : ""),
+                    onClick: function () { load(root.path); }
+                  }, root.name);
+                }))
+              : null,
+
+            view.error
+              ? h("div", { className: "drp-picker-error" },
+                  h(Icon, { name: "alert", size: 14 }),
+                  h("span", null, view.error),
+                  h("button", { type: "button", className: "drp-btn drp-btn-sm", onClick: function () { load(path); } },
+                    t("retry")))
+              : null,
+
+            h("div", { className: "drp-picker-list", role: "listbox", "aria-label": t("pickTitle") },
+              view.loading && entries.length === 0
+                ? h("div", { className: "drp-picker-empty" }, t("pickLoading"))
+                : entries.length === 0 && !view.error
+                  ? h("div", { className: "drp-picker-empty" }, t("pickEmpty"))
+                  : entries.map(function (entry) {
+                      return h("button", {
+                        key: entry.path,
+                        type: "button",
+                        role: "option",
+                        "aria-selected": false,
+                        className: "drp-picker-row" + (entry.hidden ? " is-hidden" : ""),
+                        title: entry.path,
+                        onClick: function () { load(entry.path); }
+                      },
+                        h(Icon, { name: "folder", size: 16 }),
+                        h("span", { className: "drp-picker-name" }, entry.name),
+                        h(Icon, { name: "chevron", size: 14 }));
+                    })),
+
+            h("footer", { className: "drp-picker-foot" },
+              h("button", { type: "button", className: "drp-btn drp-btn-ghost", onClick: function () { finishPicker(null); } },
+                t("cancel")),
+              h("button", {
+                type: "button",
+                className: "drp-btn drp-btn-primary",
+                disabled: !path || view.loading,
+                onClick: function () { finishPicker(path); }
+              }, t("pickUse"))))));
+    }
+
     // ── overlay sheet (shell.overlay) ────────────────────────────────────────
     // The sidebar entry opens *our own* sheet rather than trying to drive the
     // host's Settings navigation: no DOM guessing, nothing to break on a host
     // update, and the panel is one click away from anywhere in the app.
+    /** One overlay slot, two surfaces: the directory picker wins when it is up. */
+    function PortalOverlayRouter() {
+      var pickerOpen = usePickerOpen();
+      var sheetOpen = useOverlayOpen();
+      var open = pickerOpen || sheetOpen;
+      useEffect(function () {
+        try {
+          if (open) document.documentElement.setAttribute("data-drp-overlay-up", "");
+          else document.documentElement.removeAttribute("data-drp-overlay-up");
+        } catch (e) { /* ignore */ }
+        return function () {
+          try { document.documentElement.removeAttribute("data-drp-overlay-up"); } catch (e2) { /* ignore */ }
+        };
+      }, [open]);
+      if (pickerOpen) return h(DirPicker, { key: "picker" });
+      return h(PortalOverlay, { key: "sheet" });
+    }
+
     function PortalSheet() {
       var sheetRef = useRef(null);
       var closeRef = useRef(null);
@@ -1871,6 +2097,16 @@ window.__ModuleLoader__.load({
         h(Icon, { name: "portal", size: 16 }),
         wide ? h("span", { className: "drp-nav-label" }, t("navLabel")) : null);
     }
+
+    // The app asks for a directory through this global when it exists (see
+    // @deepseek-ai/dsh-client-ui-directory-picker-native). Registering it is the
+    // supported way to replace the native picker — the paths have to resolve on
+    // the host, not on whatever device opened the page.
+    try {
+      globalThis.__DSH_DIRECTORY_PICKER__ = {
+        pick: function () { return openPicker(); }
+      };
+    } catch (e0) { /* ignore */ }
 
     // ── asset injection ──────────────────────────────────────────────────────
     // The mobile layer (assets/mobile.css + mobile.js) belongs to the whole app,
@@ -2025,7 +2261,7 @@ window.__ModuleLoader__.load({
               name: "shell.overlay",
               id: "dsh-remote-portal-sheet",
               order: 95
-            }, PortalOverlay);
+            }, PortalOverlayRouter);
           });
         }
       } catch (e) { /* slot absent: the settings section remains the home */ }
@@ -2048,6 +2284,8 @@ window.__ModuleLoader__.load({
     return { inject: ["slots"], apply: apply };
   }
 });
+
+
 
 
 

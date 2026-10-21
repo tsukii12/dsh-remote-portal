@@ -22,9 +22,10 @@
  */
 import { dirname, extname, join, normalize, sep } from "node:path";
 import { fileURLToPath } from "node:url";
-import { readFile, stat as stat_ } from "node:fs/promises";
+import { readFile, readdir, realpath, stat as stat_ } from "node:fs/promises";
 import { gzipSync } from "node:zlib";
 import { homedir } from "node:os";
+import { statSync } from "node:fs";
 import { createGateway } from "./lib/gateway.mjs";
 
 /** dsh waits for the Web carrier before this row can bind its own listener. */
@@ -32,7 +33,7 @@ export const inject = ["webServer"];
 
 const PLUGIN_NAME = "dsh-remote-portal";
 // Bumped with package.json; also used to invalidate the injected asset URLs.
-const PLUGIN_VERSION = "0.2.4";
+const PLUGIN_VERSION = "0.2.5";
 const PREFIX = "/dsh-remote-portal";
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ASSET_DIR = join(HERE, "assets");
@@ -253,6 +254,85 @@ async function serveAsset(req, res, relative) {
  *
  * @returns {Array<{ kind: "exact"|"prefix", path: string, methods: string[], run: Function }>}
  */
+/** `?path=` from the request; empty means "start at home". */
+function readFsPath(req) {
+  try {
+    const url = new URL(String(req?.url || "/"), "http://portal.invalid");
+    return String(url.searchParams.get("path") || "");
+  } catch {
+    return "";
+  }
+}
+
+/** Roots a user would expect to start from on this host. */
+function fsRoots() {
+  const roots = [{ name: `~ ${homedir()}`, path: homedir() }];
+  if (process.platform === "win32") {
+    for (let c = 65; c <= 90; c += 1) {
+      const drive = `${String.fromCharCode(c)}:\\`;
+      try {
+        if (statSync(drive)) roots.push({ name: drive, path: drive });
+      } catch { /* a drive letter that does not exist */ }
+    }
+  } else {
+    roots.push({ name: "/", path: "/" });
+  }
+  return roots;
+}
+
+/**
+ * One directory level, directories only.
+ *
+ * No recursion, no file contents, a hard cap on entries and a timeout, so a
+ * hanging network share cannot hang the panel.
+ */
+async function listDirectories(rawPath) {
+  const requested = String(rawPath || "").trim();
+  if (requested.includes("\u0000")) {
+    throw Object.assign(new Error("invalid path"), { status: 400, code: "bad-path" });
+  }
+  const target = requested === "" ? homedir() : requested;
+  let resolved;
+  try {
+    resolved = await realpath(target);
+  } catch {
+    throw Object.assign(new Error(`not found: ${target}`), { status: 404, code: "not-found" });
+  }
+  const info = await stat_(resolved).catch(() => null);
+  if (!info || !info.isDirectory()) {
+    throw Object.assign(new Error(`not a directory: ${resolved}`), { status: 400, code: "not-a-directory" });
+  }
+
+  const listing = await Promise.race([
+    readdir(resolved, { withFileTypes: true }),
+    new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 4000)),
+  ]).catch(() => []);
+  const dirs = listing
+    .filter((entry) => entry.isDirectory() || entry.isSymbolicLink())
+    .sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+
+  const entries = [];
+  for (const dirent of dirs.slice(0, 400)) {
+    const full = join(resolved, dirent.name);
+    try {
+      const targetInfo = await stat_(full);
+      if (!targetInfo.isDirectory()) continue; // a symlink to a file is not a choice
+    } catch {
+      continue;
+    }
+    entries.push({ name: dirent.name, path: full, hidden: dirent.name.startsWith(".") });
+  }
+
+  const parent = dirname(resolved);
+  return {
+    path: resolved,
+    parent: parent === resolved ? "" : parent,
+    roots: fsRoots(),
+    entries,
+    truncated: dirs.length > entries.length,
+  };
+}
+
 function routeTable(portal, log) {
   const wrap = (fn) => async (req, res) => {
     try {
@@ -356,6 +436,14 @@ function routeTable(portal, log) {
       // Test hook + panel footer: proves which build is loaded without a reload.
       kind: "exact", path: `${PREFIX}/version`, methods: ["GET"],
       run: wrap(async () => ({ version: portal.version, plugin: PLUGIN_NAME })),
+    },
+    {
+      // Directory browser for the workspace picker. It lists directories on
+      // *this* host, which is the whole point: the app's native picker resolves
+      // paths on whatever device opened the page, and a phone cannot use those.
+      // Names only — no file contents, one level per request.
+      kind: "exact", path: `${PREFIX}/fs`, methods: ["GET"],
+      run: wrap(async (req) => ({ listing: await listDirectories(readFsPath(req)) })),
     },
     {
       // QR is rendered on the host so the browser half stays dependency-free.
@@ -556,6 +644,8 @@ export function apply(ctx, config = {}) {
 
   log.info(`ready — state in ${stateDir}, panel at ${PREFIX}/status`);
 }
+
+
 
 
 

@@ -53,10 +53,8 @@
   // Triggers (not menu items): the "open with…" cluster in the session header.
   // They lead to the host's desktop, which the phone cannot see.
   var NATIVE_ARIA = /(文件资源管理器|更多打开方式|open (in|with)|reveal in|show in)/i;
-  // "添加工作区…" opens the browser's own directory picker, which resolves paths
-  // on the *client* device — the host cannot use them. Until the plugin ships a
-  // server-side browser, the entry is a trap on a phone.
-  var CLIENT_SIDE_PICK = /添加工作区|Add workspace/i;
+  // "添加工作区…" is backed by the plugin's own server-side picker (client.js
+  // registers `__DSH_DIRECTORY_PICKER__`), so the entry stays.
   var NATIVE_LABEL_EN = /(open|show|reveal)\s+(in|with)\s+(finder|explorer|terminal|vs ?code|cursor|default)/i;
   var SHORTCUT_ONLY = /^[⌘⌥⇧⌃⌫←→↑↓,.\s]+$/;
   var VIEWPORT_VALUE = "width=device-width, initial-scale=1, viewport-fit=cover";
@@ -372,7 +370,25 @@
       if (text === "" || text.length > 64) continue;
       var key = item.querySelector("kbd");
       if (key && SHORTCUT_ONLY.test((key.textContent || "").trim())) key.classList.add(HIDDEN_CLASS);
-      if (NATIVE_LABEL.test(text) || NATIVE_LABEL_EN.test(text) || CLIENT_SIDE_PICK.test(text)) item.classList.add(HIDDEN_CLASS);
+      if (NATIVE_LABEL.test(text) || NATIVE_LABEL_EN.test(text)) item.classList.add(HIDDEN_CLASS);
+    }
+
+    // A menu whose entries are all gone is a dead button: hide the "…" that
+    // opens it too, instead of leaving an empty popover behind.
+    var menus = doc().querySelectorAll('[role="menu"]');
+    for (var m = 0; m < menus.length; m++) {
+      var entries = menus[m].querySelectorAll('[role="menuitem"]');
+      if (entries.length === 0) continue;
+      var visible = 0;
+      for (var e = 0; e < entries.length; e++) {
+        if (!entries[e].classList.contains(HIDDEN_CLASS)) visible += 1;
+      }
+      if (visible > 0) continue;
+      menus[m].classList.add(HIDDEN_CLASS);
+      var trigger = null;
+      if (menus[m].id) trigger = doc().querySelector('[aria-controls="' + menus[m].id + '"]');
+      if (!trigger) trigger = doc().querySelector('[aria-haspopup="menu"][aria-expanded="true"]');
+      if (trigger) trigger.classList.add(HIDDEN_CLASS);
     }
   }
 
@@ -567,6 +583,8 @@
     refresh();
   }
 })();
+
+
 
 
 
