@@ -240,9 +240,19 @@ sudo ufw enable
 ## 6. 家里那台电脑：把隧道接上
 
 1. 打开 dsh → 设置 → **远程访问** → 找到「**公网访问**」卡片；
-2. 「中转服务器」填 `tls://dsh.example.com:9443`：
-   - 走 Caddy 的普通 HTTPS 域名时用 `tls://域名:9443`
-   - 在自己信任的内网或测试中可用 `tcp://IP:9443`（不加密，别在公网用）
+2. 「中转服务器」按**服务器上 agent 端口有没有证书**二选一：
+
+   | 服务器怎么起的 | 填什么 |
+   |---|---|
+   | 默认（没有 `--tls-cert` / `--tls-key`） | `tcp://43.153.152.119:9443` |
+   | 带证书（`--tls-cert … --tls-key …`） | `tls://dsh.example.com:9443` |
+
+   > **这是最容易踩的一步。** agent 端口默认是**明文 TCP**；填 `tls://` 会握手失败，
+   > 服务器日志里会写明「sent a TLS ClientHello, but this port serves plain TCP」。
+   > 反过来，端口配了证书却填 `tcp://` 也一样连不上。前端 443 的 HTTPS 与此无关：
+   > 它保护的是**访客**那一跳，agent 端口是另一跳。
+
+   > 明文 `tcp://` 表示「家里 → 服务器」这段可被中间人看到；介意就按第 5 节配证书。
 3. 「隧道令牌」粘贴第 2 步那条；
 4. 点「连接」。状态变成 **已连接**，卡片上出现公网地址与二维码。
 
@@ -253,7 +263,7 @@ sudo ufw enable
   name: dsh-remote-portal
   config:
     tunnel:
-      url: tls://dsh.example.com:9443
+      url: tcp://43.153.152.119:9443    # 配了证书就换成 tls://
       token: 8f3k…你的令牌…
 ```
 

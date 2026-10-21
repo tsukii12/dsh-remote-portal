@@ -3,6 +3,32 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.3.4 — 2026-10-21
+
+### Fixed — the relay endpoint printed the wrong scheme
+`deploy-relay.sh` told the operator to paste **`tls://<ip>:9443`** even though the
+agent port is **plain TCP** unless the relay was started with `--tls-cert` /
+`--tls-key`. Following the printed instruction made every connection fail, and the
+server could only report `frame too large: <garbage>` because it was reading a TLS
+ClientHello as a frame header.
+
+- The script now prints the scheme it actually configured (`tcp://` by default) and
+  explains how to switch to `tls://`.
+- The panel's placeholder was `tls://relay.example.com:9443`; it is now
+  `tcp://203.0.113.10:9443`, the form that works out of the box.
+- `docs/DEPLOY-SERVER.md` has a table for "which scheme do I fill in", states that
+  443's HTTPS protects the *visitor* hop and has nothing to do with the agent hop,
+  and spells out that plain `tcp://` is visible in transit.
+- The relay now names this mistake instead of leaking a framing error: a TLS
+  ClientHello is reported as such, and an HTTP request line is reported as
+  "something between the host and this port is rewriting the connection".
+
+Verified with a hand-built HELLO frame against a live relay: `REPLY 174B type=2`
+(WELCOME) once the transport was a raw TCP stream.
+
+### Tests
+- 76 tests green; the 10 relay tests cover both transports end to end.
+
 ## 0.3.3 — 2026-10-21
 
 ### Changed — the panel is smaller, and only shows what you act on
@@ -479,6 +505,7 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
+
 
 
 

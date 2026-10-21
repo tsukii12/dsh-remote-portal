@@ -31,6 +31,8 @@ DOMAIN=""
 PUBLIC_URL=""
 PREFIX=/__t
 WITH_CADDY=0
+# The agent port is plain TCP unless this script was given a certificate pair.
+AGENT_SCHEME=tcp
 WITH_SYSTEMD=1
 UNINSTALL=0
 TOKEN=""
@@ -246,8 +248,12 @@ cat <<DONE_EOF
 ────────────────────────────────────────────────────────────────────────
 Paste these two values into dsh → 侧栏「远程访问」→ 公网访问:
 
-  中转服务器   tls://$( [ -n "$DOMAIN" ] && printf '%s' "$DOMAIN" || printf '<this-server-ip>' ):$AGENT_PORT
+  中转服务器   $AGENT_SCHEME://$( [ -n "$DOMAIN" ] && printf '%s' "$DOMAIN" || printf '<this-server-ip>' ):$AGENT_PORT
   隧道令牌     $TOKEN
+
+（中转服务器用 tcp:// 还是 tls://，取决于服务器上的 agent 端口有没有配证书。
+  本脚本没有传 --tls-cert/--tls-key，所以是明文 tcp://；要加密就用
+  --tls-cert/--tls-key 指向 PEM 再跑一次，然后把这里改成 tls://。）
 
 Then press 连接. The public address becomes:
 

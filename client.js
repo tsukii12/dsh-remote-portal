@@ -56,7 +56,7 @@ window.__ModuleLoader__.load({
     // prefix. An absolute path here would break remote access through a tunnel.
     var BASE = "./dsh-remote-portal";
   // Must match package.json: it is what busts the browser cache for the layer.
-  var CLIENT_VERSION = "0.3.3";
+  var CLIENT_VERSION = "0.3.4";
     var POLL_MS = 3000;         // status poll while the settings page is visible
     var MIN_PW = 8;             // matches the host's "≥8 recommended" rule (§3)
     var COPY_FEEDBACK_MS = 1600;
@@ -1742,7 +1742,7 @@ window.__ModuleLoader__.load({
                 spellCheck: false,
                 autoComplete: "off",
                 inputMode: "url",
-                placeholder: "tls://relay.example.com:9443",
+                placeholder: "tcp://203.0.113.10:9443",
                 "aria-label": t("tunnelUrlLabel"),
                 onChange: function (e) { patch({ tunnelUrl: e.target.value }); }
               })),
@@ -2358,6 +2358,7 @@ window.__ModuleLoader__.load({
     return { inject: ["slots"], apply: apply };
   }
 });
+
 
 
 

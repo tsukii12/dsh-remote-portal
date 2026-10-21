@@ -95,7 +95,11 @@ function createFrameReader(onFrame, onError) {
       const streamId = buffer.readUInt32BE(1);
       const length = buffer.readUInt32BE(5);
       if (length > MAX_FRAME_BYTES) {
-        onError?.(new Error(`frame too large: ${length}`));
+        const error = new Error(`frame too large: ${length}`);
+        // 0x16 is a TLS handshake record: worth naming, since the usual cause is
+        // a tls:// endpoint pointed at a plaintext port.
+        error.firstByte = type;
+        onError?.(error);
         return;
       }
       if (buffer.length < HEADER_BYTES + length) return;
@@ -115,6 +119,18 @@ function json(payload) {
 }
 
 /** Tunnel ids are derived from the token so they are stable across restarts. */
+/**
+ * Host the public URL points at, used in operator-facing hints.
+ * Derived from --public-url so the message matches what the docs print.
+ */
+function hostOfPublicUrl(value) {
+  try {
+    return new URL(String(value)).hostname || "this-server";
+  } catch {
+    return "this-server";
+  }
+}
+
 function tunnelIdFor(token) {
   return createHash("sha256").update(String(token)).digest("base64url").slice(0, 12);
 }
@@ -326,6 +342,7 @@ function createRelay(config) {
       return socket.write(encodeFrame(type, streamId, payload));
     };
 
+    const publicHost = hostOfPublicUrl(config.publicUrl);
     const reader = createFrameReader((type, streamId, payload) => {
       // `tunnel` is null until HELLO authenticates, so it must not be touched
       // before that branch — doing so used to throw inside the socket handler.
@@ -365,7 +382,28 @@ function createRelay(config) {
       }
       dispatchFromAgent(tunnel, type, streamId, payload);
     }, (error) => {
-      log.warn(`agent protocol error: ${error.message}`);
+      // 0x16 = TLS handshake record type. This port is plain TCP unless the
+      // relay was started with a certificate, so the fix is on the client side:
+      // the dsh panel must use tcp:// here, not tls://.
+      // Wrong *protocol* on this port is by far the most common setup mistake, and
+      // the raw error ("frame too large: <garbage>") points at the wrong layer.
+      // Two shapes cover it: a TLS ClientHello (0x16), and an HTTP request line
+      // (a middlebox or a proxy rewriting the connection).
+      const first = error && Number.isInteger(error.firstByte) ? error.firstByte : -1;
+      if (first === 0x16) {
+        log.warn(
+          `agent from ${socket.remoteAddress || "?"} sent a TLS ClientHello, but this port serves plain TCP.` +
+            ` Use tcp://${publicHost}:${config.agentPort} in the panel, or start the relay with --tls-cert/--tls-key.`
+        );
+      } else if (first >= 0x41 && first <= 0x5a) {
+        log.warn(
+          `agent from ${socket.remoteAddress || "?"} sent what looks like an HTTP request on the agent port` +
+            ` (first byte 0x${first.toString(16)}). Something between the host and this port is rewriting the` +
+            ` connection; the agent must be able to open a raw TCP stream to ${config.agentPort}.`
+        );
+      } else {
+        log.warn(`agent protocol error: ${error.message}`);
+      }
       close("protocol error");
     });
 
