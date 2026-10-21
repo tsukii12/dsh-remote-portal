@@ -3,6 +3,24 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.4.5 — 2026-10-21
+
+### Fixed — the local app lost its "…" menu as well
+0.4.4 only excluded `file://` from the mobile layer. The desktop window can also
+load dsh from a loopback address (`http://127.0.0.1:19887`), and that path was
+still gated on width alone — so a narrow window trimmed the "…" (更多操作) trigger
+and every other native-only entry **on the machine itself**.
+
+The rule is now what it should have been from the start: **the trimming only runs
+for a remote origin.** `activate()` bails out for the desktop shell, and also when
+`isRemoteOrigin()` is false — a phone or a remote browser always arrives over a
+non-loopback address (LAN IP, relay host, domain), while the hosting machine does
+not.
+
+- `?drp=mobile` (persisted in sessionStorage, because the login redirect drops the
+  query) forces the layer on, for tests and for previewing it locally
+- the suite opts in with that flag; 79 tests green
+
 ## 0.4.4 — 2026-10-21
 
 ### Fixed — the desktop app lost its "open in …" actions
@@ -753,6 +771,7 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
+
 
 
 

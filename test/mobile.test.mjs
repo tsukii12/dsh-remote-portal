@@ -90,7 +90,7 @@ async function startInstance() {
   const exe = dshExe();
   if (!exe) throw new Error("the dsh CLI was not found (set DSH_WEB_TEST_URL/DSH_WEB_TEST_TOKEN instead)");
   const port = 19000 + Math.floor(Math.random() * 700);
-  BASE = `http://127.0.0.1:${port}/`;
+  BASE = `http://127.0.0.1:${port}/?drp=mobile`;
   // `dsh.cmd` is a batch shim: Node refuses to spawn it directly on Windows
   // (EINVAL since Node 20.12), so hand the whole command line to the shell.
   const command = `"${exe}" --profile web --port ${port} --no-open`;
@@ -398,7 +398,7 @@ describe("mobile layer against the live dsh web UI", () => {
     if (!existsSync(CHROME)) { skipReason = `no Chrome/Chromium found (looked for ${CHROME}); set CHROME_PATH to enable these tests`; return; }
     if (!existsSync(CDP)) { skipReason = `driver missing at ${CDP}`; return; }
     if (ENV_BASE && ENV_TOKEN) {
-      BASE = ENV_BASE.endsWith("/") ? ENV_BASE : ENV_BASE + "/";
+      BASE = (ENV_BASE.endsWith("/") ? ENV_BASE : ENV_BASE + "/") + "?drp=mobile";
       TOKEN_URL = BASE + "?token=" + ENV_TOKEN;
     } else {
       try {

@@ -488,8 +488,28 @@
     } catch (e) { return false; }
   }
 
+  /**
+   * Explicit opt-in (tests, and previewing the layer from the machine itself).
+   *
+   * Stored in sessionStorage as well: the gate redirects to "/" after login and
+   * the query string does not survive that.
+   */
+  function forcedByQuery() {
+    try {
+      if (/[?&]drp=mobile\b/.test(String(location.search || ""))) {
+        try { sessionStorage.setItem("drp-mobile", "1"); } catch (e) { /* private mode */ }
+        return true;
+      }
+      return sessionStorage.getItem("drp-mobile") === "1";
+    } catch (e) { return false; }
+  }
+
   function activate() {
     if (isDesktopShell()) return;
+    // Not a phone: a loopback origin is the machine hosting dsh. A phone or a
+    // remote browser always arrives over a non-loopback address (LAN IP, relay,
+    // domain), which is exactly what `isRemoteOrigin` tests.
+    if (!forcedByQuery() && !isRemoteOrigin()) return;
     if (state.active) return;
     state.active = true;
     doc().documentElement.setAttribute(MOBILE_ATTR, "");
