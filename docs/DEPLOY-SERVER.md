@@ -61,6 +61,32 @@ sudo ./deploy-relay.sh
 
 也就是说：有反代就用反代（能蹭 80/443 的 HTTPS），没有就直连，**两种都能用**。
 
+### 管理命令：`drp`
+
+安装时脚本会写入 `/usr/local/bin/drp`，之后不用再碰部署目录：
+
+```console
+$ drp
+service     running (enabled: enabled)
+agent port  1.2.3.4:9443 (TLS)
+visitor     0.0.0.0:8080 (direct)
+endpoint    tls://1.2.3.4:9443
+relay       reachable
+tunnel      connected, streams=0
+traffic     in=110B out=0B visitors=2
+public      http://1.2.3.4/__t/ab12cd34ef56/
+
+$ drp url      # 只打印公网地址
+$ drp token    # 只打印隧道令牌
+$ drp restart  # 重启服务
+$ drp log -f   # 跟踪日志
+$ drp config   # 上次保存的配置
+```
+
+### 语言
+
+脚本默认英文。想用中文：`sudo ./deploy-relay.sh --lang zh`，交互模式第一问也可以直接选。
+
 ### 其它用法
 
 ```bash

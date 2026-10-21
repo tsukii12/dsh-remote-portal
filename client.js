@@ -56,7 +56,7 @@ window.__ModuleLoader__.load({
     // prefix. An absolute path here would break remote access through a tunnel.
     var BASE = "./dsh-remote-portal";
   // Must match package.json: it is what busts the browser cache for the layer.
-  var CLIENT_VERSION = "0.3.9";
+  var CLIENT_VERSION = "0.4.0";
     var POLL_MS = 3000;         // status poll while the settings page is visible
     var MIN_PW = 8;             // matches the host's "≥8 recommended" rule (§3)
     var COPY_FEEDBACK_MS = 1600;
@@ -542,6 +542,9 @@ window.__ModuleLoader__.load({
       "width:100%;max-width:216px;margin:0 auto}",
       ".drp-qr-frame:has(.drp-qr-img){background:#fff;border-radius:10px;padding:10px}",
       ".drp-qr-img{display:block;width:100%;max-width:216px;height:auto;aspect-ratio:1/1}",
+      ".drp-card .drp-qr{flex-direction:row;align-items:flex-start;gap:16px;flex-wrap:wrap}",
+      ".drp-card .drp-qr > .drp-qr-frame,.drp-card .drp-qr > .drp-qr-empty{max-width:150px;margin:0}",
+      ".drp-card .drp-qr-note{flex:1 1 160px;min-width:140px;text-align:left;margin:0}",
       ".drp-qr-empty{display:flex;align-items:center;justify-content:center;width:100%;max-width:216px;",
       "aspect-ratio:1/1;padding:16px;border-radius:10px;background:transparent;color:var(--drp-fg3);",
       "border:1px dashed var(--drp-line);font-size:13px;line-height:1.55;text-align:center}",
@@ -658,17 +661,26 @@ window.__ModuleLoader__.load({
       ".drp-page .drp-sub{font-size:15px;line-height:23px;color:var(--drp-fg2)}",
       /* Two columns when the page is wide enough, one when it is not — the same
          behaviour the host's own pages have. */
-      ".drp-page .drp-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:0 56px;align-items:start}",
+      ".drp-page .drp-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 44px;align-items:start}",
+      ".drp-span-2{grid-column:1/-1}",
       "@media (max-width:1080px){.drp-page .drp-grid{grid-template-columns:minmax(0,1fr);gap:0}}",
       ".drp-page .drp-head{padding:0 0 8px}",
       ".drp-page .drp-head-top{justify-content:flex-end}",
-      ".drp-connect{display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:0 40px;align-items:start;border-bottom:0.5px solid var(--drp-line)}",
-      ".drp-connect > .drp-card{border-top:0}",
-      ".drp-connect .drp-qr{gap:10px}",
-      ".drp-connect .drp-qr-frame,.drp-connect .drp-qr-empty{max-width:180px}",
-      ".drp-connect .drp-qr-actions{max-width:180px;flex-direction:column}",
-      ".drp-connect .drp-qr-note{max-width:180px;text-align:center}",
-      "@media (max-width:1080px){.drp-connect{grid-template-columns:minmax(0,1fr)}}",
+      /* Connection row: address left, pairing right, equal height. A flex column
+         per card lets the buttons sit on the baseline instead of leaving a gap. */
+      /* Two strips, not two columns: the address on its own line, then the pairing
+         block laid out horizontally (code, explanation, buttons). Columns of
+         unequal height are what produced the empty space this replaces. */
+      ".drp-connect{display:flex;flex-direction:column;border-bottom:0.5px solid var(--drp-line)}",
+      ".drp-connect > .drp-card{border-top:0;padding:14px 0}",
+      ".drp-connect > .drp-card > .drp-card-head{margin:0 0 8px}",
+      ".drp-connect .drp-qr{flex-direction:row;align-items:center;gap:18px;flex-wrap:wrap}",
+      ".drp-connect .drp-qr-frame,.drp-connect .drp-qr-empty{max-width:112px;margin:0;flex:0 0 auto}",
+      ".drp-connect .drp-qr-empty{aspect-ratio:1/1;padding:8px;font-size:11.5px}",
+      ".drp-connect .drp-qr-note{flex:1 1 220px;min-width:160px;text-align:left;margin:0;font-size:12.5px;line-height:1.5}",
+      ".drp-connect .drp-qr-actions{flex:0 0 auto;flex-direction:row;gap:8px;margin:0;max-width:none}",
+      ".drp-connect .drp-qr-actions .drp-btn{height:32px;padding:0 12px;font-size:12.5px;flex:0 0 auto;white-space:nowrap}",
+      "@media (max-width:760px){.drp-connect .drp-qr-note{flex:1 1 100%}}",
       "@media (max-width:900px){.drp-page{padding:0 20px 32px}.drp-page-head{padding:18px 0 14px}}",
       /* directory picker */
       ".drp-picker-body{display:flex;flex-direction:column;min-height:0;overflow:hidden}",
@@ -1875,8 +1887,9 @@ window.__ModuleLoader__.load({
 
         h("div", { className: "drp-connect" }, addrCard, qrCard),
         h("div", { className: "drp-grid" },
-          h("div", { className: "drp-col" }, accessCard, devicesCard),
-          h("div", { className: "drp-col" }, publicCard)));
+          accessCard,
+          publicCard,
+          h("div", { className: "drp-span-2" }, devicesCard)));
     }
 
     /** One place that turns a failed response into a sentence. */
@@ -2374,6 +2387,7 @@ window.__ModuleLoader__.load({
     return { inject: ["slots"], apply: apply };
   }
 });
+
 
 
 

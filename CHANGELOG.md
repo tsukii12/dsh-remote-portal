@@ -3,6 +3,50 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.4.0 — 2026-10-21
+
+### Changed — the panel is redesigned around density
+The old layout put the address and the pairing code in two columns of very
+different height, which left a large empty block under the address. It is now two
+horizontal strips: the address on its own line, then the pairing block laid out in
+a row (code, explanation, buttons). Nothing is left floating:
+
+- the QR is 112 px in the connect strip and 150 px inside the public card (it was
+  216 px and drove the card height)
+- the actions row is under the address strip, sized to its content
+- below the strips, a two-column grid: 访问控制 | 公网访问, with 已授权设备 spanning
+  both columns so it never sits alone in a half-empty row
+- settings-page type scale kept (15 px titles, 13.5 px labels, 36 px inputs)
+
+### Added — `drp`, a management command
+The installer now writes `/usr/local/bin/drp`:
+
+```console
+$ drp            # service, ports, tunnel state, traffic, public URL
+$ drp url        # just the public URL
+$ drp token      # just the tunnel token
+$ drp start|stop|restart
+$ drp log -f
+$ drp config     # the saved answers
+```
+
+It reads the saved configuration, so it keeps working regardless of where the
+installer lives.
+
+### Changed — the installer speaks English by default
+All prompts and messages are English; `--lang zh` (or the first question in
+interactive mode) switches the whole run to Chinese. Same script, same behaviour.
+
+### Fixed
+- **`--yes` no longer changes the entry point.** It used to answer the proxy
+  question with its default, so an unattended re-run flipped a direct install to
+  nginx. It now keeps what the saved config says.
+- **Direct mode keeps its port consistent**: the public port *is* the listening
+  port, so both are now kept in step instead of drifting apart in the summary.
+
+### Tests
+- 78 tests green.
+
 ## 0.3.9 — 2026-10-21
 
 ### Fixed — the public URL worked only if you typed it exactly right
@@ -636,6 +680,7 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
+
 
 
 
