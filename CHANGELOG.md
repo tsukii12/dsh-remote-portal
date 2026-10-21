@@ -3,6 +3,18 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.4.3 — 2026-10-21
+
+### Removed
+- **"同时退出所有已登录设备"** from the password section, per request. Changing the
+  password no longer touches other sessions — it only replaces the credential.
+  Devices can still be revoked one by one in 已授权设备. The state field, the
+  request key and the two locale strings went with it.
+
+### Tests
+- 78 tests green. (One browser test timed out once under parallel load at 64 s and
+  passed on its own in 10.8 s; a full re-run was green.)
+
 ## 0.4.2 — 2026-10-21
 
 ### Changed — the relay field takes an address and a port, nothing else
@@ -725,6 +737,7 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
+
 
 
 

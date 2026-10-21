@@ -56,7 +56,7 @@ window.__ModuleLoader__.load({
     // prefix. An absolute path here would break remote access through a tunnel.
     var BASE = "./dsh-remote-portal";
   // Must match package.json: it is what busts the browser cache for the layer.
-  var CLIENT_VERSION = "0.4.2";
+  var CLIENT_VERSION = "0.4.3";
     var POLL_MS = 3000;         // status poll while the settings page is visible
     var MIN_PW = 8;             // matches the host's "≥8 recommended" rule (§3)
     var COPY_FEEDBACK_MS = 1600;
@@ -129,7 +129,6 @@ window.__ModuleLoader__.load({
         pwSaving: "保存中…",
         pwOk: "密码已更新",
         pwShort: "密码至少需要 {n} 位",
-        pwRevoke: "同时退出所有已登录设备",
         cardDev: "已授权设备",
         cardPublic: "公网访问",
         pickTitle: "选择工作区目录",
@@ -256,7 +255,6 @@ window.__ModuleLoader__.load({
         pwSaving: "Saving…",
         pwOk: "Password updated",
         pwShort: "Password needs at least {n} characters",
-        pwRevoke: "Sign out every paired device",
         cardDev: "Authorised devices",
         cardPublic: "Public access",
         pickTitle: "Choose a workspace folder",
@@ -1192,8 +1190,7 @@ window.__ModuleLoader__.load({
       dirty: false,
       pwd: "",
       showPwd: false,
-      revokeAll: false,
-      copied: false,
+        copied: false,
       // Diagnostics and the access log are loaded on demand (and once on mount):
       // they change only when something actually happens, so polling them with
       // the status would be pure noise on the loopback.
@@ -1464,10 +1461,10 @@ window.__ModuleLoader__.load({
         if (pw.length < MIN_PW) { flash("err", t("pwShort", { n: MIN_PW })); return; }
         if (st.busy) return;
         patch({ busy: "pw" });
-        api(BASE + "/password", { method: "POST", body: { password: pw, revokeAll: !!st.revokeAll } }).then(function (r) {
+        api(BASE + "/password", { method: "POST", body: { password: pw } }).then(function (r) {
           patch({ busy: "" });
           if (!r.ok) { flash("err", r.error); return; }
-          patch({ pwd: "", showPwd: false, revokeAll: false });
+          patch({ pwd: "", showPwd: false });
           flash("ok", t("pwOk"));
           refreshStatus();
           reloadDevices();
@@ -1696,14 +1693,7 @@ window.__ModuleLoader__.load({
             }, busy === "pw" ? t("pwSaving") : t("pwSave"))),
           st.pwd && String(st.pwd).length < MIN_PW
             ? h("p", { className: "drp-hint drp-hint-warn" }, t("pwShort", { n: MIN_PW }))
-            : null,
-          h("label", { className: "drp-check" },
-            h("input", {
-              type: "checkbox",
-              checked: !!st.revokeAll,
-              onChange: function (e) { patch({ revokeAll: !!e.target.checked }); }
-            }),
-            h("span", null, t("pwRevoke")))));
+            : null));
 
       var deviceRows = devices.map(function (d, i) {
         var id = deviceId(d) || ("idx-" + i);
@@ -2412,6 +2402,7 @@ window.__ModuleLoader__.load({
     return { inject: ["slots"], apply: apply };
   }
 });
+
 
 
 
