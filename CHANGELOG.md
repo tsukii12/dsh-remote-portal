@@ -3,6 +3,40 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.3.8 — 2026-10-21
+
+### Changed — the installer asks, it does not require arguments
+`deploy-relay.sh` is now an interactive installer: run it with **no arguments** and
+it detects the environment, asks six questions (every one has a default, so Enter
+Enter Enter works), and finishes the whole setup. Answers are written to
+`/var/lib/dsh-relay/deploy.conf`, so a re-run offers what is already installed.
+
+### nginx is optional now
+The entry point is chosen from what the machine already has:
+
+| Detected | What the script does |
+|---|---|
+| Caddy | writes a Caddy site (automatic HTTPS) |
+| nginx, including 1Panel's containerised openresty | writes one `server` block for `/__t/` only, validates with the *running* server, then reloads |
+| neither | **no proxy at all** — the relay listens publicly on the chosen port |
+
+Everything is validated before it is applied: a rejected nginx/Caddy config is
+removed instead of reloaded.
+
+### Fixed
+- **Ports drifted on every re-run.** The occupancy check counted the relay's own
+  listener as "in use", so 9443/8080 walked to 9444/8081 and then 9445/8082. The
+  script now reads its own ports out of the unit file and treats them as free.
+- Self-signed certificates are generated for the actual host (SAN = `IP:…` or
+  `DNS:…`), not a fixed name.
+
+Verified on a real host, twice in a row: identical ports both times, TLS on 9443,
+health on 8080, nginx reloaded from inside the container, tunnel `online`, and
+`http://<ip>/__t/<id>/` serving the login page (200).
+
+### Tests
+- 76 tests green.
+
 ## 0.3.7 — 2026-10-21
 
 ### Added
@@ -573,6 +607,7 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
+
 
 
 

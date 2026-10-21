@@ -29,47 +29,50 @@
 
 ---
 
-## 0. 最快的方式：一键脚本
+## 0. 最快的方式：一键脚本（不需要任何参数）
 
-服务器上跑一条命令（Debian/Ubuntu/CentOS 都行，需要 root 和 Node 20+）：
-
-```bash
-# 把插件里的两个文件传上去，然后：
-chmod +x deploy-relay.sh          # 从 git 拉下来就已经是可执行的，解压/复制后可能需要一次
-sudo ./deploy-relay.sh --domain dsh.example.com --caddy
-```
-
-脚本会：检查 Node → 装 relay 到 `/opt/dsh-relay` → 生成令牌 → 写 systemd 单元并启动 →
-（带 `--caddy` 时）给 Caddy 加一个站点并 reload → 打印**要粘贴进面板的两个值**和公网地址。
-
-它**不碰**你已有的服务：自己的端口、自己的 unit、自己的目录，结尾会列出它创建了哪些文件
-以及一键撤销的命令。
-
-没有域名也能用（走 HTTP，自己在前端套 TLS）：
+把 `tools/` 里的 `deploy-relay.sh` 和 `relay.mjs` 传到服务器同一目录，然后：
 
 ```bash
-sudo ./deploy-relay.sh              # 自动探测公网 IP，打印 http://<ip>/__t/<id>/
+chmod +x deploy-relay.sh      # 从 git clone 下来已可执行；解压/复制后可能需要一次
+sudo ./deploy-relay.sh
 ```
 
-想先试不想装服务：
+**不带参数**。脚本会自己探测环境、逐项提问（每项都有默认值，直接回车即可），然后完成全部配置：
 
-```bash
-./deploy-relay.sh --no-systemd --port 18080
-# 它会把东西放在当前目录的 .relay-run / .relay-state，并打印一条前台启动命令
-```
-
-常用参数：
-
-| 参数 | 作用 |
+| 步骤 | 做什么 |
 |---|---|
-| `--domain <域名>` | 生成 `https://<域名>` 的公网地址，配合 `--caddy` 自动签证书 |
-| `--caddy` | 自动写 Caddy 站点（含 `flush_interval -1`，不加缓冲） |
-| `--agent-port <端口>` | 家里那台机器拨入的端口，默认 9443 |
-| `--port <端口>` | 访客端口，默认 8080，**只绑 127.0.0.1**（由反代对外） |
-| `--no-systemd` | 不装服务，只准备文件并打印前台启动命令 |
-| `--uninstall` | 停服务、删 `/opt/dsh-relay`（保留令牌目录并提示） |
+| 1 | 检查 Node ≥ 20、root、systemd |
+| 2 | 探测公网 IP、**已有的 nginx / Caddy / 1Panel**、可用端口 |
+| 3 | 询问：对外主机、中转端口、是否加密、用哪个入口 |
+| 4 | 装 relay、生成令牌、按需生成自签证书 |
+| 5 | 装 systemd 并启动、按需写反代站点（**校验通过才 reload**） |
+| 6 | 自检并打印可粘贴的两行 + 需要放行的端口 |
 
-> 需要 nginx/openresty？脚本会打印一段可直接用的反代配置要点（`proxy_buffering off` + WebSocket）。
+### 一定要装 nginx 吗？不需要
+
+脚本按环境自动选入口，三种都支持，无需你指定：
+
+| 环境 | 脚本的选择 |
+|---|---|
+| 已有 Caddy | 写一个 Caddy 站点，自动签 HTTPS |
+| 已有 nginx（含 1Panel 的容器内 openresty） | 写一个只转发 `/__t/` 的 server 块，先 `nginx -t` 再 reload |
+| 什么都没有 | **不用 nginx**：relay 直接对外监听一个端口，公网地址形如 `http://<ip>:8080/__t/<id>/` |
+
+也就是说：有反代就用反代（能蹭 80/443 的 HTTPS），没有就直连，**两种都能用**。
+
+### 其它用法
+
+```bash
+sudo ./deploy-relay.sh --yes        # 全默认，无人值守（也用于反复重跑）
+sudo ./deploy-relay.sh --uninstall  # 卸载（保留令牌与证书目录并提示）
+```
+
+可选覆盖（一般不需要）：`--host <域名或IP>`、`--agent-port <n>`、`--http-port <n>`、
+`--public-port <n>`、`--no-proxy`（强制直连）、`--plain`（中转端口不加密）。
+
+> **重跑是安全的**：脚本把这次的选择写进 `/var/lib/dsh-relay/deploy.conf`，下次运行沿用；
+> 已装的令牌和证书会复用（**不会**把加密降级）；自己占用的端口不算被占用，端口不会漂移。
 
 下面的 1–6 节是**手动版**：脚本做的事逐步展开，便于你按自己的规范改造。
 
