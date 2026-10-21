@@ -212,6 +212,11 @@ describe("assets/mobile.css — restraint lint", () => {
     const blocks = topLevelBlocks(clean);
     assert.ok(blocks.length > 0, "stylesheet is empty");
     for (const block of blocks) {
+      // One documented exception: the trailing remote-only block. It is gated
+      // on `html[data-drp-remote]` (set only when the page was served to another
+      // device), so it must apply at any width — a 1440px laptop on the LAN
+      // still cannot open a file on the host.
+      if (!block.prelude.startsWith("@") && /\[data-drp-remote\]/.test(block.prelude)) continue;
       assert.match(
         block.prelude,
         /^@media \(max-width: 900px\)( and \(pointer: coarse\))?$/,
@@ -223,6 +228,7 @@ describe("assets/mobile.css — restraint lint", () => {
   test("every rule is gated on html[data-drp-mobile]", () => {
     const offenders = [];
     for (const media of topLevelBlocks(clean)) {
+      if (!media.prelude.startsWith("@") && /\[data-drp-remote\]/.test(media.prelude)) continue;
       // one level deep: selectors and nested @media
       const inner = topLevelBlocks(media.body);
       for (const rule of inner) {

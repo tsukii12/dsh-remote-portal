@@ -54,6 +54,8 @@ window.__ModuleLoader__.load({
     // /__t/<id>/dsh-remote-portal/… when the whole UI is mounted under a relay
     // prefix. An absolute path here would break remote access through a tunnel.
     var BASE = "./dsh-remote-portal";
+  // Must match package.json: it is what busts the browser cache for the layer.
+  var CLIENT_VERSION = "0.2.4";
     var POLL_MS = 3000;         // status poll while the settings page is visible
     var MIN_PW = 8;             // matches the host's "≥8 recommended" rule (§3)
     var COPY_FEEDBACK_MS = 1600;
@@ -66,7 +68,7 @@ window.__ModuleLoader__.load({
     var DICT = {
       zh: {
         section: "远程访问",
-        subtitle: "在手机或另一台电脑上打开同一个 dsh 界面。门户只监听局域网，访问前需要密码或扫码授权。",
+        subtitle: "从其他设备访问此 dsh。需要访问密码或一次性配对码。",
         navLabel: "远程访问",
         navTitle: "打开远程访问设置",
         close: "关闭",
@@ -145,7 +147,7 @@ window.__ModuleLoader__.load({
         tunnelUrlRequired: "请填写中转服务器地址",
         tunnelUrlScheme: "地址需要以 tls:// 或 tcp:// 开头",
         tunnelTokenRequired: "首次连接需要填写隧道令牌",
-        tunnelNote: "在公网服务器上运行 tools/relay.mjs，把它的代理端口和令牌填在这里，人在外面也能打开这个 dsh。",
+        tunnelNote: "中转服务器运行 tools/relay.mjs，填入代理端口与隧道令牌。",
         cardDiag: "连接诊断",
         cardLog: "最近访问",
         diagOk: "可达",
@@ -258,7 +260,7 @@ window.__ModuleLoader__.load({
         tunnelUrlRequired: "Enter the relay endpoint",
         tunnelUrlScheme: "The endpoint must start with tls:// or tcp://",
         tunnelTokenRequired: "A tunnel token is required the first time",
-        tunnelNote: "Run tools/relay.mjs on a public server, then paste its agent port and token here — dsh becomes reachable from anywhere.",
+        tunnelNote: "Run tools/relay.mjs on your server, then enter its agent endpoint and token.",
         cardDiag: "Connectivity",
         cardLog: "Recent access",
         diagOk: "reachable",
@@ -564,13 +566,13 @@ window.__ModuleLoader__.load({
       /* sidebar entry */
       /* Sidebar entry: same rhythm as the app's own footer rows (40 px tall,
          14 px label, 20 px icon box) so it does not look pasted in. */
-      ".drp-nav{display:flex;align-items:center;gap:10px;width:100%;min-height:36px;padding:7px 10px;",
+      ".drp-nav{display:flex;align-items:center;gap:8px;width:calc(100% + 4px);min-height:44px;padding:0 10px 0 6px;margin:0 -2px;",
       "border:0;border-radius:9px;background:transparent;color:var(--drp-fg);font-family:inherit;",
       "font-size:14px;font-weight:500;letter-spacing:.01em;line-height:1.35;text-align:left;cursor:pointer;",
       "transition:background-color .12s ease,color .12s ease}",
       ".drp-nav:hover{background:rgba(127,127,127,.14)}",
       ".drp-nav:focus-visible{outline:2px solid var(--drp-link);outline-offset:1px}",
-      ".drp-nav .drp-ico{flex:none;width:20px;height:20px;color:var(--drp-fg3)}",
+      ".drp-nav .drp-ico{flex:none;width:24px;height:24px;color:var(--drp-fg3)}",
       ".drp-nav:hover .drp-ico{color:var(--drp-fg2)}",
       ".drp-nav-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
 
@@ -593,7 +595,15 @@ window.__ModuleLoader__.load({
       "color:var(--drp-fg2);cursor:pointer}",
       ".drp-x:hover{background:rgba(127,127,127,.14);color:var(--drp-fg)}",
       ".drp-x:focus-visible{outline:2px solid var(--drp-link);outline-offset:2px}",
-      ".drp-sheet-x{position:absolute;top:12px;right:12px;z-index:5;background:var(--drp-card)}",
+      ".drp-sheet-x{position:absolute;top:12px;right:12px;z-index:5;width:36px;height:36px;background:transparent;border:0;display:grid;place-items:center;color:var(--drp-fg2);border-radius:9px}",
+      /* Page, not a card: the panel replaces the view (no floating frame, no
+         transparent scrim showing the chat behind it). */
+      ".drp-overlay{padding:0}",
+      ".drp-sheet{width:100%;max-width:100%;max-height:100vh;max-height:100dvh;border-radius:0;border:0;box-shadow:none;background:var(--dsw-alias-bg-base,var(--drp-card))}",
+      ".drp-sheet-x{top:8px;right:8px}",
+      ".drp-sheet-x:hover{background:var(--drp-soft);color:var(--drp-fg)}",
+      ".drp-sheet-x:focus{outline:none}",
+      ".drp-sheet-x:focus-visible{outline:2px solid var(--drp-link);outline-offset:2px}",
       ".drp-sheet .drp-head-top{padding-right:44px}",
 
       /* Single column when the *panel* is narrow (container query), because the
@@ -618,8 +628,8 @@ window.__ModuleLoader__.load({
       ".drp-card[data-drp='devices']{order:4}",
       "}}",
       "@media (max-width:900px){",
-      /* A phone or a tablet is not a desktop with a narrow window: the panel is
-         a page, edge to edge, not a card floating over the chat. */
+      /* The panel is a page at every width: a settings surface, not a card
+         floating over the conversation. */
       ".drp-overlay{padding:0}",
       ".drp-sheet{width:100%;max-height:100vh;max-height:100dvh;border-radius:0;border:0}",
       ".drp-sheet-body{padding:16px 14px calc(24px + env(safe-area-inset-bottom))}",
@@ -1060,7 +1070,7 @@ window.__ModuleLoader__.load({
       // like. Loaded on mount and on demand — never polled.
       function loadDiagnose() {
         patch({ diagBusy: true });
-        return api(BASE + "/diagnose", { timeout: 10000 }).then(function (r) {
+        return api(BASE + "/diagnose?lang=" + lang(), { timeout: 10000 }).then(function (r) {
           if (r.ok && r.data && r.data.report) {
             patch({ diag: r.data.report, diagBusy: false });
             return;
@@ -1880,7 +1890,7 @@ window.__ModuleLoader__.load({
         try {
           if (document.querySelector('[data-drp="mobile-css"]')) return;
         } catch (e) { /* ignore */ }
-        fetch(BASE + "/assets/mobile.css", { credentials: "same-origin" }).then(function (res) {
+        fetch(BASE + "/assets/mobile.css?v=" + CLIENT_VERSION, { credentials: "same-origin" }).then(function (res) {
           if (!res.ok) return null;
           return res.text();
         }).then(function (css) {
@@ -1899,7 +1909,7 @@ window.__ModuleLoader__.load({
         try {
           if (document.querySelector('[data-drp="mobile-js"]')) return;
         } catch (e) { /* ignore */ }
-        fetch(BASE + "/assets/mobile.js", { credentials: "same-origin" }).then(function (res) {
+        fetch(BASE + "/assets/mobile.js?v=" + CLIENT_VERSION, { credentials: "same-origin" }).then(function (res) {
           if (!res.ok) return null;
           return res.text();
         }).then(function (js) {
@@ -2038,6 +2048,15 @@ window.__ModuleLoader__.load({
     return { inject: ["slots"], apply: apply };
   }
 });
+
+
+
+
+
+
+
+
+
 
 
 

@@ -3,6 +3,39 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.2.4 — 2026-10-21
+
+Second pass on the phone report: the previous build hid native entries only when
+they already existed at mount, so anything opened later (a menu, the file
+preview, the right panel) came back untouched.
+
+### Fixed
+- **Native entries are re-hidden as the UI changes.** The scan ran once when the
+  layer mounted; menus and panels appear later, so "在用文件资源管理器打开",
+  "更多打开方式", "下载 Session 日志" and "反馈" all survived. The layer now
+  rescans (200 ms debounce) on every DOM change and covers the whole shell —
+  verified with the right sidebar open: triggers `hidden`, menu items `hidden`.
+- **Remote pages at any width.** Layout is width-gated, this is not: a 1440 px
+  laptop on the LAN still cannot open a file on the host. `html[data-drp-remote]`
+  is set when the page is served to another device (never for the desktop shell
+  or loopback), and the hidden markers apply there too.
+- **`?v=` on the injected assets.** The layer URL was stable across upgrades, so
+  browsers (Safari especially) kept serving the previous `mobile.js`. Reloading
+  now really loads the new file — every release invalidates it.
+- **The `overflow-wrap: anywhere` blanket is gone.** It wrapped button and switch
+  labels and deformed the settings rows; children can still shrink, wrapping is
+  opt-in again.
+- **Diagnostics speak the panel's language** (`?lang=`), instead of English
+  bullets under a Chinese UI.
+
+### Changed
+- **The panel is a page at every width** (no card, no floating frame), with a
+  36×36 centred close button and terse copy ("从其他设备访问此 dsh。需要访问密码
+  或一次性配对码。") instead of tutorial paragraphs.
+- **Sidebar entry aligned to the app's own rows.** Measured the account row
+  (row x=10, icon x=16/24 px, label x=48, h=44) and matched it exactly, so the
+  entry and the avatar line up instead of sitting 6 px off.
+
 ## 0.2.3 — 2026-10-21
 
 Fixes from a real phone session on the public link.
@@ -227,6 +260,7 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
+
 
 
 

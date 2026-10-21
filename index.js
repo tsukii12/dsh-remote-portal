@@ -31,6 +31,8 @@ import { createGateway } from "./lib/gateway.mjs";
 export const inject = ["webServer"];
 
 const PLUGIN_NAME = "dsh-remote-portal";
+// Bumped with package.json; also used to invalidate the injected asset URLs.
+const PLUGIN_VERSION = "0.2.4";
 const PREFIX = "/dsh-remote-portal";
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ASSET_DIR = join(HERE, "assets");
@@ -128,6 +130,19 @@ async function readJsonBody(req, limit = 64 * 1024) {
     return value;
   } catch (error) {
     throw Object.assign(new Error(`invalid JSON body: ${error?.message || error}`), { status: 400 });
+  }
+}
+
+/** "zh" when the caller asks for it, "en" otherwise. */
+function requestLang(req) {
+  try {
+    const url = new URL(String(req?.url || "/"), "http://portal.invalid");
+    const explicit = String(url.searchParams.get("lang") || "").toLowerCase();
+    if (explicit === "zh" || explicit === "en") return explicit;
+    const accept = String(req?.headers?.["accept-language"] || "").toLowerCase();
+    return accept.includes("zh") ? "zh" : "en";
+  } catch {
+    return "en";
   }
 }
 
@@ -335,7 +350,7 @@ function routeTable(portal, log) {
     {
       kind: "exact", path: `${PREFIX}/diagnose`, methods: ["GET"],
       // `diagnose()` may probe the upstream before answering, hence the await.
-      run: wrap(async () => ({ report: await portal.diagnose() })),
+      run: wrap(async (req) => ({ report: await portal.diagnose({ lang: requestLang(req) }) })),
     },
     {
       // Test hook + panel footer: proves which build is loaded without a reload.
@@ -465,7 +480,7 @@ export function apply(ctx, config = {}) {
       stateDir,
       log,
       pluginDir: HERE,
-      pluginVersion: "0.2.3",
+      pluginVersion: PLUGIN_VERSION,
     });
   } catch (error) {
     // A construction failure must not cost the user their Web UI: report it and
@@ -520,8 +535,10 @@ export function apply(ctx, config = {}) {
         kind: "html",
         placement: "head",
         html:
-          `<link rel="stylesheet" href="${PREFIX}/assets/mobile.css" data-plugin="${PLUGIN_NAME}" data-drp="mobile-css-host">` +
-          `<script defer src="${PREFIX}/assets/mobile.js" data-plugin="${PLUGIN_NAME}" data-drp="mobile-js-host"></script>`,
+          // `?v=` is what makes a reload pick up a new layer: the file URL is
+          // otherwise stable across plugin upgrades and browsers cache it hard.
+          `<link rel="stylesheet" href="${PREFIX}/assets/mobile.css?v=${PLUGIN_VERSION}" data-plugin="${PLUGIN_NAME}" data-drp="mobile-css-host">` +
+          `<script defer src="${PREFIX}/assets/mobile.js?v=${PLUGIN_VERSION}" data-plugin="${PLUGIN_NAME}" data-drp="mobile-js-host"></script>`,
       };
       const listener = (table) => {
         if (Array.isArray(table)) table.push(row);
@@ -539,6 +556,11 @@ export function apply(ctx, config = {}) {
 
   log.info(`ready — state in ${stateDir}, panel at ${PREFIX}/status`);
 }
+
+
+
+
+
 
 
 

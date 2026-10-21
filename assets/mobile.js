@@ -39,6 +39,10 @@
   var QUERY = "(max-width: 900px)";
   var DRAWER_ATTR = "data-drp-drawer";
   var MOBILE_ATTR = "data-drp-mobile";
+  // Set when the page is served to another device (LAN or relay). The layout
+  // layer is width-based; the *remote* adaptations are not: a 1440px laptop at
+  // the office must not be offered "open in Explorer" either.
+  var REMOTE_ATTR = "data-drp-remote";
   var SIDEBAR_ID = "drp-sidebar";
   // Menus in the shipped UI include actions that only make sense in the native
   // shell ("open in Explorer", "open in VS Code", "show in Finder"). Over a
@@ -72,6 +76,7 @@
     historyPatched: false,
     observers: [],
     frame: null,
+    remote: false,
   };
 
   // ---------------------------------------------------------------- helpers
@@ -319,34 +324,55 @@
    * is on screen. Class-based on purpose: the marker is inert the moment the
    * layer is off, so nothing has to be undone item by item.
    */
-  function markNativeActions() {
-    if (!state.active) return;
+  /** False for the desktop shell itself (file://) and for loopback. */
+  function isRemoteOrigin() {
+    try {
+      var p = String(location.protocol || "");
+      if (p === "file:" || p === "chrome-extension:") return false;
+      var h = String(location.hostname || "").toLowerCase();
+      if (h === "" || h === "localhost" || h === "127.0.0.1" || h === "[::1]" || h === "::1") return false;
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 
-    // Header triggers. Scoped to the two header slots so a scan stays cheap.
-    var triggers = doc().querySelectorAll(
-      '[data-slot="conversation.header"] [aria-label], [data-slot="conversation.session.header.utilities"] [aria-label]'
-    );
+  var nativeTimer = 0;
+
+  /** Debounced: the DOM churns while a stream renders; a scan per frame is waste. */
+  function scheduleNativeScan() {
+    if (nativeTimer) return;
+    nativeTimer = setTimeout(function () {
+      nativeTimer = 0;
+      markNativeActions();
+    }, 200);
+  }
+
+  function markNativeActions() {
+    // Active layout (≤900px) or a remote page at any width — either way the
+    // native-only entries must go.
+    if (!state.active && !state.remote) return;
+
+    // Any trigger in the shell: the session header, the document preview tabs,
+    // the file browser, dialogs — "open in Explorer" appears in several of them.
+    var triggers = doc().querySelectorAll("[aria-label]");
     for (var k = 0; k < triggers.length; k++) {
-      if (NATIVE_ARIA.test(String(triggers[k].getAttribute("aria-label") || ""))) {
-        triggers[k].classList.add(HIDDEN_CLASS);
-        var cluster = triggers[k].parentElement;
-        // Both the "main" button and its chevron live in one cluster: hiding only
-        // one leaves a stray arrow.
-        if (cluster && cluster.querySelectorAll("button").length <= 2) cluster.classList.add(HIDDEN_CLASS);
-      }
+      if (!NATIVE_ARIA.test(String(triggers[k].getAttribute("aria-label") || ""))) continue;
+      triggers[k].classList.add(HIDDEN_CLASS);
+      // The "main" button and its chevron share one cluster: hiding only one
+      // leaves a stray arrow behind.
+      var cluster = triggers[k].parentElement;
+      if (cluster && cluster.querySelectorAll("button").length <= 2) cluster.classList.add(HIDDEN_CLASS);
     }
 
-    var surfaces = doc().querySelectorAll('[role="menu"], [role="listbox"], [role="dialog"]');
-    for (var i = 0; i < surfaces.length; i++) {
-      var items = surfaces[i].querySelectorAll('[role="menuitem"], [role="option"], button');
-      for (var j = 0; j < items.length; j++) {
-        var item = items[j];
-        var text = (item.textContent || "").trim();
-        if (text === "" || text.length > 64) continue;
-        var key = item.querySelector("kbd");
-        if (key && SHORTCUT_ONLY.test((key.textContent || "").trim())) key.classList.add(HIDDEN_CLASS);
-        if (NATIVE_LABEL.test(text) || NATIVE_LABEL_EN.test(text) || CLIENT_SIDE_PICK.test(text)) item.classList.add(HIDDEN_CLASS);
-      }
+    var items = doc().querySelectorAll('[role="menuitem"], [role="option"], [role="menu"] button, [role="menubar"] button');
+    for (var j = 0; j < items.length; j++) {
+      var item = items[j];
+      var text = (item.textContent || "").trim();
+      if (text === "" || text.length > 64) continue;
+      var key = item.querySelector("kbd");
+      if (key && SHORTCUT_ONLY.test((key.textContent || "").trim())) key.classList.add(HIDDEN_CLASS);
+      if (NATIVE_LABEL.test(text) || NATIVE_LABEL_EN.test(text) || CLIENT_SIDE_PICK.test(text)) item.classList.add(HIDDEN_CLASS);
     }
   }
 
@@ -495,12 +521,24 @@
         // A modal opened over the app (the host's own dialogs live on <body>,
         // the panel sheet inside the shell overlay): step out of the way.
         if (state.open && overlayIsUp()) close();
-        markNativeActions();
+        if (state.remote || state.active) scheduleNativeScan();
         var frame = frameEl();
         if (!state.active || !frame || !state.button || !state.button.isConnected) refresh();
       });
     });
     observer.observe(host, { childList: true, subtree: true });
+  }
+
+  /**
+   * Remote-host adaptations that do not depend on the viewport width: a laptop
+   * across the LAN is 1440 px wide and still cannot open a file on the host.
+   */
+  function activateRemote() {
+    if (!isRemoteOrigin()) return;
+    state.remote = true;
+    doc().documentElement.setAttribute(REMOTE_ATTR, "");
+    markNativeActions();
+    scheduleNativeScan();
   }
 
   /** True when a modal surface is on screen above the frame. */
@@ -522,12 +560,17 @@
   else if (mql && typeof mql.addListener === "function") mql.addListener(onMediaChange);
 
   watchShell();
+  try { activateRemote(); } catch (_) { /* never fatal */ }
   if (doc().readyState === "loading") {
     doc().addEventListener("DOMContentLoaded", refresh, { once: true });
   } else {
     refresh();
   }
 })();
+
+
+
+
 
 
 

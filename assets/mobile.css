@@ -633,18 +633,18 @@
     min-height: 0;
   }
 
-  /* Long paths, URLs and model names wrap inside the pane instead of widening
-     it — a wider-than-screen row is what clipped both edges of the content. */
+  /* Children may shrink (a wide row used to clip both edges of the pane). Text
+     wrapping stays opt-in per element: applying `overflow-wrap: anywhere` to a
+     button or a switch deforms its label, which is worse than the overflow. */
   html[data-drp-mobile]
     [role="dialog"]:has([data-slot="settings.header"])
     > div
     > * {
     min-width: 0;
-    overflow-wrap: anywhere;
   }
 
-  /* 11.4 Items the mobile layer removes from the menu it belongs to. Set by
-     mobile.js; the class is inert as soon as the layer is off. */
+  /* 11.4 Items the layer removes from the menu it belongs to. Set by mobile.js;
+     the class is inert as soon as the layer is off. */
   html[data-drp-mobile] .drp-hidden {
     display: none;
   }
@@ -682,9 +682,15 @@
   }
 }
 
-
-
-
-
-
-
+/* =====================================================================
+ * Remote-only removals, at any width.
+ *
+ * The layout layer above is width-gated; this block is not. A 1440 px laptop
+ * on the LAN or across a relay is still not the machine that owns the files,
+ * so the native-only entries are hidden there too. `data-drp-remote` is set by
+ * mobile.js only when the page was served to another device (never for the
+ * desktop shell or loopback).
+ * ===================================================================== */
+html[data-drp-remote] .drp-hidden {
+  display: none;
+}
