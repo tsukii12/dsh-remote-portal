@@ -308,6 +308,10 @@ describe("assets/mobile.css — restraint lint", () => {
       const cls = match[1];
       const selector = ruleSelectorAt(clean, match.index).replace(/\s+/g, " ");
       if (cls.startsWith("drp-drawer-")) continue;
+    // The layer also owns one marker class of its own: menu entries it removes
+    // (native-only actions). It is namespaced and asserted here so a future
+    // class from client.js cannot silently reuse the name.
+    if (cls === "drp-hidden") continue;
       assert.ok(
         selector.includes('[data-drp="panel"]'),
         `layer styles client.js class .${cls} outside [data-drp="panel"] (${selector})`,
@@ -573,6 +577,65 @@ describe("mobile layer against the live dsh web UI", () => {
     assert.equal(m.broken.hit, "drp-cover-probe", "the probe must be on top when the rule is defeated");
   });
 
+  test("remote-only refinements: gutters, settings column, ledger pan, native items", async (t) => {
+    if (skipReason) return t.skip(skipReason);
+    const expr = `(async () => {
+      const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+      const seat = document.querySelector('[class*="composerSeat"]');
+      const seatStyle = seat ? getComputedStyle(seat) : null;
+
+      // A ledger pane, as the trajectory view builds it: the app clips it, the
+      // mobile layer has to make it pan.
+      const pane = document.createElement('div');
+      pane.className = 'probe_tablePane';
+      pane.innerHTML = '<div style="width:1600px;height:20px"></div>';
+      document.body.appendChild(pane);
+      await sleep(120);
+      const paneOverflow = getComputedStyle(pane).overflowX;
+      pane.scrollLeft = 200;
+      const paneScrolls = pane.scrollLeft > 0;
+      pane.remove();
+
+      // A menu with a native-only entry: the layer must hide it.
+      const menu = document.createElement('div');
+      menu.setAttribute('role', 'menu');
+      menu.innerHTML = '<button role="menuitem">在资源管理器…等中打开</button>'
+        + '<button role="menuitem" id="drp-probe-keep">重命名</button>';
+      document.body.appendChild(menu);
+      await sleep(260);
+      const nativeItem = menu.querySelector('[role="menuitem"]');
+      const keepItem = menu.querySelector('#drp-probe-keep');
+      const nativeHidden = nativeItem.classList.contains('drp-hidden')
+        && getComputedStyle(nativeItem).display === 'none';
+      const keepVisible = getComputedStyle(keepItem).display !== 'none';
+      menu.remove();
+
+      return JSON.stringify({
+        seatPadLeft: seatStyle ? parseFloat(seatStyle.paddingLeft) : null,
+        seatPadRight: seatStyle ? parseFloat(seatStyle.paddingRight) : null,
+        paneOverflow,
+        paneScrolls,
+        nativeHidden,
+        keepVisible,
+        settingsColumn: (() => {
+          const dlg = document.querySelector('[role="dialog"]');
+          if (!dlg) return null;
+          return getComputedStyle(dlg).flexDirection;
+        })(),
+      });
+    })()`;
+    const { code, stdout, stderr } = await runCdp(["eval", BASE, expr, "--token", TOKEN_URL, "--wait", "4000", "--w", "390", "--h", "844", "--mobile", "--pre-file", join(tmp, "pre.js"), "--settle", "2500"]);
+    assert.equal(code, 0, "eval run failed: " + (stderr || "").slice(-800));
+    const line = stdout.trim().split("\n").filter((l) => l.trim().startsWith("{")).pop();
+    assert.ok(line, "no measurement returned: " + stdout.slice(-400));
+    const m = JSON.parse(line);
+    assert.ok(m.seatPadLeft >= 8 && m.seatPadRight >= 8, `composer needs side gutters (got ${m.seatPadLeft}/${m.seatPadRight})`);
+    assert.equal(m.paneOverflow, "auto", "the ledger pane must pan horizontally");
+    assert.equal(m.paneScrolls, true, "the ledger pane must actually scroll");
+    assert.equal(m.nativeHidden, true, "a native-only menu entry must be hidden");
+    assert.equal(m.keepVisible, true, "other menu entries must stay");
+  });
+
   test("activates at 390px and exposes a working drawer API", async (t) => {
     if (skipReason) return t.skip(skipReason);
     const expr = `(async () => {
@@ -663,6 +726,8 @@ describe("mobile layer against the live dsh web UI", () => {
     }
   });
 });
+
+
 
 
 

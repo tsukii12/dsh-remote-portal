@@ -307,18 +307,21 @@ try {
     // can only be answered by an input-level gesture.
     const gx = Number(args.x || Math.round(width / 2));
     const gy = Number(args.y || Math.round(height / 2));
-    const dy = Number(args.dy || 400);
+    const dy = Number(args.dy || 0);
+    const dx = Number(args.dx || (dy === 0 ? 400 : 0));
     const findScroller = `(() => {
       const probe = (el) => {
         const out = [];
         for (let n = el; n && n !== document.documentElement; n = n.parentElement) {
-          if (n.scrollHeight - n.clientHeight > 8) {
+          if (n.scrollHeight - n.clientHeight > 8 || n.scrollWidth - n.clientWidth > 8) {
             out.push({
               tag: n.tagName.toLowerCase(),
               slot: n.getAttribute("data-slot") || "",
               cls: String(n.className || "").slice(0, 28),
               sh: n.scrollHeight, ch: n.clientHeight, st: n.scrollTop,
+              sw: n.scrollWidth, cw: n.clientWidth, sl: n.scrollLeft,
               oy: getComputedStyle(n).overflowY,
+              ox: getComputedStyle(n).overflowX,
               touchAction: getComputedStyle(n).touchAction,
             });
           }
@@ -340,11 +343,14 @@ try {
 
     let method = "synthesizeScrollGesture";
     await cdp.send("Input.synthesizeScrollGesture", {
-      x: gx, y: gy, yDistance: -dy, speed: 800, gestureSourceType: "touch", preventFling: true,
+      x: gx, y: gy, xDistance: -dx, yDistance: -dy, speed: 800, gestureSourceType: "touch", preventFling: true,
     }, sessionId);
     await sleep(400);
     let after = await evaluate(findScroller);
-    let moved = (before.chain[0]?.st ?? 0) !== (after.chain[0]?.st ?? 0) || before.doc.st !== after.doc.st;
+    const movedNow = (b, a) => (b.chain[0]?.st ?? 0) !== (a.chain[0]?.st ?? 0)
+      || (b.chain[0]?.sl ?? 0) !== (a.chain[0]?.sl ?? 0)
+      || b.doc.st !== a.doc.st;
+    let moved = movedNow(before, after);
 
     if (!moved) {
       // Fallback: a raw touch sequence (start → N moves → end), which is what a
@@ -357,14 +363,14 @@ try {
       for (let i = 1; i <= steps; i++) {
         await cdp.send("Input.dispatchTouchEvent", {
           type: "touchMove",
-          touchPoints: [{ x: gx, y: gy + Math.round((dy * i) / steps) }],
+          touchPoints: [{ x: gx + Math.round((dx * i) / steps), y: gy + Math.round((dy * i) / steps) }],
         }, sessionId);
         await sleep(16);
       }
       await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] }, sessionId);
       await sleep(400);
       after = await evaluate(findScroller);
-      moved = (before.chain[0]?.st ?? 0) !== (after.chain[0]?.st ?? 0) || before.doc.st !== after.doc.st;
+      moved = movedNow(before, after);
     }
 
     console.log(JSON.stringify({
@@ -387,6 +393,8 @@ try {
   cleanup();
   setTimeout(() => process.exit(process.exitCode || 0), 100);
 }
+
+
 
 
 

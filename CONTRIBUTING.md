@@ -21,7 +21,7 @@ change is “does it keep the guarantees below intact?”.
 
 ```bash
 git clone <repo> dsh-remote-portal && cd dsh-remote-portal
-node --test                                  # 73 tests, ~56 s, no network needed
+node --test                                  # 74 tests, ~75 s, no network needed
 node --test test/host.test.mjs               # one suite
 ```
 
@@ -61,6 +61,7 @@ The panel lives at **Settings → 远程访问** (or append `?panel=1`).
 * Update `CHANGELOG.md` under *Unreleased*.
 * Say which environment you verified on (OS, dsh version, profile).
 * If user-visible, add or update a screenshot under `docs/screenshots/`.
+
 
 
 

@@ -3,6 +3,38 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.2.2 — 2026-10-21
+
+Remote-only UI pass. The layer stops being "the desktop UI at phone width" and
+adapts the surfaces that assume a native shell, a mouse, or a 1400 px window.
+Everything is scoped to `html[data-drp-mobile]`, so the desktop window is
+untouched.
+
+### Adapted for remote use
+- **Native-only actions are removed from menus.** "在资源管理器…等中打开",
+  "Open in VS Code", "打开配置文件" and friends act on the host's desktop, which
+  the phone cannot see; they are hidden from the menu they appear in (class-based
+  marker, inert as soon as the layer is off). Keyboard hints (`⌘,` …) go with
+  them.
+- **Composer gutters** — the composer card was flush with both screen edges; it
+  now breathes with 12 px (plus safe-area) on each side.
+- **The ledger/轨迹 view pans.** Its table pane was `overflow-x: hidden` with
+  content 2220 px wide inside a 388 px viewport: the timeline was clipped with no
+  way to reach the rest of it. The pane scrolls horizontally now.
+- **Settings is one column.** The two-pane dialog (188 px nav + 178 px body)
+  squeezed labels into a one-character-wide column; the sections are a horizontal
+  strip on top and the body gets the full width.
+- **Tapping a session closes the drawer.** Folder rows still only expand. The
+  listener runs on `document` in the capture phase, because React's synthetic
+  handlers live on the root and a `stopPropagation()` there would hide the click.
+
+### Tests
+- New live-page test asserts the composer gutters, the pane's horizontal
+  scrolling, and that a native-only menu entry is hidden while its neighbours
+  stay — with an injected menu, since that label only appears in a session that
+  produced files.
+- 74 tests (lint included), ~75 s.
+
 ## 0.2.1 — 2026-10-21
 
 Mobile hotfix, reported from a phone on the public link.
@@ -158,6 +190,8 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
+
+
 
 
 

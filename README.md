@@ -8,7 +8,7 @@
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-0f1115.svg)](LICENSE)
 [![dsh](https://img.shields.io/badge/dsh-0.2.x-4176e6.svg)](#兼容性)
-[![tests](https://img.shields.io/badge/tests-73%20passing-22c55e.svg)](#测试)
+[![tests](https://img.shields.io/badge/tests-74%20passing-22c55e.svg)](#测试)
 [![runtime deps](https://img.shields.io/badge/runtime%20deps-0-22c55e.svg)](#)
 
 [功能](#功能) · [快速开始](#快速开始) · [公网访问](#公网访问人不在局域网) · [配置](#配置) · [安全](#安全模型) · [设计](ARCHITECTURE.md) · [开发](#开发)
@@ -45,6 +45,7 @@ DeepSeek Harness 默认只监听 `127.0.0.1`，浏览器用一个**每次启动�
 | **扫码配对** | 面板里点「扫码配对」，二维码 180 秒有效、一次即失效，扫完直接进，不用在手机上打密码 |
 | **密码 + 设备管理** | `scrypt` 加盐、恒定时间比较、连错锁定；每个登录过的设备可单独「移除」 |
 | **移动端重排** | 官方界面一条响应式规则都没有；插件补上：侧栏变抽屉、对话框不再溢出、输入框不被键盘顶飞、安全区适配 |
+| **远程专属裁剪** | 手机看不到你桌面的文件管理器：`在资源管理器…等中打开`、`打开配置文件`、快捷键提示这类只在原生壳里有意义的入口会被隐藏；设置改成单列；轨迹视图可横向拖动；输入框留出左右边距 |
 | **原生设置面板** | 就在 dsh 的「设置 → 远程访问」里：状态、地址、二维码、开关、端口、密码、设备、诊断、访问记录 |
 | **会话自愈** | 远程浏览器不需要知道 dsh 的启动令牌；dsh 重启后手机不掉线，Cookie 失效会自动重换 |
 | **零依赖** | 只用 Node 内置模块；没有构建步骤，装完即用 |
@@ -174,11 +175,11 @@ dsh.example.com { reverse_proxy 127.0.0.1:8080 { flush_interval -1 } }
 
 ```console
 $ node --test
-ℹ tests 73
-ℹ pass 73
+ℹ tests 74
+ℹ pass 74
 ℹ fail 0
 ℹ skipped 0
-ℹ duration_ms ~56000
+ℹ duration_ms ~75000
 ```
 
 | 套件 | 覆盖 |
@@ -238,6 +239,9 @@ Issue / PR 都欢迎。改动前请先跑 `node --test`；网络路径上的行�
 ## 许可
 
 [MIT](LICENSE)
+
+
+
 
 
 

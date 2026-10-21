@@ -40,6 +40,14 @@
   var DRAWER_ATTR = "data-drp-drawer";
   var MOBILE_ATTR = "data-drp-mobile";
   var SIDEBAR_ID = "drp-sidebar";
+  // Menus in the shipped UI include actions that only make sense in the native
+  // shell ("open in Explorer", "open in VS Code", "show in Finder"). Over a
+  // remote link they either do nothing or open something only the host can see,
+  // so the mobile layer removes them from the menu it is in.
+  var HIDDEN_CLASS = "drp-hidden";
+  var NATIVE_LABEL = /(资源管理器|文件管理器|访达|Finder|Explorer|终端|Terminal|VS ?Code|Cursor|系统默认应用|默认应用|打开配置文件|打开数据目录|打开日志)/;
+  var NATIVE_LABEL_EN = /(open|show|reveal)\s+(in|with)\s+(finder|explorer|terminal|vs ?code|cursor|default)/i;
+  var SHORTCUT_ONLY = /^[⌘⌥⇧⌃⌫←→↑↓,.\s]+$/;
   var VIEWPORT_VALUE = "width=device-width, initial-scale=1, viewport-fit=cover";
 
   var mql = typeof window.matchMedia === "function" ? window.matchMedia(QUERY) : null;
@@ -56,6 +64,7 @@
     routeHooked: false,
     historyPatched: false,
     observers: [],
+    frame: null,
   };
 
   // ---------------------------------------------------------------- helpers
@@ -298,6 +307,45 @@
     }
   }
 
+  /**
+   * Hide native-only entries and keyboard hints inside whatever menu or dialog
+   * is on screen. Class-based on purpose: the marker is inert the moment the
+   * layer is off, so nothing has to be undone item by item.
+   */
+  function markNativeActions() {
+    if (!state.active) return;
+    var surfaces = doc().querySelectorAll('[role="menu"], [role="listbox"], [role="dialog"]');
+    for (var i = 0; i < surfaces.length; i++) {
+      var items = surfaces[i].querySelectorAll('[role="menuitem"], [role="option"], button');
+      for (var j = 0; j < items.length; j++) {
+        var item = items[j];
+        var text = (item.textContent || "").trim();
+        if (text === "" || text.length > 64) continue;
+        var key = item.querySelector("kbd");
+        if (key && SHORTCUT_ONLY.test((key.textContent || "").trim())) key.classList.add(HIDDEN_CLASS);
+        if (NATIVE_LABEL.test(text) || NATIVE_LABEL_EN.test(text)) item.classList.add(HIDDEN_CLASS);
+      }
+    }
+  }
+
+  /**
+   * A tap inside the drawer that opens a session should also close the drawer —
+   * otherwise the conversation stays behind the panel and looks frozen.
+   * Folder rows (`aria-expanded`) only expand, so they leave it open.
+   */
+  function onFrameClick(event) {
+    if (!state.open) return;
+    var target = event.target;
+    if (!target || typeof target.closest !== "function") return;
+    if (target.closest('[aria-haspopup], input, textarea, [contenteditable="true"]')) return;
+    var row = target.closest('[data-slot="sidebar"] [role="treeitem"], [data-slot="sidebar"] [role="option"]');
+    var link = target.closest('[data-slot="sidebar"] a[href]');
+    if (!row && !link) return;
+    if (row && row.hasAttribute("aria-expanded") && !row.hasAttribute("aria-selected")) return;
+    // Let the host handle the click (and start the navigation) first.
+    setTimeout(function () { if (state.open) close(); }, 120);
+  }
+
   function mount() {
     var frame = frameEl();
     if (!frame) return false;
@@ -305,6 +353,11 @@
     state.scrim = buildScrim();
     frame.appendChild(state.scrim);
     frame.appendChild(state.button);
+    state.frame = frame;
+    // Document-level capture: React's synthetic handlers live on the root, and a
+    // `stopPropagation()` there would hide the click from a listener on the frame.
+    doc().addEventListener("click", onFrameClick, true);
+    markNativeActions();
 
     // `aria-controls` needs a stable id on the drawer column.
     var column = columnOf("sidebar");
@@ -332,6 +385,10 @@
   function unmount() {
     clearTimeout(state.collapseTimer);
     state.collapseTimer = 0;
+    if (state.frame) {
+      doc().removeEventListener("click", onFrameClick, true);
+      state.frame = null;
+    }
     if (state.button) {
       state.button.removeEventListener("click", onButtonClick);
       if (state.button.parentNode) state.button.parentNode.removeChild(state.button);
@@ -416,6 +473,7 @@
         // A modal opened over the app (the host's own dialogs live on <body>,
         // the panel sheet inside the shell overlay): step out of the way.
         if (state.open && overlayIsUp()) close();
+        markNativeActions();
         var frame = frameEl();
         if (!state.active || !frame || !state.button || !state.button.isConnected) refresh();
       });
@@ -448,3 +506,7 @@
     refresh();
   }
 })();
+
+
+
+

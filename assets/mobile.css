@@ -561,7 +561,86 @@
   }
 
   /* =====================================================================
-   * 11. Reduced motion — the drawer snaps instead of sliding
+   * 11. Remote-only refinements
+   *
+   * A phone is not a small desktop: some of the shipped UI assumes a native
+   * shell (file managers, shortcut hints, side-by-side settings panes) or a
+   * mouse (hover-only scrollers). Everything here is scoped to the mobile layer
+   * so the desktop window keeps its own behaviour.
+   * ===================================================================== */
+
+  /* 11.1 Composer gutters — the composer card was flush with both edges. */
+  html[data-drp-mobile] [class*="composerSeat"] {
+    padding-left: max(12px, var(--drp-safe-left));
+    padding-right: max(12px, var(--drp-safe-right));
+    box-sizing: border-box;
+  }
+
+  /* 11.2 The ledger/trajectory view is a wide table. On the desktop it clips and
+     you pan with a trackpad; on a phone the clip left no way to see the rest of
+     the timeline, so the pane itself pans now. */
+  html[data-drp-mobile] [class*="tablePane"] {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* 11.3 Settings: the two-pane layout (nav 188px + body 178px) squeezed the
+     labels into a one-character-wide column. One column, sections as a
+     horizontal strip, body full width. */
+  html[data-drp-mobile] [role="dialog"]:has([data-slot="settings.header"]) {
+    flex-direction: column;
+  }
+
+  html[data-drp-mobile] [role="dialog"]:has([data-slot="settings.header"]) > nav {
+    width: 100%;
+    flex: 0 0 auto;
+    border-right: 0;
+    border-bottom: 0.5px solid var(--dsw-alias-border-l3);
+  }
+
+  html[data-drp-mobile]
+    [role="dialog"]:has([data-slot="settings.header"])
+    > nav
+    > div:last-child {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    max-height: none;
+    padding: 2px 0 8px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  html[data-drp-mobile]
+    [role="dialog"]:has([data-slot="settings.header"])
+    > nav
+    > div:last-child
+    > button {
+    flex: 0 0 auto;
+    width: auto;
+    min-height: 38px;
+    padding: 0 12px;
+    white-space: nowrap;
+  }
+
+  html[data-drp-mobile] [role="dialog"]:has([data-slot="settings.header"]) > div {
+    width: 100%;
+    min-width: 0;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  /* 11.4 Items the mobile layer removes from the menu it belongs to. Set by
+     mobile.js; the class is inert as soon as the layer is off. */
+  html[data-drp-mobile] .drp-hidden {
+    display: none;
+  }
+
+  /* =====================================================================
+   * 12. Reduced motion — the drawer snaps instead of sliding
    * ===================================================================== */
   @media (prefers-reduced-motion: reduce) {
     html[data-drp-mobile][data-drp-drawer="open"]
@@ -592,6 +671,8 @@
     min-height: 40px;
   }
 }
+
+
 
 
 
