@@ -3,6 +3,31 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.4.2 — 2026-10-21
+
+### Changed — the relay field takes an address and a port, nothing else
+Typing a scheme was busywork: you had to know whether the server speaks TLS, and
+getting it wrong produced `ECONNRESET` with no explanation. The field now accepts
+`203.0.113.10:9443` (or a hostname) and the transport is detected on connect:
+
+- new `auto://` transport: try TLS, and if the handshake fails, drop to plain TCP
+  and remember it, so the retry succeeds without the user seeing an error
+- the gateway normalises a bare `host:port` to `auto://` and rejects nonsense with
+  a readable message instead of a silent default
+- `createTunnel` accepts a bare address too, so programmatic callers behave the same
+
+Verified against the live relay: `43.153.152.119:9443` connected over TLS and came
+online with no scheme typed.
+
+### Changed — gateway status text is translated in the panel
+`upstream 127.0.0.1:19887 did not answer` is a log line, not a sentence. The
+gateway stays language-neutral (it feeds logs and JSON too); the panel now renders
+it as "连不上本机 dsh（127.0.0.1:19887）。它可能没在运行，或端口变了。" (or the
+English equivalent), and translates "the local listener is not running" as well.
+
+### Tests
+- 78 tests green.
+
 ## 0.4.1 — 2026-10-21
 
 ### Fixed — the bare IP started showing the panel's default site
@@ -700,6 +725,7 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
+
 
 
 

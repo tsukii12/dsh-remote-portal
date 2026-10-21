@@ -56,7 +56,7 @@ window.__ModuleLoader__.load({
     // prefix. An absolute path here would break remote access through a tunnel.
     var BASE = "./dsh-remote-portal";
   // Must match package.json: it is what busts the browser cache for the layer.
-  var CLIENT_VERSION = "0.4.1";
+  var CLIENT_VERSION = "0.4.2";
     var POLL_MS = 3000;         // status poll while the settings page is visible
     var MIN_PW = 8;             // matches the host's "≥8 recommended" rule (§3)
     var COPY_FEEDBACK_MS = 1600;
@@ -159,7 +159,7 @@ window.__ModuleLoader__.load({
         tunnelSaved: "已保存，正在连接中转服务器…",
         tunnelCleared: "已断开公网访问",
         tunnelUrlRequired: "请填写中转服务器地址",
-        tunnelUrlScheme: "地址需要以 tls:// 或 tcp:// 开头",
+        tunnelUrlScheme: "填写地址和端口，例如 203.0.113.10:9443",
         tunnelInsecure: "信任自签名证书（跳过证书校验）",
         tunnelTokenRequired: "首次连接需要填写隧道令牌",
         tunnelNote: "中转服务器运行 tools/relay.mjs，填入代理端口与隧道令牌。",
@@ -286,7 +286,7 @@ window.__ModuleLoader__.load({
         tunnelSaved: "Saved — dialing the relay…",
         tunnelCleared: "Public access removed",
         tunnelUrlRequired: "Enter the relay endpoint",
-        tunnelUrlScheme: "The endpoint must start with tls:// or tcp://",
+        tunnelUrlScheme: "Enter an address and port, for example 203.0.113.10:9443",
         tunnelInsecure: "Trust a self-signed certificate (skip verification)",
         tunnelTokenRequired: "A tunnel token is required the first time",
         tunnelNote: "Run tools/relay.mjs on your server, then enter its agent endpoint and token.",
@@ -1057,6 +1057,27 @@ window.__ModuleLoader__.load({
       } catch (e) { /* layout is a nicety: never break the panel over it */ }
     };
 
+    /**
+     * Turn a gateway status string into a sentence.
+     *
+     * The gateway is language-neutral on purpose (it also feeds logs and the JSON
+     * API), so the translations live here, next to the strings they replace.
+     */
+    function friendlyGateway(message) {
+      const text = String(message || "").trim();
+      if (text === "") return "";
+      const upstream = /^upstream (\S+) did not answer$/i.exec(text);
+      if (upstream) {
+        return lang() === "zh"
+          ? `连不上本机 dsh（${upstream[1]}）。它可能没在运行，或端口变了。`
+          : `Cannot reach dsh at ${upstream[1]} — it may not be running, or the port changed.`;
+      }
+      if (/^the local listener is not running$/i.test(text)) {
+        return lang() === "zh" ? "门户未在监听：先设置访问密码并启用。" : "The portal is not listening — set a password and enable it.";
+      }
+      return text;
+    }
+
     // ── directory picker store ───────────────────────────────────────────────
     // The app's "add workspace" flow asks for a path. Its native picker resolves
     // paths on the *client* device, which a phone cannot use, so this plugin
@@ -1370,7 +1391,11 @@ window.__ModuleLoader__.load({
         var url = String(st.tunnelUrl || "").trim();
         var token = String(st.tunnelToken || "").trim();
         if (url === "") { flash("err", t("tunnelUrlRequired")); return; }
-        if (!/^(tls|tcp|wss|https):\/\//i.test(url)) { flash("err", t("tunnelUrlScheme")); return; }
+        // Accept a bare address:port — the transport is detected on connect.
+    if (!/^([a-z][a-z0-9+.-]*:\/\/)?(\[[0-9a-fA-F:]+\]|[A-Za-z0-9._~-]+)(:\d{1,5})?$/i.test(url)) {
+      flash("err", t("tunnelUrlScheme"));
+      return;
+    }
         if (token === "" && !(st.status && st.status.public && st.status.public.configured)) {
           flash("err", t("tunnelTokenRequired"));
           return;
@@ -1505,7 +1530,7 @@ window.__ModuleLoader__.load({
           h(Icon, { name: "alert", size: 14 }),
           h("div", null,
             h("div", null, t("statusErrorTitle")),
-            h("div", { className: "drp-alert-sub" }, friendlyError(status.lastError)))));
+            h("div", { className: "drp-alert-sub" }, friendlyGateway(status.lastError)))));
       }
       if (notice) {
         alerts.push(h("div", {
@@ -1750,7 +1775,7 @@ window.__ModuleLoader__.load({
               }))
           : null,
         pub.lastError
-          ? h("p", { className: "drp-hint drp-hint-warn" }, String(pub.lastError))
+          ? h("p", { className: "drp-hint drp-hint-warn" }, friendlyGateway(pub.lastError))
           : null,
         h("div", { className: "drp-sub" },
           h("div", { className: "drp-form" },
@@ -1763,7 +1788,7 @@ window.__ModuleLoader__.load({
                 spellCheck: false,
                 autoComplete: "off",
                 inputMode: "url",
-                placeholder: "tcp://203.0.113.10:9443",
+                placeholder: "203.0.113.10:9443",
                 "aria-label": t("tunnelUrlLabel"),
                 onChange: function (e) { patch({ tunnelUrl: e.target.value }); }
               })),
@@ -2387,6 +2412,7 @@ window.__ModuleLoader__.load({
     return { inject: ["slots"], apply: apply };
   }
 });
+
 
 
 
