@@ -63,24 +63,13 @@
     "qr-pairing"
   ],
   "license": "MIT",
-  "author": "dsh-remote-portal contributors"
+  "author": "tsukii12",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tsukii12/dsh-remote-portal.git"
+  },
+  "homepage": "https://github.com/tsukii12/dsh-remote-portal#readme",
+  "bugs": {
+    "url": "https://github.com/tsukii12/dsh-remote-portal/issues"
+  }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
