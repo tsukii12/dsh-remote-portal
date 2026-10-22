@@ -3,6 +3,31 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.4.8 — 2026-10-22
+
+### Removed — the layer no longer hides anything
+The "hide host-only entries" trimming is **gone**, not disabled by a condition.
+
+It existed to keep a phone from showing "在资源管理器/VS Code 中打开", the "…" menu and
+similar actions that only work on the host's desktop. It kept firing on the machine
+itself instead — first on narrow windows, then on the machine's own LAN address, and
+each fix only moved the failure. Taking working controls away from the person using
+dsh locally is worse than a phone showing an entry that does nothing, so the whole
+mechanism is removed:
+
+- `markNativeActions()` returns immediately; nothing gets the `drp-hidden` class
+- the `.drp-hidden` rules are deleted from the stylesheet, so even a cached older
+  script cannot hide a node
+- the mobile layer keeps only what cannot hurt: layout, the drawer, and the panel
+- the test that asserted "a native-only entry must be hidden" now asserts the
+  opposite, with the reason in the message
+
+Verified: `hiddenNodes: 0` at both 1440 px and 700 px on a live instance, and the
+layer stays off on loopback.
+
+### Tests
+- 79 tests green.
+
 ## 0.4.7 — 2026-10-22
 
 ### Fixed — "Add workspace" did nothing
@@ -822,6 +847,7 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
+
 
 
 

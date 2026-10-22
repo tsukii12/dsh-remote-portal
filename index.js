@@ -33,7 +33,7 @@ export const inject = ["webServer"];
 
 const PLUGIN_NAME = "dsh-remote-portal";
 // Bumped with package.json; also used to invalidate the injected asset URLs.
-const PLUGIN_VERSION = "0.4.7";
+const PLUGIN_VERSION = "0.4.8";
 const PREFIX = "/dsh-remote-portal";
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ASSET_DIR = join(HERE, "assets");
@@ -716,6 +716,7 @@ export function apply(ctx, config = {}) {
 
   log.info(`ready — state in ${stateDir}, panel at ${PREFIX}/status`);
 }
+
 
 
 

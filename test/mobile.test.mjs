@@ -651,7 +651,7 @@ describe("mobile layer against the live dsh web UI", () => {
     assert.ok(m.seatPadLeft >= 8 && m.seatPadRight >= 8, `composer needs side gutters (got ${m.seatPadLeft}/${m.seatPadRight})`);
     assert.equal(m.paneOverflow, "auto", "the ledger pane must pan horizontally");
     assert.equal(m.paneScrolls, true, "the ledger pane must actually scroll");
-    assert.equal(m.nativeHidden, true, "a native-only menu entry must be hidden");
+    assert.equal(m.nativeHidden, false, "the layer must not hide host-only entries (it used to, and it broke the desktop app)");
     assert.equal(m.keepVisible, true, "other menu entries must stay");
   });
 

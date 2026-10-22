@@ -652,12 +652,6 @@
     display: none;
   }
 
-  /* 11.4 Items the layer removes from the menu it belongs to. Set by mobile.js;
-     the class is inert as soon as the layer is off. */
-  html[data-drp-mobile] .drp-hidden {
-    display: none;
-  }
-
   /* =====================================================================
    * 12. Reduced motion — the drawer snaps instead of sliding
    * ===================================================================== */

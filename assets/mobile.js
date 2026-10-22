@@ -363,50 +363,20 @@
     }, 200);
   }
 
+  /**
+   * Disabled on purpose.
+   *
+   * This used to hide entries that only work on the host's desktop ("open in
+   * Explorer", the "…" menu, "download session log"). It kept mis-firing on the
+   * machine itself — the entries vanished in the desktop app and in a browser on
+   * the same computer — and no amount of origin detection made it reliable.
+   *
+   * A phone now sees those entries and tapping one does nothing. That is a much
+   * smaller problem than taking working controls away from the person using dsh
+   * locally, so the trimming is gone rather than conditionally applied.
+   */
   function markNativeActions() {
-    // Active layout (≤900px) or a remote page at any width — either way the
-    // native-only entries must go.
-    if (!state.active && !state.remote) return;
-
-    // Any trigger in the shell: the session header, the document preview tabs,
-    // the file browser, dialogs — "open in Explorer" appears in several of them.
-    var triggers = doc().querySelectorAll("[aria-label]");
-    for (var k = 0; k < triggers.length; k++) {
-      if (!NATIVE_ARIA.test(String(triggers[k].getAttribute("aria-label") || ""))) continue;
-      triggers[k].classList.add(HIDDEN_CLASS);
-      // The "main" button and its chevron share one cluster: hiding only one
-      // leaves a stray arrow behind.
-      var cluster = triggers[k].parentElement;
-      if (cluster && cluster.querySelectorAll("button").length <= 2) cluster.classList.add(HIDDEN_CLASS);
-    }
-
-    var items = doc().querySelectorAll('[role="menuitem"], [role="option"], [role="menu"] button, [role="menubar"] button');
-    for (var j = 0; j < items.length; j++) {
-      var item = items[j];
-      var text = (item.textContent || "").trim();
-      if (text === "" || text.length > 64) continue;
-      var key = item.querySelector("kbd");
-      if (key && SHORTCUT_ONLY.test((key.textContent || "").trim())) key.classList.add(HIDDEN_CLASS);
-      if (NATIVE_LABEL.test(text) || NATIVE_LABEL_EN.test(text)) item.classList.add(HIDDEN_CLASS);
-    }
-
-    // A menu whose entries are all gone is a dead button: hide the "…" that
-    // opens it too, instead of leaving an empty popover behind.
-    var menus = doc().querySelectorAll('[role="menu"]');
-    for (var m = 0; m < menus.length; m++) {
-      var entries = menus[m].querySelectorAll('[role="menuitem"]');
-      if (entries.length === 0) continue;
-      var visible = 0;
-      for (var e = 0; e < entries.length; e++) {
-        if (!entries[e].classList.contains(HIDDEN_CLASS)) visible += 1;
-      }
-      if (visible > 0) continue;
-      menus[m].classList.add(HIDDEN_CLASS);
-      var trigger = null;
-      if (menus[m].id) trigger = doc().querySelector('[aria-controls="' + menus[m].id + '"]');
-      if (!trigger) trigger = doc().querySelector('[aria-haspopup="menu"][aria-expanded="true"]');
-      if (trigger) trigger.classList.add(HIDDEN_CLASS);
-    }
+    return;
   }
 
   /**
