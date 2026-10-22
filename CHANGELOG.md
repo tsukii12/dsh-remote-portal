@@ -3,6 +3,33 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.4.6 — 2026-10-22
+
+### Fixed — "…" still disappeared on the machine itself
+Origin alone cannot tell a phone from *this computer opening its own LAN address*,
+and 0.4.5 treated every non-loopback host as remote. So opening dsh at
+`http://10.150.23.97:3081` on the host itself trimmed the "…" menu and the
+"open in …" entries, which work fine there.
+
+The decision now uses facts instead of guesses:
+
+- the host publishes its own IPv4 addresses into the page
+  (`window.__DRP_HOST__.addresses`), and any of them counts as **local** at every
+  window size — so the machine's own LAN address never trims anything
+- the gateway writes a readable companion cookie `dsh_portal_client=1` on login
+  (the session cookie is HttpOnly, so the page could not see it) and clears it on
+  logout; a portal visitor is a remote visitor by definition
+- `file://`, loopback and the host's own addresses are never trimmed; a narrow
+  window on any other address is a phone and is trimmed
+- `data-drp-decision` / `window.__DRP_DECISION__` records why the layer did or did
+  not engage, so a report like this can be diagnosed instead of guessed at
+
+Verified decision matrix: `file://` → off, `127.0.0.1` → off, host LAN IP → off,
+`192.168.1.50` (a phone) → on, public host with the portal cookie → on.
+
+### Tests
+- 79 tests green.
+
 ## 0.4.5 — 2026-10-21
 
 ### Fixed — the local app lost its "…" menu as well
@@ -771,6 +798,7 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
+
 
 
 

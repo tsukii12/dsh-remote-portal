@@ -326,12 +326,26 @@
    * layer is off, so nothing has to be undone item by item.
    */
   /** False for the desktop shell itself (file://) and for loopback. */
+  /** True when `hostname` is one of this machine's own addresses. */
+  function isHostAddress(hostname) {
+    try {
+      var list = (window.__DRP_HOST__ && window.__DRP_HOST__.addresses) || [];
+      var h = String(hostname || "").toLowerCase();
+      for (var i = 0; i < list.length; i++) {
+        if (String(list[i]).toLowerCase() === h) return true;
+      }
+    } catch (e) { /* no host info */ }
+    return false;
+  }
+
   function isRemoteOrigin() {
     try {
       var p = String(location.protocol || "");
       if (p === "file:" || p === "chrome-extension:") return false;
       var h = String(location.hostname || "").toLowerCase();
       if (h === "" || h === "localhost" || h === "127.0.0.1" || h === "[::1]" || h === "::1") return false;
+      // An address this machine answers on is this machine, whatever its shape.
+      if (isHostAddress(h)) return false;
       return true;
     } catch (e) {
       return false;
@@ -504,14 +518,45 @@
     } catch (e) { return false; }
   }
 
+  /** Diagnostic breadcrumb, readable from the page: why the layer is off. */
+  function markDecision(reason) {
+    try {
+      doc().documentElement.setAttribute("data-drp-decision", reason);
+      window.__DRP_DECISION__ = {
+        reason: reason,
+        protocol: String(location.protocol || ""),
+        hostname: String(location.hostname || ""),
+        origin: String(location.origin || ""),
+        width: window.innerWidth,
+        remote: isRemoteOrigin(),
+      };
+    } catch (e) { /* never fatal */ }
+  }
+
+  /** True when this browser signed in through the portal (readable marker cookie). */
+  function viaPortal() {
+    try {
+      return /(?:^|;\s*)dsh_portal_client=1(?:;|$)/.test(String(document.cookie || ""));
+    } catch (e) { return false; }
+  }
+
+  function isNarrow() {
+    try { return mql ? mql.matches : window.innerWidth <= 900; } catch (e) { return false; }
+  }
+
   function activate() {
-    if (isDesktopShell()) return;
+    if (isDesktopShell()) { markDecision("desktop-shell"); return; }
+    if (forcedByQuery()) { /* explicit */ }
+    else if (viaPortal()) { /* signed in through the portal: a remote visitor */ }
+    else if (!isRemoteOrigin()) { markDecision("local-origin"); return; }
+    else if (!isNarrow()) { markDecision("wide-window"); return; }
     // Not a phone: a loopback origin is the machine hosting dsh. A phone or a
     // remote browser always arrives over a non-loopback address (LAN IP, relay,
     // domain), which is exactly what `isRemoteOrigin` tests.
     if (!forcedByQuery() && !isRemoteOrigin()) return;
     if (state.active) return;
     state.active = true;
+    markDecision("engaged");
     doc().documentElement.setAttribute(MOBILE_ATTR, "");
     applyViewport();
     applyAppleHints();
@@ -528,6 +573,7 @@
   }
 
   function deactivate() {
+    if (state.active) markDecision("inactive");
     if (!state.active) return;
     state.active = false;
     state.open = false;

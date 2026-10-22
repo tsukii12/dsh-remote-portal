@@ -24,7 +24,7 @@ import { dirname, extname, join, normalize, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { mkdir, readFile, readdir, realpath, stat as stat_ } from "node:fs/promises";
 import { gzipSync } from "node:zlib";
-import { homedir } from "node:os";
+import os, { homedir } from "node:os";
 import { statSync } from "node:fs";
 import { createGateway } from "./lib/gateway.mjs";
 
@@ -33,7 +33,7 @@ export const inject = ["webServer"];
 
 const PLUGIN_NAME = "dsh-remote-portal";
 // Bumped with package.json; also used to invalidate the injected asset URLs.
-const PLUGIN_VERSION = "0.4.5";
+const PLUGIN_VERSION = "0.4.6";
 const PREFIX = "/dsh-remote-portal";
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ASSET_DIR = join(HERE, "assets");
@@ -374,6 +374,25 @@ async function createDirectory(rawParent, rawName) {
   return { name, path: target };
 }
 
+/**
+ * Every IPv4 address this machine answers on.
+ *
+ * The layer compares `location.hostname` against this list: a browser on this
+ * machine opening the LAN address is still local, and must keep the entries that
+ * only work locally.
+ */
+function hostAddresses() {
+  const out = new Set(["127.0.0.1", "localhost", "::1"]);
+  try {
+    for (const list of Object.values(os.networkInterfaces() || {})) {
+      for (const entry of list || []) {
+        if (entry && entry.address && entry.family === "IPv4") out.add(entry.address);
+      }
+    }
+  } catch { /* no network info: loopback only */ }
+  return [...out];
+}
+
 function routeTable(portal, log) {
   const wrap = (fn) => async (req, res) => {
     try {
@@ -676,6 +695,9 @@ export function apply(ctx, config = {}) {
           // `?v=` is what makes a reload pick up a new layer: the file URL is
           // otherwise stable across plugin upgrades and browsers cache it hard.
           `<link rel="stylesheet" href="${PREFIX}/assets/mobile.css?v=${PLUGIN_VERSION}" data-plugin="${PLUGIN_NAME}" data-drp="mobile-css-host">` +
+          // Inline and before the layer: it must be readable by the time the
+          // layer decides whether to engage.
+          `<script data-plugin="${PLUGIN_NAME}" data-drp="host-addresses">window.__DRP_HOST__=${JSON.stringify({ addresses: hostAddresses() })};</script>` +
           `<script defer src="${PREFIX}/assets/mobile.js?v=${PLUGIN_VERSION}" data-plugin="${PLUGIN_NAME}" data-drp="mobile-js-host"></script>`,
       };
       const listener = (table) => {
@@ -694,6 +716,7 @@ export function apply(ctx, config = {}) {
 
   log.info(`ready — state in ${stateDir}, panel at ${PREFIX}/status`);
 }
+
 
 
 

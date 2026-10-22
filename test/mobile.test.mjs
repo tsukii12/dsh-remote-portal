@@ -343,9 +343,12 @@ describe("assets/mobile.js — source contract", () => {
     // Explorer", "open config file") at any window size. Gating the layer on
     // width alone hid them as soon as the window got narrow.
     assert.match(js, /function isDesktopShell\(\)/);
-    assert.match(js, /if \(isDesktopShell\(\)\) return;/, "activate() must bail out");
+    assert.match(js, /if \(isDesktopShell\(\)\) \{ markDecision\("desktop-shell"\); return; \}/, "activate() must bail out in the shell");
     assert.match(js, /p === "file:"/, "file:// is the desktop shell");
     assert.match(js, /function activateRemote\(\) \{\n\s*if \(!isRemoteOrigin\(\)\) return;/);
+    // and the host's own addresses count as local, whatever their shape
+    assert.match(js, /if \(isHostAddress\(h\)\) return false;/);
+    assert.match(js, /function viaPortal\(\)/);
   });
 
   test("uses the same 900px boundary as the stylesheet", () => {
