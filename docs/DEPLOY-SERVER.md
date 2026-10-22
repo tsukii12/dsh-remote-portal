@@ -1,3 +1,13 @@
+## 前置：把插件装进 dsh
+
+在 dsh 里：插件 → 添加插件 → 填 `https://github.com/tsukii12/dsh-remote-portal`；或用命令行：
+
+```bash
+git clone https://github.com/tsukii12/dsh-remote-portal
+cd dsh-remote-portal && ./install.sh      # Windows 用 .\install.ps1
+```
+
+装完重启 dsh。下面所有部署步骤都以本仓库的 `tools/` 为前提。
 # 在服务器上部署中转，人在任何网络都能访问
 
 > 目标：dsh 跑在家里的电脑上，你在公司/地铁/酒店用手机或笔记本打开一个**公网地址**就能用。
@@ -417,5 +427,6 @@ secrets:
 ```
 
 Caddy 容器里把 `reverse_proxy dsh-relay:8080` 指向上面的服务名即可。
+
 
 
