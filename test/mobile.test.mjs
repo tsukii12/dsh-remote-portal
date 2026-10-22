@@ -346,8 +346,9 @@ describe("assets/mobile.js — source contract", () => {
     assert.match(js, /if \(isDesktopShell\(\)\) \{ markDecision\("desktop-shell"\); return; \}/, "activate() must bail out in the shell");
     assert.match(js, /p === "file:"/, "file:// is the desktop shell");
     assert.match(js, /function activateRemote\(\) \{\n\s*if \(!isRemoteOrigin\(\)\) return;/);
-    // and the host's own addresses count as local, whatever their shape
-    assert.match(js, /if \(isHostAddress\(h\)\) return false;/);
+    // Only loopback and file:// are "this machine": a LAN address is how a phone
+    // reaches dsh, and treating it as local left phones with a fixed sidebar.
+    assert.equal(/if \(isHostAddress\(h\)\) return false;/.test(js), false);
     assert.match(js, /function viaPortal\(\)/);
   });
 

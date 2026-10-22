@@ -3,6 +3,30 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.4.9 — 2026-10-23
+
+### Fixed — a phone fell back to the desktop layout
+The layout was pinned to the desktop: a fixed sidebar on the left squeezed the
+conversation into the remaining strip. Cause: 0.4.6 taught the layer that any of
+the host's own addresses counts as "this machine", so a phone reaching dsh at
+`http://10.150.23.97:…` was treated as the host and the drawer never engaged.
+
+Only `file://` and loopback are the machine itself now — no other device can use
+those two. A LAN address is how a phone gets in, so it must get the phone layout.
+
+- removed the host-address list from the decision (it stays injected; nothing reads
+  it yet)
+- removed a duplicated origin check that ran after the branch above had already
+  decided
+- the two assertions that pinned the old rule were inverted, with the reason in the
+  message
+
+Verified: 390 px on `10.150.23.97` → engaged (drawer button present, content full
+width); the same address at 1400 px → untouched; loopback and file:// → untouched.
+
+### Tests
+- 79 tests green.
+
 ## 0.4.8 — 2026-10-22
 
 ### Removed — the layer no longer hides anything
@@ -847,6 +871,7 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
+
 
 
 

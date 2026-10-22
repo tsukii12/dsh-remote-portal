@@ -344,8 +344,6 @@
       if (p === "file:" || p === "chrome-extension:") return false;
       var h = String(location.hostname || "").toLowerCase();
       if (h === "" || h === "localhost" || h === "127.0.0.1" || h === "[::1]" || h === "::1") return false;
-      // An address this machine answers on is this machine, whatever its shape.
-      if (isHostAddress(h)) return false;
       return true;
     } catch (e) {
       return false;
@@ -520,10 +518,6 @@
     else if (viaPortal()) { /* signed in through the portal: a remote visitor */ }
     else if (!isRemoteOrigin()) { markDecision("local-origin"); return; }
     else if (!isNarrow()) { markDecision("wide-window"); return; }
-    // Not a phone: a loopback origin is the machine hosting dsh. A phone or a
-    // remote browser always arrives over a non-loopback address (LAN IP, relay,
-    // domain), which is exactly what `isRemoteOrigin` tests.
-    if (!forcedByQuery() && !isRemoteOrigin()) return;
     if (state.active) return;
     state.active = true;
     markDecision("engaged");
