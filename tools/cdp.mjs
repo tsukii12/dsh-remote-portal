@@ -219,6 +219,15 @@ try {
   await cdp.send("Runtime.enable", {}, sessionId);
   await cdp.send("Network.enable", {}, sessionId);
 
+  // `--pre-eval` (or --pre-eval-file) runs in every document before its scripts,
+  // which is the only place to change what the page sees at boot.
+  if (typeof args["pre-eval-file"] === "string") {
+    args["pre-eval"] = readFileSync(args["pre-eval-file"], "utf8");
+  }
+  if (typeof args["pre-eval"] === "string" && args["pre-eval"] !== "") {
+    await cdp.send("Page.addScriptToEvaluateOnNewDocument", { source: String(args["pre-eval"]) }, sessionId);
+  }
+
   if (mobile) {
     await cdp.send("Emulation.setDeviceMetricsOverride", {
       width, height, deviceScaleFactor: 2, mobile: true,

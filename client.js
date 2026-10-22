@@ -56,7 +56,7 @@ window.__ModuleLoader__.load({
     // prefix. An absolute path here would break remote access through a tunnel.
     var BASE = "./dsh-remote-portal";
   // Must match package.json: it is what busts the browser cache for the layer.
-  var CLIENT_VERSION = "0.4.6";
+  var CLIENT_VERSION = "0.4.7";
     var POLL_MS = 3000;         // status poll while the settings page is visible
     var MIN_PW = 8;             // matches the host's "≥8 recommended" rule (§3)
     var COPY_FEEDBACK_MS = 1600;
@@ -2351,6 +2351,7 @@ window.__ModuleLoader__.load({
       var PANEL_ID = "dsh-remote-portal";
       try {
         if (ctx && ctx.slots && typeof ctx.slots.inject === "function") {
+          // The sidebar entry (the button) …
           ctx.slots.inject("sidebar.panellist", function () {
             return ctx.slots.register({
               name: "sidebar.panellist",
@@ -2361,6 +2362,8 @@ window.__ModuleLoader__.load({
               return h(Icon, { name: "portal", size: (props && props.size) || 18 });
             });
           });
+
+          // … and the page it switches to.
           ctx.slots.inject("main", function () {
             return ctx.slots.register({ name: "main", key: PANEL_ID }, function PanelPage() {
               return h("div", { className: "drp-ui drp-page" },
@@ -2371,6 +2374,17 @@ window.__ModuleLoader__.load({
                       h("p", { className: "drp-page-sub" }, t("subtitle")))),
                   h(RemotePortalSection, { page: true })));
             });
+          });
+
+          // The directory picker needs a surface of its own: the panel lives in
+          // `main`, so the picker renders through the shell overlay slot. Without
+          // this registration __DSH_DIRECTORY_PICKER__.pick() has no receiver and
+          // "Add workspace" silently does nothing.
+          ctx.slots.inject("shell.overlay", function () {
+            return ctx.slots.register(
+              { name: "shell.overlay", id: "dsh-remote-portal-picker", order: 95 },
+              PortalOverlayRouter,
+            );
           });
         }
       } catch (e) { /* slot absent: nothing to attach to */ }
@@ -2402,6 +2416,7 @@ window.__ModuleLoader__.load({
     return { inject: ["slots"], apply: apply };
   }
 });
+
 
 
 

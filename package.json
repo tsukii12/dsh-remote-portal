@@ -1,6 +1,6 @@
 {
   "name": "dsh-remote-portal",
-  "version": "0.4.6",
+  "version": "0.4.7",
   "description": "为 DeepSeek Harness 添加远程访问能力，支持局域网和公网访问。Remote access for DeepSeek Harness: LAN and public access.",
   "type": "module",
   "main": "index.js",
@@ -73,3 +73,4 @@
     "url": "https://github.com/tsukii12/dsh-remote-portal/issues"
   }
 }
+

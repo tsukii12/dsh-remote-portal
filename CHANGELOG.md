@@ -3,6 +3,30 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.4.7 — 2026-10-22
+
+### Fixed — "Add workspace" did nothing
+The directory picker renders through the `shell.overlay` slot, but that
+registration had been lost when the panel moved into the `main` column (0.3.0).
+`__DSH_DIRECTORY_PICKER__.pick()` therefore had no receiver: the host called it,
+nothing rendered, and the flow ended silently.
+
+- `shell.overlay` is registered again, next to `sidebar.panellist` and `main`
+- the three registrations are independent: one failing surface no longer takes the
+  other two down with it (a nested `try` from an earlier edit was doing exactly
+  that, and swallowing the reason)
+
+Verified on a clean profile: `pick()` renders the picker, lists the host's
+directories, and `使用此目录` returns the path.
+
+### Changed — screenshots retaken on a clean profile
+The README images were taken with a throwaway `DSH_HOME`, so they show no real
+workspaces or sessions: the panel, the phone layout, the sidebar drawer and the
+folder picker.
+
+### Tests
+- 79 tests green.
+
 ## 0.4.6 — 2026-10-22
 
 ### Fixed — "…" still disappeared on the machine itself
@@ -798,6 +822,7 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
+
 
 
 
