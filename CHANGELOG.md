@@ -3,6 +3,29 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.5.6 — 2026-10-23
+
+### Fixed — HTTPS on 443 failed to start
+```
+[relay] failed to start: listen EACCES: permission denied 0.0.0.0:443
+```
+
+The unit runs as `dsh-relay`, and ports below 1024 need a capability to bind. The
+unit now carries `AmbientCapabilities=CAP_NET_BIND_SERVICE` (plus a bounding set of
+just that) whenever the public, agent or local port is below 1024. The relay still
+does not run as root.
+
+The failure path also names the cause now: `EACCES` explains the privileged port and
+`EADDRINUSE` says the port is taken, instead of only dumping the journal.
+
+### Verified on a real host
+Public port `444` (below 1024), HTTPS with a self-signed certificate: the unit
+starts as `dsh-relay`, the listener binds `0.0.0.0:444`, and the process keeps the
+capability it was granted.
+
+### Tests
+- 82 tests green.
+
 ## 0.5.5 — 2026-10-23
 
 ### Changed — the installer installs Node itself

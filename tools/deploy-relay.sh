@@ -19,7 +19,7 @@ set -euo pipefail
 
 if [ ! -x "$0" ] && [ -f "$0" ]; then chmod +x "$0" 2>/dev/null || true; fi
 
-SELF_VERSION="0.5.5"
+SELF_VERSION="0.5.6"
 
 RELAY_DIR=/opt/dsh-relay
 STATE_DIR=/var/lib/dsh-relay
@@ -661,6 +661,12 @@ if [ -n "$TLS_CERT" ] && { [ "$VISITOR_TLS" = 1 ] || [ "$AGENT_TLS" = 1 ]; }; th
   RELAY_ARGS="$RELAY_ARGS --tls-cert $TLS_CERT --tls-key $TLS_KEY"
 fi
 
+CAPS=""
+if [ "$PUBLIC_PORT" -lt 1024 ] || [ "$AGENT_PORT" -lt 1024 ] || [ "$HTTP_PORT" -lt 1024 ]; then
+  CAPS="AmbientCapabilities=CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE"
+fi
+
 if [ "$HAVE_SYSTEMD" = 1 ]; then
   cat > "$UNIT" <<UNIT_EOF
 [Unit]
@@ -673,6 +679,7 @@ Type=simple
 User=dsh-relay
 Group=dsh-relay
 ExecStart=/usr/bin/env node $RELAY_ARGS
+$CAPS
 Restart=always
 RestartSec=3
 NoNewPrivileges=true
@@ -694,6 +701,12 @@ UNIT_EOF
   sleep 1
   if ! systemctl is-active --quiet "$SERVICE"; then
     journalctl -u "$SERVICE" -n 15 --no-pager || true
+    if journalctl -u "$SERVICE" -n 40 --no-pager 2>/dev/null | grep -q "EACCES"; then
+      warn "$(t "a privileged port was refused. The unit gets CAP_NET_BIND_SERVICE for ports below 1024; if this persists, pick a port above 1024 or check that systemd supports AmbientCapabilities (v229+)." "特权端口被拒绝。低于 1024 的端口会在单元里获得 CAP_NET_BIND_SERVICE；若仍失败，改用 1024 以上的端口，或确认 systemd 支持 AmbientCapabilities（v229+）。")"
+    fi
+    if journalctl -u "$SERVICE" -n 40 --no-pager 2>/dev/null | grep -q "EADDRINUSE"; then
+      warn "$(t "that port is already taken by another process; pick a free one" "该端口已被其它进程占用，请换一个空闲端口")"
+    fi
     die "$(t "the service did not start" "服务启动失败")"
   fi
   ok "$SERVICE $(t "running and enabled" "运行中，已开机自启")"
