@@ -19,7 +19,7 @@ set -euo pipefail
 
 if [ ! -x "$0" ] && [ -f "$0" ]; then chmod +x "$0" 2>/dev/null || true; fi
 
-SELF_VERSION="0.6.1"
+SELF_VERSION="0.6.2"
 
 RELAY_DIR=/opt/dsh-relay
 STATE_DIR=/var/lib/dsh-relay
@@ -394,9 +394,18 @@ case "${1:-status}" in
 
     nt=$(count_tokens)
     if [ "${nt:-0}" -gt 1 ]; then
-      printf 'tunnels     %s\n' "$(cyan "$nt (drp tokens to list them)")"
+      printf 'tunnels     %s\n' "$(cyan "$nt")"
+      urls=$(mktemp); tokens_all > "$urls"
+      i=0
+      while IFS= read -r tk; do
+        i=$((i+1))
+        printf 'public      %s %s\n' "$(cyan "$i)")" "$(cyan "$(url_base)/__t/$(id_of "$tk")/")"
+      done < "$urls"
+      rm -f "$urls"
+      printf '            %s\n' "$(grey "drp tokens for ids, drp token add for another machine")"
+    else
+      printf 'public      %s\n' "$(cyan "$(url_base)/__t/$(tunnel_id)/")"
     fi
-    printf 'public      %s\n' "$(cyan "$(url_base)/__t/$(tunnel_id)/")"
     if [ "${AGENT_TLS:-1}" = 1 ]; then
       printf 'note        self-signed certificate: tick "trust" in the dsh panel\n'
     fi
