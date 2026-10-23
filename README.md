@@ -61,7 +61,7 @@ dsh plugin --profile web add \
 
 ```bash
 # jsDelivr
-curl -fsSL https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@master/tools/deploy-relay.sh | sudo bash
+curl -fsSL https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@v0.5.4/tools/deploy-relay.sh | sudo bash
 
 # 或 ghfast 代理
 curl -fsSL https://ghfast.top/https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master/tools/deploy-relay.sh | sudo bash
@@ -69,7 +69,7 @@ curl -fsSL https://ghfast.top/https://raw.githubusercontent.com/tsukii12/dsh-rem
 
 脚本下载 `relay.mjs` 时会**自动依次尝试** raw → jsDelivr → ghfast → gh-proxy，用到哪个会打印出来。
 
-想固定某一来源：`sudo -E RELAY_RAW_BASE=https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@master bash deploy-relay.sh`
+想固定某一来源：`sudo -E RELAY_RAW_BASE=https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@v0.5.4 bash deploy-relay.sh`
 
 **完全离线**：在一台能上网的机器上取一次 `relay.mjs`，和 `deploy-relay.sh` 放同一目录，脚本就不再下载。
 

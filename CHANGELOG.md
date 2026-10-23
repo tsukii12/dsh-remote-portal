@@ -3,6 +3,25 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.5.4 — 2026-10-23
+
+### Fixed — one mirror was caching a stale relay
+jsDelivr serves a branch ref from cache, so `@master` there could hand back an older
+`relay.mjs` while every check still passed. The script now pins that candidate to
+its own release tag (`@v${SELF_VERSION}`); the proxies keep tracking master because
+they do not cache.
+
+### Added
+- `test/manifest.test.mjs`: the release number appears in five files, and this test
+  fails when they disagree. It caught the mismatch that motivated it
+  (`package.json` 0.5.3 vs the script's own 0.5.4) before anything shipped
+- same test asserts the jsDelivr candidate is pinned and that every mirror in the
+  list is a plain https URL
+- docs: jsDelivr examples pin the tag too, so copy-paste cannot hit the cache
+
+### Tests
+- 82 tests green.
+
 ## 0.5.3 — 2026-10-23
 
 ### Fixed — installing from mainland China

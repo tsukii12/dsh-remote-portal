@@ -19,6 +19,8 @@ set -euo pipefail
 
 if [ ! -x "$0" ] && [ -f "$0" ]; then chmod +x "$0" 2>/dev/null || true; fi
 
+SELF_VERSION="0.5.4"
+
 RELAY_DIR=/opt/dsh-relay
 STATE_DIR=/var/lib/dsh-relay
 UNIT=/etc/systemd/system/dsh-relay.service
@@ -278,7 +280,7 @@ if [ -n "${RELAY_RAW_BASE:-}" ]; then
   RAW_BASES=$RELAY_RAW_BASE
 else
   RAW_BASES="https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master \
-https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@master \
+https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@v${SELF_VERSION} \
 https://ghfast.top/https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master \
 https://gh-proxy.com/https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master"
 fi

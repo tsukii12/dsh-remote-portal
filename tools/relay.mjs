@@ -51,7 +51,7 @@ import { dirname, join } from "node:path";
 // ───────────────────────────────────────────────────────────────────────────
 
 /** Printed at startup and by --version, so an installed copy is identifiable. */
-const RELAY_VERSION = "0.5.3";
+const RELAY_VERSION = "0.5.4";
 
 const FRAME = {
   HELLO: 1,

@@ -103,7 +103,7 @@ sudo bash deploy-relay.sh
 **自己指定来源**：
 
 ```bash
-sudo -E RELAY_RAW_BASE=https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@master bash deploy-relay.sh
+sudo -E RELAY_RAW_BASE=https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@v0.5.4 bash deploy-relay.sh
 ```
 
 **完全离线**（最稳）：在能上网的机器上下载 `relay.mjs`，与 `deploy-relay.sh` 放同一目录，然后正常运行——脚本检测到本地文件就不再联网。
@@ -111,7 +111,7 @@ sudo -E RELAY_RAW_BASE=https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@ma
 脚本本身的下载也可以用镜像：
 
 ```bash
-curl -fsSL https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@master/tools/deploy-relay.sh | sudo bash
+curl -fsSL https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@v0.5.4/tools/deploy-relay.sh | sudo bash
 ```
 
 **不带参数**。脚本会自己探测环境、逐项提问（每项都有默认值，直接回车即可），然后完成全部配置：

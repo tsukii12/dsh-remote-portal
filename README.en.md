@@ -61,7 +61,7 @@ dsh plugin --profile web add \
 
 ```bash
 # jsDelivr
-curl -fsSL https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@master/tools/deploy-relay.sh | sudo bash
+curl -fsSL https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@v0.5.4/tools/deploy-relay.sh | sudo bash
 
 # or the ghfast proxy
 curl -fsSL https://ghfast.top/https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master/tools/deploy-relay.sh | sudo bash
@@ -69,7 +69,7 @@ curl -fsSL https://ghfast.top/https://raw.githubusercontent.com/tsukii12/dsh-rem
 
 When the script needs `relay.mjs` it tries **raw → jsDelivr → ghfast → gh-proxy** in turn and prints which one answered.
 
-Pin one source: `sudo -E RELAY_RAW_BASE=https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@master bash deploy-relay.sh`
+Pin one source: `sudo -E RELAY_RAW_BASE=https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@v0.5.4 bash deploy-relay.sh`
 
 **Fully offline**: fetch `relay.mjs` once elsewhere, put it next to `deploy-relay.sh`, and nothing is downloaded.
 
