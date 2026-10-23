@@ -178,8 +178,24 @@ say "1/6 $(t "Checking the host" "检查环境")"
 command -v node >/dev/null 2>&1 || die "$(t "Node 20+ is required: https://nodejs.org" "需要 Node 20+：https://nodejs.org")"
 [ "$(node -p 'process.versions.node.split(".")[0]')" -ge 20 ] || die "$(t "Node is too old (need 20+)" "Node 版本过旧，需要 20+")"
 ok "node $(node -v) → $(command -v node)"
-[ -f "$PORTAL_DIR/relay.mjs" ] || die "$(t "relay.mjs must sit next to this script" "relay.mjs 要和本脚本放在同一目录")"
-ok "relay.mjs"
+# A one-line install pipes this script into bash, where no directory holds
+# relay.mjs. Fetch it from the same repository instead of asking for a clone.
+RAW_BASE="${RELAY_RAW_BASE:-https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master}"
+if [ ! -f "$PORTAL_DIR/relay.mjs" ]; then
+  TMP_RELAY=$(mktemp -d)/relay.mjs
+  if command -v curl >/dev/null 2>&1; then
+    curl -fsSL --max-time 60 "$RAW_BASE/tools/relay.mjs" -o "$TMP_RELAY" || die "$(t "could not download relay.mjs" "下载 relay.mjs 失败")"
+  elif command -v wget >/dev/null 2>&1; then
+    wget -qO "$TMP_RELAY" "$RAW_BASE/tools/relay.mjs" || die "$(t "could not download relay.mjs" "下载 relay.mjs 失败")"
+  else
+    die "$(t "need curl or wget to fetch relay.mjs" "需要 curl 或 wget 才能下载 relay.mjs")"
+  fi
+  node --check "$TMP_RELAY" >/dev/null 2>&1 || die "$(t "the downloaded relay.mjs is not valid JavaScript" "下载的 relay.mjs 不是有效脚本")"
+  PORTAL_DIR=$(dirname "$TMP_RELAY")
+  ok "relay.mjs $(t "downloaded" "已下载")"
+else
+  ok "relay.mjs"
+fi
 
 HAVE_SYSTEMD=0
 if [ -d /run/systemd/system ] && command -v systemctl >/dev/null 2>&1; then HAVE_SYSTEMD=1; fi

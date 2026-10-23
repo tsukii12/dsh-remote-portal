@@ -50,6 +50,9 @@ import { dirname, join } from "node:path";
 // framing
 // ───────────────────────────────────────────────────────────────────────────
 
+/** Printed at startup and by --version, so an installed copy is identifiable. */
+const RELAY_VERSION = "0.5.0";
+
 const FRAME = {
   HELLO: 1,
   WELCOME: 2,
@@ -192,6 +195,7 @@ function parseArgs(argv) {
       case "prefix": out.prefix = String(take()); break;
       case "max-streams": out.maxStreams = Number(take()); break;
       case "request-timeout": out.requestTimeout = Number(take()); break;
+      case "version": out.version = true; break;
       case "help": out.help = true; break;
       default: break;
     }
@@ -723,7 +727,8 @@ function createRelay(config) {
       const visitorAddr = await listen(visitors, config.httpPort, config.httpHost);
       let tlsAddr = null;
       if (visitorTls) tlsAddr = await listen(visitorTls, config.tlsPort, config.httpHost);
-      log.info(`agent  ${config.tlsCert ? "tls" : "tcp"} ${config.agentHost}:${agentAddr.port}`);
+      log.info(`relay  v${RELAY_VERSION}`);
+  log.info(`agent  ${config.tlsCert ? "tls" : "tcp"} ${config.agentHost}:${agentAddr.port}`);
       log.info(`visitor http  ${config.httpHost}:${visitorAddr.port}`);
       if (tlsAddr) log.info(`visitor https ${config.httpHost}:${tlsAddr.port}`);
       for (const tunnel of tunnels.values()) {
@@ -757,6 +762,10 @@ function clientIp(req) {
 
 function main() {
   const args = parseArgs(process.argv.slice(2));
+  if (args.version) {
+    process.stdout.write(RELAY_VERSION + "\n");
+    return;
+  }
   if (args.help) {
     console.log(USAGE);
     return;

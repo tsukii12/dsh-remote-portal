@@ -93,13 +93,22 @@ dsh plugin --profile web add https://github.com/tsukii12/dsh-remote-portal#v0.4.
 
 ## 公网访问
 
-在**你自己的**服务器上跑中转（单文件、零依赖）：
+在**你自己的**服务器上跑中转（单文件、零依赖）。**不用拉代码**，一条命令：
 
 ```bash
-sudo ./deploy-relay.sh
+curl -fsSL https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master/tools/deploy-relay.sh | sudo bash
 ```
 
-脚本不带参数运行，会探测环境、逐项提问（回车即默认），自动完成安装，并注册 `drp` 命令：
+脚本会自己下载 `relay.mjs`，探测环境、逐项提问（回车即默认），完成安装并注册 `drp` 命令。
+
+不想用管道、想先看内容：下载后运行，效果一样。
+
+```bash
+curl -fsSLO https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master/tools/deploy-relay.sh
+sudo bash deploy-relay.sh
+```
+
+装完：
 
 ```console
 $ drp
@@ -109,6 +118,8 @@ visitor     0.0.0.0:8080 (direct)
 tunnel      connected, streams=0
 public      http://1.2.3.4/__t/ab12cd34ef56/
 ```
+
+**更新中转**：再跑一次同一条命令即可——令牌与证书会复用，端口不会漂移。
 
 面板里「中转服务器」只填 **`IP:端口`**（如 `1.2.3.4:9443`），协议自动识别（先试 TLS，失败回退明文）。完整部署见 [docs/DEPLOY-SERVER.md](docs/DEPLOY-SERVER.md)。
 

@@ -3,6 +3,32 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.5.0 — 2026-10-23
+
+### Changed — deploying the relay is one command, no checkout
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master/tools/deploy-relay.sh | sudo bash
+```
+
+The installer required `relay.mjs` next to itself, which ruled out piping it into
+`bash`. It now fetches `relay.mjs` from the same repository when the file is not
+already present, validates it with `node --check`, and reports which path it used.
+Re-running the same command upgrades in place: the token and certificate are
+reused and the ports do not move.
+
+Verified on a real host: `relay.mjs downloaded` → service running → `drp` installed
+→ health check passed. A bad source URL fails with a clear message instead of
+half-installing.
+
+### Added
+- `relay.mjs --version`, printed in the startup banner. "Which relay is installed"
+  was previously unknowable, and a stale copy kept serving silently — that is how a
+  fixed bug came back once.
+
+### Tests
+- 79 tests green.
+
 ## 0.4.9 — 2026-10-23
 
 ### Fixed — a phone fell back to the desktop layout

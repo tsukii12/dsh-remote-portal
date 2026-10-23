@@ -41,12 +41,20 @@ cd dsh-remote-portal && ./install.sh      # Windows 用 .\install.ps1
 
 ## 0. 最快的方式：一键脚本（不需要任何参数）
 
-把 `tools/` 里的 `deploy-relay.sh` 和 `relay.mjs` 传到服务器同一目录，然后：
+**不用拉代码**，服务器上一条命令（需要 root 与 Node 20+）：
 
 ```bash
-chmod +x deploy-relay.sh      # 从 git clone 下来已可执行；解压/复制后可能需要一次
-sudo ./deploy-relay.sh
+curl -fsSL https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master/tools/deploy-relay.sh | sudo bash
 ```
+
+脚本会自己下载 `relay.mjs`，因此不需要 clone 仓库。想先看内容再跑也可以：
+
+```bash
+curl -fsSLO https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master/tools/deploy-relay.sh
+sudo bash deploy-relay.sh
+```
+
+> 重跑同一条命令就是升级：令牌与证书复用，端口不会漂移。
 
 **不带参数**。脚本会自己探测环境、逐项提问（每项都有默认值，直接回车即可），然后完成全部配置：
 

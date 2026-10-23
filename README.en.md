@@ -93,13 +93,22 @@ See [CHANGELOG.md](CHANGELOG.md) for what changed.
 
 ## Public access
 
-Run the relay on **your own** server (single file, no dependencies):
+Run the relay on **your own** server (single file, no dependencies). **No clone needed** — one command:
 
 ```bash
-sudo ./deploy-relay.sh
+curl -fsSL https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master/tools/deploy-relay.sh | sudo bash
 ```
 
-No arguments: it detects the environment, asks a few questions (Enter accepts the defaults), finishes the setup and installs a `drp` command:
+It fetches `relay.mjs` itself, detects the environment, asks a few questions (Enter accepts the defaults), finishes the setup and installs a `drp` command.
+
+Prefer to read before running? Download it, then run it — same result.
+
+```bash
+curl -fsSLO https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master/tools/deploy-relay.sh
+sudo bash deploy-relay.sh
+```
+
+Afterwards:
 
 ```console
 $ drp
@@ -109,6 +118,8 @@ visitor     0.0.0.0:8080 (direct)
 tunnel      connected, streams=0
 public      http://1.2.3.4/__t/ab12cd34ef56/
 ```
+
+**Updating the relay**: run the same command again — the token and certificate are reused and the ports do not move.
 
 In the panel, the relay field takes an **`address:port`** (e.g. `1.2.3.4:9443`); the transport is detected on connect (TLS first, plain TCP as fallback). Full guide: [docs/DEPLOY-SERVER.md](docs/DEPLOY-SERVER.md).
 
