@@ -178,6 +178,10 @@ public      https://1.2.3.4/__t/ab12cd34ef56/
 不会。撤销只让那台设备的门户 Cookie 失效，底层 dsh 身份是多设备共享的。
 </details>
 
+## 测试
+
+`node --test` → **82 个测试**，约 75 秒，网络路径不 mock：门户用真实监听端口，隧道用真实中转 + 真实 agent（覆盖 HTTP、HTTPS、WebSocket），二维码由独立解码器校验，移动层跑在测试自己启动的 dsh 上。缺少 Chrome 时浏览器测试会显式跳过。
+
 ## 兼容性
 
 | | |

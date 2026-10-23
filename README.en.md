@@ -8,7 +8,6 @@
 
 [![license](https://img.shields.io/badge/license-MIT-0f1115?style=flat-square)](LICENSE)
 [![dsh](https://img.shields.io/badge/dsh-0.2.x-4176e6?style=flat-square)](#compatibility)
-[![tests](https://img.shields.io/badge/tests-82%20passing-22c55e?style=flat-square)](#tests)
 [![deps](https://img.shields.io/badge/runtime%20deps-0-22c55e?style=flat-square)](#)
 
 [Features](#features) · [Install](#install) · [Update](#update) · [Public access](#public-access) · [Security](#security) · [FAQ](#faq)
