@@ -170,6 +170,8 @@ public      https://1.2.3.4/__t/ab12cd34ef56/
 
 <details>
 <summary><strong>公网地址打不开？</strong></summary>
+一台中转可以接多台 dsh：`drp token add` 生成新令牌，`drp tokens` 列出所有隧道，`drp urls` 列出所有地址。
+
 `drp status` 看隧道状态：`offline` 说明家里没连上中转（检查 9443 是否放行、令牌是否一致）；`connected` 但 503 说明反代缓冲（见部署文档排障表）。
 </details>
 

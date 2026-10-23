@@ -540,6 +540,39 @@ with `--yes`, so ports and certificates in the unit's command line actually chan
 The installer and `relay.mjs` are kept in `/var/lib/dsh-relay`, so this needs no
 network.
 
+### One relay, several machines
+
+The relay keys its tunnels by token, so a single relay can serve several harnesses.
+Each dsh dials the same endpoint with its own token and lands on its own path:
+
+```text
+https://dsh.example.com/__t/3TerRaeZuv7S/     ← machine A
+https://dsh.example.com/__t/HnCjh8ciUJg2/     ← machine B
+```
+
+```bash
+drp token add              # mint a token for another machine and restart
+drp tokens                 # every tunnel: id, state, masked token
+drp urls                   # every public URL
+drp token remove <id|#>    # drop one (the id, or the number drp tokens shows)
+```
+
+The token list is `/var/lib/dsh-relay/token`, one per line, with `#` comments
+allowed — the installer and these commands both use it, and the relay reads it every
+time it starts.
+
+| Shared | Per tunnel |
+|---|---|
+| visitor port, agent port, certificate | password, sessions, static-asset cache |
+| one `dsh-relay` service and its config | its own URL path, its own token |
+
+One visitor port means no extra firewall rules. The certificate is shared because the
+domain is; every harness is reached under the same hostname with a different path.
+
+Anyone holding a token can attach a machine to your relay, so the file stays mode
+`0600` and `drp token remove` is the way to revoke one.
+
+
 ---
 
 ## 8. Connecting the home machine

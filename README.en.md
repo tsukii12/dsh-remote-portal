@@ -164,7 +164,7 @@ public      https://1.2.3.4/__t/ab12cd34ef56/
 ```
 
 **Updating the relay**: run the same command again — the token and certificate are
-reused and the ports do not move. `drp config K=V …` changes a saved answer and
+reused and the ports do not move. One relay can serve several machines: `drp token add` mints another token, `drp tokens` lists them and `drp urls` lists their addresses. `drp config K=V …` changes a saved answer and
 reinstalls the unit; `drp uninstall` removes everything.
 
 In the panel, the relay field takes an **`address:port`** (e.g. `1.2.3.4:9443`); the

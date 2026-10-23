@@ -19,7 +19,7 @@ set -euo pipefail
 
 if [ ! -x "$0" ] && [ -f "$0" ]; then chmod +x "$0" 2>/dev/null || true; fi
 
-SELF_VERSION="0.6.0"
+SELF_VERSION="0.6.1"
 
 RELAY_DIR=/opt/dsh-relay
 STATE_DIR=/var/lib/dsh-relay
@@ -242,6 +242,10 @@ install_drp() {
 #   drp                     status (default)
 #   drp url                 public URL to open
 #   drp token               tunnel token (the value to paste into dsh)
+#   drp tokens              every tunnel on this relay, with its state
+#   drp urls                every public URL
+#   drp token add           mint a token for another dsh and restart
+#   drp token remove <id>   drop a tunnel (id or number from `drp tokens`)
 #   drp start|stop|restart
 #   drp log [-f]
 #   drp config              show the saved answers
@@ -287,6 +291,22 @@ load() {
 health() { curl -fsS --max-time 3 "http://127.0.0.1:${HTTP_PORT:-8080}/__relay/health" 2>/dev/null; }
 token() { [ -r "$TOKEN_FILE" ] && head -n 1 "$TOKEN_FILE"; }
 tunnel_id() { tid=$(token); [ -n "$tid" ] && node -e 'const c=require("node:crypto");process.stdout.write(c.createHash("sha256").update(process.argv[1]).digest("base64url").slice(0,12))' "$tid"; }
+
+# One token per line; blank lines and #comments are ignored, same as relay.mjs.
+tokens_all() { [ -r "$TOKEN_FILE" ] && sed -e 's/[[:space:]]*$//' -e '/^[[:space:]]*#/d' -e '/^[[:space:]]*$/d' "$TOKEN_FILE"; }
+count_tokens() { c=$(tokens_all 2>/dev/null | wc -l); [ -z "${c:-}" ] && c=0; printf '%s' "$c" | tr -d ' '; }
+id_of() { node -e 'const c=require("node:crypto");process.stdout.write(c.createHash("sha256").update(process.argv[1]).digest("base64url").slice(0,12))' "$1"; }
+mask() { printf '%s...%s' "$(printf '%s' "$1" | cut -c1-6)" "$(printf '%s' "$1" | sed 's/.*\(....\)$/\1/')"; }
+online_of() {
+  h=$(health)
+  [ -n "$h" ] || { printf 'relay down'; return 0; }
+  printf '%s' "$h" | node -e '
+    let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{
+      let j;try{j=JSON.parse(s)}catch(e){process.stdout.write("unreadable");return}
+      const t=(j.tunnels||[]).find(x=>x.id===process.argv[1]);
+      process.stdout.write(t?(t.connected?"online":"offline"):"waiting");
+    })' "$1"
+}
 url_base() {
   if [ -n "${ADVERTISED_URL:-}" ]; then printf '%s' "$ADVERTISED_URL"; return 0; fi
   if [ "${SCHEME:-http}" = https ]; then
@@ -372,6 +392,10 @@ case "${1:-status}" in
       printf 'relay       %s\n' "$(red "NOT reachable on 127.0.0.1:$HTTP_PORT")"
     fi
 
+    nt=$(count_tokens)
+    if [ "${nt:-0}" -gt 1 ]; then
+      printf 'tunnels     %s\n' "$(cyan "$nt (drp tokens to list them)")"
+    fi
     printf 'public      %s\n' "$(cyan "$(url_base)/__t/$(tunnel_id)/")"
     if [ "${AGENT_TLS:-1}" = 1 ]; then
       printf 'note        self-signed certificate: tick "trust" in the dsh panel\n'
@@ -382,7 +406,65 @@ case "${1:-status}" in
     ;;
 
   url) load; printf '%s/__t/%s/\n' "$(url_base)" "$(tunnel_id)" ;;
-  token) token; echo ;;
+
+  tokens)
+    load
+    if [ "$(count_tokens)" -eq 0 ]; then printf 'no tunnel tokens yet\n' >&2; exit 1; fi
+    list=$(mktemp); tokens_all > "$list"
+    printf '%-16s %-11s %s\n' "$(grey id)" "$(grey state)" "$(grey "token (masked)")"
+    i=0
+    while IFS= read -r tk; do
+      i=$((i+1))
+      id=$(id_of "$tk")
+      printf '%-16s %-11s %s\n' "$i) $id" "$(online_of "$id")" "$(mask "$tk")"
+    done < "$list"
+    rm -f "$list"
+    printf '\n%s\n' "$(grey "drp urls · drp token add · drp token remove <id|number>")"
+    ;;
+
+  urls)
+    load
+    tokens_all | while IFS= read -r tk; do printf '%s/__t/%s/\n' "$(url_base)" "$(id_of "$tk")"; done
+    ;;
+
+  token)
+    case "${2:-}" in
+      add)
+        tk=$(node -e 'process.stdout.write(require("node:crypto").randomBytes(32).toString("base64url"))')
+        ( umask 077; printf '%s\n' "$tk" >> "$TOKEN_FILE" )
+        chmod 600 "$TOKEN_FILE" 2>/dev/null || true
+        systemctl restart "$SERVICE" >/dev/null 2>&1 || printf 'warning: could not restart %s\n' "$SERVICE" >&2
+        load
+        printf 'endpoint  %s\n' "$(cyan "$(endpoint)")"
+        printf 'token     %s\n' "$(cyan "$tk")"
+        printf 'url       %s\n' "$(cyan "$(url_base)/__t/$(id_of "$tk")/")"
+        printf '%s\n' "$(grey "paste the endpoint and the token into the other dsh")"
+        ;;
+      rm|remove)
+        remove=${3:-}
+        if [ -z "$remove" ]; then printf 'usage: drp token remove <id|number>   (see drp tokens)\n' >&2; exit 2; fi
+        list=$(mktemp); kept=$(mktemp)
+        tokens_all > "$list"; : > "$kept"
+        n=0; found=0
+        while IFS= read -r tk; do
+          n=$((n+1))
+          id=$(id_of "$tk")
+          if [ "$id" = "$remove" ] || [ "$n" = "$remove" ]; then found=1; continue; fi
+          printf '%s\n' "$tk" >> "$kept"
+        done < "$list"
+        if [ "$found" = 0 ]; then
+          printf 'no such tunnel: %s (see drp tokens)\n' "$remove" >&2
+          rm -f "$list" "$kept"; exit 2
+        fi
+        cat "$kept" > "$TOKEN_FILE"
+        chmod 600 "$TOKEN_FILE" 2>/dev/null || true
+        rm -f "$list" "$kept"
+        systemctl restart "$SERVICE" >/dev/null 2>&1 || true
+        printf 'removed %s; %s tunnel(s) left\n' "$remove" "$(count_tokens)"
+        ;;
+      *) token; echo ;;
+    esac
+    ;;
   start) systemctl start "$SERVICE" && echo started ;;
   stop) systemctl stop "$SERVICE" && echo stopped ;;
   restart) systemctl restart "$SERVICE" && echo restarted ;;
@@ -1375,6 +1457,10 @@ printf '\n───────────────────────�
 printf '%s\n' "$(t "Paste these into dsh → sidebar 远程访问 → 公网访问:" "把下面两行填进 dsh → 侧栏「远程访问」→ 公网访问：")"
 printf '\n  %s  %s\n' "$(t "Relay endpoint " "中转服务器   ")" "$(hi "$AGENT_SCHEME://$HOST:$AGENT_PORT")"
 printf '  %s  %s\n' "$(t "Tunnel token   " "隧道令牌     ")" "$(key "$TOKEN")"
+EXTRA=$(sed -e '/^[[:space:]]*#/d' -e '/^[[:space:]]*$/d' "$TOKEN_FILE" 2>/dev/null | wc -l | tr -d ' ')
+if [ "${EXTRA:-1}" -gt 1 ]; then
+  printf '  %s\n' "$(t "this relay serves $EXTRA tunnels; drp tokens lists them" "这台中转上有 $EXTRA 条隧道，用 drp tokens 查看")"
+fi
 if [ "$AGENT_SCHEME" = tls ]; then
   printf '  %s\n' "$(t "also tick \"trust a self-signed certificate\" in the panel" "同时勾选「信任自签名证书」")"
 fi
@@ -1389,6 +1475,8 @@ printf '\n%s\n' "$(t "Manage it later with:" "以后用这条命令管理：")"
 printf '  drp            # %s\n' "$(t "status" "状态")"
 printf '  drp url        # %s\n' "$(t "public URL" "公网地址")"
 printf '  drp token      # %s\n' "$(t "tunnel token" "隧道令牌")"
+printf '  drp tokens     # %s\n' "$(t "every tunnel on this relay" "这台中转上的所有隧道")"
+printf '  drp token add  # %s\n' "$(t "add another dsh" "再加一台 dsh")"
 printf '  drp restart    # %s\n' "$(t "restart" "重启")"
 printf '  drp log -f     # %s\n' "$(t "follow the log" "跟踪日志")"
 printf '\n%s sudo ./deploy-relay.sh --uninstall\n' "$(t "Uninstall:" "卸载：")"
