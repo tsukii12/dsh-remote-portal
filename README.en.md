@@ -48,6 +48,31 @@ Then **restart dsh** (quit and reopen the desktop app, or `Ctrl+C` and `dsh web`
 
 **One required step**: sidebar → **远程访问** → set an access password. Until one exists the portal refuses to listen on the network.
 
+## Behind a restrictive network
+
+Where GitHub is unreachable, use a mirror. **Installing the plugin** (the mirror's tarball):
+
+```bash
+dsh plugin --profile web add \
+  https://ghfast.top/https://github.com/tsukii12/dsh-remote-portal/archive/refs/heads/master.tar.gz
+```
+
+**The deploy script** (whichever answers):
+
+```bash
+# jsDelivr
+curl -fsSL https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@master/tools/deploy-relay.sh | sudo bash
+
+# or the ghfast proxy
+curl -fsSL https://ghfast.top/https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master/tools/deploy-relay.sh | sudo bash
+```
+
+When the script needs `relay.mjs` it tries **raw → jsDelivr → ghfast → gh-proxy** in turn and prints which one answered.
+
+Pin one source: `sudo -E RELAY_RAW_BASE=https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@master bash deploy-relay.sh`
+
+**Fully offline**: fetch `relay.mjs` once elsewhere, put it next to `deploy-relay.sh`, and nothing is downloaded.
+
 ## Update
 
 **Remove, then add** — repeating "add plugin" with the same source may not fetch new code (pnpm answers `Already up to date` when the spec is unchanged):

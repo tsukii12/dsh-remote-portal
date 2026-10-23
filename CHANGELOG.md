@@ -3,6 +3,32 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.5.3 — 2026-10-23
+
+### Fixed — installing from mainland China
+`raw.githubusercontent.com` is unreliable there, and the installer depended on it
+alone for `relay.mjs`. It now tries four sources in order and reports which one
+answered:
+
+1. `raw.githubusercontent.com`
+2. `cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@master`
+3. `ghfast.top` proxy
+4. `gh-proxy.com` proxy
+
+Each candidate is validated with `node --check` before being accepted. When none
+answers the script stops with instructions instead of half-installing.
+`RELAY_RAW_BASE` still pins a single source, and a local `relay.mjs` next to the
+script skips the network entirely.
+
+### Documented
+- mirror one-liners for the script itself (jsDelivr / ghfast)
+- installing the plugin from a mirror tarball, e.g.
+  `dsh plugin add https://ghfast.top/https://github.com/.../archive/refs/heads/master.tar.gz`
+  (verified: pnpm installs it in ~9s)
+
+### Tests
+- 79 tests green.
+
 ## 0.5.2 — 2026-10-23
 
 ### Added — the installer resolves the domain before installing

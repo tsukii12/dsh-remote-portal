@@ -272,20 +272,35 @@ command -v node >/dev/null 2>&1 || die "$(t "Node 20+ is required: https://nodej
 [ "$(node -p 'process.versions.node.split(".")[0]')" -ge 20 ] || die "$(t "Node is too old (need 20+)" "Node 版本过旧，需要 20+")"
 ok "node $(node -v) → $(command -v node)"
 # A one-line install pipes this script into bash, where no directory holds
-# relay.mjs. Fetch it from the same repository instead of asking for a clone.
-RAW_BASE="${RELAY_RAW_BASE:-https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master}"
+# relay.mjs. Fetch it from the repository instead of asking for a clone — and try
+# mirrors, because the raw host is often unreachable from mainland China.
+if [ -n "${RELAY_RAW_BASE:-}" ]; then
+  RAW_BASES=$RELAY_RAW_BASE
+else
+  RAW_BASES="https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master \
+https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@master \
+https://ghfast.top/https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master \
+https://gh-proxy.com/https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master"
+fi
+
 if [ ! -f "$PORTAL_DIR/relay.mjs" ]; then
   TMP_RELAY=$(mktemp -d)/relay.mjs
-  if command -v curl >/dev/null 2>&1; then
-    curl -fsSL --max-time 60 "$RAW_BASE/tools/relay.mjs" -o "$TMP_RELAY" || die "$(t "could not download relay.mjs" "下载 relay.mjs 失败")"
-  elif command -v wget >/dev/null 2>&1; then
-    wget -qO "$TMP_RELAY" "$RAW_BASE/tools/relay.mjs" || die "$(t "could not download relay.mjs" "下载 relay.mjs 失败")"
-  else
-    die "$(t "need curl or wget to fetch relay.mjs" "需要 curl 或 wget 才能下载 relay.mjs")"
-  fi
-  node --check "$TMP_RELAY" >/dev/null 2>&1 || die "$(t "the downloaded relay.mjs is not valid JavaScript" "下载的 relay.mjs 不是有效脚本")"
+  got=""
+  for base in $RAW_BASES; do
+    if command -v curl >/dev/null 2>&1; then
+      curl -fsSL --max-time 25 "$base/tools/relay.mjs" -o "$TMP_RELAY" 2>/dev/null || continue
+    elif command -v wget >/dev/null 2>&1; then
+      wget -qT 25 -O "$TMP_RELAY" "$base/tools/relay.mjs" 2>/dev/null || continue
+    else
+      die "$(t "need curl or wget to fetch relay.mjs" "需要 curl 或 wget 才能下载 relay.mjs")"
+    fi
+    node --check "$TMP_RELAY" >/dev/null 2>&1 || continue
+    got=$base
+    break
+  done
+  [ -n "$got" ] || die "$(t "could not fetch relay.mjs from GitHub or any mirror. Download it once on a machine that can reach GitHub and put it next to this script, then run again." "GitHub 和所有镜像都取不到 relay.mjs。在一台能访问 GitHub 的机器上下载它，放到本脚本旁边，再重新运行。")"
   PORTAL_DIR=$(dirname "$TMP_RELAY")
-  ok "relay.mjs $(t "downloaded" "已下载")"
+  ok "relay.mjs $(t "downloaded" "已下载") ($(printf '%s' "$got" | sed -e 's#^https\?://##' -e 's#/.*##'))"
 else
   ok "relay.mjs"
 fi

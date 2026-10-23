@@ -48,6 +48,31 @@ cd dsh-remote-portal
 
 **首次必做一步**：侧栏 → **远程访问** → 设置访问密码。在此之前门户不会监听局域网——宁可显示一条红字，也不让你的 dsh 裸奔在网络上。
 
+## 国内网络
+
+GitHub 直连不稳时，用镜像。**插件安装**（把地址换成镜像的 tarball）：
+
+```bash
+dsh plugin --profile web add \
+  https://ghfast.top/https://github.com/tsukii12/dsh-remote-portal/archive/refs/heads/master.tar.gz
+```
+
+**部署脚本**（任选一个能通的）：
+
+```bash
+# jsDelivr
+curl -fsSL https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@master/tools/deploy-relay.sh | sudo bash
+
+# 或 ghfast 代理
+curl -fsSL https://ghfast.top/https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master/tools/deploy-relay.sh | sudo bash
+```
+
+脚本下载 `relay.mjs` 时会**自动依次尝试** raw → jsDelivr → ghfast → gh-proxy，用到哪个会打印出来。
+
+想固定某一来源：`sudo -E RELAY_RAW_BASE=https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@master bash deploy-relay.sh`
+
+**完全离线**：在一台能上网的机器上取一次 `relay.mjs`，和 `deploy-relay.sh` 放同一目录，脚本就不再下载。
+
 ## 更新
 
 **先移除，再安装**——直接重复"添加插件"不一定会拉新代码（源地址不变时 pnpm 会回一句 `Already up to date`）：

@@ -87,6 +87,33 @@ sudo bash deploy-relay.sh
 
 解析用 `getent` / `dig` / `nslookup` / `host` 中任意一个可用的，无需额外安装。汇总里也会显示最终解析结果，装完一眼能核对。
 
+### 国内网络：取不到 GitHub 怎么办
+
+脚本需要 `relay.mjs`。如果它不在脚本同目录，脚本会**依次尝试四个来源**，用通的那个，并在成功行里打印来源主机名：
+
+| 顺序 | 来源 |
+|---|---|
+| 1 | `raw.githubusercontent.com` |
+| 2 | `cdn.jsdelivr.net`（`/gh/user/repo@master` 形式） |
+| 3 | `ghfast.top` 代理 |
+| 4 | `gh-proxy.com` 代理 |
+
+四个都不通时，脚本会明确报错并告诉你怎么办，不会装到一半。
+
+**自己指定来源**：
+
+```bash
+sudo -E RELAY_RAW_BASE=https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@master bash deploy-relay.sh
+```
+
+**完全离线**（最稳）：在能上网的机器上下载 `relay.mjs`，与 `deploy-relay.sh` 放同一目录，然后正常运行——脚本检测到本地文件就不再联网。
+
+脚本本身的下载也可以用镜像：
+
+```bash
+curl -fsSL https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@master/tools/deploy-relay.sh | sudo bash
+```
+
 **不带参数**。脚本会自己探测环境、逐项提问（每项都有默认值，直接回车即可），然后完成全部配置：
 
 | 步骤 | 做什么 |
