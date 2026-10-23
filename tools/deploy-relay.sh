@@ -19,7 +19,7 @@ set -euo pipefail
 
 if [ ! -x "$0" ] && [ -f "$0" ]; then chmod +x "$0" 2>/dev/null || true; fi
 
-SELF_VERSION="0.5.4"
+SELF_VERSION="0.5.5"
 
 RELAY_DIR=/opt/dsh-relay
 STATE_DIR=/var/lib/dsh-relay
@@ -269,10 +269,99 @@ if [ "$UNINSTALL" = 1 ]; then
 fi
 
 # ── 1. environment ──────────────────────────────────────────────────────────
+node_major() { node -p 'process.versions.node.split(".")[0]' 2>/dev/null || echo 0; }
+
+install_node() {
+  local arch base ver tarball dir
+  case "$(uname -m)" in
+    x86_64|amd64) arch=x64 ;;
+    aarch64|arm64) arch=arm64 ;;
+    armv7l) arch=armv7l ;;
+    *) die "$(t "unsupported architecture: $(uname -m)" "不支持的架构：$(uname -m)")" ;;
+  esac
+
+  local bases="https://nodejs.org/dist https://npmmirror.com/mirrors/node https://cdn.npmmirror.com/binaries/node"
+  ver=""
+  for base in $bases; do
+    # index.json is pretty-printed, so squash it and split per release before
+    # asking for the ones flagged as LTS. A Current release works too, but it needs
+    # newer system libraries and a plain cloud image usually lacks them.
+    local index
+    index=$(curl -fsSL --max-time 25 "$base/index.json" 2>/dev/null | tr -d '\n' | sed 's/},/}\n/g') || index=""
+    [ -n "$index" ] || continue
+    ver=$(printf '%s' "$index" | grep -F '"lts":"' \
+      | grep -o '"version":"v[0-9]*\.[0-9]*\.[0-9]*"' \
+      | sed -e 's/.*"v//' -e 's/"//' | sort -V | tail -n 1) || true
+    if [ -n "$ver" ]; then
+      ok "$(t "latest LTS from" "最新 LTS 来自") $(printf '%s' "$base" | sed -e 's#https\?://##' -e 's#/.*##') -> v$ver"
+      break
+    fi
+  done
+  [ -n "$ver" ] || die "$(t "could not reach nodejs.org or its mirrors" "无法访问 nodejs.org 或镜像")"
+
+  tarball="node-v$ver-linux-$arch.tar.gz"
+  dir=/usr/local/lib/nodejs/node-v$ver-linux-$arch
+  install -d -m 0755 /usr/local/lib/nodejs
+  local tmp got=""
+  tmp=$(mktemp -d)
+  for base in $bases; do
+    if curl -fsSL --max-time 180 "$base/v$ver/$tarball" -o "$tmp/$tarball" 2>/dev/null; then got=$base; break; fi
+  done
+  [ -n "$got" ] || die "$(t "could not download Node $ver" "下载 Node $ver 失败")"
+  tar -xzf "$tmp/$tarball" -C "$tmp" || die "$(t "could not unpack Node" "解压 Node 失败")"
+  rm -rf "$dir"
+  mv "$tmp/node-v$ver-linux-$arch" "$dir"
+  ln -sf "$dir/bin/node" /usr/local/bin/node
+  ln -sf "$dir/bin/npm" /usr/local/bin/npm
+  ln -sf "$dir/bin/npx" /usr/local/bin/npx
+  rm -rf "$tmp"
+  hash -r 2>/dev/null || true
+  command -v node >/dev/null 2>&1 || die "$(t "Node was unpacked but is not on PATH" "Node 已解压但不在 PATH 上")"
+
+  # Verify by running it. A slim image can have the file and still fail to load it
+  # (libatomic.so.1 is the usual one), which used to be reported as success.
+  if ! node -v >/dev/null 2>&1; then
+    local missing
+    missing=$(node -v 2>&1 | sed -n 's/.*\(lib[a-z0-9._+-]*\.so[^ :]*\).*/\1/p' | head -n 1)
+    warn "$(t "the runtime cannot load yet" "运行时还不能加载")${missing:+ ($missing)}"
+    if command -v apt-get >/dev/null 2>&1; then
+      apt-get install -y libatomic1 >/dev/null 2>&1 || apt-get update -qq >/dev/null 2>&1 && apt-get install -y libatomic1 >/dev/null 2>&1 || true
+    elif command -v dnf >/dev/null 2>&1; then
+      dnf install -y libatomic >/dev/null 2>&1 || true
+    elif command -v yum >/dev/null 2>&1; then
+      yum install -y libatomic >/dev/null 2>&1 || true
+    elif command -v apk >/dev/null 2>&1; then
+      apk add --no-cache libatomic >/dev/null 2>&1 || true
+    fi
+    hash -r 2>/dev/null || true
+    node -v >/dev/null 2>&1 || die "$(t "Node was installed but does not start; missing libraries on this image. Install the matching libatomic/glibc and run again." "Node 已安装但无法启动：该系统缺少所需库（通常是 libatomic/glibc）。装好后重新运行。")"
+  fi
+  ok "$(t "installed" "已安装") node $(node -v) → $(command -v node)"
+}
+
+# A fresh cloud host has no Node, and stopping there made the one-liner look broken.
+# The runtime is installed from the official tarball (with the mirrors used in
+# China): nothing is added to apt or yum, and everything lands in /usr/local.
+ensure_node() {
+  if command -v node >/dev/null 2>&1 && [ "$(node_major)" -ge 20 ]; then
+    ok "node $(node -v) → $(command -v node)"
+    return 0
+  fi
+  if command -v node >/dev/null 2>&1; then
+    warn "$(t "Node $(node -v) is too old (need 20+)" "Node $(node -v) 版本过旧（需要 20+）")"
+  else
+    warn "$(t "Node 20+ is not installed" "未安装 Node 20+")"
+  fi
+  info "$(t "it is installed as a self-contained tarball: nothing is added to apt/yum, the files live in /usr/local/lib/nodejs" "将以独立运行时安装：不动 apt/yum，文件放在 /usr/local/lib/nodejs")"
+  if ask_yn "$(t "Install Node 20+ now" "现在安装 Node 20+")" y; then
+    install_node
+  else
+    die "$(t "Node 20+ is required: https://nodejs.org" "需要 Node 20+：https://nodejs.org")"
+  fi
+}
+
 say "1/6 $(t "Checking the host" "检查环境")"
-command -v node >/dev/null 2>&1 || die "$(t "Node 20+ is required: https://nodejs.org" "需要 Node 20+：https://nodejs.org")"
-[ "$(node -p 'process.versions.node.split(".")[0]')" -ge 20 ] || die "$(t "Node is too old (need 20+)" "Node 版本过旧，需要 20+")"
-ok "node $(node -v) → $(command -v node)"
+ensure_node
 # A one-line install pipes this script into bash, where no directory holds
 # relay.mjs. Fetch it from the repository instead of asking for a clone — and try
 # mirrors, because the raw host is often unreachable from mainland China.

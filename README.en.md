@@ -60,16 +60,16 @@ dsh plugin --profile web add \
 **The deploy script** (whichever answers):
 
 ```bash
-# jsDelivr
-curl -fsSL https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@v0.5.4/tools/deploy-relay.sh | sudo bash
-
-# or the ghfast proxy
+# recommended: the ghfast proxy (tracks master, always the newest release)
 curl -fsSL https://ghfast.top/https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master/tools/deploy-relay.sh | sudo bash
+
+# fallback: jsDelivr (also tracks master, but it caches and can lag by hours)
+curl -fsSL https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@master/tools/deploy-relay.sh | sudo bash
 ```
 
 When the script needs `relay.mjs` it tries **raw → jsDelivr → ghfast → gh-proxy** in turn and prints which one answered.
 
-Pin one source: `sudo -E RELAY_RAW_BASE=https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@v0.5.4 bash deploy-relay.sh`
+Pin one source: `sudo -E RELAY_RAW_BASE=https://ghfast.top/https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master bash deploy-relay.sh`
 
 **Fully offline**: fetch `relay.mjs` once elsewhere, put it next to `deploy-relay.sh`, and nothing is downloaded.
 
@@ -119,6 +119,8 @@ See [CHANGELOG.md](CHANGELOG.md) for what changed.
 ## Public access
 
 Run the relay on **your own** server (single file, no dependencies). **No clone needed** — one command:
+
+No Node? The script installs a self-contained runtime itself (official tarball, nothing added to apt/yum, kept in `/usr/local/lib/nodejs`) and carries on.
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master/tools/deploy-relay.sh | sudo bash

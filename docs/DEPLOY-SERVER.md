@@ -41,7 +41,7 @@ cd dsh-remote-portal && ./install.sh      # Windows 用 .\install.ps1
 
 ## 0. 最快的方式：一键脚本（不需要任何参数）
 
-**不用拉代码**，服务器上一条命令（需要 root 与 Node 20+）：
+**不用拉代码**，服务器上一条命令（需要 root；**没有 Node 也可以**，脚本会自己装）：
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master/tools/deploy-relay.sh | sudo bash
@@ -94,7 +94,7 @@ sudo bash deploy-relay.sh
 | 顺序 | 来源 |
 |---|---|
 | 1 | `raw.githubusercontent.com` |
-| 2 | `cdn.jsdelivr.net`（`/gh/user/repo@master` 形式） |
+| 2 | `cdn.jsdelivr.net`（`/gh/user/repo@v<本脚本版本>`，钉版本是因为它会缓存） |
 | 3 | `ghfast.top` 代理 |
 | 4 | `gh-proxy.com` 代理 |
 
@@ -103,7 +103,7 @@ sudo bash deploy-relay.sh
 **自己指定来源**：
 
 ```bash
-sudo -E RELAY_RAW_BASE=https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@v0.5.4 bash deploy-relay.sh
+sudo -E RELAY_RAW_BASE=https://ghfast.top/https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master bash deploy-relay.sh
 ```
 
 **完全离线**（最稳）：在能上网的机器上下载 `relay.mjs`，与 `deploy-relay.sh` 放同一目录，然后正常运行——脚本检测到本地文件就不再联网。
@@ -111,7 +111,7 @@ sudo -E RELAY_RAW_BASE=https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@v0
 脚本本身的下载也可以用镜像：
 
 ```bash
-curl -fsSL https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@v0.5.4/tools/deploy-relay.sh | sudo bash
+curl -fsSL https://ghfast.top/https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master/tools/deploy-relay.sh | sudo bash
 ```
 
 **不带参数**。脚本会自己探测环境、逐项提问（每项都有默认值，直接回车即可），然后完成全部配置：

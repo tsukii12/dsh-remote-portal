@@ -60,16 +60,16 @@ dsh plugin --profile web add \
 **部署脚本**（任选一个能通的）：
 
 ```bash
-# jsDelivr
-curl -fsSL https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@v0.5.4/tools/deploy-relay.sh | sudo bash
-
-# 或 ghfast 代理
+# 推荐：ghfast 代理（跟 master，永远是最新版）
 curl -fsSL https://ghfast.top/https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master/tools/deploy-relay.sh | sudo bash
+
+# 备用：jsDelivr（同样跟 master，但它有缓存，可能滞后数小时）
+curl -fsSL https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@master/tools/deploy-relay.sh | sudo bash
 ```
 
 脚本下载 `relay.mjs` 时会**自动依次尝试** raw → jsDelivr → ghfast → gh-proxy，用到哪个会打印出来。
 
-想固定某一来源：`sudo -E RELAY_RAW_BASE=https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@v0.5.4 bash deploy-relay.sh`
+想固定某一来源：`sudo -E RELAY_RAW_BASE=https://ghfast.top/https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master bash deploy-relay.sh`
 
 **完全离线**：在一台能上网的机器上取一次 `relay.mjs`，和 `deploy-relay.sh` 放同一目录，脚本就不再下载。
 
@@ -119,6 +119,8 @@ dsh plugin --profile web add https://github.com/tsukii12/dsh-remote-portal#v0.4.
 ## 公网访问
 
 在**你自己的**服务器上跑中转（单文件、零依赖）。**不用拉代码**，一条命令：
+
+没有 Node 也没关系——脚本会自己装一个独立运行时（官方 tarball，不动 apt/yum，放在 `/usr/local/lib/nodejs`），装完继续。
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master/tools/deploy-relay.sh | sudo bash

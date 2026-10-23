@@ -3,6 +3,36 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.5.5 — 2026-10-23
+
+### Changed — the installer installs Node itself
+A fresh cloud host has no Node, and stopping with "Node 20+ is required" made the
+one-liner look broken. It now offers to install a runtime and does it from the
+official tarball:
+
+- picks the newest **LTS** from `index.json` (a Current release needs newer system
+  libraries and a slim image usually lacks them)
+- downloads from `nodejs.org`, then `npmmirror.com`, then `cdn.npmmirror.com`
+- unpacks into `/usr/local/lib/nodejs/node-vX-linux-<arch>` and links
+  `node`/`npm`/`npx` into `/usr/local/bin` — nothing is added to apt or yum
+- verifies by **running** `node -v`. The previous check passed on a symlink that
+  could not load (`libatomic.so.1` on slim images) and reported success; a runtime
+  that will not start now retries after installing libatomic, then fails loudly
+
+Verified in a bare `debian:stable-slim` container: no Node before, `v24.22.1`
+after, `node:crypto` usable, files exactly where described.
+
+### Changed — the docs stopped pinning a release
+Install commands use the ghfast proxy, which tracks `master` and always serves the
+newest version. jsDelivr stays as a fallback with its cache caveat stated, because
+pinning it (or trusting `@master` there) is how a stale copy gets installed.
+
+The script's internal jsDelivr candidate is still pinned to its own release: the
+relay it downloads must match the script that configures it.
+
+### Tests
+- 82 tests green.
+
 ## 0.5.4 — 2026-10-23
 
 ### Fixed — one mirror was caching a stale relay
