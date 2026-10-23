@@ -582,30 +582,53 @@ https://ghfast.top/https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/
 https://gh-proxy.com/https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master"
 fi
 
+relay_version_of() { sed -n 's/.*RELAY_VERSION = "\([^"]*\)".*/\1/p' "$1" 2>/dev/null | head -n 1; }
+
+fetch_relay() { # fetch_relay <dest>: prints the base that worked; fails when none does
+  local dest=$1 base
+  for base in $RAW_BASES; do
+    if command -v curl >/dev/null 2>&1; then
+      curl -fsSL --max-time 25 "$base/tools/relay.mjs" -o "$dest" 2>/dev/null || continue
+    elif command -v wget >/dev/null 2>&1; then
+      wget -qT 25 -O "$dest" "$base/tools/relay.mjs" 2>/dev/null || continue
+    else
+      die "$(t "need curl or wget to fetch relay.mjs" "需要 curl 或 wget 才能下载 relay.mjs")"
+    fi
+    node --check "$dest" >/dev/null 2>&1 || continue
+    printf '%s' "$base"
+    return 0
+  done
+  return 1
+}
+
 if [ ! -f "$PORTAL_DIR/relay.mjs" ] && [ -f "$STATE_DIR/relay.mjs" ]; then
   PORTAL_DIR=$STATE_DIR
 fi
 
-if [ ! -f "$PORTAL_DIR/relay.mjs" ]; then
-  TMP_RELAY=$(mktemp -d)/relay.mjs
-  got=""
-  for base in $RAW_BASES; do
-    if command -v curl >/dev/null 2>&1; then
-      curl -fsSL --max-time 25 "$base/tools/relay.mjs" -o "$TMP_RELAY" 2>/dev/null || continue
-    elif command -v wget >/dev/null 2>&1; then
-      wget -qT 25 -O "$TMP_RELAY" "$base/tools/relay.mjs" 2>/dev/null || continue
+# A relay from another release speaks a slightly different protocol, and that shows up
+# much later as an unexplained tunnel error. Compare versions before installing, and
+# fetch the matching one when they differ.
+if [ -f "$PORTAL_DIR/relay.mjs" ]; then
+  relay_have=$(relay_version_of "$PORTAL_DIR/relay.mjs")
+  if [ -n "$relay_have" ] && [ "$relay_have" != "$SELF_VERSION" ]; then
+    warn "$(t "the relay.mjs next to this script is v$relay_have, but this installer is v$SELF_VERSION" "脚本旁边的 relay.mjs 是 v$relay_have，而安装脚本是 v$SELF_VERSION")"
+    TMP_RELAY=$(mktemp -d)/relay.mjs
+    got=""
+    if got=$(fetch_relay "$TMP_RELAY") && [ "$(relay_version_of "$TMP_RELAY")" = "$SELF_VERSION" ]; then
+      PORTAL_DIR=$(dirname "$TMP_RELAY")
+      ok "$(t "relay.mjs v$SELF_VERSION fetched from the release" "已从对应版本取到 relay.mjs v$SELF_VERSION") ($(printf '%s' "$got" | sed -e 's#^https\?://##' -e 's#/.*##'))"
     else
-      die "$(t "need curl or wget to fetch relay.mjs" "需要 curl 或 wget 才能下载 relay.mjs")"
+      die "$(t "relay.mjs v$relay_have does not match installer v$SELF_VERSION and the matching file could not be downloaded. Put tools/relay.mjs from release v$SELF_VERSION next to this script and run again." "relay.mjs 是 v$relay_have，与安装脚本 v$SELF_VERSION 不匹配，且下载不到配套版本。请把 v$SELF_VERSION 的 tools/relay.mjs 放到脚本旁边后重跑。")"
     fi
-    node --check "$TMP_RELAY" >/dev/null 2>&1 || continue
-    got=$base
-    break
-  done
+  else
+    ok "relay.mjs v${relay_have:-$SELF_VERSION}"
+  fi
+else
+  TMP_RELAY=$(mktemp -d)/relay.mjs
+  got=$(fetch_relay "$TMP_RELAY") || got=""
   [ -n "$got" ] || die "$(t "could not fetch relay.mjs from GitHub or any mirror. Download it once on a machine that can reach GitHub and put it next to this script, then run again." "GitHub 和所有镜像都取不到 relay.mjs。在一台能访问 GitHub 的机器上下载它，放到本脚本旁边，再重新运行。")"
   PORTAL_DIR=$(dirname "$TMP_RELAY")
-  ok "relay.mjs $(t "downloaded" "已下载") ($(printf '%s' "$got" | sed -e 's#^https\?://##' -e 's#/.*##'))"
-else
-  ok "relay.mjs"
+  ok "relay.mjs v$(relay_version_of "$TMP_RELAY") $(t "downloaded" "已下载") ($(printf '%s' "$got" | sed -e 's#^https\?://##' -e 's#/.*##'))"
 fi
 
 HAVE_SYSTEMD=0
