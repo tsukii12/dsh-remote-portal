@@ -977,8 +977,15 @@ ACME_TIMER
   ok "$(t "renewal timer installed" "已安装续期定时器") (dsh-relay-acme.timer)"
 }
 
-ca_reachable() { # 6 s ceiling; false means "do not even try"
-  curl -fsS --connect-timeout 4 --max-time 6 https://acme-v02.api.letsencrypt.org/directory >/dev/null 2>&1
+ca_reachable() { # a few samples: an international path is bursty
+  local attempt
+  for attempt in 1 2 3 4; do
+    if curl -fsS --connect-timeout 5 --max-time 10 https://acme-v02.api.letsencrypt.org/directory >/dev/null 2>&1; then
+      return 0
+    fi
+    sleep 1
+  done
+  return 1
 }
 
 issue_cert_acme() { # issue_cert_acme <domain> [http|dns-cf|dns-manual]
@@ -1011,8 +1018,13 @@ issue_cert_acme() { # issue_cert_acme <domain> [http|dns-cf|dns-manual]
   fi
 
   if [ "$reuse" = 0 ] && ! ca_reachable; then
-    warn "$(t "the certificate authority did not answer within 6 seconds" "证书机构在 6 秒内没有响应")"
-    die "$(t "this host cannot reach the Let's Encrypt API, so nothing was attempted. Options: run this on a host that can reach it, use the Cloudflare token, or issue the certificate elsewhere and pick \"I already have a certificate\"." "本机连不上 Let's Encrypt 接口，所以没有开始签发。可以：换一台能访问的机器执行、用 Cloudflare 令牌、或在别处签好证书后选「我已经有这个证书」。")"
+    warn "$(t "Let's Encrypt did not answer four times in a row" "Let's Encrypt 连续四次没有响应")"
+    if [ "$ASSUME_YES" = 1 ]; then
+      die "$(t "cannot reach the certificate authority from this host. Run again from a better network, or choose the self-signed option and put Cloudflare in front." "本机连不上证书机构。换网络重试，或改选自签证书并用 Cloudflare 代理。")"
+    fi
+    if ! ask_yn "$(t "try anyway? acme.sh retries on its own for a few minutes" "仍然尝试？acme.sh 自己会重试几分钟")" y; then
+      die "$(t "nothing was attempted" "没有开始签发")"
+    fi
   fi
 
   acmesh_install
