@@ -223,6 +223,7 @@ if [ "$UNINSTALL" = 0 ] && [ -r "$CONF_FILE" ]; then
   SAVED_VISIT_MODE=${VISIT_MODE:-}
   SAVED_AGENT_TLS=${AGENT_TLS:-}
   SAVED_CERT_SOURCE=${CERT_SOURCE:-}
+  SAVED_ACME_MODE=${ACME_MODE:-}
   SAVED_PUBLIC_PORT=${PUBLIC_PORT:-}
   ADVERTISED_URL=${ADVERTISED_URL:-}
   SAVED_CERT_FILE=${CERT_FILE:-}
@@ -280,6 +281,7 @@ load() {
   HOST=${HOST:-127.0.0.1}; AGENT_PORT=${AGENT_PORT:-9443}; HTTP_PORT=${HTTP_PORT:-8080}
   PUBLIC_PORT=${PUBLIC_PORT:-80}; PROXY_MODE=${PROXY_MODE:-none}
   SCHEME=${SCHEME:-http}; VISITOR_TLS=${VISITOR_TLS:-0}; AGENT_TLS=${AGENT_TLS:-1}
+  CERT_SOURCE=${CERT_SOURCE:-self}
   SCRIPT=${SCRIPT:-}
 }
 health() { curl -fsS --max-time 3 "http://127.0.0.1:${HTTP_PORT:-8080}/__relay/health" 2>/dev/null; }
@@ -329,7 +331,11 @@ case "${1:-status}" in
     printf 'agent port  %s %s\n' "$(cyan "$HOST:$AGENT_PORT")" "$([ "${AGENT_TLS:-1}" = 1 ] && echo '(TLS)' || echo '(plain)')"
     if [ "$PROXY_MODE" = none ]; then
       if [ "${VISITOR_TLS:-0}" = 1 ]; then
-        printf 'visitor     %s (TLS, self-signed)\n' "$(cyan "0.0.0.0:$PUBLIC_PORT")"
+        case "${CERT_SOURCE:-self}" in
+          acme) printf 'visitor     %s (TLS, CA certificate)\n' "$(cyan "0.0.0.0:$PUBLIC_PORT")" ;;
+          user) printf 'visitor     %s (TLS, your certificate)\n' "$(cyan "0.0.0.0:$PUBLIC_PORT")" ;;
+          *) printf 'visitor     %s (TLS, self-signed)\n' "$(cyan "0.0.0.0:$PUBLIC_PORT")" ;;
+        esac
       else
         printf 'visitor     %s %s\n' "$(cyan "0.0.0.0:$PUBLIC_PORT")" "$(red '(plain, NOT encrypted)')"
       fi
@@ -721,7 +727,7 @@ if [ "$SCHEME" = https ]; then
     # Unattended: reuse what was chosen last time; never reach out to a CA on a
     # re-run the operator did not ask for.
     case "${SAVED_CERT_SOURCE:-self}" in
-      acme) VISITOR_TLS=1; CERT_SOURCE=acme; ACME_EMAIL=${ACME_EMAIL:-admin@$HOST} ;;
+      acme) VISITOR_TLS=1; CERT_SOURCE=acme; ACME_MODE=${SAVED_ACME_MODE:-http}; ACME_EMAIL=${ACME_EMAIL:-admin@$HOST} ;;
       user) VISITOR_TLS=1; CERT_SOURCE=user; USER_CERT=$SAVED_CERT_FILE; USER_KEY=$SAVED_KEY_FILE ;;
       *) VISITOR_TLS=1; CERT_SOURCE=self ;;
     esac
@@ -927,11 +933,16 @@ acmesh_install() { # sets ACME_BIN / ACME_HOME, or dies
 
 acme_install_cert() { # acme_install_cert <domain> <fullchain-out> <key-out>
   local domain=$1 earned=$2 ekey=$3
-  if ! "$ACME_BIN" --home "$ACME_HOME" --install-cert -d "$domain" --ecc \\
-      --key-file "$ekey" --fullchain-file "$earned" \\
-      --reloadcmd "systemctl restart $SERVICE" >/tmp/acme-install.log 2>&1; then
-    tail -n 12 /tmp/acme-install.log
-    die "$(t "could not install the certificate" "证书安装失败")"
+  if ! "$ACME_BIN" --home "$ACME_HOME" --install-cert -d "$domain" --ecc \
+      --key-file "$ekey" --fullchain-file "$earned" \
+      --reloadcmd "systemctl restart $SERVICE 2>/dev/null || true" >/tmp/acme-install.log 2>&1; then
+    if [ -s "$earned" ] && [ -s "$ekey" ]; then
+      warn "$(t "the certificate is in place, but acme.sh reported an error while installing it" "证书已就位，但 acme.sh 报告了一个错误")"
+      tail -n 6 /tmp/acme-install.log
+    else
+      tail -n 12 /tmp/acme-install.log
+      die "$(t "could not install the certificate" "证书安装失败")"
+    fi
   fi
   chmod 600 "$ekey"; chmod 644 "$earned"
   [ "$HAVE_SYSTEMD" = 1 ] && chown -R dsh-relay:dsh-relay "$STATE_DIR" 2>/dev/null || true
@@ -1007,29 +1018,41 @@ issue_cert_acme() { # issue_cert_acme <domain> [http|dns-cf|dns-manual]
       die "$(t "Cloudflare validation failed; check the token's Zone:DNS:Edit permission" "Cloudflare 校验失败；检查令牌是否有 Zone:DNS:Edit 权限")"
     fi
   elif [ "$mode" = dns-manual ]; then
-    can_ask || die "$(t "the manual DNS check needs a terminal: run the installer interactively" "手工 DNS 校验需要终端：请交互式运行安装脚本")"
     local manual_flags="--server letsencrypt --yes-I-know-dns-manual-mode-enough-go-ahead-please"
+    local certfile="$ACME_HOME/${domain}_ecc/${domain}.cer"
+    if [ -s "$certfile" ] && openssl x509 -checkend 604800 -noout -in "$certfile" >/dev/null 2>&1; then
+      info "$(t "the certificate on disk for $domain is still valid; reusing it" "$domain 的证书仍在有效期内，直接复用")"
+    else
+    can_ask || die "$(t "the manual DNS check needs a terminal: run the installer interactively" "手工 DNS 校验需要终端：请交互式运行安装脚本")"
     : > /tmp/acme-issue.log
+
     "$ACME_BIN" --home "$ACME_HOME" --issue -d "$domain" --keylength ec-256 \
       $manual_flags $challenge >>/tmp/acme-issue.log 2>&1 || true
 
     local txt
     txt=$(sed -n "s/.*TXT value: '\([^']*\)'.*/\1/p" /tmp/acme-issue.log | head -n 1)
-    [ -n "$txt" ] || { tail -n 12 /tmp/acme-issue.log; die "$(t "acme.sh did not produce a TXT record" "acme.sh 没有生成 TXT 记录")"; }
-
-    printf '\n  %s\n\n' "$(t "Add this record at your DNS provider:" "到你的 DNS 服务商处添加这条记录：")"
-    printf '    %-46s TXT  %s\n' "_acme-challenge.$domain" "$txt"
-    printf '\n  %s\n' "$(t "Cloudflare or another fast provider: a few seconds. Then press Enter here." "Cloudflare 这类服务商几秒就生效。生效后回到这里按回车。")"
-    printf '  > ' >/dev/tty
-    if ! read -r _ </dev/tty; then
-      printf '\n' >/dev/tty
-      die "$(t "input closed; run again once the record is in place" "输入已结束；记录添加好后重跑即可")"
+    if [ -n "$txt" ]; then
+      printf '\n  %s\n\n' "$(t "Add this record at your DNS provider:" "到你的 DNS 服务商处添加这条记录：")"
+      printf '    %-46s TXT  %s\n' "_acme-challenge.$domain" "$txt"
+      printf '\n  %s\n' "$(t "Cloudflare or another fast provider: a few seconds. Then press Enter here." "Cloudflare 这类服务商几秒就生效。生效后回到这里按回车。")"
+      printf '  > ' >/dev/tty
+      if ! read -r _ </dev/tty; then
+        printf '\n' >/dev/tty
+        die "$(t "input closed; run again once the record is in place" "输入已结束；记录添加好后重跑即可")"
+      fi
+      info "$(t "validating" "正在验证")"
+      "$ACME_BIN" --home "$ACME_HOME" --renew -d "$domain" --ecc $manual_flags >>/tmp/acme-issue.log 2>&1 || true
+    else
+      info "$(t "a certificate for $domain is already on disk; reusing it" "$domain 的证书已经在本地，直接复用")"
     fi
 
-    info "$(t "validating" "正在验证")"
-    if ! "$ACME_BIN" --home "$ACME_HOME" --renew -d "$domain" --ecc $manual_flags >>/tmp/acme-issue.log 2>&1; then
+    fi
+
+    # Judge by the artefact: acme exits 0 for "nothing due" and non-zero for a dozen
+    # harmless reasons, but the certificate file is the thing that matters.
+    if [ ! -s "$certfile" ]; then
       tail -n 14 /tmp/acme-issue.log
-      die "$(t "DNS validation failed: check the record, then run again" "DNS 校验失败：检查记录后重跑")"
+      die "$(t "no certificate was issued; see the log above" "没有签发成功，见上面的日志")"
     fi
   else
     if ! curl -fsS --max-time 8 https://acme-v02.api.letsencrypt.org/directory >/dev/null 2>&1; then
@@ -1277,6 +1300,7 @@ HTTP_PORT=$HTTP_PORT
 PUBLIC_PORT=$PUBLIC_PORT
 PROXY_MODE=$PROXY_MODE
 CERT_SOURCE=$CERT_SOURCE
+ACME_MODE=${ACME_MODE:-http}
 ADVERTISED_URL=${ADVERTISED_URL:-}
 CERT_FILE=$TLS_CERT
 KEY_FILE=$TLS_KEY
