@@ -1,246 +1,288 @@
-## 前置：把插件装进 dsh
+# Deploying the relay
 
-在 dsh 里：插件 → 添加插件 → 填 `https://github.com/tsukii12/dsh-remote-portal`；或用命令行：
+> Goal: dsh runs on the computer at home, and you open a **public address** on a
+> phone or laptop from the office, the subway, or a hotel. Home needs no public IP,
+> no router port forwarding, and no third-party tunnel service.
+
+```
+home / office computer                    your server (public IP)              phone / laptop
+┌────────────────────────┐   outbound    ┌────────────────────────┐  ordinary  ┌──────────────┐
+│ dsh + dsh-remote-portal │  one TLS      │ relay.mjs              │  HTTPS     │ browser      │
+│   gateway  127.0.0.1:3081│ ────────────▶ │  :9443  agent port (TLS)│ ◀───────── │ scan / open  │
+│   tunnel   ─────────────┼  connection   │  :443   visitor port    │            └──────────────┘
+└────────────────────────┘               └────────────────────────┘
+```
+
+The tunnel is dialled **outward by the home machine**, so nothing has to be opened
+there. Visitors only ever see your server, and the password / pairing gate is still
+enforced by the portal at home — the relay only moves bytes.
+
+---
+
+## Contents
+
+1. [Install the plugin first](#1-install-the-plugin-first)
+2. [Three deployment shapes](#2-three-deployment-shapes)
+3. [One command, no arguments](#3-one-command-no-arguments)
+4. [Do I need nginx? No](#4-do-i-need-nginx-no)
+5. [Mirrors and offline installs](#5-mirrors-and-offline-installs)
+6. [Manual deployment (advanced)](#6-manual-deployment-advanced)
+7. [Managing it with `drp`](#7-managing-it-with-drp)
+8. [Connecting the home machine](#8-connecting-the-home-machine)
+9. [Bring your own tunnel](#9-bring-your-own-tunnel)
+10. [Operations and troubleshooting](#10-operations-and-troubleshooting)
+11. [Is it safe?](#11-is-it-safe)
+12. [Appendix: Docker](#12-appendix-docker)
+
+---
+
+## 1. Install the plugin first
+
+Inside dsh: Plugins → Add plugin → paste
+`https://github.com/tsukii12/dsh-remote-portal`. Or from a shell:
 
 ```bash
 git clone https://github.com/tsukii12/dsh-remote-portal
-cd dsh-remote-portal && ./install.sh      # Windows 用 .\install.ps1
+cd dsh-remote-portal && ./install.sh      # Windows: .\install.ps1
 ```
 
-装完重启 dsh。下面所有部署步骤都以本仓库的 `tools/` 为前提。
-# 在服务器上部署中转，人在任何网络都能访问
-
-> 目标：dsh 跑在家里的电脑上，你在公司/地铁/酒店用手机或笔记本打开一个**公网地址**就能用。
-> 家里不需要公网 IP、不需要路由器端口映射、不需要内网穿透软件。
-
-```
-家/办公室的电脑                          你的服务器（有公网 IP）                手机 / 笔记本
-┌───────────────────────┐   主动外连    ┌────────────────────────┐   普通 HTTPS   ┌──────────────┐
-│ dsh + dsh-remote-portal│  一条 TLS 连接 │ relay.mjs              │  ◀────────────  │ 浏览器         │
-│   gateway  127.0.0.1:3081 │ ───────────▶ │  :9443  代理端口（TLS） │                │ 扫码 / 打开链接 │
-│   tunnel   ────────────┼──────────────│  :8080  访客端口（HTTP）│                └──────────────┘
-└───────────────────────┘               └────────────────────────┘
-```
-
-隧道由**家里的电脑主动拨出**，所以家里那侧什么都不用开放。访客只看到你的服务器；密码 / 扫码
-那一关仍然由家里的门户把守，中转只负责搬运字节。
+Restart dsh afterwards. Everything below assumes this repository's `tools/`
+directory.
 
 ---
 
-## 0. 三种部署形态，选一个
+## 2. Three deployment shapes
 
-| 形态 | 适合 | 需要的 | 命令要点 |
+| Shape | Fits | Needs | Key point |
 |---|---|---|---|
-| **A. 服务器 + Caddy 自动 HTTPS**（推荐） | 有域名 | 域名解析到服务器 | relay 只开 HTTP，Caddy 在 443 终止 TLS |
-| **B. 服务器 + 自签证书直连 HTTPS** | 没域名，内网/自用 | 无 | relay 用 `--tls-port` 直接说 HTTPS |
-| **C. 仅 HTTP（自己在前面套隧道）** | 已有 frp / cloudflared | 无 | relay 只做 `:8080` |
+| **A. Server + automatic HTTPS** (recommended) | you own a domain | the domain resolving to the server | the relay speaks HTTP on loopback, something else terminates TLS on 443 |
+| **B. Server + self-signed TLS** | no domain, personal use | nothing | the relay terminates TLS itself with `--tls-port` |
+| **C. Bring your own tunnel** | you already run frp / cloudflared / Tailscale | nothing | no relay at all; expose the portal's own port |
 
-下面以 **A** 为主线，B/C 的差异单独标注。
+The installer picks A or B from your answers, and you can go further with C.
 
 ---
 
-## 0. 最快的方式：一键脚本（不需要任何参数）
+## 3. One command, no arguments
 
-**不用拉代码**，服务器上一条命令（需要 root；**没有 Node 也可以**，脚本会自己装）：
+No checkout needed. Run this on the server as root:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master/tools/deploy-relay.sh | sudo bash
 ```
 
-脚本会自己下载 `relay.mjs`，因此不需要 clone 仓库。想先看内容再跑也可以：
+**Node is not required.** If the host has none, the installer offers to install a
+self-contained runtime (official tarball, newest LTS, nothing added to apt/yum,
+unpacked into `/usr/local/lib/nodejs`) and carries on.
+
+Prefer to read before running? Download it and execute the same file:
 
 ```bash
 curl -fsSLO https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master/tools/deploy-relay.sh
 sudo bash deploy-relay.sh
 ```
 
-> 重跑同一条命令就是升级：令牌与证书复用，端口不会漂移。
+> Re-running the same command upgrades in place: the token and certificate are
+> reused, and the ports do not move.
 
-### 三个选择，决定安全性
+### 3.1 What it asks
 
-脚本是**完全交互式**的，不需要任何参数。第一组问题就是访客怎么连：
+The first question is the language (`en` / `zh`); everything after it is asked in
+that language. Then:
 
-| 提问 | 选项 | 安全含义 |
+| Question | Options | What it means |
 |---|---|---|
-| 访客如何连接 | `1) HTTP` | 不加密。密码、Cookie、全部会话内容在公网上明文传输，路径上任何人都能读取和篡改 |
-|  | `2) HTTPS` | 加密。只要能从公网访问就选这个 |
-| HTTPS 用域名还是 IP | 域名 | 配好证书后浏览器不报警；有 Caddy 时会自动签发续签 |
-|  | IP | 自动生成含 IP SAN 的自签证书，浏览器警告一次，之后正常加密 |
-| 证书怎么来（域名 + 已有 nginx） | 自动申请 / 已有证书 / 自签 | 自动申请走 acme.sh + Let's Encrypt（需 80 端口空闲，装完自动续期）；已有证书填 fullchain 与 key；自签会让浏览器提示不安全 |
-| 端口 | 对外端口、中转端口 | 对外端口会被占用检查，已占用会自动提示换一个 |
+| How will visitors connect? | `1) HTTP` | unencrypted — the password, the cookie and the whole session are readable and modifiable on the way. Trusted LAN only. |
+| | `2) HTTPS` | encrypted. Choose this whenever the internet can reach the server. |
+| Domain or IP? | domain | no browser warning once a certificate is in place |
+| | IP | self-signed certificate, one warning, encrypted afterwards |
+| Certificate | `1) issue one` | Let's Encrypt via acme.sh (HTTP-01 on port 80, renewed automatically) |
+| | `2) I have one` | you supply `fullchain` and `key` |
+| | `3) self-signed` | the browser will say "not secure" |
+| Ports | public + agent | a port already in use is reported and you are asked again |
 
-选 HTTPS + IP 时，relay **自己**在对外端口终止 TLS（不需要反代），明文监听只留在 `127.0.0.1` 上供健康检查使用。
+The certificate question only appears for a domain — a bare IP cannot have a public
+certificate.
 
-选 HTTPS + 域名 + Caddy 时，Caddy 负责证书，relay 只监听回环。
+### 3.2 The domain is resolved before anything is written
 
-选 HTTP 时，明文直接对外。这是脚本唯一会告警的配置。
+After you type a domain, the installer resolves it once and compares the first A
+record with the host's public IP:
 
-### 域名会做解析检测
-
-选域名后，脚本会**当场解析一次**并把结果和本机公网 IP 对照：
-
-| 情况 | 脚本行为 |
+| Result | Behaviour |
 |---|---|
-| 解析到本机 | ✓ 继续 |
-| 解析到别处（如 Cloudflare 等 CDN） | 提示两边地址，说明 CDN 场景属正常、自动签证书需要直接指向本机，然后让你选：继续 / 重新检测 / 换域名 |
-| 没有 A 记录 | 提示先加一条 A 记录指向本机，然后让你选：重新检测 / 仍然使用 / 换域名 |
+| points here | continues |
+| points elsewhere (Cloudflare and other CDNs) | shows both addresses, explains that a CDN is normal and that automatic issuance needs a direct record, then offers continue / re-check / another domain |
+| no A record | says so and offers re-check / use it anyway / another domain |
 
-解析用 `getent` / `dig` / `nslookup` / `host` 中任意一个可用的，无需额外安装。汇总里也会显示最终解析结果，装完一眼能核对。
+The lookup uses whichever of `getent`, `dig`, `nslookup` or `host` exists — nothing
+to install. The final summary prints the resolved address too.
 
-### 国内网络：取不到 GitHub 怎么办
+### 3.3 Ports below 1024
 
-脚本需要 `relay.mjs`。如果它不在脚本同目录，脚本会**依次尝试四个来源**，用通的那个，并在成功行里打印来源主机名：
+The service runs as the unprivileged `dsh-relay` user. When any port is below 1024
+the unit is written with `AmbientCapabilities=CAP_NET_BIND_SERVICE`, so 443 works
+without running the relay as root.
 
-| 顺序 | 来源 |
+### 3.4 What it prints when it finishes
+
+```
+  Relay endpoint  tls://dsh.example.com:9443
+  Tunnel token    8f3k…your token…
+
+Public URL once connected:
+
+  https://dsh.example.com/__t/3TerRaeZuv7S/
+
+Open these in your cloud firewall, or nothing outside can connect:
+
+  9443/tcp   ← the dsh host dials out
+  443/tcp    ← visitors
+```
+
+Both ports are inbound on the **server**. `9443` looks outbound, but the home dsh is
+the side that initiates the connection to it.
+
+### 3.5 Unattended and other switches
+
+```bash
+sudo ./deploy-relay.sh --yes        # accept every default (also how `drp config` reinstalls)
+sudo ./deploy-relay.sh --uninstall  # remove the service, /opt/dsh-relay and drp
+sudo ./deploy-relay.sh --lang zh    # Chinese
+```
+
+`--yes` keeps plain HTTP as the default and says so — it never picks HTTPS on a
+guess. A saved port, host and certificate choice are reused, so an unattended run
+does not move the service or fetch a certificate by surprise.
+
+Everything else is answered interactively; there are no configuration flags.
+
+---
+
+## 4. Do I need nginx? No
+
+The installer picks an entry point from what it finds:
+
+| Environment | What the installer does |
+|---|---|
+| Caddy installed | writes a Caddy site; Caddy obtains and renews the certificate |
+| nginx installed (including 1Panel's openresty in a container) | writes a server block that forwards only `/__t/`, runs `nginx -t`, then reloads — and removes the block again if validation fails |
+| neither | the relay listens on the public port itself, with its own TLS when HTTPS was chosen |
+
+So a proxy is optional: with one you can reuse 80/443, without one the relay serves
+the port directly.
+
+---
+
+## 5. Mirrors and offline installs
+
+GitHub's raw host is unreliable from mainland China. When `relay.mjs` is not next to
+the script, the installer tries four sources in order and prints which one answered:
+
+| Order | Source |
 |---|---|
 | 1 | `raw.githubusercontent.com` |
-| 2 | `cdn.jsdelivr.net`（`/gh/user/repo@v<本脚本版本>`，钉版本是因为它会缓存） |
-| 3 | `ghfast.top` 代理 |
-| 4 | `gh-proxy.com` 代理 |
+| 2 | `cdn.jsdelivr.net/gh/…@v<release>` (pinned to the tag: jsDelivr caches branch refs) |
+| 3 | `ghfast.top` proxy |
+| 4 | `gh-proxy.com` proxy |
 
-四个都不通时，脚本会明确报错并告诉你怎么办，不会装到一半。
+If none answers it stops with instructions instead of installing half of anything.
 
-**自己指定来源**：
+**Pin a source yourself:**
 
 ```bash
 sudo -E RELAY_RAW_BASE=https://ghfast.top/https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master bash deploy-relay.sh
 ```
 
-**完全离线**（最稳）：在能上网的机器上下载 `relay.mjs`，与 `deploy-relay.sh` 放同一目录，然后正常运行——脚本检测到本地文件就不再联网。
+**Fully offline** (most reliable): fetch `relay.mjs` once on a machine that can reach
+GitHub, put it next to `deploy-relay.sh`, and nothing is downloaded.
 
-脚本本身的下载也可以用镜像：
+The script itself can come from a mirror too:
 
 ```bash
 curl -fsSL https://ghfast.top/https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master/tools/deploy-relay.sh | sudo bash
 ```
 
-**不带参数**。脚本会自己探测环境、逐项提问（每项都有默认值，直接回车即可），然后完成全部配置：
+Re-running is safe: the answers are stored in `/var/lib/dsh-relay/deploy.conf` and
+offered as defaults next time, the token and certificate are reused (encryption is
+never downgraded), and ports the install already owns are not counted as conflicts.
 
-| 步骤 | 做什么 |
-|---|---|
-| 1 | 检查 Node ≥ 20、root、systemd |
-| 2 | 探测公网 IP、**已有的 nginx / Caddy / 1Panel**、可用端口 |
-| 3 | 询问：对外主机、中转端口、是否加密、用哪个入口 |
-| 4 | 装 relay、生成令牌、按需生成自签证书 |
-| 5 | 装 systemd 并启动、按需写反代站点（**校验通过才 reload**） |
-| 6 | 自检并打印可粘贴的两行 + 需要放行的端口 |
+---
 
-### 一定要装 nginx 吗？不需要
+## 6. Manual deployment (advanced)
 
-脚本按环境自动选入口，三种都支持，无需你指定：
+Everything the installer does, by hand — useful when you have your own conventions.
 
-| 环境 | 脚本的选择 |
-|---|---|
-| 已有 Caddy | 写一个 Caddy 站点，自动签 HTTPS |
-| 已有 nginx（含 1Panel 的容器内 openresty） | 写一个只转发 `/__t/` 的 server 块，先 `nginx -t` 再 reload |
-| 什么都没有 | **不用 nginx**：relay 直接对外监听一个端口，公网地址形如 `http://<ip>:8080/__t/<id>/` |
+### 6.1 Prepare the server
 
-也就是说：有反代就用反代（能蹭 80/443 的 HTTPS），没有就直连，**两种都能用**。
-
-### 管理命令：`drp`
-
-安装时脚本会写入 `/usr/local/bin/drp`，之后不用再碰部署目录：
-
-```console
-$ drp
-service     running (enabled: enabled)
-agent port  1.2.3.4:9443 (TLS)
-visitor     0.0.0.0:8080 (direct)
-endpoint    tls://1.2.3.4:9443
-relay       reachable
-tunnel      connected, streams=0
-traffic     in=110B out=0B visitors=2
-public      http://1.2.3.4/__t/ab12cd34ef56/
-
-$ drp url      # 只打印公网地址
-$ drp token    # 只打印隧道令牌
-$ drp restart  # 重启服务
-$ drp log -f   # 跟踪日志
-$ drp config   # 上次保存的配置
-```
-
-### 语言
-
-脚本默认英文。想用中文：`sudo ./deploy-relay.sh --lang zh`，交互模式第一问也可以直接选。
-
-### 其它用法
+A Linux VPS; one core and 512 MB is plenty (the relay only forwards bytes). The
+examples use public IPv4 `203.0.113.10` and `dsh.example.com` pointing at it.
 
 ```bash
-sudo ./deploy-relay.sh --yes        # 全默认，无人值守（也用于反复重跑）
-sudo ./deploy-relay.sh --uninstall  # 卸载（保留令牌与证书目录并提示）
-```
-
-可选覆盖（一般不需要）：`--host <域名或IP>`、`--agent-port <n>`、`--http-port <n>`、
-`--public-port <n>`、`--no-proxy`（强制直连）、`--plain`（中转端口不加密）。
-
-> **重跑是安全的**：脚本把这次的选择写进 `/var/lib/dsh-relay/deploy.conf`，下次运行沿用；
-> 已装的令牌和证书会复用（**不会**把加密降级）；自己占用的端口不算被占用，端口不会漂移。
-
-下面的 1–6 节是**手动版**：脚本做的事逐步展开，便于你按自己的规范改造。
-
-## 1. 服务器准备
-
-一台 Linux VPS（1 核 512 MB 足够：中继本身只转发字节，不做任何计算），假设：
-
-- 公网 IPv4：`203.0.113.10`
-- 域名：`dsh.example.com`（A 记录指向上面那个 IP）
-
-```bash
-# 一个不登录的系统用户来跑它
 sudo useradd --system --home /var/lib/dsh-relay --create-home dsh-relay
 sudo mkdir -p /opt/dsh-relay && sudo chown dsh-relay:dsh-relay /opt/dsh-relay
-
-# 只需要 Node 20+；发行版仓库的版本通常够
-node --version        # v20 或更高
+node --version        # v20 or newer
 ```
 
-把插件目录里的 `tools/relay.mjs` 复制过去（它是**单文件、零依赖**，不需要 `npm install`）：
+`tools/relay.mjs` is a **single file with no dependencies** — no `npm install`:
 
 ```bash
 sudo -u dsh-relay cp tools/relay.mjs /opt/dsh-relay/
 ```
 
-## 2. 生成隧道令牌
+### 6.2 Create a tunnel token
 
-令牌就是"哪台电脑可以接进来"的凭据。**每条隧道一个**，用 32 字节随机值：
+The token is the credential that says which machine may attach. One per tunnel, 32
+random bytes:
 
 ```bash
-openssl rand -base64 32        # 例：8f3k...（保存好，客户端要用同一条）
+openssl rand -base64 32
 ```
 
-写进一个只有服务用户可读的文件：
+Store it where only the service user can read it:
 
 ```bash
-sudo -u dsh-relay bash -c 'printf "%s\n" "8f3k…你的令牌…" > /var/lib/dsh-relay/token'
+sudo -u dsh-relay bash -c 'printf "%s\n" "8f3k…your token…" > /var/lib/dsh-relay/token'
 sudo chmod 600 /var/lib/dsh-relay/token
 ```
 
-> 可以放多行，每行一条隧道（多台机器 → 各自的公网路径互不干扰）。
-> 令牌泄露 = 别人能连进你的 dsh，但仍要过门户密码；怀疑泄露就换一条并重启双方。
+One token per line; several lines means several machines, each with its own public
+path. A leaked token lets someone attach a tunnel, but the portal password still
+stands in the way — rotate it anyway if you suspect one.
 
-## 3. 启动中继（形态 A）
+### 6.3 Run the relay
 
 ```bash
 sudo -u dsh-relay node /opt/dsh-relay/relay.mjs \
   --token-file /var/lib/dsh-relay/token \
   --agent-port 9443 \
-  --http-port 8080 \
+  --http-port 127.0.0.1:8080 \
   --public-url https://dsh.example.com
 ```
 
-启动后会打印每条隧道的公网地址：
+It prints the public path of every tunnel:
 
 ```
+[relay] relay  v0.6.0
 [relay] agent  tcp 0.0.0.0:9443
-[relay] visitor http  0.0.0.0:8080
+[relay] visitor http  127.0.0.1:8080
 [relay] tunnel 3TerRaeZuv7S → https://dsh.example.com/__t/3TerRaeZuv7S/
 ```
 
-这个 `/__t/<id>/` 就是**要填进插件面板的公网入口**（id 由令牌算出来，重启不变）。
+`/__t/<id>/` is what goes into the panel; the id is derived from the token, so it
+survives restarts.
 
-### 交给 systemd
+Two more flags worth knowing:
 
-`/etc/systemd/system/dsh-relay.service`：
+| Flag | Effect |
+|---|---|
+| `--tls-cert` / `--tls-key` | TLS on the **agent** port (the home dsh then dials `tls://`) |
+| `--tls-port <port or host:port>` / `--tls-host <addr>` | the relay terminates **visitor** TLS itself |
+| `--max-streams <n>` | concurrent visitor streams per tunnel (default 256) |
+
+### 6.4 Hand it to systemd
+
+`/etc/systemd/system/dsh-relay.service`:
 
 ```ini
 [Unit]
@@ -256,6 +298,9 @@ ExecStart=/usr/bin/node /opt/dsh-relay/relay.mjs \
   --token-file /var/lib/dsh-relay/token \
   --agent-port 9443 --http-port 127.0.0.1:8080 \
   --public-url https://dsh.example.com
+# only needed when a port is below 1024
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
 Restart=always
 RestartSec=3
 NoNewPrivileges=true
@@ -273,28 +318,23 @@ WantedBy=multi-user.target
 ```bash
 sudo systemctl daemon-reload
 sudo systemctl enable --now dsh-relay
-sudo systemctl status dsh-relay
-journalctl -u dsh-relay -f          # 看隧道连接/断开
+journalctl -u dsh-relay -f          # tunnel connect / disconnect
 ```
 
-> 注意 `--http-port 127.0.0.1:8080` 的写法：Caddy 在同一台机器上，所以访客端口只绑回环，
-> 不直接暴露到公网 —— 这样 443 是唯一入口，防火墙也只需要开 80/443/9443。
+> `--http-port 127.0.0.1:8080` keeps the plain listener on loopback: when a proxy
+> terminates TLS, 443 is the only public entry and the firewall needs 80/443/9443.
 
-## 4. 用 Caddy 拿证书并转发
-
-`/etc/caddy/Caddyfile`：
+### 6.5 Caddy in front
 
 ```caddyfile
 dsh.example.com {
     encode zstd gzip
 
-    # 门户自己的静态资源已经带 ETag/304，Caddy 不用再缓存
     reverse_proxy 127.0.0.1:8080 {
-        # 让门户知道访客本来用的是 HTTPS（Cookie 的 Secure 判定与日志都用得到）
         header_up X-Forwarded-Proto https
-        flush_interval -1          # 不缓冲：SSE / 流式响应必须直通
+        flush_interval -1          # no buffering: streaming responses must pass through
         transport http {
-            read_timeout 0         # 长连接（WebSocket、下载）不设上限
+            read_timeout 0         # long-lived connections (WebSocket, downloads)
         }
     }
 }
@@ -305,95 +345,49 @@ sudo caddy validate --config /etc/caddy/Caddyfile
 sudo systemctl reload caddy
 ```
 
-Caddy 会自动申请并续期证书。**这一步没有别的配置**——路径前缀路由由 relay 负责，Caddy 只做
-TLS 与转发。
+Caddy obtains and renews the certificate; there is nothing else to configure. The
+prefix routing is the relay's job.
 
-nginx 等价配置（如果更习惯 nginx）：
+nginx equivalent:
 
 ```nginx
+# in http {}: map $http_upgrade $connection_upgrade { default upgrade; "" close; }
+
 server {
-  listen 443 ssl http2;
+  listen 443 ssl;
+  http2 on;
   server_name dsh.example.com;
   ssl_certificate     /etc/letsencrypt/live/dsh.example.com/fullchain.pem;
   ssl_certificate_key /etc/letsencrypt/live/dsh.example.com/privkey.pem;
 
-  location / {
+  location /__t/ {
     proxy_pass http://127.0.0.1:8080;
     proxy_http_version 1.1;
     proxy_set_header Host $host;
     proxy_set_header X-Forwarded-Proto $scheme;
     proxy_set_header Upgrade $http_upgrade;      # WebSocket
     proxy_set_header Connection $connection_upgrade;
-    proxy_buffering off;                          # 流式响应
+    proxy_buffering off;                          # streaming
     proxy_read_timeout 3600s;
   }
+  location / { return 404; }
 }
-# map $http_upgrade $connection_upgrade { default upgrade; "" close; } 放在 http{} 里
 ```
 
-## 5. 防火墙
+### 6.6 Firewall
 
 ```bash
-sudo ufw allow 80,443/tcp        # Caddy
-sudo ufw allow 9443/tcp          # 家里的电脑拨进来
+sudo ufw allow 80,443/tcp        # certificate issuance and visitors
+sudo ufw allow 9443/tcp          # the home machine dials in
 sudo ufw enable
 ```
 
-云厂商的安全组同样要放行 **9443**（代理端口）和 **443**（访客端口）。`8080` 不需要开 —— 它只
-绑在回环上给 Caddy 用。
+The cloud security group needs the same inbound rules. The loopback port behind a
+proxy does not.
 
-## 6. 家里那台电脑：把隧道接上
-
-1. 打开 dsh → 设置 → **远程访问** → 找到「**公网访问**」卡片；
-2. 「中转服务器」按**服务器上 agent 端口有没有证书**二选一：
-
-   | 服务器怎么起的 | 填什么 |
-   |---|---|
-   | 默认（没有 `--tls-cert` / `--tls-key`） | `tcp://43.153.152.119:9443` |
-   | 带证书（`--tls-cert … --tls-key …`） | `tls://dsh.example.com:9443` |
-
-   > **这是最容易踩的一步。** agent 端口默认是**明文 TCP**；填 `tls://` 会握手失败，
-   > 服务器日志里会写明「sent a TLS ClientHello, but this port serves plain TCP」。
-   > 反过来，端口配了证书却填 `tcp://` 也一样连不上。前端 443 的 HTTPS 与此无关：
-   > 它保护的是**访客**那一跳，agent 端口是另一跳。
-
-   > 明文 `tcp://` 表示「家里 → 服务器」这段可被中间人看到；介意就按第 5 节配证书。
-3. 「隧道令牌」粘贴第 2 步那条；
-4. 点「连接」。状态变成 **已连接**，卡片上出现公网地址与二维码。
-
-也可以在 `cordis.patch.yml` 里写死（令牌建议只写文件路径，见下）：
-
-```yaml
-- id: dsh-remote-portal
-  name: dsh-remote-portal
-  config:
-    tunnel:
-      url: tcp://43.153.152.119:9443    # 配了证书就换成 tls://
-      token: 8f3k…你的令牌…
-```
-
-> 面板里填过之后会存进 `~/.dsh/dsh-remote-portal/state.json`（0600），并优先于 YAML。
-> `status()` / 面板**永远不会**把令牌回显出来。
-
-## 7. 客户端怎么连
-
-拿到公网地址（形如 `https://dsh.example.com/__t/3TerRaeZuv7S/`）之后：
-
-| 场景 | 做法 |
-|---|---|
-| **手机（推荐）** | 面板「公网访问」卡片上的二维码 → 相机扫码 → 输一次访问密码 → 进入 |
-| **手机长期用** | 打开后 Safari「分享 → 添加到主屏幕」/ Chrome「添加到主屏幕」，得到全屏图标，像 App 一样 |
-| **笔记本** | 把地址存书签，第一次输密码，之后 30 天内免登录 |
-| **发给别人（临时）** | 面板「扫码配对」生成一次性配对链接（180 秒、单次），对方打开即可，无需告知密码 |
-
-登录页会**相对路径**提交（`__portal/login`），所以同一个地址在没有前缀（局域网 `:3081`）和
-有前缀（公网 `/__t/<id>/`）两种情况下都能用；门户自己页面、面板、二维码里的地址也都是这个
-公网地址。
-
-## 8. 形态 B：没有域名，自签证书直连
+### 6.7 Shape B: no domain, self-signed TLS
 
 ```bash
-# 在服务器上生成（CN 用 IP，现代浏览器看的是 SAN）
 openssl req -x509 -newkey rsa:2048 -sha256 -days 365 -nodes \
   -keyout /opt/dsh-relay/key.pem -out /opt/dsh-relay/cert.pem \
   -subj "/CN=203.0.113.10" \
@@ -402,65 +396,149 @@ sudo chown dsh-relay: /opt/dsh-relay/*.pem && sudo chmod 600 /opt/dsh-relay/key.
 
 sudo -u dsh-relay node /opt/dsh-relay/relay.mjs \
   --token-file /var/lib/dsh-relay/token \
-  --agent-port 9443 --http-port 8080 \
-  --tls-port 8443 --tls-cert /opt/dsh-relay/cert.pem --tls-key /opt/dsh-relay/key.pem \
+  --agent-port 9443 --http-port 127.0.0.1:8080 \
+  --tls-port 0.0.0.0:8443 --tls-cert /opt/dsh-relay/cert.pem --tls-key /opt/dsh-relay/key.pem \
   --public-url https://203.0.113.10:8443
 ```
 
-家里那侧填 `tls://203.0.113.10:9443`；因为证书不是公共 CA 签的，需要让代理信任它：
+The phone shows one "not trusted" warning the first time; that is the normal price of
+a self-signed certificate, and it is only appropriate for your own devices.
 
-```yaml
-tunnel:
-  url: tls://203.0.113.10:9443
-  token: …
-  caFile: D:/path/to/cert.pem     # 或面板里先用 tcp:// 冒险一次
+---
+
+## 7. Managing it with `drp`
+
+The installer writes `/usr/local/bin/drp`; you never have to visit the install
+directory again.
+
+```console
+$ drp
+service     running · autostart on
+uptime      2h 14m
+agent port  dsh.example.com:9443 (TLS)
+visitor     0.0.0.0:443 (TLS, self-signed)
+endpoint    tls://dsh.example.com:9443
+relay       reachable
+tunnel      connected · 2 streams · 3 reconnects
+last drop   12m ago (ping timeout)
+traffic     in 8.0 MiB · out 7.9 MiB · 2140 requests · 3 clients
+public      https://dsh.example.com/__t/3TerRaeZuv7S/
 ```
 
-手机第一次打开会看到一次「证书不受信任」，手动继续即可 —— 这是自签证书的正常代价，**只建议
-在自己的设备上这么用**。
+| Command | Does |
+|---|---|
+| `drp` | status (the above) |
+| `drp url` | just the public URL |
+| `drp token` | just the tunnel token |
+| `drp start` / `stop` / `restart` | service control |
+| `drp log [-f]` | journal for the unit |
+| `drp config` | the saved answers |
+| `drp config K=V …` | change them and reinstall the unit |
+| `drp uninstall` | remove the service, `/opt/dsh-relay` and `drp` itself |
 
-## 9. 形态 C：已经有隧道工具
+`requests` counts real requests (health probes are excluded); `clients` counts
+distinct source addresses. `reconnects` and `last drop` are what you look at when a
+tunnel flaps: `ping timeout` means the network or NAT dropped it silently, `closed`
+means the other side hung up (a sleeping laptop is the usual cause).
 
-如果你已经在用 `cloudflared` / `frp` / Tailscale，**根本不需要 relay**：把门户的 host 设成
-`127.0.0.1`，用它们把 `http://127.0.0.1:3081` 暴露出去即可。插件不接管传输层，只要求流量能
-到网关。
+`drp config` edits `/var/lib/dsh-relay/deploy.conf` and then re-runs the installer
+with `--yes`, so ports and certificates in the unit's command line actually change.
+The installer and `relay.mjs` are kept in `/var/lib/dsh-relay`, so this needs no
+network.
+
+---
+
+## 8. Connecting the home machine
+
+1. dsh → sidebar → **远程访问** → the **公网访问** card.
+2. **Relay endpoint**: match what the server serves — `tls://` when the agent port has
+   a certificate (the installer's default), `tcp://` when it does not.
+
+   | Server | Fill in |
+   |---|---|
+   | certificate installed (default) | `tls://dsh.example.com:9443` |
+   | no certificate (`--no-tls`-style manual run) | `tcp://203.0.113.10:9443` |
+
+   > This is the step people get wrong. A `tls://` endpoint against a plain port fails
+   > the handshake, and the relay log says so (`sent a TLS ClientHello, but this port
+   > serves plain TCP`). The HTTPS on 443 is unrelated: it protects the visitor hop,
+   > not the agent hop.
+
+3. **Tunnel token**: paste the token from the installer.
+4. **Connect**. The state turns *connected* and the public URL plus a QR code appear.
+
+It can also be pinned in `cordis.patch.yml`:
+
+```yaml
+- id: dsh-remote-portal
+  name: dsh-remote-portal
+  config:
+    tunnel:
+      url: tls://dsh.example.com:9443
+      token: 8f3k…your token…
+      caFile: /path/to/cert.pem    # only for a self-signed agent certificate
+```
+
+Values entered in the panel are stored in `~/.dsh/dsh-remote-portal/state.json`
+(mode 0600) and take precedence over the YAML. Neither the panel nor `status()` ever
+echoes the token back.
+
+---
+
+## 9. Bring your own tunnel
+
+Already running `cloudflared`, `frp` or Tailscale? Then you do not need the relay.
+Point the portal at loopback and expose it with the tool you already trust:
 
 ```yaml
 config:
   host: '127.0.0.1'
 ```
 
-## 10. 运维与排障
-
-```bash
-curl -s https://dsh.example.com/__relay/health | jq
-# {"ok":true,"tunnels":[{"id":"3TerRaeZuv7S","connected":true,"streams":0,...}],"stats":{...}}
-
-journalctl -u dsh-relay -f     # 隧道连上/断开
-```
-
-| 现象 | 原因 | 处理 |
-|---|---|---|
-| 公网页 503「The host is offline」 | 家里的 dsh 没连上来 | 面板看「公网访问」状态；确认 9443 可达、令牌一致 |
-| 面板「公网访问」一直是**连接中** | 域名/端口写错，或服务器防火墙没放行 9443 | `nc -vz dsh.example.com 9443`；看 relay 日志 |
-| 打开公网页是 relay 的 404 | 路径 id 不对（令牌变了） | 用面板显示的新地址 |
-| 页面能开但登录后空白 | 反向代理缓冲了流式响应 | Caddy 加 `flush_interval -1`；nginx 关 `proxy_buffering` |
-| 登录后过一会儿掉线 | 代理有 idle timeout | Caddy `read_timeout 0`；nginx `proxy_read_timeout 3600s` |
-| 手机扫码打不开 | 二维码是**局域网**地址（走「扫码配对」那张卡） | 用「公网访问」卡上的二维码，或直接打开公网链接 |
-| 每次都要重新登录 | 浏览器清了 Cookie / 换 UA | 会话绑定 UA 指纹，换浏览器需重新登录 |
-
-### 它到底安全吗
-
-* 中转只看得到**加密的 TLS 载荷**（形态 A 里 Caddy↔浏览器是 TLS，家里的 dsh ↔ relay 也是 TLS；
-  只有 relay 进程内存里有一瞬间的明文——那是你自己的服务器）。
-* 公网链接本身不是凭据：`/__t/<id>/` 只是一个入口，进去还是要过门户密码或一次性配对码。
-* 令牌泄露不会直接拿到 dsh，但仍应立刻更换（面板断开 → 服务器换令牌 → 重连）。
-* 建议在服务器上再叠一层：`--max-streams` 限制并发（默认 256）、Caddy 侧的 `rate_limit`
-  （需要 xcaddy 插件）或云防火墙的 IP 白名单。
+The plugin does not own the transport layer; it only needs traffic to reach the
+gateway.
 
 ---
 
-## 附：Docker（可选）
+## 10. Operations and troubleshooting
+
+```bash
+curl -s https://dsh.example.com/__relay/health | jq
+# {"ok":true,"tunnels":[{"id":"3TerRaeZuv7S","connected":true,"streams":0,
+#   "reconnects":0,"lastDropReason":"","agentVersion":"0.6.0"}],"stats":{...}}
+
+journalctl -u dsh-relay -f     # connect / disconnect
+```
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| 503 "The host is offline" | the home dsh is not attached | check *公网访问* in the panel; confirm 9443 is reachable and the token matches |
+| the panel stays on *connecting* | wrong host/port, or the firewall blocks 9443 | `nc -vz dsh.example.com 9443`; read the relay log |
+| the relay's 404 page | wrong path id (the token changed) | use the URL the panel shows now |
+| the page loads but the session is blank after login | the proxy buffers streaming responses | Caddy `flush_interval -1`; nginx `proxy_buffering off` |
+| drops after a while | a proxy idle timeout | Caddy `read_timeout 0`; nginx `proxy_read_timeout 3600s` |
+| a phone cannot open the QR code | it encodes the **LAN** address | use the QR on the *公网访问* card, or open the public URL |
+| login is asked every time | cookies cleared, or the user agent changed | sessions are bound to the UA fingerprint |
+
+---
+
+## 11. Is it safe?
+
+* The relay sees only the TLS payload it forwards. In shape A, browser↔proxy and
+  home↔relay are both TLS; plaintext exists for a moment inside the relay's own
+  process, on your server.
+* The public URL is not a credential: `/__t/<id>/` is an entry point, and the portal
+  password or a one-time pairing code still stands behind it.
+* A leaked token does not hand over dsh, but rotate it anyway: disconnect in the
+  panel, change the token on the server, reconnect.
+* Optional extra layers: `--max-streams` (default 256), a rate limit at the proxy, or
+  an IP allowlist in the cloud firewall.
+* Serving visitors over plain HTTP puts the password and the whole session in the
+  clear. The installer warns once and only then.
+
+---
+
+## 12. Appendix: Docker
 
 ```dockerfile
 FROM node:22-alpine
@@ -482,8 +560,8 @@ services:
       - --http-port=8080
       - --public-url=https://dsh.example.com
     ports:
-      - "9443:9443"       # 家里的电脑拨进来
-      # 8080 不映射到宿主机；由同网络的 Caddy 容器直连
+      - "9443:9443"       # the home machine dials in
+      # 8080 stays unpublished; the proxy container reaches it on the same network
     secrets: [relay-token]
     restart: unless-stopped
 
@@ -492,7 +570,4 @@ secrets:
     file: ./relay-token
 ```
 
-Caddy 容器里把 `reverse_proxy dsh-relay:8080` 指向上面的服务名即可。
-
-
-
+In the proxy container, point `reverse_proxy dsh-relay:8080` at that service name.

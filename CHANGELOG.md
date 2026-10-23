@@ -990,8 +990,8 @@ real sockets.
   booting — it routes on `location.hash`).
 - Docs: [`docs/DEPLOY-SERVER.md`](docs/DEPLOY-SERVER.md) (systemd, Caddy/nginx,
   firewall, self-signed TLS, Docker, troubleshooting),
-  [`docs/CONNECT.md`](docs/CONNECT.md) (phone, PWA, laptop, one-time links) and
-  [`docs/PERFORMANCE.md`](docs/PERFORMANCE.md) (measured layout/transfer numbers
+  `docs/CONNECT.md` (phone, PWA, laptop, one-time links) and
+  `docs/PERFORMANCE.md` (measured layout/transfer numbers
   with the commands to reproduce them).
 
 ### Security hardening

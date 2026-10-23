@@ -78,7 +78,12 @@ window.__ModuleLoader__.load({
         pillError: "出错",
         pillLoading: "连接中",
         statusLabel: "门户状态",
-        cardAddr: "手机访问地址",
+        tabBasic: "基本设置",
+  tabLan: "局域网访问",
+  tabPublic: "公网访问",
+  tabDevices: "设备管理",
+  cardService: "服务",
+  cardAddr: "局域网地址",
         chipLan: "局域网",
         copy: "复制",
         copied: "已复制",
@@ -89,7 +94,7 @@ window.__ModuleLoader__.load({
         cardQr: "扫码配对",
         qrAlt: "扫码配对二维码",
         qrEmpty: "正在生成配对码…",
-        qrNotRunning: "门户未运行：先在下方设置访问密码并启用",
+        qrNotRunning: "门户未运行，请先设置访问密码并启用",
         qrNoteStopped: "门户没有在监听，二维码暂时不可用。设置密码并启用后会自动生成。",
         copyPairLink: "复制配对链接",
         pairLinkCopied: "配对链接已复制，5 分钟内有效",
@@ -204,7 +209,12 @@ window.__ModuleLoader__.load({
         pillError: "Error",
         pillLoading: "Connecting",
         statusLabel: "Portal status",
-        cardAddr: "Phone address",
+        tabBasic: "General",
+  tabLan: "Local network",
+  tabPublic: "Public access",
+  tabDevices: "Devices",
+  cardService: "Service",
+  cardAddr: "LAN address",
         chipLan: "LAN",
         copy: "Copy",
         copied: "Copied",
@@ -215,7 +225,7 @@ window.__ModuleLoader__.load({
         cardQr: "Pair by QR code",
         qrAlt: "Pairing QR code",
         qrEmpty: "Generating a pairing code…",
-        qrNotRunning: "Portal is not running — set a password below and enable it",
+        qrNotRunning: "The portal is not running. Set an access password and enable it",
         qrNoteStopped: "Nothing is listening yet, so there is no code to scan. Set a password and enable the portal; the code appears automatically.",
         copyPairLink: "Copy pairing link",
         pairLinkCopied: "Pairing link copied — valid for 5 minutes",
@@ -636,8 +646,39 @@ window.__ModuleLoader__.load({
       ".drp-x:focus-visible{outline:2px solid var(--drp-link);outline-offset:2px}",
       ".drp-sheet-x{position:absolute;top:12px;right:12px;z-index:5;width:36px;height:36px;background:transparent;border:0;display:grid;place-items:center;color:var(--drp-fg2);border-radius:9px}",
       /* main-area page (the panel's home) */
-      ".drp-page{height:100%;overflow-y:auto;overscroll-behavior:contain;padding:0 48px 48px}",
-      ".drp-page-inner{width:100%;max-width:100%;margin:0}",
+      // ── tabs ────────────────────────────────────────────────────────────────
+  ".drp-tabbar{display:flex;align-items:flex-end;gap:2px;margin:0 0 18px;border-bottom:1px solid var(--drp-line);overflow-x:auto;scrollbar-width:none;overscroll-behavior-x:contain}",
+  ".drp-tabbar::-webkit-scrollbar{display:none}",
+  ".drp-tab{appearance:none;-webkit-appearance:none;background:none;border:0;border-bottom:2px solid transparent;margin:0 0 -1px;padding:9px 14px;font:inherit;font-size:13.5px;line-height:20px;color:var(--drp-fg2);cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:7px;transition:color .15s ease,border-color .15s ease}",
+  ".drp-tab:hover{color:var(--drp-fg)}",
+  ".drp-tab:focus-visible{outline:2px solid var(--drp-accent,#4d6bfe);outline-offset:-2px;border-radius:6px}",
+  ".drp-tab.drp-tab-on{color:var(--drp-accent,#4d6bfe);border-bottom-color:var(--drp-accent,#4d6bfe);font-weight:500}",
+  ".drp-tab-badge{min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--drp-line);color:var(--drp-fg2);font-size:11px;font-weight:500;display:inline-flex;align-items:center;justify-content:center}",
+  ".drp-pane{animation:drp-pane-in .16s ease-out}",
+  "@keyframes drp-pane-in{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}",
+  "@media (prefers-reduced-motion:reduce){.drp-pane{animation:none}}",
+  ".drp-stack{display:flex;flex-direction:column;gap:14px}",
+  ".drp-lan{display:grid;grid-template-columns:minmax(0,1fr) 288px;gap:16px;align-items:start}",
+  "@media (max-width:1080px){.drp-lan{grid-template-columns:minmax(0,1fr);gap:0}}",
+  ".drp-form-row{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap}",
+  ".drp-form-row .drp-field{flex:1 1 180px;min-width:0}",
+  ".drp-form-row .drp-field-sm{flex:0 1 108px}",
+  ".drp-btn-inline{flex:0 0 auto}",
+  ".drp-form-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1.6fr);gap:12px}",
+  ".drp-form .drp-form-grid{flex:1 1 100%;margin-bottom:2px}",
+  ".drp-form .drp-check{flex:1 1 100%}",
+  "@media (max-width:720px){.drp-form-grid{grid-template-columns:minmax(0,1fr)}}",
+  "@media (max-width:560px){.drp-form-row .drp-field,.drp-form-row .drp-field-sm{flex:1 1 100%}.drp-form-row .drp-btn-inline{width:100%}}",
+  ".drp-page{height:100%;overflow-y:auto;overscroll-behavior:contain;padding:0 48px 48px}",
+      ".drp-page .drp-tabbar{margin:0 0 6px;border-bottom:0.5px solid var(--drp-line)}",
+  ".drp-page .drp-tab{padding:14px 0 12px;margin-right:32px;font-size:14px;letter-spacing:0.01em}",
+  ".drp-page .drp-stack{gap:0}",
+  ".drp-page .drp-qr-note{flex:0 0 auto;text-align:left;margin:0}",
+  ".drp-page .drp-qr-actions{max-width:none;margin:0;justify-content:flex-start}",
+  ".drp-page .drp-lan{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 44px;align-items:start}",
+  "@media (max-width:1080px){.drp-page .drp-lan{grid-template-columns:minmax(0,1fr);gap:0}}",
+  "@media (max-width:560px){.drp-page .drp-tabbar{margin:0}.drp-page .drp-tab{padding:12px 0;margin-right:0;font-size:13.5px;flex:1;justify-content:center}}",
+  ".drp-page-inner{width:100%;max-width:960px;margin:0}",
       /* The host page header: 20px/500 title, 16px supporting line. */
       ".drp-page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:28px 0 20px}",
       ".drp-page-title{margin:0;font-size:20px;font-weight:500;line-height:28px;letter-spacing:0}",
@@ -645,18 +686,21 @@ window.__ModuleLoader__.load({
       /* Groups, not cards: the host uses a divider and a group label. */
       ".drp-page .drp-card{background:transparent;border:0;border-top:0.5px solid var(--drp-line);border-radius:0;padding:20px 0}",
       ".drp-page .drp-card:first-of-type{border-top:0}",
+  ".drp-page .drp-lan > .drp-card{border-top:0}",
       ".drp-page .drp-card-head{margin:0 0 14px}",
       ".drp-page .drp-card-title{font-size:15px;font-weight:600;line-height:22px;letter-spacing:0}",
       ".drp-page .drp-label{font-size:13.5px;color:var(--drp-fg2);font-weight:400}",
       ".drp-page .drp-hint{font-size:13px;line-height:20px;color:var(--drp-fg3)}",
       ".drp-page .drp-input{height:36px;font-size:14px;border-radius:7px}",
-      ".drp-page .drp-btn{height:34px;font-size:13.5px;border-radius:7px;padding:0 14px}",
+      ".drp-page .drp-btn{height:36px;font-size:13.5px;border-radius:7px;padding:0 16px}",
       ".drp-page .drp-btn-sm{height:28px;font-size:12.5px}",
       ".drp-page .drp-url-box{height:36px;font-size:13px;border-radius:7px}",
       ".drp-page .drp-card-head{margin:0 0 12px;align-items:center}",
-      ".drp-page .drp-card{padding:18px 0}",
+      ".drp-page .drp-card{padding:24px 0}",
+  ".drp-page .drp-toggle-row{margin:14px 0 18px}",
+  ".drp-page .drp-card-note{margin:0 0 14px}",
       ".drp-page .drp-chip{height:22px;font-size:11.5px;padding:0 8px}",
-      ".drp-page .drp-sub{font-size:15px;line-height:23px;color:var(--drp-fg2)}",
+      ".drp-page .drp-sub{font-size:15px;line-height:23px;color:var(--drp-fg2);max-width:none}",
       /* Two columns when the page is wide enough, one when it is not — the same
          behaviour the host's own pages have. */
       ".drp-page .drp-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 44px;align-items:start}",
@@ -720,24 +764,15 @@ window.__ModuleLoader__.load({
 
       /* Single column when the *panel* is narrow (container query), because the
          host's settings content column is not the viewport. display:contents
-         dissolves the two wrappers so the cards can be re-ordered: address →
-         QR → access → devices, which is the order a phone user needs. */
+         dissolves the two wrappers so the active tab's cards can stack. */
       "@container (max-width:640px){",
       ".drp-grid{display:flex;flex-direction:column;align-items:stretch;gap:12px}",
       ".drp-col{display:contents}",
-      ".drp-card[data-drp='address']{order:1}",
-      ".drp-card[data-drp='qr']{order:2}",
-      ".drp-card[data-drp='access']{order:3}",
-      ".drp-card[data-drp='devices']{order:4}",
       "}",
       "@supports not (container-type:inline-size){",
       "@media (max-width:900px){",
       ".drp-grid{display:flex;flex-direction:column;align-items:stretch;gap:12px}",
       ".drp-col{display:contents}",
-      ".drp-card[data-drp='address']{order:1}",
-      ".drp-card[data-drp='qr']{order:2}",
-      ".drp-card[data-drp='access']{order:3}",
-      ".drp-card[data-drp='devices']{order:4}",
       "}}",
       "@media (max-width:900px){",
       /* The panel is a page at every width: a settings surface, not a card
@@ -1190,6 +1225,7 @@ window.__ModuleLoader__.load({
       dirty: false,
       pwd: "",
       showPwd: false,
+      tab: "basic",
         copied: false,
       // Diagnostics and the access log are loaded on demand (and once on mount):
       // they change only when something actually happens, so polling them with
@@ -1515,6 +1551,11 @@ window.__ModuleLoader__.load({
 
       // Notice/error stack, in priority order: "cannot reach the plugin" beats
       // "the plugin reports a bind error" beats the last action's feedback.
+      // The host refuses to listen without a password; saying so twice (once as a red
+      // error, once as the first-run banner) reads as two different problems.
+      var blockedByPassword = !passwordSet && status && status.lastError
+        && /password/i.test(String(status.lastError));
+
       var alerts = [];
       if (st.pollErr && !status) {
         alerts.push(h("div", { className: "drp-alert drp-alert-err", role: "alert", key: "poll" },
@@ -1522,7 +1563,7 @@ window.__ModuleLoader__.load({
           h("div", null,
             h("div", null, t("statusFail")),
             h("div", { className: "drp-alert-sub" }, t("statusFailHint") + " (" + st.pollErr + ")"))));
-      } else if (status && status.lastError) {
+      } else if (status && status.lastError && !blockedByPassword) {
         alerts.push(h("div", { className: "drp-alert drp-alert-err", role: "alert", key: "lastError" },
           h(Icon, { name: "alert", size: 14 }),
           h("div", null,
@@ -1582,8 +1623,9 @@ window.__ModuleLoader__.load({
                 })
               : h("div", { className: "drp-qr-empty" }, t("qrEmpty")),
           canPair && expired ? h("div", { className: "drp-qr-veil" }, t("qrExpired")) : null),
-        h("p", { className: "drp-qr-note" },
-          !canPair ? t("qrNoteStopped") : (pair ? t("qrNotePair") : t("qrNotePlain"))),
+        canPair
+          ? h("p", { className: "drp-qr-note" }, pair ? t("qrNotePair") : t("qrNotePlain"))
+          : null,
         h("div", { className: "drp-qr-actions" },
           h("button", {
             type: "button",
@@ -1609,9 +1651,10 @@ window.__ModuleLoader__.load({
             h(Icon, { name: "copy", size: 14 }),
             h("span", null, t("copyPairLink")))));
 
-      var accessCard = h("section", { className: "drp-card", "data-drp": "access", key: "access" },
+      // ── basic tab, part 1: the switch and where the portal listens ────────
+      var serviceCard = h("section", { className: "drp-card", "data-drp": "access", key: "service" },
         h("div", { className: "drp-card-head" },
-          h("h3", { className: "drp-card-title" }, t("cardAccess"))),
+          h("h3", { className: "drp-card-title" }, t("cardService"))),
         h("div", { className: "drp-toggle-row" },
           h("div", { className: "drp-toggle-text" },
             h("div", { className: "drp-toggle-title" }, t("swEnable")),
@@ -1622,78 +1665,82 @@ window.__ModuleLoader__.load({
             label: t("swEnable"),
             onClick: onToggleEnabled
           })),
-        h("div", { className: "drp-sub" },
-          h("div", { className: "drp-form" },
-            h("label", { className: "drp-field" },
-              h("span", { className: "drp-label" }, t("host")),
-              h("input", {
-                className: "drp-input",
-                type: "text",
-                value: st.host,
-                spellCheck: false,
-                autoComplete: "off",
-                inputMode: "url",
-                "aria-label": t("host"),
-                onChange: function (e) { patch({ host: e.target.value, dirty: true }); }
-              })),
-            h("label", { className: "drp-field drp-field-sm" },
-              h("span", { className: "drp-label" }, t("port")),
-              h("input", {
-                className: "drp-input",
-                type: "text",
-                value: st.port,
-                inputMode: "numeric",
-                maxLength: 5,
-                autoComplete: "off",
-                "aria-label": t("port"),
-                onChange: function (e) {
-                  patch({ port: String(e.target.value).replace(/[^0-9]/g, "").slice(0, 5), dirty: true });
-                }
-              })),
-            h("button", {
-              type: "button",
-              className: "drp-btn",
-              disabled: !!busy || !st.dirty,
-              onClick: onSaveConfig
-            }, busy === "cfg" ? t("saving") : t("save"))),
-          h("p", { className: "drp-hint" }, t("cfgNote"))),
+        h("div", { className: "drp-form drp-form-row" },
+          h("label", { className: "drp-field" },
+            h("span", { className: "drp-label" }, t("host")),
+            h("input", {
+              className: "drp-input",
+              type: "text",
+              value: st.host,
+              spellCheck: false,
+              autoComplete: "off",
+              inputMode: "url",
+              "aria-label": t("host"),
+              onChange: function (e) { patch({ host: e.target.value, dirty: true }); }
+            })),
+          h("label", { className: "drp-field drp-field-sm" },
+            h("span", { className: "drp-label" }, t("port")),
+            h("input", {
+              className: "drp-input",
+              type: "text",
+              value: st.port,
+              inputMode: "numeric",
+              maxLength: 5,
+              autoComplete: "off",
+              "aria-label": t("port"),
+              onChange: function (e) {
+                patch({ port: String(e.target.value).replace(/[^0-9]/g, "").slice(0, 5), dirty: true });
+              }
+            })),
+          h("button", {
+            type: "button",
+            className: "drp-btn drp-btn-inline",
+            disabled: !!busy || !st.dirty,
+            onClick: onSaveConfig
+          }, busy === "cfg" ? t("saving") : t("save"))),
+        h("p", { className: "drp-hint" }, t("cfgNote")));
 
-        // password block
-        h("div", { className: "drp-sub" },
-          h("div", { className: "drp-card-head" },
-            h("h3", { className: "drp-card-title" }, t("pwTitle")),
-            h("span", { className: "drp-chip" + (passwordSet ? "" : " drp-chip-warn") },
-              passwordSet ? t("pwStateSet") : t("pwStateUnset"))),
-          h("p", { className: "drp-card-note" }, t("pwNote", { n: MIN_PW })),
-          passwordSet ? null : h("p", { className: "drp-hint drp-hint-warn" }, t("pwWarn")),
-          h("div", { className: "drp-form" },
-            h("div", { className: "drp-pw" },
-              h("input", {
-                className: "drp-input",
-                id: "drp-pw-input",
-                type: st.showPwd ? "text" : "password",
-                value: st.pwd,
-                placeholder: t("pwPlaceholder"),
-                autoComplete: "new-password",
-                "aria-label": t("pwTitle"),
-                onChange: function (e) { patch({ pwd: e.target.value }); }
-              }),
-              h("button", {
-                type: "button",
-                className: "drp-pw-eye",
-                "aria-pressed": st.showPwd ? "true" : "false",
-                "aria-label": st.showPwd ? t("pwHide") : t("pwShow"),
-                onClick: function () { patch({ showPwd: !st.showPwd }); }
-              }, st.showPwd ? t("pwHide") : t("pwShow"))),
+      // ── basic tab, part 2: the one credential that guards the portal ───────
+      var passwordCard = h("section", { className: "drp-card", "data-drp": "password", key: "password" },
+        h("div", { className: "drp-card-head" },
+          h("h3", { className: "drp-card-title" }, t("pwTitle")),
+          h("span", { className: "drp-chip" + (passwordSet ? "" : " drp-chip-warn") },
+            passwordSet ? t("pwStateSet") : t("pwStateUnset"))),
+        h("p", { className: "drp-card-note" }, t("pwNote", { n: MIN_PW })),
+        passwordSet ? null : h("p", { className: "drp-hint drp-hint-warn" }, t("pwWarn")),
+        h("div", { className: "drp-form drp-form-row" },
+          h("div", { className: "drp-pw" },
+            h("input", {
+              className: "drp-input",
+              id: "drp-pw-input",
+              type: st.showPwd ? "text" : "password",
+              value: st.pwd,
+              placeholder: t("pwPlaceholder"),
+              autoComplete: "off",
+              name: "drp-portal-password",
+              "data-1p-ignore": "true",
+              "data-lpignore": "true",
+              "data-bwignore": "true",
+              "data-form-type": "other",
+              "aria-label": t("pwTitle"),
+              onChange: function (e) { patch({ pwd: e.target.value }); }
+            }),
             h("button", {
               type: "button",
-              className: "drp-btn",
-              disabled: !!busy || String(st.pwd).length < MIN_PW,
-              onClick: onSavePassword
-            }, busy === "pw" ? t("pwSaving") : t("pwSave"))),
-          st.pwd && String(st.pwd).length < MIN_PW
-            ? h("p", { className: "drp-hint drp-hint-warn" }, t("pwShort", { n: MIN_PW }))
-            : null));
+              className: "drp-pw-eye",
+              "aria-pressed": st.showPwd ? "true" : "false",
+              "aria-label": st.showPwd ? t("pwHide") : t("pwShow"),
+              onClick: function () { patch({ showPwd: !st.showPwd }); }
+            }, st.showPwd ? t("pwHide") : t("pwShow"))),
+          h("button", {
+            type: "button",
+            className: "drp-btn drp-btn-inline",
+            disabled: !!busy || String(st.pwd).length < MIN_PW,
+            onClick: onSavePassword
+          }, busy === "pw" ? t("pwSaving") : t("pwSave"))),
+        st.pwd && String(st.pwd).length < MIN_PW
+          ? h("p", { className: "drp-hint drp-hint-warn" }, t("pwShort", { n: MIN_PW }))
+          : null);
 
       var deviceRows = devices.map(function (d, i) {
         var id = deviceId(d) || ("idx-" + i);
@@ -1712,8 +1759,7 @@ window.__ModuleLoader__.load({
 
       var devicesCard = h("section", { className: "drp-card", "data-drp": "devices", key: "devices" },
         h("div", { className: "drp-card-head" },
-          h("h3", { className: "drp-card-title" }, t("cardDev")),
-          h("span", { className: "drp-chip" }, String(devices.length))),
+          h("h3", { className: "drp-card-title" }, t("cardDev"))),
         devices.length === 0
           ? h("p", { className: "drp-empty" }, t("devEmpty"))
           : h("div", { className: "drp-devs" }, deviceRows));
@@ -1769,6 +1815,7 @@ window.__ModuleLoader__.load({
           : null,
         h("div", { className: "drp-sub" },
           h("div", { className: "drp-form" },
+            h("div", { className: "drp-form-grid" },
             h("label", { className: "drp-field" },
               h("span", { className: "drp-label" }, t("tunnelUrlLabel")),
               h("input", {
@@ -1792,7 +1839,7 @@ window.__ModuleLoader__.load({
                 placeholder: pub.configured ? t("tunnelTokenKeep") : "",
                 "aria-label": t("tunnelTokenLabel"),
                 onChange: function (e) { patch({ tunnelToken: e.target.value }); }
-              })),
+              }))),
             h("label", { className: "drp-check" },
               h("input", {
                 type: "checkbox",
@@ -1815,7 +1862,7 @@ window.__ModuleLoader__.load({
                     onClick: onDisconnectTunnel
                   }, st.tunnelBusy === "clear" ? t("saving") : t("tunnelDisconnect"))
                 : null)),
-          h("p", { className: "drp-hint" }, t("tunnelNote"))));
+          ));
 
       // ── diagnostics ───────────────────────────────────────────────────────
       // The first support question for a product like this is "why can my phone
@@ -1847,6 +1894,43 @@ window.__ModuleLoader__.load({
 
     // Diagnostics and the recent-access list were removed from the panel: the
     // page shows what a user acts on, and both cards were read-only noise.
+
+      // ── tabs ──────────────────────────────────────────────────────────────
+      // Four surfaces, one at a time: the panel used to stack five cards and the
+      // thing people came for (the address, or the relay state) was somewhere in
+      // the middle of a long page.
+      var tabItems = [
+        { id: "basic", label: t("tabBasic") },
+        { id: "lan", label: t("tabLan") },
+        { id: "public", label: t("tabPublic") },
+        { id: "devices", label: t("tabDevices") }
+      ];
+      var activeTab = st.tab || "basic";
+      var tabBar = h("div", { className: "drp-tabbar", role: "tablist", "aria-label": t("section") },
+        tabItems.map(function (item) {
+          var on = item.id === activeTab;
+          return h("button", {
+            key: item.id,
+            type: "button",
+            role: "tab",
+            id: "drp-tab-" + item.id,
+            className: "drp-tab" + (on ? " drp-tab-on" : ""),
+            "aria-selected": on ? "true" : "false",
+            "aria-controls": "drp-pane-" + item.id,
+            onClick: function () { patch({ tab: item.id }); }
+          },
+            h("span", null, item.label),
+            null);
+        }));
+
+      var pane =
+        activeTab === "lan"
+          ? h("div", { className: "drp-lan" }, addrCard, qrCard)
+          : activeTab === "public"
+            ? publicCard
+            : activeTab === "devices"
+              ? devicesCard
+              : h("div", { className: "drp-stack" }, serviceCard, passwordCard);
 
       // ── frame ─────────────────────────────────────────────────────────────
       return h("div", {
@@ -1900,11 +1984,9 @@ window.__ModuleLoader__.load({
               }, t("firstRunCta")))
           : null,
 
-        h("div", { className: "drp-connect" }, addrCard, qrCard),
-        h("div", { className: "drp-grid" },
-          accessCard,
-          publicCard,
-          h("div", { className: "drp-span-2" }, devicesCard)));
+        tabBar,
+        h("div", { className: "drp-pane", role: "tabpanel", id: "drp-pane-" + activeTab, "aria-labelledby": "drp-tab-" + activeTab },
+          pane));
     }
 
     /** One place that turns a failed response into a sentence. */
@@ -2369,9 +2451,7 @@ window.__ModuleLoader__.load({
               return h("div", { className: "drp-ui drp-page" },
                 h("div", { className: "drp-page-inner" },
                   h("header", { className: "drp-page-head" },
-                    h("div", null,
-                      h("h1", { className: "drp-page-title" }, t("navLabel")),
-                      h("p", { className: "drp-page-sub" }, t("subtitle")))),
+                    h("h1", { className: "drp-page-title" }, t("navLabel"))),
                   h(RemotePortalSection, { page: true })));
             });
           });

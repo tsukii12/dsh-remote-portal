@@ -163,11 +163,15 @@ if [ "$UNINSTALL" = 0 ] && [ -r "$CONF_FILE" ]; then
   SAVED_PROXY=$PROXY_MODE
   SAVED_VISIT_MODE=${VISIT_MODE:-}
   SAVED_AGENT_TLS=${AGENT_TLS:-}
+  SAVED_CERT_SOURCE=${CERT_SOURCE:-}
+  ADVERTISED_URL=${ADVERTISED_URL:-}
+  SAVED_CERT_FILE=${CERT_FILE:-}
+  SAVED_KEY_FILE=${KEY_FILE:-}
 fi
 SAVED_PROXY=${SAVED_PROXY:-}
 OWN_PORTS=""
 if [ -f "$UNIT" ]; then
-  OWN_PORTS=$(grep -oE '\-\-(agent|http)-port [^ ]+' "$UNIT" 2>/dev/null | awk '{print $2}' | sed 's/.*://' | tr '\n' ' ' || true)
+  OWN_PORTS=$(grep -oE '\-\-(agent|http|tls)-port [^ ]+' "$UNIT" 2>/dev/null | awk '{print $2}' | sed 's/.*://' | tr '\n' ' ' || true)
 fi
 
 install_drp() {
@@ -181,6 +185,7 @@ install_drp() {
 #   drp log [-f]
 #   drp config              show the saved answers
 #   drp config K=V [K=V…]   change them and reinstall the unit
+#   drp uninstall           remove the service, /opt/dsh-relay and this command
 #   drp help
 CONF=/var/lib/dsh-relay/deploy.conf
 TOKEN_FILE=/var/lib/dsh-relay/token
@@ -221,6 +226,7 @@ health() { curl -fsS --max-time 3 "http://127.0.0.1:${HTTP_PORT:-8080}/__relay/h
 token() { [ -r "$TOKEN_FILE" ] && head -n 1 "$TOKEN_FILE"; }
 tunnel_id() { tid=$(token); [ -n "$tid" ] && node -e 'const c=require("node:crypto");process.stdout.write(c.createHash("sha256").update(process.argv[1]).digest("base64url").slice(0,12))' "$tid"; }
 url_base() {
+  if [ -n "${ADVERTISED_URL:-}" ]; then printf '%s' "$ADVERTISED_URL"; return 0; fi
   if [ "${SCHEME:-http}" = https ]; then
     case "${PUBLIC_PORT:-443}" in 443) printf 'https://%s' "$HOST" ;; *) printf 'https://%s:%s' "$HOST" "$PUBLIC_PORT" ;; esac
   else
@@ -280,7 +286,6 @@ case "${1:-status}" in
           const paint=(code,v)=>process.stdout.isTTY?`\u001b[${code}m${v}\u001b[0m`:v;
           let j;try{j=JSON.parse(s)}catch(e){console.log("tunnel      unreadable response");return}
           const t=j.tunnels[0];
-          const up=j.uptimeMs?`relay up ${Math.floor(j.uptimeMs/3600000)}h`:null;
           if(!t){console.log("tunnel      "+paint(33,"none registered"));return}
           const st=t.connected?paint(32,"connected"):paint(31,"offline");
           const bits=[st,`${t.streams} stream${t.streams===1?"":"s"}`];
@@ -292,7 +297,9 @@ case "${1:-status}" in
             console.log("last drop   "+human+(t.lastDropReason?` (${t.lastDropReason})`:""));
           }
           const b=v=>{const u=["B","KiB","MiB","GiB","TiB"];let i=0;while(v>=1024&&i<4){v/=1024;i++}return (i===0?`${v} ${u[0]}`:`${v.toFixed(1)} ${u[i]}`)};
-          console.log(`traffic     in ${b(j.stats.bytesIn)} · out ${b(j.stats.bytesOut)} · ${j.stats.visitors} visitors${up?" · "+up:""}`);
+          const reqs = t.requests ?? j.stats.requests ?? 0;
+          const clients = t.clients ?? 0;
+          console.log(`traffic     in ${b(j.stats.bytesIn)} · out ${b(j.stats.bytesOut)} · ${reqs} requests · ${clients} client${clients===1?"":"s"}`);
           if(t.agentVersion) console.log("agent       "+t.agentVersion);
         })'
     else
@@ -350,7 +357,22 @@ case "${1:-status}" in
     fi
     ;;
 
-  help|--help|-h) sed -n '2,11p' "$0" | sed 's/^# \{0,1\}//' ;;
+  uninstall)
+    load
+    if [ -n "${SCRIPT:-}" ] && [ -r "$SCRIPT" ]; then
+      printf 'removing the relay via %s\n' "$SCRIPT"
+      exec bash "$SCRIPT" --uninstall
+    fi
+    # No installer on disk (older release): do the same steps by hand.
+    systemctl disable --now "$SERVICE" >/dev/null 2>&1 || true
+    rm -f /etc/systemd/system/dsh-relay.service
+    systemctl daemon-reload >/dev/null 2>&1 || true
+    rm -rf /opt/dsh-relay /usr/local/bin/drp
+    printf 'removed the service, /opt/dsh-relay and drp\n'
+    printf 'kept /var/lib/dsh-relay (token and certificates), remove it yourself if you want a clean slate\n'
+    ;;
+
+  help|--help|-h) sed -n '2,12p' "$0" | sed 's/^# \{0,1\}//' ;;
   *) echo "unknown command: $1 (try: drp help)" >&2; exit 1 ;;
 esac
 DRP_EOF
@@ -529,13 +551,18 @@ if [ "$HAVE_SYSTEMD" = 1 ]; then ok "systemd"; else warn "$(t "no systemd: the r
 
 # ── 2. detection ────────────────────────────────────────────────────────────
 say "2/6 $(t "Detecting the environment" "探测运行环境")"
-PUBLIC_IP=""
+# An operator-supplied address wins: PUBLIC_IP=203.0.113.10 ./deploy-relay.sh
+PUBLIC_IP=${PUBLIC_IP:-}
+if [ -n "$PUBLIC_IP" ]; then
+  ok "$(t "public IP" "公网 IP"): $PUBLIC_IP ($(t "from the environment" "来自环境变量"))"
+else
 for u in https://api.ipify.org https://ifconfig.me/ip https://icanhazip.com; do
   PUBLIC_IP=$(curl -fsS --max-time 4 "$u" 2>/dev/null | tr -d '[:space:]' || true)
   [ -n "$PUBLIC_IP" ] && break
 done
 [ -n "$PUBLIC_IP" ] || PUBLIC_IP=$(hostname -I 2>/dev/null | awk '{print $1}')
 if [ -n "$PUBLIC_IP" ]; then ok "$(t "public IP" "公网 IP"): $PUBLIC_IP"; else warn "$(t "could not detect the public IP" "未能探测公网 IP")"; fi
+fi
 
 DETECTED_PROXY=none; CADDY_BIN=""; NGINX_RUN=""; NGINX_CONF_DIR=""
 if command -v caddy >/dev/null 2>&1; then
@@ -593,19 +620,28 @@ if [ "$VISIT_MODE" = http ]; then
   HOST=$(ask "$(t "Public host (domain or IP)" "对外访问的域名或 IP")" "${PUBLIC_IP:-127.0.0.1}")
 else
   SCHEME=https
-  DOMAIN_TARGET=$(ask "$(t "HTTPS with a domain (no browser warning) or with the IP (self-signed, warning once)? [domain/ip]" "HTTPS 用域名（浏览器不报警）还是用 IP（自签，会警告一次）？[domain/ip]")" "ip")
-  IS_DOMAIN=0
-  case "$(printf '%s' "$DOMAIN_TARGET" | tr 'A-Z' 'a-z')" in
-    d*|域名*)
-      IS_DOMAIN=1
-      HOST=$(pick_domain)
-      [ -n "$HOST" ] || die "$(t "a domain is required for this mode" "这个模式需要填域名")"
-      ;;
-    *)
-      HOST=${PUBLIC_IP:-127.0.0.1}
-      HOST=$(ask "$(t "IP address" "IP 地址")" "$HOST")
-      ;;
-  esac
+  # Reuse what was chosen before: a saved domain must not decay into an IP on an
+  # unattended run, which would also invalidate the certificate.
+  if [ "$ASSUME_YES" = 1 ] && [ -n "${HOST:-}" ]; then
+    case "$HOST" in
+      *[!0-9.]*) IS_DOMAIN=1 ;;
+      *) IS_DOMAIN=0 ;;
+    esac
+  else
+    DOMAIN_TARGET=$(ask "$(t "HTTPS with a domain (no browser warning) or with the IP (self-signed, warning once)? [domain/ip]" "HTTPS 用域名（浏览器不报警）还是用 IP（自签，会警告一次）？[domain/ip]")" "ip")
+    IS_DOMAIN=0
+    case "$(printf '%s' "$DOMAIN_TARGET" | tr 'A-Z' 'a-z')" in
+      d*|域名*) IS_DOMAIN=1 ;;
+    esac
+  fi
+
+  if [ "$IS_DOMAIN" = 1 ]; then
+    HOST=$(pick_domain)
+    [ -n "$HOST" ] || die "$(t "a domain is required for this mode" "这个模式需要填域名")"
+  else
+    HOST=${HOST:-$PUBLIC_IP}
+    HOST=$(ask "$(t "IP address" "IP 地址")" "$HOST")
+  fi
 fi
 [ -n "$HOST" ] || die "$(t "host cannot be empty" "主机名不能为空")"
 
@@ -617,27 +653,89 @@ if [ "$SCHEME" = https ]; then
   if [ "$DETECTED_PROXY" = caddy ]; then
     PROXY_MODE=caddy
     info "$(t "Caddy will obtain and renew the certificate for you" "Caddy 会自动申请并续签证书")"
-  elif [ "$DETECTED_PROXY" = nginx ] && [ "${IS_DOMAIN:-0}" = 1 ]; then
+  elif [ "${DOMAIN_FILTERED:-0}" = 1 ]; then
+    warn "$(t "picking a self-signed certificate instead: the HTTP check cannot pass" "改用自签证书：HTTP 校验无法通过")"
+    VISITOR_TLS=1
+    CERT_SOURCE=self
+  elif [ "${IS_DOMAIN:-0}" = 1 ] && [ "$ASSUME_YES" = 1 ]; then
+    # Unattended: reuse what was chosen last time; never reach out to a CA on a
+    # re-run the operator did not ask for.
+    case "${SAVED_CERT_SOURCE:-self}" in
+      acme) VISITOR_TLS=1; CERT_SOURCE=acme; ACME_EMAIL=${ACME_EMAIL:-admin@$HOST} ;;
+      user) VISITOR_TLS=1; CERT_SOURCE=user; USER_CERT=$SAVED_CERT_FILE; USER_KEY=$SAVED_KEY_FILE ;;
+      *) VISITOR_TLS=1; CERT_SOURCE=self ;;
+    esac
+  elif [ "${IS_DOMAIN:-0}" = 1 ]; then
     printf '\n  %s\n' "$(t "How should the certificate be provided?" "证书怎么来？")"
-    printf '    1) %s\n' "$(t "Issue a free certificate automatically (Let's Encrypt; needs port 80)" "自动申请免费证书（Let's Encrypt，需要 80 端口空闲）")"
-    printf '    2) %s\n' "$(t "I already have a certificate for this domain (fullchain + key)" "我已经有这个域名的证书（fullchain + key）")"
-    printf '    3) %s\n' "$(t "Generate a self-signed one (the browser will warn)" "生成自签证书（浏览器会提示不安全）")"
-    cert_pick=$(ask "$(t "Choose" "选择")" "1")
+    printf '    1) %s\n' "$(t "Automatic, HTTP check on port 80 (blocked on unfiled domains)" "自动申请，HTTP 校验走 80 端口（未备案域名会被拦）")"
+    printf '    2) %s\n' "$(t "Automatic, DNS check (works when 80/443 are blocked)" "自动申请，DNS 校验（80/443 被拦时可用）")"
+    printf '    3) %s\n' "$(t "I already have a certificate for this domain (fullchain + key)" "我已经有这个域名的证书（fullchain + key）")"
+    printf '    4) %s\n' "$(t "Generate a self-signed one (the browser will warn)" "生成自签证书（浏览器会提示不安全）")"
+    # Where 80 is filtered the HTTP check cannot pass, so lead with DNS.
+    if [ "${DOMAIN_FILTERED:-0}" = 1 ]; then cert_default=2; else cert_default=1; fi
+    cert_pick=$(ask "$(t "Choose" "选择")" "$cert_default")
     case "$cert_pick" in
-      2) PROXY_MODE=nginx; CERT_SOURCE=user ;;
-      3) VISITOR_TLS=1; CERT_SOURCE=self ;;
-      *) VISITOR_TLS=1; CERT_SOURCE=acme ;;
+      2)
+        printf '\n  %s\n' "$(t "How should DNS be validated?" "DNS 怎么验证？")"
+        printf '    1) %s\n' "$(t "Cloudflare API token (renews itself)" "Cloudflare API 令牌（可自动续期）")"
+        printf '    2) %s\n' "$(t "Manual TXT record (any provider; renewal repeats this step)" "手工添加 TXT 记录（任意服务商；续期时需重复一次）")"
+        dns_pick=$(ask "$(t "Choose" "选择")" "1")
+        if [ "$dns_pick" = 1 ]; then
+          CF_TOKEN=$(ask "$(t "Cloudflare API token (Zone:DNS:Edit)" "Cloudflare API 令牌（需 Zone:DNS:Edit）")" "")
+          [ -n "$CF_TOKEN" ] || die "$(t "a token is required for the Cloudflare check" "Cloudflare 校验需要令牌")"
+          export CF_Token="$CF_TOKEN"
+          CERT_SOURCE=acme; ACME_MODE=dns-cf
+        else
+          CERT_SOURCE=acme; ACME_MODE=dns-manual
+        fi
+        VISITOR_TLS=1
+        ;;
+      3)
+        # With a proxy, it terminates TLS; without one, the relay does — either way
+        # the certificate is the operator's.
+        if [ "$DETECTED_PROXY" = nginx ]; then PROXY_MODE=nginx; else VISITOR_TLS=1; fi
+        CERT_SOURCE=user
+        ;;
+      4) VISITOR_TLS=1; CERT_SOURCE=self ;;
+      *) VISITOR_TLS=1; CERT_SOURCE=acme; ACME_MODE=http ;;
     esac
   else
+    # An IP cannot have a public certificate, so there is nothing to ask.
     VISITOR_TLS=1
-    # Nothing else terminates TLS for this host, so the relay does it and needs a
-    # certificate: self-signed unless an earlier answer already chose one.
-    if [ "$CERT_SOURCE" = none ]; then CERT_SOURCE=self; fi
+    CERT_SOURCE=self
+  fi
+fi
+
+# A domain that answers on the bare IP but not on its own name is filtered on
+# 80/443 (ICP filing). Say so now instead of letting a certificate attempt hang.
+DOMAIN_FILTERED=0
+if [ "${IS_DOMAIN:-0}" = 1 ]; then
+  code_domain=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://$HOST/" 2>/dev/null || echo 000)
+  code_ip=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${PUBLIC_IP:-127.0.0.1}/" 2>/dev/null || echo 000)
+  case "$code_domain" in
+    403|000|451) [ "$code_ip" != "$code_domain" ] && DOMAIN_FILTERED=1 ;;
+  esac
+  if [ "$DOMAIN_FILTERED" = 1 ]; then
+    warn "$(t "this domain is blocked on ports 80/443 from here (no ICP filing): http://$HOST → $code_domain, http://$PUBLIC_IP → $code_ip" "这个域名在本机被 80/443 拦截（通常是没有 ICP 备案）：http://$HOST → $code_domain，http://$PUBLIC_IP → $code_ip")"
+    info "$(t "consequences: an automatic certificate cannot pass the HTTP check, and a browser cannot reach the domain on 443 either" "后果：自动申请证书的 HTTP 校验无法通过；浏览器也无法通过 443 访问这个域名")"
+    info "$(t "options: use another port (e.g. 8443, open it in the cloud firewall), use the IP, or complete the filing" "可选：换一个端口（如 8443，需在云安全组放行）、直接用 IP、或完成备案")"
+    ns=$(curl -fsS --max-time 5 -H 'accept: application/dns-json' "https://cloudflare-dns.com/dns-query?name=$HOST&type=NS" 2>/dev/null || true)
+    case "$ns" in
+      *cloudflare*)
+        info "$(t "this domain is on Cloudflare: proxy it and the browser never touches your port" "这个域名在 Cloudflare 上：开启代理后，浏览器根本不会直连你的端口")"
+        info "$(t "1) Cloudflare DNS: A record → this IP, proxy ON (orange cloud)" "1) Cloudflare DNS：A 记录指向本机 IP，开启代理（橙色云）")"
+        info "$(t "2) SSL/TLS mode: Full (not Full strict), since the origin is self-signed" "2) SSL/TLS 模式设为 Full（不要 Full strict），因为回源是自签证书")"
+        info "$(t "3) serve this relay on 8443 — Cloudflare proxies HTTPS on that port" "3) 把中转跑在 8443 —— Cloudflare 支持该端口的 HTTPS 回源")"
+        info "$(t "4) open 8443 in the cloud firewall" "4) 在云安全组放行 8443")"
+        ;;
+    esac
   fi
 fi
 
 if [ "$SCHEME" = https ] && [ "$VISITOR_TLS" = 1 ]; then
-  default_public=443
+  # 80/443 are filtered for an unfiled domain, so a domain setup that has to work
+  # today belongs on another port.
+  if [ "${IS_DOMAIN:-0}" = 1 ] && [ "${DOMAIN_FILTERED:-0}" = 1 ]; then default_public=8443; else default_public=443; fi
 elif [ "$SCHEME" = https ]; then
   default_public=443
 elif [ "$PROXY_MODE" = nginx ]; then
@@ -672,6 +770,12 @@ else
   HTTP_PORT=$(ask "$(t "Local port behind the proxy (loopback only)" "反代后面的本地端口（仅回环）")" "$HTTP_PORT")
 fi
 
+if [ "$SCHEME" = https ] && [ "${IS_DOMAIN:-0}" = 1 ] && [ "${DOMAIN_FILTERED:-0}" = 1 ]; then
+  if ask_yn "$(t "Through Cloudflare (proxy on)? Visitors then reach https://$HOST and the edge comes back to port $PUBLIC_PORT" "是否经 Cloudflare 代理访问？这样访客访问 https://$HOST，由 CF 回源到 $PUBLIC_PORT 端口")" y; then
+    ADVERTISED_URL="https://$HOST"
+  fi
+fi
+
 if [ "$ASSUME_YES" = 1 ] && [ -n "$SAVED_AGENT_TLS" ]; then
   AGENT_TLS=$SAVED_AGENT_TLS
 elif ask_yn "$(t "Encrypt the agent port as well (recommended)" "中转端口也加密（推荐）")" y; then
@@ -682,7 +786,10 @@ fi
 
 # The relay needs one certificate for both listeners; a user-supplied pair is only
 # used for nginx (which terminates TLS itself), so the agent hop still gets its own.
-if [ "$CERT_SOURCE" = user ]; then
+if [ "$CERT_SOURCE" = user ] && [ "$ASSUME_YES" = 1 ] && [ -n "${USER_CERT:-}" ]; then
+  [ -r "$USER_CERT" ] && [ -r "${USER_KEY:-}" ] || die "$(t "the saved certificate pair is no longer readable: $USER_CERT" "保存的证书文件读不到了：$USER_CERT")"
+  AGENT_TLS=1
+elif [ "$CERT_SOURCE" = user ]; then
   USER_CERT=$(ask "$(t "Certificate chain (fullchain.pem)" "证书链（fullchain.pem）")" "")
   USER_KEY=$(ask "$(t "Private key (privkey.pem)" "私钥（privkey.pem）")" "")
   [ -r "$USER_CERT" ] && [ -r "$USER_KEY" ] || die "$(t "cannot read that certificate pair" "读不到这对证书文件")"
@@ -742,56 +849,132 @@ NEED_CERT=0
 if [ "$CERT_SOURCE" = self ]; then NEED_CERT=1; fi
 if [ "$AGENT_TLS" = 1 ] && [ -z "$TLS_CERT" ]; then NEED_CERT=1; fi
 
-issue_cert_acme() { # issue_cert_acme <domain>
-  local domain=$1 earned
+acmesh_install() { # sets ACME_BIN / ACME_HOME, or dies
   if ! command -v curl >/dev/null 2>&1; then
     die "$(t "curl is required to fetch acme.sh" "需要 curl 才能获取 acme.sh")"
   fi
-  if ! port_free 80; then
-    die "$(t "port 80 is in use: Let's Encrypt needs it for the HTTP check. Free it and run again, or choose a self-signed certificate." "80 端口被占用：Let's Encrypt 的 HTTP 校验需要它。请释放后重跑，或改选自签证书。")"
-  fi
-
-  local bases="https://get.acme.sh https://ghfast.top/https://raw.githubusercontent.com/acmesh-official/acme.sh/master https://gh-proxy.com/https://raw.githubusercontent.com/acmesh-official/acme.sh/master https://raw.githubusercontent.com/acmesh-official/acme.sh/master"
-  local tmp got=""
+  # get.acme.sh is a 1 KB bootstrap, not acme.sh: the real script is ~300 KB, and
+  # --install copies ./acme.sh from the working directory, so it has to run from the
+  # directory holding the download.
+  local bases="https://ghfast.top/https://raw.githubusercontent.com/acmesh-official/acme.sh/master https://gh-proxy.com/https://raw.githubusercontent.com/acmesh-official/acme.sh/master https://raw.githubusercontent.com/acmesh-official/acme.sh/master"
+  local tmp got="" size
   tmp=$(mktemp -d)
   for base in $bases; do
-    case "$base" in
-      *get.acme.sh) curl -fsSL --max-time 30 "https://get.acme.sh" -o "$tmp/acme.sh" 2>/dev/null && got=$base || true ;;
-      *) curl -fsSL --max-time 30 "$base/acme.sh" -o "$tmp/acme.sh" 2>/dev/null && got=$base || true ;;
-    esac
-    [ -n "$got" ] && break
+    if curl -fsSL --max-time 40 "$base/acme.sh" -o "$tmp/acme.sh" 2>/dev/null; then
+      size=$(wc -c < "$tmp/acme.sh" | tr -d ' ')
+      if [ "${size:-0}" -gt 100000 ] && grep -q "acme.sh" "$tmp/acme.sh"; then got=$base; break; fi
+    fi
   done
-  [ -n "$got" ] || die "$(t "could not download acme.sh" "下载 acme.sh 失败")"
-  sh "$tmp/acme.sh" --install >/dev/null 2>&1 || true
-  local acme="$HOME/.acme.sh/acme.sh"
-  [ -x "$acme" ] || die "$(t "acme.sh did not install" "acme.sh 安装失败")"
+  [ -n "$got" ] || die "$(t "could not download acme.sh (all mirrors)" "无法下载 acme.sh（所有镜像都不通））")"
 
-  info "$(t "requesting a certificate for $domain (HTTP-01 on port 80)" "正在为 $domain 申请证书（HTTP-01，走 80 端口）")"
-  if ! "$acme" --issue -d "$domain" --standalone --httpport 80 --keylength ec-256 >/tmp/acme-issue.log 2>&1; then
-    tail -n 12 /tmp/acme-issue.log
-    die "$(t "certificate issuance failed; see the log above" "证书申请失败，见上面的日志")"
+  if ! ( cd "$tmp" && sh ./acme.sh --install --nocron >/tmp/acme-install.log 2>&1 ); then
+    tail -n 8 /tmp/acme-install.log
+    die "$(t "acme.sh could not be installed" "acme.sh 安装失败")"
   fi
+  ACME_HOME="$HOME/.acme.sh"
+  ACME_BIN="$ACME_HOME/acme.sh"
+  [ -x "$ACME_BIN" ] || die "$(t "acme.sh did not install itself" "acme.sh 没有安装成功")"
+}
 
-  CERT_DIR="$STATE_DIR/tls"
-  install -d -m 0750 "$CERT_DIR"
-  earned="$CERT_DIR/visitor-cert.pem"
-  local ekey="$CERT_DIR/visitor-key.pem"
-  if ! "$acme" --install-cert -d "$domain" --ecc \
-      --key-file "$ekey" --fullchain-file "$earned" \
+acme_install_cert() { # acme_install_cert <domain> <fullchain-out> <key-out>
+  local domain=$1 earned=$2 ekey=$3
+  if ! "$ACME_BIN" --home "$ACME_HOME" --install-cert -d "$domain" --ecc \\
+      --key-file "$ekey" --fullchain-file "$earned" \\
       --reloadcmd "systemctl restart $SERVICE" >/tmp/acme-install.log 2>&1; then
     tail -n 12 /tmp/acme-install.log
     die "$(t "could not install the certificate" "证书安装失败")"
   fi
   chmod 600 "$ekey"; chmod 644 "$earned"
   [ "$HAVE_SYSTEMD" = 1 ] && chown -R dsh-relay:dsh-relay "$STATE_DIR" 2>/dev/null || true
+}
+
+acme_renewal_timer() {
+  [ "$HAVE_SYSTEMD" = 1 ] || return 0
+  # acme.sh was installed with --nocron, so its own cron entry point runs from a
+  # timer instead. Twice a day is what acme.sh's crontab would have done.
+  cat > /etc/systemd/system/dsh-relay-acme.service <<ACME_UNIT
+[Unit]
+Description=dsh-remote-portal certificate renewal (acme.sh)
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c '"'"'$ACME_BIN' --home '$ACME_HOME' --cron >/var/log/dsh-relay-acme.log 2>&1'"'"'
+ACME_UNIT
+  cat > /etc/systemd/system/dsh-relay-acme.timer <<ACME_TIMER
+[Unit]
+Description=Daily dsh-remote-portal certificate renewal
+
+[Timer]
+OnCalendar=*-*-* 03:17:00
+RandomizedDelaySec=3600
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+ACME_TIMER
+  systemctl daemon-reload
+  systemctl enable --now dsh-relay-acme.timer >/dev/null 2>&1 || true
+  ok "$(t "renewal timer installed" "已安装续期定时器") (dsh-relay-acme.timer)"
+}
+
+issue_cert_acme() { # issue_cert_acme <domain> [http|dns-cf|dns-manual]
+  local domain=$1 mode=${2:-http} earned ekey challenge
+  case "$mode" in
+    dns-cf) challenge="--dns dns_cf" ;;
+    dns-manual) challenge="--dns" ;;
+    *) challenge="--standalone --httpport 80" ;;
+  esac
+
+  if [ "$mode" = http ] && ! port_free 80; then
+    die "$(t "port 80 is in use: the HTTP check needs it. Free it, or use the DNS option." "80 端口被占用：HTTP 校验需要它。请释放，或改选 DNS 校验。")"
+  fi
+
+  acmesh_install
+
+  CERT_DIR="$STATE_DIR/tls"
+  install -d -m 0750 "$CERT_DIR"
+  earned="$CERT_DIR/visitor-cert.pem"
+  ekey="$CERT_DIR/visitor-key.pem"
+
+  if [ "$mode" = dns-cf ]; then
+    : > /tmp/acme-issue.log
+    info "$(t "requesting a certificate for $domain (DNS-01 via Cloudflare)" "正在为 $domain 申请证书（DNS-01，走 Cloudflare）")"
+    if ! "$ACME_BIN" --home "$ACME_HOME" --issue -d "$domain" --keylength ec-256 $challenge \\
+        --server letsencrypt >>/tmp/acme-issue.log 2>&1; then
+      tail -n 14 /tmp/acme-issue.log
+      die "$(t "Cloudflare validation failed; check the token's Zone:DNS:Edit permission" "Cloudflare 校验失败；检查令牌是否有 Zone:DNS:Edit 权限")"
+    fi
+  elif [ "$mode" = dns-manual ]; then
+    can_ask || die "$(t "the manual DNS check needs a terminal: run the installer interactively" "手工 DNS 校验需要终端：请交互式运行安装脚本")"
+    info "$(t "acme.sh will print a TXT record: add it at your DNS provider, wait a moment, then press Enter here" "acme.sh 会打印一条 TXT 记录：到 DNS 服务商处添加，稍等片刻后回到这里按回车")"
+    # No redirect: the record has to be readable on screen.
+    "$ACME_BIN" --home "$ACME_HOME" --issue -d "$domain" --keylength ec-256 $challenge \\
+      --server letsencrypt || die "$(t "DNS validation failed or was cancelled" "DNS 校验失败或已取消")"
+  else
+    if ! curl -fsS --max-time 8 https://acme-v02.api.letsencrypt.org/directory >/dev/null 2>&1; then
+      warn "$(t "the CA API answers slowly from this host; this may take a minute" "从本机访问 CA 接口较慢，可能要等一分钟")"
+    fi
+    info "$(t "requesting a certificate for $domain (HTTP-01 on port 80)" "正在为 $domain 申请证书（HTTP-01，走 80 端口）")"
+    : > /tmp/acme-issue.log
+    if ! "$ACME_BIN" --home "$ACME_HOME" --issue -d "$domain" --keylength ec-256 $challenge \\
+        --server letsencrypt >>/tmp/acme-issue.log 2>&1; then
+      tail -n 14 /tmp/acme-issue.log
+      die "$(t "certificate issuance failed; see the log above. If port 80 is filtered, use the DNS option." "证书申请失败，见上面的日志。若 80 端口被拦截，请改用 DNS 校验。")"
+    fi
+  fi
+
+  "$ACME_BIN" --home "$ACME_HOME" --set-default-ca --server letsencrypt >/dev/null 2>&1 || true
+  acme_install_cert "$domain" "$earned" "$ekey"
+  acme_renewal_timer
+
   TLS_CERT=$earned
   TLS_KEY=$ekey
   AGENT_TLS=1
-  ok "$(t "certificate issued and installed; acme.sh renews it automatically" "证书已签发并安装；acme.sh 会自动续期")"
+  ok "$(t "certificate issued and installed" "证书已签发并安装")"
 }
 
 if [ "$CERT_SOURCE" = acme ]; then
-  issue_cert_acme "$HOST"
+  issue_cert_acme "$HOST" "${ACME_MODE:-http}"
 elif [ "$CERT_SOURCE" = user ]; then
   TLS_CERT=$USER_CERT
   TLS_KEY=$USER_KEY
@@ -823,7 +1006,9 @@ fi
 # ── 5. service and entry point ──────────────────────────────────────────────
 say "5/6 $(t "Starting the service" "启动服务")"
 if [ "$PROXY_MODE" = none ] && [ "$VISITOR_TLS" = 0 ]; then BIND_HOST=0.0.0.0; else BIND_HOST=127.0.0.1; fi
-if [ "$SCHEME" = https ]; then
+if [ -n "${ADVERTISED_URL:-}" ]; then
+  URL_BASE=$ADVERTISED_URL
+elif [ "$SCHEME" = https ]; then
   if [ "$PUBLIC_PORT" = 443 ]; then URL_BASE="https://$HOST"; else URL_BASE="https://$HOST:$PUBLIC_PORT"; fi
 else
   if [ "$PUBLIC_PORT" = 80 ]; then URL_BASE="http://$HOST"; else URL_BASE="http://$HOST:$PUBLIC_PORT"; fi
@@ -1000,6 +1185,10 @@ AGENT_PORT=$AGENT_PORT
 HTTP_PORT=$HTTP_PORT
 PUBLIC_PORT=$PUBLIC_PORT
 PROXY_MODE=$PROXY_MODE
+CERT_SOURCE=$CERT_SOURCE
+ADVERTISED_URL=${ADVERTISED_URL:-}
+CERT_FILE=$TLS_CERT
+KEY_FILE=$TLS_KEY
 SCRIPT=$STATE_DIR/deploy-relay.sh
 CONF_EOF
 chmod 644 "$CONF_FILE" 2>/dev/null || true

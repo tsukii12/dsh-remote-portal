@@ -1,188 +1,180 @@
 # Architecture
 
-How the plugin is put together, and **why** each piece exists. Everything below
-was verified against dsh `0.2.1-rc.2`; the facts in [Host facts](#host-facts)
-are the ones an implementer would otherwise have to rediscover.
+How the plugin is put together, and why each piece exists. Facts marked *verified*
+were checked against dsh `0.2.1-rc.2`; several of them cost an afternoon to find.
 
+```mermaid
+flowchart TB
+    B["Browser<br/>phone · laptop · desktop app"]
+
+    subgraph host["The machine running dsh"]
+        G["Portal gateway · lib/gateway.mjs<br/>0.0.0.0:3081 · password or pairing"]
+        D["dsh web server<br/>127.0.0.1:19887"]
+        T["Tunnel agent · lib/tunnel.mjs<br/>dials out, one TLS socket"]
+        G -->|"reverse proxy<br/>Host + Origin rewritten"| D
+        T -->|"forwards to 127.0.0.1:3081"| G
+    end
+
+    R["Relay · tools/relay.mjs<br/>your server, public port"]
+
+    B -->|"① LAN, direct"| G
+    B -->|"② public, HTTPS"| R
+    R <-->|"multiplexed frames"| T
 ```
-┌──────────────────────────── browser (phone / laptop / desktop app) ────────────────────────────┐
-│                                                                                                │
-│   ① LAN:   http://192.168.1.5:3081/            ② Public:  https://dsh.example.com/__t/<id>/     │
-│            └──────────────┬──────────────────────────────┘                                     │
-└───────────────────────────┼────────────────────────────────────────────────────────────────────┘
-                            │ TLS / HTTP + WebSocket
-        ┌───────────────────▼────────────────────┐         ┌──────────────────────────────────┐
-        │ ② your relay (tools/relay.mjs)         │◀────────│ tunnel agent (lib/tunnel.mjs)    │
-        │   visitor :8080/:443 → mux frames      │  outbound│  one TLS socket, 1 stream per    │
-        └────────────────────────────────────────┘   TLS    │  browser connection              │
-                                                           └───────────────┬──────────────────┘
-        ┌──────────────────────────────────────────────────────────────────▼──────────────────┐
-        │ ① portal gateway (lib/gateway.mjs) — 0.0.0.0:3081, password/pairing/device lock      │
-        │      ↓ reverse proxy, Host/Origin rewritten                                         │
-        │ dsh web server — 127.0.0.1:19887 (the app, /api, WebSocket, static assets)           │
-        └─────────────────────────────────────────────────────────────────────────────────────┘
-```
 
-Three transports, one policy: the gateway is the only thing that authenticates,
-and it never learns whether the request arrived over LAN or through the relay.
+Two ways in, one policy: the gateway is the only thing that authenticates, and it
+never learns which way the request arrived.
 
----
+## The pieces
 
-## 1. Why a gateway instead of "just bind 0.0.0.0"
+| Piece | File | Runs on | Job |
+|---|---|---|---|
+| Portal gateway | `lib/gateway.mjs` | the dsh host | the only listener that authenticates; proxies to dsh |
+| Host half | `index.js` | the dsh host | control routes, state, tunnel lifecycle |
+| Tunnel agent | `lib/tunnel.mjs` | the dsh host | one outbound socket, multiplexes every browser connection |
+| Relay | `tools/relay.mjs` | your server | public entry; one file, no dependencies |
+| Panel | `client.js` | the browser | the *远程访问* page and the directory picker |
+| Mobile layer | `assets/mobile.*` | the browser | drawer + reflow below 900 px |
 
-dsh's own defaults are deliberate: the web server rejects wildcard binds, and
-browsers authenticate with a per-process launch token (`?token=…`) exchanged for
-a signed, authority-bound cookie. Neither can be changed from inside a running
-process, and neither is a *user* credential — there is no password anywhere.
+## Why a gateway instead of "just bind 0.0.0.0"
 
-So the plugin leaves that model untouched and adds a second listener in front:
+dsh's defaults are deliberate: it refuses wildcard binds, and browsers authenticate
+with a per-process launch token (`?token=…`) exchanged for a signed, authority-bound
+cookie. Neither is a *user* credential — there is no password anywhere. The plugin
+leaves that model alone and puts a second listener in front of it:
 
-| Concern | dsh web server | portal gateway |
+| | dsh web server | portal gateway |
 |---|---|---|
-| Bind | loopback (or one concrete interface) | `0.0.0.0:<port>`, configurable |
-| Who may connect | a browser holding the launch cookie | anyone with the password / a one-time pairing code |
-| Login page | none (the token URL *is* the login) | its own page, with lockout and device registry |
-| Revocation | delete a credential record and restart | per-device, instant |
+| Bind | loopback, or one concrete interface | `0.0.0.0:<port>` |
+| Who may connect | a browser holding the launch cookie | anyone with the password or a one-time pairing code |
+| Login | none (the token URL *is* the login) | its own page, with lockout and a device list |
+| Revocation | delete a credential and restart | per device, immediate |
 
-The gateway then needs a dsh cookie for the browser it is serving. It mints one
-itself (`lib/mint.mjs`): `connection.authenticatedUrl(origin)` yields a URL with
-the process launch token, the gateway performs that `GET /?token=…` on loopback,
-and copies the `Set-Cookie` onto its own response. The token never leaves the
-machine and is never logged.
+The gateway still needs a dsh cookie for the browser it serves, so it mints one
+(`lib/mint.mjs`): `connection.authenticatedUrl(origin)` gives a URL carrying the
+process token, the gateway performs that `GET /?token=…` on loopback, and copies the
+`Set-Cookie` onto its own response. The token never leaves the machine and is never
+logged.
 
-## 2. Request path
+**The Host/Origin rewrite is not cosmetic.** dsh refuses a request whose `Host` is
+not loopback, not the listener's own bind literal, and not a declared `trustedHosts`
+entry — and refuses an `Origin` that disagrees with `Host`. A proxy that forwards the
+visitor's `Host` unchanged gets 403 on every request. Cookies ignore ports, which is
+why a cookie minted for `127.0.0.1:19887` still validates when it comes back through
+`192.168.1.5:3081`.
 
-```
-socket
- ├─ /__portal/*          local: login page, login POST, pair, logout, manifest
- ├─ /dsh-remote-portal/* local: assets and the QR renderer (same files the
- │                        dsh-origin route serves)
- └─ everything else → proxy
-        Host, Origin, Referer rewritten to the upstream authority
-        X-Forwarded-For/Proto/Host appended
-        Location headers pointing upstream rewritten back to the portal origin
-        response streamed straight through (no buffering: SSE and 1 GB downloads)
-        WebSocket upgrades tunnelled as raw bytes after the handshake
-```
+## Request path
 
-The **Host/Origin rewrite is not cosmetic**: dsh's browser-trust fence refuses a
-request whose `Host` is not loopback, the listener's own bind literal, or a
-declared `trustedHosts` entry — and refuses an `Origin` that disagrees with
-`Host`. A proxy that forwards the visitor's `Host` unchanged gets 403 on every
-request; the rewrite is what makes remote access work at all.
+Requests the gateway answers itself: `__portal/*` (login, pairing, logout,
+manifest) and `dsh-remote-portal/*` (assets, control API). Everything else is
+proxied, with `Host`/`Origin`/`Referer` rewritten to the upstream authority,
+`X-Forwarded-*` appended, upstream `Location` headers rewritten back to the portal,
+the response streamed through unbuffered (SSE and large downloads), and WebSocket
+upgrades tunnelled as raw bytes after the handshake.
 
-Cookie authority is the other half: dsh binds its cookie name and signature to
-`host:port`. Cookies ignore ports, so a cookie minted for `127.0.0.1:19887` is
-sent back to `192.168.1.5:3081` (or to a relay host) and validates, because the
-gateway forwards it while claiming the upstream authority.
+## Authentication
 
-## 3. Authentication
-
-* **Password** — `scrypt` (N=16384, r=8, p=1) with a 16-byte salt and a dummy
-  record for the no-password case, so "is a password set?" cannot be answered by
-  timing.
+* **Password** — `scrypt` (N=16384, r=8, p=1), 16-byte salt, plus a dummy record when
+  no password is set so "is a password configured?" cannot be answered by timing.
 * **Session cookie** `dsh_portal` — `<id>.<issuedAt>.<expiresAt>.<hmac>` over
-  `id|issuedAt|expiresAt|sha256(UA)`. The UA binding is inside the MAC: a stolen
-  cookie replayed from another browser fails exactly like a tampered one.
-* **Pairing** — 32 random bytes, stored as a SHA-256 hash, single use, 180 s by
-  default. This is what the QR code encodes, so a phone never types a password.
-* **Lockout** — 5 failures / 10 min per IP, 60 s doubling to 15 min, applied
-  before the password is compared.
-* **Bind safety** — a non-loopback bind without a password is refused
-  (`needs-password`), and `open` mode is refused anywhere but loopback. The
-  failure is a panel state, not an exception.
+  `id|issuedAt|expiresAt|sha256(UA)`. The UA is inside the MAC, so a cookie replayed
+  from another browser fails exactly like a tampered one.
+* **Pairing** — 32 random bytes, stored as a SHA-256 hash, single use, 180 s. This is
+  what the QR code carries, so a phone never types a password.
+* **Lockout** — 5 failures, then a delay that doubles to 15 min, enforced before the
+  password is compared.
+* **Bind safety** — a non-loopback bind with no password is refused (`needs-password`);
+  `open` mode is refused anywhere but loopback. Both are panel states, not crashes.
 
-## 4. The public relay
+## The relay
 
-`tools/relay.mjs` is a standalone server; `lib/tunnel.mjs` is the agent that the
-gateway starts. The agent always dials **out**, so the machine running dsh needs
-no inbound port, public address, or NAT mapping.
+The agent always dials **out**, so the machine running dsh needs no inbound port,
+public address, or NAT mapping.
 
+```mermaid
+sequenceDiagram
+    participant V as Visitor
+    participant R as Relay
+    participant A as Agent
+    participant D as dsh
+    V->>R: HTTP request
+    R->>A: stream id + REQ_HEAD/BODY/END
+    A->>D: http.request to 127.0.0.1:3081
+    D-->>A: response
+    A-->>R: RES_HEAD/BODY/END
+    R-->>V: streamed back, unbuffered
 ```
-relay                                 agent (dsh host)
- visitor socket ──► stream id ──► REQ_HEAD/BODY/END ──► http.request → 127.0.0.1:3081
-                   ◄────────────── RES_HEAD/BODY/END ◄── upstream response
- upgrade  ─────────────────────► WS_OPEN + WS_DATA ──► net.connect → raw bytes
-```
 
-* **One multiplexed socket.** A page load is ~75 requests; a TLS handshake per
-  request over the public internet costs far more than the framing does.
-* **Binary frames** (`type u8 | stream u32 | length u32 | payload`) — no base64
-  on user traffic, no JSON on the hot path.
-* **Routing** is a path prefix: `/__t/<id>/…`, where `<id>` is the token's hash,
-  so a restart does not change the public URL. The relay strips the prefix before
-  forwarding; dsh's shell resolves its assets relatively (`<base href="./">`), so
-  the app works under a prefix — which is also why the plugin's own URLs are
-  relative (`./dsh-remote-portal/…`, `__portal/login`).
-* **Failure modes are explicit**: unknown id → 404 page, tunnel offline → 503
-  page, request not answered within the deadline → 504 + stream released,
-  unauthorized token → the agent never attaches and retries with backoff.
-* **Keepalive**: the relay answers `PING` with `PONG`; a missing `PONG` for 10 s
-  makes the agent reconnect, which is what recovers from a dead NAT mapping.
+* **One multiplexed socket.** A page load is ~75 requests; a TLS handshake per request
+  over the public internet costs far more than the framing does.
+* **Binary frames** (`type u8 | stream u32 | length u32 | payload`) — no base64 on
+  user traffic, no JSON on the hot path.
+* **Routing is a path prefix**, `/__t/<id>/`, where `<id>` is the token's hash, so a
+  restart keeps the public URL. The relay strips the prefix before forwarding; dsh's
+  shell resolves assets relatively (`<base href="./">`), and the plugin's own URLs are
+  relative too (`__portal/login`), which is what makes a prefix work at all.
+* **Failure modes are explicit**: unknown id → 404, tunnel offline → 503, no answer
+  before the deadline → 504 with the stream released, wrong token → the agent never
+  attaches and retries with backoff.
+* **Keepalive**: the relay answers `PING` with `PONG` every 25 s; 10 s without one
+  makes the agent reconnect, which is what recovers from a dead NAT mapping. The
+  relay counts those reconnects and the reason for the last drop, and `drp` shows
+  both.
 
-## 5. Browser halves
+## Browser halves
 
-### Login page (`lib/login-page.mjs`)
+**Login page** — one self-contained document, no network requests, strict CSP
+(`default-src 'none'`, `frame-ancestors 'none'`, `form-action 'self'`), and a form
+that posts relatively so it works at the root and under a relay prefix.
 
-A single self-contained document (≈22 KB, zero network requests) rendered by the
-gateway for every unauthenticated request. It carries a strict CSP
-(`default-src 'none'`, `frame-ancestors 'none'`, `form-action 'self'`), so the
-form cannot be framed by another site. The form posts **relatively**
-(`__portal/login`) so it works at the root and under a relay prefix.
+**Panel** — a hand-written bundle with no build step, loaded through
+`window.__ModuleLoader__.load({id, factory})`. It registers three surfaces and each is
+independently guarded, because a throwing client plugin blanks the whole web app:
 
-### Settings panel (`client.js`)
+| Slot | What it is |
+|---|---|
+| `sidebar.panellist`, id `dsh-remote-portal` | the sidebar entry |
+| `main`, key `dsh-remote-portal` | the page; the host dispatches `main` by the entry's id, so it behaves like *Plugins* / *Scheduled tasks* |
+| `shell.overlay` | the directory picker — it needs its own surface because the panel already owns `main` |
 
-A hand-written bundle (no build step) loaded by dsh's client module system.
-It registers three surfaces, each independently guarded — a throwing client
-plugin blanks the whole Web app, so every registration is in a `try/catch`:
+Without that third registration `__DSH_DIRECTORY_PICKER__.pick()` has no receiver and
+"Add workspace" does nothing, silently. That is worth remembering before deleting it.
 
-1. `settings.section` — the panel inline in Settings;
-2. `sidebar.footer.action` — the entry that opens the panel;
-3. `shell.overlay` — a sheet the entry opens, so the panel is one click away
-   from anywhere (no driving the host's own dialogs).
+**Mobile layer** — the shipped UI has one `@media` rule in 77 KB of CSS. The layer is
+gated behind `@media (max-width: 900px)` **and** `html[data-drp-mobile]`, and keyed to
+stable hooks (`[data-slot=…]`, `[role=dialog]`, `:has()`), never CSS-module hashes. It
+is inert above 900 px, so the desktop app is untouched.
 
-The panel talks only to the same-origin control API (`/dsh-remote-portal/*`) and
-polls it every 3 s while visible, skipping the state update when the payload is
-unchanged.
+Whether that attribute is set is decided from facts, not from window width: an
+entry-only origin (`file://`, loopback) means the machine hosting dsh, so the layer
+stays off there; anything else is a remote visitor. Earlier versions guessed from
+width alone and hid working controls on the desktop — that is why the decision is
+now explicit and recorded in `data-drp-decision`.
 
-### Mobile layer (`assets/mobile.css`, `assets/mobile.js`)
+## Host facts
 
-The shipped UI has **one** `@media` rule in 77 KB of CSS — no responsive layout
-at all. The layer is gated behind `@media (max-width: 900px)` + `html[data-drp-mobile]`
-and keyed to stable hooks only (`[data-slot=…]`, `[role=dialog]`, `:has()`),
-never CSS-module hashes. It turns the sidebar into a drawer, gives the session
-title a readable minimum width, bounds dialogs, and respects safe-area insets.
-Desktop is untouched: the whole layer is inert above 900 px.
-
-## 6. Host facts
-
-Verified against dsh `0.2.1-rc.2`; each one cost time to discover.
+Verified against dsh `0.2.1-rc.2`.
 
 | Fact | Consequence |
 |---|---|
-| `ctx.webServer.register({kind, path, handler}) → disposer`; exact match wins over prefix | control routes are safe to compose |
+| `ctx.webServer.register({kind, path, handler})`; exact match wins over prefix | control routes are safe to compose |
 | `ctx.webServer.host` rejects wildcard binds | a second listener is the only way to serve a LAN |
-| Every request passes a Host/Origin trust fence | a proxy **must** rewrite both |
-| Launch token → `303` + authority-bound signed cookie; secret persisted in `.credentials.yaml`, so cookies survive a dsh restart | the gateway can mint cookies, and phones stay logged in |
+| every request passes a Host/Origin trust fence | a proxy **must** rewrite both |
+| launch token → `303` + authority-bound signed cookie, secret persisted so cookies survive a restart | the gateway can mint cookies, and phones stay logged in |
 | `connection.authenticatedUrl(origin)` is the supported way to get the token | no log scraping |
-| Client plugins are `window.__ModuleLoader__.load({id, factory})` bundles; only `react` may be required | the whole browser half ships as one JS file |
-| Slots used: `settings.section`, `sidebar.footer.action`, `shell.overlay` | |
-| The shell routes on `location.hash`; an unknown value stops the client tree from mounting | deep links use `?panel=1`, never a hash |
-| `dsh --dump-config` refuses the `desktop` profile ("managed exclusively by the Electron application") | install verification skips that check there |
+| client plugins are module-loader bundles; only `react` may be required | the browser half ships as one JS file |
+| the shell routes on `location.hash`; an unknown value stops the client tree mounting | deep links use `?panel=1`, never a hash |
+| `dsh --dump-config` refuses the `desktop` profile | install verification skips that check there |
 
-## 7. Testing strategy
+## Testing
 
 | Suite | What it proves |
 |---|---|
-| `test/host.test.mjs` | real listeners: bind/stop/rebind, login, lockout, pairing single-use, header rewriting, upgrade tunnelling, no-buffering streaming, cookie minting, state durability, secrets never exposed |
-| `test/security.test.mjs` | every portal response carries the hardening set, and **proxied responses keep the app's own headers** |
-| `test/relay.test.mjs` | real relay + real agent + dummy upstream: prefix stripping, header forwarding, WS byte-piping, unknown/offline tunnel, wrong token, reconnect, timeout release, framing |
-| `test/qr.test.mjs` | QR correctness against an *independent* decoder (not a round-trip through the same tables) |
-| `test/mobile.test.mjs` | the mobile layer against a **live** dsh instance the suite starts itself: drawer API, hit sizes, and a 12-configuration overflow audit |
+| `test/host.test.mjs` | real listeners: bind/stop/rebind, login, lockout, single-use pairing, header rewriting, upgrade tunnelling, unbuffered streaming, cookie minting, state durability, secrets never exposed |
+| `test/security.test.mjs` | every portal response carries the hardening set, and proxied responses keep the app's own headers |
+| `test/relay.test.mjs` | real relay + real agent + dummy upstream: prefix stripping, header forwarding, WebSocket piping, unknown/offline tunnel, wrong token, reconnect, timeout release, framing |
+| `test/qr.test.mjs` | QR output against an *independent* decoder, not a round-trip through the same tables |
+| `test/mobile.test.mjs` | the layer against a live dsh the suite starts itself: drawer API, hit sizes, overflow audit across 12 configurations, and that it never engages on the host machine |
+| `test/manifest.test.mjs` | the release number in five files agrees, and the mirror in the installer stays pinned |
 
-`node --test` → 74 tests, ~75 s, no mocks on the network paths.
-
-
-
-
-
+`node --test` → 82 tests, ~75 s, no mocks on the network paths.

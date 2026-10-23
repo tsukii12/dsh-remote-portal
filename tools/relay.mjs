@@ -299,7 +299,12 @@ function createRelay(config) {
   /** tunnelId → tunnel state */
   const tunnels = new Map();
   const startedAt = Date.now();
-  const stats = { visitors: 0, streams: 0, bytesIn: 0, bytesOut: 0, rejected: 0 };
+  // "visitors" used to count every request that reached this listener probe included,
+// which reads like a head count and is not one. Requests and distinct clients are
+// counted separately now.
+const stats = { requests: 0, streams: 0, bytesIn: 0, bytesOut: 0, rejected: 0 };
+const seenClients = new Map(); // address -> first seen, capped
+const SEEN_CLIENT_LIMIT = 5000;
 
   for (const token of config.tokens) {
     const id = tunnelIdFor(token);
@@ -510,8 +515,16 @@ function createRelay(config) {
   }
 
   function handleVisitor(req, res) {
-    stats.visitors += 1;
     const url = new URL(req.url || "/", `http://${req.headers.host || "relay"}`);
+    // Internal probes are this tool talking to itself; they are not traffic.
+    const internal = url.pathname === "/__relay/health" || url.pathname === "/healthz";
+    if (!internal) {
+      stats.requests += 1;
+      const who = (req.socket && req.socket.remoteAddress) || "unknown";
+      if (!seenClients.has(who) && seenClients.size < SEEN_CLIENT_LIMIT) {
+        seenClients.set(who, Date.now());
+      }
+    }
 
     if (url.pathname === "/__relay/health" || url.pathname === "/healthz") {
       const body = Buffer.from(JSON.stringify({
@@ -526,6 +539,8 @@ function createRelay(config) {
           lastDropReason: t.lastDropReason || "",
           lastDropAt: t.lastDropAt || 0,
           agentVersion: t.agent?.version || "",
+          requests: stats.requests,
+          clients: seenClients.size,
         })),
         stats,
       }), "utf8");
@@ -739,22 +754,29 @@ function createRelay(config) {
       log.info(`relay  v${RELAY_VERSION}`);
   log.info(`agent  ${config.tlsCert ? "tls" : "tcp"} ${config.agentHost}:${agentAddr.port}`);
       log.info(`visitor http  ${config.httpHost}:${visitorAddr.port}`);
-      if (tlsAddr) log.info(`visitor https ${config.httpHost}:${tlsAddr.port}`);
+      if (tlsAddr) log.info(`visitor https ${config.tlsHost || config.httpHost}:${tlsAddr.port}`);
       for (const tunnel of tunnels.values()) {
         log.info(`tunnel ${tunnel.id} → ${config.publicUrl.replace(/\/$/, "")}${publicPathFor(tunnel.id)}/`);
       }
       return { agentPort: agentAddr.port, httpPort: visitorAddr.port, tlsPort: tlsAddr?.port || 0 };
     },
     async stop() {
+      // Live tunnels first: an open agent socket holds the listening server's
+      // close() pending forever, which is why a restart used to hang until
+      // systemd gave up and killed the process.
+      for (const tunnel of tunnels.values()) {
+        try { tunnel.socket?.destroy(); } catch { /* gone */ }
+        tunnel.socket = null;
+      }
       const close = (server) => new Promise((resolve) => {
         if (!server) return resolve();
         try { server.closeAllConnections?.(); } catch { /* http only */ }
         try { server.close(() => resolve()); } catch { resolve(); }
+        // Whatever still clings to a socket must not block the shutdown.
+        const t = setTimeout(resolve, 2000);
+        t.unref?.();
       });
       await Promise.all([close(agentServer), close(visitors), close(visitorTls)]);
-      for (const tunnel of tunnels.values()) {
-        try { tunnel.socket?.destroy(); } catch { /* gone */ }
-      }
     },
   };
 }
@@ -822,6 +844,8 @@ function main() {
 
   const shutdown = (signal) => {
     log.info(`${signal} received, closing…`);
+    const hard = setTimeout(() => process.exit(0), 5000);
+    hard.unref?.();
     relay.stop().then(() => process.exit(0), () => process.exit(1));
   };
   process.on("SIGINT", () => shutdown("SIGINT"));
