@@ -96,35 +96,83 @@ that language. Then:
 | | `2) HTTPS` | encrypted. Choose this whenever the internet can reach the server. |
 | Domain or IP? | domain | no browser warning once a certificate is in place |
 | | IP | self-signed certificate, one warning, encrypted afterwards |
-| Certificate | `1) issue one` | Let's Encrypt via acme.sh (HTTP-01 on port 80, renewed automatically) |
-| | `2) I have one` | you supply `fullchain` and `key` |
-| | `3) self-signed` | the browser will say "not secure" |
+| Certificate | `1) automatic, HTTP check` | Let's Encrypt via acme.sh, validated on **port 80** — needs 80 free and reachable |
+| | `2) automatic, DNS check` | Let's Encrypt without touching 80: a Cloudflare token or a manual TXT record |
+| | `3) I already have one` | paste the PEM blocks, or give the paths to `fullchain` and `key` |
+| | `4) self-signed` | the browser will say "not secure" |
+| DNS validation (option 2) | `1) Cloudflare token` | `Zone:DNS:Edit`; acme.sh writes the TXT record and renews on its own |
+| | `2) manual TXT` | any provider; the installer prints the record and waits for Enter, and renewal repeats that step |
 | Ports | public + agent | a port already in use is reported and you are asked again |
+| Through Cloudflare? | `y` / `n` | only asked when the domain looks blocked on 80/443: the public URL becomes `https://domain` while the edge comes back to the port |
 
 The certificate question only appears for a domain — a bare IP cannot have a public
-certificate.
+certificate. Option 1 is the default; when the filing check (3.2) says 80 is blocked,
+option 2 becomes the default instead, because the HTTP check cannot pass there.
 
 ### 3.2 The domain is resolved before anything is written
 
-After you type a domain, the installer resolves it once and compares the first A
-record with the host's public IP:
+After you type a domain, the installer resolves it and compares the first A record
+with the host's public IP. The lookup asks `1.1.1.1` and `8.8.8.8` first and only
+falls back to the local resolver, because a record that just changed is still cached
+locally and two lookups seconds apart would disagree.
 
 | Result | Behaviour |
 |---|---|
 | points here | continues |
 | points elsewhere (Cloudflare and other CDNs) | shows both addresses, explains that a CDN is normal and that automatic issuance needs a direct record, then offers continue / re-check / another domain |
 | no A record | says so and offers re-check / use it anyway / another domain |
+| a mismatch that persists | mentions the TTL (300 s), so a record that was just changed is not mistaken for a wrong one |
 
-The lookup uses whichever of `getent`, `dig`, `nslookup` or `host` exists — nothing
-to install. The final summary prints the resolved address too.
+Nothing needs installing: `dig` is used when present, otherwise the DNS-over-HTTPS
+endpoint, otherwise `getent`/`nslookup`. The final summary prints the resolved
+address too.
 
-### 3.3 Ports below 1024
+**Filing checks.** In mainland China, providers filter ports 80 and 443 by host/SNI
+for domains without an ICP filing. The installer probes both the domain and the bare
+IP; when only the domain fails it says so and explains the consequences — the HTTP
+check cannot pass, and a browser cannot reach the domain on 443 either. When the
+domain is on Cloudflare it also prints the way out: proxy the record, set SSL mode to
+**Full**, serve the relay on **8443** (Cloudflare proxies HTTPS there).
+
+### 3.3 Certificates
+
+acme.sh is downloaded once (the real ~300 KB script, not the 1 KB bootstrap, through a
+mirror chain) and installed under `~/.acme.sh`. Both automatic routes use it, and both
+end with `--install-cert` putting `fullchain`/`key` into `/var/lib/dsh-relay/tls/`
+plus a `dsh-relay-acme.timer` that renews twice a day.
+
+**The CA has to be reachable.** Before issuing, the installer samples the Let's Encrypt
+directory up to four times with a 10 s ceiling each; only when every sample fails does
+it stop, and even then it offers to try anyway because acme.sh retries on its own. An
+international path is bursty — the same host can answer in 1.1 s twice and stall on the
+third attempt.
+
+Every acme call is capped (`timeout --foreground`: 300 s to issue or renew, 120 s to
+install). `--foreground` is not cosmetic: plain `timeout` runs the child in its own
+process group, so Ctrl+C kills the wrapper and leaves acme.sh holding the terminal.
+
+| Route | Needs | Renewal |
+|---|---|---|
+| HTTP check | port 80 free **and** reachable from the internet | timer, no interaction |
+| DNS check, Cloudflare token | a token with `Zone:DNS:Edit` for that zone | timer, no interaction |
+| DNS check, manual TXT | a terminal; you add the record each time | the timer fails until a new record is added — switch to the token for hands-off renewal |
+| own certificate | nothing | none: renew it yourself and re-run |
+| self-signed | nothing | none |
+
+Manual DNS takes two passes because acme.sh 3.x works that way: `--issue` prints the
+`_acme-challenge` record and exits, then `--renew` completes once the record answers.
+The installer prints the record on its own line and waits for Enter between the passes.
+
+A certificate that is still valid is reused without touching the network, so an
+unattended re-run (`drp config`, `--yes`) also works offline.
+
+### 3.4 Ports below 1024
 
 The service runs as the unprivileged `dsh-relay` user. When any port is below 1024
 the unit is written with `AmbientCapabilities=CAP_NET_BIND_SERVICE`, so 443 works
 without running the relay as root.
 
-### 3.4 What it prints when it finishes
+### 3.5 What it prints when it finishes
 
 ```
   Relay endpoint  tls://dsh.example.com:9443
@@ -143,7 +191,7 @@ Open these in your cloud firewall, or nothing outside can connect:
 Both ports are inbound on the **server**. `9443` looks outbound, but the home dsh is
 the side that initiates the connection to it.
 
-### 3.5 Unattended and other switches
+### 3.6 Unattended and other switches
 
 ```bash
 sudo ./deploy-relay.sh --yes        # accept every default (also how `drp config` reinstalls)
@@ -172,6 +220,27 @@ The installer picks an entry point from what it finds:
 So a proxy is optional: with one you can reuse 80/443, without one the relay serves
 the port directly.
 
+### When 80 and 443 are not available
+
+An unfiled domain in mainland China cannot use 80 or 443: the provider filters those
+ports by host/SNI for the domain only, and the bare IP still answers. Two ways forward.
+
+**Serve another port.** The installer defaults the public port to 8443 in that case
+(443 otherwise, 10003 when the relay sits behind nginx). Open it in the cloud firewall
+and keep the port in the URL: `https://dsh.example.com:8443/__t/<id>/`.
+
+**Put Cloudflare in front.** Proxy the record (orange cloud), set SSL/TLS mode to
+**Full** — not *Full (strict)*, which rejects the origin's self-signed certificate —
+and serve the relay on **8443**, one of the ports Cloudflare proxies for HTTPS. The
+browser then sees Cloudflare's certificate, so the origin needs no certificate at all
+and no filing. Visitors use `https://dsh.example.com:8443/…` unless you add an
+**Origin Rule** mapping destination port 443 → 8443, which makes the plain
+`https://dsh.example.com/…` work too.
+
+Cloudflare reaches the origin over HTTPS in *Full* mode, so an origin serving plain
+HTTP on that port fails the handshake (502), and *Flexible* would use port 80, which
+the provider filters.
+
 ---
 
 ## 5. Mirrors and offline installs
@@ -187,6 +256,18 @@ the script, the installer tries four sources in order and prints which one answe
 | 4 | `gh-proxy.com` proxy |
 
 If none answers it stops with instructions instead of installing half of anything.
+
+**The relay must match the installer.** Different releases speak slightly different
+protocols, and a mismatch shows up much later as an unexplained tunnel error. The
+installer reads `RELAY_VERSION` from whatever `relay.mjs` it found and prints it; on a
+mismatch it fetches the matching release (jsDelivr pinned to `v<release>` first, since
+the raw and proxy mirrors follow `master`) and continues only when the fetched file
+reports that same version. Otherwise it stops before changing anything.
+
+**acme.sh comes through a similar chain** (ghfast → gh-proxy → raw) and is checked for
+size: `get.acme.sh` is a 1 KB bootstrap, not the script, and `--install` copies
+`./acme.sh` from the current directory — so the download must be the real file and the
+install must run from its own directory.
 
 **Pin a source yourself:**
 
@@ -416,7 +497,7 @@ $ drp
 service     running · autostart on
 uptime      2h 14m
 agent port  dsh.example.com:9443 (TLS)
-visitor     0.0.0.0:443 (TLS, self-signed)
+visitor     0.0.0.0:443 (TLS, CA certificate)
 endpoint    tls://dsh.example.com:9443
 relay       reachable
 tunnel      connected · 2 streams · 3 reconnects
@@ -436,10 +517,16 @@ public      https://dsh.example.com/__t/3TerRaeZuv7S/
 | `drp config K=V …` | change them and reinstall the unit |
 | `drp uninstall` | remove the service, `/opt/dsh-relay` and `drp` itself |
 
+The `visitor` line names what is actually served — `CA certificate`, `your
+certificate` or `self-signed` — so it is obvious whether a real certificate ended up
+in place.
+
 `requests` counts real requests (health probes are excluded); `clients` counts
 distinct source addresses. `reconnects` and `last drop` are what you look at when a
-tunnel flaps: `ping timeout` means the network or NAT dropped it silently, `closed`
-means the other side hung up (a sleeping laptop is the usual cause).
+tunnel flaps: `ping timeout` means the network or NAT dropped it silently,
+`replaced by a new connection` means the agent dialled in again while the previous
+socket was still registered, and `closed` means the other side hung up (a sleeping
+laptop is the usual cause).
 
 `drp config` edits `/var/lib/dsh-relay/deploy.conf` and then re-runs the installer
 with `--yes`, so ports and certificates in the unit's command line actually change.
@@ -510,6 +597,25 @@ curl -s https://dsh.example.com/__relay/health | jq
 journalctl -u dsh-relay -f     # connect / disconnect
 ```
 
+### Static assets are cached at the relay
+
+Every byte of the harness UI otherwise travels from the operator's uplink through the
+relay to the browser, and the UI pulls several megabytes on a first load. Assets under
+`/assets/` are therefore kept in process:
+
+| Asset | Behaviour |
+|---|---|
+| hashed name (`index-a1b2c3d4.js`) | immutable, served from memory, no round trip |
+| plain name with an `etag` | revalidated with `If-None-Match`; a 304 costs a few hundred bytes instead of the file |
+| `no-store` / `private` / `Set-Cookie` / `Vary: cookie` | never cached |
+| anything that is not a 200 | never cached |
+
+Measured on a live relay: ten misses moved 246 KB from the home uplink, ten hits moved
+**6.5 KB**. The size cap is 128 MB (`DSH_RELAY_CACHE_MB` to change it), objects over
+16 MB are skipped, and entries expire after six hours. `curl -D -` shows
+`x-drp-cache: hit` or `revalidated`; `/__relay/health` reports `cacheHits` and
+`cacheStored`.
+
 | Symptom | Cause | Fix |
 |---|---|---|
 | 503 "The host is offline" | the home dsh is not attached | check *公网访问* in the panel; confirm 9443 is reachable and the token matches |
@@ -519,6 +625,11 @@ journalctl -u dsh-relay -f     # connect / disconnect
 | drops after a while | a proxy idle timeout | Caddy `read_timeout 0`; nginx `proxy_read_timeout 3600s` |
 | a phone cannot open the QR code | it encodes the **LAN** address | use the QR on the *公网访问* card, or open the public URL |
 | login is asked every time | cookies cleared, or the user agent changed | sessions are bound to the UA fingerprint |
+| `port 80 is in use` when issuing a certificate | a web panel owns 80, and the standalone HTTP check needs it exclusively | the installer offers to switch to the DNS check; no port is needed for that |
+| `the certificate authority did not answer` | the host cannot reach Let's Encrypt right now (four samples, 10 s each) | run it from a better network, use the Cloudflare token, or issue elsewhere and paste the certificate |
+| `Unknown tunnel` although the panel says connected | the relay on the server is from another release | re-run the installer: it now compares `RELAY_VERSION` with its own version and fetches the matching one |
+| the tunnel reconnects every ~35 s | the keepalive got no answer within 10 s, so the agent rebuilt the link and killed whatever was in flight | check `reconnects` and `last drop` in `drp`; on a lossy path raise `DSH_TUNNEL_PONG_TIMEOUT_MS` (agent side) |
+| Ctrl+C does not stop an acme run | older installer: `timeout` puts acme.sh in another process group | upgrade the installer — it uses `timeout --foreground` now |
 
 ---
 

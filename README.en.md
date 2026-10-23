@@ -134,9 +134,9 @@ every default), installs, and registers a `drp` command.
 |---|---|
 | HTTP or HTTPS | `1) HTTP` unencrypted / `2) HTTPS` |
 | HTTPS with a domain or the IP | **Domain**: no browser warning once a certificate is in place. **IP**: self-signed, one warning, encrypted from then on |
-| DNS | the domain is **actually resolved**: it continues only when it points here; pointing elsewhere (a CDN, say) is reported so you can continue or pick another name; a missing A record is reported before anything is written |
-| Certificate | `1) issue a free one` (Let's Encrypt, needs port 80 free, no browser warning) / `2) I have one` / `3) self-signed` (the browser will warn) |
-| Ports | public port and agent port (ports already in use are skipped) |
+| DNS | the domain is **actually resolved** (1.1.1.1 first, so a stale local cache cannot mislead): it continues only when it points here; pointing elsewhere (a CDN, say) is reported so you can continue or pick another name; a missing A record is reported before anything is written |
+| Certificate | `1) automatic, HTTP check` (needs port 80 free) / `2) automatic, DNS check` (works when 80 is blocked: Cloudflare token or a manual TXT record) / `3) I have one` (paste the PEM or give a path) / `4) self-signed` (the browser will warn) |
+| Ports | public port and agent port (ports already in use are skipped; the public port defaults to 8443 when 80/443 are blocked for the domain) |
 
 ⚠️ With HTTP the password and **the entire session** (chat, files, command output)
 travel in the clear. Only acceptable on a fully trusted LAN.
