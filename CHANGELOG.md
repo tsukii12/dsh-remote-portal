@@ -229,7 +229,7 @@ half-installing.
 The layout was pinned to the desktop: a fixed sidebar on the left squeezed the
 conversation into the remaining strip. Cause: 0.4.6 taught the layer that any of
 the host's own addresses counts as "this machine", so a phone reaching dsh at
-`http://10.150.23.97:…` was treated as the host and the drawer never engaged.
+`http://10.0.0.5:…` was treated as the host and the drawer never engaged.
 
 Only `file://` and loopback are the machine itself now — no other device can use
 those two. A LAN address is how a phone gets in, so it must get the phone layout.
@@ -241,7 +241,7 @@ those two. A LAN address is how a phone gets in, so it must get the phone layout
 - the two assertions that pinned the old rule were inverted, with the reason in the
   message
 
-Verified: 390 px on `10.150.23.97` → engaged (drawer button present, content full
+Verified: 390 px on `10.0.0.5` → engaged (drawer button present, content full
 width); the same address at 1400 px → untouched; loopback and file:// → untouched.
 
 ### Tests
@@ -301,7 +301,7 @@ folder picker.
 ### Fixed — "…" still disappeared on the machine itself
 Origin alone cannot tell a phone from *this computer opening its own LAN address*,
 and 0.4.5 treated every non-loopback host as remote. So opening dsh at
-`http://10.150.23.97:3081` on the host itself trimmed the "…" menu and the
+`http://10.0.0.5:3081` on the host itself trimmed the "…" menu and the
 "open in …" entries, which work fine there.
 
 The decision now uses facts instead of guesses:
@@ -382,7 +382,7 @@ getting it wrong produced `ECONNRESET` with no explanation. The field now accept
   a readable message instead of a silent default
 - `createTunnel` accepts a bare address too, so programmatic callers behave the same
 
-Verified against the live relay: `43.153.152.119:9443` connected over TLS and came
+Verified against the live relay: `203.0.113.10:9443` connected over TLS and came
 online with no scheme typed.
 
 ### Changed — gateway status text is translated in the panel
@@ -580,7 +580,7 @@ then the app (200, `__DSH_BOOT__` present) after a pairing login.
 - **The endpoint line prints the real host.** It used to say
   `tcp://<this-server-ip>:9443`, which is not something you can paste; it now
   derives the host from the resolved public URL, so the line reads
-  `tcp://43.153.152.119:9443`.
+  `tcp://203.0.113.10:9443`.
 
 Verified on the deployment host: service `active` + `enabled`, 9443 plain TCP,
 8080 loopback-only, and a hand-built HELLO frame answered with

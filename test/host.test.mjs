@@ -1261,17 +1261,17 @@ test("bind safety, wildcard detection and LAN-first URL ordering", async () => {
   assert.equal(assertBindSafe({ bindHost: "0.0.0.0", passwordSet: true, authMode: "password" }), true);
 
   const addresses = [
-    { address: "10.150.23.97", iface: "以太网", family: "IPv4", primary: true },
-    { address: "192.168.157.1", iface: "VMware Network Adapter VMnet8", family: "IPv4", primary: false },
+    { address: "10.0.0.5", iface: "以太网", family: "IPv4", primary: true },
+    { address: "192.168.56.1", iface: "VMware Network Adapter VMnet8", family: "IPv4", primary: false },
   ];
   const wildcard = urlsFor({ bindHost: "0.0.0.0", port: 3081, protocol: "http:", addresses });
-  assert.deepEqual(wildcard.urls, ["http://10.150.23.97:3081/", "http://192.168.157.1:3081/", "http://127.0.0.1:3081/"]);
-  assert.deepEqual(wildcard.lanUrls.slice(0, 1), ["http://10.150.23.97:3081/"]);
+  assert.deepEqual(wildcard.urls, ["http://10.0.0.5:3081/", "http://192.168.56.1:3081/", "http://127.0.0.1:3081/"]);
+  assert.deepEqual(wildcard.lanUrls.slice(0, 1), ["http://10.0.0.5:3081/"]);
   const loopback = urlsFor({ bindHost: "127.0.0.1", port: 3081, protocol: "http:", addresses });
   assert.deepEqual(loopback.urls, ["http://127.0.0.1:3081/"]);
   assert.deepEqual(loopback.lanUrls, []);
-  const specific = urlsFor({ bindHost: "10.150.23.97", port: 443, protocol: "https:", addresses });
-  assert.deepEqual(specific.urls, ["https://10.150.23.97/"]);
+  const specific = urlsFor({ bindHost: "10.0.0.5", port: 443, protocol: "https:", addresses });
+  assert.deepEqual(specific.urls, ["https://10.0.0.5/"]);
 });
 
 test("address discovery never selects virtual adapters", () => {
@@ -1286,8 +1286,8 @@ test("address discovery never selects virtual adapters", () => {
   // Machine-specific fact worth pinning (ARCHITECTURE.md §1): the real Ethernet
   // address must outrank the VMware adapters when it is present.
   const primary = list.find((entry) => entry.primary);
-  if (list.some((entry) => entry.address === "10.150.23.97")) {
-    assert.equal(primary && primary.address, "10.150.23.97");
+  if (list.some((entry) => entry.address === "10.0.0.5")) {
+    assert.equal(primary && primary.address, "10.0.0.5");
   }
 });
 
@@ -1300,9 +1300,9 @@ test("header rewriting helpers keep the fence and drop our own cookie", () => {
     method: "GET",
     url: "/api/x",
     headers: {
-      host: "10.150.23.97:3081",
-      origin: "http://10.150.23.97:3081",
-      referer: "http://10.150.23.97:3081/settings",
+      host: "10.0.0.5:3081",
+      origin: "http://10.0.0.5:3081",
+      referer: "http://10.0.0.5:3081/settings",
       cookie: "dsh_portal=abc; theme=dark; dsh-auth-x=v",
       "sec-fetch-site": "same-origin",
       connection: "keep-alive",
@@ -1310,26 +1310,26 @@ test("header rewriting helpers keep the fence and drop our own cookie", () => {
     },
   };
   const headers = buildUpstreamHeaders(req, {
-    upstream, portalOrigin: "http://10.150.23.97:3081", secure: false, remoteAddress: "10.150.23.97",
+    upstream, portalOrigin: "http://10.0.0.5:3081", secure: false, remoteAddress: "10.0.0.5",
   });
   assert.equal(headers.host, "127.0.0.1:19890");
   assert.equal(headers.origin, "http://127.0.0.1:19890");
   assert.equal(headers.referer, "http://127.0.0.1:19890/settings");
   assert.equal(headers.cookie, "theme=dark; dsh-auth-x=v");
-  assert.equal(headers["x-forwarded-for"], "1.2.3.4, 10.150.23.97");
+  assert.equal(headers["x-forwarded-for"], "1.2.3.4, 10.0.0.5");
   assert.equal(headers["x-forwarded-proto"], "http");
-  assert.equal(headers["x-forwarded-host"], "10.150.23.97:3081");
+  assert.equal(headers["x-forwarded-host"], "10.0.0.5:3081");
   assert.equal(headers.connection, undefined, "hop-by-hop headers must be dropped");
 
   assert.equal(stripCookies("a=1; dsh-auth-x=2; b=3", ["dsh-auth-"]), "a=1; b=3");
   assert.equal(withMintedCookies("a=1; dsh-auth-x=old", ["dsh-auth-x=new; Path=/"]), "a=1; dsh-auth-x=new");
 
   const rewritten = rewriteLocation("http://127.0.0.1:19890/app?x=1", {
-    upstream, portalOrigin: "http://10.150.23.97:3081",
+    upstream, portalOrigin: "http://10.0.0.5:3081",
   });
-  assert.equal(rewritten, "http://10.150.23.97:3081/app?x=1");
-  assert.equal(rewriteLocation("./next", { upstream, portalOrigin: "http://10.150.23.97:3081" }), "./next");
-  assert.equal(rewriteLocation("https://example.com/x", { upstream, portalOrigin: "http://10.150.23.97:3081" }), "https://example.com/x");
+  assert.equal(rewritten, "http://10.0.0.5:3081/app?x=1");
+  assert.equal(rewriteLocation("./next", { upstream, portalOrigin: "http://10.0.0.5:3081" }), "./next");
+  assert.equal(rewriteLocation("https://example.com/x", { upstream, portalOrigin: "http://10.0.0.5:3081" }), "https://example.com/x");
 });
 
 test("mint helpers filter non-dsh cookies and respect plain-http listeners", () => {
