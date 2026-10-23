@@ -84,19 +84,77 @@ ask_port() { # ask_port <prompt> <default>
 
 resolve_ipv4() { # resolve_ipv4 <name>; empty when there is no A record
   local name=$1 out=""
-  if command -v getent >/dev/null 2>&1; then
-    out=$(getent ahostsv4 "$name" 2>/dev/null | awk 'NR==1{print $1}')
+  if command -v dig >/dev/null 2>&1; then
+    out=$(dig +short +time=3 +tries=1 A "$name" @1.1.1.1 2>/dev/null | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1)
+    if [ -z "$out" ]; then
+      out=$(dig +short +time=3 +tries=1 A "$name" @8.8.8.8 2>/dev/null | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1)
+    fi
   fi
-  if [ -z "$out" ] && command -v dig >/dev/null 2>&1; then
-    out=$(dig +short A "$name" 2>/dev/null | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1)
+  if [ -z "$out" ] && command -v curl >/dev/null 2>&1; then
+    out=$(curl -fsS --max-time 5 -H 'accept: application/dns-json' \
+      "https://cloudflare-dns.com/dns-query?name=$name&type=A" 2>/dev/null \
+      | tr ',' '\n' | grep -o '"data":"[0-9.]*"' | head -n 1 | sed -e 's/.*:"//' -e 's/"//')
+  fi
+  if [ -z "$out" ] && command -v getent >/dev/null 2>&1; then
+    out=$(getent ahostsv4 "$name" 2>/dev/null | awk 'NR==1{print $1}')
   fi
   if [ -z "$out" ] && command -v nslookup >/dev/null 2>&1; then
     out=$(nslookup "$name" 2>/dev/null | awk '/^Address:[ ]*[0-9]/{print $2; exit}')
   fi
-  if [ -z "$out" ] && command -v host >/dev/null 2>&1; then
-    out=$(host -t A "$name" 2>/dev/null | awk '/has address/{print $4; exit}')
-  fi
   printf '%s' "$out"
+}
+
+choose_dns_mode() { # sets ACME_MODE (and CF_Token for Cloudflare)
+  printf '\n  %s\n' "$(t "How should DNS be validated?" "DNS 怎么验证？")"
+  printf '    1) %s\n' "$(t "Cloudflare API token (renews itself)" "Cloudflare API 令牌（可自动续期）")"
+  printf '    2) %s\n' "$(t "Manual TXT record (any provider; renewal repeats this step)" "手工添加 TXT 记录（任意服务商；续期时需重复一次）")"
+  dns_pick=$(ask "$(t "Choose" "选择")" "1")
+  if [ "$dns_pick" = 1 ]; then
+    CF_TOKEN=$(ask "$(t "Cloudflare API token (Zone:DNS:Edit)" "Cloudflare API 令牌（需 Zone:DNS:Edit）")" "")
+    [ -n "$CF_TOKEN" ] || die "$(t "a token is required for the Cloudflare check" "Cloudflare 校验需要令牌")"
+    export CF_Token="$CF_TOKEN"
+    ACME_MODE=dns-cf
+  else
+    ACME_MODE=dns-manual
+  fi
+  CERT_SOURCE=acme
+  VISITOR_TLS=1
+}
+
+# One answer for a deliverable that may be a file or a block of text: a provider hands
+# out PEM text (Cloudflare Origin CA, a cloud console), and asking people to scp it in
+# first is a step they skip.
+ask_pem() { # ask_pem <label> <marker>
+  local label=$1 marker=$2 first abs tmp
+  if ! can_ask; then
+    printf '%s' ""
+    return 0
+  fi
+  printf '  %s\n' "$(t "$label — paste the PEM and finish with a line reading END, or type the absolute path of the file" "$label —— 粘贴 PEM 内容（最后单独一行输入 END 结束），或直接填文件的绝对路径")" >/dev/tty
+  printf '  > ' >/dev/tty
+  if ! read -r first </dev/tty; then
+    printf '\n' >/dev/tty
+    die "$(t "input closed; nothing was changed" "输入已结束，未做任何修改")"
+  fi
+  case "$first" in
+    "-----BEGIN"*)
+      tmp=$(mktemp)
+      printf '%s\n' "$first" > "$tmp"
+      while IFS= read -r line </dev/tty; do
+        [ "$line" = "END" ] && break
+        printf '%s\n' "$line" >> "$tmp"
+      done
+      grep -q "$marker" "$tmp" || die "$(t "that block is not what this field expects" "粘贴的内容与这里要求的类型不符")"
+      printf '%s' "$tmp"
+      ;;
+    "")
+      printf '%s' ""
+      ;;
+    *)
+      case "$first" in "~/"*) first="$HOME/${first#\~/}" ;; esac
+      printf '%s' "$first"
+      ;;
+  esac
 }
 
 # Ask for a domain and prove it points here before going further: an automatic
@@ -130,6 +188,7 @@ pick_domain() {
       warn "$(t "$name resolves to $ip, this host is $PUBLIC_IP" "$name 解析到 $ip，本机公网 IP 是 $PUBLIC_IP")" >&2
       info "$(t "normal behind Cloudflare or another CDN: the CDN answers and reaches you" "如果走了 Cloudflare 等 CDN，这是正常的：由 CDN 回源到本机")" >&2
       info "$(t "automatic certificate issuance needs the record to point here directly" "自动申请证书需要解析直接指向本机")" >&2
+      info "$(t "if the record was changed recently, wait for the TTL (300 s) and check again" "如果刚改过解析，等 TTL（300 秒）走完再重新检测")" >&2
       ans=$(ask "$(t "c = continue, r = check again, anything else = another domain" "c = 继续，r = 重新检测，其他 = 换域名")" "c")
       case "$ans" in
         [Cc]*) printf '%s' "$name"; return 0 ;;
@@ -164,6 +223,7 @@ if [ "$UNINSTALL" = 0 ] && [ -r "$CONF_FILE" ]; then
   SAVED_VISIT_MODE=${VISIT_MODE:-}
   SAVED_AGENT_TLS=${AGENT_TLS:-}
   SAVED_CERT_SOURCE=${CERT_SOURCE:-}
+  SAVED_PUBLIC_PORT=${PUBLIC_PORT:-}
   ADVERTISED_URL=${ADVERTISED_URL:-}
   SAVED_CERT_FILE=${CERT_FILE:-}
   SAVED_KEY_FILE=${KEY_FILE:-}
@@ -675,21 +735,7 @@ if [ "$SCHEME" = https ]; then
     if [ "${DOMAIN_FILTERED:-0}" = 1 ]; then cert_default=2; else cert_default=1; fi
     cert_pick=$(ask "$(t "Choose" "选择")" "$cert_default")
     case "$cert_pick" in
-      2)
-        printf '\n  %s\n' "$(t "How should DNS be validated?" "DNS 怎么验证？")"
-        printf '    1) %s\n' "$(t "Cloudflare API token (renews itself)" "Cloudflare API 令牌（可自动续期）")"
-        printf '    2) %s\n' "$(t "Manual TXT record (any provider; renewal repeats this step)" "手工添加 TXT 记录（任意服务商；续期时需重复一次）")"
-        dns_pick=$(ask "$(t "Choose" "选择")" "1")
-        if [ "$dns_pick" = 1 ]; then
-          CF_TOKEN=$(ask "$(t "Cloudflare API token (Zone:DNS:Edit)" "Cloudflare API 令牌（需 Zone:DNS:Edit）")" "")
-          [ -n "$CF_TOKEN" ] || die "$(t "a token is required for the Cloudflare check" "Cloudflare 校验需要令牌")"
-          export CF_Token="$CF_TOKEN"
-          CERT_SOURCE=acme; ACME_MODE=dns-cf
-        else
-          CERT_SOURCE=acme; ACME_MODE=dns-manual
-        fi
-        VISITOR_TLS=1
-        ;;
+      2) choose_dns_mode ;;
       3)
         # With a proxy, it terminates TLS; without one, the relay does — either way
         # the certificate is the operator's.
@@ -744,7 +790,7 @@ else
   default_public=10003
 fi
 
-PUBLIC_PORT=$(ask_port "$(t "Public port (open it in your cloud firewall)" "对外端口（需在云安全组放行）")" "${PUBLIC_PORT:-$default_public}")
+PUBLIC_PORT=$(ask_port "$(t "Public port (open it in your cloud firewall)" "对外端口（需在云安全组放行）")" "${SAVED_PUBLIC_PORT:-$default_public}")
 while ! port_free "$PUBLIC_PORT"; do
   warn "$(t "port $PUBLIC_PORT is in use" "端口 $PUBLIC_PORT 已被占用")"
   PUBLIC_PORT=$(ask_port "$(t "Public port" "对外端口")" "$((PUBLIC_PORT + 1))")
@@ -790,9 +836,12 @@ if [ "$CERT_SOURCE" = user ] && [ "$ASSUME_YES" = 1 ] && [ -n "${USER_CERT:-}" ]
   [ -r "$USER_CERT" ] && [ -r "${USER_KEY:-}" ] || die "$(t "the saved certificate pair is no longer readable: $USER_CERT" "保存的证书文件读不到了：$USER_CERT")"
   AGENT_TLS=1
 elif [ "$CERT_SOURCE" = user ]; then
-  USER_CERT=$(ask "$(t "Certificate chain (fullchain.pem)" "证书链（fullchain.pem）")" "")
-  USER_KEY=$(ask "$(t "Private key (privkey.pem)" "私钥（privkey.pem）")" "")
-  [ -r "$USER_CERT" ] && [ -r "$USER_KEY" ] || die "$(t "cannot read that certificate pair" "读不到这对证书文件")"
+  USER_CERT=$(ask_pem "$(t "Certificate chain" "证书链")" "BEGIN CERTIFICATE")
+  [ -n "$USER_CERT" ] || die "$(t "a certificate is required here: paste it, or give the path to fullchain.pem" "这里需要证书：粘贴内容，或填写 fullchain.pem 的路径")"
+  USER_KEY=$(ask_pem "$(t "Private key" "私钥")" "PRIVATE KEY")
+  [ -n "$USER_KEY" ] || die "$(t "a private key is required here: paste it, or give the path to privkey.pem" "这里需要私钥：粘贴内容，或填写 privkey.pem 的路径")"
+  [ -r "$USER_CERT" ] || die "$(t "cannot read $USER_CERT" "读不到 $USER_CERT")"
+  [ -r "$USER_KEY" ] || die "$(t "cannot read $USER_KEY" "读不到 $USER_KEY")"
   AGENT_TLS=1
 fi
 
@@ -926,7 +975,20 @@ issue_cert_acme() { # issue_cert_acme <domain> [http|dns-cf|dns-manual]
   esac
 
   if [ "$mode" = http ] && ! port_free 80; then
-    die "$(t "port 80 is in use: the HTTP check needs it. Free it, or use the DNS option." "80 端口被占用：HTTP 校验需要它。请释放，或改选 DNS 校验。")"
+    warn "$(t "port 80 is in use (often a web panel): the standalone HTTP check needs it to itself" "80 端口被占用（常见于面板/nginx）：独立模式必须独占它")"
+    if [ "$ASSUME_YES" = 1 ]; then
+      die "$(t "use the DNS option for this domain, or free port 80" "这个域名请改用 DNS 校验，或释放 80 端口")"
+    fi
+    if ask_yn "$(t "switch to the DNS check instead? (no port needed)" "改用 DNS 校验？它不需要任何端口")" y; then
+      choose_dns_mode
+      mode=$ACME_MODE
+      case "$mode" in
+        dns-cf) challenge="--dns dns_cf" ;;
+        dns-manual) challenge="--dns" ;;
+      esac
+    else
+      die "$(t "nothing to do without port 80" "没有 80 端口就无法继续")"
+    fi
   fi
 
   acmesh_install
@@ -972,6 +1034,16 @@ issue_cert_acme() { # issue_cert_acme <domain> [http|dns-cf|dns-manual]
   AGENT_TLS=1
   ok "$(t "certificate issued and installed" "证书已签发并安装")"
 }
+
+if [ "$CERT_SOURCE" = user ]; then
+  install -d -m 0750 "$STATE_DIR/tls" 2>/dev/null || true
+  case "$USER_CERT" in
+    /tmp/*) install -m 0644 "$USER_CERT" "$STATE_DIR/tls/user-fullchain.pem"; USER_CERT="$STATE_DIR/tls/user-fullchain.pem" ;;
+  esac
+  case "$USER_KEY" in
+    /tmp/*) install -m 0600 "$USER_KEY" "$STATE_DIR/tls/user-key.pem"; USER_KEY="$STATE_DIR/tls/user-key.pem" ;;
+  esac
+fi
 
 if [ "$CERT_SOURCE" = acme ]; then
   issue_cert_acme "$HOST" "${ACME_MODE:-http}"
