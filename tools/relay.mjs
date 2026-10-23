@@ -379,6 +379,9 @@ const SEEN_CLIENT_LIMIT = 5000;
           // A second agent for the same token replaces the first: the old one is
           // almost certainly a half-dead connection after a network change.
           try { tunnel.socket.destroy(); } catch { /* gone */ }
+          tunnel.reconnects = (tunnel.reconnects || 0) + 1;
+          tunnel.lastDropReason = "replaced by a new connection";
+          tunnel.lastDropAt = Date.now();
         }
         tunnel.socket = socket;
         tunnel.agent = { version: String(hello.version || ""), peer };
