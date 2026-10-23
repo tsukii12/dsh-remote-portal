@@ -107,6 +107,7 @@ It fetches `relay.mjs` itself, detects the environment, asks a few questions (En
 |---|---|
 | HTTP or HTTPS | `1) HTTP` unencrypted / `2) HTTPS` |
 | HTTPS with a domain or the IP | **Domain**: no browser warning once a certificate is in place. **IP**: self-signed, one warning, encrypted from then on |
+| DNS | The domain is **actually resolved**: it continues only when it points here; pointing elsewhere (a CDN, say) is reported so you can continue or pick another name; a missing A record is reported before anything is written |
 | Ports | public port and agent port (ports already in use are skipped) |
 
 ⚠️ With HTTP the password and **the entire session** (chat, files, command output) travel in the clear. Only acceptable on a fully trusted LAN.

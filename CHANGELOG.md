@@ -3,6 +3,32 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.5.2 — 2026-10-23
+
+### Added — the installer resolves the domain before installing
+Choosing a domain now proves it points here. The check tries `getent`, `dig`,
+`nslookup` and `host` (whichever exists, no new dependency) and compares the first
+A record with the host's public IP:
+
+- **points here** → continue
+- **points elsewhere** → shows both addresses, explains that a CDN is normal and
+  that automatic certificate issuance needs a direct record, then offers continue /
+  re-check / another domain
+- **no A record** → says so and offers re-check / use it anyway / another domain
+
+The final summary prints the resolved address, so the result is visible after the
+fact too.
+
+### Fixed
+- a closed terminal spun forever: `read` returning nothing made every re-asking
+  prompt loop with an empty answer. EOF now aborts with "input closed; nothing was
+  changed" before anything is installed
+- the domain prompt defaulted to the machine's public IP (it borrowed a variable
+  that already held it); the default is now the previous answer, or empty
+
+### Tests
+- 79 tests green.
+
 ## 0.5.1 — 2026-10-23
 
 ### Changed — the installer asks about transport, and nothing else

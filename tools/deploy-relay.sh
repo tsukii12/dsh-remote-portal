@@ -55,7 +55,10 @@ ask() {
   local prompt=$1 def=$2 reply=""
   if can_ask; then
     printf '  %s [%s]: ' "$prompt" "$def" >/dev/tty
-    read -r reply </dev/tty || reply=""
+    if ! read -r reply </dev/tty; then
+      printf '\n' >/dev/tty
+      die "$(t "input closed; nothing was changed" "输入已结束，未做任何修改")"
+    fi
   fi
   printf '%s' "${reply:-$def}"
 }
@@ -75,11 +78,74 @@ ask_port() { # ask_port <prompt> <default>
   done
 }
 
+resolve_ipv4() { # resolve_ipv4 <name>; empty when there is no A record
+  local name=$1 out=""
+  if command -v getent >/dev/null 2>&1; then
+    out=$(getent ahostsv4 "$name" 2>/dev/null | awk 'NR==1{print $1}')
+  fi
+  if [ -z "$out" ] && command -v dig >/dev/null 2>&1; then
+    out=$(dig +short A "$name" 2>/dev/null | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1)
+  fi
+  if [ -z "$out" ] && command -v nslookup >/dev/null 2>&1; then
+    out=$(nslookup "$name" 2>/dev/null | awk '/^Address:[ ]*[0-9]/{print $2; exit}')
+  fi
+  if [ -z "$out" ] && command -v host >/dev/null 2>&1; then
+    out=$(host -t A "$name" 2>/dev/null | awk '/has address/{print $4; exit}')
+  fi
+  printf '%s' "$out"
+}
+
+# Ask for a domain and prove it points here before going further: an automatic
+# certificate cannot be issued for a name that does not resolve to this host, and a
+# visitor would land wherever the record points today. Status goes to stderr so the
+# caller captures only the name.
+pick_domain() {
+  local name ip ans last=""
+  if ! can_ask; then
+    printf '%s' "${HOST:-}"
+    return 0
+  fi
+  while :; do
+    name=$(ask "$(t "Domain name" "域名")" "$last")
+    if [ -z "$name" ]; then
+      warn "$(t "a domain is required for this mode" "这个模式需要填域名")" >&2
+      continue
+    fi
+    last=$name
+    ip=$(resolve_ipv4 "$name")
+    if [ -z "$ip" ]; then
+      warn "$(t "$name has no A record yet" "$name 还没有 A 记录")" >&2
+      info "$(t "point an A record at ${PUBLIC_IP:-this host}, then check again" "先加一条 A 记录指向 ${PUBLIC_IP:-本机}，再重新检测")" >&2
+      ans=$(ask "$(t "r = check again, u = use it anyway, anything else = another domain" "r = 重新检测，u = 仍然使用，其他 = 换域名")" "r")
+      case "$ans" in
+        [Uu]*) printf '%s' "$name"; return 0 ;;
+        *) continue ;;
+      esac
+    fi
+    if [ -n "${PUBLIC_IP:-}" ] && [ "$ip" != "$PUBLIC_IP" ]; then
+      warn "$(t "$name resolves to $ip, this host is $PUBLIC_IP" "$name 解析到 $ip，本机公网 IP 是 $PUBLIC_IP")" >&2
+      info "$(t "normal behind Cloudflare or another CDN: the CDN answers and reaches you" "如果走了 Cloudflare 等 CDN，这是正常的：由 CDN 回源到本机")" >&2
+      info "$(t "automatic certificate issuance needs the record to point here directly" "自动申请证书需要解析直接指向本机")" >&2
+      ans=$(ask "$(t "c = continue, r = check again, anything else = another domain" "c = 继续，r = 重新检测，其他 = 换域名")" "c")
+      case "$ans" in
+        [Cc]*) printf '%s' "$name"; return 0 ;;
+        *) continue ;;
+      esac
+    fi
+    ok "$(t "DNS points here" "解析已指向本机")" >&2
+    printf '%s' "$name"
+    return 0
+  done
+}
+
 ask_yn() {
   local prompt=$1 def=$2 reply=""
   if can_ask; then
     printf '  %s [%s]: ' "$prompt" "$def" >/dev/tty
-    read -r reply </dev/tty || reply=""
+    if ! read -r reply </dev/tty; then
+      printf '\n' >/dev/tty
+      die "$(t "input closed; nothing was changed" "输入已结束，未做任何修改")"
+    fi
   fi
   case "${reply:-$def}" in [Yy]*) return 0 ;; *) return 1 ;; esac
 }
@@ -307,7 +373,7 @@ else
   case "$(printf '%s' "$DOMAIN_TARGET" | tr 'A-Z' 'a-z')" in
     d*|域名*)
       IS_DOMAIN=1
-      HOST=$(ask "$(t "Domain name" "域名")" "")
+      HOST=$(pick_domain)
       [ -n "$HOST" ] || die "$(t "a domain is required for this mode" "这个模式需要填域名")"
       ;;
     *)
@@ -401,7 +467,11 @@ fi
 
 printf '\n'
 info "$(t "Summary" "汇总"):"
-info "  $(t "visitors" "访客")  $SCHEME://$HOST:$PUBLIC_PORT$( [ "$SCHEME" = https ] && echo "" || echo "  ($(t "unencrypted" "未加密"))")"
+if [ "${IS_DOMAIN:-0}" = 1 ]; then
+  info "  $(t "visitors" "访客")  $SCHEME://$HOST:$PUBLIC_PORT  ($(t "DNS" "解析") → $(resolve_ipv4 "$HOST"))"
+else
+  info "  $(t "visitors" "访客")  $SCHEME://$HOST:$PUBLIC_PORT$( [ "$SCHEME" = https ] && echo "" || echo "  ($(t "unencrypted" "未加密"))")"
+fi
 if [ "$PROXY_MODE" = none ]; then
   info "  $(t "entry" "入口")     $(t "relay listens itself" "relay 自己监听") ($([ "$VISITOR_TLS" = 1 ] && echo "TLS, $(t "self-signed" "自签")" || echo "plain"))"
 else
