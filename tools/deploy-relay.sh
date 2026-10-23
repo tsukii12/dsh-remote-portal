@@ -19,7 +19,7 @@ set -euo pipefail
 
 if [ ! -x "$0" ] && [ -f "$0" ]; then chmod +x "$0" 2>/dev/null || true; fi
 
-SELF_VERSION="0.5.6"
+SELF_VERSION="0.6.0"
 
 RELAY_DIR=/opt/dsh-relay
 STATE_DIR=/var/lib/dsh-relay
@@ -48,6 +48,8 @@ say()  { printf '\n\033[1m%s\033[0m\n' "$*"; }
 ok()   { printf '  \033[32m✓\033[0m %s\n' "$*"; }
 info() { printf '    %s\n' "$*"; }
 warn() { printf '  \033[33m!\033[0m %s\n' "$*"; }
+hi()   { printf '\033[36m%s\033[0m' "$*"; }   # addresses, URLs
+key()  { printf '\033[33m%s\033[0m' "$*"; }   # tokens
 die()  { printf '\033[31m✗ %s\033[0m\n' "$*" >&2; exit 1; }
 
 as_root() { [ "$(id -u)" = "0" ]; }
@@ -172,74 +174,183 @@ install_drp() {
   cat > "$BIN" <<'DRP_EOF'
 #!/bin/sh
 # drp — manage the dsh-remote-portal relay.
-#   drp            status (default)
-#   drp url        public URL to open
-#   drp token      tunnel token (the value to paste into dsh)
+#   drp                     status (default)
+#   drp url                 public URL to open
+#   drp token               tunnel token (the value to paste into dsh)
 #   drp start|stop|restart
 #   drp log [-f]
-#   drp config     the saved answers
+#   drp config              show the saved answers
+#   drp config K=V [K=V…]   change them and reinstall the unit
 #   drp help
 CONF=/var/lib/dsh-relay/deploy.conf
 TOKEN_FILE=/var/lib/dsh-relay/token
 SERVICE=dsh-relay
 set -u
 
+# Colour only when someone is looking at a terminal.
+if [ -t 1 ]; then
+  R=$(printf '\033[0m'); B=$(printf '\033[1m')
+  RED=$(printf '\033[31m'); GRN=$(printf '\033[32m')
+  YEL=$(printf '\033[33m'); CYA=$(printf '\033[36m'); GRY=$(printf '\033[2m')
+else
+  R=; B=; RED=; GRN=; YEL=; CYA=; GRY=
+fi
+green() { printf '%s%s%s' "$GRN" "$1" "$R"; }
+red() { printf '%s%s%s' "$RED" "$1" "$R"; }
+cyan() { printf '%s%s%s' "$CYA" "$1" "$R"; }
+yellow() { printf '%s%s%s' "$YEL" "$1" "$R"; }
+grey() { printf '%s%s%s' "$GRY" "$1" "$R"; }
+
+# Bytes as something a person can read.
+human() {
+  awk -v n="${1:-0}" 'BEGIN{
+    split("B KiB MiB GiB TiB", u, " "); i = 1
+    while (n >= 1024 && i < 5) { n /= 1024; i++ }
+    if (i == 1) printf "%d %s", n, u[i]; else printf "%.1f %s", n, u[i]
+  }'
+}
+
 load() {
   [ -r "$CONF" ] && . "$CONF"
   HOST=${HOST:-127.0.0.1}; AGENT_PORT=${AGENT_PORT:-9443}; HTTP_PORT=${HTTP_PORT:-8080}
   PUBLIC_PORT=${PUBLIC_PORT:-80}; PROXY_MODE=${PROXY_MODE:-none}
-  SCHEME=${SCHEME:-http}; VISITOR_TLS=${VISITOR_TLS:-0}; AGENT_TLS=${AGENT_TLS:-${WANT_TLS:-1}}
+  SCHEME=${SCHEME:-http}; VISITOR_TLS=${VISITOR_TLS:-0}; AGENT_TLS=${AGENT_TLS:-1}
+  SCRIPT=${SCRIPT:-}
 }
 health() { curl -fsS --max-time 3 "http://127.0.0.1:${HTTP_PORT:-8080}/__relay/health" 2>/dev/null; }
 token() { [ -r "$TOKEN_FILE" ] && head -n 1 "$TOKEN_FILE"; }
 tunnel_id() { tid=$(token); [ -n "$tid" ] && node -e 'const c=require("node:crypto");process.stdout.write(c.createHash("sha256").update(process.argv[1]).digest("base64url").slice(0,12))' "$tid"; }
 url_base() {
   if [ "${SCHEME:-http}" = https ]; then
-    case "${PUBLIC_PORT:-443}" in 443) echo "https://$HOST" ;; *) echo "https://$HOST:$PUBLIC_PORT" ;; esac
+    case "${PUBLIC_PORT:-443}" in 443) printf 'https://%s' "$HOST" ;; *) printf 'https://%s:%s' "$HOST" "$PUBLIC_PORT" ;; esac
   else
-    case "${PUBLIC_PORT:-80}" in 80) echo "http://$HOST" ;; *) echo "http://$HOST:$PUBLIC_PORT" ;; esac
+    case "${PUBLIC_PORT:-80}" in 80) printf 'http://%s' "$HOST" ;; *) printf 'http://%s:%s' "$HOST" "$PUBLIC_PORT" ;; esac
   fi
 }
-endpoint() { if [ "${AGENT_TLS:-1}" = 1 ]; then echo "tls://$HOST:$AGENT_PORT"; else echo "tcp://$HOST:$AGENT_PORT"; fi; }
+endpoint() { if [ "${AGENT_TLS:-1}" = 1 ]; then printf 'tls://%s:%s' "$HOST" "$AGENT_PORT"; else printf 'tcp://%s:%s' "$HOST" "$AGENT_PORT"; fi; }
+
+service_state() {
+  if systemctl is-active "$SERVICE" >/dev/null 2>&1; then
+    if [ "$(systemctl is-enabled "$SERVICE" 2>/dev/null || echo no)" = enabled ]; then
+      printf '%s · autostart on' "$(green running)"
+    else
+      printf '%s · autostart off' "$(green running)"
+    fi
+  else
+    printf '%s' "$(red stopped)"
+  fi
+}
+
+uptime_line() {
+  started=$(systemctl show -p ActiveEnterTimestamp --value "$SERVICE" 2>/dev/null || true)
+  [ -n "$started" ] || return 0
+  since=$(date -d "$started" +%s 2>/dev/null) || return 0
+  [ -n "$since" ] || return 0
+  awk -v d=$(( $(date +%s) - since )) 'BEGIN{
+    if (d < 0) exit
+    if (d >= 86400) printf "%dd %dh", d/86400, (d%86400)/3600
+    else if (d >= 3600) printf "%dh %dm", d/3600, (d%3600)/60
+    else if (d >= 60) printf "%dm %ds", d/60, d%60
+    else printf "%ds", d
+  }'
+}
 
 case "${1:-status}" in
   status)
     load
-    printf 'service     '
-    if systemctl is-active "$SERVICE" >/dev/null 2>&1; then
-      echo "running (enabled: $(systemctl is-enabled $SERVICE 2>/dev/null || echo no))"
-    else
-      echo "stopped"
-    fi
-    printf 'agent port  %s:%s (%s)\n' "$HOST" "$AGENT_PORT" "$([ "${AGENT_TLS:-1}" = 1 ] && echo TLS || echo plain)"
-    printf 'visitor     '
+    printf 'service     %s\n' "$(service_state)"
+    up=$(uptime_line); [ -n "${up:-}" ] && printf 'uptime      %s\n' "$up"
+    printf 'agent port  %s %s\n' "$(cyan "$HOST:$AGENT_PORT")" "$([ "${AGENT_TLS:-1}" = 1 ] && echo '(TLS)' || echo '(plain)')"
     if [ "$PROXY_MODE" = none ]; then
-      if [ "${VISITOR_TLS:-0}" = 1 ]; then echo "0.0.0.0:$PUBLIC_PORT (TLS, self-signed)"
-      else echo "0.0.0.0:$PUBLIC_PORT (plain, NOT encrypted)"; fi
+      if [ "${VISITOR_TLS:-0}" = 1 ]; then
+        printf 'visitor     %s (TLS, self-signed)\n' "$(cyan "0.0.0.0:$PUBLIC_PORT")"
+      else
+        printf 'visitor     %s %s\n' "$(cyan "0.0.0.0:$PUBLIC_PORT")" "$(red '(plain, NOT encrypted)')"
+      fi
     else
-      echo "$PROXY_MODE -> 127.0.0.1:$HTTP_PORT, public $PUBLIC_PORT ($SCHEME)"
+      printf 'visitor     %s -> 127.0.0.1:%s, public %s (%s)\n' "$PROXY_MODE" "$HTTP_PORT" "$PUBLIC_PORT" "$SCHEME"
     fi
-    printf 'endpoint    %s\n' "$(endpoint)"
+    printf 'endpoint    %s\n' "$(cyan "$(endpoint)")"
+
     h=$(health)
     if [ -n "$h" ]; then
-      printf '%s' "$h" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{const j=JSON.parse(s);const t=j.tunnels[0];console.log("relay       reachable");console.log("tunnel      "+(t?((t.connected?"connected":"offline")+", streams="+t.streams):"none"));console.log("traffic     in="+j.stats.bytesIn+"B out="+j.stats.bytesOut+"B visitors="+j.stats.visitors);}catch(e){console.log("relay       unreadable response")}})'
+      printf 'relay       %s\n' "$(green reachable)"
+      printf '%s' "$h" | node -e '
+        let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{
+          const paint=(code,v)=>process.stdout.isTTY?`\u001b[${code}m${v}\u001b[0m`:v;
+          let j;try{j=JSON.parse(s)}catch(e){console.log("tunnel      unreadable response");return}
+          const t=j.tunnels[0];
+          const up=j.uptimeMs?`relay up ${Math.floor(j.uptimeMs/3600000)}h`:null;
+          if(!t){console.log("tunnel      "+paint(33,"none registered"));return}
+          const st=t.connected?paint(32,"connected"):paint(31,"offline");
+          const bits=[st,`${t.streams} stream${t.streams===1?"":"s"}`];
+          if(t.reconnects) bits.push(`${t.reconnects} reconnect${t.reconnects===1?"":"s"}`);
+          console.log("tunnel      "+bits.join(" · "));
+          if(t.reconnects&&t.lastDropAt){
+            const ago=Math.max(0,Math.round((Date.now()-t.lastDropAt)/1000));
+            const human=ago>=3600?`${Math.floor(ago/3600)}h ago`:ago>=60?`${Math.floor(ago/60)}m ago`:`${ago}s ago`;
+            console.log("last drop   "+human+(t.lastDropReason?` (${t.lastDropReason})`:""));
+          }
+          const b=v=>{const u=["B","KiB","MiB","GiB","TiB"];let i=0;while(v>=1024&&i<4){v/=1024;i++}return (i===0?`${v} ${u[0]}`:`${v.toFixed(1)} ${u[i]}`)};
+          console.log(`traffic     in ${b(j.stats.bytesIn)} · out ${b(j.stats.bytesOut)} · ${j.stats.visitors} visitors${up?" · "+up:""}`);
+          if(t.agentVersion) console.log("agent       "+t.agentVersion);
+        })'
     else
-      printf 'relay       NOT reachable on 127.0.0.1:%s\n' "$HTTP_PORT"
+      printf 'relay       %s\n' "$(red "NOT reachable on 127.0.0.1:$HTTP_PORT")"
     fi
-    printf 'public      %s/__t/%s/\n' "$(url_base)" "$(tunnel_id)"
-    if [ "${AGENT_TLS:-1}" = 1 ]; then printf '\nnote        self-signed certificate: tick "trust" in the dsh panel\n'; fi
-    if [ "$SCHEME" = http ] && { [ "$PROXY_MODE" = none ] || [ "$PUBLIC_PORT" = 80 ]; }; then
+
+    printf 'public      %s\n' "$(cyan "$(url_base)/__t/$(tunnel_id)/")"
+    if [ "${AGENT_TLS:-1}" = 1 ]; then
+      printf 'note        self-signed certificate: tick "trust" in the dsh panel\n'
+    fi
+    if [ "${SCHEME:-http}" = http ]; then
       printf 'warn        visitors connect over plain HTTP: the password and the whole session are readable on the way\n'
     fi
     ;;
+
   url) load; printf '%s/__t/%s/\n' "$(url_base)" "$(tunnel_id)" ;;
   token) token; echo ;;
   start) systemctl start "$SERVICE" && echo started ;;
   stop) systemctl stop "$SERVICE" && echo stopped ;;
   restart) systemctl restart "$SERVICE" && echo restarted ;;
   log) if [ "${2:-}" = "-f" ]; then journalctl -u "$SERVICE" -f; else journalctl -u "$SERVICE" -n "${2:-40}" --no-pager; fi ;;
-  config) [ -r "$CONF" ] && cat "$CONF" || echo "no saved configuration" ;;
-  help|--help|-h) sed -n '2,10p' "$0" | sed 's/^# \{0,1\}//' ;;
+
+  config)
+    shift
+    if [ $# -eq 0 ]; then
+      load
+      [ -r "$CONF" ] && cat "$CONF" || echo "no saved configuration"
+      exit 0
+    fi
+    load
+    changed=0
+    for pair in "$@"; do
+      k=${pair%%=*}; v=${pair#*=}
+      case "$k" in
+        HOST|SCHEME|VISIT_MODE|VISITOR_TLS|AGENT_TLS|AGENT_PORT|HTTP_PORT|PUBLIC_PORT|PROXY_MODE) ;;
+        *) printf 'unknown key: %s\n  allowed: HOST SCHEME VISIT_MODE VISITOR_TLS AGENT_TLS AGENT_PORT HTTP_PORT PUBLIC_PORT PROXY_MODE\n' "$k" >&2; exit 2 ;;
+      esac
+      [ "$pair" = "$k" ] && { printf 'expected K=V, got %s\n' "$pair" >&2; exit 2; }
+      if grep -q "^$k=" "$CONF" 2>/dev/null; then
+        sed -i "s|^$k=.*|$k=$v|" "$CONF"
+      else
+        printf '%s=%s\n' "$k" "$v" >> "$CONF"
+      fi
+      printf '  %s = %s\n' "$k" "$(cyan "$v")"
+      changed=1
+    done
+    [ "$changed" = 1 ] || exit 0
+    # Ports and certificates live in the unit's command line, so editing the file is
+    # not enough: reinstall from the saved answers.
+    if [ -n "${SCRIPT:-}" ] && [ -r "$SCRIPT" ]; then
+      echo "reinstalling with the new settings"
+      bash "$SCRIPT" --yes
+    else
+      echo "re-run the installer to apply these (the saved answers are now defaults)"
+    fi
+    ;;
+
+  help|--help|-h) sed -n '2,11p' "$0" | sed 's/^# \{0,1\}//' ;;
   *) echo "unknown command: $1 (try: drp help)" >&2; exit 1 ;;
 esac
 DRP_EOF
@@ -360,6 +471,15 @@ ensure_node() {
   fi
 }
 
+if can_ask && [ "$ASSUME_YES" = 0 ]; then
+  printf '\n  Language / 语言 (en|zh) [en]: ' >/dev/tty
+  if ! read -r LANG_PICK < /dev/tty; then
+    printf '\n' >/dev/tty
+    die "$(t "input closed; nothing was changed" "输入已结束，未做任何修改")"
+  fi
+  case "$LANG_PICK" in zh|ZH|Zh|中文) LANG_MODE=zh ;; *) LANG_MODE=en ;; esac
+fi
+
 say "1/6 $(t "Checking the host" "检查环境")"
 ensure_node
 # A one-line install pipes this script into bash, where no directory holds
@@ -372,6 +492,10 @@ else
 https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@v${SELF_VERSION} \
 https://ghfast.top/https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master \
 https://gh-proxy.com/https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master"
+fi
+
+if [ ! -f "$PORTAL_DIR/relay.mjs" ] && [ -f "$STATE_DIR/relay.mjs" ]; then
+  PORTAL_DIR=$STATE_DIR
 fi
 
 if [ ! -f "$PORTAL_DIR/relay.mjs" ]; then
@@ -445,11 +569,6 @@ while ! port_free "$HTTP_PORT"; do HTTP_PORT=$((HTTP_PORT + 1)); done
 # ── 3. questions ────────────────────────────────────────────────────────────
 say "3/6 $(t "Configuration (Enter accepts the default)" "配置（回车即用默认值）")"
 
-if can_ask && [ "$ASSUME_YES" = 0 ]; then
-  lang_pick=$(ask "Language / 语言 (en|zh)" "$LANG_MODE")
-  [ "$lang_pick" = zh ] && LANG_MODE=zh
-fi
-
 # Visitor transport. This is the decision that matters for safety: plain HTTP over
 # the internet sends the password and every conversation in the clear.
 if [ "$ASSUME_YES" = 1 ] && [ -n "$SAVED_VISIT_MODE" ]; then
@@ -500,22 +619,21 @@ if [ "$SCHEME" = https ]; then
     info "$(t "Caddy will obtain and renew the certificate for you" "Caddy 会自动申请并续签证书")"
   elif [ "$DETECTED_PROXY" = nginx ] && [ "${IS_DOMAIN:-0}" = 1 ]; then
     printf '\n  %s\n' "$(t "How should the certificate be provided?" "证书怎么来？")"
-    printf '    1) %s\n' "$(t "I already have a certificate for this domain (fullchain + key)" "我已经有这个域名的证书（fullchain + key）")"
-    printf '    2) %s\n' "$(t "Generate a self-signed one (browser warns once)" "生成自签证书（浏览器会警告一次）")"
-    cert_pick=$(ask "$(t "Choose" "选择")" "2")
-    if [ "$cert_pick" = 1 ]; then
-      PROXY_MODE=nginx
-      CERT_SOURCE=user
-    else
-      VISITOR_TLS=1
-    fi
+    printf '    1) %s\n' "$(t "Issue a free certificate automatically (Let's Encrypt; needs port 80)" "自动申请免费证书（Let's Encrypt，需要 80 端口空闲）")"
+    printf '    2) %s\n' "$(t "I already have a certificate for this domain (fullchain + key)" "我已经有这个域名的证书（fullchain + key）")"
+    printf '    3) %s\n' "$(t "Generate a self-signed one (the browser will warn)" "生成自签证书（浏览器会提示不安全）")"
+    cert_pick=$(ask "$(t "Choose" "选择")" "1")
+    case "$cert_pick" in
+      2) PROXY_MODE=nginx; CERT_SOURCE=user ;;
+      3) VISITOR_TLS=1; CERT_SOURCE=self ;;
+      *) VISITOR_TLS=1; CERT_SOURCE=acme ;;
+    esac
   else
     VISITOR_TLS=1
+    # Nothing else terminates TLS for this host, so the relay does it and needs a
+    # certificate: self-signed unless an earlier answer already chose one.
+    if [ "$CERT_SOURCE" = none ]; then CERT_SOURCE=self; fi
   fi
-
-  # The relay's own TLS listener needs a certificate; self-signed is generated
-  # later, right next to the agent certificate.
-  [ "$VISITOR_TLS" = 1 ] && CERT_SOURCE=self
 fi
 
 if [ "$SCHEME" = https ] && [ "$VISITOR_TLS" = 1 ]; then
@@ -528,7 +646,7 @@ else
   default_public=10003
 fi
 
-PUBLIC_PORT=$(ask_port "$(t "Public port (open it in your cloud firewall)" "对外端口（需在云安全组放行）")" "$default_public")
+PUBLIC_PORT=$(ask_port "$(t "Public port (open it in your cloud firewall)" "对外端口（需在云安全组放行）")" "${PUBLIC_PORT:-$default_public}")
 while ! port_free "$PUBLIC_PORT"; do
   warn "$(t "port $PUBLIC_PORT is in use" "端口 $PUBLIC_PORT 已被占用")"
   PUBLIC_PORT=$(ask_port "$(t "Public port" "对外端口")" "$((PUBLIC_PORT + 1))")
@@ -600,6 +718,14 @@ else
 fi
 ok "$RELAY_DIR/relay.mjs"
 
+if [ -f "$0" ] && [ -r "$0" ]; then
+  install -m 0755 "$0" "$STATE_DIR/deploy-relay.sh" 2>/dev/null || true
+fi
+if [ -f "$PORTAL_DIR/relay.mjs" ]; then
+  install -m 0644 "$PORTAL_DIR/relay.mjs" "$STATE_DIR/relay.mjs" 2>/dev/null || true
+  PORTAL_DIR=$STATE_DIR
+fi
+
 TOKEN_FILE="$STATE_DIR/token"; TOKEN=""
 if [ -s "$TOKEN_FILE" ]; then
   TOKEN=$(head -n 1 "$TOKEN_FILE"); chmod 600 "$TOKEN_FILE" 2>/dev/null || true
@@ -613,9 +739,60 @@ fi
 
 TLS_CERT=""; TLS_KEY=""
 NEED_CERT=0
-if [ "$CERT_SOURCE" = self ] || [ "$AGENT_TLS" = 1 ]; then NEED_CERT=1; fi
+if [ "$CERT_SOURCE" = self ]; then NEED_CERT=1; fi
+if [ "$AGENT_TLS" = 1 ] && [ -z "$TLS_CERT" ]; then NEED_CERT=1; fi
 
-if [ "$CERT_SOURCE" = user ]; then
+issue_cert_acme() { # issue_cert_acme <domain>
+  local domain=$1 earned
+  if ! command -v curl >/dev/null 2>&1; then
+    die "$(t "curl is required to fetch acme.sh" "需要 curl 才能获取 acme.sh")"
+  fi
+  if ! port_free 80; then
+    die "$(t "port 80 is in use: Let's Encrypt needs it for the HTTP check. Free it and run again, or choose a self-signed certificate." "80 端口被占用：Let's Encrypt 的 HTTP 校验需要它。请释放后重跑，或改选自签证书。")"
+  fi
+
+  local bases="https://get.acme.sh https://ghfast.top/https://raw.githubusercontent.com/acmesh-official/acme.sh/master https://gh-proxy.com/https://raw.githubusercontent.com/acmesh-official/acme.sh/master https://raw.githubusercontent.com/acmesh-official/acme.sh/master"
+  local tmp got=""
+  tmp=$(mktemp -d)
+  for base in $bases; do
+    case "$base" in
+      *get.acme.sh) curl -fsSL --max-time 30 "https://get.acme.sh" -o "$tmp/acme.sh" 2>/dev/null && got=$base || true ;;
+      *) curl -fsSL --max-time 30 "$base/acme.sh" -o "$tmp/acme.sh" 2>/dev/null && got=$base || true ;;
+    esac
+    [ -n "$got" ] && break
+  done
+  [ -n "$got" ] || die "$(t "could not download acme.sh" "下载 acme.sh 失败")"
+  sh "$tmp/acme.sh" --install >/dev/null 2>&1 || true
+  local acme="$HOME/.acme.sh/acme.sh"
+  [ -x "$acme" ] || die "$(t "acme.sh did not install" "acme.sh 安装失败")"
+
+  info "$(t "requesting a certificate for $domain (HTTP-01 on port 80)" "正在为 $domain 申请证书（HTTP-01，走 80 端口）")"
+  if ! "$acme" --issue -d "$domain" --standalone --httpport 80 --keylength ec-256 >/tmp/acme-issue.log 2>&1; then
+    tail -n 12 /tmp/acme-issue.log
+    die "$(t "certificate issuance failed; see the log above" "证书申请失败，见上面的日志")"
+  fi
+
+  CERT_DIR="$STATE_DIR/tls"
+  install -d -m 0750 "$CERT_DIR"
+  earned="$CERT_DIR/visitor-cert.pem"
+  local ekey="$CERT_DIR/visitor-key.pem"
+  if ! "$acme" --install-cert -d "$domain" --ecc \
+      --key-file "$ekey" --fullchain-file "$earned" \
+      --reloadcmd "systemctl restart $SERVICE" >/tmp/acme-install.log 2>&1; then
+    tail -n 12 /tmp/acme-install.log
+    die "$(t "could not install the certificate" "证书安装失败")"
+  fi
+  chmod 600 "$ekey"; chmod 644 "$earned"
+  [ "$HAVE_SYSTEMD" = 1 ] && chown -R dsh-relay:dsh-relay "$STATE_DIR" 2>/dev/null || true
+  TLS_CERT=$earned
+  TLS_KEY=$ekey
+  AGENT_TLS=1
+  ok "$(t "certificate issued and installed; acme.sh renews it automatically" "证书已签发并安装；acme.sh 会自动续期")"
+}
+
+if [ "$CERT_SOURCE" = acme ]; then
+  issue_cert_acme "$HOST"
+elif [ "$CERT_SOURCE" = user ]; then
   TLS_CERT=$USER_CERT
   TLS_KEY=$USER_KEY
   ok "$(t "using the certificate you provided" "使用你提供的证书")"
@@ -823,6 +1000,7 @@ AGENT_PORT=$AGENT_PORT
 HTTP_PORT=$HTTP_PORT
 PUBLIC_PORT=$PUBLIC_PORT
 PROXY_MODE=$PROXY_MODE
+SCRIPT=$STATE_DIR/deploy-relay.sh
 CONF_EOF
 chmod 644 "$CONF_FILE" 2>/dev/null || true
 [ "$HAVE_SYSTEMD" = 1 ] && chown dsh-relay:dsh-relay "$CONF_FILE" 2>/dev/null || true
@@ -843,12 +1021,12 @@ AGENT_SCHEME=$([ "$AGENT_TLS" = 1 ] && echo tls || echo tcp)
 
 printf '\n────────────────────────────────────────────────────────────────────────\n'
 printf '%s\n' "$(t "Paste these into dsh → sidebar 远程访问 → 公网访问:" "把下面两行填进 dsh → 侧栏「远程访问」→ 公网访问：")"
-printf '\n  %s  %s://%s:%s\n' "$(t "Relay endpoint " "中转服务器   ")" "$AGENT_SCHEME" "$HOST" "$AGENT_PORT"
-printf '  %s  %s\n' "$(t "Tunnel token   " "隧道令牌     ")" "$TOKEN"
+printf '\n  %s  %s\n' "$(t "Relay endpoint " "中转服务器   ")" "$(hi "$AGENT_SCHEME://$HOST:$AGENT_PORT")"
+printf '  %s  %s\n' "$(t "Tunnel token   " "隧道令牌     ")" "$(key "$TOKEN")"
 if [ "$AGENT_SCHEME" = tls ]; then
   printf '  %s\n' "$(t "also tick \"trust a self-signed certificate\" in the panel" "同时勾选「信任自签名证书」")"
 fi
-printf '\n%s\n\n  %s/__t/%s/\n' "$(t "Public URL once connected:" "连接成功后的公网地址：")" "$URL_BASE" "$TUNNEL_ID"
+printf '\n%s\n\n  %s\n' "$(t "Public URL once connected:" "连接成功后的公网地址：")" "$(hi "$URL_BASE/__t/$TUNNEL_ID/")"
 
 printf '\n%s\n\n  %s/tcp   ← %s\n  %s/tcp   ← %s\n' \
   "$(t "Open these in your cloud firewall, or nothing outside can connect:" "还需在云安全组/防火墙放行这两个端口：")" \

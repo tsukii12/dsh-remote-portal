@@ -51,7 +51,7 @@ import { dirname, join } from "node:path";
 // ───────────────────────────────────────────────────────────────────────────
 
 /** Printed at startup and by --version, so an installed copy is identifiable. */
-const RELAY_VERSION = "0.5.6";
+const RELAY_VERSION = "0.6.0";
 
 const FRAME = {
   HELLO: 1,
@@ -334,6 +334,9 @@ function createRelay(config) {
         tunnel.socket = null;
         tunnel.connectedAt = 0;
         tunnel.lastSeenAt = 0;
+        tunnel.lastDropReason = String(reason || "unknown");
+        tunnel.lastDropAt = Date.now();
+        tunnel.reconnects = (tunnel.reconnects || 0) + 1;
         for (const stream of tunnel.streams.values()) {
           try { stream.fail(502, "tunnel disconnected"); } catch { /* gone */ }
         }
@@ -519,6 +522,10 @@ function createRelay(config) {
           connected: Boolean(t.socket),
           streams: t.streams.size,
           since: t.connectedAt,
+          reconnects: t.reconnects || 0,
+          lastDropReason: t.lastDropReason || "",
+          lastDropAt: t.lastDropAt || 0,
+          agentVersion: t.agent?.version || "",
         })),
         stats,
       }), "utf8");

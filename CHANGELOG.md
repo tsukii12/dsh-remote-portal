@@ -3,6 +3,39 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.6.0 — 2026-10-23
+
+### Added — a real certificate, so browsers stop warning
+A self-signed certificate is why HTTPS still shows "not secure". When the domain
+already points here, the installer can now issue a real one:
+
+- option `1` in the certificate menu obtains a Let's Encrypt certificate with
+  acme.sh (HTTP-01 on port 80) and installs it for the relay
+- acme.sh comes from `get.acme.sh`, then the GitHub mirrors; renewal is handled by
+  acme.sh itself, with `systemctl restart dsh-relay` as the reload hook
+- port 80 is checked first and the run stops with an explanation instead of failing
+  halfway
+
+### Changed — the console answers the questions the log left open
+- **language is asked first**, before any output, instead of buried in "3/6"
+- addresses and URLs print in cyan, the token in yellow
+- `service running · autostart on` — the word "enabled" appeared twice before
+- traffic reads in KiB/MiB/GiB, not raw bytes, and the uptime line no longer restates
+  the relay's own uptime
+- **reconnects and the last drop are shown**, with the reason and how long ago:
+  that is the data needed to explain a flapping tunnel
+- `drp config KEY=VALUE …` now works: it updates the saved answers and reinstalls
+  the unit (ports and certificates live in the command line, so editing the file
+  alone did nothing). The installer keeps a copy of itself and of `relay.mjs` in
+  `/var/lib/dsh-relay` so this needs no network
+
+### Fixed
+- a saved port is the default on the next run; before, a re-run quietly moved the
+  service back to 443/80
+
+### Tests
+- 82 tests green.
+
 ## 0.5.6 — 2026-10-23
 
 ### Fixed — HTTPS on 443 failed to start
