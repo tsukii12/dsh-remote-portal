@@ -1001,25 +1001,44 @@ issue_cert_acme() { # issue_cert_acme <domain> [http|dns-cf|dns-manual]
   if [ "$mode" = dns-cf ]; then
     : > /tmp/acme-issue.log
     info "$(t "requesting a certificate for $domain (DNS-01 via Cloudflare)" "正在为 $domain 申请证书（DNS-01，走 Cloudflare）")"
-    if ! "$ACME_BIN" --home "$ACME_HOME" --issue -d "$domain" --keylength ec-256 $challenge \\
-        --server letsencrypt >>/tmp/acme-issue.log 2>&1; then
+    if ! "$ACME_BIN" --home "$ACME_HOME" --issue -d "$domain" --keylength ec-256 \
+        --server letsencrypt $challenge >>/tmp/acme-issue.log 2>&1; then
       tail -n 14 /tmp/acme-issue.log
       die "$(t "Cloudflare validation failed; check the token's Zone:DNS:Edit permission" "Cloudflare 校验失败；检查令牌是否有 Zone:DNS:Edit 权限")"
     fi
   elif [ "$mode" = dns-manual ]; then
     can_ask || die "$(t "the manual DNS check needs a terminal: run the installer interactively" "手工 DNS 校验需要终端：请交互式运行安装脚本")"
-    info "$(t "acme.sh will print a TXT record: add it at your DNS provider, wait a moment, then press Enter here" "acme.sh 会打印一条 TXT 记录：到 DNS 服务商处添加，稍等片刻后回到这里按回车")"
-    # No redirect: the record has to be readable on screen.
-    "$ACME_BIN" --home "$ACME_HOME" --issue -d "$domain" --keylength ec-256 $challenge \\
-      --server letsencrypt || die "$(t "DNS validation failed or was cancelled" "DNS 校验失败或已取消")"
+    local manual_flags="--server letsencrypt --yes-I-know-dns-manual-mode-enough-go-ahead-please"
+    : > /tmp/acme-issue.log
+    "$ACME_BIN" --home "$ACME_HOME" --issue -d "$domain" --keylength ec-256 \
+      $manual_flags $challenge >>/tmp/acme-issue.log 2>&1 || true
+
+    local txt
+    txt=$(sed -n "s/.*TXT value: '\([^']*\)'.*/\1/p" /tmp/acme-issue.log | head -n 1)
+    [ -n "$txt" ] || { tail -n 12 /tmp/acme-issue.log; die "$(t "acme.sh did not produce a TXT record" "acme.sh 没有生成 TXT 记录")"; }
+
+    printf '\n  %s\n\n' "$(t "Add this record at your DNS provider:" "到你的 DNS 服务商处添加这条记录：")"
+    printf '    %-46s TXT  %s\n' "_acme-challenge.$domain" "$txt"
+    printf '\n  %s\n' "$(t "Cloudflare or another fast provider: a few seconds. Then press Enter here." "Cloudflare 这类服务商几秒就生效。生效后回到这里按回车。")"
+    printf '  > ' >/dev/tty
+    if ! read -r _ </dev/tty; then
+      printf '\n' >/dev/tty
+      die "$(t "input closed; run again once the record is in place" "输入已结束；记录添加好后重跑即可")"
+    fi
+
+    info "$(t "validating" "正在验证")"
+    if ! "$ACME_BIN" --home "$ACME_HOME" --renew -d "$domain" --ecc $manual_flags >>/tmp/acme-issue.log 2>&1; then
+      tail -n 14 /tmp/acme-issue.log
+      die "$(t "DNS validation failed: check the record, then run again" "DNS 校验失败：检查记录后重跑")"
+    fi
   else
     if ! curl -fsS --max-time 8 https://acme-v02.api.letsencrypt.org/directory >/dev/null 2>&1; then
       warn "$(t "the CA API answers slowly from this host; this may take a minute" "从本机访问 CA 接口较慢，可能要等一分钟")"
     fi
     info "$(t "requesting a certificate for $domain (HTTP-01 on port 80)" "正在为 $domain 申请证书（HTTP-01，走 80 端口）")"
     : > /tmp/acme-issue.log
-    if ! "$ACME_BIN" --home "$ACME_HOME" --issue -d "$domain" --keylength ec-256 $challenge \\
-        --server letsencrypt >>/tmp/acme-issue.log 2>&1; then
+    if ! "$ACME_BIN" --home "$ACME_HOME" --issue -d "$domain" --keylength ec-256 \
+        --server letsencrypt $challenge >>/tmp/acme-issue.log 2>&1; then
       tail -n 14 /tmp/acme-issue.log
       die "$(t "certificate issuance failed; see the log above. If port 80 is filtered, use the DNS option." "证书申请失败，见上面的日志。若 80 端口被拦截，请改用 DNS 校验。")"
     fi
