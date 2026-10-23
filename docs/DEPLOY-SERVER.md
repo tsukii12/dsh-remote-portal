@@ -4,13 +4,20 @@
 > phone or laptop from the office, the subway, or a hotel. Home needs no public IP,
 > no router port forwarding, and no third-party tunnel service.
 
-```
-home / office computer                    your server (public IP)              phone / laptop
-┌────────────────────────┐   outbound    ┌────────────────────────┐  ordinary  ┌──────────────┐
-│ dsh + dsh-remote-portal │  one TLS      │ relay.mjs              │  HTTPS     │ browser      │
-│   gateway  127.0.0.1:3081│ ────────────▶ │  :9443  agent port (TLS)│ ◀───────── │ scan / open  │
-│   tunnel   ─────────────┼  connection   │  :443   visitor port    │            └──────────────┘
-└────────────────────────┘               └────────────────────────┘
+```mermaid
+flowchart LR
+  subgraph home["Home machine — no public IP, nothing opened"]
+    app["dsh + dsh-remote-portal<br/>gateway 127.0.0.1:3081"]
+  end
+
+  subgraph server["Server with a public IP"]
+    relay["relay.mjs<br/>:9443 agent port (TLS)<br/>:443 visitor port"]
+  end
+
+  browser["Phone or laptop"]
+
+  app -->|"one outbound TLS connection, dialled from home"| relay
+  relay <-->|"ordinary HTTPS"| browser
 ```
 
 The tunnel is dialled **outward by the home machine**, so nothing has to be opened
