@@ -101,6 +101,16 @@ curl -fsSL https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master/t
 
 It fetches `relay.mjs` itself, detects the environment, asks a few questions (Enter accepts the defaults), finishes the setup and installs a `drp` command.
 
+**It asks how visitors connect**:
+
+| Question | Meaning |
+|---|---|
+| HTTP or HTTPS | `1) HTTP` unencrypted / `2) HTTPS` |
+| HTTPS with a domain or the IP | **Domain**: no browser warning once a certificate is in place. **IP**: self-signed, one warning, encrypted from then on |
+| Ports | public port and agent port (ports already in use are skipped) |
+
+⚠️ With HTTP the password and **the entire session** (chat, files, command output) travel in the clear. Only acceptable on a fully trusted LAN.
+
 Prefer to read before running? Download it, then run it — same result.
 
 ```bash

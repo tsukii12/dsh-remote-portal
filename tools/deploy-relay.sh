@@ -12,8 +12,8 @@
 #   sudo ./deploy-relay.sh --yes        accept every default (unattended)
 #   sudo ./deploy-relay.sh --uninstall  remove the relay and the `drp` command
 #
-# Optional overrides (usually unnecessary): --host, --agent-port, --http-port,
-# --public-port, --no-proxy, --plain.
+# Everything else is asked interactively (HTTP or HTTPS, domain or IP, ports).
+# Only two switches exist: --yes (take the defaults) and --uninstall.
 #
 set -euo pipefail
 
@@ -27,18 +27,12 @@ BIN=/usr/local/bin/drp
 PORTAL_DIR="$(cd "$(dirname "$0")" 2>/dev/null && pwd || echo .)"
 
 HOST=""; AGENT_PORT=9443; HTTP_PORT=8080; PUBLIC_PORT=80
-WANT_TLS=1; PROXY_MODE=""; ASSUME_YES=0; UNINSTALL=0
-FORCE_PLAIN=0; FORCE_NO_PROXY=0; LANG_MODE=en
+PROXY_MODE=""; ASSUME_YES=0; UNINSTALL=0; LANG_MODE=en
+VISIT_MODE=""; SCHEME=http; VISITOR_TLS=0; AGENT_TLS=1; CERT_SOURCE=none
 
 while [ $# -gt 0 ]; do
   case "$1" in
     --lang) LANG_MODE=$2; shift 2 ;;
-    --host) HOST=$2; shift 2 ;;
-    --agent-port) AGENT_PORT=$2; shift 2 ;;
-    --http-port) HTTP_PORT=$2; shift 2 ;;
-    --public-port) PUBLIC_PORT=$2; shift 2 ;;
-    --no-proxy) FORCE_NO_PROXY=1; shift ;;
-    --plain) FORCE_PLAIN=1; shift ;;
     --yes|-y) ASSUME_YES=1; shift ;;
     --uninstall) UNINSTALL=1; shift ;;
     -h|--help) sed -n '2,19p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
@@ -65,6 +59,22 @@ ask() {
   fi
   printf '%s' "${reply:-$def}"
 }
+ask_port() { # ask_port <prompt> <default>
+  local prompt=$1 def=$2 reply=""
+  while :; do
+    reply=$(ask "$prompt" "$def")
+    case "$reply" in
+      ""|*[!0-9]*) warn "$(t "enter a number between 1 and 65535" "请输入 1–65535 之间的数字")"; def=$def; continue ;;
+    esac
+    if [ "$reply" -lt 1 ] || [ "$reply" -gt 65535 ]; then
+      warn "$(t "port out of range" "端口超出范围")"
+      continue
+    fi
+    printf '%s' "$reply"
+    return 0
+  done
+}
+
 ask_yn() {
   local prompt=$1 def=$2 reply=""
   if can_ask; then
@@ -79,8 +89,10 @@ CONF_FILE="$STATE_DIR/deploy.conf"
 if [ "$UNINSTALL" = 0 ] && [ -r "$CONF_FILE" ]; then
   . "$CONF_FILE" 2>/dev/null || true
   HOST=${HOST:-}; AGENT_PORT=${AGENT_PORT:-9443}; HTTP_PORT=${HTTP_PORT:-8080}
-  PUBLIC_PORT=${PUBLIC_PORT:-80}; WANT_TLS=${WANT_TLS:-1}; PROXY_MODE=${PROXY_MODE:-}
+  PUBLIC_PORT=${PUBLIC_PORT:-80}; PROXY_MODE=${PROXY_MODE:-}
   SAVED_PROXY=$PROXY_MODE
+  SAVED_VISIT_MODE=${VISIT_MODE:-}
+  SAVED_AGENT_TLS=${AGENT_TLS:-}
 fi
 SAVED_PROXY=${SAVED_PROXY:-}
 OWN_PORTS=""
@@ -107,13 +119,20 @@ set -u
 load() {
   [ -r "$CONF" ] && . "$CONF"
   HOST=${HOST:-127.0.0.1}; AGENT_PORT=${AGENT_PORT:-9443}; HTTP_PORT=${HTTP_PORT:-8080}
-  PUBLIC_PORT=${PUBLIC_PORT:-80}; PROXY_MODE=${PROXY_MODE:-direct}; WANT_TLS=${WANT_TLS:-1}
+  PUBLIC_PORT=${PUBLIC_PORT:-80}; PROXY_MODE=${PROXY_MODE:-none}
+  SCHEME=${SCHEME:-http}; VISITOR_TLS=${VISITOR_TLS:-0}; AGENT_TLS=${AGENT_TLS:-${WANT_TLS:-1}}
 }
 health() { curl -fsS --max-time 3 "http://127.0.0.1:${HTTP_PORT:-8080}/__relay/health" 2>/dev/null; }
 token() { [ -r "$TOKEN_FILE" ] && head -n 1 "$TOKEN_FILE"; }
 tunnel_id() { tid=$(token); [ -n "$tid" ] && node -e 'const c=require("node:crypto");process.stdout.write(c.createHash("sha256").update(process.argv[1]).digest("base64url").slice(0,12))' "$tid"; }
-url_base() { case "${PUBLIC_PORT:-80}" in 80) echo "http://$HOST" ;; 443) echo "https://$HOST" ;; *) echo "http://$HOST:$PUBLIC_PORT" ;; esac; }
-endpoint() { if [ "${WANT_TLS:-1}" = 1 ]; then echo "tls://$HOST:$AGENT_PORT"; else echo "tcp://$HOST:$AGENT_PORT"; fi; }
+url_base() {
+  if [ "${SCHEME:-http}" = https ]; then
+    case "${PUBLIC_PORT:-443}" in 443) echo "https://$HOST" ;; *) echo "https://$HOST:$PUBLIC_PORT" ;; esac
+  else
+    case "${PUBLIC_PORT:-80}" in 80) echo "http://$HOST" ;; *) echo "http://$HOST:$PUBLIC_PORT" ;; esac
+  fi
+}
+endpoint() { if [ "${AGENT_TLS:-1}" = 1 ]; then echo "tls://$HOST:$AGENT_PORT"; else echo "tcp://$HOST:$AGENT_PORT"; fi; }
 
 case "${1:-status}" in
   status)
@@ -124,9 +143,14 @@ case "${1:-status}" in
     else
       echo "stopped"
     fi
-    printf 'agent port  %s:%s (%s)\n' "$HOST" "$AGENT_PORT" "$([ "${WANT_TLS:-1}" = 1 ] && echo TLS || echo plain)"
+    printf 'agent port  %s:%s (%s)\n' "$HOST" "$AGENT_PORT" "$([ "${AGENT_TLS:-1}" = 1 ] && echo TLS || echo plain)"
     printf 'visitor     '
-    if [ "$PROXY_MODE" = direct ]; then echo "0.0.0.0:$PUBLIC_PORT (direct)"; else echo "$PROXY_MODE -> 127.0.0.1:$HTTP_PORT, public $PUBLIC_PORT"; fi
+    if [ "$PROXY_MODE" = none ]; then
+      if [ "${VISITOR_TLS:-0}" = 1 ]; then echo "0.0.0.0:$PUBLIC_PORT (TLS, self-signed)"
+      else echo "0.0.0.0:$PUBLIC_PORT (plain, NOT encrypted)"; fi
+    else
+      echo "$PROXY_MODE -> 127.0.0.1:$HTTP_PORT, public $PUBLIC_PORT ($SCHEME)"
+    fi
     printf 'endpoint    %s\n' "$(endpoint)"
     h=$(health)
     if [ -n "$h" ]; then
@@ -135,7 +159,10 @@ case "${1:-status}" in
       printf 'relay       NOT reachable on 127.0.0.1:%s\n' "$HTTP_PORT"
     fi
     printf 'public      %s/__t/%s/\n' "$(url_base)" "$(tunnel_id)"
-    if [ "${WANT_TLS:-1}" = 1 ]; then printf '\nnote        self-signed certificate: tick "trust" in the dsh panel\n'; fi
+    if [ "${AGENT_TLS:-1}" = 1 ]; then printf '\nnote        self-signed certificate: tick "trust" in the dsh panel\n'; fi
+    if [ "$SCHEME" = http ] && { [ "$PROXY_MODE" = none ] || [ "$PUBLIC_PORT" = 80 ]; }; then
+      printf 'warn        visitors connect over plain HTTP: the password and the whole session are readable on the way\n'
+    fi
     ;;
   url) load; printf '%s/__t/%s/\n' "$(url_base)" "$(tunnel_id)" ;;
   token) token; echo ;;
@@ -246,45 +273,141 @@ while ! port_free "$HTTP_PORT"; do HTTP_PORT=$((HTTP_PORT + 1)); done
 # ── 3. questions ────────────────────────────────────────────────────────────
 say "3/6 $(t "Configuration (Enter accepts the default)" "配置（回车即用默认值）")"
 
-if can_ask; then
+if can_ask && [ "$ASSUME_YES" = 0 ]; then
   lang_pick=$(ask "Language / 语言 (en|zh)" "$LANG_MODE")
   [ "$lang_pick" = zh ] && LANG_MODE=zh
 fi
 
-[ -n "$HOST" ] || HOST=$(ask "$(t "Public host (domain or IP)" "对外访问的域名或 IP")" "${PUBLIC_IP:-127.0.0.1}")
+# Visitor transport. This is the decision that matters for safety: plain HTTP over
+# the internet sends the password and every conversation in the clear.
+if [ "$ASSUME_YES" = 1 ] && [ -n "$SAVED_VISIT_MODE" ]; then
+  VISIT_MODE=$SAVED_VISIT_MODE
+elif [ "$ASSUME_YES" = 1 ]; then
+  VISIT_MODE=http
+  warn "$(t "--yes picked plain HTTP; the password and the whole session travel unencrypted. Re-run without --yes to choose HTTPS." "--yes 选了明文 HTTP：密码和全部会话内容都不加密。想用 HTTPS 请去掉 --yes 重跑。")"
+else
+  printf '\n  %s\n' "$(t "How will visitors connect?" "访客如何连接？")"
+  printf '    1) HTTP   %s\n' "$(t "- no encryption. Anyone on the path can read the password and the whole session. Only for a trusted LAN." "— 不加密。路径上任何人都能读到密码和全部会话内容。仅限可信局域网。")"
+  printf '    2) HTTPS  %s\n' "$(t "- encrypted. Recommended for anything reachable from the internet." "— 加密。只要能从公网访问，就选这个。")"
+  pick=$(ask "$(t "Choose" "选择")" "2")
+  case "$pick" in
+    1) VISIT_MODE=http ;;
+    *) VISIT_MODE=https ;;
+  esac
+fi
+
+if [ "$VISIT_MODE" = http ]; then
+  SCHEME=http
+  PUBLIC_PORT=$([ "$DETECTED_PROXY" = none ] && echo 10003 || echo 80)
+  HOST=$(ask "$(t "Public host (domain or IP)" "对外访问的域名或 IP")" "${PUBLIC_IP:-127.0.0.1}")
+else
+  SCHEME=https
+  DOMAIN_TARGET=$(ask "$(t "HTTPS with a domain (no browser warning) or with the IP (self-signed, warning once)? [domain/ip]" "HTTPS 用域名（浏览器不报警）还是用 IP（自签，会警告一次）？[domain/ip]")" "ip")
+  IS_DOMAIN=0
+  case "$(printf '%s' "$DOMAIN_TARGET" | tr 'A-Z' 'a-z')" in
+    d*|域名*)
+      IS_DOMAIN=1
+      HOST=$(ask "$(t "Domain name" "域名")" "")
+      [ -n "$HOST" ] || die "$(t "a domain is required for this mode" "这个模式需要填域名")"
+      ;;
+    *)
+      HOST=${PUBLIC_IP:-127.0.0.1}
+      HOST=$(ask "$(t "IP address" "IP 地址")" "$HOST")
+      ;;
+  esac
+fi
 [ -n "$HOST" ] || die "$(t "host cannot be empty" "主机名不能为空")"
 
-if [ "$FORCE_NO_PROXY" = 1 ]; then
-  PROXY_MODE=direct
-elif [ "$ASSUME_YES" = 1 ] && [ -n "$SAVED_PROXY" ]; then
-  PROXY_MODE=$SAVED_PROXY
-elif [ "$DETECTED_PROXY" = none ]; then
-  PROXY_MODE=direct
-elif ask_yn "$(t "Use the existing $DETECTED_PROXY for the public entry (recommended)" "用已有的 $DETECTED_PROXY 做对外入口（推荐）")" y; then
-  PROXY_MODE=$DETECTED_PROXY
-else
-  PROXY_MODE=direct
+# Who terminates TLS, and where the certificate comes from.
+VISITOR_TLS=0
+PROXY_MODE=none
+CERT_SOURCE=none
+if [ "$SCHEME" = https ]; then
+  if [ "$DETECTED_PROXY" = caddy ]; then
+    PROXY_MODE=caddy
+    info "$(t "Caddy will obtain and renew the certificate for you" "Caddy 会自动申请并续签证书")"
+  elif [ "$DETECTED_PROXY" = nginx ] && [ "${IS_DOMAIN:-0}" = 1 ]; then
+    printf '\n  %s\n' "$(t "How should the certificate be provided?" "证书怎么来？")"
+    printf '    1) %s\n' "$(t "I already have a certificate for this domain (fullchain + key)" "我已经有这个域名的证书（fullchain + key）")"
+    printf '    2) %s\n' "$(t "Generate a self-signed one (browser warns once)" "生成自签证书（浏览器会警告一次）")"
+    cert_pick=$(ask "$(t "Choose" "选择")" "2")
+    if [ "$cert_pick" = 1 ]; then
+      PROXY_MODE=nginx
+      CERT_SOURCE=user
+    else
+      VISITOR_TLS=1
+    fi
+  else
+    VISITOR_TLS=1
+  fi
+
+  # The relay's own TLS listener needs a certificate; self-signed is generated
+  # later, right next to the agent certificate.
+  [ "$VISITOR_TLS" = 1 ] && CERT_SOURCE=self
 fi
 
-if [ "$PROXY_MODE" = direct ]; then
-  PUBLIC_PORT=$(ask "$(t "Public port (open it in your cloud firewall)" "对外端口（需在云安全组放行）")" "$PUBLIC_PORT")
+if [ "$SCHEME" = https ] && [ "$VISITOR_TLS" = 1 ]; then
+  default_public=443
+elif [ "$SCHEME" = https ]; then
+  default_public=443
+elif [ "$PROXY_MODE" = nginx ]; then
+  default_public=80
+else
+  default_public=10003
+fi
+
+PUBLIC_PORT=$(ask_port "$(t "Public port (open it in your cloud firewall)" "对外端口（需在云安全组放行）")" "$default_public")
+while ! port_free "$PUBLIC_PORT"; do
+  warn "$(t "port $PUBLIC_PORT is in use" "端口 $PUBLIC_PORT 已被占用")"
+  PUBLIC_PORT=$(ask_port "$(t "Public port" "对外端口")" "$((PUBLIC_PORT + 1))")
+done
+
+while :; do
+  AGENT_PORT=$(ask_port "$(t "Agent port (the dsh host dials out to it)" "中转端口（家里的 dsh 拨出到这里）")" "$AGENT_PORT")
+  if [ "$AGENT_PORT" = "$PUBLIC_PORT" ] || [ "$AGENT_PORT" = "$HTTP_PORT" ]; then
+    warn "$(t "that port is already used by this setup; pick another" "这个端口已被本次安装占用，请换一个")"
+    continue
+  fi
+  break
+done
+
+if [ "$VISITOR_TLS" = 1 ]; then
+  # The public port speaks TLS; keep a loopback plain port for health checks and
+  # for anything that only speaks HTTP on this machine.
+  HTTP_PORT=18080
+  while ! port_free "$HTTP_PORT"; do HTTP_PORT=$((HTTP_PORT + 1)); done
+elif [ "$PROXY_MODE" = none ]; then
   HTTP_PORT=$PUBLIC_PORT
-  info "$(t "the relay will listen on 0.0.0.0:$PUBLIC_PORT" "relay 将直接监听 0.0.0.0:$PUBLIC_PORT")"
 else
-  HTTP_PORT=$(ask "$(t "Local port behind the proxy" "反代后面的本地端口")" "$HTTP_PORT")
-  if [ "$DETECTED_PROXY" = caddy ]; then PUBLIC_PORT=443; else PUBLIC_PORT=80; fi
+  HTTP_PORT=$(ask "$(t "Local port behind the proxy (loopback only)" "反代后面的本地端口（仅回环）")" "$HTTP_PORT")
 fi
 
-AGENT_PORT=$(ask "$(t "Agent port (the dsh host dials out to it)" "中转端口（家里的 dsh 拨出到这里）")" "$AGENT_PORT")
-if [ "$PROXY_MODE" = direct ]; then PUBLIC_PORT=$HTTP_PORT; fi
+if [ "$ASSUME_YES" = 1 ] && [ -n "$SAVED_AGENT_TLS" ]; then
+  AGENT_TLS=$SAVED_AGENT_TLS
+elif ask_yn "$(t "Encrypt the agent port as well (recommended)" "中转端口也加密（推荐）")" y; then
+  AGENT_TLS=1
+else
+  AGENT_TLS=0
+fi
 
-if [ "$FORCE_PLAIN" = 1 ]; then WANT_TLS=0
-elif ask_yn "$(t "Encrypt the agent port (self-signed, generated here)" "加密中转端口（自签证书，自动生成）")" y; then WANT_TLS=1
-else WANT_TLS=0; fi
+# The relay needs one certificate for both listeners; a user-supplied pair is only
+# used for nginx (which terminates TLS itself), so the agent hop still gets its own.
+if [ "$CERT_SOURCE" = user ]; then
+  USER_CERT=$(ask "$(t "Certificate chain (fullchain.pem)" "证书链（fullchain.pem）")" "")
+  USER_KEY=$(ask "$(t "Private key (privkey.pem)" "私钥（privkey.pem）")" "")
+  [ -r "$USER_CERT" ] && [ -r "$USER_KEY" ] || die "$(t "cannot read that certificate pair" "读不到这对证书文件")"
+  AGENT_TLS=1
+fi
 
 printf '\n'
 info "$(t "Summary" "汇总"):"
-info "  $HOST  ·  $AGENT_PORT/$([ "$WANT_TLS" = 1 ] && echo TLS || echo plain)  ·  $([ "$PROXY_MODE" = direct ] && echo "direct :$PUBLIC_PORT" || echo "$PROXY_MODE → :$HTTP_PORT")"
+info "  $(t "visitors" "访客")  $SCHEME://$HOST:$PUBLIC_PORT$( [ "$SCHEME" = https ] && echo "" || echo "  ($(t "unencrypted" "未加密"))")"
+if [ "$PROXY_MODE" = none ]; then
+  info "  $(t "entry" "入口")     $(t "relay listens itself" "relay 自己监听") ($([ "$VISITOR_TLS" = 1 ] && echo "TLS, $(t "self-signed" "自签")" || echo "plain"))"
+else
+  info "  $(t "entry" "入口")     $PROXY_MODE → 127.0.0.1:$HTTP_PORT"
+fi
+info "  $(t "agent" "中转")     $HOST:$AGENT_PORT ($([ "$AGENT_TLS" = 1 ] && echo TLS || echo plain))"
 if can_ask; then ask_yn "$(t "Install with these settings" "确认安装")" y || die "$(t "cancelled" "已取消")"; fi
 
 # ── 4. install ──────────────────────────────────────────────────────────────
@@ -313,7 +436,14 @@ else
 fi
 
 TLS_CERT=""; TLS_KEY=""
-if [ "$WANT_TLS" = 1 ]; then
+NEED_CERT=0
+if [ "$CERT_SOURCE" = self ] || [ "$AGENT_TLS" = 1 ]; then NEED_CERT=1; fi
+
+if [ "$CERT_SOURCE" = user ]; then
+  TLS_CERT=$USER_CERT
+  TLS_KEY=$USER_KEY
+  ok "$(t "using the certificate you provided" "使用你提供的证书")"
+elif [ "$NEED_CERT" = 1 ]; then
   CERT_DIR="$STATE_DIR/tls"; CERT="$CERT_DIR/agent-cert.pem"; KEY="$CERT_DIR/agent-key.pem"
   install -d -m 0750 "$CERT_DIR"
   if [ -r "$CERT" ] && [ -r "$KEY" ]; then
@@ -328,23 +458,32 @@ if [ "$WANT_TLS" = 1 ]; then
     chmod 600 "$KEY"; chmod 644 "$CERT"
     ok "$(t "generated a self-signed certificate" "已生成自签证书") ($SAN)"
   else
-    warn "$(t "openssl is missing: continuing without encryption" "没有 openssl：跳过加密")"
-    WANT_TLS=0
+    warn "$(t "openssl is missing: continuing unencrypted" "没有 openssl：以不加密方式继续")"
+    NEED_CERT=0
+    AGENT_TLS=0
+    VISITOR_TLS=0
   fi
   [ "$HAVE_SYSTEMD" = 1 ] && chown -R dsh-relay:dsh-relay "$STATE_DIR"
-  [ "$WANT_TLS" = 1 ] && { TLS_CERT="$CERT"; TLS_KEY="$KEY"; }
+  if [ "$NEED_CERT" = 1 ]; then TLS_CERT="$CERT"; TLS_KEY="$KEY"; fi
 fi
 
 # ── 5. service and entry point ──────────────────────────────────────────────
 say "5/6 $(t "Starting the service" "启动服务")"
-if [ "$PROXY_MODE" = direct ]; then BIND_HOST=0.0.0.0; else BIND_HOST=127.0.0.1; fi
-case "$PUBLIC_PORT" in
-  80) URL_BASE="http://$HOST" ;;
-  443) URL_BASE="https://$HOST" ;;
-  *) URL_BASE="http://$HOST:$PUBLIC_PORT" ;;
-esac
+if [ "$PROXY_MODE" = none ] && [ "$VISITOR_TLS" = 0 ]; then BIND_HOST=0.0.0.0; else BIND_HOST=127.0.0.1; fi
+if [ "$SCHEME" = https ]; then
+  if [ "$PUBLIC_PORT" = 443 ]; then URL_BASE="https://$HOST"; else URL_BASE="https://$HOST:$PUBLIC_PORT"; fi
+else
+  if [ "$PUBLIC_PORT" = 80 ]; then URL_BASE="http://$HOST"; else URL_BASE="http://$HOST:$PUBLIC_PORT"; fi
+fi
 RELAY_ARGS="$RELAY_DIR/relay.mjs --token-file $TOKEN_FILE --agent-port $AGENT_PORT --http-port $BIND_HOST:$HTTP_PORT --prefix /__t --public-url $URL_BASE"
-[ -n "$TLS_CERT" ] && RELAY_ARGS="$RELAY_ARGS --tls-cert $TLS_CERT --tls-key $TLS_KEY"
+if [ "$VISITOR_TLS" = 1 ]; then
+  # Public TLS on all interfaces; the plain listener stays on loopback (health
+  # checks, and nothing else needs it).
+  RELAY_ARGS="$RELAY_ARGS --tls-port 0.0.0.0:$PUBLIC_PORT"
+fi
+if [ -n "$TLS_CERT" ] && { [ "$VISITOR_TLS" = 1 ] || [ "$AGENT_TLS" = 1 ]; }; then
+  RELAY_ARGS="$RELAY_ARGS --tls-cert $TLS_CERT --tls-key $TLS_KEY"
+fi
 
 if [ "$HAVE_SYSTEMD" = 1 ]; then
   cat > "$UNIT" <<UNIT_EOF
@@ -388,6 +527,12 @@ fi
 
 write_nginx() {
   local target="$NGINX_CONF_DIR/dsh-relay.conf"
+  local tls=""
+  if [ "$SCHEME" = https ]; then
+    tls="    ssl_certificate     $TLS_CERT;
+    ssl_certificate_key $TLS_KEY;
+    http2 on;"
+  fi
   cat > "$target" <<NGINX_EOF
 # dsh-remote-portal — public entry for the tunnel (generated by deploy-relay.sh).
 # Only /__t/ is forwarded; nothing else on this host is touched.
@@ -397,8 +542,9 @@ map \$http_upgrade \$dsh_relay_upgrade {
 }
 
 server {
-    listen $PUBLIC_PORT;
+    listen $PUBLIC_PORT$([ "$SCHEME" = https ] && echo " ssl");
     server_name $HOST;
+$tls
 
     location /__t/ {
         proxy_pass http://127.0.0.1:$HTTP_PORT;
@@ -458,8 +604,12 @@ CADDY_EOF
 case "$PROXY_MODE" in
   nginx) write_nginx ;;
   caddy) write_caddy ;;
-  direct)
-    ok "$(t "the relay serves the public port directly" "relay 直接对外监听") ($PUBLIC_PORT)"
+  none)
+    if [ "$VISITOR_TLS" = 1 ]; then
+      ok "$(t "the relay terminates TLS on the public port" "relay 在对外端口终止 TLS") ($PUBLIC_PORT)"
+    else
+      ok "$(t "the relay serves the public port directly" "relay 直接对外监听") ($PUBLIC_PORT)"
+    fi
     # A block left over from a previous proxy-mode install would keep handling this
     # host (and serve the default site on /). Remove it and reload.
     stale="$NGINX_CONF_DIR/dsh-relay.conf"
@@ -476,10 +626,13 @@ esac
 mkdir -p "$STATE_DIR" 2>/dev/null || true
 cat > "$CONF_FILE" <<CONF_EOF
 HOST=$HOST
+SCHEME=$SCHEME
+VISIT_MODE=$VISIT_MODE
+VISITOR_TLS=$VISITOR_TLS
+AGENT_TLS=$AGENT_TLS
 AGENT_PORT=$AGENT_PORT
 HTTP_PORT=$HTTP_PORT
 PUBLIC_PORT=$PUBLIC_PORT
-WANT_TLS=$([ -n "$TLS_CERT" ] && echo 1 || echo 0)
 PROXY_MODE=$PROXY_MODE
 CONF_EOF
 chmod 644 "$CONF_FILE" 2>/dev/null || true
@@ -497,13 +650,13 @@ else
 fi
 
 TUNNEL_ID=$(node -e 'const c=require("node:crypto");process.stdout.write(c.createHash("sha256").update(process.argv[1]).digest("base64url").slice(0,12))' "$TOKEN")
-SCHEME=$([ -n "$TLS_CERT" ] && echo tls || echo tcp)
+AGENT_SCHEME=$([ "$AGENT_TLS" = 1 ] && echo tls || echo tcp)
 
 printf '\n────────────────────────────────────────────────────────────────────────\n'
 printf '%s\n' "$(t "Paste these into dsh → sidebar 远程访问 → 公网访问:" "把下面两行填进 dsh → 侧栏「远程访问」→ 公网访问：")"
-printf '\n  %s  %s://%s:%s\n' "$(t "Relay endpoint " "中转服务器   ")" "$SCHEME" "$HOST" "$AGENT_PORT"
+printf '\n  %s  %s://%s:%s\n' "$(t "Relay endpoint " "中转服务器   ")" "$AGENT_SCHEME" "$HOST" "$AGENT_PORT"
 printf '  %s  %s\n' "$(t "Tunnel token   " "隧道令牌     ")" "$TOKEN"
-if [ "$SCHEME" = tls ]; then
+if [ "$AGENT_SCHEME" = tls ]; then
   printf '  %s\n' "$(t "also tick \"trust a self-signed certificate\" in the panel" "同时勾选「信任自签名证书」")"
 fi
 printf '\n%s\n\n  %s/__t/%s/\n' "$(t "Public URL once connected:" "连接成功后的公网地址：")" "$URL_BASE" "$TUNNEL_ID"

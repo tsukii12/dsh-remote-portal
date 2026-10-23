@@ -51,7 +51,7 @@ import { dirname, join } from "node:path";
 // ───────────────────────────────────────────────────────────────────────────
 
 /** Printed at startup and by --version, so an installed copy is identifiable. */
-const RELAY_VERSION = "0.5.0";
+const RELAY_VERSION = "0.5.1";
 
 const FRAME = {
   HELLO: 1,
@@ -188,6 +188,7 @@ function parseArgs(argv) {
       case "agent-host": out.agentHost = String(take()); break;
       case "http-port": out.httpPort = String(take()); break;
       case "http-host": out.httpHost = String(take()); break;
+      case "tls-host": out.tlsHost = String(take()); break;
       case "tls-port": out.tlsPort = String(take()); break;
       case "tls-cert": out.tlsCert = String(take()); break;
       case "tls-key": out.tlsKey = String(take()); break;
@@ -212,6 +213,7 @@ dsh-remote-portal relay
   --http-port <p>        visitor port, plain HTTP; "port" or "host:port"
                          (default 127.0.0.1:8080 — loopback unless you say otherwise)
   --tls-port <p>         visitor port, direct HTTPS; "port" or "host:port" (optional)
+  --tls-host <addr>      bind address for that port when the flag carries a bare port
   --tls-cert/--tls-key   PEM files used by both TLS listeners
   --token <secret>       one tunnel token (repeatable)
   --token-file <path>    file with one token per line ("#" comments allowed)
@@ -726,7 +728,7 @@ function createRelay(config) {
       const agentAddr = await listen(agentServer, config.agentPort, config.agentHost);
       const visitorAddr = await listen(visitors, config.httpPort, config.httpHost);
       let tlsAddr = null;
-      if (visitorTls) tlsAddr = await listen(visitorTls, config.tlsPort, config.httpHost);
+      if (visitorTls) tlsAddr = await listen(visitorTls, config.tlsPort, config.tlsHost || config.httpHost);
       log.info(`relay  v${RELAY_VERSION}`);
   log.info(`agent  ${config.tlsCert ? "tls" : "tcp"} ${config.agentHost}:${agentAddr.port}`);
       log.info(`visitor http  ${config.httpHost}:${visitorAddr.port}`);
@@ -788,6 +790,7 @@ function main() {
     httpPort: visitorHttp.port === undefined ? 8080 : visitorHttp.port,
     httpHost: visitorHttp.host || args.httpHost || "127.0.0.1",
     tlsPort: visitorHttps.port === undefined ? 0 : visitorHttps.port,
+    tlsHost: visitorHttps.host || args.tlsHost || "",
     tlsCert: args.tlsCert || "",
     tlsKey: args.tlsKey || "",
     publicUrl: args.publicUrl || `http://localhost:${Number.isInteger(args.httpPort) ? args.httpPort : 8080}`,

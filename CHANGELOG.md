@@ -3,6 +3,43 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## 0.5.1 — 2026-10-23
+
+### Changed — the installer asks about transport, and nothing else
+The relay can now be published over TLS by itself, so the installer asks the one
+question that actually matters: **HTTP or HTTPS**, and for HTTPS, domain or IP.
+
+- `2) HTTPS` + IP → self-signed certificate with `IP:<address>` in the SAN, the
+  relay terminates TLS on the public port, plain HTTP stays on loopback only
+- `2) HTTPS` + domain → Caddy obtains the certificate, or nginx gets your
+  fullchain/key
+- `1) HTTP` → plain, as before, with an explicit warning that the password and the
+  whole session are readable on the way
+- port questions now reject non-numbers, out-of-range values and duplicates
+  instead of handing them to the relay (which exited with a parse error and left a
+  dead unit)
+- the certificate-source question is only asked for a domain: a bare IP cannot have
+  a CA certificate
+- `--yes` keeps the old plain default and says so; it no longer guesses "HTTPS on
+  443" on a host where nginx already owns 443
+
+### Fixed
+- relay: the TLS visitor listener used `--http-port`'s host, so `--tls-port` could
+  never bind wider than loopback — "public HTTPS on the relay itself" served a
+  certificate to 127.0.0.1 only. It now takes its own address
+  (`--tls-port host:port`, `--tls-host`, else the plain host)
+- `drp status` reported `direct`/plain for an HTTPS setup; it now reads
+  `SCHEME`/`VISITOR_TLS`/`AGENT_TLS` and prints the real public URL, plus a warning
+  when visitors are on plain HTTP
+
+### Verified on a real host
+`HTTPS + IP` end to end: certificate generated with `IP Address:…`, service up,
+`https://<ip>:<port>/__t/<id>/` answers 503 while no tunnel is connected (correct),
+plain HTTP to that port is refused, `drp status` shows `TLS, self-signed`.
+
+### Tests
+- 79 tests green.
+
 ## 0.5.0 — 2026-10-23
 
 ### Changed — deploying the relay is one command, no checkout
