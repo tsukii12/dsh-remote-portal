@@ -933,7 +933,7 @@ acmesh_install() { # sets ACME_BIN / ACME_HOME, or dies
 
 acme_install_cert() { # acme_install_cert <domain> <fullchain-out> <key-out>
   local domain=$1 earned=$2 ekey=$3
-  if ! timeout 120 "$ACME_BIN" --home "$ACME_HOME" --install-cert -d "$domain" --ecc \
+  if ! timeout --foreground 120 "$ACME_BIN" --home "$ACME_HOME" --install-cert -d "$domain" --ecc \
       --key-file "$ekey" --fullchain-file "$earned" \
       --reloadcmd "systemctl restart $SERVICE 2>/dev/null || true" >/tmp/acme-install.log 2>&1; then
     if [ -s "$earned" ] && [ -s "$ekey" ]; then
@@ -1025,7 +1025,7 @@ issue_cert_acme() { # issue_cert_acme <domain> [http|dns-cf|dns-manual]
   if [ "$mode" = dns-cf ]; then
     : > /tmp/acme-issue.log
     info "$(t "requesting a certificate for $domain (DNS-01 via Cloudflare)" "正在为 $domain 申请证书（DNS-01，走 Cloudflare）")"
-    if ! timeout 300 "$ACME_BIN" --home "$ACME_HOME" --issue -d "$domain" --keylength ec-256 \
+    if ! timeout --foreground 300 "$ACME_BIN" --home "$ACME_HOME" --issue -d "$domain" --keylength ec-256 \
         --server letsencrypt $challenge >>/tmp/acme-issue.log 2>&1; then
       tail -n 14 /tmp/acme-issue.log
       die "$(t "Cloudflare validation failed; check the token's Zone:DNS:Edit permission" "Cloudflare 校验失败；检查令牌是否有 Zone:DNS:Edit 权限")"
@@ -1039,7 +1039,7 @@ issue_cert_acme() { # issue_cert_acme <domain> [http|dns-cf|dns-manual]
     can_ask || die "$(t "the manual DNS check needs a terminal: run the installer interactively" "手工 DNS 校验需要终端：请交互式运行安装脚本")"
     : > /tmp/acme-issue.log
 
-    timeout 300 "$ACME_BIN" --home "$ACME_HOME" --issue -d "$domain" --keylength ec-256 \
+    timeout --foreground 300 "$ACME_BIN" --home "$ACME_HOME" --issue -d "$domain" --keylength ec-256 \
       $manual_flags $challenge >>/tmp/acme-issue.log 2>&1 || true
 
     local txt
@@ -1054,7 +1054,7 @@ issue_cert_acme() { # issue_cert_acme <domain> [http|dns-cf|dns-manual]
         die "$(t "input closed; run again once the record is in place" "输入已结束；记录添加好后重跑即可")"
       fi
       info "$(t "validating" "正在验证")"
-      timeout 300 "$ACME_BIN" --home "$ACME_HOME" --renew -d "$domain" --ecc $manual_flags >>/tmp/acme-issue.log 2>&1 || true
+      timeout --foreground 300 "$ACME_BIN" --home "$ACME_HOME" --renew -d "$domain" --ecc $manual_flags >>/tmp/acme-issue.log 2>&1 || true
     else
       info "$(t "a certificate for $domain is already on disk; reusing it" "$domain 的证书已经在本地，直接复用")"
     fi
@@ -1073,7 +1073,7 @@ issue_cert_acme() { # issue_cert_acme <domain> [http|dns-cf|dns-manual]
     fi
     info "$(t "requesting a certificate for $domain (HTTP-01 on port 80)" "正在为 $domain 申请证书（HTTP-01，走 80 端口）")"
     : > /tmp/acme-issue.log
-    if ! timeout 300 "$ACME_BIN" --home "$ACME_HOME" --issue -d "$domain" --keylength ec-256 \
+    if ! timeout --foreground 300 "$ACME_BIN" --home "$ACME_HOME" --issue -d "$domain" --keylength ec-256 \
         --server letsencrypt $challenge >>/tmp/acme-issue.log 2>&1; then
       tail -n 14 /tmp/acme-issue.log
       die "$(t "certificate issuance failed; see the log above. If port 80 is filtered, use the DNS option." "证书申请失败，见上面的日志。若 80 端口被拦截，请改用 DNS 校验。")"
