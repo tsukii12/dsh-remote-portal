@@ -48,6 +48,29 @@ Then **restart dsh** (quit and reopen the desktop app, or `Ctrl+C` and `dsh web`
 
 **One required step**: sidebar → **远程访问** → set an access password. Until one exists the portal refuses to listen on the network.
 
+## Update
+
+**Remove, then add** — repeating "add plugin" with the same source may not fetch new code (pnpm answers `Already up to date` when the spec is unchanged):
+
+```bash
+dsh plugin --profile web remove dsh-remote-portal
+dsh plugin --profile web add    https://github.com/tsukii12/dsh-remote-portal
+```
+
+Use `--profile desktop` for the desktop app; run it once per profile you installed into.
+
+**Restart dsh afterwards.** The host half (`index.js`, `lib/*`) only loads at startup; reloading the page swaps just the client half.
+
+> On a slow link `add` can fail with `ETIMEDOUT`. Run it again — what was downloaded is reused.
+
+**Pin a version**:
+
+```bash
+dsh plugin --profile web add https://github.com/tsukii12/dsh-remote-portal#v0.4.9
+```
+
+See [CHANGELOG.md](CHANGELOG.md) for what changed.
+
 ## Features
 
 | | |

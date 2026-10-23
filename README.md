@@ -48,6 +48,29 @@ cd dsh-remote-portal
 
 **首次必做一步**：侧栏 → **远程访问** → 设置访问密码。在此之前门户不会监听局域网——宁可显示一条红字，也不让你的 dsh 裸奔在网络上。
 
+## 更新
+
+**先移除，再安装**——直接重复"添加插件"不一定会拉新代码（源地址不变时 pnpm 会回一句 `Already up to date`）：
+
+```bash
+dsh plugin --profile web remove dsh-remote-portal
+dsh plugin --profile web add    https://github.com/tsukii12/dsh-remote-portal
+```
+
+桌面端把 `--profile web` 换成 `--profile desktop`，两个 profile 都装了就跑两遍。
+
+更新后**必须重启 dsh**：宿主侧代码（`index.js`、`lib/*`）只在启动时加载，光刷新页面只换到客户端一半。
+
+> 网络慢或 GitHub 抖动时，`add` 可能失败并打印 `ETIMEDOUT`。重跑一次即可，已下载的部分会复用。
+
+**锁定版本**（不想被动升级）：
+
+```bash
+dsh plugin --profile web add https://github.com/tsukii12/dsh-remote-portal#v0.4.9
+```
+
+版本记录见 [CHANGELOG.md](CHANGELOG.md)。
+
 ## 功能
 
 | | |
