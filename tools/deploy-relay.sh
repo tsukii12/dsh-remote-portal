@@ -933,7 +933,7 @@ acmesh_install() { # sets ACME_BIN / ACME_HOME, or dies
 
 acme_install_cert() { # acme_install_cert <domain> <fullchain-out> <key-out>
   local domain=$1 earned=$2 ekey=$3
-  if ! "$ACME_BIN" --home "$ACME_HOME" --install-cert -d "$domain" --ecc \
+  if ! timeout 120 "$ACME_BIN" --home "$ACME_HOME" --install-cert -d "$domain" --ecc \
       --key-file "$ekey" --fullchain-file "$earned" \
       --reloadcmd "systemctl restart $SERVICE 2>/dev/null || true" >/tmp/acme-install.log 2>&1; then
     if [ -s "$earned" ] && [ -s "$ekey" ]; then
@@ -977,8 +977,16 @@ ACME_TIMER
   ok "$(t "renewal timer installed" "已安装续期定时器") (dsh-relay-acme.timer)"
 }
 
+ca_reachable() { # 6 s ceiling; false means "do not even try"
+  curl -fsS --connect-timeout 4 --max-time 6 https://acme-v02.api.letsencrypt.org/directory >/dev/null 2>&1
+}
+
 issue_cert_acme() { # issue_cert_acme <domain> [http|dns-cf|dns-manual]
   local domain=$1 mode=${2:-http} earned ekey challenge
+  ACME_HOME="${ACME_HOME:-$HOME/.acme.sh}"
+  local certfile="$ACME_HOME/${domain}_ecc/${domain}.cer"
+  local reuse=0
+  if [ -s "$certfile" ] && openssl x509 -checkend 604800 -noout -in "$certfile" >/dev/null 2>&1; then reuse=1; fi
   case "$mode" in
     dns-cf) challenge="--dns dns_cf" ;;
     dns-manual) challenge="--dns" ;;
@@ -1002,6 +1010,11 @@ issue_cert_acme() { # issue_cert_acme <domain> [http|dns-cf|dns-manual]
     fi
   fi
 
+  if [ "$reuse" = 0 ] && ! ca_reachable; then
+    warn "$(t "the certificate authority did not answer within 6 seconds" "证书机构在 6 秒内没有响应")"
+    die "$(t "this host cannot reach the Let's Encrypt API, so nothing was attempted. Options: run this on a host that can reach it, use the Cloudflare token, or issue the certificate elsewhere and pick \"I already have a certificate\"." "本机连不上 Let's Encrypt 接口，所以没有开始签发。可以：换一台能访问的机器执行、用 Cloudflare 令牌、或在别处签好证书后选「我已经有这个证书」。")"
+  fi
+
   acmesh_install
 
   CERT_DIR="$STATE_DIR/tls"
@@ -1012,7 +1025,7 @@ issue_cert_acme() { # issue_cert_acme <domain> [http|dns-cf|dns-manual]
   if [ "$mode" = dns-cf ]; then
     : > /tmp/acme-issue.log
     info "$(t "requesting a certificate for $domain (DNS-01 via Cloudflare)" "正在为 $domain 申请证书（DNS-01，走 Cloudflare）")"
-    if ! "$ACME_BIN" --home "$ACME_HOME" --issue -d "$domain" --keylength ec-256 \
+    if ! timeout 300 "$ACME_BIN" --home "$ACME_HOME" --issue -d "$domain" --keylength ec-256 \
         --server letsencrypt $challenge >>/tmp/acme-issue.log 2>&1; then
       tail -n 14 /tmp/acme-issue.log
       die "$(t "Cloudflare validation failed; check the token's Zone:DNS:Edit permission" "Cloudflare 校验失败；检查令牌是否有 Zone:DNS:Edit 权限")"
@@ -1026,7 +1039,7 @@ issue_cert_acme() { # issue_cert_acme <domain> [http|dns-cf|dns-manual]
     can_ask || die "$(t "the manual DNS check needs a terminal: run the installer interactively" "手工 DNS 校验需要终端：请交互式运行安装脚本")"
     : > /tmp/acme-issue.log
 
-    "$ACME_BIN" --home "$ACME_HOME" --issue -d "$domain" --keylength ec-256 \
+    timeout 300 "$ACME_BIN" --home "$ACME_HOME" --issue -d "$domain" --keylength ec-256 \
       $manual_flags $challenge >>/tmp/acme-issue.log 2>&1 || true
 
     local txt
@@ -1041,7 +1054,7 @@ issue_cert_acme() { # issue_cert_acme <domain> [http|dns-cf|dns-manual]
         die "$(t "input closed; run again once the record is in place" "输入已结束；记录添加好后重跑即可")"
       fi
       info "$(t "validating" "正在验证")"
-      "$ACME_BIN" --home "$ACME_HOME" --renew -d "$domain" --ecc $manual_flags >>/tmp/acme-issue.log 2>&1 || true
+      timeout 300 "$ACME_BIN" --home "$ACME_HOME" --renew -d "$domain" --ecc $manual_flags >>/tmp/acme-issue.log 2>&1 || true
     else
       info "$(t "a certificate for $domain is already on disk; reusing it" "$domain 的证书已经在本地，直接复用")"
     fi
@@ -1060,7 +1073,7 @@ issue_cert_acme() { # issue_cert_acme <domain> [http|dns-cf|dns-manual]
     fi
     info "$(t "requesting a certificate for $domain (HTTP-01 on port 80)" "正在为 $domain 申请证书（HTTP-01，走 80 端口）")"
     : > /tmp/acme-issue.log
-    if ! "$ACME_BIN" --home "$ACME_HOME" --issue -d "$domain" --keylength ec-256 \
+    if ! timeout 300 "$ACME_BIN" --home "$ACME_HOME" --issue -d "$domain" --keylength ec-256 \
         --server letsencrypt $challenge >>/tmp/acme-issue.log 2>&1; then
       tail -n 14 /tmp/acme-issue.log
       die "$(t "certificate issuance failed; see the log above. If port 80 is filtered, use the DNS option." "证书申请失败，见上面的日志。若 80 端口被拦截，请改用 DNS 校验。")"
