@@ -1,5 +1,8 @@
 import XCTest
 import Network
+import SwiftUI
+import Combine
+import UIKit
 @testable import DSHRemote
 
 private final class HTTPListener {
@@ -78,6 +81,41 @@ private final class HTTPListener {
 final class ListenerTests: XCTestCase {
     private func client(_ root: URL) -> PortalClient { PortalClient(configuration: .ephemeral, cookies: CookieVault(root: root)) }
     private func root() -> URL { FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString) }
+    func testOptionsPresentationLoadsMetadataOverRealHTTP() async throws {
+        for empty in [false, true] {
+            let server = try HTTPListener { request in
+                let body = try! JSONDecoder().decode(JSON.self, from: request.body)
+                let method = body["method"].text
+                XCTAssertEqual(request.path, "/api/" + method)
+                let value: JSON
+                switch method {
+                case "session/modelCatalog": value = ["groups": empty ? [] : [["id": "fake", "name": "Fake", "models": [["id": "one", "name": "One"]]]]]
+                case "permissionPresets/catalog": value = ["options": []]
+                case "agentPresets/list": value = ["presets": empty ? [] : [["id": "minimal"]]]
+                case "commands/list": value = []
+                case "session/projections": value = ["asOfSeq": 0, "values": ["agentPreset": "standard"]]
+                default: XCTFail("Unexpected method: \(method)"); value = [:]
+                }
+                return .init(body: String(decoding: try! JSONEncoder().encode(["type": "server-response", "result": ["ok": true, "value": value]] as JSON), as: UTF8.self))
+            }
+            let base = try await server.start(); let directory = root(); let client = client(directory)
+            let chat = ChatStore(sessionID: "S", api: PortalAPI(base: base, client: client))
+            let loaded = expectation(description: "Options loaded on presentation")
+            let observation = chat.$projections.dropFirst().sink { _ in loaded.fulfill() }
+            let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.first)
+            let previous = scene.windows.first { $0.isKeyWindow }
+            let window = UIWindow(windowScene: scene)
+            window.rootViewController = UIHostingController(rootView: ChatOptionsView(chat: chat))
+            window.makeKeyAndVisible()
+            defer {
+                observation.cancel(); window.isHidden = true; window.rootViewController = nil; previous?.makeKeyAndVisible()
+                server.stop(); client.session.invalidateAndCancel(); try? FileManager.default.removeItem(at: directory)
+            }
+            await fulfillment(of: [loaded], timeout: 5)
+            XCTAssertEqual(chat.catalog["groups"].array.count, empty ? 0 : 1)
+            XCTAssertEqual(chat.presetCatalog["presets"].array.count, empty ? 0 : 1)
+        }
+    }
     func testChatOptionsCommandsAndQueueOverRealHTTP() async throws {
         var calls: [JSON] = []
         let catalog: JSON = ["default": ["provider": "fake", "model": "one", "reasoningEffort": "high"], "groups": [["id": "fake", "name": "Fake", "models": [["id": "one", "name": "One", "reasoning": ["efforts": [["id": "off", "name": "Off"], ["id": "high", "name": "High"]]]], ["id": "two", "name": "Two"]]]]]
@@ -236,6 +274,8 @@ final class ListenerTests: XCTestCase {
             do { _ = try await store.makeFolder(parent: "/host", name: "new"); XCTFail("Failed mkdir accepted") } catch {}
             do { try await store.createWorkspace(path: "/host"); XCTFail("Failed workspace accepted") } catch {}
             do { try await chat.selectModel(provider: "p", model: "m"); XCTFail("Failed selection accepted") } catch {}
+            do { try await chat.loadModels(); XCTFail("Failed catalog accepted") } catch {}
+            do { try await chat.loadControls(); XCTFail("Failed options accepted") } catch {}
             do { try await chat.executeCommand("/plan"); XCTFail("Failed command accepted") } catch {}
             XCTAssertTrue(store.workspaces.isEmpty); XCTAssertEqual(chat.selectedModel, [:])
             XCTAssertEqual(api.sessionExpired, status == 401)

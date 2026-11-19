@@ -87,6 +87,7 @@ struct ChatOptionsView: View {
                 Button(L("Full access", "完全访问"), role: .destructive) { perform { try await chat.selectPermission("danger-full-access") } }
             } message: { Text(L("Tools may run outside the workspace without the usual sandbox restrictions.", "工具可在工作区之外运行，不受通常的沙箱限制。")) }
         }
+        .task { perform { try await chat.loadModels(); try await chat.loadControls() } }
     }
     private func checked(_ label: String, _ selected: Bool) -> some View {
         HStack { Text(label); Spacer(); if selected { Image(systemName: "checkmark").foregroundStyle(DRPStyle.accent) } }
