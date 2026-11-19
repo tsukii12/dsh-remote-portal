@@ -5,6 +5,10 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+- Folder picker and password: the host's errors for an invalid folder name, a
+  folder that can't be created, a missing folder, a file instead of a folder,
+  and a password over 200 characters now show in the panel's language instead
+  of raw English ("invalid folder name", "cannot create folder: EACCES", ...).
 - README: the update steps now cover installs made with `install.sh` /
   `install.ps1` (`git pull` in the checkout, then restart), and say that
   `dsh plugin` needs pnpm on PATH.
