@@ -98,8 +98,28 @@ final class ChatStore: ObservableObject {
     private var revision = -1
     private var nextIndex = 0
     private var pendingCommitSeq: Int?
+    private var startupTask: Task<Void, Never>?
+    private var startupID: UUID?
     init(sessionID: String, api: RPCServing, events: RemoteEvents? = nil) { self.sessionID = sessionID; self.api = api; self.events = events }
     private var address: JSON { ["kind": "session", "sessionId": .string(sessionID)] }
+
+    func activate() {
+        guard startupTask == nil else { return }
+        let id = UUID(); startupID = id; error = nil
+        startupTask = Task { [weak self] in
+            guard let self else { return }
+            defer { if self.startupID == id { self.startupTask = nil } }
+            do {
+                try await self.start()
+                try Task.checkCancellation()
+                try await self.loadModels()
+                try Task.checkCancellation()
+                try await self.loadControls()
+            } catch {
+                if !Task.isCancelled { self.stop(); self.error = error.localizedDescription }
+            }
+        }
+    }
 
     func start() async throws {
         guard followTask == nil else { return }
@@ -126,6 +146,7 @@ final class ChatStore: ObservableObject {
         applyState(try await api.rpc("session/state", args: ["request": ["sessionId": .string(sessionID)]]))
     }
     func stop() {
+        startupID = nil; startupTask?.cancel(); startupTask = nil
         followTask?.cancel(); followTask = nil
         controlTasks.forEach { $0.cancel() }; controlTasks = []
         if let observer { events?.removeObserver(observer) }; observer = nil
@@ -357,5 +378,19 @@ final class ChatStore: ObservableObject {
         for record in page["records"].array { if let seq = record["event"]["seq"].int { history[seq] = record["event"] } }
         hasMore = page["hasMore"].boolean; rebuild()
     }
-    deinit { followTask?.cancel(); controlTasks.forEach { $0.cancel() } }
+    deinit { startupTask?.cancel(); followTask?.cancel(); controlTasks.forEach { $0.cancel() } }
+}
+
+@MainActor
+final class ChatSelection: ObservableObject {
+    @Published private(set) var chat: ChatStore?
+    private let makeChat: (String) -> ChatStore
+    init(makeChat: @escaping (String) -> ChatStore) { self.makeChat = makeChat }
+    func select(_ sessionID: String?) {
+        guard let sessionID else { chat?.stop(); chat = nil; return }
+        if chat?.sessionID != sessionID { chat?.stop(); chat = makeChat(sessionID) }
+        chat?.activate()
+    }
+    func resume() { chat?.activate() }
+    func stop() { chat?.stop() }
 }

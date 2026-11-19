@@ -80,6 +80,48 @@ private final class HTTPListener {
 
 @MainActor
 final class ListenerTests: XCTestCase {
+    func testChatSelectionBootstrapOutlivesCancelledSearchOverRealHTTP() async throws {
+        var calls: [String] = []
+        let server = try HTTPListener { request in
+            if request.method == "GET" { return .init(status: 404) }
+            let body = try! JSONDecoder().decode(JSON.self, from: request.body)
+            let method = body["method"].text, args = body["payload"]["args"]
+            calls.append(method)
+            XCTAssertEqual(request.path, "/relay/api/" + method)
+            switch method {
+            case "session/state":
+                XCTAssertEqual(args, ["request": ["sessionId": "search-result"]])
+                return self.reply(["isRunning": false])
+            case "session/modelCatalog":
+                XCTAssertEqual(args, [:])
+                return self.reply(["default": ["provider": "fake", "model": "one"], "groups": [["id": "fake", "models": [["id": "one", "name": "One"]]]]])
+            case "permissionPresets/catalog", "agentPresets/list":
+                XCTAssertEqual(args, [:]); return self.reply([:])
+            case "commands/list":
+                XCTAssertEqual(args, ["agentId": "search-result"]); return self.reply([["name": "plan"]])
+            case "session/projections":
+                XCTAssertEqual(args, ["request": ["sessionId": "search-result"]])
+                return self.reply(["asOfSeq": 1, "values": ["modelSelection": ["selected": ["provider": "fake", "model": "one", "reasoningEffort": "high"]]]])
+            default: XCTFail("Unexpected startup RPC: " + method); return .init(status: 404)
+            }
+        }
+        let base = try await server.start().appendingPathComponent("relay/"); let directory = root(); let client = client(directory)
+        let api = PortalAPI(base: base, client: client)
+        let selection = ChatSelection { ChatStore(sessionID: $0, api: api) }
+        defer { selection.stop(); api.mux.close(); server.stop(); client.session.invalidateAndCancel(); try? FileManager.default.removeItem(at: directory) }
+        let search = Task {
+            withUnsafeCurrentTask { $0?.cancel() }
+            selection.select("search-result")
+        }
+        await search.value
+        let chat = try XCTUnwrap(selection.chat)
+        let ready = expectation(description: "Selected search result loads its controls despite navigation cancellation")
+        let subscription = chat.$projections.first { $0["modelSelection"]["selected"]["model"] == "one" }.sink { _ in ready.fulfill() }
+        defer { subscription.cancel() }
+        await fulfillment(of: [ready], timeout: 5)
+        XCTAssertEqual(chat.modelName, "One"); XCTAssertEqual(chat.effortName, "high"); XCTAssertTrue(chat.supportsPlan)
+        XCTAssertEqual(calls, ["session/state", "session/modelCatalog", "permissionPresets/catalog", "agentPresets/list", "commands/list", "session/projections"])
+    }
     private func client(_ root: URL) -> PortalClient { PortalClient(configuration: .ephemeral, cookies: CookieVault(root: root)) }
     private func root() -> URL { FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString) }
     private func reply(_ value: JSON) -> HTTPListener.Reply {

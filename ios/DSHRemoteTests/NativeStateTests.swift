@@ -1,6 +1,71 @@
 import XCTest
 import Combine
+import SwiftUI
+import UIKit
 @testable import DSHRemote
+
+@MainActor
+private final class ChatStartupProbe: RPCServing {
+    var calls: [String] = []
+    var streams: [String] = []
+    var ended: [String] = []
+    var failure: Error?
+    var records: [JSON] = [["event": ["seq": 1, "type": "user/message", "data": ["content": [["type": "text", "text": "Existing message"]]]]]]
+    func rpc(_ method: String, args: JSON) async throws -> JSON {
+        calls.append(method)
+        if method == "session/state" { try await Task.sleep(nanoseconds: 500_000_000) }
+        if let failure { throw failure }
+        switch method {
+        case "session/modelCatalog": return ["default": ["provider": "fake", "model": "one"], "groups": [["id": "fake", "models": [["id": "one", "name": "One"]]]]]
+        case "session/projections": return ["asOfSeq": 1, "values": ["modelSelection": ["selected": ["provider": "fake", "model": "one"]]]]
+        default: return [:]
+        }
+    }
+    func stream(_ endpoint: String, args: JSON) -> AsyncThrowingStream<JSON, Error> {
+        streams.append(endpoint)
+        let records = records
+        return AsyncThrowingStream { continuation in
+            continuation.onTermination = { [weak self] _ in Task { @MainActor in self?.ended.append(endpoint) } }
+            if endpoint == "session/follow" {
+                Task {
+                    try await Task.sleep(nanoseconds: 500_000_000)
+                    continuation.yield(["type": "snapshot", "records": .array(records)])
+                }
+            }
+        }
+    }
+}
+
+@MainActor
+private final class ChatStartupRoute: ObservableObject {
+    @Published var selection: String? { didSet { chats.select(selection) } }
+    @Published var search = "Known chat"
+    @Published var compactColumn: NavigationSplitViewColumn = .sidebar
+    @Published var revision = 0
+    var stores: [(ChatStore, ChatStartupProbe)] = []
+    lazy var chats = ChatSelection { [unowned self] in self.chat($0) }
+    func chat(_ id: String) -> ChatStore {
+        let api = ChatStartupProbe()
+        let chat = ChatStore(sessionID: id, api: api)
+        stores.append((chat, api))
+        return chat
+    }
+}
+
+private struct ChatStartupHarness: View {
+    @ObservedObject var route: ChatStartupRoute
+    var body: some View {
+        NavigationSplitView(preferredCompactColumn: $route.compactColumn) {
+            List { Text("Known chat") }.navigationTitle("Chats").searchable(text: $route.search)
+        } detail: {
+            if let chat = route.chats.chat {
+                ChatView(chat: chat, title: "Known chat \(route.revision)").id(chat.sessionID)
+            }
+        }.navigationSplitViewStyle(.balanced)
+            .onAppear { route.chats.resume() }
+            .onDisappear { route.chats.stop() }
+    }
+}
 
 @MainActor
 final class StubAPI: RPCServing {
@@ -17,6 +82,88 @@ final class StubAPI: RPCServing {
 
 @MainActor
 final class NativeStateTests: XCTestCase {
+    func testSearchSelectionKeepsStartedChatAcrossParentUpdates() async throws {
+        let route = ChatStartupRoute()
+        route.selection = "A"; route.compactColumn = .detail
+        let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.first)
+        let previous = scene.windows.first { $0.isKeyWindow }
+        let window = UIWindow(windowScene: scene)
+        window.rootViewController = UIHostingController(rootView: ChatStartupHarness(route: route))
+        window.makeKeyAndVisible()
+        defer {
+            route.stores.forEach { $0.0.stop() }
+            window.isHidden = true; window.rootViewController = nil; previous?.makeKeyAndVisible()
+        }
+        func controllers(_ controller: UIViewController) -> [UIViewController] {
+            [controller] + controller.children.flatMap(controllers)
+        }
+        try await Task.sleep(nanoseconds: 800_000_000)
+        route.compactColumn = .sidebar
+        try await Task.sleep(nanoseconds: 300_000_000)
+        let search = try XCTUnwrap(controllers(window.rootViewController!).filter { $0.viewIfLoaded?.window != nil }.compactMap { $0.navigationItem.searchController }.last)
+        search.isActive = true
+        search.searchBar.searchTextField.becomeFirstResponder()
+        try await Task.sleep(nanoseconds: 300_000_000)
+        route.selection = "S"; route.compactColumn = .detail
+        try await Task.sleep(nanoseconds: 10_000_000)
+        route.search = ""; route.revision += 1
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+        let started = route.stores.filter { $0.0.sessionID == "S" && !$0.1.streams.isEmpty }
+        XCTAssertEqual(started.count, 1)
+        XCTAssertTrue(started.first?.0.loaded == true)
+        XCTAssertEqual(started.first?.0.transcript.first?.text, "Existing message")
+        XCTAssertEqual(started.first?.0.modelName, "One")
+        XCTAssertEqual(started.first?.1.ended, [])
+        XCTAssertEqual(started.first?.1.calls, ["session/state", "session/modelCatalog", "permissionPresets/catalog", "agentPresets/list", "commands/list", "session/projections"])
+    }
+    func testChatSelectionStartsOutsideCancelledNavigationAndKeepsOneStore() async throws {
+        let api = ChatStartupProbe(); api.records = []
+        var created = 0
+        let selection = ChatSelection { id in created += 1; return ChatStore(sessionID: id, api: api) }
+        selection.select(nil)
+        XCTAssertNil(selection.chat); XCTAssertEqual(created, 0)
+        let navigation = Task {
+            withUnsafeCurrentTask { $0?.cancel() }
+            selection.select("S"); selection.select("S")
+        }
+        await navigation.value
+        let chat = try XCTUnwrap(selection.chat)
+        defer { selection.stop() }
+        let ready = expectation(description: "Empty session snapshot and all metadata loaded")
+        let subscription = Publishers.CombineLatest(chat.$loaded, chat.$projections)
+            .first { $0.0 && $0.1["modelSelection"]["selected"]["model"] == "one" }.sink { _ in ready.fulfill() }
+        defer { subscription.cancel() }
+        await fulfillment(of: [ready], timeout: 3)
+        XCTAssertEqual(created, 1); XCTAssertTrue(chat.transcript.isEmpty); XCTAssertEqual(chat.modelName, "One")
+        XCTAssertEqual(api.streams, ["session/follow", "session/control", "session/observeState"])
+        XCTAssertNil(chat.error)
+        selection.select(nil); XCTAssertNil(selection.chat)
+    }
+    func testChatSelectionCancelsSupersededStartupAndRetriesFailures() async throws {
+        let oldAPI = ChatStartupProbe(), api = ChatStartupProbe()
+        api.failure = PortalError.message("Startup failed")
+        let selection = ChatSelection { id in ChatStore(sessionID: id, api: id == "old" ? oldAPI : api) }
+        selection.select("old")
+        await Task.yield()
+        selection.select("S")
+        let chat = try XCTUnwrap(selection.chat)
+        defer { selection.stop() }
+        let failed = expectation(description: "Startup failure is visible")
+        let errorSubscription = chat.$error.first { $0 != nil }.sink { _ in failed.fulfill() }
+        defer { errorSubscription.cancel() }
+        await fulfillment(of: [failed], timeout: 3)
+        XCTAssertEqual(chat.error, "Startup failed")
+        XCTAssertFalse(oldAPI.calls.contains("session/modelCatalog"))
+        api.failure = nil
+        let ready = expectation(description: "Reselecting retries the failed startup")
+        let subscription = chat.$projections.first { $0["modelSelection"]["selected"]["model"] == "one" }.sink { _ in ready.fulfill() }
+        defer { subscription.cancel() }
+        selection.select("S")
+        await fulfillment(of: [ready], timeout: 3)
+        XCTAssertTrue(selection.chat === chat); XCTAssertNil(chat.error)
+        XCTAssertEqual(api.calls.filter { $0 == "session/state" }.count, 2)
+        XCTAssertEqual(chat.modelName, "One")
+    }
     func testFileMentionGrammarQuotesDirectoriesUnicodeAndUnsafePaths() throws {
         XCTAssertNil(FileMentionToken.active(in: "mail@example.com"))
         XCTAssertNil(FileMentionToken.active(in: "ordinary text"))

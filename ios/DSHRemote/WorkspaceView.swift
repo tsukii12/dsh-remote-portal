@@ -29,7 +29,8 @@ struct WorkspaceView: View {
     let onLogout: () async throws -> Void
     @ObservedObject private var sidebar: SidebarStore
     @ObservedObject private var events: RemoteEvents
-    @State private var selection: String?
+    @StateObject private var chatSelection: ChatSelection
+    private var selection: String? { chatSelection.chat?.sessionID }
     @State private var visibility: NavigationSplitViewVisibility = .all
     @State private var compactColumn: NavigationSplitViewColumn = .sidebar
     @State private var actionError: String?
@@ -40,17 +41,18 @@ struct WorkspaceView: View {
         self.connection = connection; self.serverName = serverName; self.onSwitch = onSwitch; self.onLogout = onLogout
         self.addressLabel = addressLabel
         sidebar = connection.sidebar; events = connection.events
+        _chatSelection = StateObject(wrappedValue: ChatSelection(makeChat: connection.chat))
     }
     var body: some View {
         NavigationSplitView(columnVisibility: $visibility, preferredCompactColumn: $compactColumn) {
-            SidebarView(store: sidebar, events: events, selection: selection, serverName: serverName, addressLabel: addressLabel, onSelect: { selection = $0; compactColumn = .detail }, onReview: review, onCreate: create, onSwitch: onSwitch, onLogout: onLogout, onSettings: { showingSettings = true })
+            SidebarView(store: sidebar, events: events, selection: selection, serverName: serverName, addressLabel: addressLabel, onSelect: openChat, onReview: review, onCreate: create, onSwitch: onSwitch, onLogout: onLogout, onSettings: { showingSettings = true })
                 .navigationSplitViewColumnWidth(min: 250, ideal: 290, max: 360)
                 .safeAreaInset(edge: .top, spacing: 0) { pendingBanner }
         } detail: {
             Group {
-                if let selection {
-                    ChatView(chat: connection.chat(selection), title: sidebar.sessions[selection]?.title ?? L("New chat", "新对话"))
-                        .id(selection)
+                if let chat = chatSelection.chat {
+                    ChatView(chat: chat, title: sidebar.sessions[chat.sessionID]?.title ?? L("New chat", "新对话"))
+                        .id(chat.sessionID)
                 } else {
                     VStack(spacing: 20) {
                         Image(systemName: "sparkle").font(.system(size: 42)).foregroundStyle(DRPStyle.accent)
@@ -62,6 +64,8 @@ struct WorkspaceView: View {
             }.safeAreaInset(edge: .top, spacing: 0) { pendingBanner }
         }
         .navigationSplitViewStyle(.balanced)
+        .onAppear { chatSelection.resume() }
+        .onDisappear { chatSelection.stop() }
         .safeAreaInset(edge: .top, spacing: 0) {
             if events.clientID == nil {
                 StatusBanner(message: hasConnected ? L("Connection lost. Reconnecting…", "连接已断开，正在重新连接…") : L("Connecting…", "正在连接…"), reconnecting: true)
@@ -88,12 +92,15 @@ struct WorkspaceView: View {
     private func review(_ item: PendingInteraction) {
         interactions.review(item)
         if let id = InteractionRouting.sessionID(item, knownSessionIDs: Set(sidebar.sessions.keys)) {
-            selection = id; compactColumn = .detail
+            openChat(id)
         }
+    }
+    private func openChat(_ sessionID: String) {
+        chatSelection.select(sessionID); compactColumn = .detail
     }
     private func create(_ workspaceID: String?) {
         Task {
-            do { selection = try await sidebar.createSession(workspaceID: workspaceID); compactColumn = .detail }
+            do { openChat(try await sidebar.createSession(workspaceID: workspaceID)) }
             catch { actionError = error.localizedDescription }
         }
     }

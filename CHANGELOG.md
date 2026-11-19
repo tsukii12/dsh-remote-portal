@@ -16,6 +16,8 @@ versions are the plugin's own, not dsh's.
 - 新 RPC/HTTP 路由由真实监听器测试覆盖；可选在线冒烟测试验证两个本地模拟模型的切换与明确思考强度、会话权限命令及门户文件夹浏览。
 
 ### Fixed
+- Keep native chat startup and stream lifetime bound to the selected session, not transient search/navigation detail appearances, so first-open chats load their transcript, model and attachment controls.
+- 原生聊天的启动与流生命周期改由所选会话持有，不再随搜索或导航详情视图的短暂显隐而中断，确保首次打开时正常载入历史、模型与附件控件。
 - Disable native Plan mode with a bilingual explanation when the current preset's command catalog lacks `plan`; refresh availability after preset selection.
 - 当前预设的命令目录不含 `plan` 时禁用原生计划模式并显示双语说明，切换预设后刷新可用性。
 - Wait for the workspace baseline before grouping native sessions, including after reconnect, so workspace chats never flash under Ungrouped. Pending-request banners now sit below navigation titles in both sidebar and chat.

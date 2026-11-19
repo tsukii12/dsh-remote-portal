@@ -6,7 +6,7 @@ private struct BottomPosition: PreferenceKey {
 }
 
 struct ChatView: View {
-    @StateObject private var chat: ChatStore
+    @ObservedObject private var chat: ChatStore
     @StateObject private var attachments: AttachmentsStore
     @StateObject private var mentions: FileMentions
     let title: String
@@ -23,7 +23,7 @@ struct ChatView: View {
     @State private var steer = false
     @FocusState private var composerFocused: Bool
     init(chat: ChatStore, title: String) {
-        _chat = StateObject(wrappedValue: chat); self.title = title
+        self.chat = chat; self.title = title
         _attachments = StateObject(wrappedValue: AttachmentsStore(api: chat.api, sessionID: chat.sessionID))
         _mentions = StateObject(wrappedValue: FileMentions(api: chat.api, sessionID: chat.sessionID))
     }
@@ -37,11 +37,6 @@ struct ChatView: View {
         .navigationTitle("DRP").navigationBarTitleDisplayMode(.inline)
         .toolbar { ToolbarItem(placement: .principal) { VStack(spacing: 2) { Text("DRP").font(.headline); Text(title).font(.caption).foregroundStyle(.secondary).lineLimit(1) } } }
         .toolbar { ToolbarItem(placement: .primaryAction) { Button { showingFiles = true } label: { Image(systemName: "folder") }.accessibilityLabel(L("Workspace files", "工作区文件")).accessibilityIdentifier("workspaceFiles") } }
-        .task {
-            do { try await chat.start(); try await chat.loadModels(); try await chat.loadControls() }
-            catch { if !Task.isCancelled { actionError = error.localizedDescription } }
-        }
-        .onDisappear { chat.stop() }
         .sheet(isPresented: $showingOptions) { ChatOptionsView(chat: chat) }
         .sheet(isPresented: $showingFiles) { WorkspaceFilesView(api: chat.api, sessionID: chat.sessionID) }
         .task(id: draft) { await mentions.load(draft) }
