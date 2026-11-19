@@ -78,8 +78,9 @@ async function listen(server) {
 }
 
 /** Stand-in for the portal gateway: echoes what actually arrived. */
-async function startGatewayDouble() {
+async function startGatewayDouble(serve) {
   const server = http.createServer((req, res) => {
+    if (serve?.(req, res)) return;
     const body = JSON.stringify({
       method: req.method,
       url: req.url,
@@ -624,6 +625,33 @@ test("an interim WebSocket response does not clear the header deadline", async (
   assert.equal(relay.tunnels.get(id).streams.size, 0, "the stream must be released");
 });
 
+test("a timeout cancels a negotiated response before a late body can exhaust credit", async () => {
+  const token = "test-token-timeout-response-window";
+  const path = `/__t/${tunnelIdFor(token)}`;
+  let lateResponse;
+  let upstreamClosed = false;
+  const port = await listen(http.createServer((req, res) => {
+    if (req.url !== "/late") { res.end("ok"); return; }
+    lateResponse = res;
+    req.socket.once("close", () => { upstreamClosed = true; });
+  }));
+  const { relay, httpPort, agentPort } = await startRelay([token], { requestTimeout: 500 });
+  await connectTunnel({ agentPort, token, targetPort: port });
+  const entry = relay.tunnels.get(tunnelIdFor(token));
+  const agent = entry.socket;
+  assert.equal(entry.responseWindow, 256 * 1024);
+
+  assert.equal((await request(httpPort, path + "/late")).status, 504);
+  assert.equal(entry.streams.size, 0);
+  assert.ok(lateResponse, "the gateway must have received the request");
+  if (!lateResponse.destroyed) lateResponse.end(Buffer.alloc(1024 * 1024));
+  await waitFor(() => upstreamClosed, {
+    timeoutMs: 1200, label: "upstream cancellation",
+  });
+  assert.equal((await request(httpPort, path + "/next")).body.toString(), "ok");
+  assert.equal(entry.socket, agent, "the tunnel must not reconnect to clean up the stream");
+});
+
 test("a response that finishes above the visitor high water mark does not stall the tunnel", async () => {
   const token = "test-token-finish";
   const id = tunnelIdFor(token);
@@ -666,6 +694,49 @@ test("a response that finishes above the visitor high water mark does not stall 
   await waitFor(() => incoming.length === 2, { label: "next request" });
   agent.write(Buffer.concat([responseHead(incoming[1], 0), encodeFrame(FRAME.RES_END, incoming[1])]));
   assert.equal((await next).status, 200);
+});
+
+test("a stalled visitor does not pause a negotiated tunnel or block other streams", { timeout: 10000 }, async () => {
+  const token = "test-token-slow-visitor";
+  const path = `/__t/${tunnelIdFor(token)}`;
+  const total = 16 * 1024 * 1024;
+  const chunk = Buffer.alloc(64 * 1024, 42);
+  let produced = 0;
+  const gatewayPort = await startGatewayDouble((req, res) => {
+    if (req.url !== "/bulk") return false;
+    res.setHeader("content-length", total);
+    const write = () => {
+      while (produced < total && !res.destroyed) {
+        produced += chunk.length;
+        if (!res.write(chunk)) {
+          res.once("drain", write);
+          return;
+        }
+      }
+      res.end();
+    };
+    write();
+    return true;
+  });
+  const { relay, httpPort, agentPort } = await startRelay([token]);
+  await connectTunnel({ agentPort, token, targetPort: gatewayPort });
+  const connection = relay.tunnels.get(tunnelIdFor(token)).socket;
+  const pause = connection.pause.bind(connection);
+  let pauses = 0;
+  connection.pause = () => { pauses++; return pause(); };
+  const incoming = await new Promise((resolve, reject) => {
+    const req = http.get({ host: "127.0.0.1", port: httpPort, path: path + "/bulk" }, resolve);
+    req.on("error", reject);
+    cleanups.push(() => req.destroy());
+  });
+  await waitFor(() => produced >= 1024 * 1024, { label: "bulk transfer underway" });
+  assert.equal((await request(httpPort, path + "/interactive")).status, 200);
+  assert.ok(produced < total, "the stalled visitor must backpressure the origin");
+  assert.equal(pauses, 0, "only the slow stream should be backpressured");
+  let received = 0;
+  for await (const data of incoming) received += data.length;
+  assert.equal(received, total);
+  await waitFor(() => relay.tunnels.get(tunnelIdFor(token)).streams.size === 0, { label: "streams released" });
 });
 
 test("framing helpers round-trip a binary payload", async () => {

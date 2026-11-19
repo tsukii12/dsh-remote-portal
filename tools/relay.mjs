@@ -69,10 +69,12 @@ const FRAME = {
   CLOSE: 11,
   PING: 12,
   PONG: 13,
+  WINDOW_UPDATE: 14,
 };
 
 const HEADER_BYTES = 9;
 const MAX_FRAME_BYTES = 1024 * 1024; // 1 MiB per frame; bodies are chunked by the parser
+const RESPONSE_WINDOW = 256 * 1024;
 
 function encodeFrame(type, streamId, payload) {
   const body = payload === undefined ? null
@@ -519,6 +521,7 @@ function cachePut(key, entry) {
           tunnel.lastDropAt = Date.now();
         }
         tunnel.socket = socket;
+        tunnel.responseWindow = hello.responseWindow === RESPONSE_WINDOW ? RESPONSE_WINDOW : 0;
         tunnel.agent = { version: String(hello.version || ""), peer };
         tunnel.connectedAt = Date.now();
         tunnel.lastSeenAt = Date.now();
@@ -527,12 +530,13 @@ function cachePut(key, entry) {
           tunnelId: tunnel.id,
           publicPath,
           publicUrl: `${config.publicUrl.replace(/\/$/, "")}${publicPath}/`,
+          ...(tunnel.responseWindow ? { responseWindow: tunnel.responseWindow } : {}),
           limits: { maxStreams: config.maxStreams, requestTimeout: config.requestTimeout },
         }));
         log.info(`tunnel ${tunnel.id} connected from ${peer}`);
         return;
       }
-      dispatchFromAgent(tunnel, type, streamId, payload);
+      if (tunnel.socket === socket) dispatchFromAgent(tunnel, type, streamId, payload);
     }, (error) => {
       // 0x16 = TLS handshake record type. This port is plain TCP unless the
       // relay was started with a certificate, so the fix is on the client side:
@@ -631,6 +635,8 @@ function cachePut(key, entry) {
       id = tunnel.nextStreamId ?? 1;
       tunnel.nextStreamId = id === 0xffffffff ? 1 : id + 1;
     } while (tunnel.streams.has(id));
+    const window = tunnel.responseWindow;
+    let available = window;
     let timer;
     let closed = false;
     function release() {
@@ -643,9 +649,31 @@ function cachePut(key, entry) {
       if (closed || agent.destroyed) return false;
       return agent.write(encodeFrame(type, id, payload));
     }
+    function writeBody(visitor, chunk) {
+      if (!window) {
+        if (!visitor.write(chunk)) pauseForVisitor(agent, visitor);
+        return;
+      }
+      if (chunk.length > available) {
+        send(FRAME.CLOSE, JSON.stringify({ reason: "response window exceeded" }));
+        handlers.fail(502, "response window exceeded");
+        release();
+        return;
+      }
+      if (chunk.length === 0) return;
+      available -= chunk.length;
+      visitor.write(chunk, (error) => {
+        if (error || closed) return;
+        available += chunk.length;
+        const delta = Buffer.allocUnsafe(4);
+        delta.writeUInt32BE(chunk.length);
+        send(FRAME.WINDOW_UPDATE, delta);
+      });
+    }
     function deadline(ms, reason) {
       clearTimeout(timer);
       timer = setTimeout(() => {
+        if (closed) return;
         try {
           send(FRAME.CLOSE, JSON.stringify({ reason }));
           handlers.fail(504, reason);
@@ -667,7 +695,7 @@ function cachePut(key, entry) {
     stats.streams += 1;
     deadline(config.requestTimeout ?? DEFAULT_TIMEOUT_MS, "the dsh host did not answer in time");
     return {
-      send, release,
+      send, writeBody, release,
       startHttpIdle: () => deadline(httpIdleTimeout, "the dsh HTTP response went idle"),
       refreshHttpIdle: () => timer.refresh(),
       clearDeadline: () => clearTimeout(timer),
@@ -782,7 +810,6 @@ function cachePut(key, entry) {
     // A cacheable response is streamed to the visitor and copied on the side; the
     // copy is only kept when the whole thing arrived and looks safe to reuse.
     let cacheBuffer = null;
-    const agent = route.tunnel.socket;
     let stream;
     stream = openStream(route.tunnel, {
       onHead: (head) => {
@@ -805,7 +832,7 @@ function cachePut(key, entry) {
           if (cacheBuffer.size > CACHE_MAX_OBJECT) cacheBuffer = null;
           else cacheBuffer.chunks.push(chunk);
         }
-        if (!res.write(chunk)) pauseForVisitor(agent, res);
+        stream.writeBody(res, chunk);
       },
       onEnd: () => {
         try { res.end(); } catch { /* gone */ }
@@ -865,7 +892,6 @@ function cachePut(key, entry) {
       return;
     }
 
-    const agent = route.tunnel.socket;
     const statusPrefix = Buffer.alloc(12);
     let statusBytes = 0;
     let headerBytes = 0;
@@ -891,7 +917,7 @@ function cachePut(key, entry) {
           }
         }
         stats.bytesOut += chunk.length;
-        if (!socket.write(chunk)) pauseForVisitor(agent, socket);
+        stream.writeBody(socket, chunk);
       },
       onEnd: () => { try { socket.end(); } catch { /* gone */ } },
       fail: () => {
