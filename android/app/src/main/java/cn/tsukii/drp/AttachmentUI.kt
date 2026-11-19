@@ -17,10 +17,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.*
-import java.util.Base64
 import java.io.File
 
 @Composable
@@ -61,13 +63,13 @@ fun AttachmentPicker(draft: AttachmentDraft, enabled: Boolean, imageError: Strin
     }
     Column {
     Row {
-        TextButton(enabled = enabled, onClick = { files.launch(arrayOf("*/*")) }) { Text(L("+ File", "+ 文件")) }
-        TextButton(enabled = enabled && imageError == null, onClick = {
+        TextButton(modifier = Modifier.heightIn(min = 48.dp), enabled = enabled, onClick = { files.launch(arrayOf("*/*")) }) { Text(L("+ File", "+ 文件")) }
+        TextButton(modifier = Modifier.heightIn(min = 48.dp), enabled = enabled && imageError == null, onClick = {
             pickerError = null
             try { photos.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) }
             catch (_: Exception) { pickerError = L("Photos are unavailable. Choose Files instead.", "照片选择器不可用，请选择文件。") }
         }) { Text(L("+ Photos", "+ 照片")) }
-        TextButton(enabled = enabled && imageError == null && cameraPath == null && !preparingCamera, onClick = {
+        TextButton(modifier = Modifier.heightIn(min = 48.dp), enabled = enabled && imageError == null && cameraPath == null && !preparingCamera, onClick = {
             pickerError = null; preparingCamera = true
             scope.launch {
                 try {
@@ -107,8 +109,8 @@ fun AttachmentRail(chat: ChatStore, draft: AttachmentDraft, enabled: Boolean) {
                     }
                 }
                 Row {
-                    if (item.error != null) TextButton(enabled = enabled, onClick = { draft.retry(item.id) }) { Text(L("Retry", "重试")) }
-                    TextButton(enabled = enabled, onClick = { draft.remove(item.id) }) { Text(L("Remove", "移除")) }
+                    if (item.error != null) TextButton(modifier = Modifier.heightIn(min = 48.dp), enabled = enabled, onClick = { draft.retry(item.id) }) { Text(L("Retry", "重试")) }
+                    TextButton(modifier = Modifier.heightIn(min = 48.dp), enabled = enabled, onClick = { draft.remove(item.id) }) { Text(L("Remove", "移除")) }
                 }
             }
         } }
@@ -118,7 +120,10 @@ fun AttachmentRail(chat: ChatStore, draft: AttachmentDraft, enabled: Boolean) {
 @Composable
 fun AttachmentBlock(chat: ChatStore, block: TranscriptBlock, previewOnly: Boolean = false) {
     val reference = block.attachment
-    Column(Modifier.widthIn(max = 300.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+    val viewport = LocalAttachmentViewport.current
+    var bounds by remember { mutableStateOf(Rect.Zero) }
+    val visible = viewport == null || AttachmentPreview.visible(bounds, viewport)
+    Column(Modifier.widthIn(max = 300.dp).onGloballyPositioned { bounds = it.boundsInWindow() }, verticalArrangement = Arrangement.spacedBy(6.dp)) {
         if (!previewOnly) {
             Text(reference["name"].string ?: if (block.kind == "file") L("File", "文件") else L("Image", "图片"), style = MaterialTheme.typography.titleSmall)
             Text(Usage.number(reference["bytes"].long) + L(" bytes", " 字节"), style = MaterialTheme.typography.bodySmall)
@@ -127,23 +132,23 @@ fun AttachmentBlock(chat: ChatStore, block: TranscriptBlock, previewOnly: Boolea
             var image by remember(chat.sessionID, reference) { mutableStateOf<ImageBitmap?>(null) }
             var error by remember(chat.sessionID, reference) { mutableStateOf<String?>(null) }
             var retry by remember { mutableIntStateOf(0) }
-            LaunchedEffect(chat, reference, retry) {
-                error = null
+            LaunchedEffect(chat, reference, retry, visible) {
+                if (!visible) { image = null; return@LaunchedEffect }
+                if (image != null || error != null) return@LaunchedEffect
                 try {
-                    if ((reference["bytes"].long ?: Long.MAX_VALUE) > 8 * 1024 * 1024) throw PortalError(L("Image is too large for an inline preview.", "图片过大，无法在消息中预览。"))
+                    AttachmentPreview.validateSize(reference["bytes"].long)
                     val result = chat.attachment(reference)
                     image = withContext(Dispatchers.IO) {
-                        val bytes = Base64.getDecoder().decode(result["data"].text)
+                        val bytes = AttachmentPreview.bytes(result)
                         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
                         BitmapFactory.decodeByteArray(bytes, 0, bytes.size, bounds)
-                        var sample = 1
-                        while (bounds.outWidth / sample > 1024 || bounds.outHeight / sample > 1024) sample *= 2
+                        val sample = AttachmentPreview.sample(bounds.outWidth, bounds.outHeight)
                         BitmapFactory.decodeByteArray(bytes, 0, bytes.size, BitmapFactory.Options().apply { inSampleSize = sample })?.asImageBitmap() ?: throw APIError.InvalidResponse
                     }
                 } catch (e: CancellationException) { throw e } catch (e: Exception) { error = e.message ?: L("Preview unavailable", "无法预览") }
             }
             image?.let { Image(it, reference["name"].string ?: L("Attached image", "附加图片"), Modifier.fillMaxWidth().heightIn(max = if (previewOnly) 72.dp else 240.dp)) }
-                ?: if (error == null) LinearProgressIndicator() else TextButton(onClick = { retry++ }) { Text(L("Retry image preview", "重试图片预览")) }
+                ?: if (error == null) LinearProgressIndicator() else TextButton(modifier = Modifier.heightIn(min = 48.dp), onClick = { error = null; retry++ }) { Text(L("Retry image preview", "重试图片预览")) }
             error?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
         }
     }

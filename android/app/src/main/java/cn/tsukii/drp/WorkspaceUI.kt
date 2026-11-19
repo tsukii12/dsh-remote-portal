@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -64,7 +65,7 @@ fun WorkspaceScreen(connection: NativeConnection, serverName: String, addressLab
         catch (e: CancellationException) { throw e } catch (e: Exception) { error = L("Content search unavailable; showing name matches. ", "内容搜索不可用，正在显示名称匹配。") + e.message }
     }
     ModalNavigationDrawer(drawerState = drawer, drawerContent = {
-        ModalDrawerSheet(Modifier.widthIn(max = 340.dp)) {
+        ModalDrawerSheet(Modifier.width(if (LocalConfiguration.current.smallestScreenWidthDp >= 600) 440.dp else 340.dp)) {
             Text("DeepSeek Remote", Modifier.padding(start = 20.dp, top = 12.dp), style = MaterialTheme.typography.titleLarge)
             Row(Modifier.fillMaxWidth().padding(start = 20.dp, top = 12.dp, end = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text(serverName, Modifier.weight(1f), style = MaterialTheme.typography.titleMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
@@ -178,9 +179,9 @@ fun WorkspaceScreen(connection: NativeConnection, serverName: String, addressLab
                     if (terminalOpen) TerminalScreen(connection.api, id) { terminalOpen = false }
                 } }
                 else Column(Modifier.fillMaxSize().padding(32.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-                    Text(L("Ready when you are", "随时开始"), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.SemiBold)
+                    Text(L("What can we work on?", "今天想做些什么？"), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.SemiBold)
                     Spacer(Modifier.height(12.dp))
-                    Text(L("Choose a conversation from the sidebar or start a new chat.", "从侧栏选择对话，或开始新对话。"), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(L("Choose a conversation or start a new chat.", "选择对话，或开始新的聊天。"), color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Spacer(Modifier.height(24.dp))
                     Button(onClick = { create() }) { Text(L("New chat", "新对话")) }
                 }

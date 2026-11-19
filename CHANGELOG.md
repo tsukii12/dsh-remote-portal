@@ -5,6 +5,10 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+- Android iOS polish parity: visible automatic 640 px history thumbnails (20 MiB),
+  unknown-modality compatibility, 48 dp targets, keyboard-safe bottom following,
+  haptics, pinned approval actions, tablet drawer and bilingual empty states.
+
 - Android native terminal: retained session shells over sequenced duplex mux,
   Apache-2.0 Termux VT/Canvas rendering, IME/key controls, bounded acknowledged
   input, reconnect/foreground snapshot recovery, rename and explicit close.

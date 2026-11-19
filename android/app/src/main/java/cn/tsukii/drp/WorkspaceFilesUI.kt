@@ -18,6 +18,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -105,7 +107,7 @@ private fun FileEntry(entry: J, path: String, depth: Int, expanded: Boolean, ope
                 entry["size"].long?.let { Text(Usage.number(it) + L(" bytes", " 字节"), style = MaterialTheme.typography.labelSmall) }
             }
         }
-        if (!directory && enabled) TextButton(enabled = Mentions.file(path, false, false) != null, onClick = { mention(path) }) { Text("@") }
+        if (!directory && enabled) TextButton(modifier = Modifier.sizeIn(minWidth = 48.dp, minHeight = 48.dp).semantics { contentDescription = L("Mention $path", "提及 $path") }, enabled = Mentions.file(path, false, false) != null, onClick = { mention(path) }) { Text("@") }
     }
 }
 

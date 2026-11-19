@@ -53,7 +53,8 @@ preserve the full relay path prefix. Use trusted networks for plain HTTP.
 - Explicit system Photos, camera capture and Files options stream content URIs
   to staged uploads, with a progress/retry/remove rail and attachment-only messages. Host image limits
   control admission; receipts stay scoped to the current chat draft. File cards
-  and authorized image previews render in messages (inline previews up to 8 MiB).
+  and authorized image previews render in messages. Visible history images load
+  automatically as thumbnails bounded to 640 px, with a 20 MiB cap and retry.
   Photos/camera and image uploads/sends are blocked for explicitly text-only
   models without clearing the composer; ordinary file/text messages remain usable.
 - Debounced, cancellable `@` completion for workspace files/directories (including
@@ -66,6 +67,10 @@ preserve the full relay path prefix. Use trusted networks for plain HTTP.
   File rows/previews can insert a quoted `@` mention into the composer.
   Private `.dsh` path components are hidden from lists/search/mentions and refused
   by previews. Extensionless files are probed for image magic before text reads.
+- Native polish: 48 dp composer/attachment targets, labelled icon controls,
+  keyboard-safe input and bottom following that pauses for user scrolling,
+  send/approval haptics, pinned approval actions, a wider tablet drawer and
+  matched English/Chinese empty states. Missing model modalities remain allowed.
 - Native **Terminal** action beside Files: session-owned shell list/create,
   rename and confirmed close; a Canvas VT surface, scrollback/copy/paste and
   Ctrl/Esc/Tab/arrows. Return commits the IME draft before carriage return.

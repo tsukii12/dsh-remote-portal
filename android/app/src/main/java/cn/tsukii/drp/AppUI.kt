@@ -63,7 +63,7 @@ fun DRPApp() {
 
 @Composable
 fun GlyphButton(icon: ImageVector, label: String, enabled: Boolean = true, onClick: () -> Unit) {
-    IconButton(onClick = onClick, enabled = enabled) { Icon(icon, contentDescription = label) }
+    IconButton(onClick = onClick, enabled = enabled, modifier = Modifier.size(48.dp)) { Icon(icon, contentDescription = label) }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

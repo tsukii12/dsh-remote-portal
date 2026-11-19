@@ -3,6 +3,7 @@ package cn.tsukii.drp
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonArray
 import java.util.UUID
 import java.util.TimeZone
 
@@ -51,7 +52,7 @@ data class ChatState(val transcript: List<TranscriptItem> = emptyList(), val inP
     val currentModel: J get() = listOf("selected", "next", "lastUsed").map { selectedModel[it] }.firstOrNull { it["model"].string != null } ?: catalog["default"]
     val modelDefinition: J get() = catalog["groups"].array.find { it["id"] == currentModel["provider"] }?.get("models")?.array?.find { it["id"] == currentModel["model"] } ?: EMPTY
     val modelName: String get() = modelDefinition["name"].string ?: currentModel["model"].string ?: L("Choose model", "选择模型")
-    val imageInputError: String? get() = if (modelDefinition["inputModalities"] != j(null) && modelDefinition["inputModalities"].array.none { it.text == "image" })
+    val imageInputError: String? get() = if (modelDefinition["inputModalities"] is JsonArray && modelDefinition["inputModalities"].array.none { it.text == "image" })
         L("This model does not accept images. Choose an image-capable model or remove the images.", "当前模型不支持图片。请选择支持图片的模型或移除图片。") else null
     val effortName: String get() = currentModel["reasoningEffort"].string?.let { id -> modelDefinition["reasoning"]["efforts"].array.find { it["id"].text == id }?.get("name")?.string ?: id } ?: L("Default", "默认")
     val sessionStarted: Boolean get() = projections["sessionListMetadata"]["blank"] == j(false) || transcript.any { it.role == "user" } || running

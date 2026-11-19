@@ -3,6 +3,7 @@ package cn.tsukii.drp
 import android.content.Intent
 import androidx.core.content.FileProvider
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -23,8 +24,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -36,6 +42,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.collect
 import java.io.File
 
 @Composable
@@ -62,30 +69,47 @@ fun ChatScreen(chat: ChatStore, filesOpen: Boolean = false, dismissFiles: () -> 
     var queuedText by remember { mutableStateOf("") }
     var exported by remember { mutableStateOf<ByteArray?>(null) }
     val context = LocalContext.current
+    val haptics = LocalHapticFeedback.current
     var loadingOlder by remember { mutableStateOf(false) }
     val list = rememberLazyListState()
     var follow by remember { mutableStateOf(true) }
     val bottom by remember { derivedStateOf { !list.canScrollForward } }
+    val dragging by list.interactionSource.collectIsDraggedAsState()
+    var viewport by remember { mutableStateOf(Rect.Zero) }
     fun perform(action: suspend () -> Unit) { scope.launch { try { action() } catch (e: CancellationException) { throw e } catch (e: Exception) { error = e.message } } }
     LaunchedEffect(chat) { try { chat.start(); chat.loadModels(); chat.loadControls() } catch (e: CancellationException) { throw e } catch (e: Exception) { error = e.message } }
     DisposableEffect(chat) { onDispose { chat.stop() } }
-    LaunchedEffect(list.isScrollInProgress, bottom) { if (list.isScrollInProgress) follow = bottom }
+    LaunchedEffect(dragging, bottom, loadingOlder) { follow = ChatScrollFollowing.update(follow, dragging, bottom, loadingOlder) }
     val progress = state.inProgress
-    LaunchedEffect(state.transcript, progress) {
-        withFrameNanos { }
-        if (follow && list.layoutInfo.totalItemsCount > 0) list.scrollToItem(list.layoutInfo.totalItemsCount - 1)
+    LaunchedEffect(list) {
+        snapshotFlow {
+            val layout = list.layoutInfo
+            val last = layout.visibleItemsInfo.lastOrNull()
+            ChatScrollFollowing.Layout(layout.totalItemsCount, layout.viewportSize.height, last?.index, last?.offset, last?.size,
+                follow, loadingOlder, list.isScrollInProgress, list.canScrollForward)
+        }.collect { layout ->
+            if (layout.shouldScroll) {
+                withFrameNanos { }
+                if (follow && !loadingOlder && !list.isScrollInProgress)
+                list.scrollToItem(list.layoutInfo.totalItemsCount - 1)
+            }
+        }
     }
     Box(Modifier.fillMaxSize()) {
     Column(Modifier.fillMaxSize().imePadding()) {
         (error ?: state.error ?: ErrorPresentation.catalogError(state.catalog))?.let { ErrorBanner(it) { error = null } }
-        Box(Modifier.weight(1f)) {
+        Box(Modifier.weight(1f).onGloballyPositioned { viewport = it.boundsInWindow() }) {
+            CompositionLocalProvider(LocalAttachmentViewport provides viewport) {
             LazyColumn(state = list, modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
                 item(key = "older") {
                     if (state.hasMore) TextButton(onClick = { perform { loadingOlder = true; follow = false; try { chat.loadOlder() } finally { loadingOlder = false } } }, enabled = !loadingOlder) { Text(if (loadingOlder) L("Loading…", "加载中…") else L("Load older messages", "加载更早消息")) }
                 }
                 if (!state.loaded) item(key = "loading") { LinearProgressIndicator(Modifier.fillMaxWidth()) }
                 if (state.loaded && state.transcript.isEmpty() && progress == null) item(key = "empty") {
-                    Text(L("What would you like to work on?", "今天想做些什么？"), style = MaterialTheme.typography.headlineSmall, modifier = Modifier.padding(vertical = 28.dp))
+                    Column(Modifier.padding(vertical = 28.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Text(L("What can we work on?", "今天想做些什么？"), style = MaterialTheme.typography.headlineSmall)
+                        Text(L("Send a message to start this conversation.", "发送消息，开始这段对话。"), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
                 }
                 items(state.transcript, key = { it.id }) { item ->
                     MessageView(item, chat)
@@ -98,7 +122,8 @@ fun ChatScreen(chat: ChatStore, filesOpen: Boolean = false, dismissFiles: () -> 
                 } }
                 item(key = "bottom") { Spacer(Modifier.height(4.dp)) }
             }
-            if (!bottom) SmallFloatingActionButton(onClick = { follow = true; scope.launch { list.animateScrollToItem((list.layoutInfo.totalItemsCount - 1).coerceAtLeast(0)) } }, modifier = Modifier.align(Alignment.BottomCenter).padding(12.dp)) {
+            }
+            if (!bottom) SmallFloatingActionButton(onClick = { follow = true; scope.launch { list.animateScrollToItem((list.layoutInfo.totalItemsCount - 1).coerceAtLeast(0)) } }, modifier = Modifier.align(Alignment.BottomCenter).padding(12.dp).size(48.dp)) {
                 Icon(Icons.Default.KeyboardArrowDown, L("Jump to bottom", "跳到底部"))
             }
         }
@@ -161,9 +186,9 @@ fun ChatScreen(chat: ChatStore, filesOpen: Boolean = false, dismissFiles: () -> 
             AttachmentRail(chat, draft, !sending)
             AttachmentPicker(draft, !sending, state.imageInputError)
             Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                AssistChip(onClick = { models = true }, label = { Text(L("Model: ", "模型：") + state.modelName + " · " + state.effortName) })
-                AssistChip(onClick = { models = true }, label = { Text(ChatLabels.permission(state.projections["permissions"]["currentValue"].text).ifEmpty { L("Access mode", "访问模式") }) })
-                AssistChip(onClick = { models = true }, label = { Text(if (state.planEnabled) L("Plan mode", "计划模式") else ChatLabels.preset(state.projections["agentPreset"].string ?: "standard")) })
+                AssistChip(modifier = Modifier.heightIn(min = 48.dp), onClick = { models = true }, label = { Text(L("Model: ", "模型：") + state.modelName + " · " + state.effortName) })
+                AssistChip(modifier = Modifier.heightIn(min = 48.dp), onClick = { models = true }, label = { Text(ChatLabels.permission(state.projections["permissions"]["currentValue"].text).ifEmpty { L("Access mode", "访问模式") }) })
+                AssistChip(modifier = Modifier.heightIn(min = 48.dp), onClick = { models = true }, label = { Text(if (state.planEnabled) L("Plan mode", "计划模式") else ChatLabels.preset(state.projections["agentPreset"].string ?: "standard")) })
             }
             TextButton(onClick = { usage = true }, contentPadding = PaddingValues(horizontal = 2.dp, vertical = 0.dp), modifier = Modifier.fillMaxWidth()) {
                 Text(Usage.line(Usage.session(state.projections)) + " · " + L("Context ", "上下文 ") + Usage.percent(Usage.contextPercent(state.projections)),
@@ -180,8 +205,9 @@ fun ChatScreen(chat: ChatStore, filesOpen: Boolean = false, dismissFiles: () -> 
                         if (message == "/model") models = true
                         else if (message.startsWith("/")) { exported = null; exported = chat.executeCommand(message) }
                         else { chat.send(message, steer, attachments.mapNotNull { it.receipt }, if (attachments.isEmpty()) java.util.UUID.randomUUID().toString() else draft.requestID); draft.clear() }
+                        if (message != "/model") haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                     } catch (e: Exception) { if (editor.text.isEmpty()) editor = TextFieldValue(message, TextRange(message.length)); throw e } finally { sending = false } }
-                }, enabled = (text.isNotBlank() || attachments.isNotEmpty()) && draft.ready && !sending) { Icon(Icons.AutoMirrored.Filled.Send, if (state.running) { if (steer) L("Steer", "立即引导") else L("Queue message", "消息排队") } else L("Send", "发送")) }
+                }, modifier = Modifier.size(48.dp), enabled = (text.isNotBlank() || attachments.isNotEmpty()) && draft.ready && !sending) { Icon(Icons.AutoMirrored.Filled.Send, if (state.running) { if (steer) L("Steer", "立即引导") else L("Queue message", "消息排队") } else L("Send", "发送")) }
             }
             if (state.running) Row(verticalAlignment = Alignment.CenterVertically) {
                 Switch(steer, { steer = it }); Spacer(Modifier.width(8.dp)); Text(L("Steer immediately instead of queue", "立即引导而不是排队"), style = MaterialTheme.typography.bodySmall)
