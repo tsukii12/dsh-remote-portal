@@ -402,9 +402,8 @@ describe("mobile layer against the live dsh web UI", () => {
     if (!existsSync(CHROME)) { skipReason = `no Chrome/Chromium found (looked for ${CHROME}); set CHROME_PATH to enable these tests`; return; }
     if (!existsSync(CDP)) { skipReason = `driver missing at ${CDP}`; return; }
     if (ENV_BASE && ENV_TOKEN) {
-      const root = ENV_BASE.endsWith("/") ? ENV_BASE : ENV_BASE + "/";
-      BASE = root + "?drp=mobile";
-      TOKEN_URL = root + "?token=" + encodeURIComponent(ENV_TOKEN);
+      BASE = (ENV_BASE.endsWith("/") ? ENV_BASE : ENV_BASE + "/") + "?drp=mobile";
+      TOKEN_URL = BASE + "&token=" + encodeURIComponent(ENV_TOKEN);
     } else {
       try {
         TOKEN_URL = await startInstance();
@@ -423,7 +422,24 @@ describe("mobile layer against the live dsh web UI", () => {
     const pre = `(async () => {
   for (const b of document.querySelectorAll('button')) {
     const t = (b.textContent || '').trim();
-    if (t === '继续' || t === 'Continue') { b.click(); break; }
+    if (t === '继续' || t === 'Continue') {
+      b.click();
+      for (let attempt = 0; attempt < 10; attempt++) {
+        if (dismissWelcome()) break;
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+      break;
+    }
+  }
+  dismissWelcome();
+  function dismissWelcome() {
+    const close = document.querySelector(
+      '[role="dialog"][aria-label="Get started"] button[aria-label="Close"], ' +
+      '[role="dialog"][aria-label="开始使用"] button[aria-label="关闭"]'
+    );
+    if (!close) return false;
+    close.click();
+    return true;
   }
   // A fresh profile without an API key opens a modal "Get started" dialog; the
   // layer correctly steps aside for modals, so close it before measuring.

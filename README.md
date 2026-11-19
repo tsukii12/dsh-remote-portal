@@ -16,12 +16,14 @@
 
 ---
 
-DeepSeek Harness 只监听 `127.0.0.1`，用一次性启动令牌认证——离开这台电脑就用不了。本插件不改动 dsh 的任何机制，只在它前面加一道自己的门：独立端口上的网关，先验密码或一次性配对码，再转发给本机 dsh。
+在手机或另一台电脑上继续使用 DeepSeek Harness（dsh）。同一局域网内可以直接打开门户地址，或扫码一次性配对；在外面则可以通过自己部署的中转服务器访问。
+
+dsh 仍只监听本机。插件在独立端口运行网关，验证访问密码或一次性配对码后，再把请求转发给 dsh。初次使用请看[快速上手](docs/GETTING-STARTED.zh-CN.md)。
 
 <div align="center">
 <img src="docs/screenshots/panel-main-area.png" alt="远程访问面板" width="900" />
 
-<sub>面板是主区域里的一个页面（和「插件」「自动化任务」同级），侧栏保持可用。</sub>
+<sub>「局域网访问」页签显示可连接的地址和配对二维码（图中二维码已遮盖）。</sub>
 
 </div>
 
@@ -45,6 +47,7 @@ DeepSeek Harness 只监听 `127.0.0.1`，用一次性启动令牌认证——离
 </tr>
 </table>
 
+另见[手机上的门户登录页](docs/screenshots/mobile-login.png)。
 
 ## 安装
 
@@ -59,7 +62,7 @@ https://github.com/tsukii12/dsh-remote-portal
 ```bash
 git clone https://github.com/tsukii12/dsh-remote-portal
 cd dsh-remote-portal
-./install.sh            # macOS / Linux，装进 desktop + web profile
+sh ./install.sh         # macOS / Linux，装进 desktop + web profile
 .\install.ps1           # Windows
 ```
 
@@ -70,9 +73,9 @@ dsh plugin --profile desktop add \
   https://ghfast.top/https://github.com/tsukii12/dsh-remote-portal/archive/refs/heads/master.tar.gz
 ```
 
-装完**重启  DeepSeek Harness **即可。
+装完后**重启 DeepSeek Harness**。
 
-**首次必做一步**：侧栏 → **远程访问** → 设置访问密码。在此之前门户不会监听局域网。
+**首次必做一步**：侧栏 → **远程访问** → 设置访问密码。在此之前门户不会监听局域网。接下来可以[打开局域网地址或扫码配对](docs/GETTING-STARTED.zh-CN.md)。
 
 ## 更新
 
@@ -133,18 +136,18 @@ curl -fsSL https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@master/tools/d
 $ drp
 service     running · autostart on
 uptime      2h 14m
-agent port  1.2.3.4:9443 (TLS)
+agent port  relay.example.com:9443 (TLS)
 visitor     0.0.0.0:443 (TLS, self-signed)
-endpoint    tls://1.2.3.4:9443
+endpoint    tls://relay.example.com:9443
 relay       reachable
 tunnel      connected · 2 streams
 traffic     in 8.0 MiB · out 7.9 MiB · 2140 requests · 3 clients
-public      https://1.2.3.4/__t/ab12cd34ef56/
+public      https://relay.example.com/__t/EXAMPLE_ID/
 ```
 
 **更新中转**：再跑一次同一条命令即可——令牌与证书会复用，端口不会漂移。
 
-面板里「中转服务器」只填 **`IP:端口`**（如 `1.2.3.4:9443`），协议自动识别（先试 TLS，失败回退明文）。完整部署见 [docs/DEPLOY-SERVER.md](docs/DEPLOY-SERVER.md)。
+在面板的「中转服务器」中填写安装器给出的地址，例如 `tls://relay.example.com:9443`。如果只填主机和端口，客户端会先试 TLS，再回退到明文 TCP。详见[中转部署（中文）](docs/DEPLOY-SERVER.zh-CN.md)。
 
 ## 安全
 
@@ -182,7 +185,7 @@ public      https://1.2.3.4/__t/ab12cd34ef56/
 
 ## 测试
 
-`node --test` → **82 个测试**，约 75 秒，网络路径不 mock：门户用真实监听端口，隧道用真实中转 + 真实 agent（覆盖 HTTP、HTTPS、WebSocket），二维码由独立解码器校验，移动层跑在测试自己启动的 dsh 上。缺少 Chrome 时浏览器测试会显式跳过。
+运行 `node --test`。网关和中转使用真实监听端口，二维码由独立解码器校验。要在 macOS 或 Linux 上运行移动端浏览器测试，请启动 dsh Web，并设置 `CHROME_PATH`、`DSH_WEB_TEST_URL` 和 `DSH_WEB_TEST_TOKEN`；没有浏览器或可用的 dsh 时，这些用例会跳过。见[测试步骤](docs/TESTING.md)。
 
 ## 兼容性
 
@@ -195,8 +198,9 @@ public      https://1.2.3.4/__t/ab12cd34ef56/
 
 ## 文档
 
-- [ARCHITECTURE.md](ARCHITECTURE.md) — 设计与实测宿主事实
-- [docs/DEPLOY-SERVER.md](docs/DEPLOY-SERVER.md) — 服务端部署（systemd / Caddy / nginx / TLS）
+- [文档索引与项目结构](docs/README.md)
+- [快速上手](docs/GETTING-STARTED.zh-CN.md) · [中转部署（中文）](docs/DEPLOY-SERVER.zh-CN.md)
+- [架构（英文）](ARCHITECTURE.md) · [测试（英文）](docs/TESTING.md)
 - [CHANGELOG.md](CHANGELOG.md) — 逐版本记录
 - [SECURITY.md](SECURITY.md) — 安全策略
 

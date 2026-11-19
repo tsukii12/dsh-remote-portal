@@ -781,6 +781,7 @@ window.__ModuleLoader__.load({
       ".drp-sheet{width:100%;max-height:100vh;max-height:100dvh;border-radius:0;border:0}",
       ".drp-sheet-body{padding:16px 14px calc(24px + env(safe-area-inset-bottom))}",
       ".drp-sheet-x{top:10px;right:10px;width:40px;height:40px}",
+      ".drp-picker-head .drp-sheet-x{position:static;flex:none}",
       ".drp-sheet .drp-head-top{padding-right:48px}",
       "}",
       "@media (max-width:640px){",
@@ -2069,8 +2070,8 @@ window.__ModuleLoader__.load({
       var roots = (listing && listing.roots) || [];
       var entries = (listing && listing.entries) || [];
 
-      return h("div", { className: "drp-overlay", "data-drp-overlay": "1", "data-drp": "picker" },
-        h("div", { className: "drp-ui drp-sheet", role: "dialog", "aria-modal": "true", "aria-label": t("pickTitle") },
+      return h("div", { className: "drp-overlay", "data-drp-overlay": "1" },
+        h("div", { className: "drp-ui drp-sheet", "data-drp": "picker", role: "dialog", "aria-modal": "true", "aria-label": t("pickTitle") },
           h("div", { className: "drp-sheet-body drp-picker-body" },
           h("div", { className: "drp-picker" },
             h("header", { className: "drp-picker-head" },

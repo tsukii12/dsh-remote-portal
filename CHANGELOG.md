@@ -3,6 +3,24 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## Unreleased
+
+- Fixed password and pairing form submissions from nested pages, including when
+  the portal is served under a reverse proxy path prefix.
+- When a pairing code is rejected, the portal now asks you to generate and scan
+  a new QR code instead of saying that no code was supplied.
+
+## 0.6.2 — 2026-10-24
+
+- `drp status` lists every public URL when the relay serves several dsh machines.
+  Single-tunnel status still shows one URL.
+
+## 0.6.1 — 2026-10-24
+
+- Manage several dsh machines from one relay: `drp token add` creates another
+  tunnel token, `drp tokens` lists tunnels and their state, `drp urls` lists
+  public addresses, and `drp token remove <id>` removes a tunnel.
+
 ## 0.6.0 — 2026-10-23
 
 ### Added — a real certificate, so browsers stop warning
