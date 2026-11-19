@@ -65,14 +65,20 @@ struct HealthResult {
 
 final class PortalClient: NSObject, URLSessionTaskDelegate {
     static let shared = PortalClient()
+    let cookies: CookieVault
+    private let configuration: URLSessionConfiguration
     static let userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 DSHRemote/1.0"
     lazy var session: URLSession = {
-        let config = URLSessionConfiguration.default
+        let config = configuration.copy() as! URLSessionConfiguration
         config.httpShouldSetCookies = false
-        config.httpCookieStorage = nil
+        config.httpCookieStorage = .shared
         config.httpAdditionalHeaders = ["User-Agent": Self.userAgent]
         return URLSession(configuration: config, delegate: self, delegateQueue: nil)
     }()
+    init(configuration: URLSessionConfiguration = .default, cookies: CookieVault = CookieVault()) {
+        self.configuration = configuration; self.cookies = cookies
+        super.init(); _ = session
+    }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
         completionHandler(nil)
@@ -100,12 +106,13 @@ final class PortalClient: NSObject, URLSessionTaskDelegate {
             request.cachePolicy = .reloadIgnoringLocalCacheData
             let start = Date()
             let (_, response) = try await self.session.data(for: request)
+            if let http = response as? HTTPURLResponse { try self.cookies.ingest(http, base: base) }
             guard (response as? HTTPURLResponse)?.statusCode == 200 else { throw PortalError.message("Unhealthy") }
             return Int(Date().timeIntervalSince(start) * 1000)
         }
     }
 
-    func post(_ base: URL, endpoint: String, fields: [String: String], cookies: [HTTPCookie] = []) async throws -> [HTTPCookie] {
+    func post(_ base: URL, endpoint: String, fields: [String: String]) async throws -> [HTTPCookie] {
         let url = base.appendingPathComponent("__portal/\(endpoint)")
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -114,9 +121,10 @@ final class PortalClient: NSObject, URLSessionTaskDelegate {
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue(PortalURL.origin(base), forHTTPHeaderField: "Origin")
-        for (key, value) in HTTPCookie.requestHeaderFields(with: cookies) { request.setValue(value, forHTTPHeaderField: key) }
+        for (key, value) in HTTPCookie.requestHeaderFields(with: cookies.cookies(for: base, at: url)) { request.setValue(value, forHTTPHeaderField: key) }
         let (data, response) = try await session.data(for: request)
         guard let http = response as? HTTPURLResponse else { throw PortalError.message("Invalid response") }
+        try cookies.ingest(http, base: base)
         if http.statusCode == 429 {
             throw PortalError.message(L("Too many attempts. Try again after \(http.value(forHTTPHeaderField: "Retry-After") ?? "a few") seconds.", "尝试次数过多，请稍后重试（\(http.value(forHTTPHeaderField: "Retry-After") ?? "若干")秒）。"))
         }

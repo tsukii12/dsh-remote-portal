@@ -7,9 +7,26 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0064414DE458BACF5DE9054A /* ChatStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAD55BA925A3292BC9BE346B /* ChatStore.swift */; };
+		0C1263A9F581026D3ADE67A8 /* live-stream-all.json in Resources */ = {isa = PBXBuildFile; fileRef = F47AEBC220E3699A87934461 /* live-stream-all.json */; };
+		123178A77FE7836FA332B1CE /* RemoteEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7E7013EB502DA108045EF4 /* RemoteEvents.swift */; };
 		27AFA5AFB3674EC409BB2F0B /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAE3DE41EEF7C093D12022B7 /* Connection.swift */; };
+		30D52C9256F11802C1363A73 /* NativeStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC57A9E7125C1C7B7B1EBDF /* NativeStateTests.swift */; };
+		3476C850442F28B38BF77F00 /* PortalAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BDA4C515BC90EC918160FC7 /* PortalAPI.swift */; };
+		440948480E97A6A77AA0AB04 /* LiveSmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBF0DBBE82516D32040AE0D /* LiveSmokeTests.swift */; };
+		5A84AA8A6A5C7D3A66EF0330 /* live-session-create.json in Resources */ = {isa = PBXBuildFile; fileRef = 973DED5D475F8B79FE989954 /* live-session-create.json */; };
+		660B34C92A2416C5F3BC0CBC /* live-workspace-stream.json in Resources */ = {isa = PBXBuildFile; fileRef = A802E3426AD81E789CF18C84 /* live-workspace-stream.json */; };
+		6BCF9AEA77B1F1C0CAED715C /* TransportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E31BD29E3CF1DDCFBCB0A0 /* TransportTests.swift */; };
+		7D7A53CD2468EAB23563F035 /* live-hello-stream.json in Resources */ = {isa = PBXBuildFile; fileRef = B7F63A0D8CEB2C235E3FA3D0 /* live-hello-stream.json */; };
 		885826B154157C638D23EEDE /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = F895E8B0D476AF0D2450E142 /* App.swift */; };
+		92F5D3E76DA6F1B0F731C504 /* live-hello-events.json in Resources */ = {isa = PBXBuildFile; fileRef = DD93E121F2F672C89D9A3815 /* live-hello-events.json */; };
+		963126DBDA1CC342DBB60A9D /* live-hello-prompt-request.json in Resources */ = {isa = PBXBuildFile; fileRef = EAB6DADADE845E2267928140 /* live-hello-prompt-request.json */; };
+		A99E00B8D01A16A223F3BEB3 /* PortalMux.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3430E2CC2CBD6539757293 /* PortalMux.swift */; };
+		C749EFF01CA2D46037481757 /* live-model-catalog.json in Resources */ = {isa = PBXBuildFile; fileRef = 12D941C7E4498470F35A8489 /* live-model-catalog.json */; };
 		CEA73A64EF47BE3569B4099E /* ConnectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D80301D5FBB4C69FB8FA95D /* ConnectionTests.swift */; };
+		DEF8EECE056D9028FF12D9AC /* live-approval-events.json in Resources */ = {isa = PBXBuildFile; fileRef = F345DCE047A5A4AF876DC2CE /* live-approval-events.json */; };
+		E2229F21D3CFA32A175A9231 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = B896439645C80D92D51A5D57 /* JSON.swift */; };
+		F1A383AD689AD62FE1BB500E /* SidebarStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0591514315C7638F5FE12F /* SidebarStore.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -25,10 +42,27 @@
 /* Begin PBXFileReference section */
 		04C4FB18692FB828803326B3 /* DSHRemoteTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = DSHRemoteTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0D032808C27DB9B596C1F823 /* DSHRemote.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = DSHRemote.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		12D941C7E4498470F35A8489 /* live-model-catalog.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "live-model-catalog.json"; sourceTree = "<group>"; };
+		1FBF0DBBE82516D32040AE0D /* LiveSmokeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveSmokeTests.swift; sourceTree = "<group>"; };
 		2D80301D5FBB4C69FB8FA95D /* ConnectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionTests.swift; sourceTree = "<group>"; };
+		4FC57A9E7125C1C7B7B1EBDF /* NativeStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeStateTests.swift; sourceTree = "<group>"; };
+		51E31BD29E3CF1DDCFBCB0A0 /* TransportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransportTests.swift; sourceTree = "<group>"; };
+		5BDA4C515BC90EC918160FC7 /* PortalAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortalAPI.swift; sourceTree = "<group>"; };
+		5F7E7013EB502DA108045EF4 /* RemoteEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteEvents.swift; sourceTree = "<group>"; };
+		973DED5D475F8B79FE989954 /* live-session-create.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "live-session-create.json"; sourceTree = "<group>"; };
+		A802E3426AD81E789CF18C84 /* live-workspace-stream.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "live-workspace-stream.json"; sourceTree = "<group>"; };
+		B7F63A0D8CEB2C235E3FA3D0 /* live-hello-stream.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "live-hello-stream.json"; sourceTree = "<group>"; };
+		B896439645C80D92D51A5D57 /* JSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
 		BAE3DE41EEF7C093D12022B7 /* Connection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
+		CA3430E2CC2CBD6539757293 /* PortalMux.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortalMux.swift; sourceTree = "<group>"; };
+		CAD55BA925A3292BC9BE346B /* ChatStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatStore.swift; sourceTree = "<group>"; };
+		DD93E121F2F672C89D9A3815 /* live-hello-events.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "live-hello-events.json"; sourceTree = "<group>"; };
+		EAB6DADADE845E2267928140 /* live-hello-prompt-request.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "live-hello-prompt-request.json"; sourceTree = "<group>"; };
+		F345DCE047A5A4AF876DC2CE /* live-approval-events.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "live-approval-events.json"; sourceTree = "<group>"; };
+		F47AEBC220E3699A87934461 /* live-stream-all.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "live-stream-all.json"; sourceTree = "<group>"; };
 		F895E8B0D476AF0D2450E142 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		F9271D50C7B0055EF7EEC2B9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		FF0591514315C7638F5FE12F /* SidebarStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarStore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -45,8 +79,14 @@
 			isa = PBXGroup;
 			children = (
 				F895E8B0D476AF0D2450E142 /* App.swift */,
+				CAD55BA925A3292BC9BE346B /* ChatStore.swift */,
 				BAE3DE41EEF7C093D12022B7 /* Connection.swift */,
 				F9271D50C7B0055EF7EEC2B9 /* Info.plist */,
+				B896439645C80D92D51A5D57 /* JSON.swift */,
+				5BDA4C515BC90EC918160FC7 /* PortalAPI.swift */,
+				CA3430E2CC2CBD6539757293 /* PortalMux.swift */,
+				5F7E7013EB502DA108045EF4 /* RemoteEvents.swift */,
+				FF0591514315C7638F5FE12F /* SidebarStore.swift */,
 			);
 			path = DSHRemote;
 			sourceTree = "<group>";
@@ -55,8 +95,27 @@
 			isa = PBXGroup;
 			children = (
 				2D80301D5FBB4C69FB8FA95D /* ConnectionTests.swift */,
+				1FBF0DBBE82516D32040AE0D /* LiveSmokeTests.swift */,
+				4FC57A9E7125C1C7B7B1EBDF /* NativeStateTests.swift */,
+				51E31BD29E3CF1DDCFBCB0A0 /* TransportTests.swift */,
+				C0859E41DEF08337F895755C /* Fixtures */,
 			);
 			path = DSHRemoteTests;
+			sourceTree = "<group>";
+		};
+		C0859E41DEF08337F895755C /* Fixtures */ = {
+			isa = PBXGroup;
+			children = (
+				F345DCE047A5A4AF876DC2CE /* live-approval-events.json */,
+				DD93E121F2F672C89D9A3815 /* live-hello-events.json */,
+				EAB6DADADE845E2267928140 /* live-hello-prompt-request.json */,
+				B7F63A0D8CEB2C235E3FA3D0 /* live-hello-stream.json */,
+				12D941C7E4498470F35A8489 /* live-model-catalog.json */,
+				973DED5D475F8B79FE989954 /* live-session-create.json */,
+				F47AEBC220E3699A87934461 /* live-stream-all.json */,
+				A802E3426AD81E789CF18C84 /* live-workspace-stream.json */,
+			);
+			path = Fixtures;
 			sourceTree = "<group>";
 		};
 		C70777B893EEA1CF7C03E7CB /* Products */ = {
@@ -93,6 +152,7 @@
 			buildConfigurationList = 40321D3C1FD2979274D1D1FB /* Build configuration list for PBXNativeTarget "DSHRemoteTests" */;
 			buildPhases = (
 				8ACFEA0ACB9FD3D48493C6F2 /* Sources */,
+				573DB261626A0F44A36EF854 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -137,12 +197,33 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		573DB261626A0F44A36EF854 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DEF8EECE056D9028FF12D9AC /* live-approval-events.json in Resources */,
+				92F5D3E76DA6F1B0F731C504 /* live-hello-events.json in Resources */,
+				963126DBDA1CC342DBB60A9D /* live-hello-prompt-request.json in Resources */,
+				7D7A53CD2468EAB23563F035 /* live-hello-stream.json in Resources */,
+				C749EFF01CA2D46037481757 /* live-model-catalog.json in Resources */,
+				5A84AA8A6A5C7D3A66EF0330 /* live-session-create.json in Resources */,
+				0C1263A9F581026D3ADE67A8 /* live-stream-all.json in Resources */,
+				660B34C92A2416C5F3BC0CBC /* live-workspace-stream.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		8ACFEA0ACB9FD3D48493C6F2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				CEA73A64EF47BE3569B4099E /* ConnectionTests.swift in Sources */,
+				440948480E97A6A77AA0AB04 /* LiveSmokeTests.swift in Sources */,
+				30D52C9256F11802C1363A73 /* NativeStateTests.swift in Sources */,
+				6BCF9AEA77B1F1C0CAED715C /* TransportTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -151,7 +232,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				885826B154157C638D23EEDE /* App.swift in Sources */,
+				0064414DE458BACF5DE9054A /* ChatStore.swift in Sources */,
 				27AFA5AFB3674EC409BB2F0B /* Connection.swift in Sources */,
+				E2229F21D3CFA32A175A9231 /* JSON.swift in Sources */,
+				3476C850442F28B38BF77F00 /* PortalAPI.swift in Sources */,
+				A99E00B8D01A16A223F3BEB3 /* PortalMux.swift in Sources */,
+				123178A77FE7836FA332B1CE /* RemoteEvents.swift in Sources */,
+				F1A383AD689AD62FE1BB500E /* SidebarStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,6 +1,6 @@
 # dsh Remote — iOS preview
 
-Native SwiftUI server management and sign-in, with the official dsh workspace in a persistent WKWebView. iOS 17+, no third-party dependencies. English/Chinese follow the device language.
+Native SwiftUI server management and sign-in plus a Foundation networking/state layer. iOS 17+, no third-party dependencies. No embedded browser. English/Chinese follow the device language. This first native migration step shows a connected placeholder; workspace/chat UI follows separately.
 
 ## Build and run
 
@@ -15,7 +15,30 @@ xcodebuild -project ios/DSHRemote.xcodeproj -scheme DSHRemote \
 
 Tap **+** and enter a name and one HTTP(S) base address per line. Include relay path prefixes (`https://relay.example/__t/id/`). Alternatively paste a `.../__portal/pair?t=...` link; saving creates the server and opens native pairing confirmation. Long-press a server to edit; swipe to delete. Pairing tokens/passwords are not persisted by the app. Addresses are saved locally in UserDefaults.
 
-Connecting races uncached health checks across all addresses with a three-second timeout. The first HTTP 200 wins; failed addresses do not end the race. The header shows the winning address, approximate latency and LAN/public classification. Login uses a shared keep-alive URLSession, never follows redirects, and transfers session cookies to the pre-warmed WKWebView with an identical User-Agent. Valid cookies survive app restarts. Session expiration returns to native login. Reload and logout are in the workspace toolbar; back returns to servers without logging out.
+Connecting races uncached health checks across all addresses with a three-second timeout. The first HTTP 200 wins; failed addresses do not end the race. The header shows the winning address, approximate latency and LAN/public classification. A single keep-alive URLSession serves HTTP and WebSocket requests with the same User-Agent and Origin. Login redirects are not followed. All response cookies enter HTTPCookieStorage and an explicit, file-protected cookie jar partitioned by the full server base (including port/path). Cookies survive app restarts; only that base's jar is sent. Session expiration returns to native login. Back returns to servers without logging out.
+
+## Native state layer
+
+- `PortalAPI`: RPC envelopes, login/logout, HTTP/business errors and session-expired state.
+- `PortalMux`: multiplexed logical AsyncThrowingStreams, unsubscribe/end/error, reconnect backoff and fresh stream openings. URLSession answers protocol pings automatically.
+- `NativeConnection`: owns a shared `RemoteEvents` stream and `SidebarStore`; call `start()`/`stop()` with screen lifecycle. Create chats with `chat(sessionID)` so they share that event generation.
+- `SidebarStore`: ordered workspace/session grouping, pinned/archive membership, live projections/status/activity and mutation actions.
+- `ChatStore`: snapshot/page/surface reducers, transient assistant blocks, compact stream expansion, paired tool results, optimistic request reconciliation, prompt/cancel/model actions. Call `start()`/`stop()` with chat lifecycle. `transcript` contains durable/optimistic items; `inProgress` is the separate transient assistant item.
+- `RemoteEvents`: pending approval/question requests, current clientId, cancellation and generation-safe answers. Approval decisions are `allowed-once`/`rejected`, not booleans on the wire.
+
+Sanitized `live-*.json` files in `DSHRemoteTests/Fixtures` are test-bundle resources. Reducer and transport-contract tests run offline by default.
+
+### Opt-in live smoke test
+
+Requires the local fake model setup at `~/fake-llm/README.md`, dsh on 3080 and the portal on 3081. It uses the throwaway password `demo-pass-123`, creates then archives one session, and allows only the requested fixture's pwd escalation. Never enable it against another service.
+
+```sh
+TEST_RUNNER_DSH_LIVE_SMOKE=1 xcodebuild -project ios/DSHRemote.xcodeproj -scheme DSHRemote \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=26.5' \
+  -collect-test-diagnostics never -only-testing:DSHRemoteTests/LiveSmokeTests test
+```
+
+Xcode passes the `TEST_RUNNER_`-prefixed variable into the test runner as `DSH_LIVE_SMOKE`. Output prefixed `LIVE PASS` proves native URLSession login, sidebar baseline, session creation, incremental text, reconnect, approval answer and committed tool/final response.
 
 ## Local demo
 
@@ -33,6 +56,6 @@ Set a throwaway password in dsh Settings → Remote access (or POST JSON `{"pass
 ## Limits
 
 - HTTP LAN connections are allowed by ATS. **Self-signed TLS is not bypassed**: use a trusted certificate or install and trust your local CA on the device. There is deliberately no global certificate bypass.
-- The workspace is the server’s own UI, not a native rewrite. WebKit provides its standard camera/file picker (camera requires a physical device).
-- No custom app icon in this preview. Server addresses are not encrypted; avoid embedding secrets in URLs. Session cookies use WebKit’s standard persistent data store.
-- Tests cover normalization/path prefixes, pairing parsing/form encoding, and fastest-success/empty/failed races; real relay, physical camera, lockout and revoked-session flows need manual validation.
+- Workspace/chat rendering, attachments, settings and terminal UI are not part of this state-layer step.
+- No custom app icon in this preview. Server addresses are not encrypted; avoid embedding secrets in URLs. Cookie files are in Application Support with iOS data protection; deleting a saved server does not revoke its remote session (log out first).
+- Real relay, physical-device networking, lockout and certificate flows need manual validation.

@@ -23,8 +23,6 @@ targets:
         UILaunchScreen: {}
         NSAppTransportSecurity:
           NSAllowsArbitraryLoads: true
-        NSCameraUsageDescription: Take a photo to upload to your workspace.
-        NSMicrophoneUsageDescription: Record media for your workspace.
         NSLocalNetworkUsageDescription: Connect to your DeepSeek Harness on the local network.
   DSHRemoteTests:
     type: bundle.unit-test

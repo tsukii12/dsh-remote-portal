@@ -25,12 +25,8 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
-	<key>NSCameraUsageDescription</key>
-	<string>Take a photo to upload to your workspace.</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Connect to your DeepSeek Harness on the local network.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Record media for your workspace.</string>
 	<key>UILaunchScreen</key>
 	<dict/>
 </dict>
