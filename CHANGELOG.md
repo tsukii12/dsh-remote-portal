@@ -6,6 +6,10 @@ versions are the plugin's own, not dsh's.
 ## Unreleased
 
 ### Added
+- Native iOS: workspace file search/watch-reset reload, file and session mentions, and sent/total upload bytes. Image sends respect explicit model input modalities without clearing rejected drafts; extensionless images are sniffed and private `.dsh` paths are hidden. Answered/cancelled approval replays remain resolved.
+- 原生 iOS：工作区文件搜索/监听重置刷新、文件和会话提及及上传字节进度。图片发送遵循模型输入能力，拒绝时保留草稿；识别无扩展名图片并隐藏 `.dsh` 私密路径。已回答/取消的授权请求不会因重放重新出现。
+- Terminal commits a pending IME candidate before Return, automatically reattaches after foreground/mux recovery, and never replays uncertain input.
+- 终端在回车前提交待确认的输入法候选词，回到前台/复用连接恢复后自动重连，不重发未确认输入。
 - Native terminal: pinned MIT-licensed SwiftTerm VT rendering, retained session shells, multi-terminal inventory, keyboard accessory/copy/paste, viewport resize and generation-safe bidirectional mux. Reconnect replaces the bounded screen snapshot without replaying uncertain input; parser/state, real-listener and opt-in live coverage.
 - 原生终端：固定版本的 MIT 许可 SwiftTerm VT 渲染、会话 Shell 保留、多终端列表、扩展按键/复制/粘贴、视口尺寸更新及代际安全的双向复用流。重连替换有限屏幕快照，不重发未确认输入；包含解析/状态、真实监听器与可选在线测试。
 - Native DRP round 2: Photos/camera/Files uploads and file mentions, read-only workspace previews, token/context and completed-turn usage, revision-safe default model/access settings, provider status and Portal devices. Terminal remains deferred.
@@ -1215,7 +1219,6 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
-
 
 
 

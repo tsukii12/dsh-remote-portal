@@ -39,7 +39,12 @@ struct ChatView: View {
         .toolbar { ToolbarItem(placement: .principal) { VStack(spacing: 2) { Text("DRP").font(.headline); Text(title).font(.caption).foregroundStyle(.secondary).lineLimit(1) } } }
         .toolbar { ToolbarItem(placement: .primaryAction) { Button { showingFiles = true } label: { Image(systemName: "folder") }.accessibilityLabel(L("Workspace files", "工作区文件")).accessibilityIdentifier("workspaceFiles") } }
         .sheet(isPresented: $showingOptions) { ChatOptionsView(chat: chat) }
-        .sheet(isPresented: $showingFiles) { WorkspaceFilesView(api: chat.api, sessionID: chat.sessionID) }
+        .sheet(isPresented: $showingFiles) {
+            WorkspaceFilesView(api: chat.api, sessionID: chat.sessionID) { path in
+                guard let text = FileMentionToken.insertingFile(path, into: draft) else { return }
+                draft = text; showingFiles = false; composerFocused = true
+            }
+        }
         .toolbar { ToolbarItem(placement: .primaryAction) { if chat.api is PortalAPI { Button { showingTerminals = true } label: { Image(systemName: "terminal") }.accessibilityLabel(L("Terminals", "终端")).accessibilityIdentifier("terminals") } } }
         .sheet(isPresented: $showingTerminals) { if let api = chat.api as? PortalAPI { TerminalsView(api: api, sessionID: chat.sessionID) } }
         .task(id: draft) { await mentions.load(draft) }
@@ -106,7 +111,7 @@ struct ChatView: View {
             if let file = chat.exportedFile { ShareLink(item: file) { Label(L("Share session log", "分享会话日志"), systemImage: "square.and.arrow.up") }.font(.caption) }
             if draft.hasPrefix("/") { commandSuggestions }
             if FileMentionToken.active(in: draft) != nil { mentionSuggestions }
-            ComposerAttachmentsView(store: attachments, limits: chat.projections["imageLimits"], disabled: sending || !chat.loaded, onError: { actionError = $0; dismissedError = nil })
+            ComposerAttachmentsView(store: attachments, limits: chat.projections["imageLimits"], disabled: sending || !chat.loaded, imageInputError: chat.imageInputError, onError: { actionError = $0; dismissedError = nil })
             UsageView(usage: chat.projections["tokenUsage"], pressure: chat.projections["contextPressure"])
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
@@ -147,9 +152,9 @@ struct ChatView: View {
                 ForEach(Array(mentions.candidates.enumerated()), id: \.offset) { _, candidate in
                     Button {
                         if let token = FileMentionToken.active(in: draft), let text = token.inserting(candidate, into: draft) { draft = text; composerFocused = true }
-                    } label: { Label(candidate["path"].text, systemImage: candidate["kind"] == "directory" ? "folder" : "doc").frame(maxWidth: .infinity, minHeight: 36, alignment: .leading).contentShape(Rectangle()) }.buttonStyle(.plain)
+                    } label: { Label(candidate["displayTitle"].string ?? candidate["label"].string ?? candidate["path"].text, systemImage: candidate["mention"].string != nil ? "bubble.left" : candidate["kind"] == "directory" ? "folder" : "doc").frame(maxWidth: .infinity, minHeight: 36, alignment: .leading).contentShape(Rectangle()) }.buttonStyle(.plain)
                 }
-                if !mentions.loading && mentions.error == nil && mentions.candidates.isEmpty { Text(L("No matching workspace files", "没有匹配的工作区文件")).foregroundStyle(.secondary) }
+                if !mentions.loading && mentions.error == nil && mentions.candidates.isEmpty { Text(L("No matching files or sessions", "没有匹配的文件或会话")).foregroundStyle(.secondary) }
             }.font(.caption).padding(8)
         }.frame(height: min(140, CGFloat(max(1, mentions.candidates.count)) * 44 + 8))
     }
@@ -197,9 +202,10 @@ struct ChatView: View {
     }
     private func send() {
         guard canSend else { return }
-        let text = draft; let steerNow = steer; draft = ""; sending = true; followingBottom = true; composerFocused = false
+        let text = draft; let steerNow = steer; sending = true; followingBottom = true; composerFocused = false
         Task {
             do {
+                if text.trimmingCharacters(in: .whitespacesAndNewlines) != "/model" { try chat.validateImageInput(attachments.items) }
                 if text.trimmingCharacters(in: .whitespacesAndNewlines) == "/model" { showingOptions = true }
                 else if text.hasPrefix("/") {
                     let parts: [JSON] = try attachments.items.map { item in
@@ -210,6 +216,7 @@ struct ChatView: View {
                     attachments.clear()
                 }
                 else { try await chat.send(text, steer: steerNow, attachments: attachments.items); attachments.clear() }
+                if draft == text { draft = "" }
             }
             catch { actionError = error.localizedDescription; if draft.isEmpty { draft = text } }
             sending = false

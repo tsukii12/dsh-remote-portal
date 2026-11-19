@@ -85,12 +85,16 @@ protocol RPCServing: AnyObject {
     func portal(_ path: String, query: [URLQueryItem], body: JSON?) async throws -> JSON
     func exportSession(_ id: String) async throws -> URL
     func upload(sessionID: String, file: URL, name: String, mediaType: String?) async throws -> JSON
+    func upload(sessionID: String, file: URL, name: String, mediaType: String?, progress: @escaping @Sendable (Int64, Int64) -> Void) async throws -> JSON
 }
 
 extension RPCServing {
     func portal(_ path: String, query: [URLQueryItem], body: JSON?) async throws -> JSON { throw APIError.invalidResponse }
     func exportSession(_ id: String) async throws -> URL { throw APIError.invalidResponse }
     func upload(sessionID: String, file: URL, name: String, mediaType: String?) async throws -> JSON { throw APIError.invalidResponse }
+    func upload(sessionID: String, file: URL, name: String, mediaType: String?, progress: @escaping @Sendable (Int64, Int64) -> Void) async throws -> JSON {
+        try await upload(sessionID: sessionID, file: file, name: name, mediaType: mediaType)
+    }
 }
 
 @MainActor
@@ -136,6 +140,9 @@ final class PortalAPI: ObservableObject, RPCServing {
         } catch APIError.sessionExpired { expire(); throw APIError.sessionExpired }
     }
     func upload(sessionID: String, file: URL, name: String, mediaType: String? = nil) async throws -> JSON {
+        try await upload(sessionID: sessionID, file: file, name: name, mediaType: mediaType, progress: { _, _ in })
+    }
+    func upload(sessionID: String, file: URL, name: String, mediaType: String?, progress: @escaping @Sendable (Int64, Int64) -> Void) async throws -> JSON {
         var request = request("api/session/uploadFileBinary")
         var components = URLComponents(url: request.url!, resolvingAgainstBaseURL: false)!
         components.queryItems = [URLQueryItem(name: "sessionId", value: sessionID), URLQueryItem(name: "name", value: name)]
@@ -144,7 +151,7 @@ final class PortalAPI: ObservableObject, RPCServing {
         request.url = components.url; request.httpMethod = "POST"
         request.setValue("application/octet-stream", forHTTPHeaderField: "Content-Type")
         do {
-            let (data, response) = try await client.session.upload(for: request, fromFile: file)
+            let (data, response) = try await client.session.upload(for: request, fromFile: file, delegate: UploadProgressDelegate(progress))
             guard let http = response as? HTTPURLResponse else { throw APIError.invalidResponse }
             try client.cookies.ingest(http, base: base)
             if http.statusCode == 401 { throw APIError.sessionExpired }

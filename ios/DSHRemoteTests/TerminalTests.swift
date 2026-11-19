@@ -9,8 +9,88 @@ private final class TerminalReplies: TerminalDelegate {
     func send(source: Terminal, data: ArraySlice<UInt8>) { replies += data }
 }
 
+private final class TerminalInputRecorder: TerminalViewDelegate {
+    var bytes: [UInt8] = []
+    func send(source: SwiftTerm.TerminalView, data: ArraySlice<UInt8>) { bytes += data }
+    func sizeChanged(source: SwiftTerm.TerminalView, newCols: Int, newRows: Int) {}
+    func setTerminalTitle(source: SwiftTerm.TerminalView, title: String) {}
+    func hostCurrentDirectoryUpdate(source: SwiftTerm.TerminalView, directory: String?) {}
+    func scrolled(source: SwiftTerm.TerminalView, position: Double) {}
+    func requestOpenLink(source: SwiftTerm.TerminalView, link: String, params: [String: String]) {}
+    func rangeChanged(source: SwiftTerm.TerminalView, startY: Int, endY: Int) {}
+}
+
 @MainActor
 final class TerminalTests: XCTestCase {
+    func testReturnCommitsPendingIMECandidateBeforeSendingReturn() {
+        let view = RemoteTerminalView(frame: CGRect(x: 0, y: 0, width: 390, height: 400))
+        let input = TerminalInputRecorder(); view.terminalDelegate = input
+        defer { view.updateUiClosed() }
+        view.insertText("echo ")
+        view.setMarkedText("你好", selectedRange: NSRange(location: 2, length: 0))
+        XCTAssertEqual(input.bytes, Array("echo ".utf8))
+        view.insertText("\n"); view.unmarkText()
+        XCTAssertEqual(input.bytes, Array("echo 你好\r".utf8))
+    }
+    func testPinyinMarkedCandidateCommitsOnceAsUTF8AfterASCIIPrefix() {
+        let view = RemoteTerminalView(frame: CGRect(x: 0, y: 0, width: 390, height: 400))
+        let input = TerminalInputRecorder(); view.terminalDelegate = input
+        defer { view.updateUiClosed() }
+        for character in "echo " { view.insertText(String(character)) }
+        for marked in ["n", "ni", "ni\u{2006}hao", "你好"] {
+            view.setMarkedText(marked, selectedRange: NSRange(location: marked.utf16.count, length: 0))
+            XCTAssertEqual(input.bytes, Array("echo ".utf8))
+        }
+        view.unmarkText(); view.unmarkText()
+        XCTAssertEqual(input.bytes, Array("echo 你好".utf8))
+        XCTAssertNil(view.markedTextRange)
+        view.insertText("\n")
+        XCTAssertEqual(input.bytes, Array("echo 你好\r".utf8))
+    }
+    func testIMEExplicitInsertEmptyAndCancelledComposition() {
+        let view = RemoteTerminalView(frame: CGRect(x: 0, y: 0, width: 390, height: 400))
+        let input = TerminalInputRecorder(); view.terminalDelegate = input
+        defer { view.updateUiClosed() }
+        view.setMarkedText("", selectedRange: NSRange(location: 0, length: 0)); view.unmarkText()
+        XCTAssertTrue(input.bytes.isEmpty)
+        view.setMarkedText("ni", selectedRange: NSRange(location: 2, length: 0))
+        view.setMarkedText(nil, selectedRange: NSRange(location: 0, length: 0)); view.unmarkText()
+        XCTAssertTrue(input.bytes.isEmpty)
+        view.setMarkedText("nihao", selectedRange: NSRange(location: 5, length: 0))
+        view.insertText("你好"); view.unmarkText()
+        XCTAssertEqual(input.bytes, Array("你好".utf8))
+    }
+    func testFilesWatchWireFramesRecoverAfterMuxReconnect() async throws {
+        let server = try TerminalSocketListener(); let base = try await server.start()
+        let api = PortalAPI(base: base, client: PortalClient())
+        defer { api.mux.close(); api.client.session.invalidateAndCancel(); server.stop() }
+        let deadline = Task { try await Task.sleep(nanoseconds: 10_000_000_000); api.mux.close() }
+        defer { deadline.cancel() }
+        var iterator = api.stream("workspaceFiles/changes", args: ["workspaceFileScopeId": "S", "path": "."]).makeAsyncIterator()
+        let first = try await iterator.next(); XCTAssertEqual(first?["kind"], "change")
+        api.mux.reconnect()
+        let reset = try await iterator.next(); XCTAssertEqual(reset?["type"], "connection-reset")
+        let changed = try await iterator.next(); XCTAssertEqual(changed?["kind"], "change")
+        let opens = server.received.filter { $0["type"] == "open" }
+        XCTAssertEqual(opens.count, 2)
+        XCTAssertTrue(opens.allSatisfy { $0["endpoint"] == "workspaceFiles/changes" && $0["payload"]["args"] == ["workspaceFileScopeId": "S", "path": "."] })
+    }
+    func testForegroundResumeRestartsSameTerminalOnceAndDoesNotReplayInput() {
+        let api = PortalAPI(base: URL(string: "http://127.0.0.1:1/")!, client: PortalClient())
+        let store = TerminalStore(api: api, sessionID: "S", info: ["id": "T", "state": "running"])
+        defer { store.stop(); api.mux.close(); api.client.session.invalidateAndCancel() }
+        let initial = store.runID
+        store.setForeground(false)
+        XCTAssertFalse(store.isForeground); XCTAssertFalse(store.ready)
+        XCTAssertNotEqual(store.runID, initial)
+        let stopped = store.runID
+        store.setForeground(false); XCTAssertEqual(store.runID, stopped)
+        store.setForeground(true)
+        XCTAssertTrue(store.isForeground); XCTAssertNotEqual(store.runID, stopped)
+        let resumed = store.runID
+        store.setForeground(true); XCTAssertEqual(store.runID, resumed)
+        XCTAssertEqual(store.id, "T"); XCTAssertEqual(store.protocolState.inputSequence, 0)
+    }
     func testNativeCopyAllPreservesWideCharactersAndHandlesEmptyScreen() {
         let view = RemoteTerminalView(frame: CGRect(x: 0, y: 0, width: 390, height: 400))
         defer { view.updateUiClosed() }
@@ -169,7 +249,7 @@ private final class TerminalSocketListener {
                 lock.lock(); frames.append(frame); lock.unlock()
                 let id = frame["streamId"]
                 var value: JSON?
-                if frame["type"] == "open" { value = ["type": "snapshot", "sequence": 10, "screen": "recovered"] }
+                if frame["type"] == "open" { value = frame["endpoint"] == "workspaceFiles/changes" ? ["kind": "change"] : ["type": "snapshot", "sequence": 10, "screen": "recovered"] }
                 if frame["type"] == "item" { value = ["type": "ack", "sequence": frame["value"]["sequence"]] }
                 if let value {
                     let response: JSON = ["type": "item", "streamId": id, "value": value]

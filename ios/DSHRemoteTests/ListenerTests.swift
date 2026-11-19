@@ -5,6 +5,13 @@ import Combine
 import UIKit
 @testable import DSHRemote
 
+private final class UploadProgressLog: @unchecked Sendable {
+    private let lock = NSLock()
+    private var entries: [(Int64, Int64)] = []
+    func append(_ sent: Int64, _ total: Int64) { lock.lock(); defer { lock.unlock() }; entries.append((sent, total)) }
+    var values: [(Int64, Int64)] { lock.lock(); defer { lock.unlock() }; return entries }
+}
+
 private final class HTTPListener {
     struct Request {
         let path: String
@@ -80,6 +87,74 @@ private final class HTTPListener {
 
 @MainActor
 final class ListenerTests: XCTestCase {
+    func testExtensionlessImagesTextAndBinaryFailuresOverRealHTTP() async throws {
+        let image = png(); var textReads: [String] = []; var probes = 0
+        let server = try HTTPListener { request in
+            let body = try! JSONDecoder().decode(JSON.self, from: request.body); let args = body["payload"]["args"]
+            XCTAssertEqual(args["workspaceFileScopeId"], "S")
+            if body["method"] == "workspaceFiles/readBytes" {
+                if args["options"]["range"] != .null { XCTAssertEqual(args["options"]["range"], ["offset": 0, "length": 32]); probes += 1 }
+                let data = args["path"] == "image" ? image : args["path"] == "empty" ? Data() : Data("text".utf8)
+                let metadata: JSON = ["type": "server-response", "result": ["ok": true, "value": ["data": nil, "eof": true]], "attachments": [["codec": "bytes", "part": "binary", "path": ["data"]]]]
+                return .init(headers: ["Content-Type": "multipart/form-data; boundary=drp-boundary"], data: self.multipart(metadata, bytes: data))
+            }
+            XCTAssertEqual(body["method"], "workspaceFiles/read"); textReads.append(args["path"].text)
+            if args["path"] == "binary" { return .init(body: "{\"type\":\"server-response\",\"result\":{\"ok\":false,\"error\":{\"code\":\"workspace-file/not-text\",\"message\":\"not UTF-8 text\"}}}") }
+            return self.reply(["text": args["path"] == "empty" ? "" : "text", "lines": args["path"] == "empty" ? 0 : 1, "eof": true, "version": "1"])
+        }
+        let base = try await server.start(); let directory = root(); let client = client(directory)
+        defer { server.stop(); client.session.invalidateAndCancel(); try? FileManager.default.removeItem(at: directory) }
+        let api = PortalAPI(base: base, client: client)
+        let preview = WorkspacePreviewStore(api: api, sessionID: "S", path: "image")
+        await preview.load(); XCTAssertEqual(preview.imageData, image); XCTAssertTrue(preview.isImage); XCTAssertTrue(preview.loaded); XCTAssertFalse(textReads.contains("image"))
+        for path in ["note", "empty", "binary"] {
+            let store = WorkspacePreviewStore(api: api, sessionID: "S", path: path); await store.load()
+            if path == "binary" { XCTAssertNotNil(store.error); XCTAssertFalse(store.loaded) }
+            else { XCTAssertTrue(store.loaded); XCTAssertEqual(store.text, path == "empty" ? "" : "text"); XCTAssertNil(store.imageData) }
+        }
+        XCTAssertEqual(probes, 4)
+    }
+    func testUploadByteProgressAndEmptyBodyOverRealHTTP() async throws {
+        for count in [0, 524288] {
+            let bytes = Data(repeating: 42, count: count)
+            let server = try HTTPListener { request in
+                XCTAssertEqual(request.body, bytes)
+                XCTAssertTrue(request.path.hasPrefix("/relay/api/session/uploadFileBinary?"))
+                return .init(body: "{\"ok\":true,\"value\":{\"receiptId\":\"R\",\"file\":{\"attachmentId\":\"F\"}}}")
+            }
+            let base = try await server.start().appendingPathComponent("relay/")
+            let directory = root(); try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+            let file = directory.appendingPathComponent("upload.bin"); try bytes.write(to: file)
+            let api = PortalAPI(base: base, client: client(directory))
+            defer { server.stop(); api.client.session.invalidateAndCancel(); try? FileManager.default.removeItem(at: directory) }
+            let log = UploadProgressLog()
+            let receipt = try await api.upload(sessionID: "S", file: file, name: "upload.bin", mediaType: nil) { log.append($0, $1) }
+            XCTAssertEqual(receipt["receiptId"], "R")
+            if count > 0 {
+                XCTAssertEqual(log.values.last?.0, Int64(count)); XCTAssertEqual(log.values.last?.1, Int64(count))
+                XCTAssertTrue(log.values.allSatisfy { $0.0 >= 0 && $0.0 <= $0.1 })
+            }
+        }
+    }
+    func testWorkspaceFileSearchNormalEmptyErrorAndStaleCancellationOverRealHTTP() async throws {
+        let server = try HTTPListener { request in
+            XCTAssertEqual(request.path, "/relay/api/workspaceFiles/search")
+            let args = try! JSONDecoder().decode(JSON.self, from: request.body)["payload"]["args"]
+            XCTAssertEqual(args["workspaceFileScopeId"], "S")
+            XCTAssertEqual(args["request"]["excludedPaths"], []); XCTAssertEqual(args["request"]["includeHidden"], false); XCTAssertEqual(args["request"]["respectGitignore"], true)
+            if args["request"]["query"] == "fail" { return .init(status: 503) }
+            return self.reply(["matches": args["request"]["query"] == "empty" ? [] : [["path": "Sources/main.swift", "type": "file"]], "truncated": true, "incomplete": true])
+        }
+        let base = try await server.start().appendingPathComponent("relay/"); let directory = root(); let client = client(directory)
+        defer { server.stop(); client.session.invalidateAndCancel(); try? FileManager.default.removeItem(at: directory) }
+        let store = WorkspaceFilesStore(api: PortalAPI(base: base, client: client), sessionID: "S")
+        await store.search("swift"); XCTAssertEqual(store.searchResult["matches"].array.count, 1); XCTAssertTrue(store.searchResult["truncated"].boolean); XCTAssertTrue(store.searchResult["incomplete"].boolean)
+        await store.search("empty"); XCTAssertTrue(store.searchResult["matches"].array.isEmpty); XCTAssertNil(store.searchError)
+        await store.search("fail"); XCTAssertNotNil(store.searchError); XCTAssertFalse(store.searching)
+        let old = Task { await store.search("old") }; await Task.yield()
+        await store.search(""); await old.value
+        XCTAssertTrue(store.searchResult.object.isEmpty); XCTAssertNil(store.searchError); XCTAssertFalse(store.searching)
+    }
     func testTerminalInventoryRPCsAndIdempotentCreateRetryOverHTTP() async throws {
         var calls: [(String, JSON)] = []
         var failCreate = true
@@ -283,6 +358,7 @@ final class ListenerTests: XCTestCase {
         store.retry(store.items[0].id)
         await fulfillment(of: [ready], timeout: 3); readyObservation.cancel()
         XCTAssertTrue(store.ready); XCTAssertEqual(store.items[0].content, ["type": "file", "receiptId": "I"])
+        XCTAssertEqual(store.items[0].sentBytes, Int64(data.count))
         XCTAssertEqual(store.items[0].reference, ["type": "image", "attachment": reference])
         var smallTotal = limits; smallTotal["maxMessageImageBytes"] = .int(2 * data.count - 1)
         XCTAssertThrowsError(try store.validate(bytes: data.count, mediaType: "image/png", limits: smallTotal))
@@ -310,21 +386,29 @@ final class ListenerTests: XCTestCase {
     }
     func testMentionsNormalEmptyAndErrorOverRealHTTP() async throws {
         var queries: [String] = []
+        var sessionQueries: [String] = []
         let server = try HTTPListener { request in
-            XCTAssertEqual(request.path, "/relay/api/fileReferences/list")
             let args = try! JSONDecoder().decode(JSON.self, from: request.body)["payload"]["args"]
-            XCTAssertEqual(args["agentId"], "S"); queries.append(args["query"].text)
+            XCTAssertEqual(args["agentId"], "S")
+            if request.path == "/relay/api/sessionReferenceResolver/candidates" {
+                sessionQueries.append(args["query"].text)
+                if args["query"] == "fail" { return .init(status: 503) }
+                return self.reply(args["query"] == "empty" ? [] : [["mention": "@session:host-value", "displayTitle": "Other chat"]])
+            }
+            XCTAssertEqual(request.path, "/relay/api/fileReferences/list"); queries.append(args["query"].text)
             if args["query"] == "fail" { return .init(status: 503) }
             return self.reply(args["query"] == "empty" ? [] : [["path": "a file.txt", "kind": "file"]])
         }
         let base = try await server.start().appendingPathComponent("relay/"); let directory = root(); let client = client(directory)
         defer { server.stop(); client.session.invalidateAndCancel(); try? FileManager.default.removeItem(at: directory) }
         let store = FileMentions(api: PortalAPI(base: base, client: client), sessionID: "S")
-        await store.load("See @a"); XCTAssertEqual(store.candidates.count, 1); XCTAssertNil(store.error)
+        await store.load("See @a"); XCTAssertEqual(store.candidates.count, 2); XCTAssertNil(store.error)
         await store.load("@"); XCTAssertEqual(queries.last, "")
         await store.load("@empty"); XCTAssertTrue(store.candidates.isEmpty); XCTAssertNil(store.error)
         await store.load("@fail"); XCTAssertTrue(store.candidates.isEmpty); XCTAssertNotNil(store.error); XCTAssertFalse(store.loading)
         await store.load("ordinary text"); XCTAssertNil(store.error); XCTAssertEqual(queries.count, 4)
+        XCTAssertEqual(sessionQueries.count, 4)
+        await store.load("@\"a"); XCTAssertEqual(sessionQueries.count, 4); XCTAssertEqual(store.candidates.count, 1)
     }
     func testWorkspaceFilesPagingImagesEmptyAndFailureOverRealHTTP() async throws {
         let data = png(); var reads = 0

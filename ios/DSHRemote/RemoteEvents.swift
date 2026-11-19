@@ -50,6 +50,7 @@ final class RemoteEvents: ObservableObject {
     private let api: RPCServing
     private var task: Task<Void, Never>?
     private var listeners: [UUID: (JSON) -> Void] = [:]
+    private var resolved: Set<String> = []
     init(api: RPCServing) { self.api = api }
     func observe(_ handler: @escaping (JSON) -> Void) -> UUID { let id = UUID(); listeners[id] = handler; return id }
     func removeObserver(_ id: UUID) { listeners.removeValue(forKey: id) }
@@ -57,9 +58,11 @@ final class RemoteEvents: ObservableObject {
         switch frame["type"].text {
         case "ready": clientID = frame["clientId"].string; pending = []
         case "connection-reset": clientID = nil; pending = []
-        case "cancel": pending.removeAll { $0.id == frame["eventId"].text }
+        case "cancel":
+            resolved.insert(frame["eventId"].text)
+            pending.removeAll { $0.id == frame["eventId"].text }
         case "waterfall":
-            guard let clientID, ["approval/request", "user-questions/request"].contains(frame["event"].text) else { break }
+            guard let clientID, !resolved.contains(frame["eventId"].text), ["approval/request", "user-questions/request"].contains(frame["event"].text) else { break }
             let item = PendingInteraction(id: frame["eventId"].text, clientID: clientID, agentID: frame["agentId"].text, kind: frame["event"].text, request: frame["request"])
             pending.removeAll { $0.id == item.id }; pending.append(item)
         default: break
@@ -80,6 +83,7 @@ final class RemoteEvents: ObservableObject {
     private func answer(_ id: String, value: JSON) async throws {
         guard let item = pending.first(where: { $0.id == id }), let clientID, item.clientID == clientID else { throw APIError.disconnected }
         _ = try await api.rpc("$events/result", args: ["clientId": .string(clientID), "eventId": .string(id), "outcome": ["kind": "result", "value": value]])
+        resolved.insert(id)
         pending.removeAll { $0.id == id && $0.clientID == clientID }
     }
     deinit { task?.cancel() }

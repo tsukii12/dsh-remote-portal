@@ -292,6 +292,7 @@ final class ChatStore: ObservableObject {
     func send(_ text: String, steer: Bool = false, attachments: [DraftAttachment] = []) async throws -> String {
         guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !attachments.isEmpty else { throw PortalError.message(L("Enter a message.", "请输入消息。")) }
         guard attachments.allSatisfy(\.ready) else { throw PortalError.message(L("Wait for all uploads to finish or remove failed attachments.", "请等待所有上传完成，或移除失败的附件。")) }
+        try validateImageInput(attachments)
         let id = UUID().uuidString
         addOptimistic(text: text, requestID: id, attachments: attachments.map(\.reference))
         do {
@@ -316,6 +317,14 @@ final class ChatStore: ObservableObject {
     }
     var modelDefinition: JSON {
         catalog["groups"].array.first { $0["id"] == currentModel["provider"] }?["models"].array.first { $0["id"] == currentModel["model"] } ?? [:]
+    }
+    var imageInputError: String? {
+        let modalities = modelDefinition["inputModalities"]
+        guard modalities != .null, !modalities.array.contains("image") else { return nil }
+        return L("This model does not accept images. Choose an image-capable model or remove the images.", "当前模型不支持图片。请选择支持图片的模型或移除图片。")
+    }
+    func validateImageInput(_ attachments: [DraftAttachment]) throws {
+        if attachments.contains(where: { $0.mediaType != nil }), let error = imageInputError { throw PortalError.message(error) }
     }
     var modelName: String { modelDefinition["name"].string ?? currentModel["model"].string ?? L("Choose model", "选择模型") }
     var effortName: String {

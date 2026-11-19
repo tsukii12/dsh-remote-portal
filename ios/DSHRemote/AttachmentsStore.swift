@@ -3,6 +3,15 @@ import Combine
 import ImageIO
 import UniformTypeIdentifiers
 
+final class UploadProgressDelegate: NSObject, URLSessionTaskDelegate, @unchecked Sendable {
+    private let progress: @Sendable (Int64, Int64) -> Void
+    init(_ progress: @escaping @Sendable (Int64, Int64) -> Void) { self.progress = progress }
+    func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
+        progress(totalBytesSent, totalBytesExpectedToSend)
+    }
+    func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) { completionHandler(nil) }
+}
+
 struct DraftAttachment: Identifiable {
     let id: UUID
     let file: URL
@@ -12,6 +21,7 @@ struct DraftAttachment: Identifiable {
     var receipt: JSON = [:]
     var error: String?
     var uploading = true
+    var sentBytes: Int64 = 0
     var ready: Bool { !uploading && error == nil && receipt["receiptId"].string != nil }
     var content: JSON { ["type": "file", "receiptId": receipt["receiptId"]] }
     var reference: JSON { ["type": mediaType == nil ? "file" : "image", "attachment": receipt[mediaType == nil ? "file" : "image"]] }
@@ -29,6 +39,7 @@ final class AttachmentsStore: ObservableObject {
     private let sessionID: String
     private let directory: URL
     private var tasks: [UUID: Task<Void, Never>] = [:]
+    private var attempts: [UUID: UUID] = [:]
     private let storage = DraftUploadFiles()
     var ready: Bool { items.allSatisfy(\.ready) }
     init(api: RPCServing, sessionID: String, directory: URL? = nil) {
@@ -70,20 +81,28 @@ final class AttachmentsStore: ObservableObject {
     }
     func retry(_ id: UUID) {
         guard let index = items.firstIndex(where: { $0.id == id }) else { return }
-        tasks[id]?.cancel(); items[index].uploading = true; items[index].error = nil; items[index].receipt = [:]
+        tasks[id]?.cancel(); items[index].uploading = true; items[index].error = nil; items[index].receipt = [:]; items[index].sentBytes = 0
+        let attempt = UUID(); attempts[id] = attempt
         let item = items[index]
         tasks[id] = Task { [weak self, api, sessionID] in
             do {
-                let value = try await api.upload(sessionID: sessionID, file: item.file, name: item.name, mediaType: item.mediaType)
-                guard !Task.isCancelled, let self, let index = self.items.firstIndex(where: { $0.id == id }) else { return }
-                self.items[index].receipt = value; self.items[index].uploading = false; self.tasks[id] = nil
+                try Task.checkCancellation()
+                let value = try await api.upload(sessionID: sessionID, file: item.file, name: item.name, mediaType: item.mediaType) { [weak self] sent, _ in
+                    Task { @MainActor [weak self] in
+                        guard let self, self.attempts[id] == attempt, let index = self.items.firstIndex(where: { $0.id == id }) else { return }
+                        self.items[index].sentBytes = max(self.items[index].sentBytes, min(max(0, sent), Int64(item.bytes)))
+                    }
+                }
+                guard !Task.isCancelled, let self, self.attempts[id] == attempt, let index = self.items.firstIndex(where: { $0.id == id }) else { return }
+                self.items[index].receipt = value; self.items[index].uploading = false; self.items[index].sentBytes = Int64(item.bytes); self.tasks[id] = nil
             } catch {
-                guard !Task.isCancelled, let self, let index = self.items.firstIndex(where: { $0.id == id }) else { return }
+                guard !Task.isCancelled, let self, self.attempts[id] == attempt, let index = self.items.firstIndex(where: { $0.id == id }) else { return }
                 self.items[index].error = error.localizedDescription; self.items[index].uploading = false; self.tasks[id] = nil
             }
         }
     }
     func remove(_ id: UUID) {
+        attempts.removeValue(forKey: id)
         tasks.removeValue(forKey: id)?.cancel()
         if let item = items.first(where: { $0.id == id }) {
             let folder = item.file.deletingLastPathComponent()

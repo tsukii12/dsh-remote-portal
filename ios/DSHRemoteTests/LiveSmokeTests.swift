@@ -26,6 +26,12 @@ final class LiveSmokeTests: XCTestCase {
             api.mux.reconnect()
             try await eventually("terminal recovered screen") { frames.filter { $0["type"] == "snapshot" }.count > before && store.ready }
             XCTAssertTrue(frames.last { $0["type"] == "snapshot" }?["screen"].text.contains("DRP-live-terminal") == true)
+            let beforeResume = frames.filter { $0["type"] == "snapshot" }.count
+            store.setForeground(false)
+            XCTAssertFalse(store.ready)
+            store.setForeground(true)
+            try await eventually("foreground terminal snapshot") { store.ready && frames.filter { $0["type"] == "snapshot" }.count > beforeResume }
+            XCTAssertTrue(frames.last { $0["type"] == "snapshot" }?["screen"].text.contains("DRP-live-terminal") == true)
             let beforeReattach = frames.filter { $0["type"] == "snapshot" }.count
             for _ in 0..<3 { store.reconnect(); await Task.yield() }
             try await eventually("superseded terminal attachment") { frames.filter { $0["type"] == "snapshot" }.count > beforeReattach && store.ready }

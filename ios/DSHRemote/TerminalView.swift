@@ -122,6 +122,7 @@ struct TerminalsView: View {
 }
 
 private struct TerminalScreen: View {
+    @Environment(\.scenePhase) private var scenePhase
     @StateObject private var store: TerminalStore
     init(api: PortalAPI, sessionID: String, info: JSON) { _store = StateObject(wrappedValue: TerminalStore(api: api, sessionID: sessionID, info: info)) }
     var body: some View {
@@ -137,11 +138,19 @@ private struct TerminalScreen: View {
             NativeTerminalSurface(store: store)
         }
         .navigationTitle(store.info["title"].text).navigationBarTitleDisplayMode(.inline)
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .background { store.setForeground(false) }
+            else if phase == .active { store.setForeground(true) }
+        }
         .toolbar { ToolbarItem(placement: .primaryAction) { Button { store.reconnect() } label: { Image(systemName: "arrow.clockwise") }.accessibilityLabel(L("Reconnect terminal", "重连终端")) } }
     }
 }
 
 final class RemoteTerminalView: SwiftTerm.TerminalView {
+    override func insertText(_ text: String) {
+        if text == "\n", markedTextRange != nil { unmarkText() }
+        super.insertText(text)
+    }
     var protocolReply: ((String) -> Void)?
     weak var controlButton: UIButton?
     var controlArmed = false { didSet { controlButton?.setTitle(controlArmed ? "Ctrl •" : "Ctrl", for: .normal) } }

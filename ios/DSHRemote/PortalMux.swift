@@ -77,7 +77,16 @@ final class PortalMux {
     }
     func sendItem(_ value: JSON, streamId: String) async throws { try await send(["type": "item", "streamId": .string(streamId), "value": value]) }
     func endInput(streamId: String) async throws { try await send(["type": "end", "streamId": .string(streamId)]) }
-    func reconnect() { connectionID = UUID(); socket?.cancel(with: .goingAway, reason: nil) }
+    func reconnect() {
+        connectionID = UUID()
+        receiver?.cancel(); receiver = nil
+        socket?.cancel(with: .goingAway, reason: nil); socket = nil; opened.removeAll()
+        for subscription in subscriptions.values { subscription.yield(["type": "connection-reset"], connectionID) }
+        if !subscriptions.isEmpty {
+            let token = UUID(); runnerID = token
+            receiver = Task { [weak self] in await self?.run(token) }
+        }
+    }
     private func send(_ frame: JSON, generation: UUID? = nil) async throws {
         guard generation == nil || generation == connectionID, let socket else { throw APIError.disconnected }
         let data = try JSONEncoder().encode(frame)

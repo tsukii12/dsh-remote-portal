@@ -14,13 +14,22 @@ struct FileMentionToken: Equatable {
         return nil
     }
     func inserting(_ candidate: JSON, into text: String) -> String? {
+        if let mention = candidate["mention"].string {
+            guard !quoted, !mention.isEmpty, text.hasSuffix(prefix) else { return nil }
+            return String(text.dropLast(prefix.count)) + mention + " "
+        }
         let path = candidate["path"].text
-        guard text.hasSuffix(prefix), !path.isEmpty, !path.unicodeScalars.contains(where: { CharacterSet.controlCharacters.contains($0) || $0.value == 34 }) else { return nil }
+        guard text.hasSuffix(prefix), !path.isEmpty, !WorkspacePathPolicy.isPrivate(path), !path.unicodeScalars.contains(where: { CharacterSet.controlCharacters.contains($0) || $0.value == 34 }) else { return nil }
         let directory = candidate["kind"] == "directory"
         let value = path + (directory ? "/" : "")
         let needsQuotes = quoted || value.rangeOfCharacter(from: .whitespacesAndNewlines) != nil
         let mention = needsQuotes ? "@\"" + value + (directory ? "" : "\"") : "@" + value
         return String(text.dropLast(prefix.count)) + mention + (directory ? "" : " ")
+    }
+    static func insertingFile(_ path: String, into text: String) -> String? {
+        let token = active(in: text) ?? FileMentionToken(prefix: "", query: "", quoted: false)
+        let prefix = token.prefix.isEmpty && !text.isEmpty && text.last?.isWhitespace == false ? text + " " : text
+        return token.inserting(["path": .string(path), "kind": "file"], into: prefix)
     }
 }
 
@@ -40,12 +49,20 @@ final class FileMentions: ObservableObject {
         loading = true
         do {
             try await Task.sleep(nanoseconds: 180_000_000)
-            let value = try await api.rpc("fileReferences/list", args: ["agentId": .string(sessionID), "query": .string(token.query)])
+            let args: JSON = ["agentId": .string(sessionID), "query": .string(token.query)]
+            async let files = lookup("fileReferences/list", args: args)
+            async let sessions: ([JSON], String?) = token.quoted ? ([], nil) : lookup("sessionReferenceResolver/candidates", args: args)
+            let (fileResult, sessionResult) = await (files, sessions)
             guard ticket == generation, !Task.isCancelled else { return }
-            candidates = value.array; loading = false
+            candidates = fileResult.0.filter { !WorkspacePathPolicy.isPrivate($0["path"].text) } + sessionResult.0.filter { $0["mention"].string?.isEmpty == false }
+            error = fileResult.1 ?? sessionResult.1; loading = false
         } catch {
             guard ticket == generation, !Task.isCancelled else { return }
             self.error = error.localizedDescription; loading = false
         }
+    }
+    private func lookup(_ method: String, args: JSON) async -> ([JSON], String?) {
+        do { return (try await api.rpc(method, args: args).array, nil) }
+        catch { return ([], error.localizedDescription) }
     }
 }

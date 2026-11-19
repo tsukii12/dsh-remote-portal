@@ -72,16 +72,115 @@ final class StubAPI: RPCServing {
     var calls: [(String, JSON)] = []
     var response: JSON = [:]
     var failure: Error?
+    var responses: [String: JSON] = [:]
+    var streamCalls: [(String, JSON)] = []
+    var continuations: [String: AsyncThrowingStream<JSON, Error>.Continuation] = [:]
     func rpc(_ method: String, args: JSON) async throws -> JSON {
         calls.append((method, args))
         if let failure { throw failure }
-        return response
+        return responses[method] ?? response
     }
-    func stream(_ endpoint: String, args: JSON) -> AsyncThrowingStream<JSON, Error> { AsyncThrowingStream { _ in } }
+    func stream(_ endpoint: String, args: JSON) -> AsyncThrowingStream<JSON, Error> {
+        streamCalls.append((endpoint, args))
+        return AsyncThrowingStream { continuations[endpoint] = $0 }
+    }
 }
 
 @MainActor
 final class NativeStateTests: XCTestCase {
+    func testExplicitImageCapabilitiesRejectBeforeOptimisticPromptAndAllowUnknown() async throws {
+        let api = StubAPI(); let chat = ChatStore(sessionID: "S", api: api)
+        let image = DraftAttachment(id: UUID(), file: URL(fileURLWithPath: "/image.png"), name: "image.png", mediaType: "image/png", bytes: 1, receipt: ["receiptId": "R"], uploading: false)
+        let file = DraftAttachment(id: UUID(), file: URL(fileURLWithPath: "/file.txt"), name: "file.txt", mediaType: nil, bytes: 1, receipt: ["receiptId": "F"], uploading: false)
+        for modalities in ([["text"], [], ["text", "image"], .null] as [JSON]) {
+            api.responses["session/modelCatalog"] = ["default": ["provider": "p", "model": "m"], "groups": [["id": "p", "models": [["id": "m", "inputModalities": modalities]]]]]
+            try await chat.loadModels()
+            let rejected = modalities != .null && !modalities.array.contains("image")
+            XCTAssertEqual(chat.imageInputError != nil, rejected)
+            XCTAssertNoThrow(try chat.validateImageInput([file])); XCTAssertNoThrow(try chat.validateImageInput([]))
+            if rejected {
+                do { try await chat.send("Keep this text", attachments: [image]); XCTFail("Unsupported image sent") } catch {}
+                XCTAssertTrue(chat.transcript.isEmpty)
+                XCTAssertFalse(api.calls.contains { $0.0 == "session/prompt" })
+            } else { XCTAssertNoThrow(try chat.validateImageInput([image])) }
+        }
+    }
+    func testAnsweredAndCancelledApprovalReplaysStayResolvedAcrossReady() async throws {
+        let api = StubAPI(); let events = RemoteEvents(api: api)
+        let request: JSON = ["type": "waterfall", "event": "approval/request", "eventId": "A", "agentId": "S", "request": [:]]
+        events.apply(["type": "ready", "clientId": "C"]); events.apply(request)
+        api.failure = PortalError.message("Retry")
+        do { try await events.answerApproval("A", allow: true); XCTFail("Failed answer accepted") } catch {}
+        XCTAssertEqual(events.pending.count, 1)
+        api.failure = nil; try await events.answerApproval("A", allow: true)
+        events.apply(request); XCTAssertTrue(events.pending.isEmpty)
+        events.apply(["type": "connection-reset"]); events.apply(["type": "ready", "clientId": "D"])
+        events.apply(request); XCTAssertTrue(events.pending.isEmpty)
+        events.apply(["type": "cancel", "eventId": "B"])
+        var cancelled = request; cancelled["eventId"] = "B"; events.apply(cancelled)
+        XCTAssertTrue(events.pending.isEmpty)
+        var fresh = request; fresh["eventId"] = "NEW"; events.apply(fresh)
+        XCTAssertEqual(events.pending.map(\.id), ["NEW"])
+    }
+    func testPrivateDshFilesAreHiddenAndNeverReadOrMentioned() async throws {
+        for path in [".dsh", ".dsh/.credentials.yaml", "folder/.dsh/config.yaml", "/root/.dsh/a", "folder\\.DSH\\a"] {
+            XCTAssertTrue(WorkspacePathPolicy.isPrivate(path)); XCTAssertNil(FileMentionToken.insertingFile(path, into: "Read"))
+        }
+        for path in ["foo.dsh", "folder/.dsh-other/file", "notes.swift"] { XCTAssertFalse(WorkspacePathPolicy.isPrivate(path)) }
+        let api = StubAPI(); let store = WorkspaceFilesStore(api: api, sessionID: "S")
+        api.response = ["path": "", "entries": [["name": ".dsh", "type": "directory"], ["name": "readme", "type": "file"]]]
+        await store.list(); XCTAssertEqual(store.listing["entries"].array.count, 1)
+        let before = api.calls.count
+        await store.list(".dsh"); XCTAssertNotNil(store.error); XCTAssertEqual(api.calls.count, before)
+        let preview = WorkspacePreviewStore(api: api, sessionID: "S", path: ".dsh/.credentials.yaml")
+        await preview.load(); XCTAssertNotNil(preview.error); XCTAssertEqual(api.calls.count, before)
+        api.response = ["matches": [["path": ".dsh/.credentials.yaml"], ["path": "readme"]]]
+        await store.search("read"); XCTAssertEqual(store.searchResult["matches"].array.count, 1)
+    }
+    func testImageMagicSniffingIncludesPNGJPEGAPNGGIFAndWebP() {
+        for bytes in [[UInt8]([0x89, 0x50, 0x4e, 0x47, 13, 10, 26, 10]), [255, 216, 255], Array("GIF87a".utf8), Array("GIF89a".utf8), Array("RIFF1234WEBP".utf8)] {
+            XCTAssertTrue(WorkspacePreviewStore.hasImageSignature(Data(bytes)))
+        }
+        for bytes in [Data(), Data("text".utf8), Data([255, 216]), Data("RIFF1234WAVE".utf8)] { XCTAssertFalse(WorkspacePreviewStore.hasImageSignature(bytes)) }
+    }
+    func testFilesWatchResetDebouncesAndReloadsCurrentFolderAndSearch() async throws {
+        let api = StubAPI()
+        api.responses = ["workspaceFiles/list": ["path": "Sources", "entries": []], "workspaceFiles/search": ["matches": []]]
+        let store = WorkspaceFilesStore(api: api, sessionID: "S")
+        defer { store.stop() }
+        await store.list("Sources"); await store.search("swift"); await store.start(); await Task.yield()
+        XCTAssertEqual(api.streamCalls.count, 1)
+        XCTAssertEqual(api.streamCalls.first?.0, "workspaceFiles/changes")
+        XCTAssertEqual(api.streamCalls.first?.1, ["workspaceFileScopeId": "S", "path": "."])
+        api.responses["workspaceFiles/list"] = ["path": "Sources", "entries": [["name": "new.swift", "type": "file"]]]
+        api.responses["workspaceFiles/search"] = ["matches": [["path": "Sources/new.swift", "type": "file"]]]
+        let reloaded = expectation(description: "Reset reloads files and active search")
+        let observation = store.$searchResult.first { !$0["matches"].array.isEmpty }.sink { _ in reloaded.fulfill() }
+        defer { observation.cancel() }
+        let before = api.calls.count
+        api.continuations["workspaceFiles/changes"]?.yield(["kind": "change"])
+        api.continuations["workspaceFiles/changes"]?.yield(["type": "connection-reset"])
+        await fulfillment(of: [reloaded], timeout: 3)
+        XCTAssertEqual(store.path, "Sources"); XCTAssertEqual(store.listing["entries"].array.first?["name"], "new.swift")
+        XCTAssertEqual(api.calls.count, before + 2)
+        let failed = expectation(description: "Watch failure remains visible")
+        let failureObservation = store.$watchError.first { $0 == "Watch failed" }.sink { _ in failed.fulfill() }
+        defer { failureObservation.cancel() }
+        api.continuations["workspaceFiles/changes"]?.finish(throwing: PortalError.message("Watch failed"))
+        await fulfillment(of: [failed], timeout: 3)
+        XCTAssertEqual(store.watchError, "Watch failed")
+    }
+    func testPanelFileAndVerbatimSessionMentionInsertion() throws {
+        XCTAssertEqual(FileMentionToken.insertingFile("a file.swift", into: "Read"), "Read @\"a file.swift\" ")
+        XCTAssertEqual(FileMentionToken.insertingFile("路径/a.swift", into: "Read @partial"), "Read @路径/a.swift ")
+        XCTAssertEqual(FileMentionToken.insertingFile("a file.swift", into: "@\"a"), "@\"a file.swift\" ")
+        XCTAssertNil(FileMentionToken.insertingFile("", into: ""))
+        XCTAssertNil(FileMentionToken.insertingFile("bad\npath", into: "Read"))
+        let token = try XCTUnwrap(FileMentionToken.active(in: "Read @old"))
+        XCTAssertEqual(token.inserting(["mention": "@session:host-provided", "displayTitle": "Other chat"], into: "Read @old"), "Read @session:host-provided ")
+        XCTAssertNil(token.inserting(["mention": ""], into: "Read @old"))
+        XCTAssertNil(FileMentionToken.active(in: "@\"old")?.inserting(["mention": "@session:host-provided"], into: "@\"old"))
+    }
     func testSearchSelectionKeepsStartedChatAcrossParentUpdates() async throws {
         let route = ChatStartupRoute()
         route.selection = "A"; route.compactColumn = .detail
@@ -292,7 +391,10 @@ final class NativeStateTests: XCTestCase {
         events.apply(["type": "ready", "clientId": "new"])
         events.apply(["type": "waterfall", "eventId": "approve", "agentId": "A", "event": "approval/request"])
         routing.reconcile(events.pending, openSessionID: "A")
-        XCTAssertEqual(routing.presentedID, "approve")
+        XCTAssertNil(routing.presentedID)
+        events.apply(["type": "waterfall", "eventId": "fresh-approval", "agentId": "A", "event": "approval/request"])
+        routing.reconcile(events.pending, openSessionID: "A")
+        XCTAssertEqual(routing.presentedID, "fresh-approval")
     }
     func testInteractionRoutingUnknownAgentsAndBilingualCounts() {
         let approval = PendingInteraction(id: "E", clientID: "C", agentID: "subagent", kind: "approval/request", request: [:])

@@ -13,6 +13,10 @@ xcodebuild -project ios/DSHRemote.xcodeproj -scheme DSHRemote \
   -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=26.5' build test
 ```
 
+SwiftTerm 1.19.0 attaches a build-information plugin unconditionally; XcodeGen cannot disable a dependency's plugin. On a fresh command-line checkout, Xcode may refuse to run the untrusted `SwiftTermBuildInfoPlugin`. Review/accept that pinned package's plugin in Xcode, or add `-skipPackagePluginValidation` to the `xcodebuild` command above (also for Release/IPA builds). This bypasses plugin validation for that build; it is not an app signing requirement and does not change the package or global Xcode preferences.
+
+SwiftTerm 1.19.0 无条件启用构建信息插件，XcodeGen 无法禁用依赖包的插件。首次命令行构建时，Xcode 可能拒绝运行尚未信任的 `SwiftTermBuildInfoPlugin`。请在 Xcode 中审查并接受此固定版本的插件，或为上述 `xcodebuild` 命令（包括 Release/IPA 构建）添加 `-skipPackagePluginValidation`。此选项仅跳过本次构建的插件验证，不是应用签名要求，也不会修改依赖包或全局 Xcode 偏好设置。
+
 Tap **+** and enter a name and one HTTP(S) base address per line. Include relay path prefixes (`https://relay.example/__t/id/`). Alternatively paste a `.../__portal/pair?t=...` link; saving creates the server and opens native pairing confirmation. Long-press a server to edit; swipe to delete. Pairing tokens/passwords are not persisted by the app. Addresses are saved locally in UserDefaults.
 
 Connecting races uncached health checks across all addresses with a three-second timeout. The first HTTP 200 wins; failed addresses do not end the race. A single keep-alive URLSession serves HTTP and WebSocket requests with the same User-Agent and Origin. Login redirects are not followed. All response cookies enter HTTPCookieStorage and an explicit, file-protected cookie jar partitioned by the full server base (including port/path). Cookies survive app restarts; only that base's jar is sent. Session expiration returns to native login. Servers returns to the server list without logging out.
@@ -107,7 +111,11 @@ Set a throwaway password in dsh Settings → Remote access (or POST JSON `{"pass
 
 ## Limits
 
+- Files support `workspaceFiles/search` and reload after `workspaceFiles/changes` change/reset frames. File-panel mentions quote workspace paths; session mentions use `sessionReferenceResolver/candidates`' exact `mention` token alongside `fileReferences/list`. Uploads show sent/total body bytes. 文件支持搜索、变更/重连刷新、插入文件路径提及及服务端原样序列化的会话提及；上传显示已发送/总字节。
+- Explicit model `inputModalities` without `image` disables Photos/camera and blocks image intake/send; missing modalities mean unknown, not unsupported. Rejected sends retain the draft. 模型明确不支持图片时禁用照片/相机并拒绝图片导入/发送；未提供输入类型表示能力未知；拒绝发送保留草稿。
+- Private `.dsh` paths are hidden in files/search/mentions and refused by previews. This is UI protection, **not host authorization**: the host's file RPCs still need their own credential/path policy, including symlinks. The official web hides dot entries by default but permits Show hidden. 文件、搜索及提及隐藏 `.dsh`，预览拒绝读取；此为客户端防护而非主机权限边界，主机仍需保护凭据路径及符号链接。官方网页默认隐藏点文件，但可开启显示隐藏文件。
+
 - HTTP LAN connections are allowed by ATS. **Self-signed TLS is not bypassed**: use a trusted certificate or install and trust your local CA on the device. There is deliberately no global certificate bypass.
-- Terminal is deferred: the host has `terminal/attach`, but native client uplink sequencing/acknowledgements, PTY retention/reconnect and a VT/ANSI renderer are a separate feature. Remote-access configuration/credentials and filesystem writes are intentionally not exposed. 终端需另行实现客户端上行流、序号/确认、PTY 生命周期与 VT/ANSI 渲染；本轮不开放远程访问配置/凭据或文件写入。
+- Remote-access configuration/credentials and filesystem writes are intentionally not exposed. 不开放远程访问配置/凭据或文件写入。
 - Server addresses are not encrypted; avoid embedding secrets in URLs. Cookie files are in Application Support with iOS data protection; deleting a saved server does not revoke its remote session (log out first).
 - Real relay, physical-device networking, lockout and certificate flows need manual validation.

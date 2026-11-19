@@ -37,7 +37,8 @@ final class TerminalStore: ObservableObject {
     private var receiveTask: Task<Void, Never>?
     private var channel: PortalMux.Channel?
     private var generation: UUID?
-    private var runID = UUID()
+    private(set) var runID = UUID()
+    private(set) var isForeground = true
     private var queue: [JSON] = []
     private var inFlight: JSON?
     private var bufferedBytes = 0
@@ -48,12 +49,13 @@ final class TerminalStore: ObservableObject {
         self.api = api; self.sessionID = sessionID; self.info = info; id = info["id"].text
     }
     func start() {
-        guard holdTask == nil else { return }
+        guard isForeground, holdTask == nil else { return }
         let run = UUID(); runID = run
         error = nil
         holdTask = Task { [weak self] in
             guard let self else { return }
             do {
+                try Task.checkCancellation()
                 environment = try await api.rpc("terminal/environment", args: ["agentId": .string(sessionID)])
                 try Task.checkCancellation()
                 guard runID == run else { return }
@@ -72,6 +74,12 @@ final class TerminalStore: ObservableObject {
         disconnect()
     }
     func reconnect() { stop(); start() }
+    func setForeground(_ active: Bool) {
+        guard isForeground != active else { return }
+        isForeground = active
+        stop()
+        if active { api.mux.reconnect(); start() }
+    }
     private func disconnect() {
         if bufferedBytes > 0 { notice = L("Connection changed. Pending input was not replayed; check the shell before typing again.", "连接已改变。待确认输入未重发，请检查终端后再输入。") }
         ready = false; writable = false; generation = nil
@@ -79,7 +87,7 @@ final class TerminalStore: ObservableObject {
     }
     private func attach(run: UUID) {
         receiveTask = Task { [weak self] in
-            guard let self else { return }
+            guard let self, !Task.isCancelled, runID == run else { return }
             repeat {
                 let opened = api.mux.openDuplex("terminal/attach", args: ["agentId": .string(sessionID), "id": .string(id)])
                 channel = opened
@@ -90,19 +98,22 @@ final class TerminalStore: ObservableObject {
                         guard event.generation == opened.generation else { continue }
                         try apply(event.value, generation: event.generation)
                     }
-                    if !Task.isCancelled, runID == run { error = L("Terminal attachment ended. Reconnect to review its final state.", "终端连接已结束。请重新连接以查看最终状态。") }
-                    break
+                    guard !Task.isCancelled, runID == run, isForeground, info["state"] == "running" else { break }
+                    throw APIError.disconnected
                 } catch APIError.invalidResponse {
                     guard !Task.isCancelled, runID == run else { break }
                     opened.cancel(); disconnect()
                     notice = L("Refreshing the terminal screen after an out-of-order frame.", "收到乱序数据，正在刷新终端画面。")
                     do { try await Task.sleep(nanoseconds: 300_000_000) } catch { break }
                 } catch {
-                    if !Task.isCancelled, runID == run { self.error = error.localizedDescription }
-                    break
+                    guard !Task.isCancelled, runID == run, isForeground else { break }
+                    self.error = error.localizedDescription
+                    guard case APIError.disconnected = error else { break }
+                    opened.cancel(); disconnect()
+                    do { try await Task.sleep(nanoseconds: 300_000_000) } catch { break }
                 }
             } while !Task.isCancelled
-            if runID == run { disconnect() }
+            if runID == run { disconnect(); receiveTask = nil }
         }
     }
     private func apply(_ value: JSON, generation: UUID) throws {

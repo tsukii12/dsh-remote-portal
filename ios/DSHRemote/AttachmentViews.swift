@@ -8,6 +8,7 @@ struct ComposerAttachmentsView: View {
     @ObservedObject var store: AttachmentsStore
     let limits: JSON
     let disabled: Bool
+    let imageInputError: String?
     let onError: (String) -> Void
     @State private var showingPhotos = false
     @State private var showingCamera = false
@@ -29,18 +30,21 @@ struct ComposerAttachmentsView: View {
                                 if let error = item.error {
                                     Text(error).foregroundStyle(.red).lineLimit(2)
                                     Button(L("Retry upload", "重试上传")) { store.retry(item.id) }
-                                } else { Text(item.uploading ? L("Uploading…", "正在上传…") : L("Ready · ", "就绪 · ") + ByteCountFormatter.string(fromByteCount: Int64(item.bytes), countStyle: .file)).foregroundStyle(.secondary) }
+                                } else {
+                                    Text(item.uploading ? L("Uploading · ", "正在上传 · ") + "\(item.sentBytes) / \(item.bytes) " + L("bytes", "字节") : L("Ready · ", "就绪 · ") + ByteCountFormatter.string(fromByteCount: Int64(item.bytes), countStyle: .file)).foregroundStyle(.secondary)
+                                }
                             }.font(.caption).frame(maxWidth: 240, alignment: .leading).padding(8).background(DRPStyle.sidebar, in: RoundedRectangle(cornerRadius: 10))
                         }
                     }
                 }.disabled(disabled)
             }
             Menu {
-                Button { showingPhotos = true } label: { Label(L("Photos", "照片"), systemImage: "photo.on.rectangle") }
-                Button { showingCamera = true } label: { Label(L("Camera", "相机"), systemImage: "camera") }.disabled(!UIImagePickerController.isSourceTypeAvailable(.camera))
+                Button { showingPhotos = true } label: { Label(L("Photos", "照片"), systemImage: "photo.on.rectangle") }.disabled(imageInputError != nil)
+                Button { showingCamera = true } label: { Label(L("Camera", "相机"), systemImage: "camera") }.disabled(imageInputError != nil || !UIImagePickerController.isSourceTypeAvailable(.camera))
                 Button { showingFiles = true } label: { Label(L("Files", "文件"), systemImage: "folder") }
             } label: { Label(L("Attach", "添加附件"), systemImage: "paperclip").font(.caption.weight(.medium)) }
                 .disabled(disabled).accessibilityIdentifier("attachFiles")
+            if let imageInputError { Text(imageInputError).font(.caption2).foregroundStyle(.secondary) }
         }
         .photosPicker(isPresented: $showingPhotos, selection: $photo, matching: .images, preferredItemEncoding: .compatible)
         .onChange(of: photo) { _, item in
@@ -58,6 +62,7 @@ struct ComposerAttachmentsView: View {
                 for url in try result.get() {
                     let type = UTType(filenameExtension: url.pathExtension)?.preferredMIMEType
                     let mediaType = limits["mediaTypes"].array.contains(.string(type ?? "")) ? type : nil
+                    if type?.hasPrefix("image/") == true, let imageInputError { throw PortalError.message(imageInputError) }
                     try store.add(file: url, mediaType: mediaType, limits: limits)
                 }
             } catch { onError(error.localizedDescription) }
@@ -74,6 +79,7 @@ struct ComposerAttachmentsView: View {
         }
     }
     private func addImage(_ original: Data) throws {
+        if let imageInputError { throw PortalError.message(imageInputError) }
         var data = original
         guard let source = CGImageSourceCreateWithData(data as CFData, nil), let identifier = CGImageSourceGetType(source) else { throw PortalError.message(L("This image could not be read.", "无法读取此图片。")) }
         var type = UTType(identifier as String)
