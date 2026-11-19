@@ -687,12 +687,14 @@
 
 /* Coarse pointers only: grow icon-only hit areas to a comfortable 40 px. Kept
    separate so a hybrid laptop with a mouse keeps the dense desktop metrics
-   while a touch screen gets thumbs. */
+   while a touch screen gets thumbs. Switches and the password field's
+   show/hide button keep their own size: a 40 px minimum turns a 38×22 pill
+   into a blob and pushes the button out of its 36 px field. */
 @media (max-width: 900px) and (pointer: coarse) {
   html[data-drp-mobile]
     button[aria-label]:not(:has(> span:not(:empty))):not(
       [class*="_composer"]
-    ) {
+    ):not([role="switch"]):not([data-drp="panel"] .drp-pw-eye) {
     min-width: 40px;
     min-height: 40px;
   }

@@ -788,6 +788,50 @@ describe("mobile layer against the live dsh web UI", () => {
     assert.ok(out.scrollW <= w, "page overflows horizontally: " + out.scrollW);
   });
 
+  for (const label of ["Plugins|插件", "Remote access|远程访问"]) {
+    test(`switches and the password reveal keep their shape on touch (${label.split("|")[0]})`, async (t) => {
+      if (skipReason) return t.skip(skipReason);
+      const expr = `(async () => {
+        const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+        document.querySelector('.drp-drawer-btn').click();
+        await sleep(600);
+        const entry = [...document.querySelectorAll('[data-slot="sidebar"] button')]
+          .find((b) => /^(${label})$/.test(b.getAttribute('aria-label') || ''));
+        if (!entry) return JSON.stringify({ entry: false });
+        entry.click();
+        await sleep(1500);
+        const coarse = matchMedia('(pointer: coarse)').matches;
+        const switches = [...document.querySelectorAll('[data-slot="main"] [role="switch"]')]
+          .map((e) => e.getBoundingClientRect())
+          .filter((r) => r.width > 0)
+          .map((r) => ({ w: Math.round(r.width), h: Math.round(r.height) }));
+        const pw = document.querySelector('[data-slot="main"] .drp-pw input');
+        const eye = document.querySelector('[data-slot="main"] .drp-pw-eye');
+        const ir = pw && pw.getBoundingClientRect();
+        const er = eye && eye.getBoundingClientRect();
+        return JSON.stringify({
+          entry: true, coarse, switches,
+          eye: ir && er ? { top: Math.round(er.top - ir.top), bottom: Math.round(ir.bottom - er.bottom) } : null,
+        });
+      })()`;
+      const { code, stdout, stderr } = await runCdp([
+        "eval", BASE, expr, "--token", TOKEN_URL, "--wait", "4000",
+        "--w", "390", "--h", "844", "--mobile", "--pre-file", join(tmp, "pre.js"), "--settle", "1200",
+      ]);
+      assert.equal(code, 0, "cdp run failed: " + stderr.slice(-800));
+      const out = JSON.parse(stdout.trim().split("\n").filter((l) => l.trim().startsWith("{")).pop());
+      assert.equal(out.entry, true, `${label} entry not found in the sidebar`);
+      assert.equal(out.coarse, true, "the run must emulate a touch screen, or the coarse-pointer rules never apply");
+      assert.ok(out.switches.length > 0, "no switch rendered on the page");
+      for (const sw of out.switches) {
+        assert.ok(sw.w >= sw.h * 1.5, `a switch was deformed to ${sw.w}x${sw.h}`);
+      }
+      if (out.eye) {
+        assert.ok(out.eye.top >= 0 && out.eye.bottom >= 0, `the show/hide button sticks out of the password field: ${JSON.stringify(out.eye)}`);
+      }
+    });
+  }
+
   test("every visible button in the open drawer is what a tap there hits", async (t) => {
     if (skipReason) return t.skip(skipReason);
     // A scripted .click() skips whatever sits on top, so it can pass while real

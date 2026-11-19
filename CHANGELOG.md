@@ -12,6 +12,11 @@ versions are the plugin's own, not dsh's.
   instead of a narrow strip on the right.
 - Tablet-width windows (768–900px): choosing Remote access, Plugins or another
   page in the drawer now closes the drawer instead of leaving it over the page.
+- Phone layout: on/off switches and the password field's "Show" button keep
+  their shape on touch screens instead of swelling into a 40 px square.
+- Remote access: a busy port is explained in the panel's language, and the
+  pairing card names that error instead of asking you to set a password that
+  is already set.
 - Folder picker: listing a large folder no longer stats every subfolder one by
   one, and a link to a file no longer marks the listing as cut short.
 - Fixed password and pairing form submissions from nested pages, including when
