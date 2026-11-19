@@ -25,14 +25,15 @@ import { fileURLToPath } from "node:url";
 import { mkdir, readFile, readdir, realpath, stat as stat_ } from "node:fs/promises";
 import { gzipSync } from "node:zlib";
 import os, { homedir } from "node:os";
-import { statSync } from "node:fs";
+import { readFileSync, statSync } from "node:fs";
 import { createGateway } from "./lib/gateway.mjs";
+import { assetCacheControl, assetRevision, MOBILE_ASSETS } from "./lib/public-asset.mjs";
 
 /** dsh waits for the Web carrier before this row can bind its own listener. */
 export const inject = ["webServer"];
 
 const PLUGIN_NAME = "dsh-remote-portal";
-// Bumped with package.json; also used to invalidate the injected asset URLs.
+// Bumped with package.json.
 const PLUGIN_VERSION = "0.6.2";
 const PREFIX = "/dsh-remote-portal";
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -216,25 +217,28 @@ async function serveAsset(req, res, relative) {
   if (!type) return sendText(res, 404, "not found");
   try {
     const stat = await stat_(target);
-    const etag = `W/"${stat.size.toString(16)}-${Math.floor(stat.mtimeMs).toString(16)}"`;
+    let body = await readFile(target);
+    const versioned = MOBILE_ASSETS.has(clean);
+    const etag = versioned ? `W/"${assetRevision(body)}"` : `W/"${stat.size.toString(16)}-${Math.floor(stat.mtimeMs).toString(16)}"`;
+    const cacheControl = versioned ? assetCacheControl(req, body) : "no-cache";
+    const compressible = body.length > 1024 && /^(text|application\/(?:javascript|json))/.test(type);
     const inm = String(req?.headers?.["if-none-match"] || "");
     if (inm !== "" && inm.split(",").some((tag) => tag.trim() === etag)) {
-      res.writeHead(304, { etag, "cache-control": "no-cache" });
+      res.writeHead(304, { etag, "cache-control": cacheControl, ...(compressible ? { vary: "Accept-Encoding" } : {}) });
       res.end();
       return;
     }
-    let body = await readFile(target);
     const headers = {
       "content-type": type,
-      "cache-control": "no-cache",
+      "cache-control": cacheControl,
       "x-content-type-options": "nosniff",
       etag,
     };
     const acceptsGzip = /\bgzip\b/.test(String(req?.headers?.["accept-encoding"] || ""));
-    if (acceptsGzip && body.length > 1024 && /^(text|application\/(?:javascript|json))/.test(type)) {
+    if (compressible) headers.vary = "Accept-Encoding";
+    if (acceptsGzip && compressible) {
       body = gzipSync(body);
       headers["content-encoding"] = "gzip";
-      headers.vary = "accept-encoding";
     }
     headers["content-length"] = body.length;
     res.writeHead(200, headers);
@@ -688,20 +692,24 @@ export function apply(ctx, config = {}) {
   // is what carries the Electron shell, where index rows are not rendered.
   if (config?.mobile !== false) {
     ctx.effect(() => {
-      const row = {
-        kind: "html",
-        placement: "head",
-        html:
-          // `?v=` is what makes a reload pick up a new layer: the file URL is
-          // otherwise stable across plugin upgrades and browsers cache it hard.
-          `<link rel="stylesheet" href="${PREFIX}/assets/mobile.css?v=${PLUGIN_VERSION}" data-plugin="${PLUGIN_NAME}" data-drp="mobile-css-host">` +
-          // Inline and before the layer: it must be readable by the time the
-          // layer decides whether to engage.
-          `<script data-plugin="${PLUGIN_NAME}" data-drp="host-addresses">window.__DRP_HOST__=${JSON.stringify({ addresses: hostAddresses() })};</script>` +
-          `<script defer src="${PREFIX}/assets/mobile.js?v=${PLUGIN_VERSION}" data-plugin="${PLUGIN_NAME}" data-drp="mobile-js-host"></script>`,
+      const asset = (name) => {
+        const path = `.${PREFIX}/assets/${name}`;
+        try { return `${path}?v=${assetRevision(readFileSync(join(ASSET_DIR, name)))}`; }
+        catch { return path; }
       };
+      const addresses = JSON.stringify({ addresses: hostAddresses() });
       const listener = (table) => {
-        if (Array.isArray(table)) table.push(row);
+        if (!Array.isArray(table)) return;
+        table.push({
+          kind: "html",
+          placement: "head",
+          html:
+            `<link rel="stylesheet" href="${asset("mobile.css")}" data-plugin="${PLUGIN_NAME}" data-drp="mobile-css-host">` +
+            // Inline and before the layer: it must be readable by the time the
+            // layer decides whether to engage.
+            `<script data-plugin="${PLUGIN_NAME}" data-drp="host-addresses">window.__DRP_HOST__=${addresses};</script>` +
+            `<script defer src="${asset("mobile.js")}" data-plugin="${PLUGIN_NAME}" data-drp="mobile-js-host"></script>`,
+        });
       };
       const off = ctx.on?.("webserver/index-inject", listener);
       return () => {
