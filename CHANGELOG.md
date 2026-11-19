@@ -12,10 +12,14 @@ versions are the plugin's own, not dsh's.
   instead of a narrow strip on the right.
 - Tablet-width windows (768–900px): choosing Remote access, Plugins or another
   page in the drawer now closes the drawer instead of leaving it over the page.
+- Folder picker: listing a large folder no longer stats every subfolder one by
+  one, and a link to a file no longer marks the listing as cut short.
 - Fixed password and pairing form submissions from nested pages, including when
   the portal is served under a reverse proxy path prefix.
 - When a pairing code is rejected, the portal now asks you to generate and scan
   a new QR code instead of saying that no code was supplied.
+- "Copy pairing link" now says how long the link is still valid, matching the
+  QR countdown, instead of always claiming 5 minutes.
 
 ## 0.6.2 — 2026-10-24
 
