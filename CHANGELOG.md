@@ -9,6 +9,10 @@ versions are the plugin's own, not dsh's.
   device and cancels unused pairing links, as the note under the field always
   said. Before, signed-in phones stayed signed in. A phone that makes the change
   is asked first and told that it will be signed out too.
+- Home screen: the sign-in page now links the portal's manifest and icon, so a
+  phone that adds it to its home screen gets the right name and icon. Through
+  the relay, the manifest's start page and icon stay under `/__t/<id>/` instead
+  of pointing at the relay's root.
 - Folder picker and password: the host's errors for an invalid folder name, a
   folder that can't be created, a missing folder, a file instead of a folder,
   and a password over 200 characters now show in the panel's language instead
