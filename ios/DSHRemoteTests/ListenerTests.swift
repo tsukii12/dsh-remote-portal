@@ -80,6 +80,50 @@ private final class HTTPListener {
 
 @MainActor
 final class ListenerTests: XCTestCase {
+    func testTerminalInventoryRPCsAndIdempotentCreateRetryOverHTTP() async throws {
+        var calls: [(String, JSON)] = []
+        var failCreate = true
+        var failList = true
+        let server = try HTTPListener { request in
+            if request.method == "GET" { return .init(status: 404) }
+            let body = try! JSONDecoder().decode(JSON.self, from: request.body)
+            let method = body["method"].text, args = body["payload"]["args"]
+            XCTAssertEqual(request.path, "/relay/api/" + method)
+            calls.append((method, args))
+            switch method {
+            case "terminal/list":
+                if failList { failList = false; return .init(status: 503) }
+                XCTAssertEqual(args, ["sessionId": "S"]); return self.reply([])
+            case "terminal/create":
+                XCTAssertEqual(args["agentId"], "S"); XCTAssertEqual(args["request"]["cols"], 80); XCTAssertEqual(args["request"]["rows"], 24)
+                if failCreate { failCreate = false; return .init(status: 503) }
+                return self.reply(["id": args["request"]["id"], "title": "zsh", "state": "running"])
+            case "terminal/rename":
+                XCTAssertEqual(args["title"], "Build shell"); XCTAssertEqual(args["agentId"], "S"); return self.reply(.null)
+            case "terminal/close":
+                XCTAssertEqual(args["agentId"], "S"); return self.reply(.null)
+            default: XCTFail(method); return .init(status: 404)
+            }
+        }
+        let base = try await server.start().appendingPathComponent("relay/")
+        let api = PortalAPI(base: base, client: PortalClient())
+        let inventory = TerminalInventory(api: api, sessionID: "S")
+        defer { inventory.stop(); api.mux.close(); api.client.session.invalidateAndCancel(); server.stop() }
+        await inventory.start(); XCTAssertFalse(inventory.loaded); XCTAssertNotNil(inventory.error)
+        await inventory.start(); inventory.stop()
+        XCTAssertTrue(inventory.loaded); XCTAssertTrue(inventory.terminals.isEmpty); XCTAssertNil(inventory.error)
+        let failed = await inventory.create(); XCTAssertNil(failed); XCTAssertNotNil(inventory.error)
+        let createdID = await inventory.create()
+        let id = try XCTUnwrap(createdID)
+        let creates = calls.filter { $0.0 == "terminal/create" }
+        XCTAssertEqual(creates[0].1["request"]["id"], creates[1].1["request"]["id"])
+        XCTAssertEqual(inventory.terminals.count, 1); XCTAssertNil(inventory.error)
+        await inventory.rename(id, title: "Build shell")
+        await inventory.close(id); XCTAssertTrue(inventory.terminals.isEmpty)
+        let other = TerminalInventory(api: PortalAPI(base: base.appendingPathComponent("other/")), sessionID: "S")
+        XCTAssertNotEqual(inventory.selectionKey, other.selectionKey)
+        XCTAssertEqual(calls.map(\.0), ["terminal/list", "terminal/list", "terminal/create", "terminal/create", "terminal/rename", "terminal/close"])
+    }
     func testChatSelectionBootstrapOutlivesCancelledSearchOverRealHTTP() async throws {
         var calls: [String] = []
         let server = try HTTPListener { request in

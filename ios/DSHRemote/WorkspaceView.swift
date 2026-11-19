@@ -36,6 +36,7 @@ struct WorkspaceView: View {
     @State private var actionError: String?
     @State private var hasConnected = false
     @State private var showingSettings = false
+    @State private var terminalSessionID: String?
     @State private var interactions = InteractionRouting()
     init(connection: NativeConnection, serverName: String, addressLabel: String, onSwitch: @escaping () -> Void, onLogout: @escaping () async throws -> Void) {
         self.connection = connection; self.serverName = serverName; self.onSwitch = onSwitch; self.onLogout = onLogout
@@ -45,7 +46,7 @@ struct WorkspaceView: View {
     }
     var body: some View {
         NavigationSplitView(columnVisibility: $visibility, preferredCompactColumn: $compactColumn) {
-            SidebarView(store: sidebar, events: events, selection: selection, serverName: serverName, addressLabel: addressLabel, onSelect: openChat, onReview: review, onCreate: create, onSwitch: onSwitch, onLogout: onLogout, onSettings: { showingSettings = true })
+            SidebarView(store: sidebar, events: events, selection: selection, serverName: serverName, addressLabel: addressLabel, onSelect: openChat, onReview: review, onCreate: create, onSwitch: onSwitch, onLogout: onLogout, onSettings: { showingSettings = true }, onTerminals: { terminalSessionID = $0 })
                 .navigationSplitViewColumnWidth(min: 250, ideal: 290, max: 360)
                 .safeAreaInset(edge: .top, spacing: 0) { pendingBanner }
         } detail: {
@@ -76,6 +77,7 @@ struct WorkspaceView: View {
         .onChange(of: events.pending, initial: true) { _, pending in interactions.reconcile(pending, openSessionID: selection) }
         .onChange(of: selection) { _, id in interactions.reconcile(events.pending, openSessionID: id) }
         .sheet(isPresented: $showingSettings) { HostSettingsView(api: connection.api) }
+        .sheet(isPresented: Binding(get: { terminalSessionID != nil }, set: { if !$0 { terminalSessionID = nil } })) { if let terminalSessionID { TerminalsView(api: connection.api, sessionID: terminalSessionID) } }
         .sheet(item: Binding(get: { events.pending.first { $0.id == interactions.presentedID } }, set: { if $0 == nil { interactions.dismiss() } })) { item in
             InteractionSheet(events: events, api: connection.api, item: item, sessionTitle: sidebar.sessions[item.agentID]?.title ?? L("Conversation", "对话"))
                 .id(item.id)
@@ -118,6 +120,7 @@ private struct SidebarView: View {
     let onSwitch: () -> Void
     let onLogout: () async throws -> Void
     let onSettings: () -> Void
+    let onTerminals: (String) -> Void
     @State private var renaming = false
     @State private var renameID = ""
     @State private var renameText = ""
@@ -174,6 +177,9 @@ private struct SidebarView: View {
                             }
                             if let workspace = store.workspaces.first(where: { $0.id == group.id }) {
                                 Menu {
+                                    Menu(L("Terminals", "终端")) {
+                                        ForEach(group.sessions) { row in Button(row.title) { onTerminals(row.id) } }
+                                    }
                                     Button(L("Rename workspace", "重命名工作区")) { renameID = workspace.id; renameText = workspace.title; renamingWorkspace = true; renaming = true }
                                     Button(L("Remove workspace", "移除工作区"), role: .destructive) { deletingWorkspace = workspace }
                                 } label: { Image(systemName: "ellipsis.circle") }.accessibilityLabel(L("Workspace actions", "工作区操作"))
@@ -241,6 +247,7 @@ private struct SidebarView: View {
         }
     }
     @ViewBuilder private func actions(_ row: SessionRow) -> some View {
+        Button { onTerminals(row.id) } label: { Label(L("Terminals", "终端"), systemImage: "terminal") }
         Button { beginRename(row) } label: { Label(L("Rename", "重命名"), systemImage: "pencil") }
         Button { togglePin(row.id) } label: { Label(store.pinnedIDs.contains(row.id) ? L("Unpin", "取消置顶") : L("Pin", "置顶"), systemImage: "pin") }
         if store.archivedIDs.contains(row.id) {

@@ -1,6 +1,6 @@
 # DRP — native iOS client
 
-Native SwiftUI server management, sign-in, workspace sidebar and chat on a Foundation networking/state layer. iOS 17+, no third-party dependencies or embedded browser. English/Chinese follow the device language; system appearance controls light/dark mode. DRP keeps the existing bundle identifier.
+Native SwiftUI server management, sign-in, workspace sidebar and chat on a Foundation networking/state layer. iOS 17+, no embedded browser. The native terminal uses MIT-licensed SwiftTerm 1.19.0, pinned through Swift Package Manager; accept its build-information plugin in Xcode on first build. English/Chinese follow the device language; system appearance controls light/dark mode. DRP keeps the existing bundle identifier.
 
 ## Build and run
 
@@ -40,6 +40,20 @@ Endpoints: raw uploads use `POST api/session/uploadFileBinary?sessionId=…&name
 `Assets.xcassets/AppIcon.appiconset` contains the supplied opaque 1024px whale icon as a single-size iOS AppIcon.
 
 ## Native state layer
+
+### Native terminals / 原生终端
+
+Use the chat toolbar's terminal button, a conversation's context menu, or the workspace menu's session submenu. New Terminal creates a separate retained shell in that session's workspace directory; several shells can run concurrently. Long-press a terminal to rename it or explicitly close its processes. Back/Done only detach. The last selected terminal is remembered by host base URL and session; reopening queries the host inventory before reattaching. Host restart/session disposal/idle expiry can make a saved terminal unavailable; it is never silently recreated.
+
+聊天工具栏、对话长按菜单和工作区菜单均可进入终端。新建终端在对应会话的工作目录中启动独立且可保留的 Shell，支持多个并行终端。长按可重命名或明确结束进程；返回和完成仅断开显示。按服务器地址与会话记住上次选择，重新进入先查询主机列表再连接。主机重启、会话销毁或空闲过期后，终端可能不可用，不会静默新建。
+
+The native VT engine handles cursor/erase/scroll regions, 16/256/truecolor and bold, alternate screen, scrollback, wide CJK, IME, selection/copy and bracketed paste. The scrollable accessory bar includes Esc, Tab, one-shot Ctrl, arrows, `|`, `~`, `/`, Ctrl-C, Paste, Copy all and Hide. Viewport, keyboard and rotation changes send sequenced resize commands. Remote OSC clipboard requests are denied; clipboard access requires a user's paste/copy action. Shells execute as the host account independently of agent permissions.
+
+原生 VT 引擎支持光标、擦除与滚动区域、16/256/真彩色和粗体、备用屏幕、回滚历史、宽中文字符、输入法、选择复制和括号粘贴。可横向滚动的按键栏提供 Esc、Tab、单次 Ctrl、方向键、`|`、`~`、`/`、Ctrl-C、粘贴、复制全部和收起键盘。视口、键盘和旋转变化按序发送尺寸更新。拒绝远程 OSC 剪贴板请求，仅用户操作可粘贴和复制。Shell 独立于智能体权限，以主机账户身份执行。
+
+RPCs: `terminal/environment`, `terminal/list`, idempotent `terminal/create {agentId,request:{id,cols,rows}}`, `terminal/rename`, `terminal/close`; streams: `terminal/watch {sessionId}`, `terminal/retain {sessionId,id}`, duplex `terminal/attach {agentId,id}` over the existing authenticated `remote.mux`. Reconnect resets the emulator from the host's bounded VT snapshot and validates subsequent output sequence numbers. Input is bounded, acknowledged stop-and-wait with fresh numbering per attachment. Uncertain input is discarded with a warning, never replayed. The host does not provide unbounded raw-output replay: its retained screen/scrollback is the recovery limit. Closing the UI releases its hold; the host's default unattended idle limit is two hours.
+
+接口使用主机原有 `terminal/environment`、`list`、幂等 `create`、`rename`、`close`，以及 `watch`、`retain` 与 `attach` 双向复用流。重连以主机有限 VT 快照替换本地画面，校验后续输出序号；输入有界且逐条确认，每次连接重新编号。不确定是否执行的输入将丢弃并提示，绝不重发。主机不提供无限原始输出重放，恢复范围受主机屏幕与回滚历史限制。关闭界面会释放保留连接，主机默认在无人值守且持续空闲两小时后清理。
 
 - `PortalAPI`: RPC envelopes, login/logout, HTTP/business errors and session-expired state.
 - `PortalMux`: multiplexed logical AsyncThrowingStreams, unsubscribe/end/error, reconnect backoff and fresh stream openings. URLSession answers protocol pings automatically.

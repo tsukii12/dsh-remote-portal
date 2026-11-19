@@ -6,6 +6,8 @@ versions are the plugin's own, not dsh's.
 ## Unreleased
 
 ### Added
+- Native terminal: pinned MIT-licensed SwiftTerm VT rendering, retained session shells, multi-terminal inventory, keyboard accessory/copy/paste, viewport resize and generation-safe bidirectional mux. Reconnect replaces the bounded screen snapshot without replaying uncertain input; parser/state, real-listener and opt-in live coverage.
+- 原生终端：固定版本的 MIT 许可 SwiftTerm VT 渲染、会话 Shell 保留、多终端列表、扩展按键/复制/粘贴、视口尺寸更新及代际安全的双向复用流。重连替换有限屏幕快照，不重发未确认输入；包含解析/状态、真实监听器与可选在线测试。
 - Native DRP round 2: Photos/camera/Files uploads and file mentions, read-only workspace previews, token/context and completed-turn usage, revision-safe default model/access settings, provider status and Portal devices. Terminal remains deferred.
 - 原生 DRP 第二轮：照片/相机/文件附件与文件提及、只读工作区预览、令牌/上下文及轮次用量、版本安全的默认模型/权限设置、提供商状态与门户设备；终端留待后续实现。
 - Native iOS approvals can be closed without answering and reopened from the pending-request banner or session badges. Requests in other sessions no longer interrupt the current chat; routing uses the waterfall agentId as the exact session ID, matching Android.

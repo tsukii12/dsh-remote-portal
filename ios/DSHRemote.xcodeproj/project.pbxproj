@@ -11,7 +11,9 @@
 		0C1263A9F581026D3ADE67A8 /* live-stream-all.json in Resources */ = {isa = PBXBuildFile; fileRef = F47AEBC220E3699A87934461 /* live-stream-all.json */; };
 		0F34057475377F517D1387CF /* MarkdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855CABEA5AE01E87CFD9B0B2 /* MarkdownView.swift */; };
 		123178A77FE7836FA332B1CE /* RemoteEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7E7013EB502DA108045EF4 /* RemoteEvents.swift */; };
+		16C753F19C53588E9D19F952 /* TerminalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26DB4E6868ECFF931C5B5B71 /* TerminalView.swift */; };
 		1E126ECB71106CD9656682C2 /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939A191ABC4D156D62E63FF9 /* ChatView.swift */; };
+		2416CA6BE74498387A940E58 /* TerminalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD28A88C1CE7B68D2CB824A2 /* TerminalTests.swift */; };
 		27AFA5AFB3674EC409BB2F0B /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAE3DE41EEF7C093D12022B7 /* Connection.swift */; };
 		2C6AEB8725BC972EFA1E4533 /* ListenerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C848BD31BDC4E6E9359A1052 /* ListenerTests.swift */; };
 		30D52C9256F11802C1363A73 /* NativeStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC57A9E7125C1C7B7B1EBDF /* NativeStateTests.swift */; };
@@ -28,6 +30,7 @@
 		780C760C8FEFA0367FA6C8E5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 82C838BC9250964EF93A46EF /* Assets.xcassets */; };
 		7A7E3A89DC121DD00956D78E /* ChatOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC24A54F0C5082A5A9DC09EA /* ChatOptionsView.swift */; };
 		7A8D1754CB80474AE8E6911E /* BinaryRPC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDC5C9038665C5E43C62322B /* BinaryRPC.swift */; };
+		7D5230819DEDDC343D3CDB83 /* ThirdPartyNotices.txt in Resources */ = {isa = PBXBuildFile; fileRef = B701F4CDD4AC82303CE7462E /* ThirdPartyNotices.txt */; };
 		7D7A53CD2468EAB23563F035 /* live-hello-stream.json in Resources */ = {isa = PBXBuildFile; fileRef = B7F63A0D8CEB2C235E3FA3D0 /* live-hello-stream.json */; };
 		83AF0302BC5CF2C3D52C94B0 /* WorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 534EF24D99DA04F0ABBB33D4 /* WorkspaceView.swift */; };
 		885826B154157C638D23EEDE /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = F895E8B0D476AF0D2450E142 /* App.swift */; };
@@ -35,12 +38,15 @@
 		9249376815300D7A96C1AE03 /* FileMentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC61F94CDD3BA17CA29F58C /* FileMentions.swift */; };
 		92F5D3E76DA6F1B0F731C504 /* live-hello-events.json in Resources */ = {isa = PBXBuildFile; fileRef = DD93E121F2F672C89D9A3815 /* live-hello-events.json */; };
 		963126DBDA1CC342DBB60A9D /* live-hello-prompt-request.json in Resources */ = {isa = PBXBuildFile; fileRef = EAB6DADADE845E2267928140 /* live-hello-prompt-request.json */; };
+		9C17E4475156098F2C954DAC /* SwiftTerm in Frameworks */ = {isa = PBXBuildFile; productRef = 51751F7F3E0D2D0657AB2D18 /* SwiftTerm */; };
 		A99E00B8D01A16A223F3BEB3 /* PortalMux.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3430E2CC2CBD6539757293 /* PortalMux.swift */; };
 		C531704478D3D95AE28798C3 /* PresentationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F72CD9D63AB5263738894713 /* PresentationTests.swift */; };
 		C5FB673421328E1595570A11 /* AttachmentViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90B62711DFCA72D4184AC36 /* AttachmentViews.swift */; };
 		C749EFF01CA2D46037481757 /* live-model-catalog.json in Resources */ = {isa = PBXBuildFile; fileRef = 12D941C7E4498470F35A8489 /* live-model-catalog.json */; };
 		CEA73A64EF47BE3569B4099E /* ConnectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D80301D5FBB4C69FB8FA95D /* ConnectionTests.swift */; };
+		D45C2781471ACCCAEC2D7E76 /* TerminalStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EE0ECB50E78DE1DDE7FFA53 /* TerminalStore.swift */; };
 		D99C6D5EF2F474305AC8E4F4 /* HostSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62D109FCA079606B0313AB7D /* HostSettingsView.swift */; };
+		DE1FE8AA1B9C176BB2C1C602 /* SwiftTerm in Frameworks */ = {isa = PBXBuildFile; productRef = 1AF6FE4272929FCEFC80146C /* SwiftTerm */; };
 		DEF8EECE056D9028FF12D9AC /* live-approval-events.json in Resources */ = {isa = PBXBuildFile; fileRef = F345DCE047A5A4AF876DC2CE /* live-approval-events.json */; };
 		E2229F21D3CFA32A175A9231 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = B896439645C80D92D51A5D57 /* JSON.swift */; };
 		E90C49C4440D96C9C3A25A45 /* HostFolderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9604F5F6A166C86EB6548088 /* HostFolderView.swift */; };
@@ -65,7 +71,9 @@
 		0D032808C27DB9B596C1F823 /* DSHRemote.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = DSHRemote.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		12D941C7E4498470F35A8489 /* live-model-catalog.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "live-model-catalog.json"; sourceTree = "<group>"; };
 		1FBF0DBBE82516D32040AE0D /* LiveSmokeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveSmokeTests.swift; sourceTree = "<group>"; };
+		26DB4E6868ECFF931C5B5B71 /* TerminalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalView.swift; sourceTree = "<group>"; };
 		2D80301D5FBB4C69FB8FA95D /* ConnectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionTests.swift; sourceTree = "<group>"; };
+		2EE0ECB50E78DE1DDE7FFA53 /* TerminalStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalStore.swift; sourceTree = "<group>"; };
 		4886DB0D6BB0C99F588495C8 /* live-relay-tool-results.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "live-relay-tool-results.json"; sourceTree = "<group>"; };
 		4FC57A9E7125C1C7B7B1EBDF /* NativeStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeStateTests.swift; sourceTree = "<group>"; };
 		51E31BD29E3CF1DDCFBCB0A0 /* TransportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransportTests.swift; sourceTree = "<group>"; };
@@ -86,6 +94,8 @@
 		A802E3426AD81E789CF18C84 /* live-workspace-stream.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "live-workspace-stream.json"; sourceTree = "<group>"; };
 		A90B62711DFCA72D4184AC36 /* AttachmentViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentViews.swift; sourceTree = "<group>"; };
 		AC24A54F0C5082A5A9DC09EA /* ChatOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatOptionsView.swift; sourceTree = "<group>"; };
+		AD28A88C1CE7B68D2CB824A2 /* TerminalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalTests.swift; sourceTree = "<group>"; };
+		B701F4CDD4AC82303CE7462E /* ThirdPartyNotices.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = ThirdPartyNotices.txt; sourceTree = "<group>"; };
 		B7F63A0D8CEB2C235E3FA3D0 /* live-hello-stream.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "live-hello-stream.json"; sourceTree = "<group>"; };
 		B896439645C80D92D51A5D57 /* JSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
 		BAE3DE41EEF7C093D12022B7 /* Connection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
@@ -104,6 +114,25 @@
 		F9271D50C7B0055EF7EEC2B9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		FF0591514315C7638F5FE12F /* SidebarStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarStore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8EAD2AADEC61239B950AE11D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DE1FE8AA1B9C176BB2C1C602 /* SwiftTerm in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BBBC330C50A590437D51D561 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9C17E4475156098F2C954DAC /* SwiftTerm in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		03958D513018A1088E6398C5 = {
@@ -139,6 +168,9 @@
 				CA3430E2CC2CBD6539757293 /* PortalMux.swift */,
 				5F7E7013EB502DA108045EF4 /* RemoteEvents.swift */,
 				FF0591514315C7638F5FE12F /* SidebarStore.swift */,
+				2EE0ECB50E78DE1DDE7FFA53 /* TerminalStore.swift */,
+				26DB4E6868ECFF931C5B5B71 /* TerminalView.swift */,
+				B701F4CDD4AC82303CE7462E /* ThirdPartyNotices.txt */,
 				9BC6F3B669B50EE4852F728A /* TurnUsage.swift */,
 				DD87EB58CF9A85AC843AC109 /* UsageView.swift */,
 				8FA050E3C261AE8DC9001D13 /* WorkspaceFilesView.swift */,
@@ -156,6 +188,7 @@
 				1FBF0DBBE82516D32040AE0D /* LiveSmokeTests.swift */,
 				4FC57A9E7125C1C7B7B1EBDF /* NativeStateTests.swift */,
 				F72CD9D63AB5263738894713 /* PresentationTests.swift */,
+				AD28A88C1CE7B68D2CB824A2 /* TerminalTests.swift */,
 				51E31BD29E3CF1DDCFBCB0A0 /* TransportTests.swift */,
 				C0859E41DEF08337F895755C /* Fixtures */,
 			);
@@ -196,6 +229,7 @@
 			buildPhases = (
 				C013B2C6A145D590212A4261 /* Sources */,
 				69E761C0958A5BD7CD6258D2 /* Resources */,
+				BBBC330C50A590437D51D561 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -203,6 +237,7 @@
 			);
 			name = DSHRemote;
 			packageProductDependencies = (
+				51751F7F3E0D2D0657AB2D18 /* SwiftTerm */,
 			);
 			productName = DSHRemote;
 			productReference = 0D032808C27DB9B596C1F823 /* DSHRemote.app */;
@@ -214,6 +249,7 @@
 			buildPhases = (
 				8ACFEA0ACB9FD3D48493C6F2 /* Sources */,
 				573DB261626A0F44A36EF854 /* Resources */,
+				8EAD2AADEC61239B950AE11D /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -222,6 +258,7 @@
 			);
 			name = DSHRemoteTests;
 			packageProductDependencies = (
+				1AF6FE4272929FCEFC80146C /* SwiftTerm */,
 			);
 			productName = DSHRemoteTests;
 			productReference = 04C4FB18692FB828803326B3 /* DSHRemoteTests.xctest */;
@@ -247,6 +284,9 @@
 			);
 			mainGroup = 03958D513018A1088E6398C5;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				2861172B6E88F8FC33D2F29B /* XCRemoteSwiftPackageReference "SwiftTerm" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C70777B893EEA1CF7C03E7CB /* Products */;
 			projectDirPath = "";
@@ -280,6 +320,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				780C760C8FEFA0367FA6C8E5 /* Assets.xcassets in Resources */,
+				7D5230819DEDDC343D3CDB83 /* ThirdPartyNotices.txt in Resources */,
 				89A5FE59C590F0FE4E383902 /* en.lproj in Resources */,
 				FF9326B02D86F9C5A9944E33 /* zh-Hans.lproj in Resources */,
 			);
@@ -297,6 +338,7 @@
 				440948480E97A6A77AA0AB04 /* LiveSmokeTests.swift in Sources */,
 				30D52C9256F11802C1363A73 /* NativeStateTests.swift in Sources */,
 				C531704478D3D95AE28798C3 /* PresentationTests.swift in Sources */,
+				2416CA6BE74498387A940E58 /* TerminalTests.swift in Sources */,
 				6BCF9AEA77B1F1C0CAED715C /* TransportTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -323,6 +365,8 @@
 				A99E00B8D01A16A223F3BEB3 /* PortalMux.swift in Sources */,
 				123178A77FE7836FA332B1CE /* RemoteEvents.swift in Sources */,
 				F1A383AD689AD62FE1BB500E /* SidebarStore.swift in Sources */,
+				D45C2781471ACCCAEC2D7E76 /* TerminalStore.swift in Sources */,
+				16C753F19C53588E9D19F952 /* TerminalView.swift in Sources */,
 				F4A2A42CC14C1CDD98F35FFF /* TurnUsage.swift in Sources */,
 				68E9A16BFB1F123E66B63E15 /* UsageView.swift in Sources */,
 				3F671CAED2ACB8E0AFA7456A /* WorkspaceFilesView.swift in Sources */,
@@ -561,6 +605,30 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		2861172B6E88F8FC33D2F29B /* XCRemoteSwiftPackageReference "SwiftTerm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/migueldeicaza/SwiftTerm.git";
+			requirement = {
+				kind = exactVersion;
+				version = 1.19.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		1AF6FE4272929FCEFC80146C /* SwiftTerm */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2861172B6E88F8FC33D2F29B /* XCRemoteSwiftPackageReference "SwiftTerm" */;
+			productName = SwiftTerm;
+		};
+		51751F7F3E0D2D0657AB2D18 /* SwiftTerm */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2861172B6E88F8FC33D2F29B /* XCRemoteSwiftPackageReference "SwiftTerm" */;
+			productName = SwiftTerm;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 3D2C8FF20F7EE760162E0A53 /* Project object */;
 }

@@ -2,10 +2,33 @@ import Foundation
 
 @MainActor
 final class PortalMux {
+    struct Event {
+        let value: JSON
+        let generation: UUID
+    }
+    @MainActor final class Channel {
+        let id: String
+        let frames: AsyncThrowingStream<Event, Error>
+        private weak var mux: PortalMux?
+        fileprivate init(id: String, frames: AsyncThrowingStream<Event, Error>, mux: PortalMux) {
+            self.id = id; self.frames = frames; self.mux = mux
+        }
+        var generation: UUID? { mux?.connectionID }
+        func send(_ value: JSON, generation: UUID) async throws {
+            guard let mux, mux.connectionID == generation, mux.opened.contains(id), mux.subscriptions[id] != nil else { throw APIError.disconnected }
+            try await mux.send(["type": "item", "streamId": .string(id), "value": value], generation: generation)
+        }
+        func end(generation: UUID) async throws {
+            guard let mux, mux.connectionID == generation else { throw APIError.disconnected }
+            try await mux.send(["type": "end", "streamId": .string(id)], generation: generation)
+        }
+        func cancel() { mux?.unsubscribe(id) }
+    }
     private struct Subscription {
         let endpoint: String
         let args: JSON
-        let continuation: AsyncThrowingStream<JSON, Error>.Continuation
+        let yield: (JSON, UUID) -> Void
+        let finish: (Error?) -> Void
     }
     private weak var api: PortalAPI?
     private var subscriptions: [String: Subscription] = [:]
@@ -13,37 +36,50 @@ final class PortalMux {
     private var receiver: Task<Void, Never>?
     private var opened = Set<String>()
     private var runnerID = UUID()
+    private var connectionID = UUID()
     init(api: PortalAPI) { self.api = api }
 
     func open(_ endpoint: String, args: JSON) -> AsyncThrowingStream<JSON, Error> {
         let id = UUID().uuidString
         return AsyncThrowingStream { continuation in
-            subscriptions[id] = Subscription(endpoint: endpoint, args: args, continuation: continuation)
+            register(id, endpoint: endpoint, args: args, yield: { value, _ in continuation.yield(value) }, finish: { continuation.finish(throwing: $0) })
             continuation.onTermination = { [weak self] _ in Task { @MainActor in self?.unsubscribe(id) } }
-            if receiver == nil {
-                let token = UUID(); runnerID = token
-                receiver = Task { [weak self] in await self?.run(token) }
-            }
-            else if socket != nil { Task { try? await self.sendOpen(id) } }
         }
     }
+    func openDuplex(_ endpoint: String, args: JSON) -> Channel {
+        let id = UUID().uuidString
+        let frames = AsyncThrowingStream<Event, Error> { continuation in
+            register(id, endpoint: endpoint, args: args, yield: { value, generation in continuation.yield(Event(value: value, generation: generation)) }, finish: { continuation.finish(throwing: $0) })
+            continuation.onTermination = { [weak self] _ in Task { @MainActor in self?.unsubscribe(id) } }
+        }
+        return Channel(id: id, frames: frames, mux: self)
+    }
+    private func register(_ id: String, endpoint: String, args: JSON, yield: @escaping (JSON, UUID) -> Void, finish: @escaping (Error?) -> Void) {
+        subscriptions[id] = Subscription(endpoint: endpoint, args: args, yield: yield, finish: finish)
+        if receiver == nil {
+            let token = UUID(); runnerID = token
+            receiver = Task { [weak self] in await self?.run(token) }
+        } else if socket != nil { Task { try? await self.sendOpen(id) } }
+    }
     private func unsubscribe(_ id: String) {
-        guard subscriptions.removeValue(forKey: id) != nil else { return }
+        guard let subscription = subscriptions.removeValue(forKey: id) else { return }
+        subscription.finish(nil)
         opened.remove(id)
         Task { try? await send(["type": "cancel", "streamId": .string(id)]) }
         if subscriptions.isEmpty { receiver?.cancel(); receiver = nil; socket?.cancel(with: .goingAway, reason: nil); socket = nil }
     }
     func close() {
+        connectionID = UUID()
         receiver?.cancel(); receiver = nil
         socket?.cancel(with: .goingAway, reason: nil); socket = nil; opened.removeAll()
         let existing = subscriptions; subscriptions.removeAll()
-        for subscription in existing.values { subscription.continuation.finish(throwing: APIError.sessionExpired) }
+        for subscription in existing.values { subscription.finish(APIError.sessionExpired) }
     }
     func sendItem(_ value: JSON, streamId: String) async throws { try await send(["type": "item", "streamId": .string(streamId), "value": value]) }
     func endInput(streamId: String) async throws { try await send(["type": "end", "streamId": .string(streamId)]) }
-    func reconnect() { socket?.cancel(with: .goingAway, reason: nil) }
-    private func send(_ frame: JSON) async throws {
-        guard let socket else { throw APIError.disconnected }
+    func reconnect() { connectionID = UUID(); socket?.cancel(with: .goingAway, reason: nil) }
+    private func send(_ frame: JSON, generation: UUID? = nil) async throws {
+        guard generation == nil || generation == connectionID, let socket else { throw APIError.disconnected }
         let data = try JSONEncoder().encode(frame)
         try await socket.send(.string(String(decoding: data, as: UTF8.self)))
     }
@@ -56,7 +92,7 @@ final class PortalMux {
             if runnerID == token {
                 receiver = nil; socket?.cancel(with: .goingAway, reason: nil); socket = nil
                 let remaining = subscriptions; subscriptions.removeAll()
-                for subscription in remaining.values { subscription.continuation.finish(throwing: APIError.disconnected) }
+                for subscription in remaining.values { subscription.finish(APIError.disconnected) }
             }
         }
         var failures = 0
@@ -66,6 +102,8 @@ final class PortalMux {
             url.scheme = url.scheme == "https" ? "wss" : "ws"
             request.url = url.url
             let task = client.session.webSocketTask(with: request)
+            connectionID = UUID()
+            let generation = connectionID
             socket = task; opened.removeAll()
             // URLSessionWebSocketTask handles incoming protocol pings with pongs.
             task.resume()
@@ -73,6 +111,7 @@ final class PortalMux {
                 for id in Array(subscriptions.keys) { try await sendOpen(id) }
                 while !Task.isCancelled {
                     let message = try await task.receive()
+                    guard runnerID == token, !Task.isCancelled, socket === task else { return }
                     if let http = task.response as? HTTPURLResponse { try client.cookies.ingest(http, base: base) }
                     let data: Data
                     switch message {
@@ -85,17 +124,19 @@ final class PortalMux {
                     let id = frame["streamId"].text
                     guard let subscription = subscriptions[id] else { continue }
                     switch frame["type"].text {
-                    case "item": subscription.continuation.yield(frame["value"])
-                    case "end": subscriptions.removeValue(forKey: id); subscription.continuation.finish()
+                    case "item": subscription.yield(frame["value"], generation)
+                    case "end": subscriptions.removeValue(forKey: id); subscription.finish(nil)
                     case "error":
                         subscriptions.removeValue(forKey: id)
-                        subscription.continuation.finish(throwing: APIError.remote(frame["error"]["code"].text, frame["error"]["message"].text))
+                        subscription.finish(APIError.remote(frame["error"]["code"].text, frame["error"]["message"].text))
                     default: break
                     }
                     if subscriptions.isEmpty { break }
                 }
             } catch {
-                for subscription in subscriptions.values { subscription.continuation.yield(["type": "connection-reset"]) }
+                guard runnerID == token, !Task.isCancelled else { return }
+                connectionID = UUID()
+                for subscription in subscriptions.values { subscription.yield(["type": "connection-reset"], connectionID) }
                 if let http = task.response as? HTTPURLResponse {
                     try? client.cookies.ingest(http, base: base)
                     if http.statusCode == 401 { api?.expire(); return }

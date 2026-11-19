@@ -4,6 +4,48 @@ import UIKit
 
 @MainActor
 final class LiveSmokeTests: XCTestCase {
+    func testNativeTerminalLiveMuxRecovery() async throws {
+        guard ProcessInfo.processInfo.environment["DSH_LIVE_SMOKE"] == "1" else { throw XCTSkip("Opt in with DSH_LIVE_SMOKE=1") }
+        let api = PortalAPI(base: URL(string: "http://127.0.0.1:3081/")!, client: PortalClient())
+        try await api.login(secret: "demo-pass-123", pairing: false)
+        let session = try await api.rpc("session/create", args: ["request": ["cwd": "/Users/devin/fake-llm/r2-native-ui", "agentPreset": "standard"]])
+        let sessionID = session["sessionId"].text
+        let inventory = TerminalInventory(api: api, sessionID: sessionID)
+        let createdID = await inventory.create()
+        let id = try XCTUnwrap(createdID)
+        let store = TerminalStore(api: api, sessionID: sessionID, info: try XCTUnwrap(inventory.terminals.first))
+        var frames: [JSON] = []; store.render = { frames.append($0) }; store.start()
+        do {
+            try await eventually("terminal snapshot") { store.ready }
+            XCTAssertTrue(store.writable)
+            store.write("printf 'DRP-live-terminal 中文\\n'\r")
+            try await eventually("terminal command") { frames.contains { $0["type"] == "output" && $0["data"].text.contains("DRP-live-terminal") } && store.protocolState.acknowledged >= 1 }
+            store.resize(cols: 92, rows: 28)
+            try await eventually("terminal resize") { store.info["cols"] == 92 && store.info["rows"] == 28 }
+            let before = frames.filter { $0["type"] == "snapshot" }.count
+            api.mux.reconnect()
+            try await eventually("terminal recovered screen") { frames.filter { $0["type"] == "snapshot" }.count > before && store.ready }
+            XCTAssertTrue(frames.last { $0["type"] == "snapshot" }?["screen"].text.contains("DRP-live-terminal") == true)
+            let beforeReattach = frames.filter { $0["type"] == "snapshot" }.count
+            for _ in 0..<3 { store.reconnect(); await Task.yield() }
+            try await eventually("superseded terminal attachment") { frames.filter { $0["type"] == "snapshot" }.count > beforeReattach && store.ready }
+            store.write("printf 'DRP-logical-reattach\\n'\r")
+            try await eventually("input after logical reattach") { frames.contains { $0["type"] == "output" && $0["data"].text.contains("DRP-logical-reattach") } && store.protocolState.acknowledged >= 1 }
+            let acknowledged = store.protocolState.acknowledged
+            store.write("sleep 100\r")
+            try await eventually("sleep acknowledgement") { store.protocolState.acknowledged > acknowledged }
+            let sleepingAcknowledged = store.protocolState.acknowledged
+            store.write("\u{3}")
+            try await eventually("interrupt acknowledgement") { store.protocolState.acknowledged > sleepingAcknowledged }
+            store.stop()
+            let listed = try await api.rpc("terminal/list", args: ["sessionId": .string(sessionID)])
+            XCTAssertTrue(listed.array.contains { $0["id"] == .string(id) })
+            print("LIVE PASS terminal: create/list/retain, UTF-8 write/ack, resize, reconnect snapshot, fresh input numbering, Ctrl-C and detached PTY retention")
+        } catch { store.stop(); await inventory.close(id); api.mux.close(); throw error }
+        await inventory.close(id)
+        _ = try await api.rpc("workspace/archiveSession", args: ["request": ["sessionId": .string(sessionID)]])
+        api.mux.close(); api.client.session.invalidateAndCancel()
+    }
     func testRoundTwoGatewayFilesAttachmentsSettingsAndPresets() async throws {
         guard ProcessInfo.processInfo.environment["DSH_LIVE_SMOKE"] == "1" else { throw XCTSkip("Opt in with test runner DSH_LIVE_SMOKE=1") }
         let api = PortalAPI(base: URL(string: "http://127.0.0.1:3081/")!)

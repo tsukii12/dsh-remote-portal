@@ -18,6 +18,7 @@ struct ChatView: View {
     @State private var dismissedError: String?
     @State private var showingOptions = false
     @State private var showingFiles = false
+    @State private var showingTerminals = false
     @State private var editingQueue: String?
     @State private var queuedText = ""
     @State private var steer = false
@@ -39,6 +40,8 @@ struct ChatView: View {
         .toolbar { ToolbarItem(placement: .primaryAction) { Button { showingFiles = true } label: { Image(systemName: "folder") }.accessibilityLabel(L("Workspace files", "工作区文件")).accessibilityIdentifier("workspaceFiles") } }
         .sheet(isPresented: $showingOptions) { ChatOptionsView(chat: chat) }
         .sheet(isPresented: $showingFiles) { WorkspaceFilesView(api: chat.api, sessionID: chat.sessionID) }
+        .toolbar { ToolbarItem(placement: .primaryAction) { if chat.api is PortalAPI { Button { showingTerminals = true } label: { Image(systemName: "terminal") }.accessibilityLabel(L("Terminals", "终端")).accessibilityIdentifier("terminals") } } }
+        .sheet(isPresented: $showingTerminals) { if let api = chat.api as? PortalAPI { TerminalsView(api: api, sessionID: chat.sessionID) } }
         .task(id: draft) { await mentions.load(draft) }
         .alert(L("Edit queued message", "编辑排队消息"), isPresented: Binding(get: { editingQueue != nil }, set: { if !$0 { editingQueue = nil } })) {
             TextField(L("Message", "消息"), text: $queuedText)
