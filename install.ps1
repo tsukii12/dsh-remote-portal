@@ -142,5 +142,5 @@ foreach ($name in $Profile) {
 }
 
 Write-Host ''
-Write-Host 'Next: restart the profile, then open Settings → 远程访问 to set a password and scan the QR code.' -ForegroundColor Green
+Write-Host 'Next: restart the profile, then open 远程访问 / Remote access in the sidebar to set a password and scan the QR code.' -ForegroundColor Green
 Write-Host "State and sessions live in: $(Join-Path $env:DSH_HOME 'dsh-remote-portal')"

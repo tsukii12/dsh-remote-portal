@@ -20,11 +20,13 @@ NAME="dsh-remote-portal"
 PLUGIN_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 DSH_HOME=${DSH_HOME:-"$HOME/.dsh"}
 PROFILES="desktop web"
+EXPLICIT=0
 UNINSTALL=0
+INSTALLED=0
 
 while [ $# -gt 0 ]; do
   case "$1" in
-    -p|--profile) PROFILES=$2; shift 2 ;;
+    -p|--profile) PROFILES=$2; EXPLICIT=1; shift 2 ;;
     -u|--uninstall) UNINSTALL=1; shift ;;
     -h|--help) sed -n '2,20p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *) echo "unknown option: $1" >&2; exit 2 ;;
@@ -40,6 +42,11 @@ for profile in $PROFILES; do
 
   if [ ! -f "$pkg" ]; then
     if [ "$UNINSTALL" = "1" ]; then
+      echo "[$profile] no profile at $dir — skipped"
+      continue
+    fi
+    if [ "$EXPLICIT" = "0" ]; then
+      # The default covers both apps; a server with only dsh web has no desktop profile.
       echo "[$profile] no profile at $dir — skipped"
       continue
     fi
@@ -83,12 +90,17 @@ fs.symlinkSync(pluginDir, link, "dir");
 console.log(`[${profileDir.split("/").pop()}] linked ${name} → ${pluginDir}`);
 console.log(`[${profileDir.split("/").pop()}] bundles: ${bundles.join(", ")}`);
 NODE
+  INSTALLED=$((INSTALLED + 1))
 done
 
 [ "$UNINSTALL" = "1" ] && exit 0
+if [ "$INSTALLED" = "0" ]; then
+  echo "$NAME: no dsh profile found under $DSH_HOME/profiles — run dsh (or dsh --profile web) once, then install again" >&2
+  exit 1
+fi
 cat <<'DONE'
 
 Installed. Restart the profile (quit and reopen the desktop app, or Ctrl+C then
-`dsh web`), then open Settings → 远程访问 and set an access password — the portal
+`dsh web`), then open 远程访问 / Remote access in the sidebar and set an access password — the portal
 refuses to listen on the network until one exists.
 DONE
