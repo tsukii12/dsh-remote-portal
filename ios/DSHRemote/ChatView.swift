@@ -223,7 +223,7 @@ struct ChatView: View {
     }
     private func send() {
         guard canSend else { return }
-        let text = draft; let steerNow = steer; sending = true; followingBottom = true; composerFocused = false
+        let text = draft; let steerNow = steer; sending = true; followingBottom = true; composerFocused = true
         Task {
             do {
                 if text.trimmingCharacters(in: .whitespacesAndNewlines) != "/model" { try chat.validateImageInput(attachments.items) }
