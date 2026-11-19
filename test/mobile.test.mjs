@@ -724,6 +724,41 @@ describe("mobile layer against the live dsh web UI", () => {
     assert.equal(out.closedAttr, null, "close() did not clear data-drp-drawer");
   });
 
+  test("a main-area page opened from the drawer fills the phone width", async (t) => {
+    if (skipReason) return t.skip(skipReason);
+    const expr = `(async () => {
+      const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+      const html = document.documentElement;
+      document.querySelector('.drp-drawer-btn').click();
+      await sleep(600);
+      const entry = [...document.querySelectorAll('[data-slot="sidebar"] button')]
+        .find((b) => /^(Remote access|远程访问)$/.test(b.getAttribute('aria-label') || ''));
+      if (!entry) return JSON.stringify({ entry: false });
+      entry.click();
+      await sleep(1200);
+      const page = document.querySelector('[data-slot="main"] .drp-page');
+      const r = page ? page.getBoundingClientRect() : null;
+      return JSON.stringify({
+        entry: true,
+        drawer: html.getAttribute('data-drp-drawer'),
+        page: r ? { x: Math.round(r.x), w: Math.round(r.width) } : null,
+        scrollW: document.documentElement.scrollWidth,
+      });
+    })()`;
+    const { code, stdout, stderr } = await runCdp([
+      "eval", BASE, expr, "--token", TOKEN_URL, "--wait", "4000",
+      "--w", "390", "--h", "844", "--mobile", "--pre-file", join(tmp, "pre.js"), "--settle", "1200",
+    ]);
+    assert.equal(code, 0, "cdp run failed: " + stderr.slice(-800));
+    const out = JSON.parse(stdout.trim().split("\n").filter((l) => l.trim().startsWith("{")).pop());
+    assert.equal(out.entry, true, "Remote access entry not found in the sidebar");
+    assert.equal(out.drawer, null, "the drawer must close once a page is chosen");
+    assert.ok(out.page, "the Remote access page did not render in the main slot");
+    assert.equal(out.page.x, 0, "the page must start at the left edge (was squeezed into an implicit column)");
+    assert.equal(out.page.w, 390, "the page must span the phone width");
+    assert.ok(out.scrollW <= 390, "page overflows horizontally: " + out.scrollW);
+  });
+
   test("no horizontal overflow at 320/360/390/430/768/900 in both themes", async (t) => {
     if (skipReason) return t.skip(skipReason);
     const outPath = join(tmp, "audit.json");

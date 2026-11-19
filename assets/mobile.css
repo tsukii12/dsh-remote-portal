@@ -21,7 +21,7 @@
  *
  *   [data-slot="root"] > div                            the three-column frame
  *   [data-slot="root"] > div > div:has(> [data-slot="sidebar"])    left column
- *   [data-slot="root"] > div > div:has(> [data-slot="main"])       centre column
+ *   [data-slot="root"] > div > div:has(> * > [data-slot="main"])   centre column
  *   [data-slot="root"] > div > div:has(> [data-slot="rightbar"])   right column
  *   [data-slot="root"] > div > div:has(> [data-slot="shell.bottom"]) bottom row
  *   [data-slot="sidebar"] > :first-child                the sidebar surface
@@ -95,7 +95,13 @@
 
   /* Explicit placement: the drawer leaves the flow, the right panel stacks on
      top of the centre column, the bottom row keeps its own row. */
-  html[data-drp-mobile] [data-slot="root"] > div > div:has(> [data-slot="main"]) {
+  /* dsh 0.2 wraps the main slot in a panel (`centerCol > mainPanel > main`);
+     without the second form the column kept its inline `grid-column: 2`, so
+     an implicit track opened and a page squeezed into the right ~45%. */
+  html[data-drp-mobile]
+    [data-slot="root"]
+    > div
+    > div:has(> [data-slot="main"], > * > [data-slot="main"]) {
     grid-area: 1 / 1 / 2 / 2;
     min-width: 0;
   }
