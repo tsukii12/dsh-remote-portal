@@ -30,3 +30,28 @@ test("the pairing card names the real reason the portal is not running", () => {
   // password and enable it".
   assert.match(src, /drp-qr-empty[^\n]*\n[^\n]*status\.lastError && !blockedByPassword \? friendlyGateway\(status\.lastError\) : t\("qrNotRunning"\)/);
 });
+
+test("the status poll waits for each answer before asking again", () => {
+  // A fixed 3 s setInterval with an 8 s timeout kept up to three /status
+  // requests open at once on a slow relay.
+  const poll = /\/\/ ── polling:[\s\S]*?\}, \[\]\);/.exec(src);
+  assert.ok(poll, "polling effect not found");
+  assert.doesNotMatch(poll[0], /setInterval/);
+  assert.match(poll[0], /if \(!alive \|\| inFlight\) return;/);
+  assert.match(poll[0], /refreshStatus\(\)\.then\(function \(\) \{\s*inFlight = false;\s*if \(alive\) timer = setTimeout\(tick, POLL_MS\);/);
+});
+
+test("an older /status answer never replaces a newer one", () => {
+  const body = /function refreshStatus\(\) \{([\s\S]*?)\n      \}/.exec(src);
+  assert.ok(body, "refreshStatus not found");
+  assert.match(body[1], /var seq = \+\+statusSeq\.current\.sent;/);
+  assert.match(body[1], /if \(seq <= statusSeq\.current\.applied\) return;/);
+  // Status that comes back with an action counts as the newest answer.
+  assert.match(src, /if \(seq === undefined\) statusSeq\.current\.applied = \+\+statusSeq\.current\.sent;/);
+});
+
+test("a failed poll says the status shown may be out of date", () => {
+  assert.match(src, /if \(st\.pollErr\) \{\s*alerts\.push\([^\n]*key: "stale"/);
+  assert.match(src, /statusStale: "暂时读不到最新状态/);
+  assert.match(src, /statusStale: "Cannot read the latest status/);
+});

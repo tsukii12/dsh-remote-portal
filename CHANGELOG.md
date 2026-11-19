@@ -23,6 +23,10 @@ versions are the plugin's own, not dsh's.
 - Remote access: a busy port is explained in the panel's language, and the
   pairing card names that error instead of asking you to set a password that
   is already set.
+- Remote access: on a slow link the panel no longer stacks status requests
+  (up to three at once over a 9 s relay round trip, each timing out); it asks
+  again 3 s after each answer, ignores answers older than the one shown, and
+  says when the status it shows may be out of date.
 - Remote access: a 6- or 7-character password sent to the panel's password
   route is refused as too short (at least 8, as the gateway requires) instead
   of failing as an internal server error.
