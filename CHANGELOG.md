@@ -5,6 +5,9 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+- Android Stage D: native host defaults with revision-conflict refresh, provider
+  status, confirmed authorized-device revocation and app version in drawer Settings.
+
 - Android Stage C: native session Files panel with expandable/searchable watched
   workspace tree, paged selectable text, image previews, bounded multipart file
   sharing, and composer mentions from files.

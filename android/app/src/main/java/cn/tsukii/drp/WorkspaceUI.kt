@@ -37,6 +37,7 @@ fun WorkspaceScreen(connection: NativeConnection, serverName: String, addressLab
     var deleteWorkspace by remember { mutableStateOf<WorkspaceRow?>(null) }
     var folders by remember { mutableStateOf(false) }
     var filesOpen by rememberSaveable { mutableStateOf(false) }
+    var settingsOpen by remember { mutableStateOf(false) }
     var viewOptions by remember { mutableStateOf(false) }
     var contentSearch by rememberSaveable { mutableStateOf(false) }
     var interactionID by remember { mutableStateOf<String?>(null) }
@@ -140,6 +141,7 @@ fun WorkspaceScreen(connection: NativeConnection, serverName: String, addressLab
                 }
             }
             HorizontalDivider()
+            TextButton(onClick = { settingsOpen = true; scope.launch { drawer.close() } }, modifier = Modifier.fillMaxWidth()) { Text(L("Settings", "设置")) }
             TextButton(onClick = onSwitch, modifier = Modifier.fillMaxWidth()) { Text(L("Switch server", "切换服务器")) }
             TextButton(onClick = { perform { onLogout() } }, modifier = Modifier.fillMaxWidth()) { Text(L("Log out", "退出登录")) }
         }
@@ -189,6 +191,7 @@ fun WorkspaceScreen(connection: NativeConnection, serverName: String, addressLab
         text = { Text(L("Removes the workspace registration, not the host folder or its files.", "仅移除工作区记录，不会删除主机文件夹或其中的文件。")) },
         confirmButton = { TextButton(onClick = { perform { connection.sidebar.deleteWorkspace(workspace.id); deleteWorkspace = null } }) { Text(L("Remove workspace", "移除工作区")) } },
         dismissButton = { TextButton(onClick = { deleteWorkspace = null }) { Text(L("Cancel", "取消")) } }) }
+    if (settingsOpen) HostSettingsSheet(remember(connection) { HostSettingsStore(connection.api) }) { settingsOpen = false }
     if (folders) HostFolderSheet(connection.sidebar) { folders = false }
     events.pending.find { it.id == interactionID }?.let { item -> key(item.id) {
         InteractionSheet(item, connection.api, connection.events, onLater = {

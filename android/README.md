@@ -5,6 +5,12 @@ Requires Android 8.0 (API 26) or newer; application ID: `cn.tsukii.drp`. No WebV
 
 ## Build and install
 
+The drawer footer's Settings action opens native host defaults (model, effort and
+access), provider catalog status, authorized devices with confirmed revoke, and
+app version. Writes use namespace revisions; conflicts reload without replaying
+the write. The portal does not identify the current device: revoking this phone
+can sign out the app and requires explicit selection and confirmation.
+
 Requires JDK 17 and Android SDK platform 35 / build-tools 35.0.0. Set `ANDROID_HOME`
 to your SDK, or set `sdk.dir` in an untracked `local.properties`. The checked-in
 Gradle wrapper downloads Gradle 8.9; dependencies use Google Maven and Maven Central.
