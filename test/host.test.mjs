@@ -1468,3 +1468,74 @@ test("the LAN address list follows a PC address change without a restart", async
   }
   assert.match(lan, /^http:\/\/10\.0\.0\.9:\d+\/$/, "the panel kept showing the old address");
 });
+
+test("a signed-in phone reopening a pairing link goes straight in without using the code", async () => {
+  const { gw } = await startPortal();
+  await gw.setPassword("correct horse battery");
+  await gw.start();
+  const port = gw.status().port;
+  const phone = cookieHeaderFrom((await login(port, "correct horse battery")).response).portal;
+  assert.ok(phone, "the password login must issue a session");
+  const pairing = await gw.mintPairing({ ttlSeconds: 120 });
+  const link = `/__portal/pair?t=${encodeURIComponent(pairing.token)}`;
+
+  // More reopenings than the lockout allows strikes: none of them may count.
+  for (let i = 0; i < 7; i++) {
+    const again = await request(port, link, { headers: { accept: "text/html", cookie: phone } });
+    assert.equal(again.status, 303, "a live session must go straight to the app");
+    assert.equal(again.headers.location, "/");
+    assert.equal(cookieHeaderFrom(again).portal, "", "no new session is minted");
+  }
+  const ok = await login(port, "correct horse battery");
+  assert.equal(ok.response.status, 303, "reopening the link must not lock the address out");
+
+  // The code is still there for the phone it was made for.
+  const newPhone = await request(port, link, { headers: { accept: "text/html" } });
+  assert.equal(newPhone.status, 303);
+  assert.ok(cookieHeaderFrom(newPhone).portal.startsWith("dsh_portal="), "the new phone pairs with the unused code");
+  const replay = await request(port, link, { headers: { accept: "text/html" } });
+  assert.equal(replay.status, 401, "the code is still single use");
+});
+
+test("without a live session a pairing link is refused and locked out as before", async (t) => {
+  t.mock.timers.enable({ apis: ["Date"], now: Date.now() });
+  const { gw } = await startPortal();
+  await gw.setPassword("correct horse battery");
+  await gw.start();
+  const port = gw.status().port;
+
+  const other = (await startPortal()).gw; // another host: its cookies are signed with another secret
+  await other.setPassword("correct horse battery");
+  await other.start();
+  const wrongBase = cookieHeaderFrom((await login(other.status().port, "correct horse battery")).response).portal;
+
+  const removed = cookieHeaderFrom((await login(port, "correct horse battery")).response).portal;
+  for (const device of gw.devices()) await gw.revokeDevice(device.id);
+  const expired = cookieHeaderFrom((await login(port, "correct horse battery")).response).portal;
+  t.mock.timers.tick(31 * 24 * 3600 * 1000); // past the 30-day session
+
+  const kinds = {
+    none: "",
+    forged: "dsh_portal=" + "A".repeat(43) + "." + "B".repeat(43),
+    wrongBase,
+    removed,
+    expired,
+  };
+  // Each still pairs a phone with a valid code, exactly as a fresh browser does…
+  for (const [kind, cookie] of Object.entries(kinds)) {
+    const pairing = await gw.mintPairing({ ttlSeconds: 120 });
+    const headers = { accept: "text/html", ...(cookie ? { cookie } : {}) };
+    const paired = await request(port, `/__portal/pair?t=${encodeURIComponent(pairing.token)}`, { headers });
+    assert.equal(paired.status, 303, `${kind}: a valid code must pair`);
+    assert.ok(cookieHeaderFrom(paired).portal, `${kind}: pairing must issue a session`);
+  }
+  // …and each refusal counts toward the lockout.
+  const statuses = [];
+  for (const cookie of Object.values(kinds)) {
+    const headers = { accept: "text/html", ...(cookie ? { cookie } : {}) };
+    statuses.push((await request(port, "/__portal/pair?t=definitely-not-a-token", { headers })).status);
+  }
+  assert.deepEqual(statuses, [401, 401, 401, 401, 429], "four refusals, then the fifth strike locks");
+  const locked = await login(port, "correct horse battery");
+  assert.equal(locked.response.status, 429, "five refused codes must lock the address as before");
+});

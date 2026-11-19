@@ -16,6 +16,11 @@ versions are the plugin's own, not dsh's.
   name/content search and unarchive, and host-folder workspace management.
   Includes bilingual controls and JVM RPC/projection/failure coverage.
 
+- Pairing: a phone that is already signed in and opens its pairing link again
+  (scans the QR twice, or the browser restores the tab) goes straight into the
+  app. It used to get "invalid or already used", and each try counted toward
+  the lockout. The code is no longer used up by that phone, so the new phone it
+  was made for can still pair. Without a live session nothing changes.
 - Remote access on a phone: the tab labels no longer run together ("Local
   network" touched "Public access" at 390 px, in English), and with large text
   or page zoom the tab bar scrolls the chosen tab into view instead of leaving
@@ -1182,7 +1187,6 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
-
 
 
 
