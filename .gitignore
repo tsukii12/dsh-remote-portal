@@ -24,4 +24,8 @@ docs/screenshots/*.tmp.png
 .out/
 node_modules/
 *.tgz
-
+ios/build/
+ios/DerivedData/
+ios/**/*.xcuserstate
+ios/**/xcuserdata/
+ios/*.xcresult

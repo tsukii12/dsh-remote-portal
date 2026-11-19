@@ -4,6 +4,8 @@
 
 # dsh-remote-portal
 
+[原生 iOS App（Simulator 试用）](ios/README.md)
+
 **为 DeepSeek Harness 提供远程能力：局域网或公网远程访问。**
 
 [![license](https://img.shields.io/badge/license-MIT-0f1115?style=flat-square)](LICENSE)

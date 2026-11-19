@@ -4,6 +4,8 @@
 
 # dsh-remote-portal
 
+[Native iOS app (Simulator preview)](ios/README.md)
+
 **Remote access for DeepSeek Harness — over your LAN or through your own server.**
 
 [![license](https://img.shields.io/badge/license-MIT-0f1115?style=flat-square)](LICENSE)
