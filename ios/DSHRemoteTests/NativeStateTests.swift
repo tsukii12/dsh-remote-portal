@@ -16,6 +16,75 @@ final class StubAPI: RPCServing {
 
 @MainActor
 final class NativeStateTests: XCTestCase {
+    func testInteractionRoutingUsesCapturedWaterfallSessionAddress() throws {
+        let events = RemoteEvents(api: StubAPI())
+        for frame in try fixture("live-stream-all").array { events.apply(frame["value"]) }
+        let item = try XCTUnwrap(events.pending.first)
+        let sessionID = "session-18be2ddf-6a3a-42d3-aa72-320df014ae67"
+        XCTAssertEqual(item.agentID, sessionID)
+        XCTAssertEqual(InteractionRouting.sessionID(item, knownSessionIDs: [sessionID]), sessionID)
+        var routing = InteractionRouting()
+        routing.reconcile(events.pending, openSessionID: sessionID)
+        XCTAssertEqual(routing.presentedID, item.id)
+    }
+    func testInteractionDeferralReopenCancellationAndReconnect() {
+        let events = RemoteEvents(api: StubAPI())
+        events.apply(["type": "ready", "clientId": "client"])
+        for (id, agent, kind) in [("other", "B", "approval/request"), ("approve", "A", "approval/request"), ("question", "A", "user-questions/request")] {
+            events.apply(["type": "waterfall", "eventId": .string(id), "agentId": .string(agent), "event": .string(kind), "request": ["agentId": "unrelated"]])
+        }
+        var routing = InteractionRouting()
+        routing.reconcile(events.pending, openSessionID: nil)
+        XCTAssertNil(routing.presentedID)
+        routing.reconcile(events.pending, openSessionID: "A")
+        XCTAssertEqual(routing.presentedID, "approve")
+        routing.dismiss()
+        XCTAssertEqual(events.pending.count, 3)
+        routing.reconcile(events.pending, openSessionID: "B")
+        XCTAssertEqual(routing.presentedID, "other")
+        routing.dismiss()
+        routing.reconcile(events.pending, openSessionID: "A")
+        XCTAssertEqual(routing.presentedID, "question")
+        routing.dismiss()
+        routing.reconcile(events.pending, openSessionID: "A")
+        XCTAssertNil(routing.presentedID)
+        let pending = InteractionRouting.forSession(events.pending, sessionID: "A")
+        XCTAssertEqual(pending.map(\.id), ["approve", "question"])
+        routing.review(pending[0])
+        XCTAssertEqual(routing.presentedID, "approve")
+        events.apply(["type": "cancel", "eventId": "approve"])
+        routing.reconcile(events.pending, openSessionID: "A")
+        XCTAssertNil(routing.presentedID)
+        XCTAssertFalse(routing.deferred.contains("approve"))
+        events.apply(["type": "connection-reset"])
+        routing.reconcile(events.pending, openSessionID: "A")
+        XCTAssertTrue(routing.deferred.isEmpty)
+        XCTAssertNil(routing.presentedID)
+        events.apply(["type": "ready", "clientId": "new"])
+        events.apply(["type": "waterfall", "eventId": "approve", "agentId": "A", "event": "approval/request"])
+        routing.reconcile(events.pending, openSessionID: "A")
+        XCTAssertEqual(routing.presentedID, "approve")
+    }
+    func testInteractionRoutingUnknownAgentsAndBilingualCounts() {
+        let approval = PendingInteraction(id: "E", clientID: "C", agentID: "subagent", kind: "approval/request", request: [:])
+        let missing = PendingInteraction(id: "M", clientID: "C", agentID: "", kind: "approval/request", request: [:])
+        let question = PendingInteraction(id: "Q", clientID: "C", agentID: "A", kind: "user-questions/request", request: [:])
+        XCTAssertNil(InteractionRouting.sessionID(approval, knownSessionIDs: ["A"]))
+        XCTAssertNil(InteractionRouting.sessionID(missing, knownSessionIDs: [""]))
+        XCTAssertTrue(InteractionRouting.forSession([missing], sessionID: "").isEmpty)
+        var routing = InteractionRouting()
+        routing.reconcile([approval, missing], openSessionID: "A")
+        XCTAssertNil(routing.presentedID)
+        routing.reconcile([], openSessionID: "A")
+        XCTAssertNil(routing.presentedID)
+        routing.review(approval)
+        XCTAssertEqual(routing.presentedID, "E")
+        XCTAssertEqual(InteractionRouting.label([approval], languages: ["en"]), "1 pending approval")
+        XCTAssertEqual(InteractionRouting.label([approval, missing], languages: ["en"]), "2 pending approvals")
+        XCTAssertEqual(InteractionRouting.label([approval], languages: ["zh-Hans"]), "1 个待处理授权")
+        XCTAssertEqual(InteractionRouting.label([question], languages: ["en"]), "1 pending question")
+        XCTAssertEqual(InteractionRouting.label([approval, question], languages: ["zh-Hans"]), "2 个待处理请求")
+    }
     func testControlProjectionBaselinesDeltasAndQueueReplacement() {
         let chat = ChatStore(sessionID: "S", api: StubAPI())
         chat.applyControl(["type": "baseline", "value": ["projections": ["S": ["asOfSeq": 1, "values": ["plan": ["active": false, "pending": false], "agentPreset": "standard"]]]]])

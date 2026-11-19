@@ -6,6 +6,8 @@ versions are the plugin's own, not dsh's.
 ## Unreleased
 
 ### Added
+- Native iOS approvals can be closed without answering and reopened from the pending-request banner or session badges. Requests in other sessions no longer interrupt the current chat; routing uses the waterfall agentId as the exact session ID, matching Android.
+- 原生 iOS 授权弹窗可不作答直接关闭，并通过待处理请求横幅或会话角标重新打开。其他会话的请求不再打断当前对话；与 Android 一致，使用 waterfall 的 agentId 精确匹配会话 ID。
 - Native DRP round 1: prominent provider-grouped model/effort controls, session access and plan/preset selectors, slash-command suggestions, editable queue/steer controls, session search and archive recovery, and workspace management with Portal host-folder browsing. Server-list/sidebar titles are now DeepSeek Remote; the icon name remains DRP.
 - 原生 DRP 第一轮功能：醒目的模型与思考强度选择、会话权限与计划/代理预设、斜杠命令建议、可编辑队列与引导、会话搜索与归档恢复，以及使用门户主机文件夹浏览器的工作区管理。服务器列表与侧栏标题改为 DeepSeek Remote，图标名称仍为 DRP。
 - Real-listener tests cover new RPC/HTTP routes; opt-in live smoke switches two local fake model routes with explicit effort and verifies session access commands and Portal folder browsing.

@@ -9,6 +9,39 @@ struct PendingInteraction: Identifiable, Equatable {
     let request: JSON
 }
 
+struct InteractionRouting {
+    private(set) var presentedID: String?
+    private(set) var deferred: Set<String> = []
+    static func sessionID(_ item: PendingInteraction, knownSessionIDs: Set<String>) -> String? {
+        let id = item.agentID
+        return !id.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && knownSessionIDs.contains(id) ? id : nil
+    }
+    static func forSession(_ pending: [PendingInteraction], sessionID: String?) -> [PendingInteraction] {
+        guard let sessionID, !sessionID.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return [] }
+        return pending.filter { $0.agentID == sessionID }
+    }
+    static func label(_ pending: [PendingInteraction], languages: [String] = Locale.preferredLanguages) -> String {
+        let count = pending.count
+        if pending.allSatisfy({ $0.kind == "approval/request" }) {
+            return L("\(count) pending approval\(count == 1 ? "" : "s")", "\(count) 个待处理授权", languages: languages)
+        }
+        if pending.allSatisfy({ $0.kind == "user-questions/request" }) {
+            return L("\(count) pending question\(count == 1 ? "" : "s")", "\(count) 个待回答问题", languages: languages)
+        }
+        return L("\(count) pending request\(count == 1 ? "" : "s")", "\(count) 个待处理请求", languages: languages)
+    }
+    mutating func reconcile(_ pending: [PendingInteraction], openSessionID: String?) {
+        deferred.formIntersection(Set(pending.map(\.id)))
+        guard !pending.contains(where: { $0.id == presentedID }) else { return }
+        presentedID = Self.forSession(pending, sessionID: openSessionID).first { !deferred.contains($0.id) }?.id
+    }
+    mutating func dismiss() {
+        if let presentedID { deferred.insert(presentedID) }
+        presentedID = nil
+    }
+    mutating func review(_ item: PendingInteraction) { presentedID = item.id }
+}
+
 @MainActor
 final class RemoteEvents: ObservableObject {
     @Published private(set) var clientID: String?

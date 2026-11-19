@@ -65,6 +65,7 @@ final class ApprovalInputLoader: ObservableObject {
 }
 
 struct InteractionSheet: View {
+    @Environment(\.dismiss) private var dismiss
     @ObservedObject var events: RemoteEvents
     @StateObject private var inputLoader: ApprovalInputLoader
     let item: PendingInteraction
@@ -85,6 +86,7 @@ struct InteractionSheet: View {
             }
             .navigationTitle(item.kind == "approval/request" ? L("Permission required", "需要授权") : L("Your input", "请回答"))
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .cancellationAction) { Button(L("Close", "关闭")) { dismiss() } } }
             .safeAreaInset(edge: .top, spacing: 0) { if let error = error ?? inputLoader.error { StatusBanner(message: error, dismiss: { self.error = nil; inputLoader.error = nil }) } }
         }
         .presentationDetents(item.kind == "approval/request" ? [.medium, .large] : [.large])

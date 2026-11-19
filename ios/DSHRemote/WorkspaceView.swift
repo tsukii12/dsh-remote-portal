@@ -34,6 +34,7 @@ struct WorkspaceView: View {
     @State private var compactColumn: NavigationSplitViewColumn = .sidebar
     @State private var actionError: String?
     @State private var hasConnected = false
+    @State private var interactions = InteractionRouting()
     init(connection: NativeConnection, serverName: String, addressLabel: String, onSwitch: @escaping () -> Void, onLogout: @escaping () async throws -> Void) {
         self.connection = connection; self.serverName = serverName; self.onSwitch = onSwitch; self.onLogout = onLogout
         self.addressLabel = addressLabel
@@ -41,7 +42,7 @@ struct WorkspaceView: View {
     }
     var body: some View {
         NavigationSplitView(columnVisibility: $visibility, preferredCompactColumn: $compactColumn) {
-            SidebarView(store: sidebar, selection: selection, serverName: serverName, addressLabel: addressLabel, onSelect: { selection = $0; compactColumn = .detail }, onCreate: create, onSwitch: onSwitch, onLogout: onLogout)
+            SidebarView(store: sidebar, events: events, selection: selection, serverName: serverName, addressLabel: addressLabel, onSelect: { selection = $0; compactColumn = .detail }, onReview: review, onCreate: create, onSwitch: onSwitch, onLogout: onLogout)
                 .navigationSplitViewColumnWidth(min: 250, ideal: 290, max: 360)
         } detail: {
             if let selection {
@@ -62,11 +63,25 @@ struct WorkspaceView: View {
                 StatusBanner(message: hasConnected ? L("Connection lost. Reconnecting…", "连接已断开，正在重新连接…") : L("Connecting…", "正在连接…"), reconnecting: true)
             }
             if let actionError { StatusBanner(message: actionError, dismiss: { self.actionError = nil }) }
+            if let item = events.pending.first {
+                Button { review(item) } label: {
+                    Label(InteractionRouting.label(events.pending), systemImage: "exclamationmark.bubble")
+                        .font(.subheadline).frame(maxWidth: .infinity).padding(12)
+                }.background(DRPStyle.accent.opacity(0.1))
+            }
         }
         .onChange(of: events.clientID, initial: true) { _, id in if id != nil { hasConnected = true } }
-        .sheet(item: Binding(get: { events.pending.first }, set: { _ in })) { item in
+        .onChange(of: events.pending, initial: true) { _, pending in interactions.reconcile(pending, openSessionID: selection) }
+        .onChange(of: selection) { _, id in interactions.reconcile(events.pending, openSessionID: id) }
+        .sheet(item: Binding(get: { events.pending.first { $0.id == interactions.presentedID } }, set: { if $0 == nil { interactions.dismiss() } })) { item in
             InteractionSheet(events: events, api: connection.api, item: item, sessionTitle: sidebar.sessions[item.agentID]?.title ?? L("Conversation", "对话"))
-                .id(item.id).interactiveDismissDisabled()
+                .id(item.id)
+        }
+    }
+    private func review(_ item: PendingInteraction) {
+        interactions.review(item)
+        if let id = InteractionRouting.sessionID(item, knownSessionIDs: Set(sidebar.sessions.keys)) {
+            selection = id; compactColumn = .detail
         }
     }
     private func create(_ workspaceID: String?) {
@@ -79,10 +94,12 @@ struct WorkspaceView: View {
 
 private struct SidebarView: View {
     @ObservedObject var store: SidebarStore
+    @ObservedObject var events: RemoteEvents
     let selection: String?
     let serverName: String
     let addressLabel: String
     let onSelect: (String) -> Void
+    let onReview: (PendingInteraction) -> Void
     let onCreate: (String?) -> Void
     let onSwitch: () -> Void
     let onLogout: () async throws -> Void
@@ -101,12 +118,21 @@ private struct SidebarView: View {
                 if !group.sessions.isEmpty || !["pinned", "ungrouped"].contains(group.id) {
                     Section {
                         ForEach(group.sessions) { row in
-                            Button { onSelect(row.id) } label: {
-                                HStack(spacing: 10) {
-                                    if row.running { ProgressView().controlSize(.mini).accessibilityLabel(L("Running", "运行中")) }
-                                    else { Image(systemName: "bubble.left").font(.caption).foregroundStyle(.secondary) }
-                                    Text(row.title).lineLimit(2).font(.subheadline).foregroundStyle(.primary)
-                                }.padding(.vertical, 3)
+                            HStack(spacing: 10) {
+                                Button { onSelect(row.id) } label: {
+                                    HStack(spacing: 10) {
+                                        if row.running { ProgressView().controlSize(.mini).accessibilityLabel(L("Running", "运行中")) }
+                                        else { Image(systemName: "bubble.left").font(.caption).foregroundStyle(.secondary) }
+                                        Text(row.title).lineLimit(2).font(.subheadline).foregroundStyle(.primary)
+                                    }.frame(maxWidth: .infinity, alignment: .leading).padding(.vertical, 3)
+                                }
+                                let pending = InteractionRouting.forSession(events.pending, sessionID: row.id)
+                                if let item = pending.first {
+                                    Button { onReview(item) } label: {
+                                        Text("\(pending.count)").font(.caption.bold()).padding(6)
+                                            .background(DRPStyle.accent.opacity(0.15), in: Capsule())
+                                    }.accessibilityLabel(InteractionRouting.label(pending))
+                                }
                             }
                             .buttonStyle(.plain)
                             .listRowBackground(selection == row.id ? DRPStyle.accent.opacity(0.1) : Color(uiColor: .secondarySystemGroupedBackground))

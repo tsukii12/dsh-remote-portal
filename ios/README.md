@@ -52,6 +52,10 @@ TEST_RUNNER_DSH_LIVE_SMOKE=1 xcodebuild -project ios/DSHRemote.xcodeproj -scheme
 
 Xcode passes the `TEST_RUNNER_`-prefixed variable into the test runner as `DSH_LIVE_SMOKE`. Output prefixed `LIVE PASS` proves native URLSession login, sidebar baseline, session creation, two local fake routes (`native-demo` and `native-demo-fast`) with explicit Off/High thinking effort, access-mode commands, Portal folder browsing, incremental text, reconnect, approval answer and committed tool/final response. Both fixture routes must be configured outside the repository; see `~/fake-llm/README.md`.
 
+Pending approvals and questions can be closed or swiped away without answering. The pending-request banner remains available in chat and opens the oldest request; session badges open that session's request directly. Only requests for the open session appear automatically. Navigation matches the waterfall envelope's `agentId` exactly to a known session ID, never the tool's request body or an inferred parent session. Unknown agents remain reviewable without changing chats.
+
+待处理的授权或问题可通过关闭按钮或下滑暂时收起，不会发送答复。聊天中的待处理请求横幅可重新打开最早的请求，会话角标可直接查看该会话的请求。仅当前会话的请求会自动弹出；导航使用 waterfall 信封中的 `agentId` 精确匹配已知会话 ID，不使用工具请求体中的字段，也不推测父会话。未知代理的请求仍可查看，但不会切换对话。
+
 ## Local demo
 
 From the repository root:

@@ -81,6 +81,42 @@ private final class HTTPListener {
 final class ListenerTests: XCTestCase {
     private func client(_ root: URL) -> PortalClient { PortalClient(configuration: .ephemeral, cookies: CookieVault(root: root)) }
     private func root() -> URL { FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString) }
+    func testDeferredApprovalReopensAndAnswersOverRealHTTP() async throws {
+        var calls: [JSON] = []
+        let server = try HTTPListener { request in
+            XCTAssertEqual(request.path, "/relay/api/$events/result")
+            let body = try! JSONDecoder().decode(JSON.self, from: request.body)
+            calls.append(body)
+            XCTAssertEqual(body["payload"]["args"], ["clientId": "client", "eventId": "E", "outcome": ["kind": "result", "value": "allowed-once"]])
+            if calls.count == 1 { return .init(status: 503) }
+            return .init(body: "{\"type\":\"server-response\",\"result\":{\"ok\":true}}")
+        }
+        let base = try await server.start().appendingPathComponent("relay/"); let directory = root(); let client = client(directory)
+        defer { server.stop(); client.session.invalidateAndCancel(); try? FileManager.default.removeItem(at: directory) }
+        let events = RemoteEvents(api: PortalAPI(base: base, client: client))
+        events.apply(["type": "ready", "clientId": "client"])
+        events.apply(["type": "waterfall", "event": "approval/request", "eventId": "E", "agentId": "B", "request": ["agentId": "not-the-session"]])
+        var routing = InteractionRouting()
+        routing.reconcile(events.pending, openSessionID: "A")
+        XCTAssertNil(routing.presentedID)
+        let item = try XCTUnwrap(events.pending.first)
+        XCTAssertEqual(InteractionRouting.sessionID(item, knownSessionIDs: ["A", "B"]), "B")
+        routing.review(item); routing.dismiss()
+        routing.reconcile(events.pending, openSessionID: "B")
+        XCTAssertNil(routing.presentedID)
+        XCTAssertTrue(calls.isEmpty)
+        XCTAssertEqual(events.pending, [item])
+        routing.review(item)
+        do { try await events.answerApproval(item.id, allow: true); XCTFail("Failure swallowed") } catch {}
+        XCTAssertEqual(events.pending, [item])
+        routing.reconcile(events.pending, openSessionID: "B")
+        XCTAssertEqual(routing.presentedID, "E")
+        try await events.answerApproval(item.id, allow: true)
+        routing.reconcile(events.pending, openSessionID: "B")
+        XCTAssertTrue(events.pending.isEmpty)
+        XCTAssertNil(routing.presentedID)
+        XCTAssertEqual(calls.count, 2)
+    }
     func testOptionsPresentationLoadsMetadataOverRealHTTP() async throws {
         for empty in [false, true] {
             let server = try HTTPListener { request in
