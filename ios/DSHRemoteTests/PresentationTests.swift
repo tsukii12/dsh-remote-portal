@@ -30,6 +30,20 @@ final class PresentationTests: XCTestCase {
         XCTAssertEqual(InteractionPresentation.reason(request, languages: ["fr"]), "Allow")
         XCTAssertEqual(InteractionPresentation.reason(["reason": "Raw"], languages: []), "Raw")
     }
+    func testApprovalInputMatchesExactCallAndPreservesArguments() throws {
+        let url = try XCTUnwrap(Bundle(for: Self.self).url(forResource: "live-approval-events", withExtension: "json"))
+        let page = try JSONDecoder().decode(JSON.self, from: Data(contentsOf: url))["result"]["value"]
+        let records = page["records"].array
+        let request = try XCTUnwrap(records.last { $0["event"]["type"] == "approval/asked" })["event"]["data"]
+        XCTAssertEqual(InteractionPresentation.input(request, records: records), "pwd")
+        XCTAssertNil(InteractionPresentation.input(request, records: []))
+        XCTAssertNil(InteractionPresentation.input(["callId": "unknown"], records: records))
+        XCTAssertNil(InteractionPresentation.input([:], records: records))
+        let call: JSON = ["event": ["type": "tool/call", "data": ["callId": "C", "arguments": "{\"path\": \"/workspace\", \"command\": \"not a shell command\"}"]]]
+        XCTAssertEqual(InteractionPresentation.input(["callId": "C", "toolName": "read"], records: [call]), "{\"command\":\"not a shell command\",\"path\":\"/workspace\"}")
+        let malformed: JSON = ["event": ["type": "tool/call", "data": ["callId": "C", "arguments": "{partial"]]]
+        XCTAssertEqual(InteractionPresentation.input(["callId": "C"], records: [malformed]), "{partial")
+    }
     func testSingleMultiCustomQuestionsAndFixedApprovals() {
         var draft = QuestionDraft()
         let question: JSON = ["id": "Q", "options": [["label": "A"], ["label": "B"]]]

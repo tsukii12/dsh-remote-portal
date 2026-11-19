@@ -65,7 +65,7 @@ struct WorkspaceView: View {
         }
         .onChange(of: events.clientID, initial: true) { _, id in if id != nil { hasConnected = true } }
         .sheet(item: Binding(get: { events.pending.first }, set: { _ in })) { item in
-            InteractionSheet(events: events, item: item, sessionTitle: sidebar.sessions[item.agentID]?.title ?? L("Conversation", "对话"))
+            InteractionSheet(events: events, api: connection.api, item: item, sessionTitle: sidebar.sessions[item.agentID]?.title ?? L("Conversation", "对话"))
                 .id(item.id).interactiveDismissDisabled()
         }
     }

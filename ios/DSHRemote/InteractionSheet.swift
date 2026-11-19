@@ -1,6 +1,16 @@
 import SwiftUI
 
 enum InteractionPresentation {
+    static func input(_ request: JSON, records: [JSON]) -> String? {
+        guard let callID = request["callId"].string, !callID.isEmpty,
+              let call = records.map({ $0["event"] }).last(where: { $0["type"] == "tool/call" && $0["data"]["callId"].string == callID }),
+              let arguments = call["data"]["arguments"].string else { return nil }
+        guard let value = try? JSONDecoder().decode(JSON.self, from: Data(arguments.utf8)) else { return arguments }
+        if request["toolName"] == "bash", let command = value["command"].string { return command }
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
+        return (try? encoder.encode(value)).flatMap { String(data: $0, encoding: .utf8) } ?? arguments
+    }
     static func reason(_ request: JSON, languages: [String] = Locale.preferredLanguages) -> String {
         let locale = languages.first?.split(separator: "-").first.map(String.init) ?? "en"
         return request["displayReason"][locale].string ?? request["displayReason"]["en"].string ?? request["reason"].text
@@ -35,11 +45,13 @@ struct QuestionDraft {
 
 struct InteractionSheet: View {
     @ObservedObject var events: RemoteEvents
+    let api: RPCServing
     let item: PendingInteraction
     let sessionTitle: String
     @State private var draft = QuestionDraft()
     @State private var busy = false
     @State private var error: String?
+    @State private var toolInput: String?
     private var questions: [JSON] { item.request["questions"].array }
     var body: some View {
         NavigationStack {
@@ -53,15 +65,24 @@ struct InteractionSheet: View {
         }
         .presentationDetents(item.kind == "approval/request" ? [.medium, .large] : [.large])
         .presentationDragIndicator(.visible)
+        .task(id: item.id) { if item.kind == "approval/request" { await loadInput() } }
     }
     private var approval: some View {
         VStack(alignment: .leading, spacing: 20) {
             Text(sessionTitle).font(.caption).foregroundStyle(.secondary).lineLimit(2)
             Label(item.request["toolName"].text, systemImage: "terminal").font(.title3.weight(.semibold))
             ScrollView { Text(InteractionPresentation.reason(item.request)).frame(maxWidth: .infinity, alignment: .leading).textSelection(.enabled) }
+            if let toolInput {
+                ScrollView([.horizontal, .vertical]) {
+                    Text(toolInput).font(.system(.footnote, design: .monospaced)).textSelection(.enabled)
+                        .fixedSize(horizontal: true, vertical: true).padding(12)
+                }.frame(minHeight: 44, maxHeight: 140).background(DRPStyle.sidebar, in: RoundedRectangle(cornerRadius: 12))
+            } else {
+                Button(L("Load tool input", "加载工具输入")) { Task { await loadInput() } }.font(.footnote)
+            }
             HStack(spacing: 12) {
                 Button(L("Reject", "拒绝")) { answer(allow: false) }.buttonStyle(.bordered).frame(maxWidth: .infinity)
-                Button { answer(allow: true) } label: { HStack { if busy { ProgressView() }; Text(L("Allow once", "允许一次")) }.frame(maxWidth: .infinity) }.buttonStyle(.borderedProminent)
+                Button { answer(allow: true) } label: { HStack { if busy { ProgressView() }; Text(L("Allow once", "允许一次")) }.frame(maxWidth: .infinity) }.buttonStyle(.borderedProminent).disabled(toolInput == nil)
             }.controlSize(.large).disabled(busy)
         }.padding(24)
     }
@@ -90,6 +111,13 @@ struct InteractionSheet: View {
             }
             Button { submitQuestions() } label: { HStack { Spacer(); if busy { ProgressView() }; Text(L("Submit answers", "提交回答")); Spacer() } }.disabled(busy || !draft.canSubmit(questions))
         }
+    }
+    private func loadInput() async {
+        do {
+            let page = try await api.rpc("session/events", args: ["request": ["address": ["kind": "session", "sessionId": .string(item.agentID)], "maxMessages": 50]])
+            toolInput = InteractionPresentation.input(item.request, records: page["records"].array)
+            error = toolInput == nil ? L("Tool input is unavailable. Retry before allowing this operation.", "无法获取工具输入。请重试后再允许此操作。") : nil
+        } catch { self.error = error.localizedDescription }
     }
     private func answer(allow: Bool) { perform { try await events.answerApproval(item.id, allow: allow) } }
     private func submitQuestions() { perform { try await events.answerQuestions(item.id, answers: draft.answers(questions)) } }
