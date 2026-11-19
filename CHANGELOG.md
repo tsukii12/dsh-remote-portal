@@ -18,6 +18,13 @@ versions are the plugin's own, not dsh's.
   a new QR code instead of saying that no code was supplied.
 - "Copy pairing link" now says how long the link is still valid, matching the
   QR countdown, instead of always claiming 5 minutes.
+- The relay now applies a deadline to response headers and a separate idle
+  timeout to HTTP bodies. Active streams and established WebSockets are no
+  longer cut off after two minutes.
+- Finishing or closing a backpressured visitor no longer stalls other requests
+  on the same relay tunnel.
+- The relay and tunnel agent now copy fewer bytes when decoding fragmented
+  frames, without changing the wire format.
 
 ## 0.6.2 — 2026-10-24
 
