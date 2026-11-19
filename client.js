@@ -190,6 +190,8 @@ window.__ModuleLoader__.load({
         dayAgo: "{n} 天前",
         statusFail: "无法读取门户状态。",
         statusFailHint: "插件可能尚未加载完成，稍后会自动重试。",
+        statusStale: "暂时读不到最新状态，下面显示的可能已过时。",
+        statusStaleHint: "会自动重试",
         statusErrorTitle: "门户报告了一个错误",
         errNeedsPassword: "尚未设置访问密码：门户在暴露到局域网之前必须先设置密码，请在下方「访问密码」中设置后再启用。",
         errPortBusy: "端口已被占用：换一个端口，或先关闭占用它的程序。",
@@ -321,6 +323,8 @@ window.__ModuleLoader__.load({
         dayAgo: "{n} d ago",
         statusFail: "Cannot read portal status.",
         statusFailHint: "The plugin may still be loading; this retries automatically.",
+        statusStale: "Cannot read the latest status; what is shown below may be out of date.",
+        statusStaleHint: "Retrying automatically",
         statusErrorTitle: "The portal reported an error",
         errNeedsPassword: "No password yet: the portal refuses to expose itself to the network until one is set. Set it under “Access password” below, then enable the portal.",
         errPortBusy: "That port is already in use — pick another port, or stop the program holding it.",
@@ -1255,6 +1259,10 @@ window.__ModuleLoader__.load({
       var seeded = useRef("");
       var noticeTimer = useRef(0);
       var copyTimer = useRef(0);
+      // Every /status answer carries the number of the request that asked for
+      // it; an answer older than the one already shown is dropped, so a slow
+      // poll cannot undo a toggle that landed after it was sent.
+      var statusSeq = useRef({ sent: 0, applied: 0 });
       // The polling effect runs once (empty deps), so it cannot close over the
       // current state. This ref is the bridge: it always points at the latest
       // state object, which is what lets applyStatus skip no-op updates.
@@ -1292,9 +1300,10 @@ window.__ModuleLoader__.load({
         });
       }
 
-      function applyStatus(data) {
+      function applyStatus(data, seq) {
         var next = normalizeStatus(data);
         if (!next) return;
+        if (seq === undefined) statusSeq.current.applied = ++statusSeq.current.sent;
         // A 3 s poll mostly reports "nothing changed". Replacing the status object
         // every tick re-renders the whole panel (twice, when the sheet and the
         // settings section are both mounted), so compare first and keep the
@@ -1312,9 +1321,12 @@ window.__ModuleLoader__.load({
       }
 
       function refreshStatus() {
+        var seq = ++statusSeq.current.sent;
         return api(BASE + "/status", { timeout: 8000 }).then(function (r) {
+          if (seq <= statusSeq.current.applied) return;
+          statusSeq.current.applied = seq;
           if (!r.ok) { patch({ pollErr: r.error, loaded: true }); return; }
-          applyStatus(r.data);
+          applyStatus(r.data, seq);
         });
       }
 
@@ -1332,25 +1344,28 @@ window.__ModuleLoader__.load({
 
       /** The last N requests that actually reached the gate. */
 
-      // ── polling: every 3 s, paused while the tab is hidden ────────────────
+      // ── polling: 3 s after the previous answer, paused while the tab is hidden
+      // One request at a time: on a slow relay a fixed 3 s interval stacked up to
+      // three 8 s requests, each holding one of the browser's six connections.
       useEffect(function () {
         var alive = true;
         var timer = 0;
+        var inFlight = false;
 
         function tick() {
-          if (!alive) return;
+          if (!alive || inFlight) return;
+          try { clearTimeout(timer); } catch (e0) { /* ignore */ }
           try {
-            if (document.visibilityState === "hidden") return;
+            if (document.visibilityState === "hidden") return;   // onVisible resumes
           } catch (e) { /* non-browser host: just poll */ }
-          api(BASE + "/status", { timeout: 8000 }).then(function (r) {
-            if (!alive) return;
-            if (r.ok) { applyStatus(r.data); return; }
-            patch({ pollErr: r.error, loaded: true });
+          inFlight = true;
+          refreshStatus().then(function () {
+            inFlight = false;
+            if (alive) timer = setTimeout(tick, POLL_MS);
           });
         }
 
         tick();
-        timer = setInterval(tick, POLL_MS);
 
         var onVisible = function () {
           try { if (document.visibilityState === "visible") tick(); } catch (e) { /* ignore */ }
@@ -1359,7 +1374,7 @@ window.__ModuleLoader__.load({
 
         return function () {
           alive = false;
-          try { clearInterval(timer); } catch (e3) { /* ignore */ }
+          try { clearTimeout(timer); } catch (e3) { /* ignore */ }
           try { document.removeEventListener("visibilitychange", onVisible); } catch (e4) { /* ignore */ }
         };
       }, []);
@@ -1564,12 +1579,21 @@ window.__ModuleLoader__.load({
           h("div", null,
             h("div", null, t("statusFail")),
             h("div", { className: "drp-alert-sub" }, t("statusFailHint") + " (" + st.pollErr + ")"))));
-      } else if (status && status.lastError && !blockedByPassword) {
-        alerts.push(h("div", { className: "drp-alert drp-alert-err", role: "alert", key: "lastError" },
-          h(Icon, { name: "alert", size: 14 }),
-          h("div", null,
-            h("div", null, t("statusErrorTitle")),
-            h("div", { className: "drp-alert-sub" }, friendlyGateway(status.lastError)))));
+      } else {
+        if (st.pollErr) {
+          alerts.push(h("div", { className: "drp-alert drp-alert-err", role: "alert", key: "stale" },
+            h(Icon, { name: "alert", size: 14 }),
+            h("div", null,
+              h("div", null, t("statusStale")),
+              h("div", { className: "drp-alert-sub" }, t("statusStaleHint") + " (" + st.pollErr + ")"))));
+        }
+        if (status && status.lastError && !blockedByPassword) {
+          alerts.push(h("div", { className: "drp-alert drp-alert-err", role: "alert", key: "lastError" },
+            h(Icon, { name: "alert", size: 14 }),
+            h("div", null,
+              h("div", null, t("statusErrorTitle")),
+              h("div", { className: "drp-alert-sub" }, friendlyGateway(status.lastError)))));
+        }
       }
       if (notice) {
         alerts.push(h("div", {
