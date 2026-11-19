@@ -5,6 +5,10 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+- Remote access on a phone: the tab labels no longer run together ("Local
+  network" touched "Public access" at 390 px, in English), and with large text
+  or page zoom the tab bar scrolls the chosen tab into view instead of leaving
+  it cut off at the edge.
 - Phone in landscape and small tablets (768–900 px wide): the floating menu
   button no longer covers the page title (Remote access read "mote access";
   Plugins and Automation tasks too). dsh only leaves room for a menu button
