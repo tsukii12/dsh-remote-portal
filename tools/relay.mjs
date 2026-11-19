@@ -73,14 +73,16 @@ const HEADER_BYTES = 9;
 const MAX_FRAME_BYTES = 1024 * 1024; // 1 MiB per frame; bodies are chunked by the parser
 
 function encodeFrame(type, streamId, payload) {
-  const body = payload === undefined ? Buffer.alloc(0)
+  const body = payload === undefined ? null
     : Buffer.isBuffer(payload) ? payload
       : Buffer.from(String(payload), "utf8");
-  const head = Buffer.allocUnsafe(HEADER_BYTES);
-  head.writeUInt8(type, 0);
-  head.writeUInt32BE(streamId >>> 0, 1);
-  head.writeUInt32BE(body.length, 5);
-  return body.length === 0 ? head : Buffer.concat([head, body], HEADER_BYTES + body.length);
+  const length = body?.length ?? 0;
+  const frame = Buffer.allocUnsafe(HEADER_BYTES + length);
+  frame.writeUInt8(type, 0);
+  frame.writeUInt32BE(streamId >>> 0, 1);
+  frame.writeUInt32BE(length, 5);
+  body?.copy(frame, HEADER_BYTES);
+  return frame;
 }
 
 /**
@@ -89,26 +91,69 @@ function encodeFrame(type, streamId, payload) {
  * MAX_FRAME_BYTES is a protocol error, not something to buffer forever.
  */
 function createFrameReader(onFrame, onError) {
-  let buffer = Buffer.alloc(0);
+  const header = Buffer.allocUnsafe(HEADER_BYTES);
+  let headerBytes = 0;
+  let type, streamId;
+  let length = 0;
+  let partial;
+  let partialBytes = 0;
+  let failed = false;
+
   return function push(chunk) {
-    buffer = buffer.length === 0 ? chunk : Buffer.concat([buffer, chunk]);
-    for (;;) {
-      if (buffer.length < HEADER_BYTES) return;
-      const type = buffer.readUInt8(0);
-      const streamId = buffer.readUInt32BE(1);
-      const length = buffer.readUInt32BE(5);
-      if (length > MAX_FRAME_BYTES) {
-        const error = new Error(`frame too large: ${length}`);
-        // 0x16 is a TLS handshake record: worth naming, since the usual cause is
-        // a tls:// endpoint pointed at a plaintext port.
-        error.firstByte = type;
-        onError?.(error);
-        return;
+    if (failed) return;
+    let offset = 0;
+    while (offset < chunk.length) {
+      if (length === 0) {
+        let head = chunk;
+        let start = offset;
+        if (headerBytes || chunk.length - offset < HEADER_BYTES) {
+          const bytes = Math.min(HEADER_BYTES - headerBytes, chunk.length - offset);
+          chunk.copy(header, headerBytes, offset, offset + bytes);
+          offset += bytes;
+          headerBytes += bytes;
+          if (headerBytes < HEADER_BYTES) return;
+          headerBytes = 0;
+          head = header;
+          start = 0;
+        } else {
+          offset += HEADER_BYTES;
+        }
+        type = head.readUInt8(start);
+        streamId = head.readUInt32BE(start + 1);
+        length = head.readUInt32BE(start + 5);
+        if (length > MAX_FRAME_BYTES) {
+          failed = true;
+          const error = new Error(`frame too large: ${length}`);
+          // 0x16 is a TLS handshake record on a plaintext agent port.
+          error.firstByte = type;
+          onError?.(error);
+          return;
+        }
       }
-      if (buffer.length < HEADER_BYTES + length) return;
-      const payload = buffer.subarray(HEADER_BYTES, HEADER_BYTES + length);
-      buffer = buffer.subarray(HEADER_BYTES + length);
-      onFrame(type, streamId, payload);
+
+      const bytes = Math.min(length - partialBytes, chunk.length - offset);
+      const end = offset + bytes;
+      if (!partial && bytes === length) {
+        length = 0;
+        onFrame(type, streamId, chunk.subarray(offset, end));
+      } else if (bytes > 0) {
+        const received = partialBytes + bytes;
+        // Grow with bytes received, not the length declared by the peer.
+        if (!partial || received > partial.length) {
+          const next = Buffer.allocUnsafe(Math.min(length, Math.max(1024, (partial?.length || bytes) * 2, received)));
+          if (partial) partial.copy(next, 0, 0, partialBytes);
+          partial = next;
+        }
+        chunk.copy(partial, partialBytes, offset, end);
+        partialBytes = received;
+        if (partialBytes === length) {
+          const payload = partial;
+          partial = undefined;
+          length = partialBytes = 0;
+          onFrame(type, streamId, payload);
+        }
+      }
+      offset = end;
     }
   };
 }
@@ -298,6 +343,30 @@ function forwardableHeaders(headers) {
 function createRelay(config) {
   /** tunnelId → tunnel state */
   const tunnels = new Map();
+  const blockedVisitors = new WeakMap();
+
+  function pauseForVisitor(agent, visitor) {
+    if (agent.destroyed || visitor.destroyed || visitor.writableFinished) return;
+    let blocked = blockedVisitors.get(agent);
+    if (!blocked) {
+      blocked = new Set();
+      blockedVisitors.set(agent, blocked);
+    }
+    if (blocked.has(visitor)) return;
+    blocked.add(visitor);
+    agent.pause();
+    const release = () => {
+      visitor.off("drain", release);
+      visitor.off("finish", release);
+      visitor.off("close", release);
+      blocked.delete(visitor);
+      if (blocked.size === 0 && !agent.destroyed) agent.resume();
+    };
+    visitor.once("drain", release);
+    visitor.once("finish", release);
+    visitor.once("close", release);
+  }
+
   const startedAt = Date.now();
   // "visitors" used to count every request that reached this listener probe included,
 // which reads like a head count and is not one. Requests and distinct clients are
@@ -707,6 +776,7 @@ function cachePut(key, entry) {
     // A cacheable response is streamed to the visitor and copied on the side; the
     // copy is only kept when the whole thing arrived and looks safe to reuse.
     let cacheBuffer = null;
+    const agent = route.tunnel.socket;
     const stream = openStream(route.tunnel, {
       onHead: (head) => {
         headSent = true;
@@ -732,11 +802,7 @@ function cachePut(key, entry) {
           if (cacheBuffer.size > CACHE_MAX_OBJECT) cacheBuffer = null;
           else cacheBuffer.chunks.push(chunk);
         }
-        if (!res.write(chunk)) {
-          // Backpressure: stop pulling from the tunnel until the socket drains.
-          route.tunnel.socket.pause();
-          res.once("drain", () => route.tunnel.socket.resume());
-        }
+        if (!res.write(chunk)) pauseForVisitor(agent, res);
       },
       onEnd: () => {
         try { res.end(); } catch { /* gone */ }
@@ -795,14 +861,12 @@ function cachePut(key, entry) {
       return;
     }
 
+    const agent = route.tunnel.socket;
     const stream = openStream(route.tunnel, {
       onHead: (headMsg) => { /* unused for ws streams */ },
       onBody: (chunk) => {
         stats.bytesOut += chunk.length;
-        if (!socket.write(chunk)) {
-          route.tunnel.socket.pause();
-          socket.once("drain", () => route.tunnel.socket.resume());
-        }
+        if (!socket.write(chunk)) pauseForVisitor(agent, socket);
       },
       onEnd: () => { try { socket.end(); } catch { /* gone */ } },
       fail: () => { try { socket.destroy(); } catch { /* gone */ } },
