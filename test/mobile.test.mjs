@@ -838,12 +838,13 @@ describe("mobile layer against the live dsh web UI", () => {
     // interval used to keep two (at 9 s, three) of them open at the same time.
     const slow = `(() => {
       const real = window.fetch.bind(window);
-      const poll = window.__drpPoll = { started: 0, open: 0, maxOpen: 0 };
+      const poll = window.__drpPoll = { started: 0, ok: 0, open: 0, maxOpen: 0 };
       window.fetch = (input, init) => {
         const url = String(input && input.url ? input.url : input);
         if (!/\\/dsh-remote-portal\\/status(\\?|$)/.test(url)) return real(input, init);
         poll.started++; poll.open++; poll.maxOpen = Math.max(poll.maxOpen, poll.open);
         return new Promise((r) => setTimeout(r, 5000)).then(() => real(input, init))
+          .then((res) => { if (res.ok) poll.ok++; return res; })
           .finally(() => { poll.open--; });
       };
     })();`;
@@ -857,9 +858,10 @@ describe("mobile layer against the live dsh web UI", () => {
       if (!entry) return JSON.stringify({ entry: false });
       window.__drpPoll.maxOpen = window.__drpPoll.open;
       const before = window.__drpPoll.started;
+      const okBefore = window.__drpPoll.ok;
       entry.click();
       await sleep(14000);
-      return JSON.stringify({ entry: true, started: window.__drpPoll.started - before, maxOpen: window.__drpPoll.maxOpen });
+      return JSON.stringify({ entry: true, started: window.__drpPoll.started - before, ok: window.__drpPoll.ok - okBefore, maxOpen: window.__drpPoll.maxOpen });
     })()`;
     const { code, stdout, stderr } = await runCdp([
       "eval", BASE, expr, "--token", TOKEN_URL, "--wait", "4000",
@@ -871,6 +873,8 @@ describe("mobile layer against the live dsh web UI", () => {
     assert.equal(out.entry, true, "Remote access entry not found in the sidebar");
     assert.ok(out.started >= 2, `the panel stopped polling: ${out.started} request(s) in 14 s`);
     assert.equal(out.maxOpen, 1, `${out.maxOpen} /status polls were open at once`);
+    // 5 s is inside the 8 s timeout: the slowed polls must still be answered.
+    assert.ok(out.ok >= 1, `no /status poll succeeded in 14 s (${out.started} sent)`);
   });
 
   test("every visible button in the open drawer is what a tap there hits", async (t) => {
