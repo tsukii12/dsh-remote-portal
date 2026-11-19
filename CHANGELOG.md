@@ -25,6 +25,19 @@ versions are the plugin's own, not dsh's.
 - DRP now preserves gateway sign-in failure reasons, localizes client errors and the local-network permission prompt, and recovers approval-input loading after failures. Real-listener tests cover authentication, isolated logout and approval requests.
 - DRP 现保留网关登录失败原因，提供双语客户端错误和本地网络权限提示，并支持工具授权输入加载失败后的重试。真实监听器测试覆盖认证、独立退出登录和工具授权请求。
 
+- `install.sh` with no `-p` no longer stops at a missing desktop profile on a
+  server that only runs dsh web: it skips profiles that don't exist and installs
+  into the rest, and fails only if there are none. The installers' closing hint
+  now points to Remote access in the sidebar, not Settings.
+- Remote access on a phone: switching remote access off from the phone now
+  asks first, because it cuts that phone's own connection. Afterwards the panel
+  says the phone is disconnected and only the PC can turn it back on, instead
+  of a generic "cannot reach the portal" error with the switch still on.
+- Pairing: a phone that is already signed in and opens its pairing link again
+  (scans the QR twice, or the browser restores the tab) goes straight into the
+  app. It used to get "invalid or already used", and each try counted toward
+  the lockout. The code is no longer used up by that phone, so the new phone it
+  was made for can still pair. Without a live session nothing changes.
 - Remote access on a phone: the tab labels no longer run together ("Local
   network" touched "Public access" at 390 px, in English), and with large text
   or page zoom the tab bar scrolls the chosen tab into view instead of leaving
@@ -1191,7 +1204,6 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
-
 
 
 
