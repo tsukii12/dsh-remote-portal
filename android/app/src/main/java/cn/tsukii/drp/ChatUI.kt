@@ -23,6 +23,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -31,6 +33,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -70,6 +73,8 @@ fun ChatScreen(chat: ChatStore, filesOpen: Boolean = false, dismissFiles: () -> 
     var exported by remember { mutableStateOf<ByteArray?>(null) }
     val context = LocalContext.current
     val haptics = LocalHapticFeedback.current
+    val composerFocus = remember { FocusRequester() }
+    val keyboard = LocalSoftwareKeyboardController.current
     var loadingOlder by remember { mutableStateOf(false) }
     val list = rememberLazyListState()
     var follow by remember { mutableStateOf(true) }
@@ -195,10 +200,12 @@ fun ChatScreen(chat: ChatStore, filesOpen: Boolean = false, dismissFiles: () -> 
                     style = MaterialTheme.typography.labelSmall, maxLines = 2)
             }
             Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(editor, { editor = it }, Modifier.weight(1f), enabled = !sending, placeholder = { Text(L("Message…", "输入消息…")) }, minLines = 1, maxLines = 6, shape = MaterialTheme.shapes.large)
+                OutlinedTextField(editor, { editor = it }, Modifier.weight(1f).focusRequester(composerFocus), placeholder = { Text(L("Message…", "输入消息…")) }, minLines = 1, maxLines = 6, shape = MaterialTheme.shapes.large)
                 if (state.running) FilledTonalButton(onClick = { perform { chat.cancel() } }, contentPadding = PaddingValues(14.dp)) { Text("■"); Text(L(" Stop", " 停止")) }
                 FilledIconButton(onClick = {
                     val message = text.trim(); editor = TextFieldValue(); follow = true
+                    composerFocus.requestFocus()
+                    keyboard?.show()
                     perform { sending = true; try {
                         draft.validateImages()
                         if (message.startsWith("/") && attachments.isNotEmpty()) throw PortalError(L("Send attachments as a message, not a slash command.", "请将附件作为消息发送，而非斜杠命令。"))
