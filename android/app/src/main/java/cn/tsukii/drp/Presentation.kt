@@ -14,6 +14,29 @@ sealed interface MarkdownBlock {
     data class Code(val language: String, val text: String) : MarkdownBlock
 }
 object MarkdownParser {
+    data class Inline(val text: String, val style: String = "", val url: String? = null)
+    fun inline(text: String): List<Inline> {
+        val pattern = Regex("(`[^`]+`|\\*\\*[^*]+\\*\\*|__[^_]+__|\\*[^*]+\\*|_[^_]+_|\\[[^]\\n]+\\]\\(https?://[^)\\s]+\\))")
+        val result = mutableListOf<Inline>()
+        var offset = 0
+        for (match in pattern.findAll(text)) {
+            if (match.range.first > offset) result.add(Inline(text.substring(offset, match.range.first)))
+            val value = match.value
+            result.add(when {
+                value.startsWith("`") -> Inline(value.drop(1).dropLast(1), "code")
+                value.startsWith("**") || value.startsWith("__") -> Inline(value.drop(2).dropLast(2), "bold")
+                value.startsWith("[") -> {
+                    val end = value.indexOf("](")
+                    if (end < 1 || end + 3 >= value.length) Inline(value)
+                    else Inline(value.substring(1, end), url = value.substring(end + 2, value.length - 1))
+                }
+                else -> Inline(value.drop(1).dropLast(1), "italic")
+            })
+            offset = match.range.last + 1
+        }
+        if (offset < text.length) result.add(Inline(text.substring(offset)))
+        return result
+    }
     fun blocks(text: String): List<MarkdownBlock> {
         if (text.isEmpty()) return emptyList()
         val result = mutableListOf<MarkdownBlock>()

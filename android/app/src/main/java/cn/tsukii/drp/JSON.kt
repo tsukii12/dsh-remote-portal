@@ -11,6 +11,7 @@ val J.array: List<J> get() = (this as? JsonArray)?.toList() ?: emptyList()
 val J.string: String? get() = (this as? JsonPrimitive)?.takeIf { it.isString }?.content
 val J.text: String get() = string ?: ""
 val J.int: Int? get() = (this as? JsonPrimitive)?.takeUnless { it.isString }?.intOrNull
+val J.long: Long? get() = (this as? JsonPrimitive)?.takeUnless { it.isString }?.longOrNull
 val J.boolean: Boolean get() = this == JsonPrimitive(true)
 fun J.with(key: String, value: Any?): J = JsonObject(obj + (key to j(value)))
 fun j(value: Any?): J = when (value) {

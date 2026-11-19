@@ -22,7 +22,7 @@ data class SidebarState(val workspaces: List<WorkspaceRow> = emptyList(), val se
         val assigned = (workspaces.flatMap { it.sessionIDs } + pinnedIDs).toSet()
         return listOf(SessionGroup("pinned", L("Pinned", "置顶"), pinnedIDs.mapNotNull { id -> visible.find { it.id == id } })) +
             workspaces.map { workspace -> SessionGroup(workspace.id, workspace.title, workspace.sessionIDs.mapNotNull { id -> visible.find { it.id == id && id !in pinnedIDs } }) } +
-            SessionGroup("ungrouped", L("Ungrouped", "未分组"), visible.filter { it.id !in assigned }.sortedByDescending { it.updatedAt.int ?: 0 })
+            SessionGroup("ungrouped", L("Ungrouped", "未分组"), visible.filter { it.id !in assigned }.sortedByDescending { it.updatedAt.long ?: 0L })
     }
 }
 class SidebarStore(private val api: RPCServing, private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)) {

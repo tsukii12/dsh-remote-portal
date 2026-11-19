@@ -116,8 +116,6 @@ class ListenerTests {
                 assertEquals(o("request" to o("sessionId" to "S")), follow["payload"]["args"])
                 ws.send(o("type" to "item", "streamId" to follow["streamId"], "value" to o("type" to "snapshot")).toString())
                 assertEquals("snapshot", got.next()["type"].text)
-                api.mux.sendItem(j("input"), follow["streamId"].text); assertEquals("item", frames.next()["type"].text)
-                api.mux.endInput(follow["streamId"].text); assertEquals("end", frames.next()["type"].text)
                 ws.send(o("type" to "end", "streamId" to follow["streamId"]).toString()); withTimeout(8000) { first.join() }
                 second.cancelAndJoin(); val cancel = frames.next(); assertEquals("cancel", cancel["type"].text); assertEquals(events["streamId"], cancel["streamId"])
                 val request = server.takeRequest(); assertEquals("/relay/api/remote.mux", request.path); assertEquals(PortalClient.USER_AGENT, request.getHeader("User-Agent")); assertEquals(PortalURL.origin(api.base), request.getHeader("Origin")); assertEquals(1, server.requestCount)

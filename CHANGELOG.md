@@ -5,6 +5,9 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+- Android Stage A: fix malformed Markdown links and millisecond recency sorting;
+  add validated multipart binary RPC results, generation-bound non-replaying
+  duplex streams, and bilingual session/turn token and context usage details.
 - Added DRP, a fully native Android client with server management, persistent
   login, workspace/session navigation, streaming chat, model selection, tool
   approvals and English/Chinese light/dark UI. Includes JVM protocol/reducer tests

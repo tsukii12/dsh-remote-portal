@@ -39,6 +39,10 @@ preserve the full relay path prefix. Use trusted networks for plain HTTP.
   Workspace menus rename or remove registrations, never host files.
 - Streaming chat, Markdown and copyable horizontally scrolling code, expandable
   thinking and tool cards with command summaries and running/success/error status.
+- Session token/context usage in the composer, completed-turn usage when the
+  loaded history has complete attempt evidence, and a bilingual usage detail
+  sheet. Unknown counts stay unknown; zero is not treated as missing. Account
+  balances appear only when served and available from the host.
 - Exact-input approval sheets, single/multiple-choice questions and custom answers.
   Requests only auto-open for the current chat; Later defers them without answering.
   Pending banners and drawer badges let you return to requests in any known session.
@@ -106,6 +110,20 @@ MainActor implementation; scopes can be injected for tests. Cancel the owning sc
 The mux exposes cold, single-subscription logical Flows: collection opens a stream and cancellation
 sends cancel. It shares one OkHttp WebSocket, injects connection-reset on loss, reopens subscriptions
 with exponential backoff (1–30 seconds), and fails active streams on HTTP 401 or logout.
+
+For binary RPCs, `rpcBinary()` returns the JSON metadata in `value` and exact
+byte arrays through `bytes("data")` (or the corresponding nested value path).
+Multipart responses reject missing/duplicate/unreferenced parts and invalid
+attachment paths, with a 64 MiB aggregate limit. Ordinary `rpc()` remains JSON-only
+and refuses to silently discard binary attachments.
+
+`mux.openDuplex()` returns a single-generation handle with `frames`, `send`,
+`endInput` and suspending `close`. Close it in `finally`. Connection loss ends
+that handle: callers must explicitly open a new one and recover from its snapshot.
+Input is never queued offline or replayed; stale handles refuse writes even once
+the shared socket reconnects. Duplex receive queues and outgoing frame/socket
+buffers are bounded. Protocol-specific acknowledgements and input windows remain
+the caller's responsibility. Existing chat/event Flows still reopen automatically.
 
 Offline JVM tests port the iOS Connection, NativeState, Presentation, Transport and Listener contracts,
 using the original sanitized JSON fixtures and MockWebServer HTTP/WebSocket listeners. iOS-specific

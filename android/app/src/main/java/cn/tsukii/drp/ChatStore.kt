@@ -46,7 +46,8 @@ data class ChatState(val transcript: List<TranscriptItem> = emptyList(), val inP
     val running: Boolean = false, val hasMore: Boolean = false, val loaded: Boolean = false,
     val catalog: J = EMPTY, val selectedModel: J = EMPTY, val error: String? = null,
     val projections: J = EMPTY, val queue: List<J> = emptyList(), val permissionCatalog: J = EMPTY,
-    val presetCatalog: J = EMPTY, val commands: List<J> = emptyList(), val commandNotice: String? = null) {
+    val presetCatalog: J = EMPTY, val commands: List<J> = emptyList(), val commandNotice: String? = null,
+    val turnUsage: Map<Int, TokenUsage> = emptyMap(), val completedTurns: Set<Int> = emptySet(), val accountBalance: J = JsonNull) {
     val currentModel: J get() = listOf("selected", "next", "lastUsed").map { selectedModel[it] }.firstOrNull { it["model"].string != null } ?: catalog["default"]
     val modelDefinition: J get() = catalog["groups"].array.find { it["id"] == currentModel["provider"] }?.get("models")?.array?.find { it["id"] == currentModel["model"] } ?: EMPTY
     val modelName: String get() = modelDefinition["name"].string ?: currentModel["model"].string ?: L("Choose model", "选择模型")
@@ -72,6 +73,13 @@ class ChatStore(val sessionID: String, private val api: RPCServing, private val 
     private var revision = -1
     private var nextIndex = 0
     private var pendingCommitSeq: Int? = null
+    suspend fun loadUsageAccount() {
+        val balance = try { api.rpc("account/getBalance", o("client" to o("version" to "1.0", "locale" to java.util.Locale.getDefault().toLanguageTag(), "timezoneOffsetSeconds" to TimeZone.getDefault().getOffset(System.currentTimeMillis()) / 1000))) }
+        catch (e: CancellationException) { throw e }
+        catch (e: APIError.SessionExpired) { throw e }
+        catch (_: Exception) { JsonNull }
+        mutable.value = state.value.copy(accountBalance = if (balance["status"].text == "ready") balance else JsonNull)
+    }
     private val address get() = o("kind" to "session", "sessionId" to sessionID)
     suspend fun start() {
         if (followTask != null) return
@@ -220,7 +228,8 @@ class ChatStore(val sessionID: String, private val api: RPCServing, private val 
         }
         val positions = surface.mapIndexedNotNull { index, event -> event["seq"].int?.let { it to index } }.toMap()
         val queued = state.value.queue.mapNotNull { it["rpcId"].string }.toSet()
-        mutable.value = state.value.copy(transcript = items.sortedBy { positions[it.seq] ?: 0 } + optimistic.filterNot { it.requestID in queued })
+        mutable.value = state.value.copy(transcript = items.sortedBy { positions[it.seq] ?: 0 } + optimistic.filterNot { it.requestID in queued }, turnUsage = Usage.turns(history.values),
+            completedTurns = history.values.filter { it["type"].text == "turn/end" }.mapNotNull { it["data"]["turn"].int }.toSet())
     }
     suspend fun send(text: String, steer: Boolean = false): String {
         if (text.isBlank()) throw PortalError(L("Enter a message.", "请输入消息。"))

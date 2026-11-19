@@ -42,6 +42,7 @@ fun ChatScreen(chat: ChatStore) {
     var error by remember { mutableStateOf<String?>(null) }
     var text by rememberSaveable { mutableStateOf("") }
     var models by remember { mutableStateOf(false) }
+    var usage by remember { mutableStateOf(false) }
     var sending by remember { mutableStateOf(false) }
     var steer by remember { mutableStateOf(false) }
     var editingQueue by remember { mutableStateOf<String?>(null) }
@@ -72,7 +73,11 @@ fun ChatScreen(chat: ChatStore) {
                 if (state.loaded && state.transcript.isEmpty() && progress == null) item(key = "empty") {
                     Text(L("What would you like to work on?", "今天想做些什么？"), style = MaterialTheme.typography.headlineSmall, modifier = Modifier.padding(vertical = 28.dp))
                 }
-                items(state.transcript, key = { it.id }) { MessageView(it) }
+                items(state.transcript, key = { it.id }) { item ->
+                    MessageView(item)
+                    if (item.role == "assistant" && item.turn in state.completedTurns && state.transcript.lastOrNull { it.role == "assistant" && it.turn == item.turn }?.id == item.id)
+                        TextButton(onClick = { usage = true }, contentPadding = PaddingValues(0.dp)) { Text(Usage.line(state.turnUsage[item.turn]), style = MaterialTheme.typography.labelSmall) }
+                }
                 if (progress != null) item(key = "in-progress:${progress.id}") { MessageView(progress) }
                 else if (state.running) item(key = "working") { Row(verticalAlignment = Alignment.CenterVertically) {
                     CircularProgressIndicator(Modifier.size(14.dp), strokeWidth = 2.dp); Spacer(Modifier.width(8.dp)); Text(L("Working…", "处理中…"), style = MaterialTheme.typography.bodySmall)
@@ -135,6 +140,10 @@ fun ChatScreen(chat: ChatStore) {
                 AssistChip(onClick = { models = true }, label = { Text(ChatLabels.permission(state.projections["permissions"]["currentValue"].text).ifEmpty { L("Access mode", "访问模式") }) })
                 AssistChip(onClick = { models = true }, label = { Text(if (state.planEnabled) L("Plan mode", "计划模式") else ChatLabels.preset(state.projections["agentPreset"].string ?: "standard")) })
             }
+            TextButton(onClick = { usage = true }, contentPadding = PaddingValues(horizontal = 2.dp, vertical = 0.dp), modifier = Modifier.fillMaxWidth()) {
+                Text(Usage.line(Usage.session(state.projections)) + " · " + L("Context ", "上下文 ") + Usage.percent(Usage.contextPercent(state.projections)),
+                    style = MaterialTheme.typography.labelSmall, maxLines = 2)
+            }
             Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(text, { text = it }, Modifier.weight(1f), placeholder = { Text(L("Message…", "输入消息…")) }, minLines = 1, maxLines = 6, shape = MaterialTheme.shapes.large)
                 if (state.running) FilledTonalButton(onClick = { perform { chat.cancel() } }, contentPadding = PaddingValues(14.dp)) { Text("■"); Text(L(" Stop", " 停止")) }
@@ -153,6 +162,7 @@ fun ChatScreen(chat: ChatStore) {
         }
     }
     if (models) ChatOptionsSheet(chat) { models = false }
+    if (usage) UsageSheet(chat) { usage = false }
     editingQueue?.let { id -> AlertDialog(onDismissRequest = { editingQueue = null }, title = { Text(L("Edit queued message", "编辑排队消息")) },
         text = { OutlinedTextField(queuedText, { queuedText = it }, label = { Text(L("Message", "消息")) }) },
         confirmButton = { TextButton(enabled = queuedText.isNotBlank(), onClick = { perform { chat.updateQueue(id, "edit", queuedText); editingQueue = null } }) { Text(L("Save", "保存")) } },
@@ -222,24 +232,15 @@ private fun inlineMarkdown(text: String): AnnotatedString {
     val codeColor = MaterialTheme.colorScheme.surfaceContainerHighest
     return remember(text, codeColor) {
         buildAnnotatedString {
-            val pattern = Regex("(`[^`]+`|\\*\\*[^*]+\\*\\*|__[^_]+__|\\*[^*]+\\*|_[^_]+_|\\[[^]]+](https?://[^)]+))")
-            var offset = 0
-            pattern.findAll(text).forEach { match ->
-                append(text.substring(offset, match.range.first))
-                val value = match.value
+            MarkdownParser.inline(text).forEach { token ->
                 when {
-                    value.startsWith("`") -> withStyle(SpanStyle(fontFamily = FontFamily.Monospace, background = codeColor)) { append(value.drop(1).dropLast(1)) }
-                    value.startsWith("**") || value.startsWith("__") -> withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append(value.drop(2).dropLast(2)) }
-                    value.startsWith("[") -> {
-                        val end = value.indexOf("](")
-                        val url = value.substring(end + 2, value.length - 1)
-                        withLink(LinkAnnotation.Url(url)) { append(value.substring(1, end)) }
-                    }
-                    else -> withStyle(SpanStyle(fontStyle = FontStyle.Italic)) { append(value.drop(1).dropLast(1)) }
+                    token.url != null -> withLink(LinkAnnotation.Url(token.url)) { append(token.text) }
+                    token.style == "code" -> withStyle(SpanStyle(fontFamily = FontFamily.Monospace, background = codeColor)) { append(token.text) }
+                    token.style == "bold" -> withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append(token.text) }
+                    token.style == "italic" -> withStyle(SpanStyle(fontStyle = FontStyle.Italic)) { append(token.text) }
+                    else -> append(token.text)
                 }
-                offset = match.range.last + 1
             }
-            append(text.substring(offset))
         }
     }
 }

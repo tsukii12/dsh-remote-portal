@@ -6,10 +6,21 @@ import okhttp3.HttpUrl
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonObject
+import okhttp3.MultipartReader
+import okhttp3.Response
+import okio.Buffer
 import java.util.UUID
+
+data class BinaryRPCResult(val value: J, val binaries: Map<List<String>, ByteArray> = emptyMap()) {
+    fun bytes(vararg path: String): ByteArray? = binaries[path.toList()]
+}
 
 interface RPCServing {
     suspend fun rpc(method: String, args: J = EMPTY): J
+    suspend fun rpcBinary(method: String, args: J = EMPTY): BinaryRPCResult = BinaryRPCResult(rpc(method, args))
     fun stream(endpoint: String, args: J = EMPTY): Flow<J>
     suspend fun portal(path: String, query: Map<String, String> = emptyMap(), body: J? = null): J = throw APIError.InvalidResponse
     suspend fun exportSession(id: String): ByteArray = throw APIError.InvalidResponse
@@ -48,12 +59,16 @@ class PortalAPI(val base: HttpUrl, val client: PortalClient,
         }
     }
     override suspend fun rpc(method: String, args: J): J {
+        val result = rpcBinary(method, args)
+        if (result.binaries.isNotEmpty()) throw APIError.InvalidResponse
+        return result.value
+    }
+    override suspend fun rpcBinary(method: String, args: J): BinaryRPCResult {
         val request = request("api/$method").post(envelope(method, args).toString()
             .toRequestBody("application/json".toMediaType())).build()
         return client.http.newCall(request).await().use {
             client.cookies.ingest(it, base)
-            val data = withContext(Dispatchers.IO) { it.body?.string().orEmpty() }
-            try { decode(data, it.code) }
+            try { withContext(Dispatchers.IO) { decodeResponse(it) } }
             catch (e: APIError.SessionExpired) { expire(); throw e }
         }
     }
@@ -65,6 +80,69 @@ class PortalAPI(val base: HttpUrl, val client: PortalClient,
     fun expire() { expired.value = true; mux.close() }
     override fun stream(endpoint: String, args: J): Flow<J> = mux.open(endpoint, args)
     companion object {
+        private const val MAX_RPC_BYTES = 64L * 1024 * 1024
+        fun decodeResponse(response: Response): BinaryRPCResult {
+            if (response.code == 401) throw APIError.SessionExpired
+            if (!response.isSuccessful) throw APIError.Http(response.code)
+            val body = response.body ?: throw APIError.InvalidResponse
+            if (body.contentType()?.let { it.type == "multipart" && it.subtype == "form-data" } != true)
+                return BinaryRPCResult(decode(body.string(), response.code))
+            try {
+                val parts = linkedMapOf<String, ByteArray>()
+                var total = 0L
+                MultipartReader(body).use { reader ->
+                    while (true) {
+                        val part = reader.nextPart() ?: break
+                        part.use {
+                            val disposition = it.headers.values("Content-Disposition").singleOrNull() ?: throw APIError.InvalidResponse
+                            val names = Regex("(?:^|;)\\s*name=(?:\"([^\"]+)\"|([^;\\s]+))").findAll(disposition).toList()
+                            if (names.size != 1) throw APIError.InvalidResponse
+                            val name = names.single().let { match -> match.groups[1]?.value ?: match.groups[2]!!.value }
+                            if (parts.containsKey(name) || parts.size >= 128) throw APIError.InvalidResponse
+                            val buffer = Buffer()
+                            while (!it.body.exhausted()) {
+                                val count = it.body.read(buffer, minOf(8192L, MAX_RPC_BYTES - total + 1))
+                                if (count < 0) break
+                                total += count
+                                if (total > MAX_RPC_BYTES) throw APIError.InvalidResponse
+                            }
+                            parts[name] = buffer.readByteArray()
+                        }
+                    }
+                }
+                val metadata = parts.remove("metadata") ?: throw APIError.InvalidResponse
+                val document = parse(metadata.toString(Charsets.UTF_8))
+                val value = decode(document.toString(), response.code)
+                if (document["attachments"] !is JsonArray) throw APIError.InvalidResponse
+                val binaries = linkedMapOf<List<String>, ByteArray>()
+                val used = mutableSetOf<String>()
+                for (attachment in document["attachments"].array) {
+                    val rawPath = attachment["path"] as? JsonArray ?: throw APIError.InvalidResponse
+                    var target = value
+                    val path = rawPath.map { key ->
+                        when (target) {
+                            is JsonObject -> {
+                                val name = key.string ?: throw APIError.InvalidResponse
+                                target = (target as JsonObject)[name] ?: throw APIError.InvalidResponse
+                                name
+                            }
+                            is JsonArray -> {
+                                val index = key.int?.takeIf { it >= 0 } ?: throw APIError.InvalidResponse
+                                target = (target as JsonArray).getOrNull(index) ?: throw APIError.InvalidResponse
+                                index.toString()
+                            }
+                            else -> throw APIError.InvalidResponse
+                        }
+                    }
+                    val name = attachment["part"].text
+                    if (attachment["codec"].text != "bytes" || target != JsonNull || binaries.containsKey(path) || !used.add(name)) throw APIError.InvalidResponse
+                    binaries[path] = parts[name] ?: throw APIError.InvalidResponse
+                }
+                if (used != parts.keys) throw APIError.InvalidResponse
+                return BinaryRPCResult(value, binaries)
+            } catch (e: APIError) { throw e }
+            catch (_: Exception) { throw APIError.InvalidResponse }
+        }
         fun envelope(method: String, args: J, id: String = UUID.randomUUID().toString()): J =
             o("type" to "client-request", "rpcId" to id, "method" to method, "payload" to o("args" to args))
         fun decode(data: String, status: Int): J {
