@@ -52,6 +52,7 @@ data class ChatState(val transcript: List<TranscriptItem> = emptyList(), val inP
     val modelName: String get() = modelDefinition["name"].string ?: currentModel["model"].string ?: L("Choose model", "选择模型")
     val effortName: String get() = currentModel["reasoningEffort"].string?.let { id -> modelDefinition["reasoning"]["efforts"].array.find { it["id"].text == id }?.get("name")?.string ?: id } ?: L("Default", "默认")
     val sessionStarted: Boolean get() = projections["sessionListMetadata"]["blank"] == j(false) || transcript.any { it.role == "user" } || running
+    val canChangePlan: Boolean get() = !sessionStarted && !projections["plan"]["pending"].boolean
     val planEnabled: Boolean get() = if (projections["plan"]["pending"].boolean) !projections["plan"]["active"].boolean else projections["plan"]["active"].boolean
 }
 

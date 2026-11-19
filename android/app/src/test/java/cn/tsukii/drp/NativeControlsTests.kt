@@ -15,6 +15,67 @@ class NativeControlsTests {
     private val catalog = parse("""{"default":{"provider":"fake","model":"one","reasoningEffort":"high"},"groups":[{"id":"fake","name":"Fake","models":[{"id":"one","name":"One","reasoning":{"efforts":[{"id":"off","name":"Off"},{"id":"high","name":"High"}]}},{"id":"two","name":"Two","reasoning":{"defaultEffort":"off"}}]}]}""")
     private fun ok(value: J) = MockResponse().setBody(o("type" to "server-response", "result" to o("ok" to true, "value" to value)).toString())
 
+    @Test fun planOptionsRequireAnUnstartedSessionWithoutPendingChanges() {
+        assertTrue(ChatState().canChangePlan)
+        assertTrue(ChatState(projections = parse("""{"sessionListMetadata":{"blank":true},"plan":{"active":true}}""")).canChangePlan)
+        assertFalse(ChatState(projections = parse("""{"plan":{"pending":true}}""")).canChangePlan)
+        assertFalse(ChatState(projections = parse("""{"sessionListMetadata":{"blank":false}}""")).canChangePlan)
+        assertFalse(ChatState(running = true).canChangePlan)
+    }
+
+    @Test fun firstOptimisticMessageLocksPlanAndPresetWithoutAnRpc() = runTest {
+        val api = StubAPI(); val chat = ChatStore("S", api)
+        assertFalse(chat.state.value.sessionStarted)
+        chat.addOptimistic("first message", "R")
+        assertTrue(chat.state.value.sessionStarted)
+        assertFalse(chat.state.value.canChangePlan)
+        fails<PortalError> { chat.selectPreset("minimal") }
+        assertTrue(api.calls.isEmpty())
+    }
+
+    @Test fun sidebarWaitsForWorkspaceBaselineAndWaitsAgainAfterReset() {
+        val store = SidebarStore(StubAPI())
+        assertFalse(store.state.value.loaded)
+        assertTrue(store.state.value.displayGroups.isEmpty())
+        store.applySessions(parse("""{"items":[{"sessionId":"S","projections":{"values":{"title":"First"}}}]}"""))
+        assertTrue(store.state.value.displayGroups.isEmpty())
+        store.applyWorkspace(parse("""{"type":"upsert","workspace":{"workspaceId":"W","title":"Work","sessionIds":["S"]}}"""))
+        assertTrue(store.state.value.displayGroups.isEmpty())
+        val baseline = parse("""{"type":"baseline","value":{"items":[{"workspaceId":"W","title":"Work","sessionIds":["S"]}]}}""")
+        store.applyWorkspace(baseline)
+        assertTrue(store.state.value.loaded)
+        assertEquals(listOf("S"), store.state.value.displayGroups.single { it.id == "W" }.sessions.map { it.id })
+        assertTrue(store.state.value.displayGroups.single { it.id == "ungrouped" }.sessions.isEmpty())
+        store.applyWorkspace(o("type" to "connection-reset"))
+        assertFalse(store.state.value.loaded)
+        assertTrue(store.state.value.displayGroups.isEmpty())
+        store.applyWorkspace(baseline)
+        assertEquals(listOf("S"), store.state.value.displayGroups.flatMap { it.sessions }.map { it.id })
+    }
+
+    @Test fun emptyWorkspaceBaselineFinishesLoadingAndAllowsUngroupedSessions() {
+        val store = SidebarStore(StubAPI())
+        store.applyWorkspace(o("type" to "replace", "value" to o("items" to emptyList<J>())))
+        assertTrue(store.state.value.loaded)
+        assertTrue(store.state.value.displayGroups.all { it.sessions.isEmpty() })
+        store.applySessions(o("items" to listOf(o("sessionId" to "S"))))
+        assertEquals(listOf("S"), store.state.value.displayGroups.single { it.id == "ungrouped" }.sessions.map { it.id })
+    }
+
+    @Test fun failedWorkspaceStreamDoesNotShowUnassignedSessions() = runTest {
+        val api = object : RPCServing {
+            override suspend fun rpc(method: String, args: J): J = EMPTY
+            override fun stream(endpoint: String, args: J) = kotlinx.coroutines.flow.flow<J> { throw APIError.Disconnected }
+        }
+        val store = SidebarStore(api, backgroundScope)
+        store.applySessions(o("items" to listOf(o("sessionId" to "S"))))
+        store.start(); runCurrent()
+        assertNotNull(store.state.value.error)
+        assertFalse(store.state.value.loaded)
+        assertTrue(store.state.value.displayGroups.isEmpty())
+        store.stop()
+    }
+
     @Test fun optionsCommandsAndQueueUseSwiftArgumentShapesOverHTTP() = runTest {
         val calls = CopyOnWriteArrayList<J>()
         MockWebServer().use { server ->

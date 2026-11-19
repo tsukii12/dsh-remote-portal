@@ -81,7 +81,14 @@ fun WorkspaceScreen(connection: NativeConnection, serverName: String, addressLab
             }, modifier = Modifier.weight(1f)) {
                 LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(vertical = 8.dp)) {
                     error?.let { message -> item(key = "action-error") { ErrorBanner(message) { error = null } } }
-                    sidebar.groups.forEach { group ->
+                    if (!sidebar.loaded) item(key = "workspace-loading") {
+                        Row(Modifier.fillMaxWidth().padding(24.dp), verticalAlignment = Alignment.CenterVertically) {
+                            CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
+                            Spacer(Modifier.width(12.dp))
+                            Text(L("Loading workspaces…", "正在加载工作区…"))
+                        }
+                    }
+                    sidebar.displayGroups.forEach { group ->
                         if (group.sessions.isNotEmpty() || group.id !in listOf("pinned", "ungrouped")) {
                             item(key = "group:${group.id}") {
                                 Row(Modifier.fillMaxWidth().padding(start = 20.dp, end = 8.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -127,8 +134,8 @@ fun WorkspaceScreen(connection: NativeConnection, serverName: String, addressLab
                             }
                         }
                     }
-                    if (sidebar.sessions.isEmpty()) item { Text(L("No conversations yet", "还没有对话"), Modifier.padding(24.dp), color = MaterialTheme.colorScheme.onSurfaceVariant) }
-                    else if (sidebar.groups.all { it.sessions.isEmpty() }) item { Text(L("No matching sessions", "没有匹配的会话"), Modifier.padding(24.dp)) }
+                    if (sidebar.loaded && sidebar.sessions.isEmpty()) item { Text(L("No conversations yet", "还没有对话"), Modifier.padding(24.dp), color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                    else if (sidebar.loaded && sidebar.displayGroups.all { it.sessions.isEmpty() }) item { Text(L("No matching sessions", "没有匹配的会话"), Modifier.padding(24.dp)) }
                 }
             }
             HorizontalDivider()

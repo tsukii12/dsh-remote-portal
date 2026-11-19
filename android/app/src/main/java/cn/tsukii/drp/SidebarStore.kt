@@ -14,6 +14,7 @@ data class SessionGroup(val id: String, val title: String, val sessions: List<Se
 data class SidebarState(val workspaces: List<WorkspaceRow> = emptyList(), val sessions: Map<String, SessionRow> = emptyMap(),
     val archivedIDs: List<String> = emptyList(), val pinnedIDs: List<String> = emptyList(), val loaded: Boolean = false, val error: String? = null,
     val searchText: String = "", val archivedOnly: Boolean = false, val searchResults: List<J> = emptyList()) {
+    val displayGroups: List<SessionGroup> get() = if (loaded) groups else emptyList()
     val groups: List<SessionGroup> get() {
         val query = searchText.trim()
         val found = searchResults.mapNotNull { it["sessionId"].string }.toSet()

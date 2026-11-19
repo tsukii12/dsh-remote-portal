@@ -75,7 +75,7 @@ fun ChatOptionsSheet(chat: ChatStore, onDismiss: () -> Unit) {
             }
             Text(L("Applies to this session, not the default for new sessions.", "仅适用于当前会话，不影响新会话的默认设置。"), style = MaterialTheme.typography.bodySmall)
             OptionsHeading(L("Plan & agent preset", "计划与代理预设"))
-            OptionButton(L("Plan mode", "计划模式"), state.planEnabled, !busy && !state.projections["plan"]["pending"].boolean) {
+            OptionButton(L("Plan mode", "计划模式"), state.planEnabled, !busy && state.canChangePlan) {
                 perform { chat.executeCommand(if (state.planEnabled) "/plan off" else "/plan") }
             }
             state.presetCatalog["presets"].array.forEach { preset ->
@@ -83,7 +83,8 @@ fun ChatOptionsSheet(chat: ChatStore, onDismiss: () -> Unit) {
                     perform { chat.selectPreset(preset["id"].text) }
                 }
             }
-            Text(L("Choose the agent preset before the first message. Plan mode can be changed later.", "请在第一条消息前选择代理预设。计划模式可稍后切换。"), style = MaterialTheme.typography.bodySmall)
+            Text(if (state.sessionStarted) L("Plan mode and agent preset are locked after the first message.", "发送第一条消息后，计划模式和代理预设已锁定。")
+                else L("Choose plan mode and agent preset before the first message.", "请在发送第一条消息前选择计划模式和代理预设。"), style = MaterialTheme.typography.bodySmall)
             TextButton(enabled = !busy, onClick = { perform { chat.loadModels(); chat.loadControls() } }) { Text(L("Refresh options", "刷新选项")) }
         }
     }
