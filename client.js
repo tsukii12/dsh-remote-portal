@@ -1503,7 +1503,8 @@ window.__ModuleLoader__.load({
         patch({ busy: "cfg" });
         api(BASE + "/config", { method: "POST", body: { enabled: next } }).then(function (r) {
           patch({ busy: "" });
-          if (remote && (r.ok || r.status === 0)) { patch({ selfOff: true }); return; }
+          // Over the relay the tunnel closes under the request: 502/503, not a reply.
+          if (remote && (r.ok || r.status === 0 || r.status >= 502)) { patch({ selfOff: true }); return; }
           if (!r.ok) { flash("err", r.error); return; }
           var n = normalizeStatus(r.data);
           if (n) applyStatus(n); else refreshStatus();
