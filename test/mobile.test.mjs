@@ -974,8 +974,11 @@ describe("mobile layer against the live dsh web UI", () => {
       [...document.querySelectorAll('[data-slot="sidebar"] button')]
         .find((b) => /^(Remote access|远程访问)$/.test((b.getAttribute('aria-label') || b.textContent).trim())).click();
       await sleep(2000);`;
-    const change = (phone, accept) => `(async () => {
+    const change = (phone, accept, real = false) => `(async () => {
       ${open}
+      const tab = async (re) => { const b = [...document.querySelectorAll('[data-slot="main"] [role="tab"], [data-slot="main"] button')].find((x) => re.test(x.textContent.trim())); if (b) b.click(); await sleep(900); };
+      const shown = async () => { await tab(/^(局域网访问|Local network)$/); const src = document.querySelector('[data-drp="qr"] img')?.getAttribute('src') || ''; await tab(/^(基本设置|General)$/); return (decodeURIComponent(src).match(/https?:[^\\s"'&]*pair[^\\s"'&]*/) || [''])[0]; };
+      const before = ${real} ? '' : await shown();
       if (${phone}) document.cookie = 'dsh_portal_client=1; path=/';
       let asked = '';
       window.confirm = (m) => { asked = m; return ${accept}; };
@@ -986,12 +989,17 @@ describe("mobile layer against the live dsh web UI", () => {
       [...document.querySelectorAll('[data-drp="password"] button')].find((b) => /^(更新密码|Update password)$/.test(b.textContent.trim())).click();
       await sleep(900);
       const text = document.querySelector('[data-slot="main"]').textContent;
+      if (${real}) {
+        const page = await (await fetch('./', { headers: { accept: 'text/html' } })).text();
+        return JSON.stringify({ asked: !!asked, text: text.slice(0, 4000), loginNext: /type="password"/.test(page) });
+      }
       document.cookie = 'dsh_portal_client=; path=/; max-age=0';
-      return JSON.stringify({ asked: !!asked, text: text.slice(0, 4000) });
+      await sleep(2500);
+      return JSON.stringify({ asked: !!asked, text: text.slice(0, 4000), before, after: await shown() });
     })()`;
-    const run = async (expr) => {
+    const run = async (expr, url = BASE, token = TOKEN_URL) => {
       const { code, stdout, stderr } = await runCdp([
-        "eval", BASE, expr, "--token", TOKEN_URL, "--wait", "4000",
+        "eval", url, expr, "--token", token, "--wait", "4000",
         "--w", "390", "--h", "844", "--mobile", "--pre-file", join(tmp, "pre.js"), "--settle", "1200",
       ]);
       assert.equal(code, 0, "cdp run failed: " + stderr.slice(-800));
@@ -1024,10 +1032,18 @@ describe("mobile layer against the live dsh web UI", () => {
     assert.match(pc.text, /所有设备已退出登录|every device has been signed out/);
     assert.equal(await signedIn(phone), false, "a signed-in phone must be signed out by the change");
     assert.equal(await pair(links.b), "", "a pairing link made before the change must no longer sign anyone in");
+    assert.ok(pc.after && pc.after !== pc.before, "the panel must show a fresh pairing link, not the voided one: " + JSON.stringify([pc.before, pc.after]));
+    assert.ok(await pair(pc.after), "the pairing link shown after the change must work");
 
-    const self = await run(change(true, true));
-    assert.equal(self.asked, true);
+    // A real phone, signed in through the portal (not the marker cookie on the PC).
+    const fresh = await run(`(async () => {
+      const r = await fetch('/dsh-remote-portal/pair', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ttlSeconds: 300 }) });
+      return JSON.stringify({ c: (await r.json()).pairing.url });
+    })()`);
+    const self = await run(change(false, true, true), `http://127.0.0.1:${links.port}/`, local(fresh.c));
+    assert.equal(self.asked, true, "a phone signed in through the portal must be asked");
     assert.match(self.text, /这台设备也已退出登录|This device has been signed out too/);
+    assert.equal(self.loginNext, true, "after the change that phone must land on sign-in");
   });
 
   test("a slow /status link never has two polls open at once", async (t) => {
