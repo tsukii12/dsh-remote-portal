@@ -5,6 +5,9 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+- Load the portal's presentation assets through the tunnel prefix without
+  duplicate fallback fetches. Browsers and the relay can reuse content-versioned
+  public assets without caching authenticated dsh responses.
 - Updated relay and agent peers isolate backpressured downloads and WebSockets
   so they no longer pause unrelated traffic on the same tunnel. Mixed-version
   connections still work using the previous flow control.

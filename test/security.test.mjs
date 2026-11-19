@@ -22,6 +22,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { createGateway } from "../lib/gateway.mjs";
+import { apply } from "../index.js";
 
 const quiet = { info() {}, warn() {}, error() {} };
 const dirs = [];
@@ -204,6 +205,51 @@ test("static assets served by the gateway carry the set", async () => {
   assert.equal(res.status, 200);
   assert.match(String(res.headers["content-type"]), /text\/css/);
   assertHardened(res.headers, "asset");
+});
+
+test("only a matching public presentation asset revision is immutable", async () => {
+  const { port } = await startPortal();
+  const path = "/dsh-remote-portal/assets/mobile.css";
+  const unversioned = await request(port, path);
+  assert.equal(unversioned.headers["cache-control"], "no-cache");
+  assert.equal(unversioned.headers.vary, "Accept-Encoding");
+  const revision = /^W\/"([A-Za-z0-9_-]{43})"$/.exec(unversioned.headers.etag)[1];
+  const versioned = await request(port, `${path}?v=${revision}`, { headers: { "accept-encoding": "gzip" } });
+  assert.equal(versioned.headers["content-encoding"], "gzip");
+  assert.equal(versioned.headers.vary, "Accept-Encoding");
+  assert.match(versioned.headers["cache-control"], /^public, .*immutable$/);
+  const conditional = await request(port, `${path}?v=${revision}`, {
+    headers: { "if-none-match": versioned.headers.etag, "accept-encoding": "gzip" },
+  });
+  assert.equal(conditional.status, 304);
+  assert.equal(conditional.headers.vary, "Accept-Encoding");
+  assert.equal(conditional.headers["cache-control"], versioned.headers["cache-control"]);
+  const stale = await request(port, `${path}?v=${"z".repeat(43)}`);
+  assert.equal(stale.headers["cache-control"], "no-cache");
+});
+
+test("dsh index injection links the immutable assets relative to the tunnel root", async () => {
+  let inject;
+  const routes = new Map();
+  const ctx = makeCtx(0);
+  ctx.on = (name, listener) => { if (name === "webserver/index-inject") inject = listener; };
+  ctx.effect = (fn, label) => { if (/(control routes|index injections)$/.test(label)) fn(); };
+  ctx.webServer.register = (route) => { routes.set(route.path, route.handler); };
+  apply(ctx, { stateDir: tmpDir() });
+  const port = await listen(http.createServer(routes.get("/dsh-remote-portal/assets")));
+  const rows = [];
+  inject(rows);
+  const urls = [...rows[0].html.matchAll(/(?:href|src)="([^"]+)"/g)].map((match) => match[1]);
+  assert.equal(urls.length, 2);
+  for (const [url, filename] of urls.map((url, i) => [url, ["mobile.css", "mobile.js"][i]])) {
+    const mount = "https://relay.test/__t/test/";
+    assert.ok(new URL(url, mount).pathname.startsWith(new URL(mount).pathname));
+    const asset = new URL(url, "http://localhost/");
+    assert.equal(asset.pathname, "/dsh-remote-portal/assets/" + filename);
+    const response = await request(port, asset.pathname + asset.search);
+    assert.equal(response.status, 200);
+    assert.match(response.headers["cache-control"], /^public, .*immutable$/);
+  }
 });
 
 test("a 404 still carries the set (no bare Node response)", async () => {

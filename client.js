@@ -2330,7 +2330,7 @@ window.__ModuleLoader__.load({
 
       function mountCss() {
         try {
-          if (document.querySelector('[data-drp="mobile-css"]')) return;
+          if (document.querySelector('[data-drp="mobile-css"], [data-drp="mobile-css-host"]')) return;
         } catch (e) { /* ignore */ }
         fetch(BASE + "/assets/mobile.css?v=" + CLIENT_VERSION, { credentials: "same-origin" }).then(function (res) {
           if (!res.ok) return null;
@@ -2349,7 +2349,7 @@ window.__ModuleLoader__.load({
 
       function mountJs() {
         try {
-          if (document.querySelector('[data-drp="mobile-js"]')) return;
+          if (document.querySelector('[data-drp="mobile-js"], [data-drp="mobile-js-host"]')) return;
         } catch (e) { /* ignore */ }
         fetch(BASE + "/assets/mobile.js?v=" + CLIENT_VERSION, { credentials: "same-origin" }).then(function (res) {
           if (!res.ok) return null;
