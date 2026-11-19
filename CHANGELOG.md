@@ -5,6 +5,8 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+- The public relay's offline and other error pages now follow the visitor's
+  preferred language, with Chinese and English versions.
 - Relay visitors now use the relay-observed address for device entries and
   password lockouts, instead of sharing the gateway's loopback address.
   The gateway does not trust visitor-supplied forwarding headers.

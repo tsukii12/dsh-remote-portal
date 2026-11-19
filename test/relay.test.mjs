@@ -530,6 +530,11 @@ test("an unknown tunnel id gets a page, not a proxy attempt", async () => {
   assert.equal(res.status, 404);
   assert.match(res.body.toString(), /Unknown tunnel/i);
   assert.match(String(res.headers["content-security-policy"]), /frame-ancestors 'none'/);
+  const zh = await request(httpPort, "/__t/doesnotexist/", { headers: { "accept-language": "zh-TW" } });
+  assert.equal(zh.status, 404);
+  assert.equal(zh.headers["content-language"], "zh");
+  assert.equal(zh.headers.vary, "Accept-Language");
+  assert.match(zh.body.toString(), /找不到隧道.*<code>doesnotexist<\/code>/);
 });
 
 test("a known but offline tunnel explains itself with 503", async () => {
@@ -539,6 +544,24 @@ test("a known but offline tunnel explains itself with 503", async () => {
   const res = await request(httpPort, `/__t/${id}/`);
   assert.equal(res.status, 503);
   assert.match(res.body.toString(), /not connected/i);
+  assert.equal(res.headers["content-language"], "en");
+  assert.equal(res.headers.vary, "Accept-Language");
+  assert.match(res.body.toString(), /<html lang="en">/);
+  assert.match(res.body.toString(), /<h1>The host is offline<\/h1>/);
+  for (const [preferred, lang] of [
+    ["zh", "zh"],
+    ["zh-CN", "zh"],
+    ["en-US;q=0.5, zh-Hant-TW;q=0.9", "zh"],
+    ["en-US, zh-CN;q=0.8", "en"],
+    ["fr-FR, zh;q=0", "en"],
+  ]) {
+    const localized = await request(httpPort, `/__t/${id}/`, { headers: { "accept-language": preferred } });
+    assert.equal(localized.status, 503);
+    assert.equal(localized.headers["content-language"], lang);
+    assert.equal(localized.headers.vary, "Accept-Language");
+    assert.match(localized.body.toString(), new RegExp(`<html lang="${lang}">`));
+    assert.ok(localized.body.toString().includes(lang === "zh" ? "<h1>主机已离线</h1>" : "<h1>The host is offline</h1>"));
+  }
 });
 
 test("a tunnel with the wrong token never comes online", async () => {
@@ -666,6 +689,11 @@ test("a stream that outlives the request timeout is failed, not leaked", async (
   const elapsed = Date.now() - startedAt;
   assert.equal(res.status, 504, `expected 504, got ${res.status}`);
   assert.match(res.body.toString(), /did not answer/i);
+  const zh = await request(httpPort, `/__t/${id}/slow`, { headers: { "accept-language": "zh-CN" } });
+  assert.equal(zh.status, 504);
+  assert.equal(zh.headers["content-language"], "zh");
+  assert.equal(zh.headers.vary, "Accept-Language");
+  assert.match(zh.body.toString(), /主机响应超时/);
   assert.ok(elapsed < 6000, `the timeout should fire quickly, took ${elapsed} ms`);
   assert.equal(relay.tunnels.get(id).streams.size, 0, "the stream must be released");
   await waitFor(() => upstreamClosed, { label: "timed-out upstream closed" });
