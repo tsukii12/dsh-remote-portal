@@ -167,6 +167,7 @@ window.__ModuleLoader__.load({
         tunnelInsecure: "信任自签名证书（跳过证书校验）",
         tunnelTokenRequired: "首次连接需要填写隧道令牌",
         tunnelNote: "中转服务器运行 tools/relay.mjs，填入代理端口与隧道令牌。",
+        tunnelNotTls: "中转服务器没有用 TLS 应答。它没有配置证书时，请填写 tcp://地址:端口。",
         cardDiag: "连接诊断",
         cardLog: "最近访问",
         diagOk: "可达",
@@ -300,6 +301,7 @@ window.__ModuleLoader__.load({
         tunnelInsecure: "Trust a self-signed certificate (skip verification)",
         tunnelTokenRequired: "A tunnel token is required the first time",
         tunnelNote: "Run tools/relay.mjs on your server, then enter its agent endpoint and token.",
+        tunnelNotTls: "The relay did not answer with TLS. If it runs without a certificate, enter tcp://address:port.",
         cardDiag: "Connectivity",
         cardLog: "Recent access",
         diagOk: "reachable",
@@ -1110,11 +1112,7 @@ window.__ModuleLoader__.load({
           ? `连不上本机 dsh（${upstream[1]}）。它可能没在运行，或端口变了。`
           : `Cannot reach dsh at ${upstream[1]} — it may not be running, or the port changed.`;
       }
-      if (text === "relay-not-tls") {
-        return lang() === "zh"
-          ? "中转服务器没有用 TLS 应答。它没有配置证书时，请填写 tcp://地址:端口。"
-          : "The relay did not answer with TLS. If it runs without a certificate, enter tcp://address:port.";
-      }
+      if (text === "relay-not-tls") return t("tunnelNotTls");
       if (/^the local listener is not running$/i.test(text)) {
         return lang() === "zh" ? "门户未在监听：先设置访问密码并启用。" : "The portal is not listening — set a password and enable it.";
       }
