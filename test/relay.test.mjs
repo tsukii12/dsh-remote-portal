@@ -92,6 +92,7 @@ async function startGatewayDouble() {
   // Minimal upgrade handler: complete the handshake, then echo bytes.
   server.on("upgrade", (req, socket) => {
     socket.write(
+      "HTTP/1.1 103 Early Hints\r\nLink: </asset>; rel=preload; as=script\r\n\r\n" +
       "HTTP/1.1 101 Switching Protocols\r\n" +
       "upgrade: websocket\r\nconnection: Upgrade\r\n" +
       "sec-websocket-accept: test\r\n\r\n",
@@ -367,6 +368,7 @@ test("a stream that outlives the request timeout is failed, not leaked", async (
   // An upstream that never answers.
   let upstreamClosed = false;
   const hanging = http.createServer((_req, res) => {
+    res.writeEarlyHints({ link: "</asset>; rel=preload; as=script" });
     res.on("close", () => { upstreamClosed = true; });
   });
   const hangingPort = await listen(hanging);
@@ -454,6 +456,33 @@ test("a partial WebSocket handshake is subject to the header deadline", async ()
   assert.equal(data, "HTTP/1.1 101 Switching Protocols\r\n");
   assert.equal(relay.tunnels.get(id).streams.size, 0, "the stream must be released");
   await waitFor(() => upstreamClosed, { label: "timed-out upgrade upstream closed" });
+});
+
+test("an interim WebSocket response does not clear the header deadline", async () => {
+  const token = "test-token-ws-early-hints";
+  const id = tunnelIdFor(token);
+  const target = http.createServer();
+  const hints = "HTTP/1.1 103 Early Hints\r\nLink: </asset>; rel=preload; as=script\r\n\r\n";
+  target.on("upgrade", (_req, socket) => {
+    socket.write(hints);
+    socket.once("end", () => socket.end());
+    socket.resume();
+  });
+  const targetPort = await listen(target);
+  const { relay, httpPort, agentPort } = await startRelay([token], { requestTimeout: 500 });
+  await connectTunnel({ agentPort, token, targetPort });
+  const socket = net.connect(httpPort, "127.0.0.1");
+  cleanups.push(() => socket.destroy());
+  const data = await new Promise((resolve, reject) => {
+    let data = "";
+    socket.on("data", (chunk) => { data += chunk; });
+    socket.on("error", reject);
+    socket.on("close", () => resolve(data));
+    socket.setTimeout(2000, () => socket.destroy(new Error("relay did not close the stalled upgrade after 103")));
+    socket.write(`GET /__t/${id}/ws HTTP/1.1\r\nHost: relay.test\r\nConnection: Upgrade\r\nUpgrade: websocket\r\n\r\n`);
+  });
+  assert.equal(data, hints);
+  assert.equal(relay.tunnels.get(id).streams.size, 0, "the stream must be released");
 });
 
 test("a response that finishes above the visitor high water mark does not stall the tunnel", async () => {

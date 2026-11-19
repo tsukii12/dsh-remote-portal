@@ -898,6 +898,8 @@ function cachePut(key, entry) {
     }
 
     const agent = route.tunnel.socket;
+    const statusPrefix = Buffer.alloc(12);
+    let statusBytes = 0;
     let headerBytes = 0;
     let handshakeComplete = false;
     let stream;
@@ -906,11 +908,17 @@ function cachePut(key, entry) {
       onBody: (chunk) => {
         if (!handshakeComplete) {
           for (const byte of chunk) {
+            if (statusBytes < statusPrefix.length) statusPrefix[statusBytes++] = byte;
             headerBytes = byte === HEADER_END[headerBytes] ? headerBytes + 1 : Number(byte === HEADER_END[0]);
             if (headerBytes === HEADER_END.length) {
-              handshakeComplete = true;
-              stream.clearDeadline();
-              break;
+              const status = Number(/^HTTP\/1\.[01] (\d{3})$/.exec(statusPrefix.toString("ascii"))?.[1]);
+              if (status === 101 || status >= 200) {
+                handshakeComplete = true;
+                stream.clearDeadline();
+                break;
+              }
+              statusBytes = 0;
+              headerBytes = 0;
             }
           }
         }
