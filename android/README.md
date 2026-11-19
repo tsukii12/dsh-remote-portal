@@ -51,7 +51,8 @@ preserve the full relay path prefix. Use trusted networks for plain HTTP.
   quoted names) and host-provided session mentions, preserving cursor position.
 - Chat-top-bar Files panel: session-scoped expandable workspace tree, name/path
   search, refresh and live change/reset invalidation. Read-only text previews use
-  version-checked 200-line pages, selection and copy (1 MiB preview cap); native
+  version-checked 200-line lazy pages with automatic loading, selection and copy
+  (1,048,576-character preview cap); native
   images and shared downloads use bounded multipart reads (8 MiB, 256 KiB chunks).
   File rows/previews can insert a quoted `@` mention into the composer.
 - Exact-input approval sheets, single/multiple-choice questions and custom answers.

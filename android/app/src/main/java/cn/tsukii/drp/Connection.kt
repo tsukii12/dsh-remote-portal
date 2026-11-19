@@ -16,6 +16,7 @@ import java.util.UUID
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.EmptyCoroutineContext
 
 object PortalURL {
     fun normalize(input: String): HttpUrl {
@@ -74,7 +75,10 @@ suspend fun Call.await(): Response = suspendCancellableCoroutine { continuation 
     enqueue(object : Callback {
         override fun onFailure(call: Call, e: IOException) { if (continuation.isActive) continuation.resumeWithException(e) }
         override fun onResponse(call: Call, response: Response) {
-            continuation.resume(response) { _, value, _ -> value.close() }
+            continuation.resume(response) { _, value, _ ->
+                call.cancel()
+                Dispatchers.IO.dispatch(EmptyCoroutineContext, Runnable { value.close() })
+            }
         }
     })
 }

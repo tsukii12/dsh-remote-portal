@@ -145,7 +145,7 @@ fun WorkspaceScreen(connection: NativeConnection, serverName: String, addressLab
         }
     }) {
         Scaffold(topBar = {
-            TopAppBar(title = { Text(sidebar.sessions[selected]?.title ?: L("New conversation", "新对话"), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+            if (!filesOpen) TopAppBar(title = { Text(sidebar.sessions[selected]?.title ?: L("New conversation", "新对话"), maxLines = 1, overflow = TextOverflow.Ellipsis) },
                 navigationIcon = { GlyphButton(Icons.Default.Menu, L("Sessions", "会话")) { scope.launch { drawer.open() } } },
                 actions = {
                     if (selected != null) TextButton(onClick = { filesOpen = true }) { Text(L("Files", "文件")) }

@@ -4,14 +4,16 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.webkit.MimeTypeMap
 import androidx.core.content.FileProvider
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -20,12 +22,12 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import kotlinx.coroutines.*
 import java.io.File
 import java.util.UUID
@@ -36,11 +38,14 @@ fun WorkspaceFilesPanel(store: WorkspaceFilesStore, onMention: (String) -> Unit,
     var path by remember(store) { mutableStateOf<String?>(null) }
     val preview = remember(store, path) { path?.let(store::preview) }
     val scope = rememberCoroutineScope()
-    LaunchedEffect(store) { store.start() }
+    val focus = LocalFocusManager.current
+    val keyboard = LocalSoftwareKeyboardController.current
+    LaunchedEffect(store) { focus.clearFocus(); keyboard?.hide(); store.start() }
     DisposableEffect(store) { onDispose { store.close() } }
-    Dialog(onDismissRequest = { if (path != null) path = null else onDismiss() }, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+    BackHandler { if (path != null) path = null else onDismiss() }
+    Scaffold(contentWindowInsets = WindowInsets(0, 0, 0, 0)) { padding ->
         Surface(Modifier.fillMaxSize()) {
-            Column(Modifier.fillMaxSize().navigationBarsPadding().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Column(Modifier.fillMaxSize().padding(padding).padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                     if (preview != null) TextButton(onClick = { path = null }) { Text(L("Back", "返回")) }
                     Text(path?.substringAfterLast('/') ?: L("Files", "文件"), Modifier.weight(1f), style = MaterialTheme.typography.titleLarge, maxLines = 1, overflow = TextOverflow.Ellipsis)
@@ -108,13 +113,20 @@ private fun FileEntry(entry: J, path: String, depth: Int, expanded: Boolean, ope
 private fun FilesLoading(text: String) { Row(verticalAlignment = Alignment.CenterVertically) { CircularProgressIndicator(Modifier.size(18.dp)); Spacer(Modifier.width(8.dp)); Text(text) } }
 
 @Composable
-private fun WorkspaceFilePreview(store: WorkspacePreviewStore, mention: (String) -> Unit) {
+private fun ColumnScope.WorkspaceFilePreview(store: WorkspacePreviewStore, mention: (String) -> Unit) {
     val state by store.state.collectAsState()
     val scope = rememberCoroutineScope()
     val clipboard = LocalClipboardManager.current
     val context = LocalContext.current
     var image by remember(store) { mutableStateOf<ImageBitmap?>(null) }
     var error by remember(store) { mutableStateOf<String?>(null) }
+    val list = rememberLazyListState()
+    val lines = remember(state.text) { state.text.split('\n') }
+    val moreVisible by remember { derivedStateOf { list.layoutInfo.visibleItemsInfo.any { it.key == "more" } } }
+    LaunchedEffect(store) {
+        snapshotFlow { moreVisible && state.loaded && !state.loading && state.error == null && !state.eof && !state.truncated }
+            .collect { if (it) store.load() }
+    }
     LaunchedEffect(store) { store.load() }
     LaunchedEffect(store, state.data) {
         image = null; error = null
@@ -150,17 +162,17 @@ private fun WorkspaceFilePreview(store: WorkspacePreviewStore, mention: (String)
             } catch (e: CancellationException) { throw e } catch (e: Exception) { error = e.message }
         } }) { Text(L("Share file", "分享文件")) }
     }
-    Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        (state.error ?: error)?.let { ErrorBanner(it) }
-        if (state.loading) FilesLoading(L("Loading preview…", "正在加载预览…"))
-        image?.let { Image(it, store.path, Modifier.fillMaxWidth().heightIn(max = 420.dp)) }
+    LazyColumn(state = list, modifier = Modifier.weight(1f).fillMaxWidth(), contentPadding = PaddingValues(bottom = 16.dp)) {
+        (state.error ?: error)?.let { message -> item { ErrorBanner(message) } }
+        if (state.loading) item { FilesLoading(L("Loading preview…", "正在加载预览…")) }
+        image?.let { bitmap -> item { Image(bitmap, store.path, Modifier.fillMaxWidth().heightIn(max = 420.dp)) } }
         if (state.kind == FilePreviewKind.TEXT && state.loaded) {
-            if (state.text.isEmpty()) Text(L("Empty file", "空文件"))
-            else SelectionContainer { Text(state.text, Modifier.horizontalScroll(rememberScrollState()), fontFamily = FontFamily.Monospace, style = MaterialTheme.typography.bodySmall) }
-            if (state.truncated) Text(L("Preview limited to 1 MiB of text. Share the file for more.", "文本预览限制为 1 MiB，可分享文件查看更多内容。"))
-            else if (!state.eof) TextButton(enabled = !state.loading, onClick = { scope.launch { store.load() } }) { Text(L("Load more lines", "加载更多行")) }
+            if (state.text.isEmpty()) item { Text(L("Empty file", "空文件")) }
+            else itemsIndexed(lines, key = { index, _ -> "line:$index" }) { _, line -> SelectionContainer { Text(line, Modifier.horizontalScroll(rememberScrollState()), fontFamily = FontFamily.Monospace, style = MaterialTheme.typography.bodySmall) } }
+            if (state.truncated) item { Text(L("Preview limited to 1,048,576 characters. Share the file for more.", "文本预览限制为 1,048,576 个字符，可分享文件查看更多内容。")) }
+            else if (!state.eof) item(key = "more") { TextButton(enabled = !state.loading, onClick = { scope.launch { store.load() } }) { Text(L("Load more lines", "加载更多行")) } }
         }
-        if (state.kind == FilePreviewKind.BINARY) Text(L("No text preview. Share a bounded download (up to 8 MiB).", "无文本预览。可下载并分享文件（最多 8 MiB）。"))
-        if (state.error != null) TextButton(enabled = !state.loading, onClick = { scope.launch { store.load(true) } }) { Text(L("Reload file", "重新加载文件")) }
+        if (state.kind == FilePreviewKind.BINARY) item { Text(L("No text preview. Share a bounded download (up to 8 MiB).", "无文本预览。可下载并分享文件（最多 8 MiB）。")) }
+        if (state.error != null) item { TextButton(enabled = !state.loading, onClick = { scope.launch { store.load(true) } }) { Text(L("Reload file", "重新加载文件")) } }
     }
 }

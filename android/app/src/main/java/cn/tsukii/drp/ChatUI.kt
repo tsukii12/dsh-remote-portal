@@ -75,6 +75,7 @@ fun ChatScreen(chat: ChatStore, filesOpen: Boolean = false, dismissFiles: () -> 
         withFrameNanos { }
         if (follow && list.layoutInfo.totalItemsCount > 0) list.scrollToItem(list.layoutInfo.totalItemsCount - 1)
     }
+    Box(Modifier.fillMaxSize()) {
     Column(Modifier.fillMaxSize().imePadding()) {
         (error ?: state.error ?: ErrorPresentation.catalogError(state.catalog))?.let { ErrorBanner(it) { error = null } }
         Box(Modifier.weight(1f)) {
@@ -198,6 +199,7 @@ fun ChatScreen(chat: ChatStore, filesOpen: Boolean = false, dismissFiles: () -> 
                 dismissFiles()
             }
         }, onDismiss = dismissFiles)
+    }
     }
     editingQueue?.let { id -> AlertDialog(onDismissRequest = { editingQueue = null }, title = { Text(L("Edit queued message", "编辑排队消息")) },
         text = { OutlinedTextField(queuedText, { queuedText = it }, label = { Text(L("Message", "消息")) }) },
