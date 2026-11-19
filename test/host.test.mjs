@@ -8,6 +8,7 @@
  *
  * Run with:  node --test test/
  */
+import os from "node:os";
 import { test, after } from "node:test";
 import assert from "node:assert/strict";
 import http from "node:http";
@@ -1445,3 +1446,25 @@ test("config normalization clamps hostile values and keeps tls on a partial patc
 
 
 
+
+test("the LAN address list follows a PC address change without a restart", async (t) => {
+  let ip = "10.0.0.5";
+  t.mock.method(os, "networkInterfaces", () => ({
+    eth0: [{ address: ip, netmask: "255.255.255.0", family: "IPv4", mac: "02:00:00:00:00:01", internal: false, cidr: `${ip}/24` }],
+  }));
+  t.mock.timers.enable({ apis: ["Date"], now: Date.now() });
+  const { gw } = await startPortal({ config: { host: "0.0.0.0" } });
+  await gw.setPassword("correct horse battery");
+  await gw.start();
+  assert.match(gw.status().lanUrls[0] || "", /^http:\/\/10\.0\.0\.5:\d+\/$/);
+
+  ip = "10.0.0.9"; // another Wi-Fi, a new DHCP lease
+  t.mock.timers.tick(16000); // past the 15 s discovery cache
+  let lan = "";
+  for (let i = 0; i < 40 && !/10\.0\.0\.9/.test(lan); i++) {
+    lan = gw.status().lanUrls[0] || "";
+    await new Promise((r) => setImmediate(r));
+    await new Promise((r) => setTimeout(r, 25));
+  }
+  assert.match(lan, /^http:\/\/10\.0\.0\.9:\d+\/$/, "the panel kept showing the old address");
+});

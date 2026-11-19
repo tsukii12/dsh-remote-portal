@@ -5,6 +5,10 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+- Local network: the address list, the pairing QR code and the pairing link now
+  follow a change of the PC's address (another Wi-Fi, a new DHCP lease) within
+  about 15 s. They used to keep the address from when the listener started until
+  the portal was restarted, so a phone scanning the QR went to a dead address.
 - Public access: a relay entered as a bare `address:port` is TLS only. It used
   to "fall back" to plain TCP after any TLS error, which would have sent the
   tunnel token in clear text to anyone able to break the handshake (the
