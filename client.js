@@ -148,6 +148,11 @@ window.__ModuleLoader__.load({
         pickNewHint: "文件夹名称",
         pickCreate: "创建",
         pickExists: "同名文件夹已存在。",
+        pickBadName: "文件夹名称无效：不能为空，也不能包含 / 或 \\。",
+        pickMkdirCode: "无法在这里新建文件夹（{code}）。",
+        pickNotFound: "这个文件夹不存在或已被移走。",
+        pickNotDir: "这不是一个文件夹。",
+        pwLong: "密码太长了，最多 200 位。",
         pickMkdirFailed: "创建文件夹失败，请检查名称或权限。",
         cancel: "取消",
 
@@ -284,6 +289,11 @@ window.__ModuleLoader__.load({
         pickNewHint: "Folder name",
         pickCreate: "Create",
         pickExists: "A folder with that name already exists.",
+        pickBadName: "Invalid folder name: it can't be empty or contain / or \\.",
+        pickMkdirCode: "Can't create a folder here ({code}).",
+        pickNotFound: "That folder doesn't exist or was moved.",
+        pickNotDir: "That is not a folder.",
+        pwLong: "That password is too long; 200 characters at most.",
         pickMkdirFailed: "Could not create the folder — check the name or permissions.",
         cancel: "Cancel",
 
@@ -378,6 +388,7 @@ window.__ModuleLoader__.load({
       var raw = String(text || "");
       if (/password must be set|needs-password/i.test(raw)) return t("errNeedsPassword");
       if (/EADDRINUSE|already in use|已被占用/i.test(raw)) return t("errPortBusy");
+      if (/password is too long/i.test(raw)) return t("pwLong");
       return raw;
     }
 
@@ -1539,7 +1550,7 @@ window.__ModuleLoader__.load({
         patch({ busy: "pw" });
         api(BASE + "/password", { method: "POST", body: { password: pw } }).then(function (r) {
           patch({ busy: "" });
-          if (!r.ok) { flash("err", r.error); return; }
+          if (!r.ok) { flash("err", friendlyError(r.error)); return; }
           patch({ pwd: "", showPwd: false });
           flash("ok", t("pwOk"));
           refreshStatus();
@@ -2053,7 +2064,13 @@ window.__ModuleLoader__.load({
     function pickError(r, fallbackKey) {
       var message = r && typeof r.error === "string" && r.error !== "" ? r.error : "";
       if (!message && r && r.data && typeof r.data.error === "string") message = r.data.error;
-      if (r && r.data && r.data.code === "exists") return t("pickExists");
+      var code = r && r.data && r.data.code;
+      if (code === "exists") return t("pickExists");
+      if (code === "bad-name") return t("pickBadName");
+      if (code === "mkdir-failed") return t("pickMkdirCode", { code: String(message).replace(/^.*:\s*/, "") || "error" });
+      if (code === "not-found" || code === "bad-path") return t("pickNotFound");
+      if (code === "not-a-directory") return t("pickNotDir");
+      if (code === "password-too-long") return t("pwLong");
       if (!message && r && r.status === 404) message = t("pickHostOld");
       if (!message) message = t(fallbackKey || "network");
       return friendlyError(message);
