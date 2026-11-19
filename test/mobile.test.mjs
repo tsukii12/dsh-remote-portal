@@ -832,6 +832,89 @@ describe("mobile layer against the live dsh web UI", () => {
     });
   }
 
+  // 768–900px (a phone in landscape, a small tablet): dsh pads its main panel
+  // for its own menu button only below 768px, so the floating drawer button
+  // used to sit on every page title there.
+  for (const [w, h, label] of [
+    [844, 390, "Remote access|远程访问"],
+    [844, 390, "Plugins|插件"],
+    [800, 1280, "Automation tasks|自动化任务"],
+    [390, 844, "Remote access|远程访问"],
+  ]) test(`the drawer button covers no text on ${label.split("|")[0]} at ${w}x${h}`, async (t) => {
+    if (skipReason) return t.skip(skipReason);
+    const expr = `(async () => {
+      const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+      const btn = document.querySelector('.drp-drawer-btn');
+      btn.click();
+      await sleep(600);
+      const entry = [...document.querySelectorAll('[data-slot="sidebar"] button')]
+        .find((b) => /^(${label})$/.test((b.getAttribute('aria-label') || b.textContent).trim()));
+      if (!entry) return JSON.stringify({ entry: false });
+      entry.click();
+      await sleep(1500);
+      const b = btn.getBoundingClientRect();
+      const covered = [];
+      const walk = document.createTreeWalker(document.querySelector('[data-slot="main"]'), NodeFilter.SHOW_TEXT);
+      for (let n; (n = walk.nextNode());) {
+        if (!n.textContent.trim()) continue;
+        const range = document.createRange();
+        range.selectNodeContents(n);
+        for (const q of range.getClientRects()) {
+          if (q.width && q.right > b.left && q.left < b.right && q.bottom > b.top && q.top < b.bottom) {
+            covered.push(n.textContent.trim().slice(0, 30));
+            break;
+          }
+        }
+      }
+      return JSON.stringify({ entry: true, visible: getComputedStyle(btn).display !== 'none', covered });
+    })()`;
+    const { code, stdout, stderr } = await runCdp([
+      "eval", BASE, expr, "--token", TOKEN_URL, "--wait", "4000",
+      "--w", String(w), "--h", String(h), "--mobile", "--pre-file", join(tmp, "pre.js"), "--settle", "1200",
+    ]);
+    assert.equal(code, 0, "cdp run failed: " + stderr.slice(-800));
+    const out = JSON.parse(stdout.trim().split("\n").filter((l) => l.trim().startsWith("{")).pop());
+    assert.equal(out.entry, true, `${label} entry not found in the sidebar`);
+    assert.equal(out.visible, true, "the drawer button must be shown at this width");
+    assert.deepEqual(out.covered, [], "the drawer button sits on page text");
+  });
+
+  // ≤560px: tabs used to share the width equally with no side padding, so at
+  // 390px "Local network" ran into "Public access" and at 260px (390px at 150%
+  // zoom) the last tab was cut off with nothing to show it was there.
+  for (const w of [390, 260]) test(`Remote access tab labels stay apart and the chosen tab stays visible at ${w}px`, async (t) => {
+    if (skipReason) return t.skip(skipReason);
+    const expr = `(async () => {
+      const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+      document.querySelector('.drp-drawer-btn').click();
+      await sleep(600);
+      const entry = [...document.querySelectorAll('[data-slot="sidebar"] button')]
+        .find((b) => /^(Remote access|远程访问)$/.test((b.getAttribute('aria-label') || b.textContent).trim()));
+      if (!entry) return JSON.stringify({ entry: false });
+      entry.click();
+      await sleep(1500);
+      const tabs = [...document.querySelectorAll('[data-slot="main"] [role="tab"]')];
+      const text = (el) => { const r = document.createRange(); r.selectNodeContents(el); return r.getBoundingClientRect(); };
+      const gaps = tabs.slice(1).map((tab, i) => Math.round(text(tab).left - text(tabs[i]).right));
+      const last = tabs[tabs.length - 1];
+      last.click();
+      await sleep(800);
+      const bar = last.parentElement.getBoundingClientRect();
+      const lr = last.getBoundingClientRect();
+      return JSON.stringify({ entry: true, gaps, lastVisible: lr.left >= bar.left - 1 && lr.right <= bar.right + 1, scrollW: document.documentElement.scrollWidth });
+    })()`;
+    const { code, stdout, stderr } = await runCdp([
+      "eval", BASE, expr, "--token", TOKEN_URL, "--wait", "4000",
+      "--w", String(w), "--h", "700", "--mobile", "--pre-file", join(tmp, "pre.js"), "--settle", "1200",
+    ]);
+    assert.equal(code, 0, "cdp run failed: " + stderr.slice(-800));
+    const out = JSON.parse(stdout.trim().split("\n").filter((l) => l.trim().startsWith("{")).pop());
+    assert.equal(out.entry, true, "Remote access entry not found in the sidebar");
+    for (const g of out.gaps) assert.ok(g >= 12, `two tab labels are only ${g}px apart: ${JSON.stringify(out.gaps)}`);
+    assert.equal(out.lastVisible, true, "the chosen tab is scrolled out of view");
+    assert.ok(out.scrollW <= w, "page overflows horizontally: " + out.scrollW);
+  });
+
   test("a slow /status link never has two polls open at once", async (t) => {
     if (skipReason) return t.skip(skipReason);
     // Every /status answer is held back 5 s, as on a slow relay. A fixed 3 s

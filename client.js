@@ -683,7 +683,7 @@ window.__ModuleLoader__.load({
   ".drp-page .drp-qr-actions{max-width:none;margin:0;justify-content:flex-start}",
   ".drp-page .drp-lan{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 44px;align-items:start}",
   "@media (max-width:1080px){.drp-page .drp-lan{grid-template-columns:minmax(0,1fr);gap:0}}",
-  "@media (max-width:560px){.drp-page .drp-tabbar{margin:0}.drp-page .drp-tab{padding:12px 0;margin-right:0;font-size:13.5px;flex:1;justify-content:center}}",
+  "@media (max-width:560px){.drp-page .drp-tabbar{margin:0}.drp-page .drp-tab{padding:12px 8px;margin-right:0;font-size:13.5px;flex:1 0 auto;justify-content:center}}",
   ".drp-page-inner{width:100%;max-width:960px;margin:0}",
       /* The host page header: 20px/500 title, 16px supporting line. */
       ".drp-page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:28px 0 20px}",
@@ -1948,7 +1948,11 @@ window.__ModuleLoader__.load({
             className: "drp-tab" + (on ? " drp-tab-on" : ""),
             "aria-selected": on ? "true" : "false",
             "aria-controls": "drp-pane-" + item.id,
-            onClick: function () { patch({ tab: item.id }); }
+            onClick: function (e) {
+              patch({ tab: item.id });
+              // With large text the bar scrolls sideways; keep the chosen tab in view.
+              try { e.currentTarget.scrollIntoView({ block: "nearest", inline: "nearest" }); } catch (e1) { /* ignore */ }
+            }
           },
             h("span", null, item.label),
             null);

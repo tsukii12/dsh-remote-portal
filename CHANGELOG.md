@@ -21,6 +21,25 @@ versions are the plugin's own, not dsh's.
 - DRP now preserves gateway sign-in failure reasons, localizes client errors and the local-network permission prompt, and recovers approval-input loading after failures. Real-listener tests cover authentication, isolated logout and approval requests.
 - DRP 现保留网关登录失败原因，提供双语客户端错误和本地网络权限提示，并支持工具授权输入加载失败后的重试。真实监听器测试覆盖认证、独立退出登录和工具授权请求。
 
+- Remote access on a phone: the tab labels no longer run together ("Local
+  network" touched "Public access" at 390 px, in English), and with large text
+  or page zoom the tab bar scrolls the chosen tab into view instead of leaving
+  it cut off at the edge.
+- Phone in landscape and small tablets (768–900 px wide): the floating menu
+  button no longer covers the page title (Remote access read "mote access";
+  Plugins and Automation tasks too). dsh only leaves room for a menu button
+  below 768 px; the layer now leaves the same 48 px in that band.
+- The public relay's offline and other error pages now follow the visitor's
+  preferred language, with Chinese and English versions.
+- Local network: the address list and every pairing link or QR code made after
+  the PC's address changes (another Wi-Fi, a new DHCP lease) use the new address
+  within about 15 s. They used to keep the address from when the listener
+  started until the portal was restarted, so a phone scanning a fresh QR went
+  to a dead address. A QR already on screen keeps its link until it is
+  refreshed or expires.
+- Relay visitors now use the relay-observed address for device entries and
+  password lockouts, instead of sharing the gateway's loopback address.
+  The gateway does not trust visitor-supplied forwarding headers.
 - Public access: a relay entered as a bare `address:port` is TLS only. It used
   to "fall back" to plain TCP after any TLS error, which would have sent the
   tunnel token in clear text to anyone able to break the handshake (the
@@ -1168,7 +1187,6 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
-
 
 
 

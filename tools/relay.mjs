@@ -308,8 +308,50 @@ function sendPlain(res, status, text, extra = {}) {
   res.end(body);
 }
 
-function sendPage(res, status, title, message) {
-  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8">
+const PAGE_COPY = {
+  en: {
+    home: ["dsh remote portal relay", "This is a <code>dsh-remote-portal</code> relay. Open the private link your Harness gave you: <code>{value}/&lt;tunnel&gt;/</code>"],
+    notFound: ["Not found", "This relay only serves tunnel links."],
+    unknown: ["Unknown tunnel", "No tunnel named <code>{value}</code> is registered here."],
+    offline: ["The host is offline", "The dsh machine is not connected to the relay right now. Start dsh (or turn the portal back on) and this page will work again — the link itself does not change."],
+    busy: ["The relay is busy", "There are too many simultaneous connections. Please try again in a moment."],
+    timeout: ["The host took too long to respond", "The dsh host did not answer in time. Please try again in a moment."],
+    failed: ["Tunnel error", "The relay could not complete this request. Check that dsh is running on the host and try again."],
+  },
+  zh: {
+    home: ["dsh 远程访问中继", "这是 <code>dsh-remote-portal</code> 的中继。请打开 dsh 提供的专属链接：<code>{value}/&lt;隧道 ID&gt;/</code>"],
+    notFound: ["找不到页面", "此中继只提供隧道链接。"],
+    unknown: ["找不到隧道", "此中继未注册名为 <code>{value}</code> 的隧道。"],
+    offline: ["主机已离线", "主机上的 dsh 尚未连接到中继。请启动 dsh，或重新开启远程访问，原链接无需更换。"],
+    busy: ["中继繁忙", "同时连接的请求过多，请稍后重试。"],
+    timeout: ["主机响应超时", "dsh 主机未能及时响应，请稍后重试。"],
+    failed: ["隧道连接出错", "中继无法完成此请求。请确认主机上的 dsh 正在运行，然后重试。"],
+  },
+};
+
+function pageLanguage(acceptLanguage) {
+  let choice = "en";
+  let bestQuality = 0;
+  for (const range of String(acceptLanguage || "").split(",")) {
+    const [tag, ...params] = range.trim().toLowerCase().split(";");
+    const lang = tag.trim().split("-")[0];
+    if (lang !== "zh" && lang !== "en") continue;
+    const weight = params.find(param => /^\s*q\s*=/.test(param));
+    const quality = weight === undefined ? 1 : Number(weight.split("=")[1]);
+    if (quality > bestQuality && quality <= 1) {
+      choice = lang;
+      bestQuality = quality;
+    }
+  }
+  return choice;
+}
+
+function sendPage(req, res, status, page, value = "") {
+  const lang = pageLanguage(req.headers["accept-language"]);
+  const [title, template] = PAGE_COPY[lang][page];
+  const escaped = String(value).replace(/[&<>]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[ch]);
+  const message = template.replace("{value}", () => escaped);
+  const html = `<!doctype html><html lang="${lang}"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${title}</title><style>
 :root{color-scheme:light dark}
@@ -324,6 +366,8 @@ code{font:12px ui-monospace,Menlo,monospace;color:#adb2b8}
   res.writeHead(status, {
     ...LOCAL_HEADERS,
     "content-type": "text/html; charset=utf-8",
+    "content-language": lang,
+    vary: "Accept-Language",
     "content-length": body.length,
     "cache-control": "no-store",
   });
@@ -743,8 +787,7 @@ function cachePut(key, entry) {
     }
 
     if (url.pathname === "/" || url.pathname === "") {
-      sendPage(res, 200, "dsh remote portal relay",
-        `This is a <code>dsh-remote-portal</code> relay. Open the private link your Harness gave you: <code>${config.prefix}/&lt;tunnel&gt;/</code>`);
+      sendPage(req, res, 200, "home", config.prefix);
       return;
     }
 
@@ -770,16 +813,15 @@ function cachePut(key, entry) {
 
     const route = routeFor(url.pathname);
     if (!route) {
-      sendPage(res, 404, "Not found", "This relay only serves tunnel links.");
+      sendPage(req, res, 404, "notFound");
       return;
     }
     if (!route.tunnel) {
-      sendPage(res, 404, "Unknown tunnel", `No tunnel named <code>${route.id}</code> is registered here.`);
+      sendPage(req, res, 404, "unknown", route.id);
       return;
     }
     if (!route.tunnel.socket || route.tunnel.socket.destroyed) {
-      sendPage(res, 503, "The host is offline",
-        "The dsh machine is not connected to the relay right now. Start dsh (or turn the portal back on) and this page will work again — the link itself does not change.");
+      sendPage(req, res, 503, "offline");
       return;
     }
 
@@ -801,7 +843,10 @@ function cachePut(key, entry) {
     // The agent's gateway rewrites Host/Origin for the upstream; what it needs
     // here is the *public* authority so its own same-origin check passes.
     const upstreamHeaders = { ...headers, "x-forwarded-proto": config.publicUrl.startsWith("https") ? "https" : "http" };
-    if (!upstreamHeaders["x-forwarded-for"]) upstreamHeaders["x-forwarded-for"] = clientIp(req);
+    const visitorIp = clientIp(req);
+    delete upstreamHeaders["x-drp-tunnel-visitor"];
+    delete upstreamHeaders["x-forwarded-for"];
+    if (visitorIp) upstreamHeaders["x-forwarded-for"] = visitorIp;
     // The app is mounted under this prefix; it needs it to build correct
     // redirects and form actions (the relay strips the prefix before proxying).
     upstreamHeaders["x-forwarded-prefix"] = publicPathFor(route.id);
@@ -847,8 +892,12 @@ function cachePut(key, entry) {
         stream?.release?.();
       },
       fail: (status, reason) => {
-        if (!headSent && !res.headersSent) sendPage(res, status, "Tunnel error", String(reason));
-        else if (status === 504) res.destroy();
+        if (!headSent && !res.headersSent) {
+          const page = status === 504 ? "timeout"
+            : status === 503 ? (reason === "too many concurrent streams" ? "busy" : "offline")
+            : "failed";
+          sendPage(req, res, status, page);
+        } else if (status === 504) res.destroy();
         else try { res.end(); } catch { /* gone */ }
         stream?.release?.();
       },
@@ -858,6 +907,7 @@ function cachePut(key, entry) {
     stream.send(FRAME.REQ_HEAD, JSON.stringify({
       method: req.method,
       path: target,
+      visitorIp,
       headers: upstreamHeaders,
     }));
 
@@ -927,12 +977,16 @@ function cachePut(key, entry) {
     });
     if (!stream) return;
 
+    const visitorIp = clientIp(req);
     const lines = [`${req.method} ${route.path + (url.search || "")} HTTP/1.1`];
     for (const [name, value] of Object.entries(req.headers)) {
+      if (name === "x-forwarded-for" || name === "x-drp-tunnel-visitor") continue;
       if (Array.isArray(value)) for (const one of value) lines.push(`${name}: ${one}`);
       else lines.push(`${name}: ${value}`);
     }
+    if (visitorIp) lines.push(`x-forwarded-for: ${visitorIp}`);
     stream.send(FRAME.WS_OPEN, JSON.stringify({
+      visitorIp,
       head: lines.join("\r\n") + "\r\n\r\n",
       headB64: head && head.length ? head.toString("base64") : "",
     }));
@@ -1025,9 +1079,7 @@ function cachePut(key, entry) {
 }
 
 function clientIp(req) {
-  const direct = req.socket?.remoteAddress || "";
-  const forwarded = String(req.headers["x-forwarded-for"] || "").split(",")[0].trim();
-  return forwarded || direct.replace(/^::ffff:/, "");
+  return (req.socket?.remoteAddress || "").replace(/^::ffff:/, "");
 }
 
 // ───────────────────────────────────────────────────────────────────────────
@@ -1100,5 +1152,3 @@ const isMain = process.argv[1] && fileURLToPath(import.meta.url) === join(dirnam
 if (isMain) main();
 
 export { createRelay, tunnelIdFor, encodeFrame, createFrameReader, FRAME, parseArgs };
-
-
