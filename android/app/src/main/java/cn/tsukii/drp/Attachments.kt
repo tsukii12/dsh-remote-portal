@@ -21,7 +21,7 @@ data class UploadSource(val name: String, val mediaType: String?, val size: Long
 data class DraftAttachment(val id: String, val source: UploadSource, val sent: Long = 0, val receipt: J? = null, val error: String? = null) {
     val reference: J get() = receipt?.let { if (it["image"] != j(null)) it["image"] else it["file"] } ?: EMPTY
 }
-class AttachmentDraft(private val sessionID: String, private val api: RPCServing, private val scope: CoroutineScope, private val limits: () -> J) {
+class AttachmentDraft(private val sessionID: String, private val api: RPCServing, private val scope: CoroutineScope, private val imageError: () -> String? = { null }, private val limits: () -> J) {
     private val mutable = MutableStateFlow<List<DraftAttachment>>(emptyList())
     val items = mutable.asStateFlow()
     private val jobs = mutableMapOf<String, Job>()
@@ -57,6 +57,7 @@ class AttachmentDraft(private val sessionID: String, private val api: RPCServing
     fun validateImages() {
         val images = items.value.filter { it.source.image }
         if (images.isEmpty()) return
+        imageError()?.let { throw PortalError(it) }
         val policy = limits()
         val count = policy["maxImagesPerMessage"].long ?: throw PortalError(L("Image limits are not available yet.", "尚未获取图片限制。"))
         val maxBytes = policy["maxImageBytes"].long ?: throw APIError.InvalidResponse
@@ -106,6 +107,7 @@ object Mentions {
         return AtToken(position - match.groupValues[1].length, position, match.groupValues[2], quoted != null)
     }
     fun file(path: String, directory: Boolean, quoted: Boolean): String? {
+        if (path.isEmpty() || !WorkspacePaths.visible(path)) return null
         val value = path + if (directory) "/" else ""
         if (value.any { it.code in 0..31 || it.code in 127..159 || it == '"' }) return null
         return if (quoted || value.any(Char::isWhitespace)) "@\"" + value + if (directory) "" else "\"" else "@$value"

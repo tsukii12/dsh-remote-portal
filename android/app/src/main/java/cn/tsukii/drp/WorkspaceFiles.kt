@@ -60,7 +60,7 @@ class WorkspaceFilesStore(val sessionID: String, private val api: RPCServing, pr
         parents.forEach(::load)
     }
     fun load(path: String) {
-        if (closed) return
+        if (closed || !WorkspacePaths.visible(path)) return
         loads.remove(path)?.cancel()
         val ticket = Any(); tickets[path] = ticket
         mutable.value = state.value.copy(directories = state.value.directories + (path to DirectoryListing()))
@@ -68,7 +68,7 @@ class WorkspaceFilesStore(val sessionID: String, private val api: RPCServing, pr
             try {
                 val result = api.rpc("workspaceFiles/list", o("workspaceFileScopeId" to sessionID, "path" to path))
                 ensureActive()
-                if (!closed && tickets[path] === ticket) mutable.value = state.value.copy(directories = state.value.directories + (path to DirectoryListing(false, result["entries"].array, result["truncated"].boolean)))
+                if (!closed && tickets[path] === ticket) mutable.value = state.value.copy(directories = state.value.directories + (path to DirectoryListing(false, result["entries"].array.filter { WorkspacePaths.visible(it["path"].string ?: child(path, it["name"].text)) }, result["truncated"].boolean)))
             } catch (e: CancellationException) { throw e }
             catch (e: Exception) { if (!closed && tickets[path] === ticket) mutable.value = state.value.copy(directories = state.value.directories + (path to DirectoryListing(false, error = e.message ?: L("Cannot list folder.", "无法列出文件夹。")))) }
         }
@@ -83,7 +83,7 @@ class WorkspaceFilesStore(val sessionID: String, private val api: RPCServing, pr
                 delay(250)
                 val value = api.rpc("workspaceFiles/search", o("workspaceFileScopeId" to sessionID, "request" to o("query" to query, "excludedPaths" to emptyList<String>(), "includeHidden" to false, "respectGitignore" to true)))
                 ensureActive()
-                if (!closed && searchTicket === ticket) mutable.value = state.value.copy(searching = false, results = value["matches"].array, truncated = value["truncated"].boolean, incomplete = value["incomplete"].boolean)
+                if (!closed && searchTicket === ticket) mutable.value = state.value.copy(searching = false, results = value["matches"].array.filter { WorkspacePaths.visible(it["path"].text) }, truncated = value["truncated"].boolean, incomplete = value["incomplete"].boolean)
             } catch (e: CancellationException) { throw e }
             catch (e: Exception) { if (!closed && searchTicket === ticket) mutable.value = state.value.copy(searching = false, searchError = e.message ?: L("Search failed.", "搜索失败。")) }
         }
@@ -109,11 +109,19 @@ class WorkspacePreviewStore(private val sessionID: String, private val api: RPCS
     private fun args() = o("workspaceFileScopeId" to sessionID, "path" to path)
     suspend fun load(reload: Boolean = false) {
         if (state.value.loading) return
+        if (!WorkspacePaths.visible(path)) { fail(PortalError(L("Private dsh files are hidden.", "已隐藏 dsh 私密文件。"))); return }
         if (!reload && state.value.loaded && (state.value.eof || state.value.truncated)) return
         if (reload) { nextLine = 1; version = null; mutable.value = WorkspacePreviewState(kind = initialKind) }
         if (state.value.kind == FilePreviewKind.BINARY) { mutable.value = state.value.copy(loaded = true); return }
         mutable.value = state.value.copy(loading = true, error = null)
         try {
+            if (!state.value.loaded && state.value.kind == FilePreviewKind.TEXT && path.substringAfterLast('/').substringAfterLast('.', "").isEmpty()) {
+                val probe = api.rpcBinary("workspaceFiles/readBytes", args().with("options", o("range" to o("offset" to 0, "length" to 32))))
+                currentCoroutineContext().ensureActive()
+                val bytes = probe.bytes("data") ?: throw APIError.InvalidResponse
+                if (bytes.size > 32 || probe.value["offset"].long != 0L) throw APIError.InvalidResponse
+                if (ImageSignatures.detected(bytes)) mutable.value = state.value.copy(kind = FilePreviewKind.IMAGE)
+            }
             if (state.value.kind == FilePreviewKind.IMAGE) { val data = readBytes(); mutable.value = state.value.copy(data = data, eof = true, loaded = true) }
             else {
                 val page = api.rpc("workspaceFiles/read", args().with("range", o("offset" to nextLine, "limit" to 200)))
@@ -128,12 +136,21 @@ class WorkspacePreviewStore(private val sessionID: String, private val api: RPCS
                 mutable.value = state.value.copy(text = combined.take(MAX_TEXT_CHARS), loaded = true, eof = page["eof"].boolean, truncated = combined.length > MAX_TEXT_CHARS || combined.length == MAX_TEXT_CHARS && !page["eof"].boolean)
             }
         } catch (e: CancellationException) { throw e }
-        catch (e: APIError.Remote) { if (e.code == "workspace-file/not-text") mutable.value = state.value.copy(kind = FilePreviewKind.BINARY, loaded = true) else fail(e) }
+        catch (e: APIError.Remote) {
+            if (e.code == "workspace-file/not-text") {
+                mutable.value = state.value.copy(kind = FilePreviewKind.BINARY, loaded = true)
+                try {
+                    val data = readBytes()
+                    mutable.value = state.value.copy(kind = if (ImageSignatures.detected(data)) FilePreviewKind.IMAGE else FilePreviewKind.BINARY, data = data, eof = true)
+                } catch (cancel: CancellationException) { throw cancel } catch (failure: Exception) { fail(failure) }
+            } else fail(e)
+        }
         catch (e: Exception) { fail(e) }
         finally { mutable.value = state.value.copy(loading = false) }
     }
     suspend fun download(): ByteArray? {
         if (state.value.loading) return null
+        if (!WorkspacePaths.visible(path)) { fail(PortalError(L("Private dsh files are hidden.", "已隐藏 dsh 私密文件。"))); return null }
         mutable.value = state.value.copy(loading = true, error = null)
         return try { state.value.data ?: readBytes() }
         catch (e: CancellationException) { throw e }

@@ -11,6 +11,7 @@ class RemoteEvents(private val api: RPCServing, private val scope: CoroutineScop
     val state = mutable.asStateFlow()
     private var task: Job? = null
     private val listeners = linkedMapOf<String, (J) -> Unit>()
+    private val resolved = mutableSetOf<String>()
     fun observe(handler: (J) -> Unit): String = UUID.randomUUID().toString().also { listeners[it] = handler }
     fun removeObserver(id: String) { listeners.remove(id) }
     fun apply(frame: J) {
@@ -18,8 +19,8 @@ class RemoteEvents(private val api: RPCServing, private val scope: CoroutineScop
         mutable.value = when (frame["type"].text) {
             "ready" -> s.copy(clientID = frame["clientId"].string, pending = emptyList())
             "connection-reset" -> s.copy(clientID = null, pending = emptyList())
-            "cancel" -> s.copy(pending = s.pending.filterNot { it.id == frame["eventId"].text })
-            "waterfall" -> if (s.clientID != null && frame["event"].text in listOf("approval/request", "user-questions/request")) {
+            "cancel" -> { resolved += frame["eventId"].text; s.copy(pending = s.pending.filterNot { it.id == frame["eventId"].text }) }
+            "waterfall" -> if (s.clientID != null && frame["eventId"].text !in resolved && frame["event"].text in listOf("approval/request", "user-questions/request")) {
                 val item = PendingInteraction(frame["eventId"].text, s.clientID, frame["agentId"].text, frame["event"].text, frame["request"])
                 s.copy(pending = s.pending.filterNot { it.id == item.id } + item)
             } else s
@@ -42,7 +43,8 @@ class RemoteEvents(private val api: RPCServing, private val scope: CoroutineScop
         val clientID = state.value.clientID ?: throw APIError.Disconnected
         val item = state.value.pending.find { it.id == id && it.clientID == clientID } ?: throw APIError.Disconnected
         api.rpc("\$events/result", o("clientId" to clientID, "eventId" to item.id, "outcome" to o("kind" to "result", "value" to value)))
-        mutable.value = state.value.copy(pending = state.value.pending.filterNot { it.id == id && it.clientID == clientID })
+        resolved += id
+        mutable.value = state.value.copy(pending = state.value.pending.filterNot { it.id == id })
     }
 }
 

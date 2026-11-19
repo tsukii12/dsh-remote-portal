@@ -5,6 +5,12 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+- Android native terminal: retained session shells over sequenced duplex mux,
+  Apache-2.0 Termux VT/Canvas rendering, IME/key controls, bounded acknowledged
+  input, reconnect/foreground snapshot recovery, rename and explicit close.
+- Android parity fixes: model image-modality admission, replay-safe resolved
+  approvals, extensionless image magic detection and private `.dsh` filtering.
+
 - Android Stage D: native host defaults with revision-conflict refresh, provider
   status, confirmed authorized-device revocation and app version in drawer Settings.
 - Android parity: explicit Photos/camera attachments, per-turn token buckets and

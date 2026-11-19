@@ -159,7 +159,7 @@ fun ChatScreen(chat: ChatStore, filesOpen: Boolean = false, dismissFiles: () -> 
                 if (mentions.isEmpty()) Text(L("No matches yet", "暂无匹配项"), style = MaterialTheme.typography.bodySmall)
             }
             AttachmentRail(chat, draft, !sending)
-            AttachmentPicker(draft, !sending)
+            AttachmentPicker(draft, !sending, state.imageInputError)
             Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 AssistChip(onClick = { models = true }, label = { Text(L("Model: ", "模型：") + state.modelName + " · " + state.effortName) })
                 AssistChip(onClick = { models = true }, label = { Text(ChatLabels.permission(state.projections["permissions"]["currentValue"].text).ifEmpty { L("Access mode", "访问模式") }) })

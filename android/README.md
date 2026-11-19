@@ -54,6 +54,8 @@ preserve the full relay path prefix. Use trusted networks for plain HTTP.
   to staged uploads, with a progress/retry/remove rail and attachment-only messages. Host image limits
   control admission; receipts stay scoped to the current chat draft. File cards
   and authorized image previews render in messages (inline previews up to 8 MiB).
+  Photos/camera and image uploads/sends are blocked for explicitly text-only
+  models without clearing the composer; ordinary file/text messages remain usable.
 - Debounced, cancellable `@` completion for workspace files/directories (including
   quoted names) and host-provided session mentions, preserving cursor position.
 - Chat-top-bar Files panel: session-scoped expandable workspace tree, name/path
@@ -62,9 +64,22 @@ preserve the full relay path prefix. Use trusted networks for plain HTTP.
   (1,048,576-character preview cap); native
   images and shared downloads use bounded multipart reads (8 MiB, 256 KiB chunks).
   File rows/previews can insert a quoted `@` mention into the composer.
+  Private `.dsh` path components are hidden from lists/search/mentions and refused
+  by previews. Extensionless files are probed for image magic before text reads.
+- Native **Terminal** action beside Files: session-owned shell list/create,
+  rename and confirmed close; a Canvas VT surface, scrollback/copy/paste and
+  Ctrl/Esc/Tab/arrows. Return commits the IME draft before carriage return.
+  Shells run with host-account permissions, independently of agent approvals.
+  Leaving/backgrounding detaches without closing; foreground/reconnect restores
+  the authoritative bounded host snapshot, never replaying uncertain input.
+  Selected terminal/allocation IDs are persisted per full host base + session.
+  Uses Termux v0.118.0's Apache-2.0 terminal-emulator and Canvas renderer (see
+  `third_party/termux/`); no WebView, local subprocess or JNI library is used.
 - Exact-input approval sheets, single/multiple-choice questions and custom answers.
   Requests only auto-open for the current chat; Later defers them without answering.
   Pending banners and drawer badges let you return to requests in any known session.
+  Successfully answered/cancelled event IDs stay resolved through stream replays
+  and reconnects for the connection store's lifetime.
 - Composer chips show the model, thinking effort, access mode and agent preset.
   Chat options refresh on opening: provider-grouped models, explicit/default
   effort, session access, plan mode and agent presets before the first message.

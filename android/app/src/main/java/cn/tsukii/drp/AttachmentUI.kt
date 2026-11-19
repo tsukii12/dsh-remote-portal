@@ -24,7 +24,7 @@ import java.util.Base64
 import java.io.File
 
 @Composable
-fun AttachmentPicker(draft: AttachmentDraft, enabled: Boolean) {
+fun AttachmentPicker(draft: AttachmentDraft, enabled: Boolean, imageError: String? = null) {
     val context = LocalContext.current
     val resolver = context.contentResolver
     val scope = rememberCoroutineScope()
@@ -44,7 +44,7 @@ fun AttachmentPicker(draft: AttachmentDraft, enabled: Boolean) {
                 }
                 UploadSource(name, resolver.getType(uri), size) { resolver.openInputStream(uri) ?: throw java.io.IOException(L("Cannot open attachment.", "无法打开附件。")) }
             }
-            draft.add(source)
+            if (source.image && imageError != null) pickerError = imageError else draft.add(source)
         } catch (e: CancellationException) { throw e }
         catch (e: Exception) { draft.add(UploadSource(L("Unavailable attachment", "附件不可用"), null, null) { throw java.io.IOException(e.message) }) }
     } } }
@@ -62,12 +62,12 @@ fun AttachmentPicker(draft: AttachmentDraft, enabled: Boolean) {
     Column {
     Row {
         TextButton(enabled = enabled, onClick = { files.launch(arrayOf("*/*")) }) { Text(L("+ File", "+ 文件")) }
-        TextButton(enabled = enabled, onClick = {
+        TextButton(enabled = enabled && imageError == null, onClick = {
             pickerError = null
             try { photos.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) }
             catch (_: Exception) { pickerError = L("Photos are unavailable. Choose Files instead.", "照片选择器不可用，请选择文件。") }
         }) { Text(L("+ Photos", "+ 照片")) }
-        TextButton(enabled = enabled && cameraPath == null && !preparingCamera, onClick = {
+        TextButton(enabled = enabled && imageError == null && cameraPath == null && !preparingCamera, onClick = {
             pickerError = null; preparingCamera = true
             scope.launch {
                 try {
@@ -84,6 +84,7 @@ fun AttachmentPicker(draft: AttachmentDraft, enabled: Boolean) {
         }) { Text(L("+ Camera", "+ 拍照")) }
     }
     pickerError?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
+    imageError?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
     }
 }
 

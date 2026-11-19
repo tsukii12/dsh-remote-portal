@@ -51,6 +51,8 @@ data class ChatState(val transcript: List<TranscriptItem> = emptyList(), val inP
     val currentModel: J get() = listOf("selected", "next", "lastUsed").map { selectedModel[it] }.firstOrNull { it["model"].string != null } ?: catalog["default"]
     val modelDefinition: J get() = catalog["groups"].array.find { it["id"] == currentModel["provider"] }?.get("models")?.array?.find { it["id"] == currentModel["model"] } ?: EMPTY
     val modelName: String get() = modelDefinition["name"].string ?: currentModel["model"].string ?: L("Choose model", "选择模型")
+    val imageInputError: String? get() = if (modelDefinition["inputModalities"] != j(null) && modelDefinition["inputModalities"].array.none { it.text == "image" })
+        L("This model does not accept images. Choose an image-capable model or remove the images.", "当前模型不支持图片。请选择支持图片的模型或移除图片。") else null
     val effortName: String get() = currentModel["reasoningEffort"].string?.let { id -> modelDefinition["reasoning"]["efforts"].array.find { it["id"].text == id }?.get("name")?.string ?: id } ?: L("Default", "默认")
     val sessionStarted: Boolean get() = projections["sessionListMetadata"]["blank"] == j(false) || transcript.any { it.role == "user" } || running
     val supportsPlanMode: Boolean get() = commands.any { it["name"].text == "plan" }
@@ -236,6 +238,7 @@ class ChatStore(val sessionID: String, private val api: RPCServing, private val 
     suspend fun send(text: String, steer: Boolean = false, attachments: List<J> = emptyList(), requestID: String = UUID.randomUUID().toString()): String {
         if (text.isBlank() && attachments.isEmpty()) throw PortalError(L("Enter a message.", "请输入消息。"))
         if (attachments.any { it["receiptId"].string.isNullOrEmpty() }) throw APIError.InvalidResponse
+        if (attachments.any { it["image"] != j(null) }) state.value.imageInputError?.let { throw PortalError(it) }
         val id = requestID; addOptimistic(text, id, attachments)
         try {
             api.rpc("session/prompt", o("request" to o("sessionId" to sessionID, "requestId" to id, "mode" to if (steer && state.value.running) "steer" else "queue",
@@ -246,7 +249,7 @@ class ChatStore(val sessionID: String, private val api: RPCServing, private val 
         }
     }
     suspend fun cancel() { api.rpc("session/cancel", o("request" to o("sessionId" to sessionID))) }
-    fun attachmentDraft(scope: CoroutineScope) = AttachmentDraft(sessionID, api, scope) { state.value.projections["imageLimits"] }
+    fun attachmentDraft(scope: CoroutineScope) = AttachmentDraft(sessionID, api, scope, { state.value.imageInputError }) { state.value.projections["imageLimits"] }
     fun files(scope: CoroutineScope) = WorkspaceFilesStore(sessionID, api, scope)
     suspend fun mentions(token: AtToken) = Mentions.candidates(api, sessionID, token)
     suspend fun attachment(reference: J): J = api.rpc("session/attachment", o("request" to o("sessionId" to sessionID, "attachment" to reference)))

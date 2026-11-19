@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -38,6 +39,7 @@ fun WorkspaceScreen(connection: NativeConnection, serverName: String, addressLab
     var folders by remember { mutableStateOf(false) }
     var filesOpen by rememberSaveable { mutableStateOf(false) }
     var settingsOpen by remember { mutableStateOf(false) }
+    var terminalOpen by rememberSaveable { mutableStateOf(false) }
     var viewOptions by remember { mutableStateOf(false) }
     var contentSearch by rememberSaveable { mutableStateOf(false) }
     var interactionID by remember { mutableStateOf<String?>(null) }
@@ -147,10 +149,11 @@ fun WorkspaceScreen(connection: NativeConnection, serverName: String, addressLab
         }
     }) {
         Scaffold(topBar = {
-            if (!filesOpen) TopAppBar(title = { Text(sidebar.sessions[selected]?.title ?: L("New conversation", "新对话"), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+            if (!filesOpen && !terminalOpen) TopAppBar(title = { Text(sidebar.sessions[selected]?.title ?: L("New conversation", "新对话"), maxLines = 1, overflow = TextOverflow.Ellipsis) },
                 navigationIcon = { GlyphButton(Icons.Default.Menu, L("Sessions", "会话")) { scope.launch { drawer.open() } } },
                 actions = {
                     if (selected != null) TextButton(onClick = { filesOpen = true }) { Text(L("Files", "文件")) }
+                    if (selected != null) TextButton(onClick = { terminalOpen = true }) { Text(L("Terminal", "终端")) }
                     GlyphButton(Icons.Default.Add, L("New chat", "新对话")) { create() }
                 })
         }) { padding ->
@@ -168,7 +171,12 @@ fun WorkspaceScreen(connection: NativeConnection, serverName: String, addressLab
                     }
                 }
                 val id = selected
-                if (id != null) key(id) { ChatScreen(remember(id) { connection.chat(id) }, filesOpen) { filesOpen = false } }
+                if (id != null) key(id) { Box(Modifier.fillMaxSize()) {
+                    Box(Modifier.fillMaxSize().then(if (terminalOpen) Modifier.clearAndSetSemantics {} else Modifier)) {
+                        ChatScreen(remember(id) { connection.chat(id) }, filesOpen) { filesOpen = false }
+                    }
+                    if (terminalOpen) TerminalScreen(connection.api, id) { terminalOpen = false }
+                } }
                 else Column(Modifier.fillMaxSize().padding(32.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
                     Text(L("Ready when you are", "随时开始"), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.SemiBold)
                     Spacer(Modifier.height(12.dp))
