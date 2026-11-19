@@ -136,7 +136,7 @@ window.__ModuleLoader__.load({
         pwSaving: "保存中…",
         pwOk: "密码已更新，所有设备已退出登录",
         pwOkRemote: "密码已更新。这台设备也已退出登录，正在返回登录页……",
-        pwSignOutConfirm: "修改密码会让所有设备退出登录，包括这台设备；之后要用新密码重新登录。确定修改？",
+        pwSignOutConfirm: "修改密码会让所有设备退出登录，包括这台设备；之后需要重新登录（或重新配对）。确定修改？",
         pwShort: "密码至少需要 {n} 位",
         cardDev: "已授权设备",
         cardPublic: "公网访问",
@@ -279,7 +279,7 @@ window.__ModuleLoader__.load({
         pwSaving: "Saving…",
         pwOk: "Password updated; every device has been signed out",
         pwOkRemote: "Password updated. This device has been signed out too; returning to sign-in…",
-        pwSignOutConfirm: "Changing the password signs out every device, this one included; you'll sign in again with the new password. Change it?",
+        pwSignOutConfirm: "Changing the password signs out every device, this one included; you'll need to sign in (or pair) again. Change it?",
         pwShort: "Password needs at least {n} characters",
         cardDev: "Authorised devices",
         cardPublic: "Public access",
@@ -1552,7 +1552,7 @@ window.__ModuleLoader__.load({
         if (pw.length < MIN_PW) { flash("err", t("pwShort", { n: MIN_PW })); return; }
         if (st.busy) return;
         var remote = viaPortal();
-        if (remote && st.status && st.status.passwordSet) {
+        if (remote) {
           var sure = true;
           try { sure = window.confirm(t("pwSignOutConfirm")); } catch (e) { sure = true; }
           if (!sure) return;
@@ -1568,6 +1568,8 @@ window.__ModuleLoader__.load({
             return;
           }
           flash("ok", t("pwOk"));
+          // The change voided every pairing code, the one on screen included.
+          if (st.status && st.status.running) mintPair(true);
           refreshStatus();
           reloadDevices();
         });
