@@ -5,6 +5,10 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+- Phone in landscape and small tablets (768–900 px wide): the floating menu
+  button no longer covers the page title (Remote access read "mote access";
+  Plugins and Automation tasks too). dsh only leaves room for a menu button
+  below 768 px; the layer now leaves the same 48 px in that band.
 - Local network: the address list and every pairing link or QR code made after
   the PC's address changes (another Wi-Fi, a new DHCP lease) use the new address
   within about 15 s. They used to keep the address from when the listener

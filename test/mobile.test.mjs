@@ -832,6 +832,53 @@ describe("mobile layer against the live dsh web UI", () => {
     });
   }
 
+  // 768–900px (a phone in landscape, a small tablet): dsh pads its main panel
+  // for its own menu button only below 768px, so the floating drawer button
+  // used to sit on every page title there.
+  for (const [w, h, label] of [
+    [844, 390, "Remote access|远程访问"],
+    [844, 390, "Plugins|插件"],
+    [800, 1280, "Automation tasks|自动化任务"],
+    [390, 844, "Remote access|远程访问"],
+  ]) test(`the drawer button covers no text on ${label.split("|")[0]} at ${w}x${h}`, async (t) => {
+    if (skipReason) return t.skip(skipReason);
+    const expr = `(async () => {
+      const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+      const btn = document.querySelector('.drp-drawer-btn');
+      btn.click();
+      await sleep(600);
+      const entry = [...document.querySelectorAll('[data-slot="sidebar"] button')]
+        .find((b) => /^(${label})$/.test((b.getAttribute('aria-label') || b.textContent).trim()));
+      if (!entry) return JSON.stringify({ entry: false });
+      entry.click();
+      await sleep(1500);
+      const b = btn.getBoundingClientRect();
+      const covered = [];
+      const walk = document.createTreeWalker(document.querySelector('[data-slot="main"]'), NodeFilter.SHOW_TEXT);
+      for (let n; (n = walk.nextNode());) {
+        if (!n.textContent.trim()) continue;
+        const range = document.createRange();
+        range.selectNodeContents(n);
+        for (const q of range.getClientRects()) {
+          if (q.width && q.right > b.left && q.left < b.right && q.bottom > b.top && q.top < b.bottom) {
+            covered.push(n.textContent.trim().slice(0, 30));
+            break;
+          }
+        }
+      }
+      return JSON.stringify({ entry: true, visible: getComputedStyle(btn).display !== 'none', covered });
+    })()`;
+    const { code, stdout, stderr } = await runCdp([
+      "eval", BASE, expr, "--token", TOKEN_URL, "--wait", "4000",
+      "--w", String(w), "--h", String(h), "--mobile", "--pre-file", join(tmp, "pre.js"), "--settle", "1200",
+    ]);
+    assert.equal(code, 0, "cdp run failed: " + stderr.slice(-800));
+    const out = JSON.parse(stdout.trim().split("\n").filter((l) => l.trim().startsWith("{")).pop());
+    assert.equal(out.entry, true, `${label} entry not found in the sidebar`);
+    assert.equal(out.visible, true, "the drawer button must be shown at this width");
+    assert.deepEqual(out.covered, [], "the drawer button sits on page text");
+  });
+
   test("a slow /status link never has two polls open at once", async (t) => {
     if (skipReason) return t.skip(skipReason);
     // Every /status answer is held back 5 s, as on a slow relay. A fixed 3 s
