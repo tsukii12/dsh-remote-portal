@@ -27,6 +27,9 @@ versions are the plugin's own, not dsh's.
   (up to three at once over a 9 s relay round trip, each timing out); it asks
   again 3 s after each answer, ignores answers older than the one shown, and
   says when the status it shows may be out of date.
+- Remote access: a 6- or 7-character password sent to the panel's password
+  route is refused as too short (at least 8, as the gateway requires) instead
+  of failing as an internal server error.
 - Folder picker: listing a large folder no longer stats every subfolder one by
   one, and a link to a file no longer marks the listing as cut short.
 - Fixed password and pairing form submissions from nested pages, including when
