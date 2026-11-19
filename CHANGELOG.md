@@ -8,6 +8,11 @@ versions are the plugin's own, not dsh's.
 - README: the update steps now cover installs made with `install.sh` /
   `install.ps1` (`git pull` in the checkout, then restart), and say that
   `dsh plugin` needs pnpm on PATH.
+||||||| 3c8607e
+- `install.sh` with no `-p` no longer stops at a missing desktop profile on a
+  server that only runs dsh web: it skips profiles that don't exist and installs
+  into the rest, and fails only if there are none. The installers' closing hint
+  now points to Remote access in the sidebar, not Settings.
 - Remote access on a phone: switching remote access off from the phone now
   asks first, because it cuts that phone's own connection. Afterwards the panel
   says the phone is disconnected and only the PC can turn it back on, instead
