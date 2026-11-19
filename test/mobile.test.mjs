@@ -832,6 +832,47 @@ describe("mobile layer against the live dsh web UI", () => {
     });
   }
 
+  test("a slow /status link never has two polls open at once", async (t) => {
+    if (skipReason) return t.skip(skipReason);
+    // Every /status answer is held back 5 s, as on a slow relay. A fixed 3 s
+    // interval used to keep two (at 9 s, three) of them open at the same time.
+    const slow = `(() => {
+      const real = window.fetch.bind(window);
+      const poll = window.__drpPoll = { started: 0, open: 0, maxOpen: 0 };
+      window.fetch = (input, init) => {
+        const url = String(input && input.url ? input.url : input);
+        if (!/\\/dsh-remote-portal\\/status(\\?|$)/.test(url)) return real(input, init);
+        poll.started++; poll.open++; poll.maxOpen = Math.max(poll.maxOpen, poll.open);
+        return new Promise((r) => setTimeout(r, 5000)).then(() => real(input, init))
+          .finally(() => { poll.open--; });
+      };
+    })();`;
+    writeFileSync(join(tmp, "slow-status.js"), slow);
+    const expr = `(async () => {
+      const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+      document.querySelector('.drp-drawer-btn').click();
+      await sleep(600);
+      const entry = [...document.querySelectorAll('[data-slot="sidebar"] button')]
+        .find((b) => /^(Remote access|远程访问)$/.test(b.getAttribute('aria-label') || ''));
+      if (!entry) return JSON.stringify({ entry: false });
+      window.__drpPoll.maxOpen = window.__drpPoll.open;
+      const before = window.__drpPoll.started;
+      entry.click();
+      await sleep(14000);
+      return JSON.stringify({ entry: true, started: window.__drpPoll.started - before, maxOpen: window.__drpPoll.maxOpen });
+    })()`;
+    const { code, stdout, stderr } = await runCdp([
+      "eval", BASE, expr, "--token", TOKEN_URL, "--wait", "4000",
+      "--w", "390", "--h", "844", "--mobile", "--pre-eval-file", join(tmp, "slow-status.js"),
+      "--pre-file", join(tmp, "pre.js"), "--settle", "1200",
+    ]);
+    assert.equal(code, 0, "cdp run failed: " + stderr.slice(-800));
+    const out = JSON.parse(stdout.trim().split("\n").filter((l) => l.trim().startsWith("{")).pop());
+    assert.equal(out.entry, true, "Remote access entry not found in the sidebar");
+    assert.ok(out.started >= 2, `the panel stopped polling: ${out.started} request(s) in 14 s`);
+    assert.equal(out.maxOpen, 1, `${out.maxOpen} /status polls were open at once`);
+  });
+
   test("every visible button in the open drawer is what a tap there hits", async (t) => {
     if (skipReason) return t.skip(skipReason);
     // A scripted .click() skips whatever sits on top, so it can pass while real
