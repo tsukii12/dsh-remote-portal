@@ -668,7 +668,14 @@ function cachePut(key, entry) {
     tunnel.stats.streams += 1;
     stats.streams += 1;
     const timer = setTimeout(() => {
-      if (!stream.closed) handlers.fail(504, "the dsh host did not answer in time");
+      if (stream.closed) return;
+      const reason = "the dsh host did not answer in time";
+      try {
+        send(FRAME.CLOSE, JSON.stringify({ reason }));
+        handlers.fail(504, reason);
+      } finally {
+        release();
+      }
     }, config.requestTimeout);
     timer.unref?.();
     const release = () => {

@@ -378,6 +378,33 @@ test("a stream that outlives the request timeout is failed, not leaked", async (
   assert.equal(relay.tunnels.get(id).streams.size, 0, "the stream must be released");
 });
 
+test("a timeout cancels a negotiated response before a late body can exhaust credit", async () => {
+  const token = "test-token-timeout-response-window";
+  const path = `/__t/${tunnelIdFor(token)}`;
+  let lateResponse;
+  let upstreamClosed = false;
+  const port = await listen(http.createServer((req, res) => {
+    if (req.url !== "/late") { res.end("ok"); return; }
+    lateResponse = res;
+    req.socket.once("close", () => { upstreamClosed = true; });
+  }));
+  const { relay, httpPort, agentPort } = await startRelay([token], { requestTimeout: 500 });
+  await connectTunnel({ agentPort, token, targetPort: port });
+  const entry = relay.tunnels.get(tunnelIdFor(token));
+  const agent = entry.socket;
+  assert.equal(entry.responseWindow, 256 * 1024);
+
+  assert.equal((await request(httpPort, path + "/late")).status, 504);
+  assert.equal(entry.streams.size, 0);
+  assert.ok(lateResponse, "the gateway must have received the request");
+  if (!lateResponse.destroyed) lateResponse.end(Buffer.alloc(1024 * 1024));
+  await waitFor(() => upstreamClosed, {
+    timeoutMs: 1200, label: "upstream cancellation",
+  });
+  assert.equal((await request(httpPort, path + "/next")).body.toString(), "ok");
+  assert.equal(entry.socket, agent, "the tunnel must not reconnect to clean up the stream");
+});
+
 test("a response that finishes above the visitor high water mark does not stall the tunnel", async () => {
   const token = "test-token-finish";
   const id = tunnelIdFor(token);
