@@ -603,9 +603,18 @@
     scheduleNativeScan();
   }
 
-  /** True when a modal surface is on screen above the frame. */
+  /**
+   * True when a modal surface is on screen above the frame. The expanded
+   * sidebar is itself a modal dialog in narrow windows
+   * (`[data-shortcut-modal="sidebar"]`), so anything inside the drawer does not
+   * count: it would close the drawer the moment it opened.
+   */
   function overlayIsUp() {
-    return doc().querySelector('[role="dialog"][aria-modal="true"], [data-drp-overlay="1"]') !== null;
+    var list = doc().querySelectorAll('[role="dialog"][aria-modal="true"], [data-drp-overlay="1"]');
+    for (var i = 0; i < list.length; i++) {
+      if (!list[i].closest('[data-slot="sidebar"]')) return true;
+    }
+    return false;
   }
 
   window.__DRP_MOBILE__ = {

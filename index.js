@@ -311,17 +311,17 @@ async function listDirectories(rawPath) {
     .filter((entry) => entry.isDirectory() || entry.isSymbolicLink())
     .sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
 
-  const entries = [];
-  for (const dirent of dirs.slice(0, 400)) {
-    const full = join(resolved, dirent.name);
-    try {
-      const targetInfo = await stat_(full);
-      if (!targetInfo.isDirectory()) continue; // a symlink to a file is not a choice
-    } catch {
-      continue;
-    }
-    entries.push({ name: dirent.name, path: full, hidden: dirent.name.startsWith(".") });
-  }
+  // The Dirent already says what a plain directory is; only a symlink needs a
+  // stat, to drop one that points at a file or nowhere.
+  const shown = dirs.slice(0, 400);
+  const keep = await Promise.all(shown.map((dirent) =>
+    dirent.isDirectory()
+      ? true
+      : stat_(join(resolved, dirent.name)).then((info) => info.isDirectory(), () => false),
+  ));
+  const entries = shown
+    .filter((_, i) => keep[i])
+    .map((dirent) => ({ name: dirent.name, path: join(resolved, dirent.name), hidden: dirent.name.startsWith(".") }));
 
   const parent = dirname(resolved);
   return {
@@ -329,7 +329,7 @@ async function listDirectories(rawPath) {
     parent: parent === resolved ? "" : parent,
     roots: fsRoots(),
     entries,
-    truncated: dirs.length > entries.length,
+    truncated: dirs.length > shown.length,
   };
 }
 

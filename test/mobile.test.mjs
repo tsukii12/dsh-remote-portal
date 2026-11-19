@@ -441,6 +441,13 @@ describe("mobile layer against the live dsh web UI", () => {
     close.click();
     return true;
   }
+  // A fresh profile without an API key opens a modal "Get started" dialog; the
+  // layer correctly steps aside for modals, so close it before measuring.
+  for (const d of document.querySelectorAll('[role="dialog"][aria-modal="true"]')) {
+    const x = d.querySelector('button[aria-label="Close"], button[aria-label="关闭"]');
+    if (x) x.click();
+  }
+  await new Promise((r) => setTimeout(r, 300));
   const style = document.createElement('style');
   style.id = 'drp-mobile-css';
   style.textContent = ${JSON.stringify(css)};
@@ -731,6 +738,84 @@ describe("mobile layer against the live dsh web UI", () => {
     assert.ok(out.drawerBox.w <= 320 && out.drawerBox.w >= 250, "drawer width outside min(86vw,320px): " + out.drawerBox.w);
     assert.equal(out.drawerWhileModal, null, "drawer must close when a modal opens above it");
     assert.equal(out.closedAttr, null, "close() did not clear data-drp-drawer");
+  });
+
+  test("a main-area page opened from the drawer fills the phone width", async (t) => {
+    if (skipReason) return t.skip(skipReason);
+    const expr = `(async () => {
+      const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+      const html = document.documentElement;
+      document.querySelector('.drp-drawer-btn').click();
+      await sleep(600);
+      const entry = [...document.querySelectorAll('[data-slot="sidebar"] button')]
+        .find((b) => /^(Remote access|远程访问)$/.test(b.getAttribute('aria-label') || ''));
+      if (!entry) return JSON.stringify({ entry: false });
+      // Tap where a finger would: whatever is on top at the button's centre.
+      const box = entry.getBoundingClientRect();
+      const top = document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2);
+      const hitsEntry = !!top && entry.contains(top);
+      (top || entry).click();
+      await sleep(1200);
+      const page = document.querySelector('[data-slot="main"] .drp-page');
+      const r = page ? page.getBoundingClientRect() : null;
+      return JSON.stringify({
+        entry: true,
+        hitsEntry,
+        drawer: html.getAttribute('data-drp-drawer'),
+        page: r ? { x: Math.round(r.x), w: Math.round(r.width) } : null,
+        scrollW: document.documentElement.scrollWidth,
+      });
+    })()`;
+    const { code, stdout, stderr } = await runCdp([
+      "eval", BASE, expr, "--token", TOKEN_URL, "--wait", "4000",
+      "--w", "390", "--h", "844", "--mobile", "--pre-file", join(tmp, "pre.js"), "--settle", "1200",
+    ]);
+    assert.equal(code, 0, "cdp run failed: " + stderr.slice(-800));
+    const out = JSON.parse(stdout.trim().split("\n").filter((l) => l.trim().startsWith("{")).pop());
+    assert.equal(out.entry, true, "Remote access entry not found in the sidebar");
+    assert.equal(out.hitsEntry, true, "something covers the drawer: a tap on its rows never reaches them");
+    assert.equal(out.drawer, null, "the drawer must close once a page is chosen");
+    assert.ok(out.page, "the Remote access page did not render in the main slot");
+    assert.equal(out.page.x, 0, "the page must start at the left edge (was squeezed into an implicit column)");
+    assert.equal(out.page.w, 390, "the page must span the phone width");
+    assert.ok(out.scrollW <= 390, "page overflows horizontally: " + out.scrollW);
+  });
+
+  test("every visible button in the open drawer is what a tap there hits", async (t) => {
+    if (skipReason) return t.skip(skipReason);
+    // A scripted .click() skips whatever sits on top, so it can pass while real
+    // taps land on a mask (dsh's own drawer mask did exactly that).
+    const expr = `(async () => {
+      const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+      document.querySelector('.drp-drawer-btn').click();
+      await sleep(700);
+      const sidebar = document.querySelector('[data-slot="sidebar"]');
+      const buttons = sidebar ? [...sidebar.querySelectorAll('button')].filter((b) => {
+        const r = b.getBoundingClientRect();
+        return r.width > 0 && r.height > 0 && r.left >= 0 && r.top >= 0 && r.right <= innerWidth && r.bottom <= innerHeight;
+      }) : [];
+      const missed = buttons.filter((b) => {
+        const r = b.getBoundingClientRect();
+        const hit = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2);
+        // hit.contains(b): a button that ignores pointers itself (hover-only affordances).
+        return !hit || !(b.contains(hit) || hit.contains(b));
+      }).map((b) => {
+        const r = b.getBoundingClientRect();
+        const hit = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2);
+        return (b.getAttribute('aria-label') || b.textContent.trim()).slice(0, 30) + ' -> ' +
+          (hit ? hit.tagName + '.' + String(hit.className).slice(0, 40) : 'nothing');
+      });
+      return JSON.stringify({ drawer: document.documentElement.getAttribute('data-drp-drawer'), candidates: buttons.length, missed });
+    })()`;
+    const { code, stdout, stderr } = await runCdp([
+      "eval", BASE, expr, "--token", TOKEN_URL, "--wait", "4000",
+      "--w", "390", "--h", "844", "--mobile", "--pre-file", join(tmp, "pre.js"), "--settle", "1200",
+    ]);
+    assert.equal(code, 0, "cdp run failed: " + stderr.slice(-800));
+    const out = JSON.parse(stdout.trim().split("\n").filter((l) => l.trim().startsWith("{")).pop());
+    assert.equal(out.drawer, "open", "the drawer did not open");
+    assert.ok(out.candidates > 0, "no visible buttons in the open drawer");
+    assert.deepEqual(out.missed, [], `drawer buttons covered by something else (of ${out.candidates})`);
   });
 
   test("no horizontal overflow at 320/360/390/430/768/900 in both themes", async (t) => {
