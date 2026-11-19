@@ -26,6 +26,7 @@ import { promisify } from "node:util";
 
 import { apply } from "../index.js";
 import { createRelay, tunnelIdFor } from "../tools/relay.mjs";
+import { createGateway } from "../lib/gateway.mjs";
 import { createTunnel } from "../lib/tunnel.mjs";
 import * as agentFraming from "../lib/tunnel.mjs";
 import * as relayFraming from "../tools/relay.mjs";
@@ -149,9 +150,9 @@ async function waitFor(predicate, { timeoutMs = 5000, label = "condition" } = {}
   throw new Error(`timed out waiting for ${label}`);
 }
 
-function request(port, path, { method = "GET", headers = {} } = {}) {
+function request(port, path, { method = "GET", headers = {}, body, localAddress } = {}) {
   return new Promise((resolve, reject) => {
-    const req = http.request({ host: "127.0.0.1", port, path, method, headers }, (res) => {
+    const req = http.request({ host: "127.0.0.1", port, path, method, headers, localAddress }, (res) => {
       const chunks = [];
       res.on("data", (c) => chunks.push(c));
       res.on("end", () => resolve({
@@ -161,7 +162,7 @@ function request(port, path, { method = "GET", headers = {} } = {}) {
       }));
     });
     req.on("error", reject);
-    req.end();
+    req.end(body);
   });
 }
 
@@ -353,6 +354,151 @@ test("forwards an HTTP request through the tunnel and strips the routing prefix"
   assert.equal(seen.headers["x-test-header"], "forwarded", "client headers must be forwarded");
   assert.equal(seen.headers["x-forwarded-proto"], "http", "the relay tags the original scheme");
   assert.ok(seen.headers["x-forwarded-for"], "the relay passes the client address along");
+});
+
+const visitorAuthHeaders = { accept: "application/json", "user-agent": "same phone browser" };
+const forgedVisitorHeaders = {
+  "x-forwarded-for": "203.0.113.42",
+  "x-drp-tunnel-visitor": "made-up-key 203.0.113.42",
+};
+const testPassword = "correct horse battery";
+
+async function portalWithRelay(agentPort, token) {
+  let upgradeHeaders;
+  const upstream = http.createServer((req, res) => res.end(JSON.stringify(req.headers)));
+  upstream.on("upgrade", (req, socket) => {
+    upgradeHeaders = req.headers;
+    socket.write("HTTP/1.1 101 Switching Protocols\r\nConnection: Upgrade\r\nUpgrade: websocket\r\n\r\n");
+  });
+  const upstreamPort = await listen(upstream);
+  const gateway = createGateway({
+    ctx: { webServer: { host: "127.0.0.1", port: upstreamPort, protocol: "http:" } },
+    config: {
+      enabled: true, host: "127.0.0.1", port: 0, auth: { maxFailures: 2 },
+      tunnel: { url: `tcp://127.0.0.1:${agentPort}`, token },
+    },
+    stateDir: tmpDir(), log: quiet,
+  });
+  cleanups.push(() => gateway.stop());
+  await gateway.setPassword(testPassword);
+  await gateway.start();
+  await waitFor(() => gateway.status().public.state === "online", { label: "gateway tunnel online" });
+  return { gateway, upgradeHeaders: () => upgradeHeaders };
+}
+
+async function visitorPair(gateway, httpPort, mount, options) {
+  const { token } = await gateway.mintPairing({ ttlSeconds: 120 });
+  const res = await request(httpPort, `${mount}/__portal/pair?t=${encodeURIComponent(token)}`, options);
+  assert.equal(res.status, 303);
+  return res.headers["set-cookie"].find(line => line.startsWith("dsh_portal=")).split(";")[0];
+}
+
+function visitorLogin(port, mount, password, options = {}) {
+  const body = new URLSearchParams({ password }).toString();
+  return request(port, `${mount}/__portal/login`, {
+    ...options, method: "POST", body,
+    headers: { ...visitorAuthHeaders, ...options.headers, "content-type": "application/x-www-form-urlencoded",
+      "content-length": Buffer.byteLength(body) },
+  });
+}
+
+test("real relay separates same-UA visitor pairing, revocation and lockout by socket address", async (t) => {
+  const token = "test-token-visitor-identity";
+  const mount = `/__t/${tunnelIdFor(token)}`;
+  const { httpPort, agentPort } = await startRelay([token]);
+  const { gateway, upgradeHeaders } = await portalWithRelay(agentPort, token);
+  const headers = { ...visitorAuthHeaders, ...forgedVisitorHeaders };
+  const a = { localAddress: "127.0.0.2", headers };
+  const b = { localAddress: "127.0.0.3", headers };
+  try {
+    await Promise.all([a, b].map(opts => request(httpPort, "/__relay/health", opts)));
+  } catch (error) {
+    if (error.code === "EADDRNOTAVAIL") return t.skip("distinct loopback source addresses are unavailable");
+    throw error;
+  }
+  const first = await visitorPair(gateway, httpPort, mount, a);
+  const second = await visitorPair(gateway, httpPort, mount, b);
+  const devices = gateway.devices().sort((x, y) => x.ip.localeCompare(y.ip));
+  assert.deepEqual(devices.map(d => [d.ip, d.ua, d.sessions]), [
+    ["127.0.0.2", headers["user-agent"], 1],
+    ["127.0.0.3", headers["user-agent"], 1],
+  ]);
+  assert.notEqual(devices[0].id, devices[1].id);
+
+  const authenticated = (port, address, cookie) => request(port, mount + "/api/who", {
+    localAddress: address, headers: { ...headers, cookie },
+  });
+  assert.equal((await authenticated(httpPort, a.localAddress, first)).status, 200);
+  assert.equal(await gateway.revokeDevice(devices[0].id), true);
+  assert.equal((await authenticated(httpPort, a.localAddress, first)).status, 401);
+  const survivor = await authenticated(httpPort, b.localAddress, second);
+  assert.equal(survivor.status, 200);
+  const seen = JSON.parse(survivor.body);
+  assert.equal(seen["x-forwarded-for"], b.localAddress);
+  assert.equal(seen["x-drp-tunnel-visitor"], undefined);
+
+  await new Promise((resolve, reject) => {
+    const req = http.request({ host: "127.0.0.1", port: httpPort, path: mount + "/api/ws",
+      localAddress: b.localAddress, headers: { ...headers, cookie: second, connection: "Upgrade", upgrade: "websocket" } });
+    req.once("upgrade", (_res, socket) => { socket.destroy(); resolve(); });
+    req.once("response", res => { res.resume(); reject(new Error(`unexpected HTTP ${res.statusCode} for upgrade`)); });
+    req.once("error", reject);
+    req.end();
+  });
+  assert.equal(upgradeHeaders()["x-forwarded-for"], b.localAddress);
+  assert.equal(upgradeHeaders()["x-drp-tunnel-visitor"], undefined);
+  assert.equal(gateway.accessLog().find(entry => entry.path === "/api/ws").ip, b.localAddress);
+
+  assert.equal((await visitorLogin(httpPort, mount, "wrong", a)).status, 401);
+  const spoofed = { ...a, headers: { ...headers, "x-forwarded-for": b.localAddress,
+    "x-drp-tunnel-visitor": `made-up-key ${b.localAddress}` } };
+  assert.equal((await visitorLogin(httpPort, mount, "wrong", spoofed)).status, 429);
+  assert.equal((await visitorLogin(httpPort, mount, testPassword, a)).status, 429);
+  assert.equal((await visitorLogin(httpPort, mount, testPassword, b)).status, 303);
+});
+
+test("direct clients cannot spoof a different visitor or send the internal header upstream", async () => {
+  const token = "test-token-direct-spoof";
+  const { agentPort } = await startRelay([token]);
+  const { gateway } = await portalWithRelay(agentPort, token);
+  const port = gateway.status().port;
+  const headers = { ...visitorAuthHeaders, ...forgedVisitorHeaders };
+  const cookie = await visitorPair(gateway, port, "", { headers });
+  assert.deepEqual(gateway.devices().map(d => d.ip), ["127.0.0.1"]);
+  const proxied = await request(port, "/api/who", { headers: { ...headers, cookie } });
+  assert.equal(proxied.status, 200);
+  const seen = JSON.parse(proxied.body);
+  assert.equal(seen["x-forwarded-for"], "127.0.0.1");
+  assert.equal(seen["x-drp-tunnel-visitor"], undefined);
+  assert.equal((await visitorLogin(port, "", "wrong", { headers })).status, 401);
+  assert.equal((await visitorLogin(port, "", "wrong", { headers: { ...headers, "x-forwarded-for": "203.0.113.43" } })).status, 429);
+  assert.equal((await visitorLogin(port, "", testPassword)).status, 429);
+});
+
+test("legacy relay opens use a stable tunnel identity instead of forwarding headers", async () => {
+  const token = "test-token-legacy-visitor-identity";
+  const { createFrameReader, encodeFrame, FRAME } = relayFraming;
+  let peer;
+  const heads = new Map();
+  const agentPort = await listen(net.createServer(socket => {
+    peer = socket;
+    socket.on("data", createFrameReader((type, id, payload) => {
+      if (type === FRAME.HELLO) socket.write(encodeFrame(FRAME.WELCOME, 0, JSON.stringify({ tunnelId: tunnelIdFor(token) })));
+      if (type === FRAME.RES_HEAD) heads.set(id, JSON.parse(payload));
+    }, assert.fail));
+  }));
+  const { gateway } = await portalWithRelay(agentPort, token);
+  for (const id of [1, 2]) {
+    const pairing = await gateway.mintPairing({ ttlSeconds: 120 });
+    peer.write(encodeFrame(FRAME.REQ_HEAD, id, JSON.stringify({
+      method: "GET", path: `/__portal/pair?t=${encodeURIComponent(pairing.token)}`,
+      headers: { ...visitorAuthHeaders, ...forgedVisitorHeaders, "x-forwarded-for": `203.0.113.${id}` },
+    })));
+    peer.write(encodeFrame(FRAME.REQ_END, id));
+    await waitFor(() => heads.has(id), { label: "legacy relay pairing response" });
+    assert.equal(heads.get(id).status, 303);
+  }
+  assert.deepEqual(gateway.devices().map(d => [d.ip, d.sessions]), [[`relay:${tunnelIdFor(token)}`, 2]]);
 });
 
 test("serves the relay's own health endpoint without touching the tunnel", async () => {

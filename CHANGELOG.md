@@ -5,6 +5,9 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+- Relay visitors now use the relay-observed address for device entries and
+  password lockouts, instead of sharing the gateway's loopback address.
+  The gateway does not trust visitor-supplied forwarding headers.
 - Load the portal's presentation assets through the tunnel prefix without
   duplicate fallback fetches. Browsers and the relay can reuse content-versioned
   public assets without caching authenticated dsh responses.

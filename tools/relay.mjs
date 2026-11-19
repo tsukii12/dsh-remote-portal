@@ -801,7 +801,10 @@ function cachePut(key, entry) {
     // The agent's gateway rewrites Host/Origin for the upstream; what it needs
     // here is the *public* authority so its own same-origin check passes.
     const upstreamHeaders = { ...headers, "x-forwarded-proto": config.publicUrl.startsWith("https") ? "https" : "http" };
-    if (!upstreamHeaders["x-forwarded-for"]) upstreamHeaders["x-forwarded-for"] = clientIp(req);
+    const visitorIp = clientIp(req);
+    delete upstreamHeaders["x-drp-tunnel-visitor"];
+    delete upstreamHeaders["x-forwarded-for"];
+    if (visitorIp) upstreamHeaders["x-forwarded-for"] = visitorIp;
     // The app is mounted under this prefix; it needs it to build correct
     // redirects and form actions (the relay strips the prefix before proxying).
     upstreamHeaders["x-forwarded-prefix"] = publicPathFor(route.id);
@@ -858,6 +861,7 @@ function cachePut(key, entry) {
     stream.send(FRAME.REQ_HEAD, JSON.stringify({
       method: req.method,
       path: target,
+      visitorIp,
       headers: upstreamHeaders,
     }));
 
@@ -927,12 +931,16 @@ function cachePut(key, entry) {
     });
     if (!stream) return;
 
+    const visitorIp = clientIp(req);
     const lines = [`${req.method} ${route.path + (url.search || "")} HTTP/1.1`];
     for (const [name, value] of Object.entries(req.headers)) {
+      if (name === "x-forwarded-for" || name === "x-drp-tunnel-visitor") continue;
       if (Array.isArray(value)) for (const one of value) lines.push(`${name}: ${one}`);
       else lines.push(`${name}: ${value}`);
     }
+    if (visitorIp) lines.push(`x-forwarded-for: ${visitorIp}`);
     stream.send(FRAME.WS_OPEN, JSON.stringify({
+      visitorIp,
       head: lines.join("\r\n") + "\r\n\r\n",
       headB64: head && head.length ? head.toString("base64") : "",
     }));
@@ -1025,9 +1033,7 @@ function cachePut(key, entry) {
 }
 
 function clientIp(req) {
-  const direct = req.socket?.remoteAddress || "";
-  const forwarded = String(req.headers["x-forwarded-for"] || "").split(",")[0].trim();
-  return forwarded || direct.replace(/^::ffff:/, "");
+  return (req.socket?.remoteAddress || "").replace(/^::ffff:/, "");
 }
 
 // ───────────────────────────────────────────────────────────────────────────
