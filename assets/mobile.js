@@ -428,6 +428,18 @@
         state.observers.push(observer);
       }
     }
+
+    // A page chosen in the drawer (Remote access, Plugins, a session) swaps the
+    // main slot's children without a route change. Below 768px dsh collapses
+    // its own sidebar then (caught above); up to 900px only this closes ours.
+    var main = slotEl("main");
+    if (main && typeof MutationObserver === "function") {
+      var mainObserver = new MutationObserver(function () {
+        if (state.open) close();
+      });
+      mainObserver.observe(main, { childList: true });
+      state.observers.push(mainObserver);
+    }
     return true;
   }
 

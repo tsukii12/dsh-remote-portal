@@ -10,6 +10,8 @@ versions are the plugin's own, not dsh's.
   drawer.
 - Phone layout: Remote access and other main-area pages fill the screen
   instead of a narrow strip on the right.
+- Tablet-width windows (768–900px): choosing Remote access, Plugins or another
+  page in the drawer now closes the drawer instead of leaving it over the page.
 - Fixed password and pairing form submissions from nested pages, including when
   the portal is served under a reverse proxy path prefix.
 - When a pairing code is rejected, the portal now asks you to generate and scan
