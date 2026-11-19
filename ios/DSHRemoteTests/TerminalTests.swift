@@ -22,6 +22,14 @@ private final class TerminalInputRecorder: TerminalViewDelegate {
 
 @MainActor
 final class TerminalTests: XCTestCase {
+    func testMarkedLineBreakReturnDoesNotRecursivelyCommit() {
+        let view = RemoteTerminalView(frame: CGRect(x: 0, y: 0, width: 390, height: 400))
+        let input = TerminalInputRecorder(); view.terminalDelegate = input
+        defer { view.updateUiClosed() }
+        view.setMarkedText("\n", selectedRange: NSRange(location: 1, length: 0))
+        view.insertText("\n"); view.unmarkText()
+        XCTAssertEqual(input.bytes, [13])
+    }
     func testReturnCommitsPendingIMECandidateBeforeSendingReturn() {
         let view = RemoteTerminalView(frame: CGRect(x: 0, y: 0, width: 390, height: 400))
         let input = TerminalInputRecorder(); view.terminalDelegate = input

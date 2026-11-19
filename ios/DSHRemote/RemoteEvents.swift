@@ -84,7 +84,7 @@ final class RemoteEvents: ObservableObject {
         guard let item = pending.first(where: { $0.id == id }), let clientID, item.clientID == clientID else { throw APIError.disconnected }
         _ = try await api.rpc("$events/result", args: ["clientId": .string(clientID), "eventId": .string(id), "outcome": ["kind": "result", "value": value]])
         resolved.insert(id)
-        pending.removeAll { $0.id == id && $0.clientID == clientID }
+        pending.removeAll { $0.id == id }
     }
     deinit { task?.cancel() }
 }

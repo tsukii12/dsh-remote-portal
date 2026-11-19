@@ -148,7 +148,7 @@ private struct TerminalScreen: View {
 
 final class RemoteTerminalView: SwiftTerm.TerminalView {
     override func insertText(_ text: String) {
-        if text == "\n", markedTextRange != nil { unmarkText() }
+        if text == "\n", let range = markedTextRange, self.text(in: range) != text { unmarkText() }
         super.insertText(text)
     }
     var protocolReply: ((String) -> Void)?

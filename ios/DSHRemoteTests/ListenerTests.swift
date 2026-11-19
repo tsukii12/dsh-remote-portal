@@ -87,6 +87,29 @@ private final class HTTPListener {
 
 @MainActor
 final class ListenerTests: XCTestCase {
+    func testApprovalAnswerResolvesReplayReceivedDuringReconnectOverRealHTTP() async throws {
+        let received = expectation(description: "Answer waits for host")
+        let gate = DispatchSemaphore(value: 0)
+        let server = try HTTPListener { request in
+            let body = try! JSONDecoder().decode(JSON.self, from: request.body)
+            XCTAssertEqual(body["payload"]["args"]["clientId"], "old")
+            received.fulfill(); _ = gate.wait(timeout: .now() + 5)
+            return .init(body: "{\"type\":\"server-response\",\"result\":{\"ok\":true,\"value\":null}}")
+        }
+        let base = try await server.start(); let directory = root(); let client = client(directory)
+        defer { gate.signal(); server.stop(); client.session.invalidateAndCancel(); try? FileManager.default.removeItem(at: directory) }
+        let events = RemoteEvents(api: PortalAPI(base: base, client: client))
+        let request: JSON = ["type": "waterfall", "eventId": "E", "event": "approval/request", "agentId": "S", "request": [:]]
+        events.apply(["type": "ready", "clientId": "old"]); events.apply(request)
+        let answer = Task { try await events.answerApproval("E", allow: true) }
+        defer { answer.cancel() }
+        await fulfillment(of: [received], timeout: 3)
+        events.apply(["type": "connection-reset"]); events.apply(["type": "ready", "clientId": "new"]); events.apply(request)
+        XCTAssertEqual(events.pending.first?.clientID, "new")
+        gate.signal(); try await answer.value
+        XCTAssertTrue(events.pending.isEmpty)
+        events.apply(request); XCTAssertTrue(events.pending.isEmpty)
+    }
     func testExtensionlessImagesTextAndBinaryFailuresOverRealHTTP() async throws {
         let image = png(); var textReads: [String] = []; var probes = 0
         let server = try HTTPListener { request in
