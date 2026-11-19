@@ -273,10 +273,11 @@ test("WebSocket upgrades are tunnelled byte-for-byte", async () => {
   const token = "test-token-ws";
   const id = tunnelIdFor(token);
   const gatewayPort = await startGatewayDouble();
-  const { httpPort, agentPort } = await startRelay([token]);
+  const { httpPort, agentPort } = await startRelay([token], { requestTimeout: 750, httpIdleTimeout: 750 });
   await connectTunnel({ agentPort, token, targetPort: gatewayPort });
 
   const socket = net.connect({ host: "127.0.0.1", port: httpPort });
+  cleanups.push(() => socket.destroy());
   const received = [];
   await new Promise((resolve, reject) => {
     socket.once("error", reject);
@@ -295,6 +296,7 @@ test("WebSocket upgrades are tunnelled byte-for-byte", async () => {
   const head = Buffer.concat(received).toString("latin1");
   assert.match(head, /101 Switching Protocols/, "the upstream handshake must reach the client");
 
+  await new Promise((resolve) => setTimeout(resolve, 900));
   socket.write("ping-through-tunnel");
   await waitFor(
     () => Buffer.concat(received).toString("latin1").includes("echo:ping-through-tunnel"),
@@ -363,7 +365,10 @@ test("a stream that outlives the request timeout is failed, not leaked", async (
   const token = "test-token-timeout";
   const id = tunnelIdFor(token);
   // An upstream that never answers.
-  const hanging = http.createServer(() => { /* never respond */ });
+  let upstreamClosed = false;
+  const hanging = http.createServer((_req, res) => {
+    res.on("close", () => { upstreamClosed = true; });
+  });
   const hangingPort = await listen(hanging);
   const { relay, httpPort, agentPort } = await startRelay([token], { requestTimeout: 1200 });
   await connectTunnel({ agentPort, token, targetPort: hangingPort });
@@ -375,6 +380,80 @@ test("a stream that outlives the request timeout is failed, not leaked", async (
   assert.match(res.body.toString(), /did not answer/i);
   assert.ok(elapsed < 6000, `the timeout should fire quickly, took ${elapsed} ms`);
   assert.equal(relay.tunnels.get(id).streams.size, 0, "the stream must be released");
+  await waitFor(() => upstreamClosed, { label: "timed-out upstream closed" });
+});
+
+test("HTTP data refreshes the idle timeout, but a stalled body is aborted", async () => {
+  const token = "test-token-http-idle";
+  const id = tunnelIdFor(token);
+  const target = http.createServer((req, res) => {
+    res.writeHead(200);
+    res.write("start");
+    const count = req.url === "/active" ? 5 : 1;
+    let sent = 0;
+    const timer = setInterval(() => {
+      res.write(" chunk");
+      if (++sent === count) {
+        clearInterval(timer);
+        if (req.url === "/active") res.end(" end");
+      }
+    }, 200);
+    res.once("close", () => clearInterval(timer));
+  });
+  const targetPort = await listen(target);
+  const { relay, httpPort, agentPort } = await startRelay([token], {
+    requestTimeout: 750,
+    httpIdleTimeout: 500,
+  });
+  await connectTunnel({ agentPort, token, targetPort });
+
+  const active = await request(httpPort, `/__t/${id}/active`);
+  assert.equal(active.status, 200);
+  assert.equal(active.body.toString(), "start chunk chunk chunk chunk chunk end");
+
+  const stalled = await new Promise((resolve, reject) => {
+    const req = http.get({ host: "127.0.0.1", port: httpPort, path: `/__t/${id}/stalled` }, (res) => {
+      res.setEncoding("utf8");
+      let body = "";
+      res.on("data", (chunk) => { body += chunk; });
+      res.on("aborted", () => resolve({ body, complete: res.complete }));
+      res.on("error", reject);
+      res.on("end", () => reject(new Error("the stalled HTTP response ended normally")));
+    });
+    req.on("error", reject);
+    req.setTimeout(3000, () => req.destroy(new Error("relay did not abort the stalled HTTP response")));
+  });
+  assert.deepEqual(stalled, { body: "start chunk", complete: false });
+  assert.equal(relay.tunnels.get(id).streams.size, 0, "the stream must be released");
+});
+
+test("a partial WebSocket handshake is subject to the header deadline", async () => {
+  const token = "test-token-ws-header-timeout";
+  const id = tunnelIdFor(token);
+  const target = http.createServer();
+  let upstreamClosed = false;
+  target.on("upgrade", (_req, socket) => {
+    socket.write("HTTP/1.1 101 Switching Protocols\r\n");
+    socket.once("end", () => socket.end());
+    socket.once("close", () => { upstreamClosed = true; });
+    socket.resume();
+  });
+  const targetPort = await listen(target);
+  const { relay, httpPort, agentPort } = await startRelay([token], { requestTimeout: 500 });
+  await connectTunnel({ agentPort, token, targetPort });
+  const socket = net.connect(httpPort, "127.0.0.1");
+  cleanups.push(() => socket.destroy());
+  const data = await new Promise((resolve, reject) => {
+    let data = "";
+    socket.on("data", (chunk) => { data += chunk; });
+    socket.on("error", reject);
+    socket.on("close", () => resolve(data));
+    socket.setTimeout(2000, () => socket.destroy(new Error("relay did not close the incomplete upgrade")));
+    socket.write(`GET /__t/${id}/ws HTTP/1.1\r\nHost: relay.test\r\nConnection: Upgrade\r\nUpgrade: websocket\r\n\r\n`);
+  });
+  assert.equal(data, "HTTP/1.1 101 Switching Protocols\r\n");
+  assert.equal(relay.tunnels.get(id).streams.size, 0, "the stream must be released");
+  await waitFor(() => upstreamClosed, { label: "timed-out upgrade upstream closed" });
 });
 
 test("a response that finishes above the visitor high water mark does not stall the tunnel", async () => {
@@ -474,6 +553,3 @@ for (const [name, framing, peer] of [
     if (name === "relay") assert.equal(errors[0].firstByte, 22);
   });
 }
-
-
-
