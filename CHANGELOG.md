@@ -5,6 +5,9 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+- README: the update steps now cover installs made with `install.sh` /
+  `install.ps1` (`git pull` in the checkout, then restart), and say that
+  `dsh plugin` needs pnpm on PATH.
 - Remote access on a phone: switching remote access off from the phone now
   asks first, because it cuts that phone's own connection. Afterwards the panel
   says the phone is disconnected and only the PC can turn it back on, instead
