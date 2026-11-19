@@ -34,7 +34,7 @@ fun UsageSheet(chat: ChatStore, onDismiss: () -> Unit) {
             UsageRow(L("Cache hit", "缓存命中率"), Usage.percent(if (billedInput != null && billedInput > 0 && cacheRead != null) cacheRead.toDouble() / billedInput * 100 else null))
             HorizontalDivider()
             UsageRow(L("Context occupancy", "上下文占用"), Usage.percent(Usage.contextPercent(state.projections)))
-            UsageRow(L("Context window", "上下文窗口"), Usage.number(state.projections["contextPressure"]["contextWindow"].long?.takeIf { it > 0 }))
+            UsageRow(L("Context used / capacity (approx.)", "上下文已用／容量（估算）"), Usage.contextCounts(state.projections))
             val breakdown = state.projections["contextBreakdown"]
             UsageRow(L("System / tools / messages (estimated)", "系统／工具／消息（估算）"), listOf("systemTokens", "toolsTokens", "messageTokens").joinToString(" / ") { Usage.number(breakdown[it].long?.takeIf { n -> n >= 0 }) })
             HorizontalDivider()
@@ -52,6 +52,7 @@ fun UsageSheet(chat: ChatStore, onDismiss: () -> Unit) {
                 state.completedTurns.sorted().forEach { turn ->
                     val used = state.turnUsage[turn]
                     UsageRow(L("Turn $turn", "第 $turn 轮"), Usage.line(used))
+                    TurnUsageView(used)
                     used?.routes?.let { Text(it.joinToString(", "), style = MaterialTheme.typography.bodySmall) }
                 }
             }
@@ -63,6 +64,20 @@ fun UsageSheet(chat: ChatStore, onDismiss: () -> Unit) {
             }
             TextButton(onClick = onDismiss, modifier = Modifier.fillMaxWidth()) { Text(L("Done", "完成")) }
         }
+    }
+}
+
+@Composable
+fun TurnUsageView(tokens: TokenUsage?) {
+    ExpandableBlock(Usage.line(tokens)) {
+        UsageRow(L("Uncached input", "未缓存输入"), Usage.number(tokens?.input))
+        UsageRow(L("Cache read", "缓存读取"), Usage.number(tokens?.cacheRead))
+        UsageRow(L("Cache write", "缓存写入"), Usage.number(tokens?.cacheWrite))
+        UsageRow(L("Output", "输出"), Usage.number(tokens?.output))
+        tokens?.reasoning?.let { reasoning -> ExpandableBlock(L("Reasoning tokens", "推理令牌")) {
+            Text(Usage.number(reasoning))
+            Text(L("Included in output, not additional tokens.", "已包含在输出中，并非额外令牌。"), style = MaterialTheme.typography.bodySmall)
+        } }
     }
 }
 

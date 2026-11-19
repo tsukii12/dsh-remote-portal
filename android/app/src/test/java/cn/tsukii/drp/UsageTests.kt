@@ -6,6 +6,21 @@ import org.junit.Test
 import java.util.Locale
 
 class UsageTests {
+    @Test fun rawContextCountsPreserveZeroLargeOverflowingOccupancyAndUnknown() {
+        fun context(used: Any?, capacity: Any?, fallback: Any? = 9L) = o("contextPressure" to o("projectedTokens" to used, "contextWindow" to capacity, "pressureTokens" to fallback))
+        assertEquals(9L, Usage.contextUsed(context(null, 100)))
+        assertEquals(0L, Usage.contextUsed(context(0, 100)))
+        assertEquals(6_000_000_000L, Usage.contextUsed(context(6_000_000_000L, 5_000_000_000L)))
+        assertEquals(5_000_000_000L, Usage.contextCapacity(context(6_000_000_000L, 5_000_000_000L)))
+        assertEquals(100.0, Usage.contextPercent(context(6_000_000_000L, 5_000_000_000L))!!, 0.001)
+        assertNull(Usage.contextUsed(context(-1, 100))); assertNull(Usage.contextUsed(context("12", 100)))
+        assertNull(Usage.contextCapacity(context(1, 0))); assertNull(Usage.contextUsed(EMPTY)); assertNull(Usage.contextCapacity(EMPTY))
+        val before = Locale.getDefault()
+        try {
+            Locale.setDefault(Locale.ENGLISH); assertEquals("≈ 0 / 100", Usage.contextCounts(context(0, 100))); assertEquals("≈ Unknown / Unknown", Usage.contextCounts(EMPTY))
+            Locale.setDefault(Locale.SIMPLIFIED_CHINESE); assertEquals("≈ 未知 / 未知", Usage.contextCounts(EMPTY))
+        } finally { Locale.setDefault(before) }
+    }
     private fun event(type: String, vararg fields: Pair<String, Any?>): J = o("type" to type, "data" to o("turn" to 1, "step" to 1, *fields))
     private val sample = o("inputTokens" to 100L, "outputTokens" to 20L, "cacheReadTokens" to 50L, "cacheWriteTokens" to 10L, "reasoningTokens" to 5L, "totalTokens" to 180L)
     private fun message(usage: J = sample): J = event("assistant/message", "usage" to usage, "message" to o("id" to "M", "source" to o("provider" to "P", "model" to "model"), "content" to emptyList<J>()))

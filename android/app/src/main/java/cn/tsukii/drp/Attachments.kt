@@ -4,7 +4,16 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.io.InputStream
+import java.io.File
 import java.util.UUID
+
+object CameraCaptures {
+    fun create(cache: File, activeNames: Set<String> = emptySet(), now: Long = System.currentTimeMillis()): File {
+        val directory = File(cache, "exports").apply { mkdirs() }
+        directory.listFiles()?.filter { it.isFile && it.name.startsWith("camera-") && it.name !in activeNames && it.lastModified() < now - 86_400_000L }?.forEach { it.delete() }
+        return File.createTempFile("camera-", ".jpg", directory)
+    }
+}
 
 data class UploadSource(val name: String, val mediaType: String?, val size: Long?, val open: () -> InputStream) {
     val image get() = mediaType?.startsWith("image/") == true

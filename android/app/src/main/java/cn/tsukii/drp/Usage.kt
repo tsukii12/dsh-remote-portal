@@ -17,10 +17,15 @@ object Usage {
         val write = count(value["cacheWriteTokens"]) ?: return null
         return TokenUsage(input, output, sum(listOf(input, output, read, write)) ?: return null, read, write)
     }
-    fun contextPercent(projections: J): Double? {
+    fun contextUsed(projections: J): Long? {
         val pressure = projections["contextPressure"]
-        val window = count(pressure["contextWindow"])?.takeIf { it > 0 } ?: return null
-        val projected = count(if (pressure["projectedTokens"] == JsonNull) pressure["pressureTokens"] else pressure["projectedTokens"]) ?: return null
+        return count(if (pressure["projectedTokens"] == JsonNull) pressure["pressureTokens"] else pressure["projectedTokens"])
+    }
+    fun contextCapacity(projections: J): Long? = count(projections["contextPressure"]["contextWindow"])?.takeIf { it > 0 }
+    fun contextCounts(projections: J) = "≈ " + number(contextUsed(projections)) + " / " + number(contextCapacity(projections))
+    fun contextPercent(projections: J): Double? {
+        val window = contextCapacity(projections) ?: return null
+        val projected = contextUsed(projections) ?: return null
         return (projected.toDouble() / window.toDouble() * 100).coerceIn(0.0, 100.0)
     }
     fun number(value: Long?): String = value?.let { NumberFormat.getIntegerInstance().format(it) } ?: L("Unknown", "未知")

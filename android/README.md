@@ -46,11 +46,12 @@ preserve the full relay path prefix. Use trusted networks for plain HTTP.
 - Streaming chat, Markdown and copyable horizontally scrolling code, expandable
   thinking and tool cards with command summaries and running/success/error status.
 - Session token/context usage in the composer, completed-turn usage when the
-  loaded history has complete attempt evidence, and a bilingual usage detail
-  sheet. Unknown counts stay unknown; zero is not treated as missing. Account
+  loaded history has complete attempt evidence, per-turn token buckets with a
+  reasoning disclosure, and a bilingual detail sheet with raw approximate context
+  used/capacity. Unknown counts stay unknown; zero is not treated as missing. Account
   balances appear only when served and available from the host.
-- System image/file pickers stream content URIs to staged uploads, with a
-  progress/retry/remove rail and attachment-only messages. Host image limits
+- Explicit system Photos, camera capture and Files options stream content URIs
+  to staged uploads, with a progress/retry/remove rail and attachment-only messages. Host image limits
   control admission; receipts stay scoped to the current chat draft. File cards
   and authorized image previews render in messages (inline previews up to 8 MiB).
 - Debounced, cancellable `@` completion for workspace files/directories (including

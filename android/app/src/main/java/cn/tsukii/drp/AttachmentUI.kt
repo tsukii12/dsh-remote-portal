@@ -5,12 +5,15 @@ import android.net.Uri
 import android.provider.OpenableColumns
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.core.content.FileProvider
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
@@ -18,11 +21,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.*
 import java.util.Base64
+import java.io.File
 
 @Composable
 fun AttachmentPicker(draft: AttachmentDraft, enabled: Boolean) {
-    val resolver = LocalContext.current.contentResolver
+    val context = LocalContext.current
+    val resolver = context.contentResolver
     val scope = rememberCoroutineScope()
+    var cameraPath by rememberSaveable { mutableStateOf<String?>(null) }
+    var preparingCamera by remember { mutableStateOf(false) }
+    var pickerError by remember { mutableStateOf<String?>(null) }
     fun picked(uris: List<Uri>) { uris.forEach { uri -> scope.launch {
         try {
             val source = withContext(Dispatchers.IO) {
@@ -41,10 +49,41 @@ fun AttachmentPicker(draft: AttachmentDraft, enabled: Boolean) {
         catch (e: Exception) { draft.add(UploadSource(L("Unavailable attachment", "附件不可用"), null, null) { throw java.io.IOException(e.message) }) }
     } } }
     val files = rememberLauncherForActivityResult(ActivityResultContracts.OpenMultipleDocuments(), ::picked)
-    val images = rememberLauncherForActivityResult(ActivityResultContracts.OpenMultipleDocuments(), ::picked)
+    val photos = rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(), ::picked)
+    val camera = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+        val path = cameraPath
+        cameraPath = null
+        if (path != null) {
+            val file = File(path)
+            if (success) picked(listOf(FileProvider.getUriForFile(context, context.packageName + ".files", file)))
+            else file.delete()
+        }
+    }
+    Column {
     Row {
         TextButton(enabled = enabled, onClick = { files.launch(arrayOf("*/*")) }) { Text(L("+ File", "+ 文件")) }
-        TextButton(enabled = enabled, onClick = { images.launch(arrayOf("image/*")) }) { Text(L("+ Image", "+ 图片")) }
+        TextButton(enabled = enabled, onClick = {
+            pickerError = null
+            try { photos.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) }
+            catch (_: Exception) { pickerError = L("Photos are unavailable. Choose Files instead.", "照片选择器不可用，请选择文件。") }
+        }) { Text(L("+ Photos", "+ 照片")) }
+        TextButton(enabled = enabled && cameraPath == null && !preparingCamera, onClick = {
+            pickerError = null; preparingCamera = true
+            scope.launch {
+                try {
+                    val active = draft.items.value.map { it.source.name }.toSet()
+                    val file = withContext(Dispatchers.IO) { CameraCaptures.create(context.cacheDir, active) }
+                    cameraPath = file.path
+                    camera.launch(FileProvider.getUriForFile(context, context.packageName + ".files", file))
+                } catch (e: CancellationException) { throw e }
+                catch (_: Exception) {
+                    cameraPath?.let { File(it).delete() }; cameraPath = null
+                    pickerError = L("Camera is unavailable. Choose Photos or Files instead.", "相机不可用，请选择照片或文件。")
+                } finally { preparingCamera = false }
+            }
+        }) { Text(L("+ Camera", "+ 拍照")) }
+    }
+    pickerError?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
     }
 }
 

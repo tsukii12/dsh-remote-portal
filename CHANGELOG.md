@@ -7,6 +7,8 @@ versions are the plugin's own, not dsh's.
 
 - Android Stage D: native host defaults with revision-conflict refresh, provider
   status, confirmed authorized-device revocation and app version in drawer Settings.
+- Android parity: explicit Photos/camera attachments, per-turn token buckets and
+  reasoning disclosure, and raw approximate context used/capacity.
 
 - Android Stage C: native session Files panel with expandable/searchable watched
   workspace tree, paged selectable text, image previews, bounded multipart file

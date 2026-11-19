@@ -90,7 +90,7 @@ fun ChatScreen(chat: ChatStore, filesOpen: Boolean = false, dismissFiles: () -> 
                 items(state.transcript, key = { it.id }) { item ->
                     MessageView(item, chat)
                     if (item.role == "assistant" && item.turn in state.completedTurns && state.transcript.lastOrNull { it.role == "assistant" && it.turn == item.turn }?.id == item.id)
-                        TextButton(onClick = { usage = true }, contentPadding = PaddingValues(0.dp)) { Text(Usage.line(state.turnUsage[item.turn]), style = MaterialTheme.typography.labelSmall) }
+                        TurnUsageView(state.turnUsage[item.turn])
                 }
                 if (progress != null) item(key = "in-progress:${progress.id}") { MessageView(progress, chat) }
                 else if (state.running) item(key = "working") { Row(verticalAlignment = Alignment.CenterVertically) {

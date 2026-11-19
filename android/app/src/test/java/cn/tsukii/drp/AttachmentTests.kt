@@ -14,6 +14,22 @@ import java.util.Locale
 @OptIn(ExperimentalCoroutinesApi::class)
 class AttachmentTests {
     @get:Rule val temporary = TemporaryFolder()
+    @Test fun cameraCapturesUseUniqueShareableJpegFilesAndDoNotDeleteActiveOrUnrelatedFiles() {
+        val cache = temporary.newFolder()
+        val first = CameraCaptures.create(cache)
+        val stale = CameraCaptures.create(cache)
+        val second = CameraCaptures.create(cache)
+        assertTrue(first.isFile); assertEquals("jpg", first.extension)
+        assertEquals(java.io.File(cache, "exports"), first.parentFile)
+        assertNotEquals(first, second)
+        val other = java.io.File(first.parentFile, "download.txt").apply { writeText("keep") }
+        for (file in listOf(first, stale, other)) assertTrue(file.setLastModified(System.currentTimeMillis() - 172_800_000L))
+        CameraCaptures.create(cache, setOf(first.name))
+        assertTrue(first.exists()); assertFalse(stale.exists()); assertTrue(other.exists()); assertTrue(second.exists())
+    }
+    @Test fun cameraCaptureCannotWriteThroughAnUnavailableCacheDirectory() {
+        fails<java.io.IOException> { CameraCaptures.create(temporary.newFile()) }
+    }
     private val limits = o("maxImageBytes" to 10, "maxMessageImageBytes" to 15, "maxImagesPerMessage" to 2, "maxImageDimension" to 8, "maxImagePixels" to 32, "mediaTypes" to listOf("image/png"))
     private fun source(size: Long? = 3, type: String? = null) = UploadSource("space name.txt", type, size) { ByteArrayInputStream(byteArrayOf(0, 1, -1)) }
     private fun receipt(image: Boolean = false) = o("receiptId" to "R", (if (image) "image" else "file") to o("name" to "picked.txt", "bytes" to 3, "attachmentId" to "sha256:test", "width" to 4, "height" to 4))
