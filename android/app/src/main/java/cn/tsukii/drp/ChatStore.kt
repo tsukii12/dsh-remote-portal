@@ -52,7 +52,8 @@ data class ChatState(val transcript: List<TranscriptItem> = emptyList(), val inP
     val modelName: String get() = modelDefinition["name"].string ?: currentModel["model"].string ?: L("Choose model", "选择模型")
     val effortName: String get() = currentModel["reasoningEffort"].string?.let { id -> modelDefinition["reasoning"]["efforts"].array.find { it["id"].text == id }?.get("name")?.string ?: id } ?: L("Default", "默认")
     val sessionStarted: Boolean get() = projections["sessionListMetadata"]["blank"] == j(false) || transcript.any { it.role == "user" } || running
-    val canChangePlan: Boolean get() = !sessionStarted && !projections["plan"]["pending"].boolean
+    val supportsPlanMode: Boolean get() = commands.any { it["name"].text == "plan" }
+    val canChangePlan: Boolean get() = supportsPlanMode && !sessionStarted && !projections["plan"]["pending"].boolean
     val planEnabled: Boolean get() = if (projections["plan"]["pending"].boolean) !projections["plan"]["active"].boolean else projections["plan"]["active"].boolean
 }
 
@@ -263,6 +264,11 @@ class ChatStore(val sessionID: String, private val api: RPCServing, private val 
         return exported
     }
     suspend fun selectPermission(preset: String) { executeCommand("/permission $preset") }
+    suspend fun togglePlan() {
+        if (!state.value.supportsPlanMode) throw PortalError(L("Plan mode is not available for this agent preset.", "此代理预设不支持计划模式。"))
+        if (!state.value.canChangePlan) throw PortalError(L("Plan mode cannot be changed after the first message or while a change is pending.", "发送第一条消息后或切换尚未完成时，无法更改计划模式。"))
+        executeCommand(if (state.value.planEnabled) "/plan off" else "/plan")
+    }
     suspend fun selectPreset(preset: String) {
         if (state.value.sessionStarted) throw PortalError(L("Choose a preset before the first message.", "请在发送第一条消息前选择预设。"))
         api.rpc("agentPresets/select", o("agentId" to sessionID, "agentPreset" to preset)); loadControls()

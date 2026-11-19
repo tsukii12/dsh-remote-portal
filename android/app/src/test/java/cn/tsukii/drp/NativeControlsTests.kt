@@ -16,11 +16,52 @@ class NativeControlsTests {
     private fun ok(value: J) = MockResponse().setBody(o("type" to "server-response", "result" to o("ok" to true, "value" to value)).toString())
 
     @Test fun planOptionsRequireAnUnstartedSessionWithoutPendingChanges() {
-        assertTrue(ChatState().canChangePlan)
-        assertTrue(ChatState(projections = parse("""{"sessionListMetadata":{"blank":true},"plan":{"active":true}}""")).canChangePlan)
-        assertFalse(ChatState(projections = parse("""{"plan":{"pending":true}}""")).canChangePlan)
-        assertFalse(ChatState(projections = parse("""{"sessionListMetadata":{"blank":false}}""")).canChangePlan)
-        assertFalse(ChatState(running = true).canChangePlan)
+        val state = ChatState(commands = listOf(o("name" to "plan")))
+        assertFalse(ChatState().canChangePlan)
+        assertTrue(state.canChangePlan)
+        assertTrue(state.copy(projections = parse("""{"sessionListMetadata":{"blank":true},"plan":{"active":true}}""")).canChangePlan)
+        assertFalse(state.copy(projections = parse("""{"plan":{"pending":true}}""")).canChangePlan)
+        assertFalse(state.copy(projections = parse("""{"sessionListMetadata":{"blank":false}}""")).canChangePlan)
+        assertFalse(state.copy(running = true).canChangePlan)
+    }
+
+    @Test fun planToggleUsesAdvertisedCommandAndRefreshesOnAndOffOverHTTP() = runTest {
+        MockWebServer().use { server ->
+            server.start()
+            val api = PortalAPI(server.url("/relay/"), PortalClient(CookieVault(temporary.newFolder())), backgroundScope)
+            val chat = ChatStore("S", api)
+            fun metadata(commands: List<J>) {
+                server.enqueue(ok(EMPTY)); server.enqueue(ok(EMPTY)); server.enqueue(ok(j(commands)))
+                server.enqueue(ok(o("asOfSeq" to 1, "values" to o("sessionListMetadata" to o("blank" to true)))))
+            }
+            metadata(listOf(o("name" to "permission")))
+            chat.loadControls()
+            repeat(4) { server.takeRequest() }
+            assertFalse(chat.state.value.supportsPlanMode)
+            assertFalse(chat.state.value.canChangePlan)
+            val before = server.requestCount
+            assertEquals("Plan mode is not available for this agent preset.", fails<PortalError> { chat.togglePlan() }.message)
+            assertEquals(before, server.requestCount)
+            metadata(listOf(o("name" to "plan")))
+            chat.loadControls()
+            repeat(4) { server.takeRequest() }
+            assertTrue(chat.state.value.canChangePlan)
+            for ((index, line) in listOf("/plan", "/plan off").withIndex()) {
+                server.enqueue(ok(o("commandId" to "C", "result" to o("kind" to "success", "text" to "Changed"))))
+                server.enqueue(ok(o("asOfSeq" to index + 2, "values" to o("plan" to o("active" to (index == 0), "pending" to false)))))
+                chat.togglePlan()
+                val command = server.takeRequest()
+                assertEquals("/relay/api/commands/execute", command.path)
+                assertEquals(o("agentId" to "S", "line" to line, "submittedAttachments" to emptyList<J>()), parse(command.body.readUtf8())["payload"]["args"])
+                assertEquals("/relay/api/session/projections", server.takeRequest().path)
+                assertEquals(index == 0, chat.state.value.planEnabled)
+            }
+            chat.applyProjections(o("asOfSeq" to 4, "values" to o("plan" to o("pending" to true))))
+            fails<PortalError> { chat.togglePlan() }
+            chat.applyProjections(o("asOfSeq" to 5, "values" to o("sessionListMetadata" to o("blank" to false))))
+            fails<PortalError> { chat.togglePlan() }
+            assertEquals(12, server.requestCount)
+        }
     }
 
     @Test fun firstOptimisticMessageLocksPlanAndPresetWithoutAnRpc() = runTest {

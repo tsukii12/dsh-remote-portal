@@ -76,8 +76,9 @@ fun ChatOptionsSheet(chat: ChatStore, onDismiss: () -> Unit) {
             Text(L("Applies to this session, not the default for new sessions.", "仅适用于当前会话，不影响新会话的默认设置。"), style = MaterialTheme.typography.bodySmall)
             OptionsHeading(L("Plan & agent preset", "计划与代理预设"))
             OptionButton(L("Plan mode", "计划模式"), state.planEnabled, !busy && state.canChangePlan) {
-                perform { chat.executeCommand(if (state.planEnabled) "/plan off" else "/plan") }
+                perform { chat.togglePlan() }
             }
+            if (!busy && !state.supportsPlanMode) Text(L("Plan mode is not available for this agent preset.", "此代理预设不支持计划模式。"), style = MaterialTheme.typography.bodySmall)
             state.presetCatalog["presets"].array.forEach { preset ->
                 OptionButton(ChatLabels.preset(preset["id"].text), state.projections["agentPreset"] == preset["id"], !busy && !state.sessionStarted && preset["broken"].string == null) {
                     perform { chat.selectPreset(preset["id"].text) }
