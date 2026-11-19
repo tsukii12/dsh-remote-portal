@@ -941,3 +941,35 @@ for (const [name, framing, peer] of [
 
 
 
+
+test("a bare address:port never falls back to plain TCP, and says to use tcp://", { timeout: 20000 }, async () => {
+  const token = "bare-address-token-0123456789";
+  const { agentPort } = await startRelay([token]);
+  const plain = [];
+  const tunnel = createTunnel({
+    url: `127.0.0.1:${agentPort}`,
+    token,
+    targetPort: () => 9,
+    log: { ...quiet, info: (m) => plain.push(String(m)) },
+  });
+  cleanups.push(() => tunnel.stop());
+  await tunnel.start();
+  await waitFor(() => tunnel.status().lastError === "relay-not-tls", { label: "relay-not-tls reported", timeoutMs: 8000 });
+  // Long enough for the 1 s and 2 s retries: none of them may go out in plain TCP.
+  await new Promise((r) => setTimeout(r, 3500));
+  assert.notEqual(tunnel.status().status, "online");
+  assert.equal(tunnel.status().endpoint, `tls://127.0.0.1:${agentPort}`);
+  assert.equal(tunnel.status().lastError, "relay-not-tls");
+});
+
+test("a connection error does not linger once the tunnel is online", { timeout: 20000 }, async () => {
+  const token = "linger-token-0123456789abcdef";
+  const agentPort = await freePort();
+  const tunnel = createTunnel({ url: `tcp://127.0.0.1:${agentPort}`, token, targetPort: () => 9, log: quiet });
+  cleanups.push(() => tunnel.stop());
+  await tunnel.start();
+  await waitFor(() => tunnel.status().lastError === "ECONNREFUSED", { label: "first attempt refused" });
+  await startRelay([token], { agentPort });
+  await waitFor(() => tunnel.status().status === "online", { label: "tunnel online", timeoutMs: 10000 });
+  assert.equal(tunnel.status().lastError, null);
+});
