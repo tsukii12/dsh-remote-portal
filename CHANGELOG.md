@@ -11,6 +11,10 @@ versions are the plugin's own, not dsh's.
   and build/install documentation in `android/README.md`.
 - Android approvals/questions can be deferred with Later, only interrupt their
   open chat, and remain accessible from pending banners and session badges.
+- Android native parity: refreshed model/thinking/access/plan/preset options,
+  slash commands and session export, editable queue/steer controls, session
+  name/content search and unarchive, and host-folder workspace management.
+  Includes bilingual controls and JVM RPC/projection/failure coverage.
 
 - Phone in landscape and small tablets (768–900 px wide): the floating menu
   button no longer covers the page title (Remote access read "mote access";
@@ -1174,7 +1178,6 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
-
 
 
 

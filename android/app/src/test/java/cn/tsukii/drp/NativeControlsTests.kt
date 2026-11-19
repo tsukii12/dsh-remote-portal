@@ -1,0 +1,224 @@
+package cn.tsukii.drp
+
+import kotlinx.coroutines.*
+import kotlinx.coroutines.test.*
+import okhttp3.mockwebserver.*
+import org.junit.Assert.*
+import org.junit.Rule
+import org.junit.Test
+import org.junit.rules.TemporaryFolder
+import java.util.concurrent.CopyOnWriteArrayList
+
+@OptIn(ExperimentalCoroutinesApi::class)
+class NativeControlsTests {
+    @get:Rule val temporary = TemporaryFolder()
+    private val catalog = parse("""{"default":{"provider":"fake","model":"one","reasoningEffort":"high"},"groups":[{"id":"fake","name":"Fake","models":[{"id":"one","name":"One","reasoning":{"efforts":[{"id":"off","name":"Off"},{"id":"high","name":"High"}]}},{"id":"two","name":"Two","reasoning":{"defaultEffort":"off"}}]}]}""")
+    private fun ok(value: J) = MockResponse().setBody(o("type" to "server-response", "result" to o("ok" to true, "value" to value)).toString())
+
+    @Test fun optionsCommandsAndQueueUseSwiftArgumentShapesOverHTTP() = runTest {
+        val calls = CopyOnWriteArrayList<J>()
+        MockWebServer().use { server ->
+            server.dispatcher = object : Dispatcher() {
+                override fun dispatch(request: RecordedRequest): MockResponse {
+                    val body = parse(request.body.readUtf8()); calls.add(body)
+                    val method = body["method"].text; val args = body["payload"]["args"]
+                    assertEquals("/relay/api/$method", request.path)
+                    assertEquals("POST", request.method)
+                    assertEquals(PortalClient.USER_AGENT, request.getHeader("User-Agent"))
+                    assertEquals(PortalURL.origin(server.url("/")), request.getHeader("Origin"))
+                    return ok(when (method) {
+                        "session/modelCatalog" -> catalog
+                        "session/selectModel" -> o("selected" to args["request"])
+                        "permissionPresets/catalog" -> parse("""{"options":[{"value":"read-only"}]}""")
+                        "agentPresets/list" -> parse("""{"presets":[{"id":"standard"},{"id":"minimal"}]}""")
+                        "commands/list" -> j(listOf(o("name" to "plan", "description" to "Plan")))
+                        "session/projections" -> parse("""{"asOfSeq":1,"values":{"agentPreset":"standard","permissions":{"currentValue":"read-only"},"sessionListMetadata":{"blank":true}}}""")
+                        "commands/execute" -> when (args["line"].text) {
+                            "/bad" -> o("result" to o("kind" to "error", "text" to "Refused"))
+                            "/unknown" -> j(null)
+                            else -> o("result" to o("kind" to "success", "text" to "Changed"))
+                        }
+                        "session/state" -> o("running" to true, "queue" to emptyList<J>())
+                        else -> EMPTY
+                    })
+                }
+            }
+            server.start()
+            val api = PortalAPI(server.url("/relay/"), PortalClient(CookieVault(temporary.newFolder())), backgroundScope)
+            val chat = ChatStore("S", api, scope = backgroundScope)
+            chat.loadModels(); chat.loadControls()
+            assertEquals("One", chat.state.value.modelName); assertEquals("High", chat.state.value.effortName)
+            assertEquals(o("agentId" to "S"), calls.first { it["method"].text == "commands/list" }["payload"]["args"])
+            chat.selectModel("fake", "one")
+            assertEquals("high", calls.last()["payload"]["args"]["request"]["reasoningEffort"].text)
+            chat.selectModel("fake", "one", "off"); chat.selectModel("fake", "one")
+            assertEquals("off", calls.last()["payload"]["args"]["request"]["reasoningEffort"].text)
+            chat.selectModel("fake", "two")
+            assertEquals("off", chat.state.value.currentModel["reasoningEffort"].text)
+            chat.selectModel("fake", "one", useDefaultEffort = true)
+            assertNull(chat.state.value.currentModel["reasoningEffort"].string)
+            chat.selectPermission("read-only"); chat.selectPreset("minimal"); chat.executeCommand("/plan")
+            assertEquals("Changed", chat.state.value.commandNotice)
+            assertTrue(calls.any { it["method"].text == "agentPresets/select" && it["payload"]["args"] == o("agentId" to "S", "agentPreset" to "minimal") })
+            assertEquals(o("agentId" to "S", "line" to "/permission read-only", "submittedAttachments" to emptyList<J>()), calls.first { it["method"].text == "commands/execute" }["payload"]["args"])
+            for (line in listOf("/bad", "/unknown")) fails<PortalError> { chat.executeCommand(line) }
+            chat.addOptimistic("queued", "R")
+            val queue = parse("""{"running":true,"queue":[{"id":"Q","rpcId":"R","placement":"queued","content":[{"type":"text","text":"queued"}]}]}""")
+            chat.applyState(queue)
+            assertTrue(chat.state.value.transcript.isEmpty())
+            for (kind in listOf("edit", "steer", "remove")) {
+                chat.applyState(queue); chat.updateQueue("Q", kind, if (kind == "edit") "changed" else null)
+                val args = calls.last { it["method"].text == "session/updateQueue" }["payload"]["args"]
+                val action = if (kind == "edit") o("kind" to kind, "content" to listOf(o("type" to "text", "text" to "changed"))) else o("kind" to kind)
+                assertEquals(o("request" to o("sessionId" to "S", "itemId" to "Q", "action" to action)), args)
+                assertTrue(chat.state.value.transcript.isEmpty()); assertTrue(chat.state.value.queue.isEmpty())
+            }
+            val before = calls.size
+            fails<PortalError> { chat.updateQueue("Q", "edit", " ") }
+            fails<PortalError> { chat.selectPreset("minimal") }
+            assertEquals(before, calls.size)
+        }
+    }
+
+    @Test fun projectionsRespectCursorSessionPendingAndReset() {
+        val chat = ChatStore("S", StubAPI())
+        chat.applyProjections(parse("""{"asOfSeq":2,"values":{"plan":{"active":false,"pending":true},"agentPreset":"minimal"}}"""))
+        assertTrue(chat.state.value.planEnabled)
+        chat.applyControl(parse("""{"type":"projection","sessionId":"Other","seq":20,"changes":[{"key":"agentPreset","val":"wrong"}]}"""))
+        chat.applyControl(parse("""{"type":"projection","sessionId":"S","seq":1,"changes":[{"key":"agentPreset","val":"stale"}]}"""))
+        chat.applyProjections(o("asOfSeq" to 1, "values" to EMPTY))
+        assertEquals("minimal", chat.state.value.projections["agentPreset"].text)
+        chat.applyControl(parse("""{"type":"projection","sessionId":"S","seq":3,"changes":[{"key":"plan","val":{"active":true,"pending":true}}]}"""))
+        assertFalse(chat.state.value.planEnabled)
+        chat.applyControl(o("type" to "connection-reset"))
+        chat.applyControl(parse("""{"type":"baseline","value":{"projections":{"S":{"asOfSeq":1,"values":{"plan":{"active":true},"sessionListMetadata":{"blank":false}}}}}}"""))
+        assertTrue(chat.state.value.planEnabled); assertTrue(chat.state.value.sessionStarted)
+        chat.applyState(o("running" to false, "queue" to null))
+        assertTrue(chat.state.value.queue.isEmpty()); assertFalse(chat.state.value.running)
+    }
+
+    @Test fun startsAndStopsControlAndStateStreams() = runTest {
+        val api = StubAPI(); val chat = ChatStore("S", api, scope = backgroundScope)
+        chat.start(); runCurrent()
+        assertTrue(api.streams.contains("session/control" to EMPTY))
+        assertTrue(api.streams.contains("session/observeState" to o("request" to o("sessionId" to "S"))))
+        assertEquals(3, api.streams.size)
+        chat.stop(); chat.start(); runCurrent(); assertEquals(6, api.streams.size); chat.stop()
+    }
+
+    @Test fun optionsRefreshMetadataAlsoForEmptyCatalogs() = runTest {
+        for (empty in listOf(false, true)) MockWebServer().use { server ->
+            server.start()
+            val api = PortalAPI(server.url("/"), PortalClient(CookieVault(temporary.newFolder())), backgroundScope)
+            val chat = ChatStore("S", api)
+            repeat(2) { index ->
+                server.enqueue(ok(if (empty) EMPTY else catalog))
+                server.enqueue(ok(o("options" to emptyList<J>())))
+                server.enqueue(ok(o("presets" to if (empty) emptyList<J>() else listOf(o("id" to "minimal")))))
+                server.enqueue(ok(j(emptyList<J>())))
+                server.enqueue(ok(o("asOfSeq" to index, "values" to o("agentPreset" to "standard"))))
+                chat.loadModels(); chat.loadControls()
+                assertEquals(if (empty) 0 else 1, chat.state.value.catalog["groups"].array.size)
+                assertEquals(if (empty) 0 else 1, chat.state.value.presetCatalog["presets"].array.size)
+                assertEquals("standard", chat.state.value.projections["agentPreset"].text)
+            }
+            assertEquals(10, server.requestCount)
+        }
+    }
+
+    @Test fun foldersWorkspaceSearchAndArchiveOverHTTP() = runTest {
+        MockWebServer().use { server ->
+            server.start()
+            val api = PortalAPI(server.url("/relay/"), PortalClient(CookieVault(temporary.newFolder())), backgroundScope)
+            val store = SidebarStore(api)
+            server.enqueue(MockResponse().setResponseCode(303).addHeader("Set-Cookie", "dsh_portal=fixture; Path=/; Max-Age=3600"))
+            api.login("secret"); server.takeRequest()
+            server.enqueue(MockResponse().setBody("""{"ok":true,"listing":{"entries":[],"path":"/host/a b","parent":"/host","roots":[]}}"""))
+            assertTrue(store.folders("/host/a b")["entries"].array.isEmpty())
+            val browse = server.takeRequest()
+            assertEquals("/relay/dsh-remote-portal/fs?path=%2Fhost%2Fa%20b", browse.path)
+            assertEquals("GET", browse.method); assertEquals(PortalClient.USER_AGENT, browse.getHeader("User-Agent"))
+            assertTrue(browse.getHeader("Cookie")!!.contains("dsh_portal=fixture"))
+            assertEquals(PortalURL.origin(server.url("/")), browse.getHeader("Origin"))
+            server.enqueue(MockResponse().setBody("""{"ok":true,"created":{"path":"/host/a b/new"}}"""))
+            assertEquals("/host/a b/new", store.makeFolder("/host/a b", "new")["path"].text)
+            val mkdir = server.takeRequest()
+            assertEquals("/relay/dsh-remote-portal/fs/mkdir", mkdir.path); assertEquals("POST", mkdir.method)
+            assertEquals(o("parent" to "/host/a b", "name" to "new"), parse(mkdir.body.readUtf8()))
+            val workspace = parse("""{"workspace":{"workspaceId":"W","title":"Work","path":"/host/a b","sessionIds":[]}}""")
+            server.enqueue(ok(workspace)); store.createWorkspace("/host/a b")
+            assertEquals(o("request" to o("path" to "/host/a b")), parse(server.takeRequest().body.readUtf8())["payload"]["args"])
+            server.enqueue(ok(workspace)); store.renameWorkspace("W", "Renamed")
+            assertEquals(o("request" to o("workspaceId" to "W", "title" to "Renamed")), parse(server.takeRequest().body.readUtf8())["payload"]["args"])
+            store.applySessions(parse("""{"items":[{"sessionId":"S","projections":{"values":{"title":"Other"}}},{"sessionId":"N","projections":{"values":{"title":"Match name"}}}]}"""))
+            store.setSearchText("match")
+            assertEquals(listOf("N"), store.state.value.groups.flatMap { it.sessions }.map { it.id })
+            server.enqueue(ok(parse("""{"items":[{"sessionId":"S"}]}"""))); store.search("match")
+            assertEquals(o("request" to o("query" to "match")), parse(server.takeRequest().body.readUtf8())["payload"]["args"])
+            assertEquals(2, store.state.value.groups.flatMap { it.sessions }.size)
+            store.applyWorkspace(o("type" to "archived", "archivedSessionIds" to listOf("S"))); store.setArchivedOnly(true)
+            assertEquals(listOf("S"), store.state.value.groups.flatMap { it.sessions }.map { it.id })
+            server.enqueue(ok(o("archivedSessionIds" to emptyList<J>()))); store.unarchive("S"); server.takeRequest()
+            assertTrue(store.state.value.groups.all { it.sessions.isEmpty() })
+            store.setArchivedOnly(false)
+            server.enqueue(MockResponse().setResponseCode(500)); fails<APIError.Http> { store.search("match") }; server.takeRequest()
+            assertEquals(listOf("N"), store.state.value.groups.flatMap { it.sessions }.map { it.id })
+            store.setSearchText(""); val count = server.requestCount; store.search(" "); assertEquals(count, server.requestCount)
+            server.enqueue(ok(EMPTY)); store.deleteWorkspace("W")
+            assertEquals(o("request" to o("workspaceId" to "W")), parse(server.takeRequest().body.readUtf8())["payload"]["args"])
+            assertTrue(store.state.value.workspaces.isEmpty())
+        }
+    }
+
+    @Test fun staleContentSearchDoesNotReplaceNewQuery() = runTest {
+        lateinit var store: SidebarStore
+        val api = object : RPCServing {
+            override suspend fun rpc(method: String, args: J): J {
+                store.setSearchText("new"); return o("items" to listOf(o("sessionId" to "S")))
+            }
+            override fun stream(endpoint: String, args: J) = kotlinx.coroutines.flow.emptyFlow<J>()
+        }
+        store = SidebarStore(api); store.setSearchText("old"); store.search("old")
+        assertTrue(store.state.value.searchResults.isEmpty())
+        store.applySessions(parse("""{"items":[{"sessionId":"S","projections":{"values":{"title":"Before"}}}]}"""))
+        store.applyControl(parse("""{"type":"baseline","value":{"projections":{"S":{"values":{"title":"After"}}}}}"""))
+        assertEquals("After", store.state.value.sessions["S"]?.title)
+    }
+
+    @Test fun exportValidatesZipAndExpiresOnUnauthorized() = runTest {
+        for ((status, body, success) in listOf(Triple(200, "PKfixture", true), Triple(200, "", false), Triple(200, "{}", false), Triple(401, "", false), Triple(500, "Failed", false))) {
+            MockWebServer().use { server ->
+                server.start()
+                val api = PortalAPI(server.url("/relay/"), PortalClient(CookieVault(temporary.newFolder())), backgroundScope)
+                val chat = ChatStore("S", api)
+                server.enqueue(ok(o("result" to o("kind" to "success"))))
+                server.enqueue(MockResponse().setResponseCode(status).setBody(body).setHeader("Content-Type", "application/zip"))
+                if (success) server.enqueue(ok(o("asOfSeq" to 0, "values" to EMPTY)))
+                if (success) assertArrayEquals(body.toByteArray(), chat.executeCommand("/export")) else fails<APIError> { chat.executeCommand("/export") }
+                server.takeRequest()
+                val request = server.takeRequest()
+                assertEquals("/relay/api/session.export?sessionId=S", request.path); assertEquals("GET", request.method)
+                assertEquals(PortalClient.USER_AGENT, request.getHeader("User-Agent")); assertEquals(PortalURL.origin(server.url("/")), request.getHeader("Origin"))
+                assertEquals(status == 401, api.sessionExpired.value)
+            }
+        }
+    }
+
+    @Test fun httpFailuresDoNotMutateOptionsOrWorkspaceState() = runTest {
+        for (status in listOf(200, 401, 404, 500)) MockWebServer().use { server ->
+            server.dispatcher = object : Dispatcher() {
+                override fun dispatch(request: RecordedRequest) = MockResponse().setResponseCode(status).setBody(
+                    if (request.path!!.contains("/api/")) """{"type":"server-response","result":{"ok":false,"error":{"code":"refused","message":"Refused"}}}"""
+                    else """{"ok":false,"error":"Refused"}""")
+            }
+            server.start()
+            val api = PortalAPI(server.url("/"), PortalClient(CookieVault(temporary.newFolder())), backgroundScope)
+            val store = SidebarStore(api); val chat = ChatStore("S", api)
+            fails<APIError> { store.folders() }; fails<APIError> { store.makeFolder("/host", "new") }
+            fails<APIError> { store.createWorkspace("/host") }; fails<APIError> { chat.selectModel("p", "m") }
+            fails<APIError> { chat.loadModels() }; fails<APIError> { chat.loadControls() }; fails<APIError> { chat.executeCommand("/plan") }
+            assertTrue(store.state.value.workspaces.isEmpty()); assertEquals(EMPTY, chat.state.value.selectedModel)
+            assertEquals(status == 401, api.sessionExpired.value)
+        }
+    }
+}

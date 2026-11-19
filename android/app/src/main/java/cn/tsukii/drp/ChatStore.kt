@@ -44,7 +44,16 @@ object CompactStream {
 }
 data class ChatState(val transcript: List<TranscriptItem> = emptyList(), val inProgress: TranscriptItem? = null,
     val running: Boolean = false, val hasMore: Boolean = false, val loaded: Boolean = false,
-    val catalog: J = EMPTY, val selectedModel: J = EMPTY, val error: String? = null)
+    val catalog: J = EMPTY, val selectedModel: J = EMPTY, val error: String? = null,
+    val projections: J = EMPTY, val queue: List<J> = emptyList(), val permissionCatalog: J = EMPTY,
+    val presetCatalog: J = EMPTY, val commands: List<J> = emptyList(), val commandNotice: String? = null) {
+    val currentModel: J get() = listOf("selected", "next", "lastUsed").map { selectedModel[it] }.firstOrNull { it["model"].string != null } ?: catalog["default"]
+    val modelDefinition: J get() = catalog["groups"].array.find { it["id"] == currentModel["provider"] }?.get("models")?.array?.find { it["id"] == currentModel["model"] } ?: EMPTY
+    val modelName: String get() = modelDefinition["name"].string ?: currentModel["model"].string ?: L("Choose model", "选择模型")
+    val effortName: String get() = currentModel["reasoningEffort"].string?.let { id -> modelDefinition["reasoning"]["efforts"].array.find { it["id"].text == id }?.get("name")?.string ?: id } ?: L("Default", "默认")
+    val sessionStarted: Boolean get() = projections["sessionListMetadata"]["blank"] == j(false) || transcript.any { it.role == "user" } || running
+    val planEnabled: Boolean get() = if (projections["plan"]["pending"].boolean) !projections["plan"]["active"].boolean else projections["plan"]["active"].boolean
+}
 
 class ChatStore(val sessionID: String, private val api: RPCServing, private val events: RemoteEvents? = null,
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)) {
@@ -52,6 +61,8 @@ class ChatStore(val sessionID: String, private val api: RPCServing, private val 
     val state = mutable.asStateFlow()
     private var observer: String? = null
     private var followTask: Job? = null
+    private var controlTasks = emptyList<Job>()
+    private var projectionCursor = -1
     private val history = sortedMapOf<Int, J>()
     private var optimistic = listOf<TranscriptItem>()
     private var snapshotCursor: Int? = null
@@ -67,10 +78,35 @@ class ChatStore(val sessionID: String, private val api: RPCServing, private val 
             try { api.stream("session/follow", o("request" to o("address" to address, "assistantStream" to true, "maxMessages" to 50))).collect(::apply) }
             catch (e: CancellationException) { throw e } catch (e: Exception) { mutable.value = state.value.copy(error = e.message) }
         }
+        controlTasks = listOf("session/control", "session/observeState").map { endpoint -> scope.launch {
+            try { api.stream(endpoint, if (endpoint == "session/control") EMPTY else o("request" to o("sessionId" to sessionID))).collect {
+                if (endpoint == "session/control") applyControl(it) else if (it["type"].text != "connection-reset") applyState(it)
+            } } catch (e: CancellationException) { throw e } catch (e: Exception) { mutable.value = state.value.copy(error = e.message) }
+        } }
         applyState(api.rpc("session/state", o("request" to o("sessionId" to sessionID))))
     }
-    fun stop() { followTask?.cancel(); followTask = null; observer?.let { events?.removeObserver(it) }; observer = null }
-    fun applyState(value: J) { mutable.value = state.value.copy(running = value["running"].boolean) }
+    fun stop() { followTask?.cancel(); followTask = null; controlTasks.forEach { it.cancel() }; controlTasks = emptyList(); observer?.let { events?.removeObserver(it) }; observer = null }
+    fun applyState(value: J) { mutable.value = state.value.copy(running = value["running"].boolean, queue = value["queue"].array); rebuild() }
+    fun applyProjections(snapshot: J) {
+        val cursor = snapshot["asOfSeq"].int ?: -1
+        if (cursor < projectionCursor) return
+        projectionCursor = cursor
+        mutable.value = state.value.copy(projections = snapshot["values"], selectedModel = snapshot["values"]["modelSelection"])
+    }
+    fun applyControl(frame: J) {
+        when (frame["type"].text) {
+            "connection-reset" -> projectionCursor = -1
+            "baseline" -> frame["value"]["projections"][sessionID].takeIf { it != JsonNull }?.let(::applyProjections)
+            "projection" -> if (frame["sessionId"].text == sessionID) {
+                val seq = frame["seq"].int ?: return
+                if (seq < projectionCursor) return
+                projectionCursor = seq
+                var values = state.value.projections
+                frame["changes"].array.forEach { values = values.with(it["key"].text, it["val"]) }
+                mutable.value = state.value.copy(projections = values, selectedModel = values["modelSelection"])
+            }
+        }
+    }
     fun applyStatusEvent(frame: J) {
         if (frame["type"].text == "ready") scope.launch {
             try { applyState(api.rpc("session/state", o("request" to o("sessionId" to sessionID)))) }
@@ -90,7 +126,8 @@ class ChatStore(val sessionID: String, private val api: RPCServing, private val 
                 history.clear(); snapshotCursor = frame["cursor"].int
                 frame["records"].array.forEach { record -> record["event"]["seq"].int?.let { history[it] = record["event"] } }
                 attemptID = null; pendingCommitSeq = null
-                mutable.value = state.value.copy(hasMore = frame["hasMore"].boolean, selectedModel = frame["projections"]["values"]["modelSelection"], inProgress = null)
+                applyProjections(frame["projections"])
+                mutable.value = state.value.copy(hasMore = frame["hasMore"].boolean, inProgress = null)
                 val baseline = frame["assistantStream"]
                 revision = baseline["revision"].int ?: -1
                 val attempt = baseline["activeAttempt"]
@@ -180,7 +217,8 @@ class ChatStore(val sessionID: String, private val api: RPCServing, private val 
             } else items.add(TranscriptItem("result:${result["seq"].int ?: 0}", "tool", message["content"].array.map(::TranscriptBlock), result["seq"].int))
         }
         val positions = surface.mapIndexedNotNull { index, event -> event["seq"].int?.let { it to index } }.toMap()
-        mutable.value = state.value.copy(transcript = items.sortedBy { positions[it.seq] ?: 0 } + optimistic)
+        val queued = state.value.queue.mapNotNull { it["rpcId"].string }.toSet()
+        mutable.value = state.value.copy(transcript = items.sortedBy { positions[it.seq] ?: 0 } + optimistic.filterNot { it.requestID in queued })
     }
     suspend fun send(text: String, steer: Boolean = false): String {
         if (text.isBlank()) throw PortalError(L("Enter a message.", "请输入消息。"))
@@ -197,10 +235,47 @@ class ChatStore(val sessionID: String, private val api: RPCServing, private val 
     suspend fun loadModels() {
         val value = api.rpc("session/modelCatalog"); mutable.value = state.value.copy(catalog = value)
     }
-    suspend fun selectModel(provider: String, model: String, reasoningEffort: String? = null) {
+    suspend fun selectModel(provider: String, model: String, reasoningEffort: String? = null, useDefaultEffort: Boolean = false) {
         var request = o("sessionId" to sessionID, "provider" to provider, "model" to model)
-        if (reasoningEffort != null) request = request.with("reasoningEffort", reasoningEffort)
+        val current = state.value.currentModel
+        val definition = state.value.catalog["groups"].array.find { it["id"].text == provider }?.get("models")?.array?.find { it["id"].text == model } ?: EMPTY
+        val effort = if (useDefaultEffort) null else reasoningEffort ?: if (current["provider"].text == provider && current["model"].text == model) current["reasoningEffort"].string else definition["reasoning"]["defaultEffort"].string
+        if (effort != null) request = request.with("reasoningEffort", effort)
         val value = api.rpc("session/selectModel", o("request" to request)); mutable.value = state.value.copy(selectedModel = value)
+    }
+    suspend fun loadControls() {
+        mutable.value = state.value.copy(permissionCatalog = api.rpc("permissionPresets/catalog"))
+        mutable.value = state.value.copy(presetCatalog = api.rpc("agentPresets/list"))
+        mutable.value = state.value.copy(commands = api.rpc("commands/list", o("agentId" to sessionID)).array)
+        refreshProjections()
+    }
+    suspend fun refreshProjections() { applyProjections(api.rpc("session/projections", o("request" to o("sessionId" to sessionID)))) }
+    suspend fun executeCommand(line: String): ByteArray? {
+        mutable.value = state.value.copy(commandNotice = null)
+        val response = api.rpc("commands/execute", o("agentId" to sessionID, "line" to line, "submittedAttachments" to emptyList<J>()))
+        val result = response["result"]
+        if (result["kind"].string == null) throw PortalError(L("Unknown command. Choose a suggestion or send ordinary text.", "未知命令，请选择建议或发送普通文本。"))
+        if (result["kind"].text == "error") throw PortalError(result["text"].string ?: L("Command failed.", "命令执行失败。"))
+        mutable.value = state.value.copy(commandNotice = result["text"].string)
+        val exported = if (line.trim() == "/export") api.exportSession(sessionID) else null
+        refreshProjections()
+        return exported
+    }
+    suspend fun selectPermission(preset: String) { executeCommand("/permission $preset") }
+    suspend fun selectPreset(preset: String) {
+        if (state.value.sessionStarted) throw PortalError(L("Choose a preset before the first message.", "请在发送第一条消息前选择预设。"))
+        api.rpc("agentPresets/select", o("agentId" to sessionID, "agentPreset" to preset)); loadControls()
+    }
+    suspend fun updateQueue(id: String, kind: String, text: String? = null) {
+        var action = o("kind" to kind)
+        if (kind == "edit") {
+            if (text.isNullOrBlank()) throw PortalError(L("Enter a message.", "请输入消息。"))
+            action = action.with("content", listOf(o("type" to "text", "text" to text)))
+        }
+        val rpcID = state.value.queue.find { it["id"].text == id }?.get("rpcId")?.string
+        api.rpc("session/updateQueue", o("request" to o("sessionId" to sessionID, "itemId" to id, "action" to action)))
+        if (rpcID != null) optimistic = optimistic.filterNot { it.requestID == rpcID }
+        applyState(api.rpc("session/state", o("request" to o("sessionId" to sessionID))))
     }
     suspend fun loadOlder() {
         if (!state.value.hasMore) return

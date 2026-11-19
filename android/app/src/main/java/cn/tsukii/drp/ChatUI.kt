@@ -1,11 +1,14 @@
 package cn.tsukii.drp
 
+import android.content.Intent
+import androidx.core.content.FileProvider
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
@@ -21,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -29,6 +33,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
+import java.io.File
 
 @Composable
 fun ChatScreen(chat: ChatStore) {
@@ -38,12 +43,17 @@ fun ChatScreen(chat: ChatStore) {
     var text by rememberSaveable { mutableStateOf("") }
     var models by remember { mutableStateOf(false) }
     var sending by remember { mutableStateOf(false) }
+    var steer by remember { mutableStateOf(false) }
+    var editingQueue by remember { mutableStateOf<String?>(null) }
+    var queuedText by remember { mutableStateOf("") }
+    var exported by remember { mutableStateOf<ByteArray?>(null) }
+    val context = LocalContext.current
     var loadingOlder by remember { mutableStateOf(false) }
     val list = rememberLazyListState()
     var follow by remember { mutableStateOf(true) }
     val bottom by remember { derivedStateOf { !list.canScrollForward } }
     fun perform(action: suspend () -> Unit) { scope.launch { try { action() } catch (e: CancellationException) { throw e } catch (e: Exception) { error = e.message } } }
-    LaunchedEffect(chat) { try { chat.start(); chat.loadModels() } catch (e: CancellationException) { throw e } catch (e: Exception) { error = e.message } }
+    LaunchedEffect(chat) { try { chat.start(); chat.loadModels(); chat.loadControls() } catch (e: CancellationException) { throw e } catch (e: Exception) { error = e.message } }
     DisposableEffect(chat) { onDispose { chat.stop() } }
     LaunchedEffect(list.isScrollInProgress, bottom) { if (list.isScrollInProgress) follow = bottom }
     val progress = state.inProgress
@@ -75,29 +85,78 @@ fun ChatScreen(chat: ChatStore) {
         }
         HorizontalDivider()
         Column(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp)) {
-            Box {
-                val selection = state.selectedModel
-                val label = selection["selected"]["model"].string ?: selection["next"]["model"].string ?: selection["lastUsed"]["model"].string ?: state.catalog["default"]["model"].string ?: L("Model", "模型")
-                TextButton(onClick = { models = true }) { Text(label); Icon(Icons.Default.KeyboardArrowDown, null) }
-                DropdownMenu(models, onDismissRequest = { models = false }) {
-                    state.catalog["groups"].array.forEach { group ->
-                        Text(group["name"].string ?: group["id"].text, Modifier.padding(horizontal = 16.dp, vertical = 8.dp), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
-                        group["models"].array.forEach { model -> DropdownMenuItem(text = { Text(model["name"].string ?: model["id"].text) }, onClick = { models = false; perform { chat.selectModel(group["id"].text, model["id"].text) } }) }
+            if (state.queue.isNotEmpty()) Column(Modifier.fillMaxWidth().heightIn(max = 140.dp).verticalScroll(rememberScrollState())) {
+                Text(L("Queued messages", "排队消息"), style = MaterialTheme.typography.labelMedium)
+                state.queue.forEach { item ->
+                    var menu by remember(item["id"].text) { mutableStateOf(false) }
+                    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                        Column(Modifier.weight(1f)) {
+                            Text(if (item["placement"].text == "steering") L("Steering", "引导中") else L("Queued", "排队中"), style = MaterialTheme.typography.labelSmall)
+                            Text(item["content"].array.joinToString("\n") { it["text"].text }, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                        }
+                        Box {
+                            TextButton(onClick = { menu = true }) { Text(L("Actions", "操作")) }
+                            DropdownMenu(menu, onDismissRequest = { menu = false }) {
+                                DropdownMenuItem(text = { Text(L("Edit", "编辑")) }, enabled = item["content"].array.all { it["type"].text == "text" }, onClick = {
+                                    menu = false; queuedText = item["content"].array.joinToString("\n") { it["text"].text }; editingQueue = item["id"].text
+                                })
+                                DropdownMenuItem(text = { Text(L("Steer now", "立即引导")) }, onClick = { menu = false; perform { chat.updateQueue(item["id"].text, "steer") } })
+                                DropdownMenuItem(text = { Text(L("Remove", "移除")) }, onClick = { menu = false; perform { chat.updateQueue(item["id"].text, "remove") } })
+                            }
+                        }
                     }
-                    ErrorPresentation.catalogError(state.catalog)?.let { ErrorBanner(it) }
-                    DropdownMenuItem(text = { Text(L("Refresh models", "刷新模型")) }, onClick = { models = false; perform { chat.loadModels() } })
                 }
+            }
+            state.commandNotice?.let { Text(it, maxLines = 3, style = MaterialTheme.typography.bodySmall) }
+            exported?.let { bytes -> TextButton(onClick = { perform {
+                val directory = File(context.cacheDir, "exports").apply { mkdirs() }
+                val file = File.createTempFile("DRP-session-", ".zip", directory).apply { writeBytes(bytes) }
+                val uri = FileProvider.getUriForFile(context, context.packageName + ".files", file)
+                context.startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).apply {
+                    type = "application/zip"; putExtra(Intent.EXTRA_STREAM, uri); addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }, L("Share session log", "分享会话日志")))
+            } }) { Text(L("Share session log", "分享会话日志")) } }
+            if (text.startsWith("/")) Column(Modifier.fillMaxWidth().heightIn(max = 150.dp).verticalScroll(rememberScrollState())) {
+                val query = text.drop(1).substringBefore(' ')
+                val suggestions = (listOf(o("name" to "model", "description" to L("Choose model and thinking effort", "选择模型与思考强度"))) + state.commands).filter { query.isEmpty() || it["name"].text.startsWith(query) }
+                suggestions.forEach { command -> TextButton(onClick = {
+                    if (command["name"].text == "model") { text = ""; models = true }
+                    else text = "/" + command["name"].text + if (command["input"] == kotlinx.serialization.json.JsonNull) "" else " "
+                }, modifier = Modifier.fillMaxWidth()) {
+                    Column(Modifier.fillMaxWidth()) {
+                        Text("/" + command["name"].text + " " + command["input"]["hint"].text)
+                        Text(command["description"].text, style = MaterialTheme.typography.bodySmall, maxLines = 2)
+                    }
+                } }
+                if (suggestions.isEmpty()) Text(L("No matching commands", "没有匹配的命令"), style = MaterialTheme.typography.bodySmall)
+            }
+            Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                AssistChip(onClick = { models = true }, label = { Text(L("Model: ", "模型：") + state.modelName + " · " + state.effortName) })
+                AssistChip(onClick = { models = true }, label = { Text(ChatLabels.permission(state.projections["permissions"]["currentValue"].text).ifEmpty { L("Access mode", "访问模式") }) })
+                AssistChip(onClick = { models = true }, label = { Text(if (state.planEnabled) L("Plan mode", "计划模式") else ChatLabels.preset(state.projections["agentPreset"].string ?: "standard")) })
             }
             Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(text, { text = it }, Modifier.weight(1f), placeholder = { Text(L("Message…", "输入消息…")) }, minLines = 1, maxLines = 6, shape = MaterialTheme.shapes.large)
                 if (state.running) FilledTonalButton(onClick = { perform { chat.cancel() } }, contentPadding = PaddingValues(14.dp)) { Text("■"); Text(L(" Stop", " 停止")) }
                 FilledIconButton(onClick = {
                     val message = text.trim(); text = ""; follow = true
-                    perform { sending = true; try { chat.send(message) } finally { sending = false } }
-                }, enabled = text.isNotBlank() && !sending) { Icon(Icons.AutoMirrored.Filled.Send, L("Send", "发送")) }
+                    perform { sending = true; try {
+                        if (message == "/model") models = true
+                        else if (message.startsWith("/")) { exported = null; exported = chat.executeCommand(message) }
+                        else chat.send(message, steer)
+                    } catch (e: Exception) { if (text.isEmpty()) text = message; throw e } finally { sending = false } }
+                }, enabled = text.isNotBlank() && !sending) { Icon(Icons.AutoMirrored.Filled.Send, if (state.running) { if (steer) L("Steer", "立即引导") else L("Queue message", "消息排队") } else L("Send", "发送")) }
+            }
+            if (state.running) Row(verticalAlignment = Alignment.CenterVertically) {
+                Switch(steer, { steer = it }); Spacer(Modifier.width(8.dp)); Text(L("Steer immediately instead of queue", "立即引导而不是排队"), style = MaterialTheme.typography.bodySmall)
             }
         }
     }
+    if (models) ChatOptionsSheet(chat) { models = false }
+    editingQueue?.let { id -> AlertDialog(onDismissRequest = { editingQueue = null }, title = { Text(L("Edit queued message", "编辑排队消息")) },
+        text = { OutlinedTextField(queuedText, { queuedText = it }, label = { Text(L("Message", "消息")) }) },
+        confirmButton = { TextButton(enabled = queuedText.isNotBlank(), onClick = { perform { chat.updateQueue(id, "edit", queuedText); editingQueue = null } }) { Text(L("Save", "保存")) } },
+        dismissButton = { TextButton(onClick = { editingQueue = null }) { Text(L("Cancel", "取消")) } }) }
 }
 
 @Composable

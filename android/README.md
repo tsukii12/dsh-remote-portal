@@ -30,14 +30,30 @@ preserve the full relay path prefix. Use trusted networks for plain HTTP.
 - Saved server names/addresses, editing/deletion, fastest-address health race,
   LAN/Public latency labels, pairing and password login.
 - Persistent per-server cookies, logout and automatic sign-in expiration.
-- Workspace/session drawer, pinned sessions, new chats, rename/archive and refresh.
+- Workspace/session drawer, pinned sessions, new chats, rename/archive/unarchive
+  and refresh. Search locally by name or enable message-content search under
+  **View options**; content-search failures retain name matches. View archived
+  sessions from the same menu.
+- **Add workspace** browses folders on the dsh host (roots, parent, direct paths
+  and new folders). On older portals, enter an explicit host path and use it.
+  Workspace menus rename or remove registrations, never host files.
 - Streaming chat, Markdown and copyable horizontally scrolling code, expandable
   thinking and tool cards with command summaries and running/success/error status.
 - Exact-input approval sheets, single/multiple-choice questions and custom answers.
   Requests only auto-open for the current chat; Later defers them without answering.
   Pending banners and drawer badges let you return to requests in any known session.
-- Model selection, cancellation, history pagination, reconnect indicators and
-  jump-to-bottom behavior.
+- Composer chips show the model, thinking effort, access mode and agent preset.
+  Chat options refresh on opening: provider-grouped models, explicit/default
+  effort, session access, plan mode and agent presets before the first message.
+  Reselecting a model preserves its explicit effort. Full host access requires
+  confirmation.
+- Type `/` for host command suggestions. Commands use `commands/execute`, not
+  prompts; `/model` opens options and `/export` downloads the portal ZIP and
+  offers Android's native share sheet with a temporary read-only content URI.
+- While running, queue or steer new messages separately from Stop. The queue
+  dock edits, removes or steers host queue items and reconciles optimistic sends
+  by `rpcId`.
+- Cancellation, history pagination, reconnect indicators and jump-to-bottom.
 - English/Chinese UI, system light/dark theme, and friendly errors with raw Details.
 
 ## Tests
@@ -66,6 +82,7 @@ The native iOS client is the behavioral reference. Kotlin files live in
 | `RemoteEvents.swift`, `SidebarStore.swift` | `RemoteEvents.kt`, `SidebarStore.kt`: shared events and navigation state |
 | `ChatStore.swift` | `ChatStore.kt`: compact stream/surface reducers, optimistic messages, tool-result pairing |
 | `WorkspaceView.swift`, `ChatView.swift` | `WorkspaceUI.kt`, `ChatUI.kt`: drawer, transcript and composer |
+| `ChatOptionsView.swift`, `HostFolderView.swift` | `ChatOptionsUI.kt`, `HostFolderUI.kt`: native options and host folder sheets |
 | `InteractionSheet.swift` | `InteractionUI.kt`, `Presentation.kt`: approval input loading and question drafts |
 | Android interaction routing | `InteractionRouting.kt`: current-chat auto-presentation, deferred requests and session badges |
 | `MarkdownView.swift` | `ChatUI.kt`, `Presentation.kt`: native Markdown and tool presentation |
@@ -94,3 +111,15 @@ Offline JVM tests port the iOS Connection, NativeState, Presentation, Transport 
 using the original sanitized JSON fixtures and MockWebServer HTTP/WebSocket listeners. iOS-specific
 bundle/permission checks are replaced with Android branding/manifest checks. No live service test is
 enabled and no real passwords/tokens are included.
+
+`NativeControlsTests` ports the latest iOS options/commands/queue/workspace tests:
+exact RPC arguments, projection cursor ordering and resets, metadata refresh,
+queue reconciliation, archive/search filtering, Portal folder HTTP routes and
+ZIP validation, plus empty/error/401 cases. `session/control` and
+`session/observeState` follow changes while a chat is open.
+
+侧栏可按名称或消息内容搜索、查看与恢复归档会话；工作区支持主机文件夹浏览、
+新建文件夹、重命名和移除记录（不删除文件）。输入区显示模型和思考强度；聊天
+选项在打开时刷新，并提供访问模式、计划模式和首次发送前的代理预设。输入 `/`
+查看命令建议，`/export` 分享会话日志；运行中可排队或立即引导消息，队列支持
+编辑、移除和引导，停止按钮保持独立。

@@ -12,9 +12,12 @@ data class SessionRow(val id: String, val title: String, val running: Boolean, v
 }
 data class SessionGroup(val id: String, val title: String, val sessions: List<SessionRow>)
 data class SidebarState(val workspaces: List<WorkspaceRow> = emptyList(), val sessions: Map<String, SessionRow> = emptyMap(),
-    val archivedIDs: List<String> = emptyList(), val pinnedIDs: List<String> = emptyList(), val loaded: Boolean = false, val error: String? = null) {
+    val archivedIDs: List<String> = emptyList(), val pinnedIDs: List<String> = emptyList(), val loaded: Boolean = false, val error: String? = null,
+    val searchText: String = "", val archivedOnly: Boolean = false, val searchResults: List<J> = emptyList()) {
     val groups: List<SessionGroup> get() {
-        val visible = sessions.values.filter { it.id !in archivedIDs }
+        val query = searchText.trim()
+        val found = searchResults.mapNotNull { it["sessionId"].string }.toSet()
+        val visible = sessions.values.filter { (it.id in archivedIDs) == archivedOnly && (query.isEmpty() || it.title.contains(query, ignoreCase = true) || it.id in found) }
         val assigned = (workspaces.flatMap { it.sessionIDs } + pinnedIDs).toSet()
         return listOf(SessionGroup("pinned", L("Pinned", "置顶"), pinnedIDs.mapNotNull { id -> visible.find { it.id == id } })) +
             workspaces.map { workspace -> SessionGroup(workspace.id, workspace.title, workspace.sessionIDs.mapNotNull { id -> visible.find { it.id == id && id !in pinnedIDs } }) } +
@@ -57,7 +60,7 @@ class SidebarStore(private val api: RPCServing, private val scope: CoroutineScop
     }
     fun applyControl(frame: J) {
         when (frame["type"].text) {
-            "baseline" -> frame["projections"].obj.forEach { (id, value) -> updateProjections(id, value["values"]) }
+            "baseline" -> (if (frame["value"] == kotlinx.serialization.json.JsonNull) frame else frame["value"])["projections"].obj.forEach { (id, value) -> updateProjections(id, value["values"]) }
             "projection" -> {
                 val id = frame["sessionId"].text
                 var values = state.value.sessions[id]?.projections ?: EMPTY
@@ -96,4 +99,31 @@ class SidebarStore(private val api: RPCServing, private val scope: CoroutineScop
         val value = api.rpc(if (pinned) "workspace/pinSession" else "workspace/unpinSession", o("request" to o("sessionId" to id)))
         mutable.value = state.value.copy(pinnedIDs = value["pinnedSessionIds"].array.map { it.text })
     }
+    fun setSearchText(text: String) { if (text != state.value.searchText) mutable.value = state.value.copy(searchText = text, searchResults = emptyList()) }
+    fun setArchivedOnly(value: Boolean) { mutable.value = state.value.copy(archivedOnly = value) }
+    fun clearSearchResults() { mutable.value = state.value.copy(searchResults = emptyList()) }
+    suspend fun search(query: String) {
+        clearSearchResults()
+        if (query.isBlank()) return
+        val value = api.rpc("session/search", o("request" to o("query" to query)))
+        if (state.value.searchText == query) mutable.value = state.value.copy(searchResults = value["items"].array)
+    }
+    suspend fun unarchive(id: String) {
+        val value = api.rpc("workspace/unarchiveSession", o("request" to o("sessionId" to id)))
+        mutable.value = state.value.copy(archivedIDs = value["archivedSessionIds"].array.map { it.text })
+    }
+    suspend fun createWorkspace(path: String) {
+        val value = api.rpc("workspace/create", o("request" to o("path" to path)))
+        applyWorkspace(o("type" to "upsert", "workspace" to value["workspace"]))
+    }
+    suspend fun renameWorkspace(id: String, title: String) {
+        val value = api.rpc("workspace/rename", o("request" to o("workspaceId" to id, "title" to title)))
+        applyWorkspace(o("type" to "upsert", "workspace" to value["workspace"]))
+    }
+    suspend fun deleteWorkspace(id: String) {
+        api.rpc("workspace/delete", o("request" to o("workspaceId" to id)))
+        mutable.value = state.value.copy(workspaces = state.value.workspaces.filterNot { it.id == id })
+    }
+    suspend fun folders(path: String = ""): J = api.portal("fs", if (path.isEmpty()) emptyMap() else mapOf("path" to path))["listing"]
+    suspend fun makeFolder(parent: String, name: String): J = api.portal("fs/mkdir", body = o("parent" to parent, "name" to name))["created"]
 }
