@@ -27,6 +27,13 @@ versions are the plugin's own, not dsh's.
 - DRP now preserves gateway sign-in failure reasons, localizes client errors and the local-network permission prompt, and recovers approval-input loading after failures. Real-listener tests cover authentication, isolated logout and approval requests.
 - DRP 现保留网关登录失败原因，提供双语客户端错误和本地网络权限提示，并支持工具授权输入加载失败后的重试。真实监听器测试覆盖认证、独立退出登录和工具授权请求。
 
+- Folder picker and password: the host's errors for an invalid folder name, a
+  folder that can't be created, a missing folder, a file instead of a folder,
+  and a password over 200 characters now show in the panel's language instead
+  of raw English ("invalid folder name", "cannot create folder: EACCES", ...).
+- README: the update steps now cover installs made with `install.sh` /
+  `install.ps1` (`git pull` in the checkout, then restart), and say that
+  `dsh plugin` needs pnpm on PATH.
 - `install.sh` with no `-p` no longer stops at a missing desktop profile on a
   server that only runs dsh web: it skips profiles that don't exist and installs
   into the rest, and fails only if there are none. The installers' closing hint
@@ -1206,7 +1213,6 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
-
 
 
 
