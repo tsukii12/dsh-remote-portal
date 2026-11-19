@@ -52,6 +52,8 @@ import { dirname, join } from "node:path";
 
 /** Printed at startup and by --version, so an installed copy is identifiable. */
 const RELAY_VERSION = "0.6.2";
+const DEFAULT_TIMEOUT_MS = 120_000;
+const HEADER_END = Buffer.from("\r\n\r\n");
 
 const FRAME = {
   HELLO: 1,
@@ -241,6 +243,7 @@ function parseArgs(argv) {
       case "prefix": out.prefix = String(take()); break;
       case "max-streams": out.maxStreams = Number(take()); break;
       case "request-timeout": out.requestTimeout = Number(take()); break;
+      case "http-idle-timeout": out.httpIdleTimeout = Number(take()); break;
       case "version": out.version = true; break;
       case "help": out.help = true; break;
       default: break;
@@ -265,7 +268,8 @@ dsh-remote-portal relay
   --public-url <url>     how visitors reach this relay, e.g. https://dsh.example.com
   --prefix <path>        routing prefix                     (default /__t)
   --max-streams <n>      concurrent streams per tunnel      (default 256)
-  --request-timeout <ms> upstream timeout                   (default 120000)
+  --request-timeout <ms> upstream response header deadline  (default 120000)
+  --http-idle-timeout <ms> upstream HTTP response idle timeout (default 120000)
   --help
 
 Put this behind Caddy/nginx on 443 for certificates (see docs/DEPLOY-SERVER.md),
@@ -344,6 +348,7 @@ function createRelay(config) {
   /** tunnelId → tunnel state */
   const tunnels = new Map();
   const blockedVisitors = new WeakMap();
+  const httpIdleTimeout = config.httpIdleTimeout ?? DEFAULT_TIMEOUT_MS;
 
   function pauseForVisitor(agent, visitor) {
     if (agent.destroyed || visitor.destroyed || visitor.writableFinished) return;
@@ -452,6 +457,13 @@ function cachePut(key, entry) {
 
   // ── agent side ───────────────────────────────────────────────────────────
 
+  function closeStreams(tunnel) {
+    for (const stream of tunnel.streams.values()) {
+      try { stream.fail(502, "tunnel disconnected"); } catch { /* gone */ }
+    }
+    tunnel.streams.clear();
+  }
+
   /**
    * One agent connection = one tunnel. The first frame must be HELLO with a
    * token we know; everything after that is stream traffic for that tunnel id.
@@ -472,10 +484,7 @@ function cachePut(key, entry) {
         tunnel.lastDropReason = String(reason || "unknown");
         tunnel.lastDropAt = Date.now();
         tunnel.reconnects = (tunnel.reconnects || 0) + 1;
-        for (const stream of tunnel.streams.values()) {
-          try { stream.fail(502, "tunnel disconnected"); } catch { /* gone */ }
-        }
-        tunnel.streams.clear();
+        closeStreams(tunnel);
         log.warn(`tunnel ${tunnel.id} disconnected (${reason})`);
       }
       try { socket.destroy(); } catch { /* gone */ }
@@ -509,6 +518,7 @@ function cachePut(key, entry) {
           // A second agent for the same token replaces the first: the old one is
           // almost certainly a half-dead connection after a network change.
           try { tunnel.socket.destroy(); } catch { /* gone */ }
+          closeStreams(tunnel);
           tunnel.reconnects = (tunnel.reconnects || 0) + 1;
           tunnel.lastDropReason = "replaced by a new connection";
           tunnel.lastDropAt = Date.now();
@@ -612,7 +622,8 @@ function cachePut(key, entry) {
   }
 
   function openStream(tunnel, handlers) {
-    if (!tunnel.socket || tunnel.socket.destroyed) {
+    const agent = tunnel.socket;
+    if (!agent || agent.destroyed) {
       handlers.fail(503, "the dsh host is not connected to the relay");
       return null;
     }
@@ -620,31 +631,52 @@ function cachePut(key, entry) {
       handlers.fail(503, "too many concurrent streams");
       return null;
     }
-    let id = 1;
-    while (tunnel.streams.has(id)) id += 1;
+    let id;
+    do {
+      id = tunnel.nextStreamId ?? 1;
+      tunnel.nextStreamId = id === 0xffffffff ? 1 : id + 1;
+    } while (tunnel.streams.has(id));
+    let timer;
+    let closed = false;
+    function release() {
+      if (closed) return;
+      closed = true;
+      clearTimeout(timer);
+      tunnel.streams.delete(id);
+    }
+    function send(type, payload) {
+      if (closed || agent.destroyed) return false;
+      return agent.write(encodeFrame(type, id, payload));
+    }
+    function deadline(ms, reason) {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        try {
+          send(FRAME.CLOSE, JSON.stringify({ reason }));
+          handlers.fail(504, reason);
+        } finally {
+          release();
+        }
+      }, ms);
+      timer.unref?.();
+    }
     const stream = {
       id,
       onHead: handlers.onHead,
       onBody: handlers.onBody,
       onEnd: handlers.onEnd,
       fail: handlers.fail,
-      closed: false,
     };
     tunnel.streams.set(id, stream);
     tunnel.stats.streams += 1;
     stats.streams += 1;
-    const timer = setTimeout(() => {
-      if (!stream.closed) handlers.fail(504, "the dsh host did not answer in time");
-    }, config.requestTimeout);
-    timer.unref?.();
-    const release = () => {
-      if (stream.closed) return;
-      stream.closed = true;
-      try { clearTimeout(timer); } catch { /* ignore */ }
-      tunnel.streams.delete(id);
+    deadline(config.requestTimeout ?? DEFAULT_TIMEOUT_MS, "the dsh host did not answer in time");
+    return {
+      send, release,
+      startHttpIdle: () => deadline(httpIdleTimeout, "the dsh HTTP response went idle"),
+      refreshHttpIdle: () => timer.refresh(),
+      clearDeadline: () => clearTimeout(timer),
     };
-    stream.release = release;
-    return { id, send: (type, payload) => tunnel.socket?.write(encodeFrame(type, id, payload)), release };
   }
 
   function handleVisitor(req, res) {
@@ -777,8 +809,10 @@ function cachePut(key, entry) {
     // copy is only kept when the whole thing arrived and looks safe to reuse.
     let cacheBuffer = null;
     const agent = route.tunnel.socket;
-    const stream = openStream(route.tunnel, {
+    let stream;
+    stream = openStream(route.tunnel, {
       onHead: (head) => {
+        stream.startHttpIdle();
         headSent = true;
         const status = Number(head.status) || 502;
         if (cached && status === 304) {
@@ -796,6 +830,7 @@ function cachePut(key, entry) {
         res.writeHead(Number(head.status) || 502, responseHeaders);
       },
       onBody: (chunk) => {
+        if (headSent && chunk.length) stream.refreshHttpIdle();
         stats.bytesOut += chunk.length;
         if (cacheBuffer) {
           cacheBuffer.size += chunk.length;
@@ -818,6 +853,7 @@ function cachePut(key, entry) {
       },
       fail: (status, reason) => {
         if (!headSent && !res.headersSent) sendPage(res, status, "Tunnel error", String(reason));
+        else if (status === 504) res.destroy();
         else try { res.end(); } catch { /* gone */ }
         stream?.release?.();
       },
@@ -862,14 +898,38 @@ function cachePut(key, entry) {
     }
 
     const agent = route.tunnel.socket;
-    const stream = openStream(route.tunnel, {
-      onHead: (headMsg) => { /* unused for ws streams */ },
+    const statusPrefix = Buffer.alloc(12);
+    let statusBytes = 0;
+    let headerBytes = 0;
+    let handshakeComplete = false;
+    let stream;
+    stream = openStream(route.tunnel, {
+      onHead: () => { /* unused for ws streams */ },
       onBody: (chunk) => {
+        if (!handshakeComplete) {
+          for (const byte of chunk) {
+            if (statusBytes < statusPrefix.length) statusPrefix[statusBytes++] = byte;
+            headerBytes = byte === HEADER_END[headerBytes] ? headerBytes + 1 : Number(byte === HEADER_END[0]);
+            if (headerBytes === HEADER_END.length) {
+              const status = Number(/^HTTP\/1\.[01] (\d{3})$/.exec(statusPrefix.toString("ascii"))?.[1]);
+              if (status === 101 || status >= 200) {
+                handshakeComplete = true;
+                stream.clearDeadline();
+                break;
+              }
+              statusBytes = 0;
+              headerBytes = 0;
+            }
+          }
+        }
         stats.bytesOut += chunk.length;
         if (!socket.write(chunk)) pauseForVisitor(agent, socket);
       },
       onEnd: () => { try { socket.end(); } catch { /* gone */ } },
-      fail: () => { try { socket.destroy(); } catch { /* gone */ } },
+      fail: () => {
+        stream?.release();
+        try { socket.destroy(); } catch { /* gone */ }
+      },
     });
     if (!stream) return;
 
@@ -955,6 +1015,7 @@ function cachePut(key, entry) {
       for (const tunnel of tunnels.values()) {
         try { tunnel.socket?.destroy(); } catch { /* gone */ }
         tunnel.socket = null;
+        closeStreams(tunnel);
       }
       const close = (server) => new Promise((resolve) => {
         if (!server) return resolve();
@@ -1013,7 +1074,8 @@ function main() {
     publicUrl: args.publicUrl || `http://localhost:${Number.isInteger(args.httpPort) ? args.httpPort : 8080}`,
     prefix: (args.prefix || "/__t").replace(/\/$/, ""),
     maxStreams: Number.isInteger(args.maxStreams) ? args.maxStreams : 256,
-    requestTimeout: Number.isInteger(args.requestTimeout) ? args.requestTimeout : 120000,
+    requestTimeout: Number.isInteger(args.requestTimeout) ? args.requestTimeout : DEFAULT_TIMEOUT_MS,
+    httpIdleTimeout: Number.isInteger(args.httpIdleTimeout) ? args.httpIdleTimeout : DEFAULT_TIMEOUT_MS,
   };
   if (config.tokens.length === 0) {
     console.error("relay: at least one --token or --token-file is required\n" + USAGE);

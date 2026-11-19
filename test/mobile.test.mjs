@@ -740,7 +740,13 @@ describe("mobile layer against the live dsh web UI", () => {
     assert.equal(out.closedAttr, null, "close() did not clear data-drp-drawer");
   });
 
-  test("a main-area page opened from the drawer fills the phone width", async (t) => {
+  // 800px: dsh has no drawer of its own above 768px, so nothing but the layer
+  // closes the drawer there (it used to stay open over the chosen page).
+  for (const [w, name, label] of [
+    [390, "Remote access", "Remote access|远程访问"],
+    [800, "Remote access", "Remote access|远程访问"],
+    [800, "Plugins", "Plugins|插件"],
+  ]) test(`${name} opened from the drawer at ${w}px closes it${name === "Remote access" ? " and fills the width" : ""}`, async (t) => {
     if (skipReason) return t.skip(skipReason);
     const expr = `(async () => {
       const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -748,7 +754,7 @@ describe("mobile layer against the live dsh web UI", () => {
       document.querySelector('.drp-drawer-btn').click();
       await sleep(600);
       const entry = [...document.querySelectorAll('[data-slot="sidebar"] button')]
-        .find((b) => /^(Remote access|远程访问)$/.test(b.getAttribute('aria-label') || ''));
+        .find((b) => /^(${label})$/.test((b.getAttribute('aria-label') || b.textContent).trim()));
       if (!entry) return JSON.stringify({ entry: false });
       // Tap where a finger would: whatever is on top at the button's centre.
       const box = entry.getBoundingClientRect();
@@ -768,17 +774,18 @@ describe("mobile layer against the live dsh web UI", () => {
     })()`;
     const { code, stdout, stderr } = await runCdp([
       "eval", BASE, expr, "--token", TOKEN_URL, "--wait", "4000",
-      "--w", "390", "--h", "844", "--mobile", "--pre-file", join(tmp, "pre.js"), "--settle", "1200",
+      "--w", String(w), "--h", "844", "--mobile", "--pre-file", join(tmp, "pre.js"), "--settle", "1200",
     ]);
     assert.equal(code, 0, "cdp run failed: " + stderr.slice(-800));
     const out = JSON.parse(stdout.trim().split("\n").filter((l) => l.trim().startsWith("{")).pop());
-    assert.equal(out.entry, true, "Remote access entry not found in the sidebar");
+    assert.equal(out.entry, true, `${name} entry not found in the sidebar`);
     assert.equal(out.hitsEntry, true, "something covers the drawer: a tap on its rows never reaches them");
     assert.equal(out.drawer, null, "the drawer must close once a page is chosen");
+    if (name !== "Remote access") return;
     assert.ok(out.page, "the Remote access page did not render in the main slot");
     assert.equal(out.page.x, 0, "the page must start at the left edge (was squeezed into an implicit column)");
-    assert.equal(out.page.w, 390, "the page must span the phone width");
-    assert.ok(out.scrollW <= 390, "page overflows horizontally: " + out.scrollW);
+    assert.equal(out.page.w, w, "the page must span the window width");
+    assert.ok(out.scrollW <= w, "page overflows horizontally: " + out.scrollW);
   });
 
   for (const label of ["Plugins|插件", "Remote access|远程访问"]) {

@@ -10,6 +10,8 @@ versions are the plugin's own, not dsh's.
   drawer.
 - Phone layout: Remote access and other main-area pages fill the screen
   instead of a narrow strip on the right.
+- Tablet-width windows (768–900px): choosing Remote access, Plugins or another
+  page in the drawer now closes the drawer instead of leaving it over the page.
 - Phone layout: on/off switches and the password field's "Show" button keep
   their shape on touch screens instead of swelling into a 40 px square.
 - Remote access: a busy port is explained in the panel's language, and the
@@ -23,6 +25,13 @@ versions are the plugin's own, not dsh's.
   a new QR code instead of saying that no code was supplied.
 - "Copy pairing link" now says how long the link is still valid, matching the
   QR countdown, instead of always claiming 5 minutes.
+- The relay now applies a deadline to response headers and a separate idle
+  timeout to HTTP bodies. Active streams and established WebSockets are no
+  longer cut off after two minutes.
+- Finishing or closing a backpressured visitor no longer stalls other requests
+  on the same relay tunnel.
+- The relay and tunnel agent now copy fewer bytes when decoding fragmented
+  frames, without changing the wire format.
 
 ## 0.6.2 — 2026-10-24
 
