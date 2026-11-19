@@ -16,15 +16,18 @@
 
 ---
 
-DeepSeek Harness listens on `127.0.0.1` only and authenticates with a one-time launch
-token, so it is unusable from any other device. This plugin changes nothing inside dsh:
-it puts its own gate in front — a gateway on a separate port that asks for a password or
-a one-time pairing code, then forwards to dsh on loopback.
+Use DeepSeek Harness (dsh) from your phone or another computer. On the same network,
+open the portal address or scan a one-time pairing code. Away from home, connect
+through a relay on a server you control.
+
+dsh still listens on loopback. The plugin runs a separate gateway that checks a
+password or one-time pairing code before forwarding requests to dsh. See the
+[quickstart](docs/GETTING-STARTED.md) for your first connection.
 
 <div align="center">
 <img src="docs/screenshots/panel-main-area.png" alt="The remote access panel" width="900" />
 
-<sub>The panel is a page in the main column (a sibling of Plugins / Scheduled tasks); the sidebar keeps working.</sub>
+<sub>The Local network tab shows the address and pairing QR code (redacted here).</sub>
 
 </div>
 
@@ -48,6 +51,8 @@ a one-time pairing code, then forwards to dsh on loopback.
 </tr>
 </table>
 
+See also the [portal sign-in screen on mobile](docs/screenshots/mobile-login.png).
+
 ## Install
 
 **From inside dsh (recommended)**: Plugins → Add plugin → paste
@@ -61,7 +66,7 @@ https://github.com/tsukii12/dsh-remote-portal
 ```bash
 git clone https://github.com/tsukii12/dsh-remote-portal
 cd dsh-remote-portal
-./install.sh            # macOS / Linux, desktop + web profiles
+sh ./install.sh         # macOS / Linux, desktop + web profiles
 .\install.ps1           # Windows
 ```
 
@@ -75,7 +80,8 @@ dsh plugin --profile web add \
 Then **restart dsh** (quit and reopen the desktop app, or `Ctrl+C` and `dsh web`).
 
 **One required step**: sidebar → **远程访问** → set an access password. Until one exists
-the portal refuses to listen beyond loopback.
+the portal refuses to listen beyond loopback. Then [open the LAN address or pair by
+QR code](docs/GETTING-STARTED.md).
 
 ## Update
 
@@ -154,21 +160,22 @@ When it finishes:
 $ drp
 service     running · autostart on
 uptime      2h 14m
-agent port  1.2.3.4:9443 (TLS)
+agent port  relay.example.com:9443 (TLS)
 visitor     0.0.0.0:443 (TLS, self-signed)
-endpoint    tls://1.2.3.4:9443
+endpoint    tls://relay.example.com:9443
 relay       reachable
 tunnel      connected · 2 streams
 traffic     in 8.0 MiB · out 7.9 MiB · 2140 requests · 3 clients
-public      https://1.2.3.4/__t/ab12cd34ef56/
+public      https://relay.example.com/__t/EXAMPLE_ID/
 ```
 
 **Updating the relay**: run the same command again — the token and certificate are
 reused and the ports do not move. One relay can serve several machines: `drp token add` mints another token, `drp tokens` lists them and `drp urls` lists their addresses. `drp config K=V …` changes a saved answer and
 reinstalls the unit; `drp uninstall` removes everything.
 
-In the panel, the relay field takes an **`address:port`** (e.g. `1.2.3.4:9443`); the
-transport is detected on connect (TLS first, plain TCP as fallback). Full guide:
+In the panel, enter the relay endpoint printed by the installer, for example
+`tls://relay.example.com:9443`. With just a host and port, the client tries TLS
+first and falls back to plain TCP. Full guide:
 [docs/DEPLOY-SERVER.md](docs/DEPLOY-SERVER.md).
 
 ## Security
@@ -223,16 +230,17 @@ shared across devices.
 
 ## Tests
 
-`node --test` → **82 tests**, roughly 75 s, no mocks on the network paths: real listeners
-for the gateway, a real relay plus a real agent for the tunnel (HTTP, HTTPS and
-WebSocket), QR output checked by an independent decoder, and the mobile layer driven
-against a live dsh that the suite starts itself. Browser tests skip explicitly when
-Chrome is missing.
+Run `node --test`. Gateway and relay tests use real listeners, and QR output is
+checked by an independent decoder. To run the mobile browser checks on macOS or
+Linux, start dsh Web and set `CHROME_PATH`, `DSH_WEB_TEST_URL`, and
+`DSH_WEB_TEST_TOKEN`. The checks skip without a browser or reachable dsh. See the
+[testing guide](docs/TESTING.md).
 
 ## Documentation
 
-- [ARCHITECTURE.md](ARCHITECTURE.md) — how it works, and the host facts behind it
-- [docs/DEPLOY-SERVER.md](docs/DEPLOY-SERVER.md) — server deployment (systemd / Caddy / nginx / TLS)
+- [Documentation index and repository map](docs/README.md)
+- [Quickstart](docs/GETTING-STARTED.md) · [Relay deployment](docs/DEPLOY-SERVER.md)
+- [Architecture](ARCHITECTURE.md) · [Testing](docs/TESTING.md)
 - [CHANGELOG.md](CHANGELOG.md) — per-release notes
 - [SECURITY.md](SECURITY.md) — policy
 

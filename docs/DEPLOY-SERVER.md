@@ -1,5 +1,7 @@
 # Deploying the relay
 
+[简体中文摘要](DEPLOY-SERVER.zh-CN.md) · [Documentation index](README.md)
+
 > Goal: dsh runs on the computer at home, and you open a **public address** on a
 > phone or laptop from the office, the subway, or a hotel. Home needs no public IP,
 > no router port forwarding, and no third-party tunnel service.
