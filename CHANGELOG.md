@@ -5,6 +5,10 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+- Remote access password: changing it from the panel now signs out every
+  device and cancels unused pairing links, as the note under the field always
+  said. Before, signed-in phones stayed signed in. A phone that makes the change
+  is asked first and told that it will be signed out too.
 - Folder picker and password: the host's errors for an invalid folder name, a
   folder that can't be created, a missing folder, a file instead of a folder,
   and a password over 200 characters now show in the panel's language instead

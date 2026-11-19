@@ -963,6 +963,73 @@ describe("mobile layer against the live dsh web UI", () => {
     assert.ok(!out.back.alerts.some((a) => /PC|电脑/.test(a)), "the disconnected notice must clear");
   });
 
+  // The panel's note promises that a password change signs devices out; one
+  // who lost a phone changes the password expecting exactly that.
+  test("changing the password from the panel signs every device out and cancels unused pairing links", async (t) => {
+    if (skipReason) return t.skip(skipReason);
+    const UA = "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1";
+    const open = `const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+      document.querySelector('.drp-drawer-btn').click();
+      await sleep(600);
+      [...document.querySelectorAll('[data-slot="sidebar"] button')]
+        .find((b) => /^(Remote access|远程访问)$/.test((b.getAttribute('aria-label') || b.textContent).trim())).click();
+      await sleep(2000);`;
+    const change = (phone, accept) => `(async () => {
+      ${open}
+      if (${phone}) document.cookie = 'dsh_portal_client=1; path=/';
+      let asked = '';
+      window.confirm = (m) => { asked = m; return ${accept}; };
+      const input = document.querySelector('input[name="drp-portal-password"]');
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, 'pw-test-' + Date.now());
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      await sleep(300);
+      [...document.querySelectorAll('[data-drp="password"] button')].find((b) => /^(更新密码|Update password)$/.test(b.textContent.trim())).click();
+      await sleep(900);
+      const text = document.querySelector('[data-slot="main"]').textContent;
+      document.cookie = 'dsh_portal_client=; path=/; max-age=0';
+      return JSON.stringify({ asked: !!asked, text: text.slice(0, 4000) });
+    })()`;
+    const run = async (expr) => {
+      const { code, stdout, stderr } = await runCdp([
+        "eval", BASE, expr, "--token", TOKEN_URL, "--wait", "4000",
+        "--w", "390", "--h", "844", "--mobile", "--pre-file", join(tmp, "pre.js"), "--settle", "1200",
+      ]);
+      assert.equal(code, 0, "cdp run failed: " + stderr.slice(-800));
+      return JSON.parse(stdout.trim().split("\n").filter((l) => l.trim().startsWith("{")).pop());
+    };
+    const links = await run(`(async () => {
+      const post = (p, b) => fetch('/dsh-remote-portal/' + p, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(b) }).then((r) => r.json());
+      const st = (await (await fetch('/dsh-remote-portal/status')).json()).status;
+      return JSON.stringify({ port: st.port, a: (await post('pair', { ttlSeconds: 300 })).pairing.url, b: (await post('pair', { ttlSeconds: 300 })).pairing.url });
+    })()`);
+    const local = (link) => { const u = new URL(link); return `http://127.0.0.1:${links.port}${u.pathname}${u.search}`; };
+    const pair = async (link) => {
+      const r = await fetch(local(link), { redirect: "manual", headers: { "user-agent": UA, accept: "text/html" } });
+      return (r.headers.getSetCookie?.() || []).map((c) => c.split(";")[0]).filter((c) => /^dsh_portal=./.test(c)).join("; ");
+    };
+    const signedIn = async (cookie) => {
+      const r = await fetch(`http://127.0.0.1:${links.port}/`, { redirect: "manual", headers: { "user-agent": UA, accept: "text/html", cookie } });
+      return r.status !== 401 && !/type="password"/.test(await r.text());
+    };
+    const phone = await pair(links.a);
+    assert.ok(phone, "the test phone must pair");
+    assert.equal(await signedIn(phone), true);
+
+    const declined = await run(change(true, false));
+    assert.equal(declined.asked, true, "a phone changing the password must be told it will be signed out");
+    assert.equal(await signedIn(phone), true, "declining must change nothing");
+
+    const pc = await run(change(false, true));
+    assert.equal(pc.asked, false, "the PC is not signed out, so it is not asked");
+    assert.match(pc.text, /所有设备已退出登录|every device has been signed out/);
+    assert.equal(await signedIn(phone), false, "a signed-in phone must be signed out by the change");
+    assert.equal(await pair(links.b), "", "a pairing link made before the change must no longer sign anyone in");
+
+    const self = await run(change(true, true));
+    assert.equal(self.asked, true);
+    assert.match(self.text, /这台设备也已退出登录|This device has been signed out too/);
+  });
+
   test("a slow /status link never has two polls open at once", async (t) => {
     if (skipReason) return t.skip(skipReason);
     // Every /status answer is held back 5 s, as on a slow relay. A fixed 3 s

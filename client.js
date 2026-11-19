@@ -127,14 +127,16 @@ window.__ModuleLoader__.load({
         firstRunCta: "去设置密码",
         pwStateSet: "已设置",
         pwStateUnset: "未设置",
-        pwNote: "至少 {n} 位。修改密码后，已登录的设备需要重新验证。",
+        pwNote: "至少 {n} 位。修改密码会让所有已登录的设备退出，并作废还没用过的配对链接。",
         pwWarn: "尚未设置密码：门户在非本机地址上不会启动。",
         pwPlaceholder: "输入新密码",
         pwShow: "显示",
         pwHide: "隐藏",
         pwSave: "更新密码",
         pwSaving: "保存中…",
-        pwOk: "密码已更新",
+        pwOk: "密码已更新，所有设备已退出登录",
+        pwOkRemote: "密码已更新。这台设备也已退出登录，正在返回登录页……",
+        pwSignOutConfirm: "修改密码会让所有设备退出登录，包括这台设备；之后要用新密码重新登录。确定修改？",
         pwShort: "密码至少需要 {n} 位",
         cardDev: "已授权设备",
         cardPublic: "公网访问",
@@ -268,14 +270,16 @@ window.__ModuleLoader__.load({
         firstRunCta: "Set the password",
         pwStateSet: "Set",
         pwStateUnset: "Not set",
-        pwNote: "At least {n} characters. Existing devices must sign in again after a change.",
+        pwNote: "At least {n} characters. Changing it signs out every device and cancels unused pairing links.",
         pwWarn: "No password yet — the portal refuses to bind a non-loopback address.",
         pwPlaceholder: "New password",
         pwShow: "Show",
         pwHide: "Hide",
         pwSave: "Update password",
         pwSaving: "Saving…",
-        pwOk: "Password updated",
+        pwOk: "Password updated; every device has been signed out",
+        pwOkRemote: "Password updated. This device has been signed out too; returning to sign-in…",
+        pwSignOutConfirm: "Changing the password signs out every device, this one included; you'll sign in again with the new password. Change it?",
         pwShort: "Password needs at least {n} characters",
         cardDev: "Authorised devices",
         cardPublic: "Public access",
@@ -1547,11 +1551,22 @@ window.__ModuleLoader__.load({
         var pw = String(st.pwd || "");
         if (pw.length < MIN_PW) { flash("err", t("pwShort", { n: MIN_PW })); return; }
         if (st.busy) return;
+        var remote = viaPortal();
+        if (remote && st.status && st.status.passwordSet) {
+          var sure = true;
+          try { sure = window.confirm(t("pwSignOutConfirm")); } catch (e) { sure = true; }
+          if (!sure) return;
+        }
         patch({ busy: "pw" });
-        api(BASE + "/password", { method: "POST", body: { password: pw } }).then(function (r) {
+        api(BASE + "/password", { method: "POST", body: { password: pw, revokeAll: true } }).then(function (r) {
           patch({ busy: "" });
           if (!r.ok) { flash("err", friendlyError(r.error)); return; }
           patch({ pwd: "", showPwd: false });
+          if (remote) {
+            flash("ok", t("pwOkRemote"));
+            setTimeout(function () { try { window.location.reload(); } catch (e) { /* stay */ } }, 1500);
+            return;
+          }
           flash("ok", t("pwOk"));
           refreshStatus();
           reloadDevices();
