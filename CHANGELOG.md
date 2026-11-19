@@ -15,6 +15,13 @@ versions are the plugin's own, not dsh's.
 - DRP now preserves gateway sign-in failure reasons, localizes client errors and the local-network permission prompt, and recovers approval-input loading after failures. Real-listener tests cover authentication, isolated logout and approval requests.
 - DRP 现保留网关登录失败原因，提供双语客户端错误和本地网络权限提示，并支持工具授权输入加载失败后的重试。真实监听器测试覆盖认证、独立退出登录和工具授权请求。
 
+- Public access: a relay entered as a bare `address:port` is TLS only. It used
+  to "fall back" to plain TCP after any TLS error, which would have sent the
+  tunnel token in clear text to anyone able to break the handshake (the
+  fallback never actually connected, so the panel sat on 连接中 / "Connecting"
+  with `ECONNRESET`). A relay that drops the TLS handshake now gets a clear
+  message in both languages: enter `tcp://address:port`. A connection error
+  no longer stays on screen once the tunnel is online.
 - Load the portal's presentation assets through the tunnel prefix without
   duplicate fallback fetches. Browsers and the relay can reuse content-versioned
   public assets without caching authenticated dsh responses.
@@ -33,6 +40,13 @@ versions are the plugin's own, not dsh's.
 - Remote access: a busy port is explained in the panel's language, and the
   pairing card names that error instead of asking you to set a password that
   is already set.
+- Remote access: on a slow link the panel no longer stacks status requests
+  (up to three at once over a 9 s relay round trip, each timing out); it asks
+  again 3 s after each answer, ignores answers older than the one shown, and
+  says when the status it shows may be out of date.
+- Remote access: a 6- or 7-character password sent to the panel's password
+  route is refused as too short (at least 8, as the gateway requires) instead
+  of failing as an internal server error.
 - Folder picker: listing a large folder no longer stats every subfolder one by
   one, and a link to a file no longer marks the listing as cut short.
 - Fixed password and pairing form submissions from nested pages, including when
