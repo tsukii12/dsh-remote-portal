@@ -27,6 +27,7 @@ import { gzipSync } from "node:zlib";
 import os, { homedir } from "node:os";
 import { statSync } from "node:fs";
 import { createGateway } from "./lib/gateway.mjs";
+import { MIN_PASSWORD_LENGTH } from "./lib/auth.mjs";
 
 /** dsh waits for the Web carrier before this row can bind its own listener. */
 export const inject = ["webServer"];
@@ -433,8 +434,8 @@ function routeTable(portal, log) {
       kind: "exact", path: `${PREFIX}/password`, methods: ["POST"],
       run: wrap(async (_req, _res, body) => {
         const password = typeof body.password === "string" ? body.password : "";
-        if (password.length < 6) {
-          throw Object.assign(new Error("password must be at least 6 characters"), { status: 400, code: "weak-password" });
+        if (password.length < MIN_PASSWORD_LENGTH) {
+          throw Object.assign(new Error(`password must be at least ${MIN_PASSWORD_LENGTH} characters`), { status: 400, code: "weak-password" });
         }
         if (password.length > 200) {
           throw Object.assign(new Error("password is too long"), { status: 400, code: "password-too-long" });
