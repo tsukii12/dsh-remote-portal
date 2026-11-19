@@ -5,6 +5,8 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+- Folder picker: listing a large folder no longer stats every subfolder one by
+  one, and a link to a file no longer marks the listing as cut short.
 - Fixed password and pairing form submissions from nested pages, including when
   the portal is served under a reverse proxy path prefix.
 - When a pairing code is rejected, the portal now asks you to generate and scan
