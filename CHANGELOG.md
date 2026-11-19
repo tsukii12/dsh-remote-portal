@@ -12,6 +12,28 @@ versions are the plugin's own, not dsh's.
 - Android approvals/questions can be deferred with Later, only interrupt their
   open chat, and remain accessible from pending banners and session badges.
 
+- Phone in landscape and small tablets (768–900 px wide): the floating menu
+  button no longer covers the page title (Remote access read "mote access";
+  Plugins and Automation tasks too). dsh only leaves room for a menu button
+  below 768 px; the layer now leaves the same 48 px in that band.
+- The public relay's offline and other error pages now follow the visitor's
+  preferred language, with Chinese and English versions.
+- Local network: the address list and every pairing link or QR code made after
+  the PC's address changes (another Wi-Fi, a new DHCP lease) use the new address
+  within about 15 s. They used to keep the address from when the listener
+  started until the portal was restarted, so a phone scanning a fresh QR went
+  to a dead address. A QR already on screen keeps its link until it is
+  refreshed or expires.
+- Relay visitors now use the relay-observed address for device entries and
+  password lockouts, instead of sharing the gateway's loopback address.
+  The gateway does not trust visitor-supplied forwarding headers.
+- Public access: a relay entered as a bare `address:port` is TLS only. It used
+  to "fall back" to plain TCP after any TLS error, which would have sent the
+  tunnel token in clear text to anyone able to break the handshake (the
+  fallback never actually connected, so the panel sat on 连接中 / "Connecting"
+  with `ECONNRESET`). A relay that drops the TLS handshake now gets a clear
+  message in both languages: enter `tcp://address:port`. A connection error
+  no longer stays on screen once the tunnel is online.
 - Load the portal's presentation assets through the tunnel prefix without
   duplicate fallback fetches. Browsers and the relay can reuse content-versioned
   public assets without caching authenticated dsh responses.
@@ -1152,7 +1174,6 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
-
 
 
 
