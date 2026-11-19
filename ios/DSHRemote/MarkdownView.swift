@@ -62,7 +62,7 @@ struct MarkdownView: View {
                         HStack {
                             Text(language.isEmpty ? L("Code", "代码") : language).font(.caption).foregroundStyle(.secondary)
                             Spacer()
-                            Button { UIPasteboard.general.string = code } label: { Image(systemName: "doc.on.doc").font(.caption) }.accessibilityLabel(L("Copy code", "复制代码"))
+                            Button { UIPasteboard.general.string = code } label: { Image(systemName: "doc.on.doc").font(.caption).frame(minWidth: 44, minHeight: 44) }.accessibilityLabel(L("Copy code", "复制代码"))
                         }.padding(12)
                         Divider()
                         ScrollView(.horizontal) { Text(code.isEmpty ? " " : code).font(.system(.footnote, design: .monospaced)).textSelection(.enabled).fixedSize(horizontal: true, vertical: false).padding(12) }

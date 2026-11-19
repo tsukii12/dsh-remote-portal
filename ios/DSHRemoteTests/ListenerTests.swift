@@ -87,6 +87,48 @@ private final class HTTPListener {
 
 @MainActor
 final class ListenerTests: XCTestCase {
+    func testHistoricalImagesLoadOnlyInViewportAndUseBoundedThumbnailsOverHTTP() async throws {
+        let data = UIGraphicsImageRenderer(size: CGSize(width: 2048, height: 512)).pngData { context in
+            UIColor.blue.setFill(); context.fill(CGRect(x: 0, y: 0, width: 2048, height: 512))
+        }
+        var reads = 0
+        let requested = expectation(description: "Visible image fetched")
+        let server = try HTTPListener { _ in
+            reads += 1; if reads == 1 { requested.fulfill() }
+            return self.reply(["data": .string(data.base64EncodedString())])
+        }
+        let base = try await server.start(); let directory = root(); let client = client(directory)
+        let api = PortalAPI(base: base, client: client)
+        defer { server.stop(); client.session.invalidateAndCancel(); try? FileManager.default.removeItem(at: directory) }
+        let block = TranscriptBlock(["type": "image", "attachment": ["name": "wide.png", "bytes": .int(data.count)]])
+        let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.first as? UIWindowScene)
+        let window = UIWindow(windowScene: scene); let previous = scene.windows.first { $0.isKeyWindow }
+        let view = HistoricalAttachmentView(block: block, api: api, sessionID: "S")
+        let host = UIHostingController(rootView: view.environment(\.attachmentViewportHeight, 0))
+        window.rootViewController = host; window.makeKeyAndVisible(); host.view.layoutIfNeeded()
+        defer { window.isHidden = true; previous?.makeKeyAndVisible() }
+        let idle = expectation(description: "No viewport means no fetch")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { idle.fulfill() }
+        await fulfillment(of: [idle], timeout: 1); XCTAssertEqual(reads, 0)
+        host.rootView = view.environment(\.attachmentViewportHeight, 10000)
+        await fulfillment(of: [requested], timeout: 3)
+        let image = try await AttachmentReader.image(api: api, sessionID: "S", reference: block.attachment)
+        XCTAssertLessThanOrEqual(image.cgImage!.width, AttachmentReader.thumbnailPixelLimit)
+        XCTAssertLessThanOrEqual(image.cgImage!.height, AttachmentReader.thumbnailPixelLimit)
+        do { _ = try await AttachmentReader.image(api: api, sessionID: "S", reference: ["bytes": .int(AttachmentReader.maximumBytes + 1)]); XCTFail("Oversized image fetched") } catch {}
+        XCTAssertEqual(reads, 2)
+    }
+    func testHistoricalImageRejectsEmptyAndInvalidImageBytesOverHTTP() async throws {
+        var value = ""
+        let server = try HTTPListener { _ in self.reply(["data": .string(value)]) }
+        let base = try await server.start(); let directory = root(); let client = client(directory)
+        defer { server.stop(); client.session.invalidateAndCancel(); try? FileManager.default.removeItem(at: directory) }
+        let api = PortalAPI(base: base, client: client)
+        for bad in ["", "not base64", Data("not an image".utf8).base64EncodedString()] {
+            value = bad
+            do { _ = try await AttachmentReader.image(api: api, sessionID: "S", reference: [:]); XCTFail("Invalid image accepted") } catch {}
+        }
+    }
     func testApprovalAnswerResolvesReplayReceivedDuringReconnectOverRealHTTP() async throws {
         let received = expectation(description: "Answer waits for host")
         let gate = DispatchSemaphore(value: 0)

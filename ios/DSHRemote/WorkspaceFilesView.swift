@@ -186,7 +186,7 @@ struct WorkspaceFilesView: View {
                         }
                     }.buttonStyle(.plain).disabled(entry["type"] == "other")
                         if entry["type"] == "file", let onMention {
-                            Button { onMention(path) } label: { Image(systemName: "at") }
+                            Button { onMention(path) } label: { Image(systemName: "at").frame(minWidth: 44, minHeight: 44) }
                                 .buttonStyle(.borderless).accessibilityLabel(L("Mention file", "提及文件"))
                                 .disabled(FileMentionToken.insertingFile(path, into: "") == nil)
                         }

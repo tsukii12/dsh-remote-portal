@@ -6,6 +6,8 @@ versions are the plugin's own, not dsh's.
 ## Unreleased
 
 ### Added
+- Native iOS photo smoke verifies image MIME/byte acknowledgement and one durable history image after a fresh client. dsh 0.2.2-rc.5 omits catalog input modalities: unknown remains allowed; explicit modality gating is unchanged. Visible history images load automatically as bounded thumbnails. Larger touch targets, accessibility labels, keyboard/scroll layout, approval-sheet scrolling and success haptics improve native usability.
+- 原生 iOS 照片测试验证图片类型/字节确认及新客户端恢复后仅一张历史图片。dsh 0.2.2-rc.5 不提供目录输入能力，未知能力仍允许发送；显式能力检查保持不变。可见历史图片自动加载受限缩略图；增大触控区域，完善无障碍标签、键盘/滚动布局、授权页滚动及成功触感反馈。
 - Native iOS: workspace file search/watch-reset reload, file and session mentions, and sent/total upload bytes. Image sends respect explicit model input modalities without clearing rejected drafts; extensionless images are sniffed and private `.dsh` paths are hidden. Answered/cancelled approval replays remain resolved.
 - 原生 iOS：工作区文件搜索/监听重置刷新、文件和会话提及及上传字节进度。图片发送遵循模型输入能力，拒绝时保留草稿；识别无扩展名图片并隐藏 `.dsh` 私密路径。已回答/取消的授权请求不会因重放重新出现。
 - Terminal commits a pending IME candidate before Return, automatically reattaches after foreground/mux recovery, and never replays uncertain input.

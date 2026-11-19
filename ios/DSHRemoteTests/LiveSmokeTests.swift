@@ -82,7 +82,9 @@ final class LiveSmokeTests: XCTestCase {
             try await chat.selectPreset("minimal"); XCTAssertFalse(chat.supportsPlan)
             try await chat.selectPreset("standard"); XCTAssertTrue(chat.supportsPlan)
             print("LIVE PASS presets: Minimal disables unavailable Plan; Standard refresh restores it")
-            try await chat.selectModel(provider: "local-fake", model: "native-demo", reasoningEffort: "high")
+            try await chat.selectModel(provider: "local-fake", model: "native-demo-vision", reasoningEffort: "high")
+            XCTAssertEqual(chat.modelDefinition["inputModalities"], .null)
+            XCTAssertNil(chat.imageInputError)
             let files = WorkspaceFilesStore(api: api, sessionID: id); await files.list()
             XCTAssertNil(files.error); XCTAssertTrue(files.listing["entries"].array.contains { $0["name"] == "r2 note.txt" })
             let text = WorkspacePreviewStore(api: api, sessionID: id, path: "r2 note.txt"); await text.load()
@@ -110,6 +112,26 @@ final class LiveSmokeTests: XCTestCase {
             XCTAssertTrue(blocks.contains { $0.kind == "file" && $0.attachment["name"] == "native-note.txt" })
             let imageBlock = try XCTUnwrap(blocks.first { $0.kind == "image" })
             _ = try await AttachmentReader.image(api: api, sessionID: id, reference: imageBlock.attachment)
+            let delivered = try await api.rpc("session/attachment", args: ["request": ["sessionId": .string(id), "attachment": imageBlock.attachment]])
+            let photoBytes = try XCTUnwrap(Data(base64Encoded: delivered["data"].text)).count
+            let mediaType = try XCTUnwrap(delivered["mediaType"].string ?? imageBlock.attachment["mediaType"].string)
+            let acknowledgement = try XCTUnwrap(chat.transcript.first { $0.role == "assistant" }).text
+            let expected = "Received 1 image(s). \(mediaType): \(photoBytes) bytes"
+            guard acknowledgement.contains(expected), acknowledgement.contains("hello @\"r2 note.txt\"") else { throw PortalError.message("Missing photo acknowledgement: " + expected) }
+            chat.stop()
+            let freshAPI = PortalAPI(base: api.base, client: PortalClient())
+            defer { freshAPI.mux.close(); freshAPI.client.session.invalidateAndCancel() }
+            try await freshAPI.login(secret: "demo-pass-123", pairing: false)
+            let reloaded = ChatStore(sessionID: id, api: freshAPI)
+            defer { reloaded.stop() }
+            try await reloaded.start()
+            try await eventually("photo history after fresh transport") { reloaded.loaded }
+            let durableImages = reloaded.transcript.flatMap(\.blocks).filter { $0.kind == "image" }
+            XCTAssertEqual(durableImages.count, 1)
+            XCTAssertEqual(durableImages.first?.attachment, imageBlock.attachment)
+            _ = try await AttachmentReader.image(api: freshAPI, sessionID: id, reference: imageBlock.attachment)
+            try await chat.start()
+            print("LIVE PASS photo: unknown modalities allowed; vision provider acknowledged \(mediaType), \(photoBytes) bytes + text; fresh client history contains one readable image")
             print("LIVE PASS attachments: raw file/image uploads, receipt prompt, durable history and image retrieval")
             try await eventually("usage projections") { UsagePresentation.total(chat.projections["tokenUsage"]) != nil && UsagePresentation.context(chat.projections["contextPressure"]) != nil }
             XCTAssertNotNil(chat.turnUsage[1]?["totalTokens"].int)

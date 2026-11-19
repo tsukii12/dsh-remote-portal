@@ -88,6 +88,29 @@ final class StubAPI: RPCServing {
 
 @MainActor
 final class NativeStateTests: XCTestCase {
+    func testScrollFollowingHandlesLateImagesAndManualScrolling() {
+        let previous = CGRect(x: 0, y: -700, width: 390, height: 1200)
+        let grown = CGRect(x: 0, y: -700, width: 390, height: 1500)
+        let arrival = ChatScrollFollowing.update(previous: previous, current: grown, viewportHeight: 500, following: true, loadingOlder: false)
+        XCTAssertTrue(arrival.following); XCTAssertTrue(arrival.scroll)
+        let scrolled = CGRect(x: 0, y: -300, width: 390, height: 1200)
+        let manual = ChatScrollFollowing.update(previous: previous, current: scrolled, viewportHeight: 500, following: true, loadingOlder: false)
+        XCTAssertFalse(manual.following); XCTAssertFalse(manual.scroll)
+        let paused = ChatScrollFollowing.update(previous: previous, current: grown, viewportHeight: 500, following: false, loadingOlder: false)
+        XCTAssertFalse(paused.following); XCTAssertFalse(paused.scroll)
+        let latest = ChatScrollFollowing.update(previous: scrolled, current: previous, viewportHeight: 500, following: false, loadingOlder: false)
+        XCTAssertTrue(latest.following); XCTAssertFalse(latest.scroll)
+        let paging = ChatScrollFollowing.update(previous: previous, current: grown, viewportHeight: 500, following: false, loadingOlder: true)
+        XCTAssertFalse(paging.following); XCTAssertFalse(paging.scroll)
+    }
+    func testScrollFollowingHandlesInitialEmptyAndMissingLayout() {
+        let initial = ChatScrollFollowing.update(previous: nil, current: .zero, viewportHeight: 500, following: true, loadingOlder: false)
+        XCTAssertTrue(initial.following); XCTAssertTrue(initial.scroll)
+        let empty = ChatScrollFollowing.update(previous: .zero, current: .zero, viewportHeight: 500, following: false, loadingOlder: false)
+        XCTAssertTrue(empty.following); XCTAssertFalse(empty.scroll)
+        let missing = ChatScrollFollowing.update(previous: nil, current: .null, viewportHeight: 500, following: false, loadingOlder: false)
+        XCTAssertFalse(missing.following); XCTAssertFalse(missing.scroll)
+    }
     func testExplicitImageCapabilitiesRejectBeforeOptimisticPromptAndAllowUnknown() async throws {
         let api = StubAPI(); let chat = ChatStore(sessionID: "S", api: api)
         let image = DraftAttachment(id: UUID(), file: URL(fileURLWithPath: "/image.png"), name: "image.png", mediaType: "image/png", bytes: 1, receipt: ["receiptId": "R"], uploading: false)

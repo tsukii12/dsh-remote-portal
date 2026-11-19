@@ -40,7 +40,7 @@ struct ServersView: View {
                 }
             }
             .navigationTitle("DeepSeek Remote")
-            .toolbar { Button { adding = true } label: { Image(systemName: "plus") } }
+            .toolbar { Button { adding = true } label: { Image(systemName: "plus") }.accessibilityLabel(L("Add server", "添加服务器")) }
             .sheet(isPresented: $adding) { ServerEditor(server: nil) { server, token in
                 store.servers.append(server)
                 if !token.isEmpty { pairToken = token; selected = server }
@@ -110,7 +110,7 @@ struct ConnectionView: View {
                         if !error.isEmpty { Text(error); Button(L("Retry", "重试")) { Task { await connect() } } }
                     }
                     .navigationTitle("DRP")
-                    .toolbar { ToolbarItem(placement: .topBarLeading) { Button { dismiss() } label: { Image(systemName: "chevron.left") } } }
+                    .toolbar { ToolbarItem(placement: .topBarLeading) { Button { dismiss() } label: { Image(systemName: "chevron.left") }.accessibilityLabel(L("Servers", "服务器")) } }
                 }
             }
         }

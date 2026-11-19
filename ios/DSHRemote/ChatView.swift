@@ -1,8 +1,18 @@
 import SwiftUI
 
-private struct BottomPosition: PreferenceKey {
-    static var defaultValue: CGFloat = .infinity
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) { value = nextValue() }
+private struct ChatContentFrame: PreferenceKey {
+    static var defaultValue: CGRect = .null
+    static func reduce(value: inout CGRect, nextValue: () -> CGRect) { value = nextValue() }
+}
+
+enum ChatScrollFollowing {
+    static func update(previous: CGRect?, current: CGRect, viewportHeight: CGFloat, following: Bool, loadingOlder: Bool) -> (following: Bool, scroll: Bool) {
+        guard !current.isNull, current.height.isFinite, current.minY.isFinite, !loadingOlder else { return (following, false) }
+        if let previous, !previous.isNull, abs(current.height - previous.height) < 0.5 {
+            return (current.maxY <= viewportHeight + 60, false)
+        }
+        return (following, following)
+    }
 }
 
 struct ChatView: View {
@@ -13,6 +23,7 @@ struct ChatView: View {
     @State private var draft = ""
     @State private var sending = false
     @State private var followingBottom = true
+    @State private var previousContentFrame: CGRect?
     @State private var loadingOlder = false
     @State private var actionError: String?
     @State private var dismissedError: String?
@@ -22,6 +33,7 @@ struct ChatView: View {
     @State private var editingQueue: String?
     @State private var queuedText = ""
     @State private var steer = false
+    @State private var sendFeedback = 0
     @FocusState private var composerFocused: Bool
     init(chat: ChatStore, title: String) {
         self.chat = chat; self.title = title
@@ -34,6 +46,7 @@ struct ChatView: View {
             transcript
         }
         .background(Color(uiColor: .systemBackground))
+        .sensoryFeedback(.impact(weight: .light), trigger: sendFeedback)
         .safeAreaInset(edge: .bottom, spacing: 0) { composer }
         .navigationTitle("DRP").navigationBarTitleDisplayMode(.inline)
         .toolbar { ToolbarItem(placement: .principal) { VStack(spacing: 2) { Text("DRP").font(.headline); Text(title).font(.caption).foregroundStyle(.secondary).lineLimit(1) } } }
@@ -73,30 +86,38 @@ struct ChatView: View {
                                 }
                             } label: { HStack { Spacer(); if loadingOlder { ProgressView() }; Text(L("Load earlier messages", "加载更早的消息")); Spacer() }.font(.caption) }.disabled(loadingOlder)
                         }
-                        if chat.transcript.isEmpty && chat.inProgress == nil {
+                        if !chat.loaded && chat.transcript.isEmpty {
+                            ProgressView(L("Loading conversation…", "正在加载对话…")).frame(maxWidth: .infinity).padding(.vertical, 60)
+                        } else if chat.transcript.isEmpty && chat.inProgress == nil {
                             VStack(spacing: 16) {
                                 Image(systemName: "sparkle").font(.system(size: 36)).foregroundStyle(DRPStyle.accent)
-                                Text(L("What can we work on?", "今天一起做点什么？")).font(.title2.weight(.semibold))
+                                Text(L("What can we work on?", "今天想做些什么？")).font(.title2.weight(.semibold))
                                 Text(L("Send a message to start this conversation.", "发送消息，开始这段对话。")).font(.subheadline).foregroundStyle(.secondary)
                             }.frame(maxWidth: .infinity).padding(.vertical, 80)
                         }
                         ForEach(chat.transcript) { item in MessageView(item: item, api: chat.api, sessionID: chat.sessionID, usage: chat.usage(for: item)).id(item.id) }
                         if let message = chat.inProgress { MessageView(item: message, api: chat.api, sessionID: chat.sessionID).id(message.id) }
                         Color.clear.frame(height: 1)
-                            .background(GeometryReader { geometry in Color.clear.preference(key: BottomPosition.self, value: geometry.frame(in: .named("chatScroll")).maxY) })
                             .id("bottom")
                     }.padding(20).frame(maxWidth: 780).frame(maxWidth: .infinity)
+                        .background(GeometryReader { geometry in Color.clear.preference(key: ChatContentFrame.self, value: geometry.frame(in: .named("chatScroll"))) })
                 }
                 .coordinateSpace(name: "chatScroll")
+                .environment(\.attachmentViewportHeight, viewport.size.height)
                 .scrollDismissesKeyboard(.interactively)
                 .simultaneousGesture(DragGesture().onChanged { _ in followingBottom = false })
-                .onPreferenceChange(BottomPosition.self) { bottom in if bottom < viewport.size.height + 60 && !loadingOlder { followingBottom = true } }
+                .onPreferenceChange(ChatContentFrame.self) { frame in
+                    let update = ChatScrollFollowing.update(previous: previousContentFrame, current: frame, viewportHeight: viewport.size.height, following: followingBottom, loadingOlder: loadingOlder)
+                    previousContentFrame = frame; followingBottom = update.following
+                    if update.scroll { proxy.scrollTo("bottom", anchor: .bottom) }
+                }
+                .onChange(of: viewport.size.height) { _, _ in if followingBottom && !loadingOlder { proxy.scrollTo("bottom", anchor: .bottom) } }
                 .onChange(of: chat.transcript) { _, _ in if followingBottom && !loadingOlder { proxy.scrollTo("bottom", anchor: .bottom) } }
                 .onChange(of: chat.inProgress) { _, _ in if followingBottom { proxy.scrollTo("bottom", anchor: .bottom) } }
                 .onChange(of: composerFocused) { _, focused in if focused && followingBottom { proxy.scrollTo("bottom", anchor: .bottom) } }
                 .overlay(alignment: .bottomTrailing) {
                     if !followingBottom {
-                        Button { followingBottom = true; withAnimation { proxy.scrollTo("bottom", anchor: .bottom) } } label: { Image(systemName: "arrow.down").padding(12).background(.regularMaterial, in: Circle()).shadow(radius: 2) }
+                        Button { followingBottom = true; withAnimation { proxy.scrollTo("bottom", anchor: .bottom) } } label: { Image(systemName: "arrow.down").frame(width: 44, height: 44).background(.regularMaterial, in: Circle()).shadow(radius: 2) }
                             .accessibilityLabel(L("Jump to latest", "回到最新消息")).padding()
                     }
                 }
@@ -116,10 +137,10 @@ struct ChatView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
                     Button { showingOptions = true } label: {
-                        Label(L("Model: ", "模型：") + chat.modelName + " · " + chat.effortName, systemImage: "cpu")
+                        Label(L("Model: ", "模型：") + chat.modelName + " · " + chat.effortName, systemImage: "cpu").frame(minHeight: 44)
                     }.accessibilityIdentifier("modelOptions")
-                    Button { showingOptions = true } label: { Label(ChatLabels.permission(chat.projections["permissions"]["currentValue"].text), systemImage: "lock.shield") }
-                    Button { showingOptions = true } label: { Text(chat.planEnabled ? L("Plan mode", "计划模式") : ChatLabels.preset(chat.projections["agentPreset"].string ?? "standard")) }
+                    Button { showingOptions = true } label: { Label(ChatLabels.permission(chat.projections["permissions"]["currentValue"].text), systemImage: "lock.shield").frame(minHeight: 44) }
+                    Button { showingOptions = true } label: { Text(chat.planEnabled ? L("Plan mode", "计划模式") : ChatLabels.preset(chat.projections["agentPreset"].string ?? "standard")).frame(minHeight: 44) }
                 }.font(.caption.weight(.medium)).buttonStyle(.bordered).tint(DRPStyle.accent)
             }
             HStack(alignment: .bottom, spacing: 12) {
@@ -128,18 +149,18 @@ struct ChatView: View {
                     .textInputAutocapitalization(.never).autocorrectionDisabled()
                     .accessibilityIdentifier("chatComposer")
                 if chat.running {
-                    Button { perform { try await chat.cancel() } } label: { Image(systemName: "stop.fill").padding(8) }.accessibilityLabel(L("Stop", "停止"))
+                    Button { perform { try await chat.cancel() } } label: { Image(systemName: "stop.fill").frame(minWidth: 44, minHeight: 44) }.accessibilityLabel(L("Stop", "停止"))
                 }
                 Button {
                     send()
                 } label: {
                     Image(systemName: chat.running ? (steer ? "bolt.fill" : "text.badge.plus") : "arrow.up").font(.system(size: 15, weight: .bold)).foregroundStyle(.white)
-                        .frame(width: 36, height: 36).background(canSend ? DRPStyle.accent : Color.gray.opacity(0.4), in: Circle())
+                        .frame(width: 44, height: 44).background(canSend ? DRPStyle.accent : Color.gray.opacity(0.4), in: Circle())
                 }
                 .disabled(!canSend).padding(6)
                 .accessibilityLabel(chat.running ? (steer ? L("Steer", "立即引导") : L("Queue message", "消息排队")) : L("Send", "发送")).accessibilityIdentifier("sendMessage")
             }.background(DRPStyle.sidebar, in: RoundedRectangle(cornerRadius: 22))
-            if chat.running { Toggle(L("Steer immediately instead of queue", "立即引导而不是排队"), isOn: $steer).font(.caption) }
+            if chat.running { Toggle(L("Steer immediately instead of queue", "立即引导而不是排队"), isOn: $steer).font(.caption).frame(minHeight: 44) }
         }
         .padding(.horizontal, 16).padding(.bottom, 10).frame(maxWidth: 800).frame(maxWidth: .infinity).background(.bar)
     }
@@ -152,11 +173,11 @@ struct ChatView: View {
                 ForEach(Array(mentions.candidates.enumerated()), id: \.offset) { _, candidate in
                     Button {
                         if let token = FileMentionToken.active(in: draft), let text = token.inserting(candidate, into: draft) { draft = text; composerFocused = true }
-                    } label: { Label(candidate["displayTitle"].string ?? candidate["label"].string ?? candidate["path"].text, systemImage: candidate["mention"].string != nil ? "bubble.left" : candidate["kind"] == "directory" ? "folder" : "doc").frame(maxWidth: .infinity, minHeight: 36, alignment: .leading).contentShape(Rectangle()) }.buttonStyle(.plain)
+                    } label: { Label(candidate["displayTitle"].string ?? candidate["label"].string ?? candidate["path"].text, systemImage: candidate["mention"].string != nil ? "bubble.left" : candidate["kind"] == "directory" ? "folder" : "doc").frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).contentShape(Rectangle()) }.buttonStyle(.plain)
                 }
                 if !mentions.loading && mentions.error == nil && mentions.candidates.isEmpty { Text(L("No matching files or sessions", "没有匹配的文件或会话")).foregroundStyle(.secondary) }
             }.font(.caption).padding(8)
-        }.frame(height: min(140, CGFloat(max(1, mentions.candidates.count)) * 44 + 8))
+        }.frame(height: min(160, CGFloat(max(1, mentions.candidates.count)) * 52 + 8))
     }
     private var commandSuggestions: some View {
         let query = draft.dropFirst().split(separator: " ", omittingEmptySubsequences: false).first.map(String.init) ?? ""
@@ -171,7 +192,7 @@ struct ChatView: View {
                         VStack(alignment: .leading, spacing: 3) {
                             Text("/" + command["name"].text + " " + command["input"]["hint"].text).font(.caption.weight(.semibold))
                             Text(command["description"].text).font(.caption2).foregroundStyle(.secondary).lineLimit(2)
-                        }.frame(maxWidth: .infinity, alignment: .leading)
+                        }.frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
                     }.buttonStyle(.plain)
                 }
                 if suggestions.isEmpty { Text(L("No matching commands", "没有匹配的命令")).font(.caption) }
@@ -217,6 +238,7 @@ struct ChatView: View {
                 }
                 else { try await chat.send(text, steer: steerNow, attachments: attachments.items); attachments.clear() }
                 if draft == text { draft = "" }
+                if text.trimmingCharacters(in: .whitespacesAndNewlines) != "/model" { sendFeedback += 1 }
             }
             catch { actionError = error.localizedDescription; if draft.isEmpty { draft = text } }
             sending = false

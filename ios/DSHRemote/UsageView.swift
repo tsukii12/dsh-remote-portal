@@ -43,7 +43,7 @@ struct UsageView: View {
                 HStack(spacing: 10) {
                     if let context = UsagePresentation.context(pressure) { Label(L("Context ", "上下文 ") + "\(context.percent)%", systemImage: "chart.pie") }
                     if let total = UsagePresentation.total(usage) { Text(L("Usage ", "用量 ") + "\(total.formatted()) tok") }
-                }.foregroundStyle(.secondary)
+                }.foregroundStyle(.secondary).frame(minHeight: 44)
             }.font(.caption).accessibilityIdentifier("usageDetails")
         }
     }

@@ -14,7 +14,7 @@ struct StatusBanner: View {
             if reconnecting { ProgressView().controlSize(.small) }
             else { Image(systemName: "exclamationmark.circle") }
             Text(message).font(.caption).frame(maxWidth: .infinity, alignment: .leading)
-            if let dismiss { Button(action: dismiss) { Image(systemName: "xmark") }.accessibilityLabel(L("Dismiss", "关闭")) }
+            if let dismiss { Button(action: dismiss) { Image(systemName: "xmark").frame(minWidth: 44, minHeight: 44) }.accessibilityLabel(L("Dismiss", "关闭")) }
         }
         .padding(12).foregroundStyle(.primary)
         .background(reconnecting ? DRPStyle.accent.opacity(0.09) : Color.orange.opacity(0.12))
@@ -47,7 +47,7 @@ struct WorkspaceView: View {
     var body: some View {
         NavigationSplitView(columnVisibility: $visibility, preferredCompactColumn: $compactColumn) {
             SidebarView(store: sidebar, events: events, selection: selection, serverName: serverName, addressLabel: addressLabel, onSelect: openChat, onReview: review, onCreate: create, onSwitch: onSwitch, onLogout: onLogout, onSettings: { showingSettings = true }, onTerminals: { terminalSessionID = $0 })
-                .navigationSplitViewColumnWidth(min: 250, ideal: 290, max: 360)
+                .navigationSplitViewColumnWidth(min: 340, ideal: 360, max: 440)
                 .safeAreaInset(edge: .top, spacing: 0) { pendingBanner }
         } detail: {
             Group {
@@ -57,7 +57,7 @@ struct WorkspaceView: View {
                 } else {
                     VStack(spacing: 20) {
                         Image(systemName: "sparkle").font(.system(size: 42)).foregroundStyle(DRPStyle.accent)
-                        Text(L("What can we work on?", "今天一起做点什么？")).font(.title2.bold())
+                        Text(L("What can we work on?", "今天想做些什么？")).font(.title2.bold())
                         Text(L("Choose a conversation or start a new chat.", "选择对话，或开始新的聊天。")).foregroundStyle(.secondary)
                         Button(L("New chat", "新对话")) { create(sidebar.workspaces.first?.id) }.buttonStyle(.borderedProminent)
                     }.padding().frame(maxWidth: .infinity, maxHeight: .infinity).navigationTitle("DRP")
@@ -172,7 +172,7 @@ private struct SidebarView: View {
                                 .lineLimit(1).textCase(nil)
                             Spacer()
                             if !["pinned", "ungrouped"].contains(group.id) {
-                                Button { onCreate(group.id) } label: { Image(systemName: "plus") }
+                                Button { onCreate(group.id) } label: { Image(systemName: "plus").frame(minWidth: 44, minHeight: 44) }
                                     .accessibilityLabel(L("New chat in ", "在此工作区新建对话：") + group.title)
                             }
                             if let workspace = store.workspaces.first(where: { $0.id == group.id }) {
