@@ -90,6 +90,10 @@ private struct SidebarView: View {
     @State private var renameID = ""
     @State private var renameText = ""
     @State private var actionError: String?
+    @State private var showingFolders = false
+    @State private var renamingWorkspace = false
+    @State private var deletingWorkspace: WorkspaceRow?
+    @State private var contentSearch = false
     var body: some View {
         List {
             if let actionError { StatusBanner(message: actionError, dismiss: { self.actionError = nil }).listRowInsets(EdgeInsets()) }
@@ -108,7 +112,7 @@ private struct SidebarView: View {
                             .listRowBackground(selection == row.id ? DRPStyle.accent.opacity(0.1) : Color(uiColor: .secondarySystemGroupedBackground))
                             .contextMenu { actions(row) }
                             .swipeActions(edge: .trailing) {
-                                Button(role: .destructive) { perform { try await store.archive(row.id) } } label: { Label(L("Archive", "归档"), systemImage: "archivebox") }
+                                Button(role: .destructive) { perform { if store.archivedOnly { try await store.unarchive(row.id) } else { try await store.archive(row.id) } } } label: { Label(store.archivedOnly ? L("Unarchive", "取消归档") : L("Archive", "归档"), systemImage: "archivebox") }
                                 Button { beginRename(row) } label: { Label(L("Rename", "重命名"), systemImage: "pencil") }.tint(.gray)
                             }
                             .swipeActions(edge: .leading) {
@@ -124,6 +128,12 @@ private struct SidebarView: View {
                                 Button { onCreate(group.id) } label: { Image(systemName: "plus") }
                                     .accessibilityLabel(L("New chat in ", "在此工作区新建对话：") + group.title)
                             }
+                            if let workspace = store.workspaces.first(where: { $0.id == group.id }) {
+                                Menu {
+                                    Button(L("Rename workspace", "重命名工作区")) { renameID = workspace.id; renameText = workspace.title; renamingWorkspace = true; renaming = true }
+                                    Button(L("Remove workspace", "移除工作区"), role: .destructive) { deletingWorkspace = workspace }
+                                } label: { Image(systemName: "ellipsis.circle") }.accessibilityLabel(L("Workspace actions", "工作区操作"))
+                            }
                         }
                     }
                 }
@@ -131,8 +141,31 @@ private struct SidebarView: View {
             if store.sessions.isEmpty && store.loaded { Text(L("No conversations yet", "还没有对话")).foregroundStyle(.secondary) }
         }
         .listStyle(.sidebar).scrollContentBackground(.hidden).background(DRPStyle.sidebar)
-        .navigationTitle("DRP")
-        .toolbar { ToolbarItem(placement: .topBarTrailing) { Button { onCreate(store.workspaces.first?.id) } label: { Image(systemName: "square.and.pencil") }.accessibilityLabel(L("New chat", "新对话")) } }
+        .navigationTitle("DeepSeek Remote")
+        .searchable(text: $store.searchText, prompt: L("Search sessions", "搜索会话"))
+        .onChange(of: contentSearch) { _, _ in store.clearSearchResults() }
+        .task(id: store.searchText + String(contentSearch)) {
+            do {
+                try await Task.sleep(nanoseconds: 300_000_000)
+                if contentSearch { try await store.search(store.searchText) }
+            } catch { if !Task.isCancelled { actionError = L("Content search unavailable; showing name matches. ", "内容搜索不可用，正在显示名称匹配。") + error.localizedDescription } }
+        }
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Menu {
+                    Toggle(L("Archived sessions", "已归档会话"), isOn: $store.archivedOnly)
+                    Toggle(L("Search message content", "搜索消息内容"), isOn: $contentSearch)
+                    Button(L("Add workspace", "添加工作区")) { showingFolders = true }
+                } label: { Label(store.archivedOnly ? L("Archived", "已归档") : L("View options", "视图选项"), systemImage: store.archivedOnly ? "archivebox.fill" : "line.3.horizontal.decrease.circle") }
+            }
+            ToolbarItem(placement: .topBarTrailing) { Button { onCreate(store.workspaces.first?.id) } label: { Image(systemName: "square.and.pencil") }.accessibilityLabel(L("New chat", "新对话")) }
+        }
+        .sheet(isPresented: $showingFolders) { HostFolderView(store: store) }
+        .confirmationDialog(L("Remove workspace?", "移除工作区？"), isPresented: Binding(get: { deletingWorkspace != nil }, set: { if !$0 { deletingWorkspace = nil } }), titleVisibility: .visible) {
+            Button(L("Remove workspace", "移除工作区"), role: .destructive) {
+                if let workspace = deletingWorkspace { perform { try await store.deleteWorkspace(workspace.id) } }; deletingWorkspace = nil
+            }
+        } message: { Text(L("Removes the workspace registration, not the host folder or its files.", "仅移除工作区记录，不会删除主机文件夹或其中的文件。")) }
         .safeAreaInset(edge: .bottom, spacing: 0) {
             VStack(spacing: 12) {
                 Divider()
@@ -152,18 +185,25 @@ private struct SidebarView: View {
             }.padding(.horizontal, 20).padding(.bottom, 12).background(DRPStyle.sidebar)
         }
         .refreshable { do { try await store.refresh() } catch { actionError = error.localizedDescription } }
-        .alert(L("Rename conversation", "重命名对话"), isPresented: $renaming) {
+        .alert(renamingWorkspace ? L("Rename workspace", "重命名工作区") : L("Rename conversation", "重命名对话"), isPresented: $renaming) {
             TextField(L("Title", "标题"), text: $renameText)
             Button(L("Cancel", "取消"), role: .cancel) {}
-            Button(L("Save", "保存")) { perform { try await store.rename(renameID, title: renameText) } }.disabled(renameText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            Button(L("Save", "保存")) {
+                let workspace = renamingWorkspace
+                perform { if workspace { try await store.renameWorkspace(renameID, title: renameText) } else { try await store.rename(renameID, title: renameText) } }
+            }.disabled(renameText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
         }
     }
     @ViewBuilder private func actions(_ row: SessionRow) -> some View {
         Button { beginRename(row) } label: { Label(L("Rename", "重命名"), systemImage: "pencil") }
         Button { togglePin(row.id) } label: { Label(store.pinnedIDs.contains(row.id) ? L("Unpin", "取消置顶") : L("Pin", "置顶"), systemImage: "pin") }
-        Button(role: .destructive) { perform { try await store.archive(row.id) } } label: { Label(L("Archive", "归档"), systemImage: "archivebox") }
+        if store.archivedIDs.contains(row.id) {
+            Button { perform { try await store.unarchive(row.id) } } label: { Label(L("Unarchive", "取消归档"), systemImage: "archivebox") }
+        } else {
+            Button(role: .destructive) { perform { try await store.archive(row.id) } } label: { Label(L("Archive", "归档"), systemImage: "archivebox") }
+        }
     }
-    private func beginRename(_ row: SessionRow) { renameID = row.id; renameText = row.title; renaming = true }
+    private func beginRename(_ row: SessionRow) { renameID = row.id; renameText = row.title; renamingWorkspace = false; renaming = true }
     private func togglePin(_ id: String) { perform { try await store.pin(id, pinned: !store.pinnedIDs.contains(id)) } }
     private func perform(_ action: @escaping () async throws -> Void) { Task { do { try await action() } catch { actionError = error.localizedDescription } } }
 }

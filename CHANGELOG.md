@@ -5,6 +5,12 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+### Added
+- Native DRP round 1: prominent provider-grouped model/effort controls, session access and plan/preset selectors, slash-command suggestions, editable queue/steer controls, session search and archive recovery, and workspace management with Portal host-folder browsing. Server-list/sidebar titles are now DeepSeek Remote; the icon name remains DRP.
+- 原生 DRP 第一轮功能：醒目的模型与思考强度选择、会话权限与计划/代理预设、斜杠命令建议、可编辑队列与引导、会话搜索与归档恢复，以及使用门户主机文件夹浏览器的工作区管理。服务器列表与侧栏标题改为 DeepSeek Remote，图标名称仍为 DRP。
+- Real-listener tests cover new RPC/HTTP routes; opt-in live smoke switches two local fake model routes with explicit effort and verifies session access commands and Portal folder browsing.
+- 新 RPC/HTTP 路由由真实监听器测试覆盖；可选在线冒烟测试验证两个本地模拟模型的切换与明确思考强度、会话权限命令及门户文件夹浏览。
+
 ### Fixed
 - DRP now preserves gateway sign-in failure reasons, localizes client errors and the local-network permission prompt, and recovers approval-input loading after failures. Real-listener tests cover authentication, isolated logout and approval requests.
 - DRP 现保留网关登录失败原因，提供双语客户端错误和本地网络权限提示，并支持工具授权输入加载失败后的重试。真实监听器测试覆盖认证、独立退出登录和工具授权请求。

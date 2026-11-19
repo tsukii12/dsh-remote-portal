@@ -38,11 +38,18 @@ final class SidebarStore: ObservableObject {
     @Published private(set) var pinnedIDs: [String] = []
     @Published private(set) var loaded = false
     @Published private(set) var error: String?
+    @Published var searchText = "" { didSet { if oldValue != searchText { searchResults = [] } } }
+    @Published var archivedOnly = false
+    @Published private(set) var searchResults: [JSON] = []
     private let api: RPCServing
     private var tasks: [Task<Void, Never>] = []
     init(api: RPCServing) { self.api = api }
     var groups: [SessionGroup] {
-        let visible = sessions.values.filter { !archivedIDs.contains($0.id) }
+        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        let foundIDs = Set(searchResults.compactMap { $0["sessionId"].string })
+        let visible = sessions.values.filter {
+            archivedIDs.contains($0.id) == archivedOnly && (query.isEmpty || $0.title.localizedCaseInsensitiveContains(query) || foundIDs.contains($0.id))
+        }
         let pinned = pinnedIDs.compactMap { id in visible.first { $0.id == id } }
         let assigned = Set(workspaces.flatMap(\.sessionIDs) + pinnedIDs)
         return [SessionGroup(id: "pinned", title: L("Pinned", "置顶"), sessions: pinned)] + workspaces.map { workspace in
@@ -86,7 +93,8 @@ final class SidebarStore: ObservableObject {
     }
     func applyControl(_ frame: JSON) {
         if frame["type"] == "baseline" {
-            for (id, value) in frame["projections"].object { updateProjections(id, values: value["values"]) }
+            let baseline = frame["value"] == .null ? frame : frame["value"]
+            for (id, value) in baseline["projections"].object { updateProjections(id, values: value["values"]) }
         } else if frame["type"] == "projection" {
             let id = frame["sessionId"].text
             var values = sessions[id]?.projections ?? [:]
@@ -135,6 +143,36 @@ final class SidebarStore: ObservableObject {
     func pin(_ id: String, pinned: Bool) async throws {
         let value = try await api.rpc(pinned ? "workspace/pinSession" : "workspace/unpinSession", args: ["request": ["sessionId": .string(id)]])
         pinnedIDs = value["pinnedSessionIds"].array.map(\.text)
+    }
+    func search(_ query: String) async throws {
+        searchResults = []
+        guard !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        let value = try await api.rpc("session/search", args: ["request": ["query": .string(query)]])
+        guard searchText == query else { return }
+        searchResults = value["items"].array
+    }
+    func clearSearchResults() { searchResults = [] }
+    func unarchive(_ id: String) async throws {
+        let value = try await api.rpc("workspace/unarchiveSession", args: ["request": ["sessionId": .string(id)]])
+        archivedIDs = value["archivedSessionIds"].array.map(\.text)
+    }
+    func createWorkspace(path: String) async throws {
+        let value = try await api.rpc("workspace/create", args: ["request": ["path": .string(path)]])
+        applyWorkspace(["type": "upsert", "workspace": value["workspace"]])
+    }
+    func renameWorkspace(_ id: String, title: String) async throws {
+        let value = try await api.rpc("workspace/rename", args: ["request": ["workspaceId": .string(id), "title": .string(title)]])
+        applyWorkspace(["type": "upsert", "workspace": value["workspace"]])
+    }
+    func deleteWorkspace(_ id: String) async throws {
+        _ = try await api.rpc("workspace/delete", args: ["request": ["workspaceId": .string(id)]])
+        workspaces.removeAll { $0.id == id }
+    }
+    func folders(path: String = "") async throws -> JSON {
+        try await api.portal("fs", query: path.isEmpty ? [] : [URLQueryItem(name: "path", value: path)], body: nil)["listing"]
+    }
+    func makeFolder(parent: String, name: String) async throws -> JSON {
+        try await api.portal("fs/mkdir", query: [], body: ["parent": .string(parent), "name": .string(name)])["created"]
     }
     deinit { tasks.forEach { $0.cancel() } }
 }

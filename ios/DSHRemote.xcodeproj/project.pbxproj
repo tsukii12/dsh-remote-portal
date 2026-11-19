@@ -22,6 +22,7 @@
 		682CF7AA9D40EEDEF5605417 /* InteractionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 695031F55C568529A75E26AD /* InteractionSheet.swift */; };
 		6BCF9AEA77B1F1C0CAED715C /* TransportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E31BD29E3CF1DDCFBCB0A0 /* TransportTests.swift */; };
 		780C760C8FEFA0367FA6C8E5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 82C838BC9250964EF93A46EF /* Assets.xcassets */; };
+		7A7E3A89DC121DD00956D78E /* ChatOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC24A54F0C5082A5A9DC09EA /* ChatOptionsView.swift */; };
 		7D7A53CD2468EAB23563F035 /* live-hello-stream.json in Resources */ = {isa = PBXBuildFile; fileRef = B7F63A0D8CEB2C235E3FA3D0 /* live-hello-stream.json */; };
 		83AF0302BC5CF2C3D52C94B0 /* WorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 534EF24D99DA04F0ABBB33D4 /* WorkspaceView.swift */; };
 		885826B154157C638D23EEDE /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = F895E8B0D476AF0D2450E142 /* App.swift */; };
@@ -34,6 +35,7 @@
 		CEA73A64EF47BE3569B4099E /* ConnectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D80301D5FBB4C69FB8FA95D /* ConnectionTests.swift */; };
 		DEF8EECE056D9028FF12D9AC /* live-approval-events.json in Resources */ = {isa = PBXBuildFile; fileRef = F345DCE047A5A4AF876DC2CE /* live-approval-events.json */; };
 		E2229F21D3CFA32A175A9231 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = B896439645C80D92D51A5D57 /* JSON.swift */; };
+		E90C49C4440D96C9C3A25A45 /* HostFolderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9604F5F6A166C86EB6548088 /* HostFolderView.swift */; };
 		F1A383AD689AD62FE1BB500E /* SidebarStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0591514315C7638F5FE12F /* SidebarStore.swift */; };
 		FF9326B02D86F9C5A9944E33 /* zh-Hans.lproj in Resources */ = {isa = PBXBuildFile; fileRef = 08749B89FB8966EFB82DE292 /* zh-Hans.lproj */; };
 /* End PBXBuildFile section */
@@ -65,8 +67,10 @@
 		82C838BC9250964EF93A46EF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		855CABEA5AE01E87CFD9B0B2 /* MarkdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownView.swift; sourceTree = "<group>"; };
 		939A191ABC4D156D62E63FF9 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
+		9604F5F6A166C86EB6548088 /* HostFolderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostFolderView.swift; sourceTree = "<group>"; };
 		973DED5D475F8B79FE989954 /* live-session-create.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "live-session-create.json"; sourceTree = "<group>"; };
 		A802E3426AD81E789CF18C84 /* live-workspace-stream.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "live-workspace-stream.json"; sourceTree = "<group>"; };
+		AC24A54F0C5082A5A9DC09EA /* ChatOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatOptionsView.swift; sourceTree = "<group>"; };
 		B7F63A0D8CEB2C235E3FA3D0 /* live-hello-stream.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "live-hello-stream.json"; sourceTree = "<group>"; };
 		B896439645C80D92D51A5D57 /* JSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
 		BAE3DE41EEF7C093D12022B7 /* Connection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
@@ -98,10 +102,12 @@
 			children = (
 				F895E8B0D476AF0D2450E142 /* App.swift */,
 				82C838BC9250964EF93A46EF /* Assets.xcassets */,
+				AC24A54F0C5082A5A9DC09EA /* ChatOptionsView.swift */,
 				CAD55BA925A3292BC9BE346B /* ChatStore.swift */,
 				939A191ABC4D156D62E63FF9 /* ChatView.swift */,
 				BAE3DE41EEF7C093D12022B7 /* Connection.swift */,
 				5895312125F1BDED1EA1D4AD /* en.lproj */,
+				9604F5F6A166C86EB6548088 /* HostFolderView.swift */,
 				F9271D50C7B0055EF7EEC2B9 /* Info.plist */,
 				695031F55C568529A75E26AD /* InteractionSheet.swift */,
 				B896439645C80D92D51A5D57 /* JSON.swift */,
@@ -272,9 +278,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				885826B154157C638D23EEDE /* App.swift in Sources */,
+				7A7E3A89DC121DD00956D78E /* ChatOptionsView.swift in Sources */,
 				0064414DE458BACF5DE9054A /* ChatStore.swift in Sources */,
 				1E126ECB71106CD9656682C2 /* ChatView.swift in Sources */,
 				27AFA5AFB3674EC409BB2F0B /* Connection.swift in Sources */,
+				E90C49C4440D96C9C3A25A45 /* HostFolderView.swift in Sources */,
 				682CF7AA9D40EEDEF5605417 /* InteractionSheet.swift in Sources */,
 				E2229F21D3CFA32A175A9231 /* JSON.swift in Sources */,
 				0F34057475377F517D1387CF /* MarkdownView.swift in Sources */,

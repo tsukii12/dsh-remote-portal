@@ -74,11 +74,20 @@ final class ChatStore: ObservableObject {
     @Published private(set) var loaded = false
     @Published private(set) var catalog: JSON = [:]
     @Published private(set) var selectedModel: JSON = [:]
+    @Published private(set) var projections: JSON = [:]
+    @Published private(set) var queue: [JSON] = []
+    @Published private(set) var permissionCatalog: JSON = [:]
+    @Published private(set) var presetCatalog: JSON = [:]
+    @Published private(set) var commands: [JSON] = []
+    @Published private(set) var commandNotice: String?
+    @Published private(set) var exportedFile: URL?
     @Published private(set) var error: String?
     private let api: RPCServing
     private weak var events: RemoteEvents?
     private var observer: UUID?
     private var followTask: Task<Void, Never>?
+    private var controlTasks: [Task<Void, Never>] = []
+    private var projectionCursor = -1
     private var history: [Int: JSON] = [:]
     private var optimistic: [TranscriptItem] = []
     private var snapshotCursor: Int?
@@ -99,13 +108,49 @@ final class ChatStore: ObservableObject {
             do { for try await frame in stream { if Task.isCancelled { break }; self?.apply(frame) } }
             catch { self?.error = error.localizedDescription }
         }
+        for endpoint in ["session/control", "session/observeState"] {
+            let frames = api.stream(endpoint, args: endpoint == "session/control" ? [:] : ["request": ["sessionId": .string(sessionID)]])
+            controlTasks.append(Task { [weak self] in
+                do {
+                    for try await frame in frames {
+                        guard !Task.isCancelled else { break }
+                        if endpoint == "session/control" { self?.applyControl(frame) }
+                        else if frame["type"] != "connection-reset" { self?.applyState(frame) }
+                    }
+                } catch { if !Task.isCancelled { self?.error = error.localizedDescription } }
+            })
+        }
         applyState(try await api.rpc("session/state", args: ["request": ["sessionId": .string(sessionID)]]))
     }
     func stop() {
         followTask?.cancel(); followTask = nil
+        controlTasks.forEach { $0.cancel() }; controlTasks = []
         if let observer { events?.removeObserver(observer) }; observer = nil
     }
-    func applyState(_ state: JSON) { running = state["running"].boolean }
+    func applyState(_ state: JSON) {
+        running = state["running"].boolean
+        queue = state["queue"].array
+        rebuild()
+    }
+    func applyControl(_ frame: JSON) {
+        if frame["type"] == "connection-reset" { projectionCursor = -1; return }
+        if frame["type"] == "baseline" {
+            let snapshot = frame["value"]["projections"][sessionID]
+            if snapshot != .null { applyProjections(snapshot) }
+        } else if frame["type"] == "projection", frame["sessionId"].text == sessionID {
+            guard let seq = frame["seq"].int, seq >= projectionCursor else { return }
+            projectionCursor = seq
+            var values = projections
+            for change in frame["changes"].array { values[change["key"].text] = change["val"] }
+            projections = values; selectedModel = values["modelSelection"]
+        }
+    }
+    func applyProjections(_ snapshot: JSON) {
+        let cursor = snapshot["asOfSeq"].int ?? -1
+        guard cursor >= projectionCursor else { return }
+        projectionCursor = cursor
+        projections = snapshot["values"]; selectedModel = projections["modelSelection"]
+    }
     func applyStatusEvent(_ frame: JSON) {
         if frame["type"] == "ready" {
             Task { [weak self] in
@@ -125,7 +170,7 @@ final class ChatStore: ObservableObject {
             history = [:]
             snapshotCursor = frame["cursor"].int
             hasMore = frame["hasMore"].boolean
-            selectedModel = frame["projections"]["values"]["modelSelection"]
+            applyProjections(frame["projections"])
             for record in frame["records"].array { if let seq = record["event"]["seq"].int { history[seq] = record["event"] } }
             inProgress = nil; attemptID = nil; pendingCommitSeq = nil
             let baseline = frame["assistantStream"]
@@ -214,7 +259,8 @@ final class ChatStore: ObservableObject {
             }
         }
         let positions = Dictionary(uniqueKeysWithValues: surface.enumerated().compactMap { index, event in event["seq"].int.map { ($0, index) } })
-        transcript = items.sorted { (positions[$0.seq ?? -1] ?? 0) < (positions[$1.seq ?? -1] ?? 0) } + optimistic
+        let queuedRequests = Set(queue.compactMap { $0["rpcId"].string })
+        transcript = items.sorted { (positions[$0.seq ?? -1] ?? 0) < (positions[$1.seq ?? -1] ?? 0) } + optimistic.filter { !queuedRequests.contains($0.requestID ?? "") }
     }
     @discardableResult
     func send(_ text: String, steer: Bool = false) async throws -> String {
@@ -231,10 +277,65 @@ final class ChatStore: ObservableObject {
     }
     func cancel() async throws { _ = try await api.rpc("session/cancel", args: ["request": ["sessionId": .string(sessionID)]]) }
     func loadModels() async throws { catalog = try await api.rpc("session/modelCatalog", args: [:]) }
-    func selectModel(provider: String, model: String, reasoningEffort: String? = nil) async throws {
+    var currentModel: JSON {
+        for key in ["selected", "next", "lastUsed"] where selectedModel[key]["model"].string != nil { return selectedModel[key] }
+        return catalog["default"]
+    }
+    var modelDefinition: JSON {
+        catalog["groups"].array.first { $0["id"] == currentModel["provider"] }?["models"].array.first { $0["id"] == currentModel["model"] } ?? [:]
+    }
+    var modelName: String { modelDefinition["name"].string ?? currentModel["model"].string ?? L("Choose model", "选择模型") }
+    var effortName: String {
+        guard let effort = currentModel["reasoningEffort"].string else { return L("Default", "默认") }
+        return modelDefinition["reasoning"]["efforts"].array.first { $0["id"].text == effort }?["name"].string ?? effort
+    }
+    var sessionStarted: Bool { projections["sessionListMetadata"]["blank"] == false || transcript.contains { $0.role == "user" } || running }
+    var planEnabled: Bool { projections["plan"]["pending"].boolean ? !projections["plan"]["active"].boolean : projections["plan"]["active"].boolean }
+    func selectModel(provider: String, model: String, reasoningEffort: String? = nil, useDefaultEffort: Bool = false) async throws {
         var request: JSON = ["sessionId": .string(sessionID), "provider": .string(provider), "model": .string(model)]
-        if let reasoningEffort { request["reasoningEffort"] = .string(reasoningEffort) }
+        let sameRoute = currentModel["provider"].text == provider && currentModel["model"].text == model
+        let definition = catalog["groups"].array.first { $0["id"].text == provider }?["models"].array.first { $0["id"].text == model } ?? [:]
+        let effort = useDefaultEffort ? nil : reasoningEffort ?? (sameRoute ? currentModel["reasoningEffort"].string : definition["reasoning"]["defaultEffort"].string)
+        if let effort { request["reasoningEffort"] = .string(effort) }
         selectedModel = try await api.rpc("session/selectModel", args: ["request": request])
+    }
+    func loadControls() async throws {
+        permissionCatalog = try await api.rpc("permissionPresets/catalog", args: [:])
+        presetCatalog = try await api.rpc("agentPresets/list", args: [:])
+        commands = try await api.rpc("commands/list", args: ["agentId": .string(sessionID)]).array
+        try await refreshProjections()
+    }
+    func refreshProjections() async throws {
+        applyProjections(try await api.rpc("session/projections", args: ["request": ["sessionId": .string(sessionID)]]))
+    }
+    @discardableResult
+    func executeCommand(_ line: String) async throws -> JSON {
+        commandNotice = nil; exportedFile = nil
+        let response = try await api.rpc("commands/execute", args: ["agentId": .string(sessionID), "line": .string(line), "submittedAttachments": []])
+        guard response["result"]["kind"].string != nil else { throw PortalError.message(L("Unknown command. Choose a suggestion or send ordinary text.", "未知命令，请选择建议或发送普通文本。")) }
+        let result = response["result"]
+        if result["kind"] == "error" { throw PortalError.message(result["text"].string ?? L("Command failed.", "命令执行失败。")) }
+        commandNotice = result["text"].string
+        if line.trimmingCharacters(in: .whitespacesAndNewlines) == "/export" { exportedFile = try await api.exportSession(sessionID) }
+        try await refreshProjections()
+        return response
+    }
+    func selectPermission(_ preset: String) async throws { try await executeCommand("/permission " + preset) }
+    func selectPreset(_ preset: String) async throws {
+        guard !sessionStarted else { throw PortalError.message(L("Choose a preset before the first message.", "请在发送第一条消息前选择预设。")) }
+        _ = try await api.rpc("agentPresets/select", args: ["agentId": .string(sessionID), "agentPreset": .string(preset)])
+        try await loadControls()
+    }
+    func updateQueue(_ id: String, kind: String, text: String? = nil) async throws {
+        var action: JSON = ["kind": .string(kind)]
+        if kind == "edit" {
+            guard let text, !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { throw PortalError.message(L("Enter a message.", "请输入消息。")) }
+            action["content"] = [["type": "text", "text": .string(text)]]
+        }
+        let rpcID = queue.first { $0["id"].text == id }?["rpcId"].string
+        _ = try await api.rpc("session/updateQueue", args: ["request": ["sessionId": .string(sessionID), "itemId": .string(id), "action": action]])
+        if let rpcID { optimistic.removeAll { $0.requestID == rpcID } }
+        applyState(try await api.rpc("session/state", args: ["request": ["sessionId": .string(sessionID)]]))
     }
     func loadOlder() async throws {
         guard hasMore, let before = history.keys.min(), let through = snapshotCursor else { return }
@@ -242,5 +343,5 @@ final class ChatStore: ObservableObject {
         for record in page["records"].array { if let seq = record["event"]["seq"].int { history[seq] = record["event"] } }
         hasMore = page["hasMore"].boolean; rebuild()
     }
-    deinit { followTask?.cancel() }
+    deinit { followTask?.cancel(); controlTasks.forEach { $0.cancel() } }
 }

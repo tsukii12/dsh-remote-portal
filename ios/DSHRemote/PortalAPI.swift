@@ -82,6 +82,13 @@ final class CookieVault {
 protocol RPCServing: AnyObject {
     func rpc(_ method: String, args: JSON) async throws -> JSON
     func stream(_ endpoint: String, args: JSON) -> AsyncThrowingStream<JSON, Error>
+    func portal(_ path: String, query: [URLQueryItem], body: JSON?) async throws -> JSON
+    func exportSession(_ id: String) async throws -> URL
+}
+
+extension RPCServing {
+    func portal(_ path: String, query: [URLQueryItem], body: JSON?) async throws -> JSON { throw APIError.invalidResponse }
+    func exportSession(_ id: String) async throws -> URL { throw APIError.invalidResponse }
 }
 
 @MainActor
@@ -128,6 +135,44 @@ final class PortalAPI: ObservableObject, RPCServing {
     func login(secret: String, pairing: Bool) async throws {
         _ = try await client.post(base, endpoint: "login", fields: [pairing ? "token" : "password": secret])
         sessionExpired = false
+    }
+    func exportSession(_ id: String) async throws -> URL {
+        var request = request("api/session.export")
+        var components = URLComponents(url: request.url!, resolvingAgainstBaseURL: false)!
+        components.queryItems = [URLQueryItem(name: "sessionId", value: id)]; request.url = components.url
+        do {
+            let (data, response) = try await client.session.data(for: request)
+            guard let http = response as? HTTPURLResponse else { throw APIError.invalidResponse }
+            try client.cookies.ingest(http, base: base)
+            if http.statusCode == 401 { throw APIError.sessionExpired }
+            guard (200..<300).contains(http.statusCode) else { throw APIError.http(http.statusCode) }
+            guard data.starts(with: [0x50, 0x4b]) else { throw APIError.invalidResponse }
+            let file = FileManager.default.temporaryDirectory.appendingPathComponent("DRP-session-\(UUID().uuidString).zip")
+            try data.write(to: file, options: [.atomic, .completeFileProtection])
+            return file
+        } catch APIError.sessionExpired { expire(); throw APIError.sessionExpired }
+    }
+    func portal(_ path: String, query: [URLQueryItem] = [], body: JSON? = nil) async throws -> JSON {
+        var request = request("dsh-remote-portal/" + path)
+        var components = URLComponents(url: request.url!, resolvingAgainstBaseURL: false)!
+        if !query.isEmpty { components.queryItems = query }
+        request.url = components.url
+        if let body {
+            request.httpMethod = "POST"
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.httpBody = try JSONEncoder().encode(body)
+        }
+        do {
+            let (data, response) = try await client.session.data(for: request)
+            guard let http = response as? HTTPURLResponse else { throw APIError.invalidResponse }
+            try client.cookies.ingest(http, base: base)
+            if http.statusCode == 401 { throw APIError.sessionExpired }
+            let value = try? JSONDecoder().decode(JSON.self, from: data)
+            guard (200..<300).contains(http.statusCode), value?["ok"].boolean == true else {
+                throw APIError.remote(value?["code"].text ?? "portal/http-\(http.statusCode)", value?["error"].string ?? L("Host folder request failed.", "主机文件夹请求失败。"))
+            }
+            return value!
+        } catch APIError.sessionExpired { expire(); throw APIError.sessionExpired }
     }
     func logout() async throws {
         _ = try await client.post(base, endpoint: "logout", fields: [:])

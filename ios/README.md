@@ -19,9 +19,13 @@ Connecting races uncached health checks across all addresses with a three-second
 
 ## Native interface
 
-The adaptive sidebar is a separate column on iPad and native sidebar navigation on iPhone. Pinned chats come first, then workspaces and ungrouped chats. Tap a workspace's **+** for a new chat; long-press or swipe conversations to rename, pin/unpin or archive. Pull down to refresh. Switch servers or log out from the sidebar footer.
+The server list and sidebar use **DeepSeek Remote** as the home title; the home-screen icon is still **DRP**. The adaptive sidebar is a separate column on iPad and native sidebar navigation on iPhone. Pinned chats come first, then workspaces and ungrouped chats. Tap a workspace's **+** for a new chat; long-press or swipe conversations to rename, pin/unpin or archive. Pull down to refresh. Switch servers or log out from the sidebar footer.
 
-Chat supports live Markdown, expandable thinking, fenced code with copy/horizontal scrolling and compact tool cards with expandable results. Earlier history loads from the top. Scrolling up pauses automatic following; use the down arrow to return to the live edge. The multiline composer has a model picker and a send/stop button. Native sheets handle tool approvals and single/multiple-choice questions with custom answers. A connection banner reports reconnects without hiding the transcript.
+Search session names from the sidebar. **View options** enables message-content search and the archived view; archived rows offer **Unarchive**. Content-search errors retain local name filtering. **Add workspace** opens the Portal-backed host folder browser, including roots, parent navigation, direct paths and new folders. Workspace menus rename or remove the registration without deleting host files. Older Portals without folder routes can still register an explicit host path.
+
+Chat supports live Markdown, expandable thinking, fenced code with copy/horizontal scrolling and compact tool cards with expandable results. Earlier history loads from the top. Scrolling up pauses automatic following; use the down arrow to return to the live edge. The prominent composer chip shows the model and thinking effort; its options group models by provider, allow explicit/default effort, access mode, plan mode and an agent preset before the first message. Reselecting a model preserves its explicit effort. Type `/` for host command suggestions or `/model` for native options. Commands use `commands/execute`, not ordinary prompts; `/export` offers a native share link. While running, send queues or steers a prompt separately from Stop. The queue dock supports edit, remove and steer using the host's item id. Native sheets handle tool approvals and single/multiple-choice questions with custom answers. A connection banner reports reconnects without hiding the transcript.
+
+服务器列表和侧栏标题为 **DeepSeek Remote**，主屏幕图标名称仍为 **DRP**。侧栏支持按名称或消息内容搜索、查看与恢复归档会话，以及通过门户主机文件夹浏览器创建、重命名和移除工作区。聊天输入区显示模型与思考强度，可选择访问权限、计划模式及首次发送前的代理预设；输入 `/` 查看命令建议。运行中可排队或立即引导消息，并编辑、移除或引导队列项目，停止按钮保持独立。
 
 `Assets.xcassets/AppIcon.appiconset` contains the supplied opaque 1024px whale icon as a single-size iOS AppIcon.
 
@@ -46,7 +50,7 @@ TEST_RUNNER_DSH_LIVE_SMOKE=1 xcodebuild -project ios/DSHRemote.xcodeproj -scheme
   -collect-test-diagnostics never -only-testing:DSHRemoteTests/LiveSmokeTests test
 ```
 
-Xcode passes the `TEST_RUNNER_`-prefixed variable into the test runner as `DSH_LIVE_SMOKE`. Output prefixed `LIVE PASS` proves native URLSession login, sidebar baseline, session creation, incremental text, reconnect, approval answer and committed tool/final response.
+Xcode passes the `TEST_RUNNER_`-prefixed variable into the test runner as `DSH_LIVE_SMOKE`. Output prefixed `LIVE PASS` proves native URLSession login, sidebar baseline, session creation, two local fake routes (`native-demo` and `native-demo-fast`) with explicit Off/High thinking effort, access-mode commands, Portal folder browsing, incremental text, reconnect, approval answer and committed tool/final response. Both fixture routes must be configured outside the repository; see `~/fake-llm/README.md`.
 
 ## Local demo
 

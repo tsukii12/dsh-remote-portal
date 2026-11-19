@@ -16,6 +16,24 @@ final class StubAPI: RPCServing {
 
 @MainActor
 final class NativeStateTests: XCTestCase {
+    func testControlProjectionBaselinesDeltasAndQueueReplacement() {
+        let chat = ChatStore(sessionID: "S", api: StubAPI())
+        chat.applyControl(["type": "baseline", "value": ["projections": ["S": ["asOfSeq": 1, "values": ["plan": ["active": false, "pending": false], "agentPreset": "standard"]]]]])
+        XCTAssertFalse(chat.planEnabled)
+        chat.applyControl(["type": "projection", "sessionId": "other", "seq": 2, "changes": [["key": "plan", "val": ["active": true]]]])
+        XCTAssertFalse(chat.planEnabled)
+        chat.applyControl(["type": "projection", "sessionId": "S", "seq": 2, "changes": [["key": "plan", "val": ["active": false, "pending": true]], ["key": "agentPreset", "val": "minimal"]]])
+        XCTAssertTrue(chat.planEnabled); XCTAssertEqual(chat.projections["agentPreset"], "minimal")
+        chat.applyProjections(["asOfSeq": 1, "values": [:]])
+        XCTAssertTrue(chat.planEnabled)
+        chat.applyControl(["type": "connection-reset"])
+        chat.applyControl(["type": "baseline", "value": ["projections": ["S": ["asOfSeq": 1, "values": ["plan": ["active": true, "pending": false]]]]]])
+        XCTAssertTrue(chat.planEnabled)
+        chat.applyState(["running": true, "queue": [["id": "host-id", "rpcId": "request-id", "placement": "queued", "content": [["type": "text", "text": "queued"]]]]])
+        XCTAssertEqual(chat.queue.first?["id"], "host-id")
+        chat.applyState(["running": false, "queue": .null])
+        XCTAssertTrue(chat.queue.isEmpty); XCTAssertFalse(chat.running)
+    }
     func fixture(_ name: String) throws -> JSON {
         let url = try XCTUnwrap(Bundle(for: Self.self).url(forResource: name, withExtension: "json"))
         return try JSONDecoder().decode(JSON.self, from: Data(contentsOf: url))

@@ -78,6 +78,169 @@ private final class HTTPListener {
 final class ListenerTests: XCTestCase {
     private func client(_ root: URL) -> PortalClient { PortalClient(configuration: .ephemeral, cookies: CookieVault(root: root)) }
     private func root() -> URL { FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString) }
+    func testChatOptionsCommandsAndQueueOverRealHTTP() async throws {
+        var calls: [JSON] = []
+        let catalog: JSON = ["default": ["provider": "fake", "model": "one", "reasoningEffort": "high"], "groups": [["id": "fake", "name": "Fake", "models": [["id": "one", "name": "One", "reasoning": ["efforts": [["id": "off", "name": "Off"], ["id": "high", "name": "High"]]]], ["id": "two", "name": "Two"]]]]]
+        let server = try HTTPListener { request in
+            let body = try! JSONDecoder().decode(JSON.self, from: request.body)
+            let method = body["method"].text; let args = body["payload"]["args"]
+            XCTAssertEqual(request.path, "/relay/api/" + method)
+            XCTAssertEqual(request.method, "POST")
+            XCTAssertEqual(request.headers["user-agent"], PortalClient.userAgent)
+            XCTAssertEqual(request.headers["origin"], "http://" + request.headers["host", default: ""])
+            calls.append(body)
+            var value: JSON = [:]
+            switch method {
+            case "session/modelCatalog": value = catalog
+            case "session/selectModel": value = ["selected": args["request"]]
+            case "permissionPresets/catalog": value = ["options": [["value": "read-only"]]]
+            case "agentPresets/list": value = ["presets": [["id": "standard"], ["id": "minimal"]]]
+            case "commands/list": value = [["name": "plan", "description": "Plan"]]
+            case "session/projections": value = ["asOfSeq": 1, "values": ["agentPreset": "standard", "permissions": ["currentValue": "read-only"], "sessionListMetadata": ["blank": true]]]
+            case "commands/execute":
+                XCTAssertEqual(args["agentId"], "S"); XCTAssertEqual(args["submittedAttachments"], [])
+                value = args["line"] == "/bad" ? ["commandId": "C", "result": ["kind": "error", "text": "Refused"]] : args["line"] == "/unknown" ? .null : ["commandId": "C", "result": ["kind": "success", "text": "Changed"]]
+            case "session/state": value = ["running": true, "queue": []]
+            default: break
+            }
+            let response: JSON = ["type": "server-response", "result": ["ok": true, "value": value]]
+            return .init(body: String(decoding: try! JSONEncoder().encode(response), as: UTF8.self))
+        }
+        let base = try await server.start().appendingPathComponent("relay/")
+        let directory = root(); let client = client(directory); let api = PortalAPI(base: base, client: client)
+        defer { server.stop(); client.session.invalidateAndCancel(); try? FileManager.default.removeItem(at: directory) }
+        let chat = ChatStore(sessionID: "S", api: api)
+        try await chat.loadModels(); try await chat.loadControls()
+        try await chat.selectModel(provider: "fake", model: "one")
+        XCTAssertEqual(calls.last?["payload"]["args"]["request"]["reasoningEffort"], "high")
+        try await chat.selectModel(provider: "fake", model: "one", reasoningEffort: "off")
+        try await chat.selectModel(provider: "fake", model: "one")
+        XCTAssertEqual(calls.last?["payload"]["args"]["request"]["reasoningEffort"], "off")
+        try await chat.selectModel(provider: "fake", model: "two")
+        XCTAssertEqual(chat.currentModel["model"], "two")
+        try await chat.selectModel(provider: "fake", model: "one", useDefaultEffort: true)
+        XCTAssertEqual(chat.currentModel["reasoningEffort"], .null)
+        try await chat.selectPermission("read-only")
+        XCTAssertEqual(chat.projections["permissions"]["currentValue"], "read-only")
+        try await chat.selectPreset("minimal")
+        XCTAssertTrue(calls.contains { $0["method"] == "agentPresets/select" && $0["payload"]["args"] == ["agentId": "S", "agentPreset": "minimal"] })
+        try await chat.executeCommand("/plan")
+        XCTAssertEqual(chat.commandNotice, "Changed")
+        for line in ["/bad", "/unknown"] {
+            do { try await chat.executeCommand(line); XCTFail("Command failure accepted") } catch {}
+        }
+        chat.applyState(["running": true, "queue": [["id": "Q", "placement": "queued", "rpcId": "R", "content": [["type": "text", "text": "queued"]]]]])
+        chat.addOptimistic(text: "queued", requestID: "R")
+        XCTAssertFalse(chat.transcript.contains { $0.requestID == "R" })
+        for kind in ["edit", "steer", "remove"] {
+            try await chat.updateQueue("Q", kind: kind, text: kind == "edit" ? "updated" : nil)
+            let request = calls.last { $0["method"] == "session/updateQueue" }!["payload"]["args"]["request"]
+            XCTAssertEqual(request["sessionId"], "S"); XCTAssertEqual(request["itemId"], "Q"); XCTAssertEqual(request["action"]["kind"].text, kind)
+            if kind == "edit" { XCTAssertEqual(request["action"]["content"], [["type": "text", "text": "updated"]]) }
+        }
+        do { try await chat.updateQueue("Q", kind: "edit", text: " "); XCTFail("Empty edit accepted") } catch {}
+        do { try await chat.selectPreset("ptc"); XCTFail("Started preset accepted") } catch {}
+    }
+    func testSidebarSearchArchiveAndWorkspaceRoutesOverRealHTTP() async throws {
+        var calls: [JSON] = []
+        let workspace: JSON = ["workspaceId": "W", "title": "Project", "path": "/host/a b", "sessionIds": ["S"]]
+        let server = try HTTPListener { request in
+            if request.path.hasSuffix("/__portal/login") { return .init(status: 303, headers: ["Set-Cookie": "dsh_portal=fixture; Path=/; Max-Age=3600"]) }
+            if request.path.hasPrefix("/relay/dsh-remote-portal/") {
+                XCTAssertTrue(request.headers["cookie", default: ""].contains("dsh_portal=fixture"))
+                XCTAssertEqual(request.headers["user-agent"], PortalClient.userAgent)
+                XCTAssertEqual(request.headers["origin"], "http://" + request.headers["host", default: ""])
+                if request.method == "GET" {
+                    XCTAssertEqual(request.path, "/relay/dsh-remote-portal/fs?path=/host/a%20b")
+                    return .init(body: "{\"ok\":true,\"listing\":{\"path\":\"/host/a b\",\"entries\":[],\"roots\":[]}}")
+                }
+                XCTAssertEqual(request.path, "/relay/dsh-remote-portal/fs/mkdir")
+                let body = try! JSONDecoder().decode(JSON.self, from: request.body)
+                XCTAssertEqual(body, ["parent": "/host/a b", "name": "new"])
+                return .init(body: "{\"ok\":true,\"created\":{\"path\":\"/host/a b/new\"}}")
+            }
+            let body = try! JSONDecoder().decode(JSON.self, from: request.body); calls.append(body)
+            let method = body["method"].text
+            XCTAssertEqual(request.path, "/relay/api/" + method)
+            let value: JSON
+            switch method {
+            case "session/search": value = ["items": [["sessionId": "S", "snippet": "match"]]]
+            case "workspace/create", "workspace/rename": value = ["workspace": workspace]
+            case "workspace/unarchiveSession": value = ["archivedSessionIds": []]
+            default: value = [:]
+            }
+            return .init(body: String(decoding: try! JSONEncoder().encode(JSON.object(["type": "server-response", "result": ["ok": true, "value": value]])), as: UTF8.self))
+        }
+        let base = try await server.start().appendingPathComponent("relay/")
+        let directory = root(); let client = client(directory); let api = PortalAPI(base: base, client: client)
+        defer { server.stop(); client.session.invalidateAndCancel(); try? FileManager.default.removeItem(at: directory) }
+        let store = SidebarStore(api: api)
+        try await api.login(secret: "secret", pairing: false)
+        let folders = try await store.folders(path: "/host/a b")
+        let created = try await store.makeFolder(parent: "/host/a b", name: "new")
+        XCTAssertEqual(folders["entries"], [])
+        XCTAssertEqual(created["path"], "/host/a b/new")
+        try await store.createWorkspace(path: "/host/a b")
+        XCTAssertEqual(store.workspaces.map(\.id), ["W"])
+        try await store.renameWorkspace("W", title: "Renamed")
+        store.applySessions(["items": [["sessionId": "S", "projections": ["values": ["title": "Other"]]]]])
+        store.searchText = "match"; try await store.search("match")
+        XCTAssertEqual(store.groups.flatMap(\.sessions).map(\.id), ["S"])
+        store.applyWorkspace(["type": "archived", "archivedSessionIds": ["S"]])
+        XCTAssertTrue(store.groups.flatMap(\.sessions).isEmpty)
+        store.archivedOnly = true; XCTAssertEqual(store.groups.flatMap(\.sessions).map(\.id), ["S"])
+        try await store.unarchive("S"); XCTAssertTrue(store.groups.flatMap(\.sessions).isEmpty)
+        try await store.deleteWorkspace("W"); XCTAssertTrue(store.workspaces.isEmpty)
+        XCTAssertEqual(calls.first { $0["method"] == "workspace/create" }?["payload"]["args"], ["request": ["path": "/host/a b"]])
+        XCTAssertEqual(calls.first { $0["method"] == "workspace/rename" }?["payload"]["args"], ["request": ["workspaceId": "W", "title": "Renamed"]])
+        XCTAssertEqual(calls.first { $0["method"] == "workspace/delete" }?["payload"]["args"], ["request": ["workspaceId": "W"]])
+    }
+    func testSessionExportAndDownloadFailuresOverRealHTTP() async throws {
+        for (status, body, success) in [(200, "PKfixture", true), (200, "", false), (200, "{}", false), (401, "", false), (500, "Failed", false)] {
+            let server = try HTTPListener { request in
+                if request.path == "/relay/api/commands/execute" {
+                    return .init(body: "{\"type\":\"server-response\",\"result\":{\"ok\":true,\"value\":{\"commandId\":\"C\",\"result\":{\"kind\":\"success\"}}}}")
+                }
+                if request.path == "/relay/api/session/projections" {
+                    return .init(body: "{\"type\":\"server-response\",\"result\":{\"ok\":true,\"value\":{\"asOfSeq\":0,\"values\":{}}}}")
+                }
+                XCTAssertEqual(request.path, "/relay/api/session.export?sessionId=S")
+                XCTAssertEqual(request.method, "GET")
+                XCTAssertEqual(request.headers["user-agent"], PortalClient.userAgent)
+                XCTAssertEqual(request.headers["origin"], "http://" + request.headers["host", default: ""])
+                return .init(status: status, headers: ["Content-Type": "application/zip"], body: body)
+            }
+            let base = try await server.start().appendingPathComponent("relay/")
+            let directory = root(); let client = client(directory); let api = PortalAPI(base: base, client: client)
+            defer { server.stop(); client.session.invalidateAndCancel(); try? FileManager.default.removeItem(at: directory) }
+            let chat = ChatStore(sessionID: "S", api: api)
+            do {
+                try await chat.executeCommand("/export")
+                XCTAssertTrue(success)
+                let url = try XCTUnwrap(chat.exportedFile)
+                XCTAssertEqual(try Data(contentsOf: url), Data(body.utf8))
+                try FileManager.default.removeItem(at: url)
+            } catch { XCTAssertFalse(success); XCTAssertNil(chat.exportedFile) }
+            XCTAssertEqual(api.sessionExpired, status == 401)
+        }
+    }
+    func testRoundOneHTTPFailuresDoNotMutateState() async throws {
+        for status in [200, 401, 404, 500] {
+            let server = try HTTPListener { request in
+                .init(status: status, body: request.path.contains("/api/") ? "{\"type\":\"server-response\",\"result\":{\"ok\":false,\"error\":{\"code\":\"refused\",\"message\":\"Refused\"}}}" : "{\"ok\":false,\"error\":\"Refused\"}")
+            }
+            let base = try await server.start(); let directory = root(); let client = client(directory); let api = PortalAPI(base: base, client: client)
+            defer { server.stop(); client.session.invalidateAndCancel(); try? FileManager.default.removeItem(at: directory) }
+            let store = SidebarStore(api: api); let chat = ChatStore(sessionID: "S", api: api)
+            do { _ = try await store.folders(); XCTFail("Failed browse accepted") } catch {}
+            do { _ = try await store.makeFolder(parent: "/host", name: "new"); XCTFail("Failed mkdir accepted") } catch {}
+            do { try await store.createWorkspace(path: "/host"); XCTFail("Failed workspace accepted") } catch {}
+            do { try await chat.selectModel(provider: "p", model: "m"); XCTFail("Failed selection accepted") } catch {}
+            do { try await chat.executeCommand("/plan"); XCTFail("Failed command accepted") } catch {}
+            XCTAssertTrue(store.workspaces.isEmpty); XCTAssertEqual(chat.selectedModel, [:])
+            XCTAssertEqual(api.sessionExpired, status == 401)
+        }
+    }
     func testGatewayLoginAndPairFailureReasonsOverHTTP() async throws {
         let generic = L("Sign-in failed. Check your password or pairing code.", "登录失败，请检查密码或配对码。")
         let cases: [(Int, String, Bool, String)] = [

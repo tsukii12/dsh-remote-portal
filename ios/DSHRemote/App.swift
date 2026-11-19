@@ -39,7 +39,7 @@ struct ServersView: View {
                     .contextMenu { Button(L("Edit", "编辑")) { editing = server } }
                 }
             }
-            .navigationTitle("DRP")
+            .navigationTitle("DeepSeek Remote")
             .toolbar { Button { adding = true } label: { Image(systemName: "plus") } }
             .sheet(isPresented: $adding) { ServerEditor(server: nil) { server, token in
                 store.servers.append(server)

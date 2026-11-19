@@ -14,6 +14,10 @@ struct ChatView: View {
     @State private var loadingOlder = false
     @State private var actionError: String?
     @State private var dismissedError: String?
+    @State private var showingOptions = false
+    @State private var editingQueue: String?
+    @State private var queuedText = ""
+    @State private var steer = false
     @FocusState private var composerFocused: Bool
     init(chat: ChatStore, title: String) { _chat = StateObject(wrappedValue: chat); self.title = title }
     var body: some View {
@@ -26,10 +30,19 @@ struct ChatView: View {
         .navigationTitle("DRP").navigationBarTitleDisplayMode(.inline)
         .toolbar { ToolbarItem(placement: .principal) { VStack(spacing: 2) { Text("DRP").font(.headline); Text(title).font(.caption).foregroundStyle(.secondary).lineLimit(1) } } }
         .task {
-            do { try await chat.start(); try await chat.loadModels() }
+            do { try await chat.start(); try await chat.loadModels(); try await chat.loadControls() }
             catch { if !Task.isCancelled { actionError = error.localizedDescription } }
         }
         .onDisappear { chat.stop() }
+        .sheet(isPresented: $showingOptions) { ChatOptionsView(chat: chat) }
+        .alert(L("Edit queued message", "编辑排队消息"), isPresented: Binding(get: { editingQueue != nil }, set: { if !$0 { editingQueue = nil } })) {
+            TextField(L("Message", "消息"), text: $queuedText)
+            Button(L("Cancel", "取消"), role: .cancel) { editingQueue = nil }
+            Button(L("Save", "保存")) {
+                if let id = editingQueue { let text = queuedText; perform { try await chat.updateQueue(id, kind: "edit", text: text) } }
+                editingQueue = nil
+            }.disabled(queuedText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+        }
     }
     private var transcript: some View {
         GeometryReader { viewport in
@@ -80,54 +93,92 @@ struct ChatView: View {
     private var composer: some View {
         VStack(alignment: .leading, spacing: 10) {
             Divider()
-            HStack {
-                modelMenu
-                Spacer()
-                if chat.running { Label(L("Working", "处理中"), systemImage: "circle.dotted").font(.caption).foregroundStyle(.secondary) }
+            if !chat.queue.isEmpty { queueDock }
+            if let notice = chat.commandNotice { Text(notice).font(.caption).foregroundStyle(.secondary).lineLimit(3).textSelection(.enabled) }
+            if let file = chat.exportedFile { ShareLink(item: file) { Label(L("Share session log", "分享会话日志"), systemImage: "square.and.arrow.up") }.font(.caption) }
+            if draft.hasPrefix("/") { commandSuggestions }
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    Button { showingOptions = true } label: {
+                        Label(L("Model: ", "模型：") + chat.modelName + " · " + chat.effortName, systemImage: "cpu")
+                    }.accessibilityIdentifier("modelOptions")
+                    Button { showingOptions = true } label: { Label(ChatLabels.permission(chat.projections["permissions"]["currentValue"].text), systemImage: "lock.shield") }
+                    Button { showingOptions = true } label: { Text(chat.planEnabled ? L("Plan mode", "计划模式") : ChatLabels.preset(chat.projections["agentPreset"].string ?? "standard")) }
+                }.font(.caption.weight(.medium)).buttonStyle(.bordered).tint(DRPStyle.accent)
             }
             HStack(alignment: .bottom, spacing: 12) {
                 TextField(L("Message DRP…", "发送消息给 DRP…"), text: $draft, axis: .vertical)
                     .lineLimit(1...6).focused($composerFocused).padding(.vertical, 12).padding(.leading, 14)
                     .textInputAutocapitalization(.never).autocorrectionDisabled()
                     .accessibilityIdentifier("chatComposer")
-                Button {
-                    if chat.running { perform { try await chat.cancel() } }
-                    else { send() }
-                } label: {
-                    Image(systemName: chat.running ? "stop.fill" : "arrow.up").font(.system(size: 15, weight: .bold)).foregroundStyle(.white)
-                        .frame(width: 36, height: 36).background(canSend || chat.running ? DRPStyle.accent : Color.gray.opacity(0.4), in: Circle())
+                if chat.running {
+                    Button { perform { try await chat.cancel() } } label: { Image(systemName: "stop.fill").padding(8) }.accessibilityLabel(L("Stop", "停止"))
                 }
-                .disabled(!chat.running && !canSend).padding(6)
-                .accessibilityLabel(chat.running ? L("Stop", "停止") : L("Send", "发送")).accessibilityIdentifier("sendMessage")
+                Button {
+                    send()
+                } label: {
+                    Image(systemName: chat.running ? (steer ? "bolt.fill" : "text.badge.plus") : "arrow.up").font(.system(size: 15, weight: .bold)).foregroundStyle(.white)
+                        .frame(width: 36, height: 36).background(canSend ? DRPStyle.accent : Color.gray.opacity(0.4), in: Circle())
+                }
+                .disabled(!canSend).padding(6)
+                .accessibilityLabel(chat.running ? (steer ? L("Steer", "立即引导") : L("Queue message", "消息排队")) : L("Send", "发送")).accessibilityIdentifier("sendMessage")
             }.background(DRPStyle.sidebar, in: RoundedRectangle(cornerRadius: 22))
+            if chat.running { Toggle(L("Steer immediately instead of queue", "立即引导而不是排队"), isOn: $steer).font(.caption) }
         }
         .padding(.horizontal, 16).padding(.bottom, 10).frame(maxWidth: 800).frame(maxWidth: .infinity).background(.bar)
     }
     private var canSend: Bool { !sending && !draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
-    private var modelMenu: some View {
-        Menu {
-            ForEach(Array(chat.catalog["groups"].array.enumerated()), id: \.offset) { _, group in
-                Section(group["name"].text) {
-                    ForEach(Array(group["models"].array.enumerated()), id: \.offset) { _, model in
-                        Button(model["name"].string ?? model["id"].text) { perform { try await chat.selectModel(provider: group["id"].text, model: model["id"].text) } }
-                    }
+    private var commandSuggestions: some View {
+        let query = draft.dropFirst().split(separator: " ", omittingEmptySubsequences: false).first.map(String.init) ?? ""
+        let suggestions = ([JSON.object(["name": "model", "description": .string(L("Choose model and thinking effort", "选择模型与思考强度"))])] + chat.commands).filter { query.isEmpty || $0["name"].text.hasPrefix(query) }
+        return ScrollView {
+            VStack(alignment: .leading, spacing: 10) {
+                ForEach(Array(suggestions.enumerated()), id: \.offset) { _, command in
+                    Button {
+                        if command["name"] == "model" { draft = ""; showingOptions = true }
+                        else { draft = "/" + command["name"].text + (command["input"] == .null ? "" : " "); composerFocused = true }
+                    } label: {
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text("/" + command["name"].text + " " + command["input"]["hint"].text).font(.caption.weight(.semibold))
+                            Text(command["description"].text).font(.caption2).foregroundStyle(.secondary).lineLimit(2)
+                        }.frame(maxWidth: .infinity, alignment: .leading)
+                    }.buttonStyle(.plain)
+                }
+                if suggestions.isEmpty { Text(L("No matching commands", "没有匹配的命令")).font(.caption) }
+            }.padding(8)
+        }.frame(maxHeight: 150)
+    }
+    private var queueDock: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 8) {
+                Text(L("Queued messages", "排队消息")).font(.caption.weight(.semibold))
+                ForEach(Array(chat.queue.enumerated()), id: \.offset) { _, item in
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text(item["placement"] == "steering" ? L("Steering", "引导中") : L("Queued", "排队中")).font(.caption2).foregroundStyle(.secondary)
+                            Text(item["content"].array.map { $0["text"].text }.joined(separator: "\n")).font(.caption).lineLimit(2)
+                        }
+                        Spacer()
+                        Menu {
+                            Button(L("Edit", "编辑")) { queuedText = item["content"].array.map { $0["text"].text }.joined(separator: "\n"); editingQueue = item["id"].text }
+                                .disabled(item["content"].array.contains { $0["type"] != "text" })
+                            Button(L("Steer now", "立即引导")) { perform { try await chat.updateQueue(item["id"].text, kind: "steer") } }
+                            Button(L("Remove", "移除"), role: .destructive) { perform { try await chat.updateQueue(item["id"].text, kind: "remove") } }
+                        } label: { Image(systemName: "ellipsis.circle").padding(6) }.accessibilityLabel(L("Queued message actions", "排队消息操作"))
+                    }.padding(8).background(DRPStyle.sidebar, in: RoundedRectangle(cornerRadius: 10))
                 }
             }
-            if chat.catalog["groups"].array.isEmpty { Text(L("No models available", "没有可用模型")) }
-            Button(L("Refresh models", "刷新模型")) { perform { try await chat.loadModels() } }
-        } label: { Label(modelLabel, systemImage: "chevron.down").font(.caption.weight(.medium)).lineLimit(1) }
-        .accessibilityLabel(L("Select model: ", "选择模型：") + modelLabel)
-    }
-    private var modelLabel: String {
-        let selection = chat.selectedModel
-        let model = selection["selected"]["model"].string ?? selection["next"]["model"].string ?? selection["lastUsed"]["model"].string ?? chat.catalog["default"]["model"].string
-        return model ?? L("Choose model", "选择模型")
+        }.frame(maxHeight: 140)
     }
     private func send() {
         guard canSend else { return }
-        let text = draft; draft = ""; sending = true; followingBottom = true; composerFocused = false
+        let text = draft; let steerNow = steer; draft = ""; sending = true; followingBottom = true; composerFocused = false
         Task {
-            do { try await chat.send(text) }
+            do {
+                if text.trimmingCharacters(in: .whitespacesAndNewlines) == "/model" { showingOptions = true }
+                else if text.hasPrefix("/") { try await chat.executeCommand(text) }
+                else { try await chat.send(text, steer: steerNow) }
+            }
             catch { actionError = error.localizedDescription; if draft.isEmpty { draft = text } }
             sending = false
         }

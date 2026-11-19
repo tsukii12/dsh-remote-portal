@@ -38,11 +38,34 @@ final class LiveSmokeTests: XCTestCase {
         defer { chat.stop() }
         try await chat.start()
         try await eventually("history snapshot") { chat.loaded }
+        try await chat.loadModels(); try await chat.loadControls()
+        XCTAssertTrue(chat.catalog["groups"].array.flatMap { $0["models"].array }.contains { $0["id"] == "native-demo-fast" })
+        try await chat.selectModel(provider: "local-fake", model: "native-demo", reasoningEffort: "off")
+        try await chat.selectModel(provider: "local-fake", model: "native-demo")
+        XCTAssertEqual(chat.currentModel["reasoningEffort"], "off")
+        try await chat.selectModel(provider: "local-fake", model: "native-demo-fast", reasoningEffort: "high")
+        XCTAssertEqual(chat.currentModel["model"], "native-demo-fast")
+        XCTAssertEqual(chat.currentModel["reasoningEffort"], "high")
+        print("LIVE PASS model: Off preserved on reselection; switched to second route with High")
+        try await chat.selectPermission("read-only")
+        XCTAssertEqual(chat.projections["permissions"]["currentValue"], "read-only")
+        try await chat.executeCommand("/permission workspace-write")
+        XCTAssertEqual(chat.projections["permissions"]["currentValue"], "workspace-write")
+        print("LIVE PASS access/slash: read-only then workspace-write through commands/execute and projections")
+        let folders = try await connection.sidebar.folders(path: "/Users/devin/fake-llm")
+        XCTAssertEqual(folders["path"], "/Users/devin/fake-llm")
+        print("LIVE PASS host folders: Portal fs listing with authenticated native transport")
         try await chat.send("hello")
         try await eventually("incremental text") { !(chat.inProgress?.text.isEmpty ?? true) }
         print("LIVE PASS hello: incremental assistant text received")
         try await eventually("hello committed") { chat.transcript.contains { $0.role == "assistant" && $0.text.contains("# Local native chat demo") } && chat.inProgress == nil && !chat.running }
         XCTAssertEqual(chat.transcript.filter { $0.role == "user" }.count, 1)
+        XCTAssertTrue(chat.transcript.contains { $0.role == "assistant" && $0.text.contains("Model: native-demo-fast") })
+        try await chat.selectModel(provider: "local-fake", model: "native-demo", reasoningEffort: "high")
+        try await chat.selectModel(provider: "local-fake", model: "native-demo")
+        XCTAssertEqual(chat.currentModel["model"], "native-demo")
+        XCTAssertEqual(chat.currentModel["reasoningEffort"], "high")
+        print("LIVE PASS model generation: second route streamed its identity; switched back preserving High")
         let previousClient = connection.events.clientID
         api.mux.reconnect()
         try await eventually("mux reconnect and fresh baselines") { connection.events.clientID != nil && connection.events.clientID != previousClient && chat.loaded }
