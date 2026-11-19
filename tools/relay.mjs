@@ -343,6 +343,30 @@ function forwardableHeaders(headers) {
 function createRelay(config) {
   /** tunnelId → tunnel state */
   const tunnels = new Map();
+  const blockedVisitors = new WeakMap();
+
+  function pauseForVisitor(agent, visitor) {
+    if (agent.destroyed || visitor.destroyed || visitor.writableFinished) return;
+    let blocked = blockedVisitors.get(agent);
+    if (!blocked) {
+      blocked = new Set();
+      blockedVisitors.set(agent, blocked);
+    }
+    if (blocked.has(visitor)) return;
+    blocked.add(visitor);
+    agent.pause();
+    const release = () => {
+      visitor.off("drain", release);
+      visitor.off("finish", release);
+      visitor.off("close", release);
+      blocked.delete(visitor);
+      if (blocked.size === 0 && !agent.destroyed) agent.resume();
+    };
+    visitor.once("drain", release);
+    visitor.once("finish", release);
+    visitor.once("close", release);
+  }
+
   const startedAt = Date.now();
   // "visitors" used to count every request that reached this listener probe included,
 // which reads like a head count and is not one. Requests and distinct clients are
@@ -752,6 +776,7 @@ function cachePut(key, entry) {
     // A cacheable response is streamed to the visitor and copied on the side; the
     // copy is only kept when the whole thing arrived and looks safe to reuse.
     let cacheBuffer = null;
+    const agent = route.tunnel.socket;
     const stream = openStream(route.tunnel, {
       onHead: (head) => {
         headSent = true;
@@ -777,11 +802,7 @@ function cachePut(key, entry) {
           if (cacheBuffer.size > CACHE_MAX_OBJECT) cacheBuffer = null;
           else cacheBuffer.chunks.push(chunk);
         }
-        if (!res.write(chunk)) {
-          // Backpressure: stop pulling from the tunnel until the socket drains.
-          route.tunnel.socket.pause();
-          res.once("drain", () => route.tunnel.socket.resume());
-        }
+        if (!res.write(chunk)) pauseForVisitor(agent, res);
       },
       onEnd: () => {
         try { res.end(); } catch { /* gone */ }
@@ -840,14 +861,12 @@ function cachePut(key, entry) {
       return;
     }
 
+    const agent = route.tunnel.socket;
     const stream = openStream(route.tunnel, {
       onHead: (headMsg) => { /* unused for ws streams */ },
       onBody: (chunk) => {
         stats.bytesOut += chunk.length;
-        if (!socket.write(chunk)) {
-          route.tunnel.socket.pause();
-          socket.once("drain", () => route.tunnel.socket.resume());
-        }
+        if (!socket.write(chunk)) pauseForVisitor(agent, socket);
       },
       onEnd: () => { try { socket.end(); } catch { /* gone */ } },
       fail: () => { try { socket.destroy(); } catch { /* gone */ } },
