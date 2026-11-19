@@ -5,6 +5,11 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+- Phone layout: the menu button opens the drawer again (it closed itself at
+  once), and tapping a drawer row now opens it instead of only closing the
+  drawer.
+- Phone layout: Remote access and other main-area pages fill the screen
+  instead of a narrow strip on the right.
 - Fixed password and pairing form submissions from nested pages, including when
   the portal is served under a reverse proxy path prefix.
 - When a pairing code is rejected, the portal now asks you to generate and scan

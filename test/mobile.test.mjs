@@ -781,6 +781,43 @@ describe("mobile layer against the live dsh web UI", () => {
     assert.ok(out.scrollW <= 390, "page overflows horizontally: " + out.scrollW);
   });
 
+  test("every visible button in the open drawer is what a tap there hits", async (t) => {
+    if (skipReason) return t.skip(skipReason);
+    // A scripted .click() skips whatever sits on top, so it can pass while real
+    // taps land on a mask (dsh's own drawer mask did exactly that).
+    const expr = `(async () => {
+      const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+      document.querySelector('.drp-drawer-btn').click();
+      await sleep(700);
+      const sidebar = document.querySelector('[data-slot="sidebar"]');
+      const buttons = sidebar ? [...sidebar.querySelectorAll('button')].filter((b) => {
+        const r = b.getBoundingClientRect();
+        return r.width > 0 && r.height > 0 && r.left >= 0 && r.top >= 0 && r.right <= innerWidth && r.bottom <= innerHeight;
+      }) : [];
+      const missed = buttons.filter((b) => {
+        const r = b.getBoundingClientRect();
+        const hit = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2);
+        // hit.contains(b): a button that ignores pointers itself (hover-only affordances).
+        return !hit || !(b.contains(hit) || hit.contains(b));
+      }).map((b) => {
+        const r = b.getBoundingClientRect();
+        const hit = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2);
+        return (b.getAttribute('aria-label') || b.textContent.trim()).slice(0, 30) + ' -> ' +
+          (hit ? hit.tagName + '.' + String(hit.className).slice(0, 40) : 'nothing');
+      });
+      return JSON.stringify({ drawer: document.documentElement.getAttribute('data-drp-drawer'), candidates: buttons.length, missed });
+    })()`;
+    const { code, stdout, stderr } = await runCdp([
+      "eval", BASE, expr, "--token", TOKEN_URL, "--wait", "4000",
+      "--w", "390", "--h", "844", "--mobile", "--pre-file", join(tmp, "pre.js"), "--settle", "1200",
+    ]);
+    assert.equal(code, 0, "cdp run failed: " + stderr.slice(-800));
+    const out = JSON.parse(stdout.trim().split("\n").filter((l) => l.trim().startsWith("{")).pop());
+    assert.equal(out.drawer, "open", "the drawer did not open");
+    assert.ok(out.candidates > 0, "no visible buttons in the open drawer");
+    assert.deepEqual(out.missed, [], `drawer buttons covered by something else (of ${out.candidates})`);
+  });
+
   test("no horizontal overflow at 320/360/390/430/768/900 in both themes", async (t) => {
     if (skipReason) return t.skip(skipReason);
     const outPath = join(tmp, "audit.json");
