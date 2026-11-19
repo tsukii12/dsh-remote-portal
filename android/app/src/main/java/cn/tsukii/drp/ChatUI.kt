@@ -39,7 +39,7 @@ import kotlinx.coroutines.ensureActive
 import java.io.File
 
 @Composable
-fun ChatScreen(chat: ChatStore) {
+fun ChatScreen(chat: ChatStore, filesOpen: Boolean = false, dismissFiles: () -> Unit = {}) {
     val state by chat.state.collectAsState()
     val scope = rememberCoroutineScope()
     var error by remember { mutableStateOf<String?>(null) }
@@ -189,6 +189,16 @@ fun ChatScreen(chat: ChatStore) {
     }
     if (models) ChatOptionsSheet(chat) { models = false }
     if (usage) UsageSheet(chat) { usage = false }
+    if (filesOpen) {
+        val filesScope = rememberCoroutineScope()
+        val files = remember(chat) { chat.files(filesScope) }
+        WorkspaceFilesPanel(files, onMention = { path ->
+            Mentions.insertFile(editor.text, editor.selection.min, editor.selection.max, path)?.let { (text, cursor) ->
+                editor = TextFieldValue(text, TextRange(cursor))
+                dismissFiles()
+            }
+        }, onDismiss = dismissFiles)
+    }
     editingQueue?.let { id -> AlertDialog(onDismissRequest = { editingQueue = null }, title = { Text(L("Edit queued message", "编辑排队消息")) },
         text = { OutlinedTextField(queuedText, { queuedText = it }, label = { Text(L("Message", "消息")) }) },
         confirmButton = { TextButton(enabled = queuedText.isNotBlank(), onClick = { perform { chat.updateQueue(id, "edit", queuedText); editingQueue = null } }) { Text(L("Save", "保存")) } },

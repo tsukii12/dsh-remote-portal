@@ -247,6 +247,7 @@ class ChatStore(val sessionID: String, private val api: RPCServing, private val 
     }
     suspend fun cancel() { api.rpc("session/cancel", o("request" to o("sessionId" to sessionID))) }
     fun attachmentDraft(scope: CoroutineScope) = AttachmentDraft(sessionID, api, scope) { state.value.projections["imageLimits"] }
+    fun files(scope: CoroutineScope) = WorkspaceFilesStore(sessionID, api, scope)
     suspend fun mentions(token: AtToken) = Mentions.candidates(api, sessionID, token)
     suspend fun attachment(reference: J): J = api.rpc("session/attachment", o("request" to o("sessionId" to sessionID, "attachment" to reference)))
     suspend fun loadModels() {

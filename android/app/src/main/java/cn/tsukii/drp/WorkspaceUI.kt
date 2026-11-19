@@ -36,6 +36,7 @@ fun WorkspaceScreen(connection: NativeConnection, serverName: String, addressLab
     var renameWorkspace by remember { mutableStateOf<WorkspaceRow?>(null) }
     var deleteWorkspace by remember { mutableStateOf<WorkspaceRow?>(null) }
     var folders by remember { mutableStateOf(false) }
+    var filesOpen by rememberSaveable { mutableStateOf(false) }
     var viewOptions by remember { mutableStateOf(false) }
     var contentSearch by rememberSaveable { mutableStateOf(false) }
     var interactionID by remember { mutableStateOf<String?>(null) }
@@ -146,7 +147,10 @@ fun WorkspaceScreen(connection: NativeConnection, serverName: String, addressLab
         Scaffold(topBar = {
             TopAppBar(title = { Text(sidebar.sessions[selected]?.title ?: L("New conversation", "新对话"), maxLines = 1, overflow = TextOverflow.Ellipsis) },
                 navigationIcon = { GlyphButton(Icons.Default.Menu, L("Sessions", "会话")) { scope.launch { drawer.open() } } },
-                actions = { GlyphButton(Icons.Default.Add, L("New chat", "新对话")) { create() } })
+                actions = {
+                    if (selected != null) TextButton(onClick = { filesOpen = true }) { Text(L("Files", "文件")) }
+                    GlyphButton(Icons.Default.Add, L("New chat", "新对话")) { create() }
+                })
         }) { padding ->
             Column(Modifier.fillMaxSize().padding(padding)) {
                 if (events.clientID == null || !sidebar.loaded) Surface(color = MaterialTheme.colorScheme.secondaryContainer) {
@@ -162,7 +166,7 @@ fun WorkspaceScreen(connection: NativeConnection, serverName: String, addressLab
                     }
                 }
                 val id = selected
-                if (id != null) key(id) { ChatScreen(remember(id) { connection.chat(id) }) }
+                if (id != null) key(id) { ChatScreen(remember(id) { connection.chat(id) }, filesOpen) { filesOpen = false } }
                 else Column(Modifier.fillMaxSize().padding(32.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
                     Text(L("Ready when you are", "随时开始"), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.SemiBold)
                     Spacer(Modifier.height(12.dp))

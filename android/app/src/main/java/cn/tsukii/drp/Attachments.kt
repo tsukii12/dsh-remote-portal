@@ -81,6 +81,13 @@ class AttachmentDraft(private val sessionID: String, private val api: RPCServing
 data class AtToken(val start: Int, val end: Int, val query: String, val quoted: Boolean)
 data class MentionCandidate(val label: String, val insertion: String, val directory: Boolean = false)
 object Mentions {
+    fun insertFile(text: String, start: Int, end: Int, path: String): Pair<String, Int>? {
+        if (path.isEmpty() || start !in 0..text.length || end !in start..text.length) return null
+        val token = if (start == end) active(text, start) else null
+        val mention = file(path, false, token?.quoted == true) ?: return null
+        val from = token?.start ?: start
+        return text.replaceRange(from, end, "$mention ") to (from + mention.length + 1)
+    }
     fun active(text: String, cursor: Int): AtToken? {
         val position = cursor.coerceIn(0, text.length)
         val before = text.take(position).substringAfterLast('\n')

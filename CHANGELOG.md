@@ -5,6 +5,9 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+- Android Stage C: native session Files panel with expandable/searchable watched
+  workspace tree, paged selectable text, image previews, bounded multipart file
+  sharing, and composer mentions from files.
 - Android Stage B: fix locale-recreation transcript loading races; add streaming
   staged image/file uploads, attachment messages/previews, and file/session
   `@` completion with host image limits and chat-bound upload cancellation.
