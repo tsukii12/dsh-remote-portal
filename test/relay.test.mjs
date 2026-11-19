@@ -14,14 +14,17 @@
  */
 import { test, after } from "node:test";
 import assert from "node:assert/strict";
+import { execFile, spawnSync } from "node:child_process";
 import http from "node:http";
 import https from "node:https";
 import net from "node:net";
-import { mkdtempSync, rmSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { promisify } from "node:util";
 
+import { apply } from "../index.js";
 import { createRelay, tunnelIdFor } from "../tools/relay.mjs";
 import { createTunnel } from "../lib/tunnel.mjs";
 import * as agentFraming from "../lib/tunnel.mjs";
@@ -192,6 +195,91 @@ async function connectTunnel({ agentPort, token, targetPort }) {
   await waitFor(() => tunnel.status().status === "online", { label: "tunnel online" });
   return tunnel;
 }
+
+test("Chrome loads each mobile asset once through the relay, with and without host tags", { timeout: 60000 }, async (t) => {
+  const chrome = process.env.CHROME_PATH || "google-chrome";
+  const browser = spawnSync(chrome, ["--version"]);
+  if (!process.env.CHROME_PATH && browser.error?.code === "ENOENT") {
+    return t.skip("Chrome not found; set CHROME_PATH to enable this test");
+  }
+  assert.equal(browser.status, 0, String(browser.error || browser.stderr));
+
+  let inject;
+  const routes = new Map();
+  apply({
+    logger: quiet,
+    webServer: {
+      host: "127.0.0.1",
+      register(route) { routes.set(route.path, route.handler); },
+    },
+    get() { return undefined; },
+    on(name, listener) { if (name === "webserver/index-inject") inject = listener; },
+    effect(fn, label) { if (/(control routes|index injections)$/.test(label)) fn(); },
+  }, { stateDir: tmpDir() });
+  const rows = [];
+  inject(rows);
+
+  const client = readFileSync(join(HERE, "..", "client.js"));
+  const received = [];
+  const assetRoute = "/dsh-remote-portal/assets";
+  const targetPort = await listen(http.createServer((req, res) => {
+    const url = new URL(req.url, "http://localhost");
+    if (url.pathname === "/") {
+      res.writeHead(200, { "content-type": "text/html" });
+      res.end(`<!doctype html><html><head><base href="./">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        ${url.searchParams.has("host") ? rows.map(row => row.html).join("") : ""}
+        <script>window.__ModuleLoader__ = { load(plugin) {
+          plugin.factory(() => ({})).apply({ effect: fn => fn() });
+        } };</script>
+        <script defer src="./client.js"></script></head><body></body></html>`);
+    } else if (url.pathname === "/client.js") {
+      res.writeHead(200, { "content-type": "text/javascript" }).end(client);
+    } else if (url.pathname.startsWith(assetRoute + "/")) {
+      received.push(url.pathname.slice(assetRoute.length + 1));
+      routes.get(assetRoute)(req, res);
+    } else {
+      res.writeHead(404).end();
+    }
+  }));
+  const token = "test-token-browser-mobile-assets";
+  const mount = `/__t/${tunnelIdFor(token)}/`;
+  const { httpPort, agentPort } = await startRelay([token]);
+  await connectTunnel({ agentPort, token, targetPort });
+
+  for (const host of [true, false]) {
+    const css = host ? "link[data-drp=mobile-css-host]" : "style[data-drp=mobile-css]";
+    const js = host ? "script[data-drp=mobile-js-host]" : "script[data-drp=mobile-js]";
+    const expr = `(async () => {
+      const limit = performance.now() + 3000;
+      const ready = () => document.querySelector(${JSON.stringify(css)})?.sheet?.cssRules.length > 0 &&
+        window.__DRP_MOBILE__?.active === true;
+      while (!ready() && performance.now() < limit) await new Promise(r => setTimeout(r, 25));
+      return {
+        active: ready() && document.documentElement.hasAttribute("data-drp-mobile"),
+        script: !!document.querySelector(${JSON.stringify(js)}),
+        assets: performance.getEntriesByType("resource")
+          .filter(entry => /\\/assets\\/mobile\\.(?:css|js)$/.test(new URL(entry.name).pathname))
+          .map(entry => [new URL(entry.name).pathname, entry.initiatorType]).sort(),
+      };
+    })()`;
+    received.length = 0;
+    const { stdout } = await promisify(execFile)(process.execPath, [
+      join(HERE, "..", "tools", "cdp.mjs"), "eval",
+      `http://127.0.0.1:${httpPort}${mount}?drp=mobile${host ? "&host=1" : ""}`,
+      expr, "--wait", "100", "--w", "390", "--h", "844", "--mobile",
+    ], { env: { ...process.env, CHROME_PATH: chrome }, timeout: 26000 });
+    assert.deepEqual(JSON.parse(stdout), {
+      active: true,
+      script: true,
+      assets: [
+        [`${mount}dsh-remote-portal/assets/mobile.css`, host ? "link" : "fetch"],
+        [`${mount}dsh-remote-portal/assets/mobile.js`, host ? "script" : "fetch"],
+      ],
+    });
+    assert.deepEqual(received.sort(), ["mobile.css", "mobile.js"]);
+  }
+});
 
 test("the relay shares only versioned public mobile assets and separates encoding variants", async () => {
   const token = "test-token-public-mobile-assets";
