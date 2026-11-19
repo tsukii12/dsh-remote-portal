@@ -1109,7 +1109,7 @@ window.__ModuleLoader__.load({
       if (/^the local listener is not running$/i.test(text)) {
         return lang() === "zh" ? "门户未在监听：先设置访问密码并启用。" : "The portal is not listening — set a password and enable it.";
       }
-      return text;
+      return friendlyError(text);
     }
 
     // ── directory picker store ───────────────────────────────────────────────
@@ -1612,7 +1612,8 @@ window.__ModuleLoader__.load({
           canPair && pair && pair.expiresAt ? h(Countdown, { expiresAt: pair.expiresAt }) : null),
         h("div", { className: "drp-qr-frame" },
           !canPair
-            ? h("div", { className: "drp-qr-empty" }, t("qrNotRunning"))
+            ? h("div", { className: "drp-qr-empty" },
+                status && status.lastError && !blockedByPassword ? friendlyGateway(status.lastError) : t("qrNotRunning"))
             : qrSrc && !st.qrBroken
               ? h("img", {
                   className: "drp-qr-img",

@@ -15,3 +15,18 @@ test("the copied pairing link quotes its real remaining time", () => {
   }
   assert.match(src, /t\("pairLinkCopied", \{ t: mmss\(left\) \}\)/);
 });
+
+test("gateway errors shown in the panel go through the localized error table", () => {
+  // `port 3081 on 0.0.0.0 is already in use` reached a Chinese panel verbatim
+  // while errPortBusy had a translation all along.
+  const body = /function friendlyGateway\(message\) \{([\s\S]*?)\n    \}/.exec(src);
+  assert.ok(body, "friendlyGateway not found");
+  assert.match(body[1], /return friendlyError\(text\);\s*$/, "unknown gateway text must fall back to friendlyError");
+  assert.match(src, /friendlyError\(text\) \{[\s\S]*?already in use[\s\S]*?errPortBusy/);
+});
+
+test("the pairing card names the real reason the portal is not running", () => {
+  // With a password set and the port taken, the card still said "set an access
+  // password and enable it".
+  assert.match(src, /drp-qr-empty[^\n]*\n[^\n]*status\.lastError && !blockedByPassword \? friendlyGateway\(status\.lastError\) : t\("qrNotRunning"\)/);
+});
