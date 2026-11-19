@@ -12,6 +12,7 @@
 
 | Path | 职责 / Responsibility |
 | --- | --- |
+| [`android/`](../android/README.md) | DRP 原生 Android 客户端、构建说明与 JVM 测试 / Native Android client, build instructions, and JVM tests |
 | [`index.js`](../index.js), [`cordis.patch.yml`](../cordis.patch.yml) | 插件入口与宿主配置 / dsh plugin entry point and host configuration |
 | [`lib/`](../lib/) | 网关、认证、状态、代理、二维码和中转客户端 / Gateway, authentication, state, proxying, QR encoding, and tunnel agent |
 | [`client.js`](../client.js), [`assets/`](../assets/), [`locale/`](../locale/) | 远程访问面板、移动端样式与行为、翻译 / Remote Access panel, mobile styles and behavior, and locale strings |

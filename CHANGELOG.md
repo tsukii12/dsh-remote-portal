@@ -5,6 +5,13 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+- Added DRP, a fully native Android client with server management, persistent
+  login, workspace/session navigation, streaming chat, model selection, tool
+  approvals and English/Chinese light/dark UI. Includes JVM protocol/reducer tests
+  and build/install documentation in `android/README.md`.
+- Android approvals/questions can be deferred with Later, only interrupt their
+  open chat, and remain accessible from pending banners and session badges.
+
 - Load the portal's presentation assets through the tunnel prefix without
   duplicate fallback fetches. Browsers and the relay can reuse content-versioned
   public assets without caching authenticated dsh responses.
