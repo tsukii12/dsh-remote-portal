@@ -5,6 +5,11 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+- Phone layout: the menu button opens the drawer again (it closed itself at
+  once), and tapping a drawer row now opens it instead of only closing the
+  drawer.
+- Phone layout: Remote access and other main-area pages fill the screen
+  instead of a narrow strip on the right.
 - Folder picker: listing a large folder no longer stats every subfolder one by
   one, and a link to a file no longer marks the listing as cut short.
 - Fixed password and pairing form submissions from nested pages, including when
