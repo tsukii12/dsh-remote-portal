@@ -97,7 +97,7 @@ window.__ModuleLoader__.load({
         qrNotRunning: "门户未运行，请先设置访问密码并启用",
         qrNoteStopped: "门户没有在监听，二维码暂时不可用。设置密码并启用后会自动生成。",
         copyPairLink: "复制配对链接",
-        pairLinkCopied: "配对链接已复制，5 分钟内有效",
+        pairLinkCopied: "配对链接已复制，剩余 {t} 内有效",
         qrNotePair: "用手机相机扫描二维码，即可直接在这台手机上打开 dsh。",
         qrNotePlain: "用手机相机扫描二维码，打开后输入访问密码。",
         qrRefresh: "刷新二维码",
@@ -228,7 +228,7 @@ window.__ModuleLoader__.load({
         qrNotRunning: "The portal is not running. Set an access password and enable it",
         qrNoteStopped: "Nothing is listening yet, so there is no code to scan. Set a password and enable the portal; the code appears automatically.",
         copyPairLink: "Copy pairing link",
-        pairLinkCopied: "Pairing link copied — valid for 5 minutes",
+        pairLinkCopied: "Pairing link copied — valid for {t} more",
         qrNotePair: "Scan with the phone camera to open dsh on that phone right away.",
         qrNotePlain: "Scan with the phone camera, then enter the access password.",
         qrRefresh: "Refresh code",
@@ -1644,7 +1644,9 @@ window.__ModuleLoader__.load({
             onClick: function () {
               if (!pairUrl) return;
               copyText(pairUrl, function (ok) {
-                flash(ok ? "ok" : "err", ok ? t("pairLinkCopied") : t("copyFail"));
+                // The link expires with the QR beside it: quote the same countdown.
+                var left = Math.max(0, Math.ceil((pair.expiresAt - Date.now()) / 1000));
+                flash(ok ? "ok" : "err", ok ? t("pairLinkCopied", { t: mmss(left) }) : t("copyFail"));
               });
             }
           },
