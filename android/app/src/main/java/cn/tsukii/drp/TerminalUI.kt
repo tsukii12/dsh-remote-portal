@@ -13,10 +13,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -33,6 +36,15 @@ import androidx.lifecycle.LifecycleOwner
 import com.termux.terminal.*
 import com.termux.view.TerminalRenderer
 import kotlinx.coroutines.launch
+
+data class TerminalViewport(val cols: Int, val rows: Int) {
+    companion object {
+        fun measured(width: Int, height: Int, fontWidth: Float, lineSpacing: Int): TerminalViewport? {
+            if (width <= 0 || height <= 0 || !fontWidth.isFinite() || fontWidth <= 0 || lineSpacing <= 0) return null
+            return TerminalViewport((width / fontWidth).toInt().coerceIn(2, 500), (height / lineSpacing - 1).coerceIn(1, 200))
+        }
+    }
+}
 
 class TerminalEngine(private val send: (String, Boolean) -> Unit) {
     private val client = object : TerminalSessionClient {
@@ -79,6 +91,9 @@ class TerminalEngine(private val send: (String, Boolean) -> Unit) {
         changed()
     }
     private fun append(text: String) { val bytes = text.toByteArray(Charsets.UTF_8); emulator.append(bytes, bytes.size) }
+    fun fit(viewport: TerminalViewport) {
+        if (emulator.mColumns != viewport.cols || emulator.mRows != viewport.rows) emulator.resize(viewport.cols, viewport.rows)
+    }
     fun key(code: Int, ctrl: Boolean = false): String? = KeyHandler.getCode(code, if (ctrl) KeyHandler.KEYMOD_CTRL else 0, emulator.isCursorKeysApplicationMode, emulator.isKeypadApplicationMode)
     fun paste(text: String) { pasting = true; try { emulator.paste(text) } finally { pasting = false } }
     fun text(): String = emulator.screen.transcriptText
@@ -90,11 +105,24 @@ class NativeTerminalView(context: Context, private val engine: TerminalEngine, p
     private var top = 0
     private var touchY = 0f
     init { isFocusableInTouchMode = true; setBackgroundColor(android.graphics.Color.BLACK) }
-    fun refresh() { top = top.coerceIn(-engine.emulator.screen.activeTranscriptRows, 0); invalidate() }
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        if (w > 0 && h > 0) resize((w / renderer.fontWidth).toInt().coerceIn(2, 500), (h / renderer.fontLineSpacing - 1).coerceIn(1, 200))
+    fun refresh() {
+        TerminalViewport.measured(width, height, renderer.fontWidth, renderer.fontLineSpacing)?.let { viewport ->
+            engine.fit(viewport)
+            resize(viewport.cols, viewport.rows)
+        }
+        top = top.coerceIn(-engine.emulator.screen.activeTranscriptRows, 0)
+        invalidate()
     }
-    override fun onDraw(canvas: Canvas) { super.onDraw(canvas); renderer.render(engine.emulator, canvas, top, -1, -1, -1, -1) }
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        refresh()
+    }
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+        if (width <= 0 || height <= 0) return
+        val saved = canvas.save()
+        try { canvas.clipRect(0, 0, width, height); renderer.render(engine.emulator, canvas, top, -1, -1, -1, -1) }
+        finally { canvas.restoreToCount(saved) }
+    }
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> { touchY = event.y; requestFocus(); parent.requestDisallowInterceptTouchEvent(true) }
@@ -136,7 +164,12 @@ fun TerminalScreen(api: PortalAPI, sessionID: String, onDismiss: () -> Unit) {
     LaunchedEffect(inventory) { focus.clearFocus(); keyboard?.hide(); inventory.start() }
     DisposableEffect(inventory) { onDispose { inventory.stop() } }
     BackHandler(onBack = onDismiss)
-    Surface(Modifier.fillMaxSize()) { Column(Modifier.fillMaxSize().padding(8.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+    Surface(Modifier.fillMaxSize()) { BoxWithConstraints(Modifier.fillMaxSize().padding(8.dp)) {
+        val compact = maxWidth > maxHeight
+        val headerHeight = maxHeight * 0.4f
+        val info = state.entries.firstOrNull { it["id"].text == selected }
+        Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Column(Modifier.fillMaxWidth().heightIn(max = headerHeight).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Row(Modifier.fillMaxWidth()) {
             TextButton(onClick = onDismiss) { Text(L("Back", "返回")) }
             Text(L("Terminal", "终端"), Modifier.weight(1f).padding(top = 12.dp), style = MaterialTheme.typography.titleLarge)
@@ -146,18 +179,27 @@ fun TerminalScreen(api: PortalAPI, sessionID: String, onDismiss: () -> Unit) {
         Text(L("Shells use your host account's permissions, not agent approvals. Leaving this screen keeps them running.", "终端以主机账户权限运行，不受智能体审批限制。离开此页面不会结束进程。"), style = MaterialTheme.typography.bodySmall)
         state.error?.let { ErrorBanner(it) }
         if (!state.loaded) LinearProgressIndicator(Modifier.fillMaxWidth())
-        Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState())) {
-            state.entries.forEach { info -> FilterChip(selected == info["id"].text, onClick = { select(info["id"].text) }, label = { Text(info["title"].text.ifBlank { info["shell"]["name"].text }) }) }
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Row(Modifier.weight(1f).horizontalScroll(rememberScrollState()), verticalAlignment = Alignment.CenterVertically) {
+                state.entries.forEach { info -> FilterChip(selected == info["id"].text, onClick = { select(info["id"].text) }, label = { Text(info["title"].text.ifBlank { info["shell"]["name"].text }) }) }
+                if (compact && info != null) Text(info["cwd"].text, Modifier.padding(start = 8.dp), maxLines = 1, style = MaterialTheme.typography.bodySmall)
+            }
+            if (compact && info != null) {
+                TextButton(enabled = !state.busy, onClick = { title = info["title"].text; renaming = true }) { Text(L("Rename", "重命名")) }
+                TextButton(enabled = !state.busy, onClick = { closing = true }) { Text(L("Close", "结束")) }
+            }
         }
-        val info = state.entries.firstOrNull { it["id"].text == selected }
-        if (info != null) {
+        if (info != null && !compact) {
             Row {
                 Text(info["cwd"].text, Modifier.weight(1f), maxLines = 1, style = MaterialTheme.typography.bodySmall)
                 TextButton(enabled = !state.busy, onClick = { title = info["title"].text; renaming = true }) { Text(L("Rename", "重命名")) }
                 TextButton(enabled = !state.busy, onClick = { closing = true }) { Text(L("Close", "结束")) }
             }
-            key(info["id"].text) { TerminalPane(api, sessionID, info, Modifier.weight(1f)) }
-        } else if (state.loaded) Text(if (selected != null) L("Saved terminal unavailable. Select a listed terminal or explicitly create a new one.", "保存的终端不可用，请选择已有终端或手动新建。") else L("No terminal selected. Choose one or create a new shell.", "未选择终端，请选择已有终端或新建。"))
+        }
+        }
+        if (info != null) key(info["id"].text) { TerminalPane(api, sessionID, info, Modifier.weight(1f), compact) }
+        else if (state.loaded) Text(if (selected != null) L("Saved terminal unavailable. Select a listed terminal or explicitly create a new one.", "保存的终端不可用，请选择已有终端或手动新建。") else L("No terminal selected. Choose one or create a new shell.", "未选择终端，请选择已有终端或新建。"))
+        }
         if (renaming && selected != null) AlertDialog(onDismissRequest = { renaming = false }, title = { Text(L("Rename terminal", "重命名终端")) },
             text = { OutlinedTextField(title, { title = it }, singleLine = true, label = { Text(L("Title", "标题")) }) },
             confirmButton = { TextButton(enabled = title.isNotBlank() && title.trim().length <= 120 && !state.busy, onClick = { val id = selected!!; scope.launch { if (inventory.rename(id, title)) renaming = false } }) { Text(L("Save", "保存")) } },
@@ -170,7 +212,7 @@ fun TerminalScreen(api: PortalAPI, sessionID: String, onDismiss: () -> Unit) {
 }
 
 @Composable
-private fun TerminalPane(api: PortalAPI, sessionID: String, info: J, modifier: Modifier) {
+private fun TerminalPane(api: PortalAPI, sessionID: String, info: J, modifier: Modifier, compact: Boolean) {
     val scope = rememberCoroutineScope()
     val store = remember { TerminalStore(api, sessionID, info, scope) { MuxTerminalChannel(api.mux.openDuplex("terminal/attach", o("agentId" to sessionID, "id" to info["id"]))) } }
     val state by store.state.collectAsState()
@@ -203,8 +245,8 @@ private fun TerminalPane(api: PortalAPI, sessionID: String, info: J, modifier: M
         }
         state.error?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
         state.notice?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
-        AndroidView(factory = { ctx -> NativeTerminalView(ctx, engine, store::resize) { store.write(it) }.also { view -> engine.changed = { view.refresh() } } }, modifier = Modifier.fillMaxWidth().weight(1f))
-        Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState())) {
+        AndroidView(factory = { ctx -> NativeTerminalView(ctx, engine, store::resize) { store.write(it) }.also { view -> engine.changed = { view.refresh() } } }, modifier = Modifier.fillMaxWidth().weight(1f).clipToBounds())
+        val keys: @Composable (Modifier) -> Unit = { keyModifier -> Row(keyModifier.horizontalScroll(rememberScrollState())) {
             FilterChip(control, onClick = { if (!control && editor.text.isNotEmpty()) { store.write(editor.text); editor = TextFieldValue() }; control = !control }, label = { Text("Ctrl") })
             listOf("Esc" to "\u001b", "Tab" to "\t", "←" to "left", "↑" to "up", "↓" to "down", "→" to "right").forEach { (label, key) ->
                 TextButton(enabled = state.writable, onClick = {
@@ -213,15 +255,18 @@ private fun TerminalPane(api: PortalAPI, sessionID: String, info: J, modifier: M
                 }) { Text(label) }
             }
             TextButton(enabled = state.writable, onClick = { clipboard.getText()?.text?.let(engine::paste) }) { Text(L("Paste", "粘贴")) }
-        }
-        Row(Modifier.fillMaxWidth()) {
+        } }
+        val input: @Composable (Modifier) -> Unit = { inputModifier -> Row(inputModifier) {
             OutlinedTextField(editor, { value ->
                 if (control && value.text.isNotEmpty()) { val code = value.text.last().uppercaseChar().code; if (code in 64..95) store.write((code and 31).toChar().toString()); control = false; editor = TextFieldValue() }
                 else editor = value
             }, Modifier.weight(1f), enabled = state.writable, singleLine = true, label = { Text(L("Terminal input", "终端输入")) },
                 keyboardOptions = KeyboardOptions(autoCorrectEnabled = false, imeAction = ImeAction.Send), keyboardActions = KeyboardActions(onSend = { send("\r") }))
             TextButton(enabled = state.writable, onClick = { send("\r") }) { Text(L("Return", "回车")) }
-        }
+        } }
+        if (compact) Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            keys(Modifier.weight(1f)); input(Modifier.weight(1f))
+        } else { keys(Modifier.fillMaxWidth()); input(Modifier.fillMaxWidth()) }
     }
 }
 

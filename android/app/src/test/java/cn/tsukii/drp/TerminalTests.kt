@@ -131,4 +131,46 @@ class TerminalTests {
         val value = TextFieldValue("echo 中文", selection = TextRange(7), composition = TextRange(5, 7))
         assertEquals("echo 中文\r", TerminalInput.returnText(value)); assertEquals("\r", TerminalInput.returnText(TextFieldValue()))
     }
+    @Test fun viewportUsesMeasuredBoundsAndRejectsEmptyOrInvalidMetrics() {
+        assertEquals(TerminalViewport(48, 25), TerminalViewport.measured(960, 1040, 20f, 40))
+        assertEquals(TerminalViewport(110, 6), TerminalViewport.measured(2200, 280, 20f, 40))
+        assertEquals(TerminalViewport(2, 1), TerminalViewport.measured(1, 1, 20f, 40))
+        assertEquals(TerminalViewport(500, 200), TerminalViewport.measured(Int.MAX_VALUE, Int.MAX_VALUE, 1f, 1))
+        assertNull(TerminalViewport.measured(0, 100, 20f, 40))
+        assertNull(TerminalViewport.measured(100, 0, 20f, 40))
+        assertNull(TerminalViewport.measured(-1, 100, 20f, 40))
+        assertNull(TerminalViewport.measured(100, 100, 0f, 40))
+        assertNull(TerminalViewport.measured(100, 100, Float.NaN, 40))
+        assertNull(TerminalViewport.measured(100, 100, Float.POSITIVE_INFINITY, 40))
+        assertNull(TerminalViewport.measured(100, 100, 20f, 0))
+    }
+    @Test fun emulatorFitsViewportAcrossRotationAndAfterAuthoritativeSnapshots() {
+        val engine = TerminalEngine { _, _ -> }
+        val portrait = TerminalViewport.measured(960, 1040, 20f, 40)!!
+        val landscape = TerminalViewport.measured(2200, 280, 20f, 40)!!
+        for (viewport in listOf(portrait, landscape, portrait)) {
+            engine.apply(snapshot(screen = "rotation marker"))
+            engine.fit(viewport)
+            assertEquals(viewport.cols, engine.emulator.mColumns)
+            assertEquals(viewport.rows, engine.emulator.mRows)
+            assertTrue(engine.text().contains("rotation marker"))
+            engine.fit(viewport)
+            assertTrue(engine.text().contains("rotation marker"))
+        }
+    }
+    @Test fun measuredRotationSizesUseSequencedResizesIncludingAfterReattach() = runTest {
+        val link = Link(); val store = TerminalStore(StubAPI(), "S", info(), backgroundScope) { link }
+        val portrait = TerminalViewport.measured(960, 1040, 20f, 40)!!
+        val landscape = TerminalViewport.measured(2200, 280, 20f, 40)!!
+        store.resize(portrait.cols, portrait.rows)
+        store.start(); runCurrent(); link.input.send(snapshot()); runCurrent()
+        for ((index, viewport) in listOf(portrait, landscape, portrait).withIndex()) {
+            store.resize(viewport.cols, viewport.rows); runCurrent()
+            assertEquals(o("type" to "resize", "cols" to viewport.cols, "rows" to viewport.rows, "sequence" to index + 1), link.sent.last())
+            link.input.send(o("type" to "ack", "sequence" to index + 1)); runCurrent()
+        }
+        link.input.send(snapshot()); runCurrent()
+        assertEquals(o("type" to "resize", "cols" to portrait.cols, "rows" to portrait.rows, "sequence" to 1), link.sent.last())
+        store.stop()
+    }
 }
