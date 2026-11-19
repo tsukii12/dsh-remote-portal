@@ -5,6 +5,10 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+- Remote access on a phone: switching remote access off from the phone now
+  asks first, because it cuts that phone's own connection. Afterwards the panel
+  says the phone is disconnected and only the PC can turn it back on, instead
+  of a generic "cannot reach the portal" error with the switch still on.
 - Pairing: a phone that is already signed in and opens its pairing link again
   (scans the QR twice, or the browser restores the tab) goes straight into the
   app. It used to get "invalid or already used", and each try counted toward
