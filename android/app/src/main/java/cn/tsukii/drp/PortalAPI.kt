@@ -12,6 +12,7 @@ import kotlinx.serialization.json.JsonObject
 import okhttp3.MultipartReader
 import okhttp3.Response
 import okio.Buffer
+import okio.BufferedSink
 import java.util.UUID
 
 data class BinaryRPCResult(val value: J, val binaries: Map<List<String>, ByteArray> = emptyMap()) {
@@ -24,6 +25,7 @@ interface RPCServing {
     fun stream(endpoint: String, args: J = EMPTY): Flow<J>
     suspend fun portal(path: String, query: Map<String, String> = emptyMap(), body: J? = null): J = throw APIError.InvalidResponse
     suspend fun exportSession(id: String): ByteArray = throw APIError.InvalidResponse
+    suspend fun upload(sessionID: String, source: UploadSource, maxBytes: Long, progress: (Long) -> Unit): J = throw APIError.InvalidResponse
 }
 
 class PortalAPI(val base: HttpUrl, val client: PortalClient,
@@ -32,6 +34,38 @@ class PortalAPI(val base: HttpUrl, val client: PortalClient,
     val sessionExpired = expired.asStateFlow()
     val mux = PortalMux(this, scope)
     fun request(path: String) = client.request(base, path)
+    override suspend fun upload(sessionID: String, source: UploadSource, maxBytes: Long, progress: (Long) -> Unit): J {
+        val job = currentCoroutineContext().job
+        val body = object : okhttp3.RequestBody() {
+            override fun contentType() = "application/octet-stream".toMediaType()
+            override fun contentLength() = source.size ?: -1L
+            override fun isOneShot() = true
+            override fun writeTo(sink: BufferedSink) {
+                try { source.open().use { input ->
+                    val bytes = ByteArray(8192); var total = 0L
+                    while (true) {
+                        if (!job.isActive) throw java.io.IOException("Upload cancelled")
+                        val count = input.read(bytes)
+                        if (count < 0) break
+                        if (count.toLong() > maxBytes - total) throw java.io.IOException(L("Upload exceeds the host's size limit.", "上传内容超过主机大小限制。"))
+                        sink.write(bytes, 0, count); total += count; progress(total)
+                    }
+                } } catch (e: java.io.IOException) { throw e }
+                catch (e: Exception) { throw java.io.IOException(e.message, e) }
+            }
+        }
+        val builder = request("api/session/uploadFileBinary")
+        builder.url(builder.build().url.newBuilder().addQueryParameter("sessionId", sessionID).addQueryParameter("name", source.name)
+            .apply { if (source.image) addQueryParameter("mediaType", source.mediaType) }.build())
+        return client.http.newCall(builder.post(body).build()).await().use {
+            client.cookies.ingest(it, base)
+            if (it.code == 401) { expire(); throw APIError.SessionExpired }
+            if (!it.isSuccessful) throw APIError.Http(it.code)
+            val result = withContext(Dispatchers.IO) { parse(it.body?.string().orEmpty()) }
+            if (!result["ok"].boolean) throw APIError.Remote(result["error"]["code"].text, result["error"]["message"].text)
+            result["value"]
+        }
+    }
     override suspend fun portal(path: String, query: Map<String, String>, body: J?): J {
         val builder = request("dsh-remote-portal/$path")
         val url = builder.build().url.newBuilder().apply { query.forEach { (key, value) -> addQueryParameter(key, value) } }.build()

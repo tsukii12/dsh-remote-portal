@@ -6,8 +6,8 @@ import kotlinx.serialization.json.JsonNull
 import java.util.UUID
 import java.util.TimeZone
 
-data class TranscriptBlock(val kind: String, val text: String = "", val callID: String = "", val name: String = "", val arguments: String = "", val result: J? = null) {
-    constructor(value: J) : this(value["type"].text, value["text"].text, value["id"].text, value["name"].text, value["arguments"].text)
+data class TranscriptBlock(val kind: String, val text: String = "", val callID: String = "", val name: String = "", val arguments: String = "", val result: J? = null, val attachment: J = EMPTY) {
+    constructor(value: J) : this(value["type"].text, value["text"].text, value["id"].text, value["name"].text, value["arguments"].text, attachment = if (value["type"].text in listOf("image", "file")) value["attachment"] else EMPTY)
 }
 data class TranscriptItem(val id: String, val role: String, val blocks: List<TranscriptBlock>, val seq: Int? = null,
     val requestID: String? = null, val optimistic: Boolean = false, val deliveryError: String? = null,
@@ -190,8 +190,10 @@ class ChatStore(val sessionID: String, private val api: RPCServing, private val 
             }
         }
     }
-    fun addOptimistic(text: String, requestID: String) {
-        optimistic = optimistic + TranscriptItem("request:$requestID", "user", listOf(TranscriptBlock("text", text)), requestID = requestID, optimistic = true)
+    fun addOptimistic(text: String, requestID: String, attachments: List<J> = emptyList()) {
+        optimistic = optimistic.filterNot { it.requestID == requestID } + TranscriptItem("request:$requestID", "user", (if (text.isEmpty()) emptyList() else listOf(TranscriptBlock("text", text))) + attachments.map {
+            if (it["image"] != JsonNull) TranscriptBlock("image", attachment = it["image"]) else TranscriptBlock("file", attachment = it["file"])
+        }, requestID = requestID, optimistic = true)
         rebuild()
     }
     private fun rebuild() {
@@ -231,18 +233,22 @@ class ChatStore(val sessionID: String, private val api: RPCServing, private val 
         mutable.value = state.value.copy(transcript = items.sortedBy { positions[it.seq] ?: 0 } + optimistic.filterNot { it.requestID in queued }, turnUsage = Usage.turns(history.values),
             completedTurns = history.values.filter { it["type"].text == "turn/end" }.mapNotNull { it["data"]["turn"].int }.toSet())
     }
-    suspend fun send(text: String, steer: Boolean = false): String {
-        if (text.isBlank()) throw PortalError(L("Enter a message.", "请输入消息。"))
-        val id = UUID.randomUUID().toString(); addOptimistic(text, id)
+    suspend fun send(text: String, steer: Boolean = false, attachments: List<J> = emptyList(), requestID: String = UUID.randomUUID().toString()): String {
+        if (text.isBlank() && attachments.isEmpty()) throw PortalError(L("Enter a message.", "请输入消息。"))
+        if (attachments.any { it["receiptId"].string.isNullOrEmpty() }) throw APIError.InvalidResponse
+        val id = requestID; addOptimistic(text, id, attachments)
         try {
             api.rpc("session/prompt", o("request" to o("sessionId" to sessionID, "requestId" to id, "mode" to if (steer && state.value.running) "steer" else "queue",
-                "content" to listOf(o("type" to "text", "text" to text)), "clientTimeZone" to TimeZone.getDefault().id)))
+                "content" to (if (text.isBlank()) emptyList() else listOf(o("type" to "text", "text" to text))) + attachments.map { o("type" to "file", "receiptId" to it["receiptId"]) }, "clientTimeZone" to TimeZone.getDefault().id)))
             return id
         } catch (e: Exception) {
             optimistic = optimistic.map { if (it.requestID == id) it.copy(deliveryError = e.message) else it }; rebuild(); throw e
         }
     }
     suspend fun cancel() { api.rpc("session/cancel", o("request" to o("sessionId" to sessionID))) }
+    fun attachmentDraft(scope: CoroutineScope) = AttachmentDraft(sessionID, api, scope) { state.value.projections["imageLimits"] }
+    suspend fun mentions(token: AtToken) = Mentions.candidates(api, sessionID, token)
+    suspend fun attachment(reference: J): J = api.rpc("session/attachment", o("request" to o("sessionId" to sessionID, "attachment" to reference)))
     suspend fun loadModels() {
         val value = api.rpc("session/modelCatalog"); mutable.value = state.value.copy(catalog = value)
     }
@@ -255,9 +261,12 @@ class ChatStore(val sessionID: String, private val api: RPCServing, private val 
         val value = api.rpc("session/selectModel", o("request" to request)); mutable.value = state.value.copy(selectedModel = value)
     }
     suspend fun loadControls() {
-        mutable.value = state.value.copy(permissionCatalog = api.rpc("permissionPresets/catalog"))
-        mutable.value = state.value.copy(presetCatalog = api.rpc("agentPresets/list"))
-        mutable.value = state.value.copy(commands = api.rpc("commands/list", o("agentId" to sessionID)).array)
+        val permissions = api.rpc("permissionPresets/catalog")
+        mutable.value = state.value.copy(permissionCatalog = permissions)
+        val presets = api.rpc("agentPresets/list")
+        mutable.value = state.value.copy(presetCatalog = presets)
+        val commands = api.rpc("commands/list", o("agentId" to sessionID)).array
+        mutable.value = state.value.copy(commands = commands)
         refreshProjections()
     }
     suspend fun refreshProjections() { applyProjections(api.rpc("session/projections", o("request" to o("sessionId" to sessionID)))) }

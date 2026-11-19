@@ -43,6 +43,12 @@ preserve the full relay path prefix. Use trusted networks for plain HTTP.
   loaded history has complete attempt evidence, and a bilingual usage detail
   sheet. Unknown counts stay unknown; zero is not treated as missing. Account
   balances appear only when served and available from the host.
+- System image/file pickers stream content URIs to staged uploads, with a
+  progress/retry/remove rail and attachment-only messages. Host image limits
+  control admission; receipts stay scoped to the current chat draft. File cards
+  and authorized image previews render in messages (inline previews up to 8 MiB).
+- Debounced, cancellable `@` completion for workspace files/directories (including
+  quoted names) and host-provided session mentions, preserving cursor position.
 - Exact-input approval sheets, single/multiple-choice questions and custom answers.
   Requests only auto-open for the current chat; Later defers them without answering.
   Pending banners and drawer badges let you return to requests in any known session.

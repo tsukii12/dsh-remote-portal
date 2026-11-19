@@ -30,9 +30,12 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
 import java.io.File
 
 @Composable
@@ -40,7 +43,17 @@ fun ChatScreen(chat: ChatStore) {
     val state by chat.state.collectAsState()
     val scope = rememberCoroutineScope()
     var error by remember { mutableStateOf<String?>(null) }
-    var text by rememberSaveable { mutableStateOf("") }
+    var editor by rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue()) }
+    val text = editor.text
+    val draft = remember(chat) { chat.attachmentDraft(scope) }
+    val attachments by draft.items.collectAsState()
+    DisposableEffect(draft) { onDispose { draft.close() } }
+    val token = if (editor.selection.collapsed) Mentions.active(editor.text, editor.selection.start) else null
+    var mentions by remember(chat) { mutableStateOf<List<MentionCandidate>>(emptyList()) }
+    LaunchedEffect(chat, token) {
+        mentions = emptyList()
+        if (token != null) { delay(250); val result = chat.mentions(token); kotlinx.coroutines.currentCoroutineContext().ensureActive(); mentions = result }
+    }
     var models by remember { mutableStateOf(false) }
     var usage by remember { mutableStateOf(false) }
     var sending by remember { mutableStateOf(false) }
@@ -74,11 +87,11 @@ fun ChatScreen(chat: ChatStore) {
                     Text(L("What would you like to work on?", "今天想做些什么？"), style = MaterialTheme.typography.headlineSmall, modifier = Modifier.padding(vertical = 28.dp))
                 }
                 items(state.transcript, key = { it.id }) { item ->
-                    MessageView(item)
+                    MessageView(item, chat)
                     if (item.role == "assistant" && item.turn in state.completedTurns && state.transcript.lastOrNull { it.role == "assistant" && it.turn == item.turn }?.id == item.id)
                         TextButton(onClick = { usage = true }, contentPadding = PaddingValues(0.dp)) { Text(Usage.line(state.turnUsage[item.turn]), style = MaterialTheme.typography.labelSmall) }
                 }
-                if (progress != null) item(key = "in-progress:${progress.id}") { MessageView(progress) }
+                if (progress != null) item(key = "in-progress:${progress.id}") { MessageView(progress, chat) }
                 else if (state.running) item(key = "working") { Row(verticalAlignment = Alignment.CenterVertically) {
                     CircularProgressIndicator(Modifier.size(14.dp), strokeWidth = 2.dp); Spacer(Modifier.width(8.dp)); Text(L("Working…", "处理中…"), style = MaterialTheme.typography.bodySmall)
                 } }
@@ -125,8 +138,8 @@ fun ChatScreen(chat: ChatStore) {
                 val query = text.drop(1).substringBefore(' ')
                 val suggestions = (listOf(o("name" to "model", "description" to L("Choose model and thinking effort", "选择模型与思考强度"))) + state.commands).filter { query.isEmpty() || it["name"].text.startsWith(query) }
                 suggestions.forEach { command -> TextButton(onClick = {
-                    if (command["name"].text == "model") { text = ""; models = true }
-                    else text = "/" + command["name"].text + if (command["input"] == kotlinx.serialization.json.JsonNull) "" else " "
+                    if (command["name"].text == "model") { editor = TextFieldValue(); models = true }
+                    else { val value = "/" + command["name"].text + if (command["input"] == kotlinx.serialization.json.JsonNull) "" else " "; editor = TextFieldValue(value, TextRange(value.length)) }
                 }, modifier = Modifier.fillMaxWidth()) {
                     Column(Modifier.fillMaxWidth()) {
                         Text("/" + command["name"].text + " " + command["input"]["hint"].text)
@@ -135,6 +148,17 @@ fun ChatScreen(chat: ChatStore) {
                 } }
                 if (suggestions.isEmpty()) Text(L("No matching commands", "没有匹配的命令"), style = MaterialTheme.typography.bodySmall)
             }
+            if (token != null) Column(Modifier.fillMaxWidth().heightIn(max = 150.dp).verticalScroll(rememberScrollState())) {
+                Text(L("Mention a file, folder or session", "提及文件、文件夹或会话"), style = MaterialTheme.typography.labelSmall)
+                mentions.forEach { candidate -> TextButton(onClick = {
+                    val suffix = if (candidate.directory) "" else " "
+                    val value = editor.text.replaceRange(token.start, token.end, candidate.insertion + suffix)
+                    editor = TextFieldValue(value, TextRange(token.start + candidate.insertion.length + suffix.length))
+                }, modifier = Modifier.fillMaxWidth()) { Text(candidate.label, maxLines = 1, overflow = TextOverflow.Ellipsis) } }
+                if (mentions.isEmpty()) Text(L("No matches yet", "暂无匹配项"), style = MaterialTheme.typography.bodySmall)
+            }
+            AttachmentRail(chat, draft, !sending)
+            AttachmentPicker(draft, !sending)
             Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 AssistChip(onClick = { models = true }, label = { Text(L("Model: ", "模型：") + state.modelName + " · " + state.effortName) })
                 AssistChip(onClick = { models = true }, label = { Text(ChatLabels.permission(state.projections["permissions"]["currentValue"].text).ifEmpty { L("Access mode", "访问模式") }) })
@@ -145,16 +169,18 @@ fun ChatScreen(chat: ChatStore) {
                     style = MaterialTheme.typography.labelSmall, maxLines = 2)
             }
             Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(text, { text = it }, Modifier.weight(1f), placeholder = { Text(L("Message…", "输入消息…")) }, minLines = 1, maxLines = 6, shape = MaterialTheme.shapes.large)
+                OutlinedTextField(editor, { editor = it }, Modifier.weight(1f), enabled = !sending, placeholder = { Text(L("Message…", "输入消息…")) }, minLines = 1, maxLines = 6, shape = MaterialTheme.shapes.large)
                 if (state.running) FilledTonalButton(onClick = { perform { chat.cancel() } }, contentPadding = PaddingValues(14.dp)) { Text("■"); Text(L(" Stop", " 停止")) }
                 FilledIconButton(onClick = {
-                    val message = text.trim(); text = ""; follow = true
+                    val message = text.trim(); editor = TextFieldValue(); follow = true
                     perform { sending = true; try {
+                        draft.validateImages()
+                        if (message.startsWith("/") && attachments.isNotEmpty()) throw PortalError(L("Send attachments as a message, not a slash command.", "请将附件作为消息发送，而非斜杠命令。"))
                         if (message == "/model") models = true
                         else if (message.startsWith("/")) { exported = null; exported = chat.executeCommand(message) }
-                        else chat.send(message, steer)
-                    } catch (e: Exception) { if (text.isEmpty()) text = message; throw e } finally { sending = false } }
-                }, enabled = text.isNotBlank() && !sending) { Icon(Icons.AutoMirrored.Filled.Send, if (state.running) { if (steer) L("Steer", "立即引导") else L("Queue message", "消息排队") } else L("Send", "发送")) }
+                        else { chat.send(message, steer, attachments.mapNotNull { it.receipt }, if (attachments.isEmpty()) java.util.UUID.randomUUID().toString() else draft.requestID); draft.clear() }
+                    } catch (e: Exception) { if (editor.text.isEmpty()) editor = TextFieldValue(message, TextRange(message.length)); throw e } finally { sending = false } }
+                }, enabled = (text.isNotBlank() || attachments.isNotEmpty()) && draft.ready && !sending) { Icon(Icons.AutoMirrored.Filled.Send, if (state.running) { if (steer) L("Steer", "立即引导") else L("Queue message", "消息排队") } else L("Send", "发送")) }
             }
             if (state.running) Row(verticalAlignment = Alignment.CenterVertically) {
                 Switch(steer, { steer = it }); Spacer(Modifier.width(8.dp)); Text(L("Steer immediately instead of queue", "立即引导而不是排队"), style = MaterialTheme.typography.bodySmall)
@@ -170,7 +196,7 @@ fun ChatScreen(chat: ChatStore) {
 }
 
 @Composable
-private fun MessageView(item: TranscriptItem) {
+private fun MessageView(item: TranscriptItem, chat: ChatStore) {
     val user = item.role == "user"
     Column(Modifier.fillMaxWidth(), horizontalAlignment = if (user) Alignment.End else Alignment.Start) {
         Surface(color = if (user) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface, shape = if (user) MaterialTheme.shapes.large else RectangleShape) {
@@ -179,6 +205,7 @@ private fun MessageView(item: TranscriptItem) {
                     "text" -> MarkdownView(block.text)
                     "reasoning" -> ExpandableBlock(L("Thinking", "思考过程")) { MarkdownView(block.text) }
                     "tool-call" -> ToolCard(block)
+                    "image", "file" -> AttachmentBlock(chat, block)
                     else -> if (block.text.isNotEmpty()) MarkdownView(block.text)
                 } }
                 if (item.inProgress) Text(L("Generating…", "正在生成…"), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)

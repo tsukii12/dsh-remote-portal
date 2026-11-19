@@ -9,7 +9,8 @@ object ErrorPresentation {
     }
 
     fun headline(message: String, languages: List<String> = listOf(Locale.getDefault().toLanguageTag())): String =
-        if (isModelConfiguration(message)) L(
+        if ("does not support image" in message.lowercase(Locale.ROOT)) L("This model cannot read images. Choose an image-capable model or remove the image.", "此模型不支持图片。请选择支持图片的模型或移除图片。", languages)
+        else if (isModelConfiguration(message)) L(
             "No model is set up on this computer. Add an API key on dsh's Models page.",
             "这台电脑上还没有可用的模型，请在 dsh 的模型页面添加 API Key。", languages)
         else L("Something went wrong. Please try again.", "操作未成功，请重试。", languages)

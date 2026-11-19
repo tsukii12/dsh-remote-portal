@@ -5,6 +5,9 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+- Android Stage B: fix locale-recreation transcript loading races; add streaming
+  staged image/file uploads, attachment messages/previews, and file/session
+  `@` completion with host image limits and chat-bound upload cancellation.
 - Android Stage A: fix malformed Markdown links and millisecond recency sorting;
   add validated multipart binary RPC results, generation-bound non-replaying
   duplex streams, and bilingual session/turn token and context usage details.
