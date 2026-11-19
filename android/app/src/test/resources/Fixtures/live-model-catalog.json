@@ -1,0 +1,42 @@
+{
+  "type": "server-response",
+  "rpcId": "live-model-catalog",
+  "result": {
+    "ok": true,
+    "value": {
+      "default": {
+        "provider": "local-fake",
+        "model": "native-demo",
+        "reasoningEffort": "high"
+      },
+      "routableProviders": [
+        "local-fake"
+      ],
+      "groups": [
+        {
+          "id": "local-fake",
+          "name": "Local fake streaming demo",
+          "models": [
+            {
+              "id": "native-demo",
+              "name": "Native demo (local fake)",
+              "reasoning": {
+                "efforts": [
+                  {
+                    "id": "off",
+                    "name": "Off"
+                  },
+                  {
+                    "id": "high",
+                    "name": "High"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "failures": []
+    }
+  }
+}

@@ -16,6 +16,8 @@
 
 ---
 
+Native Android client: see [DRP build, installation and usage](android/README.md).
+
 Use DeepSeek Harness (dsh) from your phone or another computer. On the same network,
 open the portal address or scan a one-time pairing code. Away from home, connect
 through a relay on a server you control.

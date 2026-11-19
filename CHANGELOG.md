@@ -5,6 +5,41 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+- Android iOS polish parity: visible automatic 640 px history thumbnails (20 MiB),
+  unknown-modality compatibility, 48 dp targets, keyboard-safe bottom following,
+  haptics, pinned approval actions, tablet drawer and bilingual empty states.
+
+- Android native terminal: retained session shells over sequenced duplex mux,
+  Apache-2.0 Termux VT/Canvas rendering, IME/key controls, bounded acknowledged
+  input, reconnect/foreground snapshot recovery, rename and explicit close.
+- Android parity fixes: model image-modality admission, replay-safe resolved
+  approvals, extensionless image magic detection and private `.dsh` filtering.
+
+- Android Stage D: native host defaults with revision-conflict refresh, provider
+  status, confirmed authorized-device revocation and app version in drawer Settings.
+- Android parity: explicit Photos/camera attachments, per-turn token buckets and
+  reasoning disclosure, and raw approximate context used/capacity.
+
+- Android Stage C: native session Files panel with expandable/searchable watched
+  workspace tree, paged selectable text, image previews, bounded multipart file
+  sharing, and composer mentions from files.
+- Android Stage B: fix locale-recreation transcript loading races; add streaming
+  staged image/file uploads, attachment messages/previews, and file/session
+  `@` completion with host image limits and chat-bound upload cancellation.
+- Android Stage A: fix malformed Markdown links and millisecond recency sorting;
+  add validated multipart binary RPC results, generation-bound non-replaying
+  duplex streams, and bilingual session/turn token and context usage details.
+- Added DRP, a fully native Android client with server management, persistent
+  login, workspace/session navigation, streaming chat, model selection, tool
+  approvals and English/Chinese light/dark UI. Includes JVM protocol/reducer tests
+  and build/install documentation in `android/README.md`.
+- Android approvals/questions can be deferred with Later, only interrupt their
+  open chat, and remain accessible from pending banners and session badges.
+- Android native parity: refreshed model/thinking/access/plan/preset options,
+  slash commands and session export, editable queue/steer controls, session
+  name/content search and unarchive, and host-folder workspace management.
+  Includes bilingual controls and JVM RPC/projection/failure coverage.
+
 - Home screen: the sign-in page now links the portal's manifest and icon, so a
   phone that adds it to its home screen gets the right name and icon. Through
   the relay, the manifest's start page and icon stay under `/__t/<id>/` instead
@@ -1195,11 +1230,6 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
-
-
-
-
-
 
 
 

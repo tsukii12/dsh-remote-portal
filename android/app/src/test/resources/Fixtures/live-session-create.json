@@ -1,0 +1,11 @@
+{
+  "type": "server-response",
+  "rpcId": "4b1502cb-cf3a-4798-8b66-782c839e61e5",
+  "result": {
+    "ok": true,
+    "value": {
+      "sessionId": "session-18be2ddf-6a3a-42d3-aa72-320df014ae67",
+      "agentPreset": "standard"
+    }
+  }
+}
