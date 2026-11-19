@@ -8,7 +8,6 @@ versions are the plugin's own, not dsh's.
 - README: the update steps now cover installs made with `install.sh` /
   `install.ps1` (`git pull` in the checkout, then restart), and say that
   `dsh plugin` needs pnpm on PATH.
-||||||| 3c8607e
 - `install.sh` with no `-p` no longer stops at a missing desktop profile on a
   server that only runs dsh web: it skips profiles that don't exist and installs
   into the rest, and fails only if there are none. The installers' closing hint
