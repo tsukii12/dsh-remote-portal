@@ -24,6 +24,8 @@ import { fileURLToPath } from "node:url";
 
 import { createRelay, tunnelIdFor } from "../tools/relay.mjs";
 import { createTunnel } from "../lib/tunnel.mjs";
+import * as agentFraming from "../lib/tunnel.mjs";
+import * as relayFraming from "../tools/relay.mjs";
 
 const quiet = { info() {}, warn() {}, error() {} };
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -375,6 +377,50 @@ test("a stream that outlives the request timeout is failed, not leaked", async (
   assert.equal(relay.tunnels.get(id).streams.size, 0, "the stream must be released");
 });
 
+test("a response that finishes above the visitor high water mark does not stall the tunnel", async () => {
+  const token = "test-token-finish";
+  const id = tunnelIdFor(token);
+  const { relay, httpPort, agentPort } = await startRelay([token], { requestTimeout: 1500 });
+  const { FRAME, encodeFrame, createFrameReader } = agentFraming;
+  const incoming = [];
+  const agent = net.connect(agentPort, "127.0.0.1");
+  cleanups.push(() => agent.destroy());
+  agent.on("data", createFrameReader((type, streamId) => {
+    if (type === FRAME.REQ_END) incoming.push(streamId);
+  }, assert.fail));
+  agent.write(encodeFrame(FRAME.HELLO, 0, JSON.stringify({ token })));
+  await waitFor(() => relay.tunnels.get(id).socket, { label: "agent attached" });
+
+  const tunnelSocket = relay.tunnels.get(id).socket;
+  const pause = tunnelSocket.pause.bind(tunnelSocket);
+  let pauses = 0;
+  tunnelSocket.pause = () => { pauses++; return pause(); };
+
+  function responseHead(streamId, length) {
+    return encodeFrame(FRAME.RES_HEAD, streamId, JSON.stringify({ status: 200, headers: { "content-length": length } }));
+  }
+
+  const first = request(httpPort, `/__t/${id}/large`);
+  await waitFor(() => incoming.length === 1, { label: "first request" });
+  const body = Buffer.alloc(128 * 1024, 65);
+  const frame = encodeFrame(FRAME.RES_BODY, incoming[0], body);
+  const split = frame.length - 1024;
+  const prefix = Buffer.concat([responseHead(incoming[0], body.length), frame.subarray(0, split)]);
+  const before = relay.stats.bytesIn;
+  agent.write(prefix);
+  await waitFor(() => relay.stats.bytesIn === before + prefix.length, { label: "response prefix read" });
+  agent.write(Buffer.concat([frame.subarray(split), encodeFrame(FRAME.RES_END, incoming[0])]));
+
+  const result = await first;
+  assert.equal(result.status, 200);
+  assert.deepEqual(result.body, body);
+  assert.ok(pauses > 0, "the large frame must trigger visitor backpressure");
+  const next = request(httpPort, `/__t/${id}/next`);
+  await waitFor(() => incoming.length === 2, { label: "next request" });
+  agent.write(Buffer.concat([responseHead(incoming[1], 0), encodeFrame(FRAME.RES_END, incoming[1])]));
+  assert.equal((await next).status, 200);
+});
+
 test("framing helpers round-trip a binary payload", async () => {
   const { encodeFrame, createFrameReader, FRAME } = await import("../tools/relay.mjs");
   const payload = Buffer.from([0, 255, 1, 254, 2]);
@@ -391,6 +437,43 @@ test("framing helpers round-trip a binary payload", async () => {
   assert.deepEqual([...frames[0].body], [...payload]);
 });
 
+for (const [name, framing, peer] of [
+  ["relay", relayFraming, agentFraming],
+  ["agent", agentFraming, relayFraming],
+]) {
+  test(`${name} decodes a fragmented maximum-size frame followed by coalesced frames`, () => {
+    const { RES_BODY, RES_END, PING } = peer.FRAME;
+    const body = Buffer.alloc(1024 * 1024);
+    for (let i = 0; i < body.length; i++) body[i] = i % 251;
+    const large = peer.encodeFrame(RES_BODY, 0x01020304, body);
+    const end = peer.encodeFrame(RES_END, 0x01020304);
+    const ping = peer.encodeFrame(PING, 0);
+    const calls = [];
+    const reader = framing.createFrameReader((...frame) => calls.push(frame), assert.fail);
+
+    for (let i = 0; i < 9; i++) reader(large.subarray(i, i + 1));
+    for (let i = 9; i < large.length - 1; i += 1024) {
+      reader(large.subarray(i, Math.min(i + 1024, large.length - 1)));
+    }
+    assert.deepEqual(calls, []);
+    reader(Buffer.concat([large.subarray(-1), end, ping]));
+    assert.deepEqual(calls, [[RES_BODY, 0x01020304, body], [RES_END, 0x01020304, Buffer.alloc(0)],
+      [PING, 0, Buffer.alloc(0)]]);
+  });
+
+  test(`${name} rejects an oversized frame without waiting for its payload`, () => {
+    const header = Buffer.from([22, 0, 0, 0, 0, 0, 16, 0, 1]);
+    const errors = [];
+    const reader = framing.createFrameReader(assert.fail, (error) => errors.push(error));
+    reader(header.subarray(0, 8));
+    assert.deepEqual(errors, []);
+    reader(header.subarray(8));
+    reader(peer.encodeFrame(peer.FRAME.PING, 0));
+    assert.equal(errors.length, 1);
+    assert.match(errors[0].message, /frame too large: 1048577/);
+    if (name === "relay") assert.equal(errors[0].firstByte, 22);
+  });
+}
 
 
 

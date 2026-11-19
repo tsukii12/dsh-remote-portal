@@ -21,7 +21,7 @@ change is “does it keep the guarantees below intact?”.
 
 ```bash
 git clone <repo> dsh-remote-portal && cd dsh-remote-portal
-node --test                                  # 74 tests, ~75 s, no network needed
+node --test                                 # see the testing guide for browser setup
 node --test test/host.test.mjs               # one suite
 ```
 
@@ -32,9 +32,12 @@ To try it in a live Harness, install it into a profile and restart dsh:
 dsh web --port 3080          # then open http://127.0.0.1:3080/?token=…
 ```
 
-The panel lives at **Settings → 远程访问** (or append `?panel=1`).
+Open **Remote access / 远程访问** in the sidebar. See the
+[testing guide](docs/TESTING.md) to run the mobile checks against dsh.
 
 ## What to change where
+
+Start with the [repository map](docs/README.md#项目结构--repository-map).
 
 | You want to… | Touch |
 |---|---|

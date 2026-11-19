@@ -174,7 +174,7 @@ Verified against dsh `0.2.1-rc.2`.
 | `test/security.test.mjs` | every portal response carries the hardening set, and proxied responses keep the app's own headers |
 | `test/relay.test.mjs` | real relay + real agent + dummy upstream: prefix stripping, header forwarding, WebSocket piping, unknown/offline tunnel, wrong token, reconnect, timeout release, framing |
 | `test/qr.test.mjs` | QR output against an *independent* decoder, not a round-trip through the same tables |
-| `test/mobile.test.mjs` | the layer against a live dsh the suite starts itself: drawer API, hit sizes, overflow audit across 12 configurations, and that it never engages on the host machine |
+| `test/mobile.test.mjs` | the layer against a live dsh: drawer API, hit sizes, overflow audit across 12 configurations, and that it never engages on the host machine |
 | `test/manifest.test.mjs` | the release number in five files agrees, and the mirror in the installer stays pinned |
 
-`node --test` → 82 tests, ~75 s, no mocks on the network paths.
+Run `node --test`; see the [testing guide](docs/TESTING.md) for browser setup.
