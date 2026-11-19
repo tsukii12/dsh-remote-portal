@@ -1553,6 +1553,7 @@ test("the login page links the home-screen manifest, and the manifest follows th
   const page = await request(port, "/", { headers: { accept: "text/html", ...mounted } });
   assert.match(page.body, /<link rel="manifest" href="__portal\/manifest\.webmanifest">/);
   assert.match(page.body, /<link rel="apple-touch-icon" href="__portal\/icon\.svg">/);
+  assert.match(String(page.headers["content-security-policy"]), /manifest-src 'self'/, "the page CSP must let the browser load the manifest");
 
   const viaRelay = JSON.parse((await request(port, "/__portal/manifest.webmanifest", { headers: mounted })).body);
   assert.equal(viaRelay.start_url, "/__t/abc123/");
