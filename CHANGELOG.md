@@ -9,6 +9,8 @@ versions are the plugin's own, not dsh's.
   the portal is served under a reverse proxy path prefix.
 - When a pairing code is rejected, the portal now asks you to generate and scan
   a new QR code instead of saying that no code was supplied.
+- "Copy pairing link" now says how long the link is still valid, matching the
+  QR countdown, instead of always claiming 5 minutes.
 
 ## 0.6.2 — 2026-10-24
 
