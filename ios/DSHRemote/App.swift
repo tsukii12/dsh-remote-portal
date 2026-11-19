@@ -39,7 +39,7 @@ struct ServersView: View {
                     .contextMenu { Button(L("Edit", "编辑")) { editing = server } }
                 }
             }
-            .navigationTitle("dsh Remote")
+            .navigationTitle("DRP")
             .toolbar { Button { adding = true } label: { Image(systemName: "plus") } }
             .sheet(isPresented: $adding) { ServerEditor(server: nil) { server, token in
                 store.servers.append(server)
@@ -101,17 +101,21 @@ struct ConnectionView: View {
     @State private var busy = false
     @State private var error = ""
     var body: some View {
-        NavigationStack {
-            Group {
-                if let api { NativeConnectionGate(api: api, initialToken: initialToken) }
-                else if busy { ProgressView(L("Finding fastest address…", "正在寻找最快地址…")) }
-                else { VStack { Text(error); Button(L("Retry", "重试")) { Task { await connect() } } } }
+        Group {
+            if let api { NativeConnectionGate(api: api, initialToken: initialToken, serverName: server.name, addressLabel: result?.label ?? "", onSwitch: { dismiss() }) }
+            else {
+                NavigationStack {
+                    VStack(spacing: 20) {
+                        if busy { ProgressView(L("Finding fastest address…", "正在寻找最快地址…")) }
+                        if !error.isEmpty { Text(error); Button(L("Retry", "重试")) { Task { await connect() } } }
+                    }
+                    .navigationTitle("DRP")
+                    .toolbar { ToolbarItem(placement: .topBarLeading) { Button { dismiss() } label: { Image(systemName: "chevron.left") } } }
+                }
             }
-            .safeAreaInset(edge: .top) { if let result { Text(result.label).font(.caption2).foregroundStyle(.secondary) } }
-            .navigationTitle(server.name).navigationBarTitleDisplayMode(.inline)
-            .toolbar { ToolbarItem(placement: .topBarLeading) { Button { dismiss() } label: { Image(systemName: "chevron.left") } } }
-            .task { await connect() }
         }
+        .tint(DRPStyle.accent)
+        .task { await connect() }
     }
     private func connect() async {
         busy = true; error = ""
@@ -130,20 +134,27 @@ struct NativeConnectionGate: View {
     @State private var pairing: Bool
     @State private var error = ""
     @State private var busy = false
-    init(api: PortalAPI, initialToken: String) {
+    let serverName: String
+    let addressLabel: String
+    let onSwitch: () -> Void
+    init(api: PortalAPI, initialToken: String, serverName: String, addressLabel: String, onSwitch: @escaping () -> Void) {
         self.api = api
+        self.serverName = serverName; self.onSwitch = onSwitch
+        self.addressLabel = addressLabel
         _connection = StateObject(wrappedValue: NativeConnection(api: api))
         _secret = State(initialValue: initialToken); _pairing = State(initialValue: !initialToken.isEmpty)
     }
     var body: some View {
-        VStack(spacing: 22) {
+        Group {
             if signedIn {
-                ContentUnavailableView(L("Connected", "已连接"), systemImage: "checkmark.circle", description: Text(L("Native workspace and chat UI is coming next.", "原生工作区与聊天界面将在下一步提供。")))
-                Button(L("Log out", "退出")) { Task { do { try await api.logout(); signedIn = false } catch { self.error = error.localizedDescription } } }
+                WorkspaceView(connection: connection, serverName: serverName, addressLabel: addressLabel, onSwitch: { connection.stop(); onSwitch() }, onLogout: {
+                    try await api.logout(); connection.stop(); signedIn = false
+                })
             } else {
+                NavigationStack {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 22) {
-                        HStack { Image(systemName: "sparkle").font(.title); Text("DeepSeek").font(.title2.bold()); Text("HARNESS").font(.caption.bold()).padding(6).background(.quaternary, in: RoundedRectangle(cornerRadius: 5)) }
+                        HStack { Image(systemName: "sparkle").font(.title).foregroundStyle(DRPStyle.accent); Text("DRP").font(.title.bold()) }
                         Text(L("REMOTE ACCESS", "远程访问")).font(.caption).foregroundStyle(.secondary)
                         Text(L("Verify this device", "验证这台设备")).font(.largeTitle.bold())
                         Text(pairing
@@ -154,14 +165,16 @@ struct NativeConnectionGate: View {
                             Text(L("Pairing code", "配对码")).tag(true)
                         }.pickerStyle(.segmented)
                         SecureField(pairing ? L("Pairing code", "配对码") : L("Access password", "访问密码"), text: $secret).textContentType(.password).textInputAutocapitalization(.never).autocorrectionDisabled().padding().background(.quaternary, in: RoundedRectangle(cornerRadius: 12))
+                        if !error.isEmpty { Text(error).foregroundStyle(.red).font(.callout) }
                         Button { Task { await login() } } label: {
                             HStack { Spacer(); if busy { ProgressView() }; Text(L("Continue", "继续")); Spacer() }.padding(10)
-                        }.buttonStyle(.borderedProminent).tint(.primary).disabled(busy || secret.isEmpty)
+                        }.buttonStyle(.borderedProminent).disabled(busy || secret.isEmpty)
                     }.padding(28).frame(maxWidth: 460)
                 }.frame(maxWidth: .infinity).background(colorScheme == .dark ? Color(red: 21/255, green: 21/255, blue: 23/255) : .white)
+                .navigationTitle("DRP").navigationBarTitleDisplayMode(.inline)
+                .toolbar { ToolbarItem(placement: .topBarLeading) { Button(action: onSwitch) { Label(L("Servers", "服务器"), systemImage: "chevron.left") } } }
+                }
             }
-            if busy { ProgressView() }
-            if !error.isEmpty { Text(error).foregroundStyle(.red) }
         }
         .task { if secret.isEmpty { await resume() } }
         .onChange(of: api.sessionExpired) { _, expired in if expired { signedIn = false; connection.stop() } }

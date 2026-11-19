@@ -1,6 +1,6 @@
-# dsh Remote — iOS preview
+# DRP — native iOS client
 
-Native SwiftUI server management and sign-in plus a Foundation networking/state layer. iOS 17+, no third-party dependencies. No embedded browser. English/Chinese follow the device language. This first native migration step shows a connected placeholder; workspace/chat UI follows separately.
+Native SwiftUI server management, sign-in, workspace sidebar and chat on a Foundation networking/state layer. iOS 17+, no third-party dependencies or embedded browser. English/Chinese follow the device language; system appearance controls light/dark mode. DRP keeps the existing bundle identifier.
 
 ## Build and run
 
@@ -15,7 +15,15 @@ xcodebuild -project ios/DSHRemote.xcodeproj -scheme DSHRemote \
 
 Tap **+** and enter a name and one HTTP(S) base address per line. Include relay path prefixes (`https://relay.example/__t/id/`). Alternatively paste a `.../__portal/pair?t=...` link; saving creates the server and opens native pairing confirmation. Long-press a server to edit; swipe to delete. Pairing tokens/passwords are not persisted by the app. Addresses are saved locally in UserDefaults.
 
-Connecting races uncached health checks across all addresses with a three-second timeout. The first HTTP 200 wins; failed addresses do not end the race. The header shows the winning address, approximate latency and LAN/public classification. A single keep-alive URLSession serves HTTP and WebSocket requests with the same User-Agent and Origin. Login redirects are not followed. All response cookies enter HTTPCookieStorage and an explicit, file-protected cookie jar partitioned by the full server base (including port/path). Cookies survive app restarts; only that base's jar is sent. Session expiration returns to native login. Back returns to servers without logging out.
+Connecting races uncached health checks across all addresses with a three-second timeout. The first HTTP 200 wins; failed addresses do not end the race. A single keep-alive URLSession serves HTTP and WebSocket requests with the same User-Agent and Origin. Login redirects are not followed. All response cookies enter HTTPCookieStorage and an explicit, file-protected cookie jar partitioned by the full server base (including port/path). Cookies survive app restarts; only that base's jar is sent. Session expiration returns to native login. Servers returns to the server list without logging out.
+
+## Native interface
+
+The adaptive sidebar is a separate column on iPad and native sidebar navigation on iPhone. Pinned chats come first, then workspaces and ungrouped chats. Tap a workspace's **+** for a new chat; long-press or swipe conversations to rename, pin/unpin or archive. Pull down to refresh. Switch servers or log out from the sidebar footer.
+
+Chat supports live Markdown, expandable thinking, fenced code with copy/horizontal scrolling and compact tool cards with expandable results. Earlier history loads from the top. Scrolling up pauses automatic following; use the down arrow to return to the live edge. The multiline composer has a model picker and a send/stop button. Native sheets handle tool approvals and single/multiple-choice questions with custom answers. A connection banner reports reconnects without hiding the transcript.
+
+`Assets.xcassets/AppIcon.appiconset` contains the supplied opaque 1024px whale icon as a single-size iOS AppIcon.
 
 ## Native state layer
 
@@ -56,6 +64,6 @@ Set a throwaway password in dsh Settings → Remote access (or POST JSON `{"pass
 ## Limits
 
 - HTTP LAN connections are allowed by ATS. **Self-signed TLS is not bypassed**: use a trusted certificate or install and trust your local CA on the device. There is deliberately no global certificate bypass.
-- Workspace/chat rendering, attachments, settings and terminal UI are not part of this state-layer step.
-- No custom app icon in this preview. Server addresses are not encrypted; avoid embedding secrets in URLs. Cookie files are in Application Support with iOS data protection; deleting a saved server does not revoke its remote session (log out first).
+- Attachments, settings and terminal UI are not implemented.
+- Server addresses are not encrypted; avoid embedding secrets in URLs. Cookie files are in Application Support with iOS data protection; deleting a saved server does not revoke its remote session (log out first).
 - Real relay, physical-device networking, lockout and certificate flows need manual validation.

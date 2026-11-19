@@ -15,11 +15,13 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: io.github.tsukii12.dshremote
-        GENERATE_INFOPLIST_FILE: YES
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        GENERATE_INFOPLIST_FILE: NO
     info:
       path: DSHRemote/Info.plist
       properties:
-        CFBundleDisplayName: dsh Remote
+        CFBundleDisplayName: DRP
+        CFBundleName: DRP
         UILaunchScreen: {}
         NSAppTransportSecurity:
           NSAllowsArbitraryLoads: true
