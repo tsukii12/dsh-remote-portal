@@ -53,6 +53,11 @@ final class LiveSmokeTests: XCTestCase {
         let approval = try XCTUnwrap(connection.events.pending.first { $0.agentID == id })
         XCTAssertEqual(approval.request["toolName"], "bash")
         print("LIVE PASS approval: approval/request received")
+        let input = ApprovalInputLoader(api: api, item: approval)
+        await input.load()
+        XCTAssertEqual(input.input, "pwd")
+        XCTAssertTrue(input.canAllow)
+        print("LIVE PASS approval input: fetched matching pwd command through session/events")
         try await connection.events.answerApproval(approval.id, allow: true)
         print("LIVE PASS approval: allowed-once sent with current clientId")
         try await eventually("tool result and final answer") { chat.transcript.contains { $0.role == "assistant" && $0.turn == 2 && $0.step == 2 && $0.text.contains("Tool result:") } && chat.inProgress == nil && !chat.running }

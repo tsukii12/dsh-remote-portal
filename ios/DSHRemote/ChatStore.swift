@@ -218,7 +218,7 @@ final class ChatStore: ObservableObject {
     }
     @discardableResult
     func send(_ text: String, steer: Bool = false) async throws -> String {
-        guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { throw PortalError.message("Enter a message") }
+        guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { throw PortalError.message(L("Enter a message.", "请输入消息。")) }
         let id = UUID().uuidString
         addOptimistic(text: text, requestID: id)
         do {

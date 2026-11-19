@@ -13,6 +13,7 @@
 		123178A77FE7836FA332B1CE /* RemoteEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7E7013EB502DA108045EF4 /* RemoteEvents.swift */; };
 		1E126ECB71106CD9656682C2 /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939A191ABC4D156D62E63FF9 /* ChatView.swift */; };
 		27AFA5AFB3674EC409BB2F0B /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAE3DE41EEF7C093D12022B7 /* Connection.swift */; };
+		2C6AEB8725BC972EFA1E4533 /* ListenerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C848BD31BDC4E6E9359A1052 /* ListenerTests.swift */; };
 		30D52C9256F11802C1363A73 /* NativeStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC57A9E7125C1C7B7B1EBDF /* NativeStateTests.swift */; };
 		3476C850442F28B38BF77F00 /* PortalAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BDA4C515BC90EC918160FC7 /* PortalAPI.swift */; };
 		440948480E97A6A77AA0AB04 /* LiveSmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBF0DBBE82516D32040AE0D /* LiveSmokeTests.swift */; };
@@ -24,6 +25,7 @@
 		7D7A53CD2468EAB23563F035 /* live-hello-stream.json in Resources */ = {isa = PBXBuildFile; fileRef = B7F63A0D8CEB2C235E3FA3D0 /* live-hello-stream.json */; };
 		83AF0302BC5CF2C3D52C94B0 /* WorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 534EF24D99DA04F0ABBB33D4 /* WorkspaceView.swift */; };
 		885826B154157C638D23EEDE /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = F895E8B0D476AF0D2450E142 /* App.swift */; };
+		89A5FE59C590F0FE4E383902 /* en.lproj in Resources */ = {isa = PBXBuildFile; fileRef = 5895312125F1BDED1EA1D4AD /* en.lproj */; };
 		92F5D3E76DA6F1B0F731C504 /* live-hello-events.json in Resources */ = {isa = PBXBuildFile; fileRef = DD93E121F2F672C89D9A3815 /* live-hello-events.json */; };
 		963126DBDA1CC342DBB60A9D /* live-hello-prompt-request.json in Resources */ = {isa = PBXBuildFile; fileRef = EAB6DADADE845E2267928140 /* live-hello-prompt-request.json */; };
 		A99E00B8D01A16A223F3BEB3 /* PortalMux.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3430E2CC2CBD6539757293 /* PortalMux.swift */; };
@@ -33,6 +35,7 @@
 		DEF8EECE056D9028FF12D9AC /* live-approval-events.json in Resources */ = {isa = PBXBuildFile; fileRef = F345DCE047A5A4AF876DC2CE /* live-approval-events.json */; };
 		E2229F21D3CFA32A175A9231 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = B896439645C80D92D51A5D57 /* JSON.swift */; };
 		F1A383AD689AD62FE1BB500E /* SidebarStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0591514315C7638F5FE12F /* SidebarStore.swift */; };
+		FF9326B02D86F9C5A9944E33 /* zh-Hans.lproj in Resources */ = {isa = PBXBuildFile; fileRef = 08749B89FB8966EFB82DE292 /* zh-Hans.lproj */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +50,7 @@
 
 /* Begin PBXFileReference section */
 		04C4FB18692FB828803326B3 /* DSHRemoteTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = DSHRemoteTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		08749B89FB8966EFB82DE292 /* zh-Hans.lproj */ = {isa = PBXFileReference; path = "zh-Hans.lproj"; sourceTree = "<group>"; };
 		0D032808C27DB9B596C1F823 /* DSHRemote.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = DSHRemote.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		12D941C7E4498470F35A8489 /* live-model-catalog.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "live-model-catalog.json"; sourceTree = "<group>"; };
 		1FBF0DBBE82516D32040AE0D /* LiveSmokeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveSmokeTests.swift; sourceTree = "<group>"; };
@@ -54,6 +58,7 @@
 		4FC57A9E7125C1C7B7B1EBDF /* NativeStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeStateTests.swift; sourceTree = "<group>"; };
 		51E31BD29E3CF1DDCFBCB0A0 /* TransportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransportTests.swift; sourceTree = "<group>"; };
 		534EF24D99DA04F0ABBB33D4 /* WorkspaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceView.swift; sourceTree = "<group>"; };
+		5895312125F1BDED1EA1D4AD /* en.lproj */ = {isa = PBXFileReference; path = en.lproj; sourceTree = "<group>"; };
 		5BDA4C515BC90EC918160FC7 /* PortalAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortalAPI.swift; sourceTree = "<group>"; };
 		5F7E7013EB502DA108045EF4 /* RemoteEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteEvents.swift; sourceTree = "<group>"; };
 		695031F55C568529A75E26AD /* InteractionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractionSheet.swift; sourceTree = "<group>"; };
@@ -65,6 +70,7 @@
 		B7F63A0D8CEB2C235E3FA3D0 /* live-hello-stream.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "live-hello-stream.json"; sourceTree = "<group>"; };
 		B896439645C80D92D51A5D57 /* JSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
 		BAE3DE41EEF7C093D12022B7 /* Connection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
+		C848BD31BDC4E6E9359A1052 /* ListenerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListenerTests.swift; sourceTree = "<group>"; };
 		CA3430E2CC2CBD6539757293 /* PortalMux.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortalMux.swift; sourceTree = "<group>"; };
 		CAD55BA925A3292BC9BE346B /* ChatStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatStore.swift; sourceTree = "<group>"; };
 		DD93E121F2F672C89D9A3815 /* live-hello-events.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "live-hello-events.json"; sourceTree = "<group>"; };
@@ -95,6 +101,7 @@
 				CAD55BA925A3292BC9BE346B /* ChatStore.swift */,
 				939A191ABC4D156D62E63FF9 /* ChatView.swift */,
 				BAE3DE41EEF7C093D12022B7 /* Connection.swift */,
+				5895312125F1BDED1EA1D4AD /* en.lproj */,
 				F9271D50C7B0055EF7EEC2B9 /* Info.plist */,
 				695031F55C568529A75E26AD /* InteractionSheet.swift */,
 				B896439645C80D92D51A5D57 /* JSON.swift */,
@@ -104,6 +111,7 @@
 				5F7E7013EB502DA108045EF4 /* RemoteEvents.swift */,
 				FF0591514315C7638F5FE12F /* SidebarStore.swift */,
 				534EF24D99DA04F0ABBB33D4 /* WorkspaceView.swift */,
+				08749B89FB8966EFB82DE292 /* zh-Hans.lproj */,
 			);
 			path = DSHRemote;
 			sourceTree = "<group>";
@@ -112,6 +120,7 @@
 			isa = PBXGroup;
 			children = (
 				2D80301D5FBB4C69FB8FA95D /* ConnectionTests.swift */,
+				C848BD31BDC4E6E9359A1052 /* ListenerTests.swift */,
 				1FBF0DBBE82516D32040AE0D /* LiveSmokeTests.swift */,
 				4FC57A9E7125C1C7B7B1EBDF /* NativeStateTests.swift */,
 				F72CD9D63AB5263738894713 /* PresentationTests.swift */,
@@ -237,6 +246,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				780C760C8FEFA0367FA6C8E5 /* Assets.xcassets in Resources */,
+				89A5FE59C590F0FE4E383902 /* en.lproj in Resources */,
+				FF9326B02D86F9C5A9944E33 /* zh-Hans.lproj in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -248,6 +259,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CEA73A64EF47BE3569B4099E /* ConnectionTests.swift in Sources */,
+				2C6AEB8725BC972EFA1E4533 /* ListenerTests.swift in Sources */,
 				440948480E97A6A77AA0AB04 /* LiveSmokeTests.swift in Sources */,
 				30D52C9256F11802C1363A73 /* NativeStateTests.swift in Sources */,
 				C531704478D3D95AE28798C3 /* PresentationTests.swift in Sources */,

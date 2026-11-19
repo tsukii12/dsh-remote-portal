@@ -3,6 +3,12 @@
 All notable changes to this project. The format is loosely [Keep a Changelog](https://keepachangelog.com/);
 versions are the plugin's own, not dsh's.
 
+## Unreleased
+
+### Fixed
+- DRP now preserves gateway sign-in failure reasons, localizes client errors and the local-network permission prompt, and recovers approval-input loading after failures. Real-listener tests cover authentication, isolated logout and approval requests.
+- DRP 现保留网关登录失败原因，提供双语客户端错误和本地网络权限提示，并支持工具授权输入加载失败后的重试。真实监听器测试覆盖认证、独立退出登录和工具授权请求。
+
 ## 0.6.0 — 2026-10-23
 
 ### Added — a real certificate, so browsers stop warning
@@ -1091,7 +1097,6 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
-
 
 
 

@@ -14,7 +14,7 @@ enum PortalURL {
         c.query = nil
         c.fragment = nil
         if !c.path.hasSuffix("/") { c.path += "/" }
-        guard let url = c.url else { throw PortalError.message("Invalid URL") }
+        guard let url = c.url else { throw PortalError.message(L("Invalid address.", "地址无效。")) }
         return url
     }
 
@@ -44,8 +44,8 @@ enum PortalURL {
     }
 }
 
-func L(_ english: String, _ chinese: String) -> String {
-    Locale.preferredLanguages.first?.hasPrefix("zh") == true ? chinese : english
+func L(_ english: String, _ chinese: String, languages: [String] = Locale.preferredLanguages) -> String {
+    languages.first?.hasPrefix("zh") == true ? chinese : english
 }
 
 enum PortalError: LocalizedError {
@@ -107,7 +107,7 @@ final class PortalClient: NSObject, URLSessionTaskDelegate {
             let start = Date()
             let (_, response) = try await self.session.data(for: request)
             if let http = response as? HTTPURLResponse { try self.cookies.ingest(http, base: base) }
-            guard (response as? HTTPURLResponse)?.statusCode == 200 else { throw PortalError.message("Unhealthy") }
+            guard (response as? HTTPURLResponse)?.statusCode == 200 else { throw PortalError.message(L("Server is unavailable.", "服务器不可用。")) }
             return Int(Date().timeIntervalSince(start) * 1000)
         }
     }
@@ -120,17 +120,19 @@ final class PortalClient: NSObject, URLSessionTaskDelegate {
         request.httpBody = PortalURL.form(fields)
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue(L("en", "zh"), forHTTPHeaderField: "Accept-Language")
         request.setValue(PortalURL.origin(base), forHTTPHeaderField: "Origin")
         for (key, value) in HTTPCookie.requestHeaderFields(with: cookies.cookies(for: base, at: url)) { request.setValue(value, forHTTPHeaderField: key) }
         let (data, response) = try await session.data(for: request)
-        guard let http = response as? HTTPURLResponse else { throw PortalError.message("Invalid response") }
+        guard let http = response as? HTTPURLResponse else { throw APIError.invalidResponse }
         try cookies.ingest(http, base: base)
         if http.statusCode == 429 {
             throw PortalError.message(L("Too many attempts. Try again after \(http.value(forHTTPHeaderField: "Retry-After") ?? "a few") seconds.", "尝试次数过多，请稍后重试（\(http.value(forHTTPHeaderField: "Retry-After") ?? "若干")秒）。"))
         }
         guard http.statusCode == 303 || (endpoint == "logout" && (200..<300).contains(http.statusCode)) else {
             let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
-            throw PortalError.message(json?["message"] as? String ?? L("Sign-in failed. Check your password or pairing code.", "登录失败，请检查密码或配对码。"))
+            let message = [json?["error"], json?["message"]].compactMap { $0 as? String }.first { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+            throw PortalError.message(message ?? (endpoint == "logout" ? L("Sign-out failed. Please try again.", "退出登录失败，请重试。") : L("Sign-in failed. Check your password or pairing code.", "登录失败，请检查密码或配对码。")))
         }
         let headers = http.allHeaderFields.reduce(into: [String: String]()) { result, item in result[String(describing: item.key)] = String(describing: item.value) }
         return HTTPCookie.cookies(withResponseHeaderFields: headers, for: url)

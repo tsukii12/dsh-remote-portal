@@ -43,15 +43,39 @@ struct QuestionDraft {
     func canSubmit(_ questions: [JSON]) -> Bool { !questions.isEmpty && answers(questions).allSatisfy { !$0["selected"].array.isEmpty || !$0["custom"].text.isEmpty } }
 }
 
+@MainActor
+final class ApprovalInputLoader: ObservableObject {
+    @Published private(set) var input: String?
+    @Published var error: String?
+    @Published private(set) var isLoading = false
+    var canAllow: Bool { !isLoading && input != nil }
+    private let api: RPCServing
+    private let item: PendingInteraction
+    init(api: RPCServing, item: PendingInteraction) { self.api = api; self.item = item }
+    func load() async {
+        guard !isLoading else { return }
+        isLoading = true; input = nil; error = nil
+        defer { isLoading = false }
+        do {
+            let page = try await api.rpc("session/events", args: ["request": ["address": ["kind": "session", "sessionId": .string(item.agentID)], "maxMessages": 50]])
+            input = InteractionPresentation.input(item.request, records: page["records"].array)
+            if input == nil { error = L("Tool input is unavailable. Retry before allowing this operation.", "无法获取工具输入。请重试后再允许此操作。") }
+        } catch { self.error = error.localizedDescription }
+    }
+}
+
 struct InteractionSheet: View {
     @ObservedObject var events: RemoteEvents
-    let api: RPCServing
+    @StateObject private var inputLoader: ApprovalInputLoader
     let item: PendingInteraction
     let sessionTitle: String
     @State private var draft = QuestionDraft()
     @State private var busy = false
     @State private var error: String?
-    @State private var toolInput: String?
+    init(events: RemoteEvents, api: RPCServing, item: PendingInteraction, sessionTitle: String) {
+        self.events = events; self.item = item; self.sessionTitle = sessionTitle
+        _inputLoader = StateObject(wrappedValue: ApprovalInputLoader(api: api, item: item))
+    }
     private var questions: [JSON] { item.request["questions"].array }
     var body: some View {
         NavigationStack {
@@ -61,28 +85,28 @@ struct InteractionSheet: View {
             }
             .navigationTitle(item.kind == "approval/request" ? L("Permission required", "需要授权") : L("Your input", "请回答"))
             .navigationBarTitleDisplayMode(.inline)
-            .safeAreaInset(edge: .top, spacing: 0) { if let error { StatusBanner(message: error, dismiss: { self.error = nil }) } }
+            .safeAreaInset(edge: .top, spacing: 0) { if let error = error ?? inputLoader.error { StatusBanner(message: error, dismiss: { self.error = nil; inputLoader.error = nil }) } }
         }
         .presentationDetents(item.kind == "approval/request" ? [.medium, .large] : [.large])
         .presentationDragIndicator(.visible)
-        .task(id: item.id) { if item.kind == "approval/request" { await loadInput() } }
+        .task(id: item.id) { if item.kind == "approval/request" { await inputLoader.load() } }
     }
     private var approval: some View {
         VStack(alignment: .leading, spacing: 20) {
             Text(sessionTitle).font(.caption).foregroundStyle(.secondary).lineLimit(2)
             Label(item.request["toolName"].text, systemImage: "terminal").font(.title3.weight(.semibold))
             ScrollView { Text(InteractionPresentation.reason(item.request)).frame(maxWidth: .infinity, alignment: .leading).textSelection(.enabled) }
-            if let toolInput {
+            if let toolInput = inputLoader.input {
                 ScrollView([.horizontal, .vertical]) {
                     Text(toolInput).font(.system(.footnote, design: .monospaced)).textSelection(.enabled)
                         .fixedSize(horizontal: true, vertical: true).padding(12)
                 }.frame(minHeight: 44, maxHeight: 140).background(DRPStyle.sidebar, in: RoundedRectangle(cornerRadius: 12))
             } else {
-                Button(L("Load tool input", "加载工具输入")) { Task { await loadInput() } }.font(.footnote)
+                Button(L("Load tool input", "加载工具输入")) { Task { await inputLoader.load() } }.font(.footnote).disabled(inputLoader.isLoading)
             }
             HStack(spacing: 12) {
                 Button(L("Reject", "拒绝")) { answer(allow: false) }.buttonStyle(.bordered).frame(maxWidth: .infinity)
-                Button { answer(allow: true) } label: { HStack { if busy { ProgressView() }; Text(L("Allow once", "允许一次")) }.frame(maxWidth: .infinity) }.buttonStyle(.borderedProminent).disabled(toolInput == nil)
+                Button { answer(allow: true) } label: { HStack { if busy { ProgressView() }; Text(L("Allow once", "允许一次")) }.frame(maxWidth: .infinity) }.buttonStyle(.borderedProminent).disabled(!inputLoader.canAllow)
             }.controlSize(.large).disabled(busy)
         }.padding(24)
     }
@@ -111,13 +135,6 @@ struct InteractionSheet: View {
             }
             Button { submitQuestions() } label: { HStack { Spacer(); if busy { ProgressView() }; Text(L("Submit answers", "提交回答")); Spacer() } }.disabled(busy || !draft.canSubmit(questions))
         }
-    }
-    private func loadInput() async {
-        do {
-            let page = try await api.rpc("session/events", args: ["request": ["address": ["kind": "session", "sessionId": .string(item.agentID)], "maxMessages": 50]])
-            toolInput = InteractionPresentation.input(item.request, records: page["records"].array)
-            error = toolInput == nil ? L("Tool input is unavailable. Retry before allowing this operation.", "无法获取工具输入。请重试后再允许此操作。") : nil
-        } catch { self.error = error.localizedDescription }
     }
     private func answer(allow: Bool) { perform { try await events.answerApproval(item.id, allow: allow) } }
     private func submitQuestions() { perform { try await events.answerQuestions(item.id, answers: draft.answers(questions)) } }

@@ -11,7 +11,13 @@ targets:
   DSHRemote:
     type: application
     platform: iOS
-    sources: [DSHRemote]
+    sources:
+      - path: DSHRemote
+        excludes: [en.lproj, zh-Hans.lproj]
+      - path: DSHRemote/en.lproj
+        buildPhase: resources
+      - path: DSHRemote/zh-Hans.lproj
+        buildPhase: resources
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: io.github.tsukii12.dshremote

@@ -7,10 +7,10 @@ enum APIError: LocalizedError, Equatable {
     var errorDescription: String? {
         switch self {
         case .sessionExpired: return L("Please sign in again.", "请重新登录。")
-        case .invalidResponse: return "Invalid server response"
-        case .http(let status): return "HTTP \(status)"
+        case .invalidResponse: return L("Invalid server response.", "服务器响应无效。")
+        case .http(let status): return L("Server request failed (HTTP \(status)).", "服务器请求失败（HTTP \(status)）。")
         case .remote(_, let message): return message
-        case .disconnected: return "Connection closed"
+        case .disconnected: return L("Connection closed.", "连接已关闭。")
         }
     }
 }
@@ -109,7 +109,7 @@ final class PortalAPI: ObservableObject, RPCServing {
         guard let body = try? JSONDecoder().decode(JSON.self, from: data), body["type"] == "server-response", [JSON.bool(true), .bool(false)].contains(body["result"]["ok"]) else { throw APIError.invalidResponse }
         guard body["result"]["ok"].boolean else {
             let error = body["result"]["error"]
-            throw APIError.remote(error["code"].text, error["message"].string ?? "Request failed")
+            throw APIError.remote(error["code"].text, error["message"].string ?? L("Request failed.", "请求失败。"))
         }
         return body["result"]["value"]
     }
