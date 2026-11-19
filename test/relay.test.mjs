@@ -524,12 +524,34 @@ test("a tunnel URL without its trailing slash redirects to one", async () => {
   assert.equal(res.headers.location, `/__t/${id}/`);
 });
 
+test("the relay home and missing-route pages are localized", async () => {
+  const { httpPort } = await startRelay(["test-token-local-pages"]);
+  for (const [lang, home, notFound] of [
+    ["en", "dsh remote portal relay", "Not found"],
+    ["zh", "dsh 远程访问中继", "找不到页面"],
+  ]) {
+    const options = { headers: { "accept-language": lang } };
+    for (const [path, status, title] of [["/", 200, home], ["/missing", 404, notFound]]) {
+      const res = await request(httpPort, path, options);
+      assert.equal(res.status, status);
+      assert.equal(res.headers["content-language"], lang);
+      assert.equal(res.headers.vary, "Accept-Language");
+      assert.ok(res.body.toString().includes(`<h1>${title}</h1>`));
+    }
+  }
+});
+
 test("an unknown tunnel id gets a page, not a proxy attempt", async () => {
   const { httpPort } = await startRelay(["only-this-token"]);
   const res = await request(httpPort, "/__t/doesnotexist/");
   assert.equal(res.status, 404);
   assert.match(res.body.toString(), /Unknown tunnel/i);
   assert.match(String(res.headers["content-security-policy"]), /frame-ancestors 'none'/);
+  const zh = await request(httpPort, "/__t/doesnotexist/", { headers: { "accept-language": "zh-TW" } });
+  assert.equal(zh.status, 404);
+  assert.equal(zh.headers["content-language"], "zh");
+  assert.equal(zh.headers.vary, "Accept-Language");
+  assert.match(zh.body.toString(), /找不到隧道.*<code>doesnotexist<\/code>/);
 });
 
 test("a known but offline tunnel explains itself with 503", async () => {
@@ -539,6 +561,24 @@ test("a known but offline tunnel explains itself with 503", async () => {
   const res = await request(httpPort, `/__t/${id}/`);
   assert.equal(res.status, 503);
   assert.match(res.body.toString(), /not connected/i);
+  assert.equal(res.headers["content-language"], "en");
+  assert.equal(res.headers.vary, "Accept-Language");
+  assert.match(res.body.toString(), /<html lang="en">/);
+  assert.match(res.body.toString(), /<h1>The host is offline<\/h1>/);
+  for (const [preferred, lang] of [
+    ["zh", "zh"],
+    ["zh-CN", "zh"],
+    ["en-US;q=0.5, zh-Hant-TW;q=0.9", "zh"],
+    ["en-US, zh-CN;q=0.8", "en"],
+    ["fr-FR, zh;q=0", "en"],
+  ]) {
+    const localized = await request(httpPort, `/__t/${id}/`, { headers: { "accept-language": preferred } });
+    assert.equal(localized.status, 503);
+    assert.equal(localized.headers["content-language"], lang);
+    assert.equal(localized.headers.vary, "Accept-Language");
+    assert.match(localized.body.toString(), new RegExp(`<html lang="${lang}">`));
+    assert.ok(localized.body.toString().includes(lang === "zh" ? "<h1>主机已离线</h1>" : "<h1>The host is offline</h1>"));
+  }
 });
 
 test("a tunnel with the wrong token never comes online", async () => {
@@ -648,6 +688,39 @@ test("the tunnel reconnects after the relay drops the agent socket", async () =>
   assert.equal(JSON.parse(res.body.toString()).url, "/after-reconnect");
 });
 
+test("a saturated tunnel and a failed upstream get distinct localized error pages", async () => {
+  const token = "test-token-localized-errors";
+  const path = `/__t/${tunnelIdFor(token)}/`;
+  let heldResponse;
+  const upstream = http.createServer((req, res) => {
+    if (req.url === "/hold") heldResponse = res;
+    else req.socket.destroy();
+  });
+  const targetPort = await listen(upstream);
+  const { httpPort, agentPort } = await startRelay([token], { maxStreams: 1 });
+  await connectTunnel({ agentPort, token, targetPort });
+  const held = request(httpPort, path + "hold");
+  const variants = [
+    ["en", "The relay is busy", "Tunnel error"],
+    ["zh", "中继繁忙", "隧道连接出错"],
+  ];
+  async function checkPage(route, status, lang, heading) {
+    const res = await request(httpPort, path + route, { headers: { "accept-language": lang } });
+    assert.equal(res.status, status);
+    assert.equal(res.headers["content-language"], lang);
+    assert.equal(res.headers.vary, "Accept-Language");
+    assert.ok(res.body.toString().includes(`<h1>${heading}</h1>`));
+  }
+  try {
+    await waitFor(() => heldResponse, { label: "the only stream to reach the upstream" });
+    for (const [lang, heading] of variants) await checkPage("fail", 503, lang, heading);
+  } finally {
+    heldResponse?.end("released");
+    await held;
+  }
+  for (const [lang, , heading] of variants) await checkPage("fail", 502, lang, heading);
+});
+
 test("a stream that outlives the request timeout is failed, not leaked", async () => {
   const token = "test-token-timeout";
   const id = tunnelIdFor(token);
@@ -666,6 +739,11 @@ test("a stream that outlives the request timeout is failed, not leaked", async (
   const elapsed = Date.now() - startedAt;
   assert.equal(res.status, 504, `expected 504, got ${res.status}`);
   assert.match(res.body.toString(), /did not answer/i);
+  const zh = await request(httpPort, `/__t/${id}/slow`, { headers: { "accept-language": "zh-CN" } });
+  assert.equal(zh.status, 504);
+  assert.equal(zh.headers["content-language"], "zh");
+  assert.equal(zh.headers.vary, "Accept-Language");
+  assert.match(zh.body.toString(), /主机响应超时/);
   assert.ok(elapsed < 6000, `the timeout should fire quickly, took ${elapsed} ms`);
   assert.equal(relay.tunnels.get(id).streams.size, 0, "the stream must be released");
   await waitFor(() => upstreamClosed, { label: "timed-out upstream closed" });

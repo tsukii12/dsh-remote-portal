@@ -9,6 +9,8 @@ versions are the plugin's own, not dsh's.
   button no longer covers the page title (Remote access read "mote access";
   Plugins and Automation tasks too). dsh only leaves room for a menu button
   below 768 px; the layer now leaves the same 48 px in that band.
+- The public relay's offline and other error pages now follow the visitor's
+  preferred language, with Chinese and English versions.
 - Local network: the address list and every pairing link or QR code made after
   the PC's address changes (another Wi-Fi, a new DHCP lease) use the new address
   within about 15 s. They used to keep the address from when the listener
