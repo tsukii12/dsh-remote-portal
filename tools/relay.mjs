@@ -52,6 +52,8 @@ import { dirname, join } from "node:path";
 
 /** Printed at startup and by --version, so an installed copy is identifiable. */
 const RELAY_VERSION = "0.6.2";
+const DEFAULT_TIMEOUT_MS = 120_000;
+const HEADER_END = Buffer.from("\r\n\r\n");
 
 const FRAME = {
   HELLO: 1,
@@ -67,20 +69,24 @@ const FRAME = {
   CLOSE: 11,
   PING: 12,
   PONG: 13,
+  WINDOW_UPDATE: 14,
 };
 
 const HEADER_BYTES = 9;
 const MAX_FRAME_BYTES = 1024 * 1024; // 1 MiB per frame; bodies are chunked by the parser
+const RESPONSE_WINDOW = 256 * 1024;
 
 function encodeFrame(type, streamId, payload) {
-  const body = payload === undefined ? Buffer.alloc(0)
+  const body = payload === undefined ? null
     : Buffer.isBuffer(payload) ? payload
       : Buffer.from(String(payload), "utf8");
-  const head = Buffer.allocUnsafe(HEADER_BYTES);
-  head.writeUInt8(type, 0);
-  head.writeUInt32BE(streamId >>> 0, 1);
-  head.writeUInt32BE(body.length, 5);
-  return body.length === 0 ? head : Buffer.concat([head, body], HEADER_BYTES + body.length);
+  const length = body?.length ?? 0;
+  const frame = Buffer.allocUnsafe(HEADER_BYTES + length);
+  frame.writeUInt8(type, 0);
+  frame.writeUInt32BE(streamId >>> 0, 1);
+  frame.writeUInt32BE(length, 5);
+  body?.copy(frame, HEADER_BYTES);
+  return frame;
 }
 
 /**
@@ -89,26 +95,69 @@ function encodeFrame(type, streamId, payload) {
  * MAX_FRAME_BYTES is a protocol error, not something to buffer forever.
  */
 function createFrameReader(onFrame, onError) {
-  let buffer = Buffer.alloc(0);
+  const header = Buffer.allocUnsafe(HEADER_BYTES);
+  let headerBytes = 0;
+  let type, streamId;
+  let length = 0;
+  let partial;
+  let partialBytes = 0;
+  let failed = false;
+
   return function push(chunk) {
-    buffer = buffer.length === 0 ? chunk : Buffer.concat([buffer, chunk]);
-    for (;;) {
-      if (buffer.length < HEADER_BYTES) return;
-      const type = buffer.readUInt8(0);
-      const streamId = buffer.readUInt32BE(1);
-      const length = buffer.readUInt32BE(5);
-      if (length > MAX_FRAME_BYTES) {
-        const error = new Error(`frame too large: ${length}`);
-        // 0x16 is a TLS handshake record: worth naming, since the usual cause is
-        // a tls:// endpoint pointed at a plaintext port.
-        error.firstByte = type;
-        onError?.(error);
-        return;
+    if (failed) return;
+    let offset = 0;
+    while (offset < chunk.length) {
+      if (length === 0) {
+        let head = chunk;
+        let start = offset;
+        if (headerBytes || chunk.length - offset < HEADER_BYTES) {
+          const bytes = Math.min(HEADER_BYTES - headerBytes, chunk.length - offset);
+          chunk.copy(header, headerBytes, offset, offset + bytes);
+          offset += bytes;
+          headerBytes += bytes;
+          if (headerBytes < HEADER_BYTES) return;
+          headerBytes = 0;
+          head = header;
+          start = 0;
+        } else {
+          offset += HEADER_BYTES;
+        }
+        type = head.readUInt8(start);
+        streamId = head.readUInt32BE(start + 1);
+        length = head.readUInt32BE(start + 5);
+        if (length > MAX_FRAME_BYTES) {
+          failed = true;
+          const error = new Error(`frame too large: ${length}`);
+          // 0x16 is a TLS handshake record on a plaintext agent port.
+          error.firstByte = type;
+          onError?.(error);
+          return;
+        }
       }
-      if (buffer.length < HEADER_BYTES + length) return;
-      const payload = buffer.subarray(HEADER_BYTES, HEADER_BYTES + length);
-      buffer = buffer.subarray(HEADER_BYTES + length);
-      onFrame(type, streamId, payload);
+
+      const bytes = Math.min(length - partialBytes, chunk.length - offset);
+      const end = offset + bytes;
+      if (!partial && bytes === length) {
+        length = 0;
+        onFrame(type, streamId, chunk.subarray(offset, end));
+      } else if (bytes > 0) {
+        const received = partialBytes + bytes;
+        // Grow with bytes received, not the length declared by the peer.
+        if (!partial || received > partial.length) {
+          const next = Buffer.allocUnsafe(Math.min(length, Math.max(1024, (partial?.length || bytes) * 2, received)));
+          if (partial) partial.copy(next, 0, 0, partialBytes);
+          partial = next;
+        }
+        chunk.copy(partial, partialBytes, offset, end);
+        partialBytes = received;
+        if (partialBytes === length) {
+          const payload = partial;
+          partial = undefined;
+          length = partialBytes = 0;
+          onFrame(type, streamId, payload);
+        }
+      }
+      offset = end;
     }
   };
 }
@@ -196,6 +245,7 @@ function parseArgs(argv) {
       case "prefix": out.prefix = String(take()); break;
       case "max-streams": out.maxStreams = Number(take()); break;
       case "request-timeout": out.requestTimeout = Number(take()); break;
+      case "http-idle-timeout": out.httpIdleTimeout = Number(take()); break;
       case "version": out.version = true; break;
       case "help": out.help = true; break;
       default: break;
@@ -220,7 +270,8 @@ dsh-remote-portal relay
   --public-url <url>     how visitors reach this relay, e.g. https://dsh.example.com
   --prefix <path>        routing prefix                     (default /__t)
   --max-streams <n>      concurrent streams per tunnel      (default 256)
-  --request-timeout <ms> upstream timeout                   (default 120000)
+  --request-timeout <ms> upstream response header deadline  (default 120000)
+  --http-idle-timeout <ms> upstream HTTP response idle timeout (default 120000)
   --help
 
 Put this behind Caddy/nginx on 443 for certificates (see docs/DEPLOY-SERVER.md),
@@ -298,6 +349,31 @@ function forwardableHeaders(headers) {
 function createRelay(config) {
   /** tunnelId → tunnel state */
   const tunnels = new Map();
+  const blockedVisitors = new WeakMap();
+  const httpIdleTimeout = config.httpIdleTimeout ?? DEFAULT_TIMEOUT_MS;
+
+  function pauseForVisitor(agent, visitor) {
+    if (agent.destroyed || visitor.destroyed || visitor.writableFinished) return;
+    let blocked = blockedVisitors.get(agent);
+    if (!blocked) {
+      blocked = new Set();
+      blockedVisitors.set(agent, blocked);
+    }
+    if (blocked.has(visitor)) return;
+    blocked.add(visitor);
+    agent.pause();
+    const release = () => {
+      visitor.off("drain", release);
+      visitor.off("finish", release);
+      visitor.off("close", release);
+      blocked.delete(visitor);
+      if (blocked.size === 0 && !agent.destroyed) agent.resume();
+    };
+    visitor.once("drain", release);
+    visitor.once("finish", release);
+    visitor.once("close", release);
+  }
+
   const startedAt = Date.now();
   // "visitors" used to count every request that reached this listener probe included,
 // which reads like a head count and is not one. Requests and distinct clients are
@@ -306,9 +382,7 @@ const stats = { requests: 0, streams: 0, bytesIn: 0, bytesOut: 0, rejected: 0, c
 const seenClients = new Map(); // address -> first seen, capped
 const SEEN_CLIENT_LIMIT = 5000;
 
-// Static assets dominate a first load of the harness UI, and every byte of them
-// otherwise travels from the operator's uplink through this process. Hashed asset
-// URLs never change, so keep them here: a reload then costs nothing on the home side.
+// Only the portal's public, content-addressed presentation assets are shared.
 const ASSET_CACHE = new Map(); // key -> { at, status, headers, body }
 let assetCacheBytes = 0;
 const CACHE_MAX_BYTES = Number(process.env.DSH_RELAY_CACHE_MB) > 0
@@ -316,28 +390,25 @@ const CACHE_MAX_BYTES = Number(process.env.DSH_RELAY_CACHE_MB) > 0
   : 128 * 1024 * 1024;
 const CACHE_MAX_OBJECT = 16 * 1024 * 1024;
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000;
-const CACHEABLE_TYPE = /^(text\/css|text\/javascript|application\/javascript|application\/json|font\/|image\/|application\/font)/i;
-
-/** Hashed build output is immutable; anything else may carry per-session data. */
-function isCacheableAsset(pathname) {
-  if (!pathname.includes("/assets/")) return false;
-  return /\.(?:js|mjs|css|woff2?|ttf|otf|eot|png|jpe?g|gif|svg|webp|ico|map)$/i.test(pathname);
+function cacheableRequest(req, path, search) {
+  if (req.method !== "GET" || !/^\/dsh-remote-portal\/assets\/mobile\.(?:css|js)$/.test(path)) return false;
+  if (!/^\?v=[A-Za-z0-9_-]{43}$/.test(search)) return false;
+  for (const header of Object.keys(req.headers)) {
+    if (header === "range" || header.startsWith("if-")) return false;
+  }
+  return !req.headers.authorization && !req.headers["cache-control"] && !req.headers.pragma &&
+    String(req.headers["accept-encoding"] || "").length <= 128;
 }
 
-/** The origin decides; a no-store answer or Vary: cookie is not ours to keep. */
 function responseAllowsCache(headers, status) {
   if (status !== 200) return false;
-  if (headers["set-cookie"]) return false;
-  const cc = String(headers["cache-control"] || "");
-  if (/no-store|private/i.test(cc)) return false;
-  const vary = String(headers["vary"] || "");
-  if (vary.includes("*") || /cookie/i.test(vary)) return false;
-  return CACHEABLE_TYPE.test(String(headers["content-type"] || ""));
-}
-
-/** index-a1b2c3d4.js / vendor.9f8e7d6c.css: the name changes when the content does. */
-function isImmutableName(pathname) {
-  return /[.\-][0-9a-f]{8,}(?:\.[0-9a-f]{2,})?\.(?:js|mjs|css|woff2?|ttf|otf|png|jpe?g|gif|svg|webp|ico)$/i.test(pathname);
+  if (headers["set-cookie"] || headers["content-range"]) return false;
+  const directives = String(headers["cache-control"] || "").toLowerCase().split(",").map(s => s.trim());
+  if (!directives.includes("public") || !directives.includes("immutable")) return false;
+  if (directives.some(s => /^(?:private|no-cache|no-store|s-maxage)(?:=|$)/.test(s))) return false;
+  const vary = String(headers.vary || "").toLowerCase().split(",").map(s => s.trim());
+  if (vary.some(s => s && s !== "accept-encoding")) return false;
+  return directives.includes("max-age=31536000") && !headers.age;
 }
 
 function cacheGet(key) {
@@ -383,6 +454,13 @@ function cachePut(key, entry) {
 
   // ── agent side ───────────────────────────────────────────────────────────
 
+  function closeStreams(tunnel) {
+    for (const stream of tunnel.streams.values()) {
+      try { stream.fail(502, "tunnel disconnected"); } catch { /* gone */ }
+    }
+    tunnel.streams.clear();
+  }
+
   /**
    * One agent connection = one tunnel. The first frame must be HELLO with a
    * token we know; everything after that is stream traffic for that tunnel id.
@@ -403,10 +481,7 @@ function cachePut(key, entry) {
         tunnel.lastDropReason = String(reason || "unknown");
         tunnel.lastDropAt = Date.now();
         tunnel.reconnects = (tunnel.reconnects || 0) + 1;
-        for (const stream of tunnel.streams.values()) {
-          try { stream.fail(502, "tunnel disconnected"); } catch { /* gone */ }
-        }
-        tunnel.streams.clear();
+        closeStreams(tunnel);
         log.warn(`tunnel ${tunnel.id} disconnected (${reason})`);
       }
       try { socket.destroy(); } catch { /* gone */ }
@@ -440,11 +515,13 @@ function cachePut(key, entry) {
           // A second agent for the same token replaces the first: the old one is
           // almost certainly a half-dead connection after a network change.
           try { tunnel.socket.destroy(); } catch { /* gone */ }
+          closeStreams(tunnel);
           tunnel.reconnects = (tunnel.reconnects || 0) + 1;
           tunnel.lastDropReason = "replaced by a new connection";
           tunnel.lastDropAt = Date.now();
         }
         tunnel.socket = socket;
+        tunnel.responseWindow = hello.responseWindow === RESPONSE_WINDOW ? RESPONSE_WINDOW : 0;
         tunnel.agent = { version: String(hello.version || ""), peer };
         tunnel.connectedAt = Date.now();
         tunnel.lastSeenAt = Date.now();
@@ -453,12 +530,13 @@ function cachePut(key, entry) {
           tunnelId: tunnel.id,
           publicPath,
           publicUrl: `${config.publicUrl.replace(/\/$/, "")}${publicPath}/`,
+          ...(tunnel.responseWindow ? { responseWindow: tunnel.responseWindow } : {}),
           limits: { maxStreams: config.maxStreams, requestTimeout: config.requestTimeout },
         }));
         log.info(`tunnel ${tunnel.id} connected from ${peer}`);
         return;
       }
-      dispatchFromAgent(tunnel, type, streamId, payload);
+      if (tunnel.socket === socket) dispatchFromAgent(tunnel, type, streamId, payload);
     }, (error) => {
       // 0x16 = TLS handshake record type. This port is plain TCP unless the
       // relay was started with a certificate, so the fix is on the client side:
@@ -543,7 +621,8 @@ function cachePut(key, entry) {
   }
 
   function openStream(tunnel, handlers) {
-    if (!tunnel.socket || tunnel.socket.destroyed) {
+    const agent = tunnel.socket;
+    if (!agent || agent.destroyed) {
       handlers.fail(503, "the dsh host is not connected to the relay");
       return null;
     }
@@ -551,31 +630,76 @@ function cachePut(key, entry) {
       handlers.fail(503, "too many concurrent streams");
       return null;
     }
-    let id = 1;
-    while (tunnel.streams.has(id)) id += 1;
+    let id;
+    do {
+      id = tunnel.nextStreamId ?? 1;
+      tunnel.nextStreamId = id === 0xffffffff ? 1 : id + 1;
+    } while (tunnel.streams.has(id));
+    const window = tunnel.responseWindow;
+    let available = window;
+    let timer;
+    let closed = false;
+    function release() {
+      if (closed) return;
+      closed = true;
+      clearTimeout(timer);
+      tunnel.streams.delete(id);
+    }
+    function send(type, payload) {
+      if (closed || agent.destroyed) return false;
+      return agent.write(encodeFrame(type, id, payload));
+    }
+    function writeBody(visitor, chunk) {
+      if (!window) {
+        if (!visitor.write(chunk)) pauseForVisitor(agent, visitor);
+        return;
+      }
+      if (chunk.length > available) {
+        send(FRAME.CLOSE, JSON.stringify({ reason: "response window exceeded" }));
+        handlers.fail(502, "response window exceeded");
+        release();
+        return;
+      }
+      if (chunk.length === 0) return;
+      available -= chunk.length;
+      visitor.write(chunk, (error) => {
+        if (error || closed) return;
+        available += chunk.length;
+        const delta = Buffer.allocUnsafe(4);
+        delta.writeUInt32BE(chunk.length);
+        send(FRAME.WINDOW_UPDATE, delta);
+      });
+    }
+    function deadline(ms, reason) {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        if (closed) return;
+        try {
+          send(FRAME.CLOSE, JSON.stringify({ reason }));
+          handlers.fail(504, reason);
+        } finally {
+          release();
+        }
+      }, ms);
+      timer.unref?.();
+    }
     const stream = {
       id,
       onHead: handlers.onHead,
       onBody: handlers.onBody,
       onEnd: handlers.onEnd,
       fail: handlers.fail,
-      closed: false,
     };
     tunnel.streams.set(id, stream);
     tunnel.stats.streams += 1;
     stats.streams += 1;
-    const timer = setTimeout(() => {
-      if (!stream.closed) handlers.fail(504, "the dsh host did not answer in time");
-    }, config.requestTimeout);
-    timer.unref?.();
-    const release = () => {
-      if (stream.closed) return;
-      stream.closed = true;
-      try { clearTimeout(timer); } catch { /* ignore */ }
-      tunnel.streams.delete(id);
+    deadline(config.requestTimeout ?? DEFAULT_TIMEOUT_MS, "the dsh host did not answer in time");
+    return {
+      send, writeBody, release,
+      startHttpIdle: () => deadline(httpIdleTimeout, "the dsh HTTP response went idle"),
+      refreshHttpIdle: () => timer.refresh(),
+      clearDeadline: () => clearTimeout(timer),
     };
-    stream.release = release;
-    return { id, send: (type, payload) => tunnel.socket?.write(encodeFrame(type, id, payload)), release };
   }
 
   function handleVisitor(req, res) {
@@ -660,35 +784,16 @@ function cachePut(key, entry) {
     }
 
     const target = route.path + (url.search || "");
-    const cacheKey = req.method === "GET" && isCacheableAsset(url.pathname)
-      ? route.id + "\u0000" + target
+    const cacheKey = cacheableRequest(req, route.path, url.search)
+      ? route.id + "\u0000" + target + "\u0000" + String(req.headers["accept-encoding"] || "")
       : "";
-    let cached = null;
     if (cacheKey) {
       const hit = cacheGet(cacheKey);
       if (hit) {
-        const inm = req.headers["if-none-match"];
-        if (inm && hit.headers.etag && inm === hit.headers.etag) {
-          stats.cacheHits += 1;
-          res.writeHead(304, { ...hit.headers, "content-length": 0 });
-          res.end();
-          return;
-        }
-        // Hashed names are immutable: no round trip at all.
-        if (isImmutableName(url.pathname)) {
-          stats.cacheHits += 1;
-          res.writeHead(hit.status, { ...hit.headers, "x-drp-cache": "hit" });
-          res.end(hit.body);
-          return;
-        }
-        // Otherwise serve the stored copy only once the origin confirms it.
-        if (hit.headers.etag) cached = hit;
-        else {
-          stats.cacheHits += 1;
-          res.writeHead(hit.status, { ...hit.headers, "x-drp-cache": "hit" });
-          res.end(hit.body);
-          return;
-        }
+        stats.cacheHits += 1;
+        res.writeHead(hit.status, { ...hit.headers, age: Math.floor((Date.now() - hit.at) / 1000), "x-drp-cache": "hit" });
+        res.end(hit.body);
+        return;
       }
     }
 
@@ -696,8 +801,6 @@ function cachePut(key, entry) {
     // The agent's gateway rewrites Host/Origin for the upstream; what it needs
     // here is the *public* authority so its own same-origin check passes.
     const upstreamHeaders = { ...headers, "x-forwarded-proto": config.publicUrl.startsWith("https") ? "https" : "http" };
-    // Revalidate instead of re-downloading.
-    if (cached && cached.headers.etag) upstreamHeaders["if-none-match"] = cached.headers.etag;
     if (!upstreamHeaders["x-forwarded-for"]) upstreamHeaders["x-forwarded-for"] = clientIp(req);
     // The app is mounted under this prefix; it needs it to build correct
     // redirects and form actions (the relay strips the prefix before proxying).
@@ -707,36 +810,29 @@ function cachePut(key, entry) {
     // A cacheable response is streamed to the visitor and copied on the side; the
     // copy is only kept when the whole thing arrived and looks safe to reuse.
     let cacheBuffer = null;
-    const stream = openStream(route.tunnel, {
+    let stream;
+    stream = openStream(route.tunnel, {
       onHead: (head) => {
+        stream.startHttpIdle();
         headSent = true;
         const status = Number(head.status) || 502;
-        if (cached && status === 304) {
-          stats.cacheHits += 1;
-          res.writeHead(cached.status, { ...cached.headers, "x-drp-cache": "revalidated" });
-          res.end(cached.body);
-          return;
-        }
         const responseHeaders = forwardableHeaders(head.headers || {});
         if (cacheKey && responseAllowsCache(head.headers || {}, status)) {
           cacheBuffer = { status, headers: responseHeaders, chunks: [], size: 0 };
         }
         // Keep the browser's cache semantics but never let the relay host's own
         // headers leak into a tunnel response.
-        res.writeHead(Number(head.status) || 502, responseHeaders);
+        res.writeHead(status, responseHeaders);
       },
       onBody: (chunk) => {
+        if (headSent && chunk.length) stream.refreshHttpIdle();
         stats.bytesOut += chunk.length;
         if (cacheBuffer) {
           cacheBuffer.size += chunk.length;
           if (cacheBuffer.size > CACHE_MAX_OBJECT) cacheBuffer = null;
           else cacheBuffer.chunks.push(chunk);
         }
-        if (!res.write(chunk)) {
-          // Backpressure: stop pulling from the tunnel until the socket drains.
-          route.tunnel.socket.pause();
-          res.once("drain", () => route.tunnel.socket.resume());
-        }
+        stream.writeBody(res, chunk);
       },
       onEnd: () => {
         try { res.end(); } catch { /* gone */ }
@@ -752,6 +848,7 @@ function cachePut(key, entry) {
       },
       fail: (status, reason) => {
         if (!headSent && !res.headersSent) sendPage(res, status, "Tunnel error", String(reason));
+        else if (status === 504) res.destroy();
         else try { res.end(); } catch { /* gone */ }
         stream?.release?.();
       },
@@ -795,17 +892,38 @@ function cachePut(key, entry) {
       return;
     }
 
-    const stream = openStream(route.tunnel, {
-      onHead: (headMsg) => { /* unused for ws streams */ },
+    const statusPrefix = Buffer.alloc(12);
+    let statusBytes = 0;
+    let headerBytes = 0;
+    let handshakeComplete = false;
+    let stream;
+    stream = openStream(route.tunnel, {
+      onHead: () => { /* unused for ws streams */ },
       onBody: (chunk) => {
-        stats.bytesOut += chunk.length;
-        if (!socket.write(chunk)) {
-          route.tunnel.socket.pause();
-          socket.once("drain", () => route.tunnel.socket.resume());
+        if (!handshakeComplete) {
+          for (const byte of chunk) {
+            if (statusBytes < statusPrefix.length) statusPrefix[statusBytes++] = byte;
+            headerBytes = byte === HEADER_END[headerBytes] ? headerBytes + 1 : Number(byte === HEADER_END[0]);
+            if (headerBytes === HEADER_END.length) {
+              const status = Number(/^HTTP\/1\.[01] (\d{3})$/.exec(statusPrefix.toString("ascii"))?.[1]);
+              if (status === 101 || status >= 200) {
+                handshakeComplete = true;
+                stream.clearDeadline();
+                break;
+              }
+              statusBytes = 0;
+              headerBytes = 0;
+            }
+          }
         }
+        stats.bytesOut += chunk.length;
+        stream.writeBody(socket, chunk);
       },
       onEnd: () => { try { socket.end(); } catch { /* gone */ } },
-      fail: () => { try { socket.destroy(); } catch { /* gone */ } },
+      fail: () => {
+        stream?.release();
+        try { socket.destroy(); } catch { /* gone */ }
+      },
     });
     if (!stream) return;
 
@@ -891,6 +1009,7 @@ function cachePut(key, entry) {
       for (const tunnel of tunnels.values()) {
         try { tunnel.socket?.destroy(); } catch { /* gone */ }
         tunnel.socket = null;
+        closeStreams(tunnel);
       }
       const close = (server) => new Promise((resolve) => {
         if (!server) return resolve();
@@ -949,7 +1068,8 @@ function main() {
     publicUrl: args.publicUrl || `http://localhost:${Number.isInteger(args.httpPort) ? args.httpPort : 8080}`,
     prefix: (args.prefix || "/__t").replace(/\/$/, ""),
     maxStreams: Number.isInteger(args.maxStreams) ? args.maxStreams : 256,
-    requestTimeout: Number.isInteger(args.requestTimeout) ? args.requestTimeout : 120000,
+    requestTimeout: Number.isInteger(args.requestTimeout) ? args.requestTimeout : DEFAULT_TIMEOUT_MS,
+    httpIdleTimeout: Number.isInteger(args.httpIdleTimeout) ? args.httpIdleTimeout : DEFAULT_TIMEOUT_MS,
   };
   if (config.tokens.length === 0) {
     console.error("relay: at least one --token or --token-file is required\n" + USAGE);

@@ -14,16 +14,21 @@
  */
 import { test, after } from "node:test";
 import assert from "node:assert/strict";
+import { execFile, spawnSync } from "node:child_process";
 import http from "node:http";
 import https from "node:https";
 import net from "node:net";
-import { mkdtempSync, rmSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { promisify } from "node:util";
 
+import { apply } from "../index.js";
 import { createRelay, tunnelIdFor } from "../tools/relay.mjs";
 import { createTunnel } from "../lib/tunnel.mjs";
+import * as agentFraming from "../lib/tunnel.mjs";
+import * as relayFraming from "../tools/relay.mjs";
 
 const quiet = { info() {}, warn() {}, error() {} };
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -73,8 +78,9 @@ async function listen(server) {
 }
 
 /** Stand-in for the portal gateway: echoes what actually arrived. */
-async function startGatewayDouble() {
+async function startGatewayDouble(serve) {
   const server = http.createServer((req, res) => {
+    if (serve?.(req, res)) return;
     const body = JSON.stringify({
       method: req.method,
       url: req.url,
@@ -90,6 +96,7 @@ async function startGatewayDouble() {
   // Minimal upgrade handler: complete the handshake, then echo bytes.
   server.on("upgrade", (req, socket) => {
     socket.write(
+      "HTTP/1.1 103 Early Hints\r\nLink: </asset>; rel=preload; as=script\r\n\r\n" +
       "HTTP/1.1 101 Switching Protocols\r\n" +
       "upgrade: websocket\r\nconnection: Upgrade\r\n" +
       "sec-websocket-accept: test\r\n\r\n",
@@ -191,6 +198,142 @@ async function connectTunnel({ agentPort, token, targetPort }) {
   return tunnel;
 }
 
+test("Chrome loads each mobile asset once through the relay, with and without host tags", { timeout: 60000 }, async (t) => {
+  const chrome = process.env.CHROME_PATH || "google-chrome";
+  const browser = spawnSync(chrome, ["--version"]);
+  if (!process.env.CHROME_PATH && browser.error?.code === "ENOENT") {
+    return t.skip("Chrome not found; set CHROME_PATH to enable this test");
+  }
+  assert.equal(browser.status, 0, String(browser.error || browser.stderr));
+
+  let inject;
+  const routes = new Map();
+  apply({
+    logger: quiet,
+    webServer: {
+      host: "127.0.0.1",
+      register(route) { routes.set(route.path, route.handler); },
+    },
+    get() { return undefined; },
+    on(name, listener) { if (name === "webserver/index-inject") inject = listener; },
+    effect(fn, label) { if (/(control routes|index injections)$/.test(label)) fn(); },
+  }, { stateDir: tmpDir() });
+  const rows = [];
+  inject(rows);
+
+  const client = readFileSync(join(HERE, "..", "client.js"));
+  const received = [];
+  const assetRoute = "/dsh-remote-portal/assets";
+  const targetPort = await listen(http.createServer((req, res) => {
+    const url = new URL(req.url, "http://localhost");
+    if (url.pathname === "/") {
+      res.writeHead(200, { "content-type": "text/html" });
+      res.end(`<!doctype html><html><head><base href="./">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        ${url.searchParams.has("host") ? rows.map(row => row.html).join("") : ""}
+        <script>window.__ModuleLoader__ = { load(plugin) {
+          plugin.factory(() => ({})).apply({ effect: fn => fn() });
+        } };</script>
+        <script defer src="./client.js"></script></head><body></body></html>`);
+    } else if (url.pathname === "/client.js") {
+      res.writeHead(200, { "content-type": "text/javascript" }).end(client);
+    } else if (url.pathname.startsWith(assetRoute + "/")) {
+      received.push(url.pathname.slice(assetRoute.length + 1));
+      routes.get(assetRoute)(req, res);
+    } else {
+      res.writeHead(404).end();
+    }
+  }));
+  const token = "test-token-browser-mobile-assets";
+  const mount = `/__t/${tunnelIdFor(token)}/`;
+  const { httpPort, agentPort } = await startRelay([token]);
+  await connectTunnel({ agentPort, token, targetPort });
+
+  for (const host of [true, false]) {
+    const css = host ? "link[data-drp=mobile-css-host]" : "style[data-drp=mobile-css]";
+    const js = host ? "script[data-drp=mobile-js-host]" : "script[data-drp=mobile-js]";
+    const expr = `(async () => {
+      const limit = performance.now() + 3000;
+      const ready = () => document.querySelector(${JSON.stringify(css)})?.sheet?.cssRules.length > 0 &&
+        window.__DRP_MOBILE__?.active === true;
+      while (!ready() && performance.now() < limit) await new Promise(r => setTimeout(r, 25));
+      return {
+        active: ready() && document.documentElement.hasAttribute("data-drp-mobile"),
+        script: !!document.querySelector(${JSON.stringify(js)}),
+        assets: performance.getEntriesByType("resource")
+          .filter(entry => /\\/assets\\/mobile\\.(?:css|js)$/.test(new URL(entry.name).pathname))
+          .map(entry => [new URL(entry.name).pathname, entry.initiatorType]).sort(),
+      };
+    })()`;
+    received.length = 0;
+    const { stdout } = await promisify(execFile)(process.execPath, [
+      join(HERE, "..", "tools", "cdp.mjs"), "eval",
+      `http://127.0.0.1:${httpPort}${mount}?drp=mobile${host ? "&host=1" : ""}`,
+      expr, "--wait", "100", "--w", "390", "--h", "844", "--mobile",
+    ], { env: { ...process.env, CHROME_PATH: chrome }, timeout: 26000 });
+    assert.deepEqual(JSON.parse(stdout), {
+      active: true,
+      script: true,
+      assets: [
+        [`${mount}dsh-remote-portal/assets/mobile.css`, host ? "link" : "fetch"],
+        [`${mount}dsh-remote-portal/assets/mobile.js`, host ? "script" : "fetch"],
+      ],
+    });
+    assert.deepEqual(received.sort(), ["mobile.css", "mobile.js"]);
+  }
+});
+
+test("the relay shares only versioned public mobile assets and separates encoding variants", async () => {
+  const token = "test-token-public-mobile-assets";
+  const root = `/__t/${tunnelIdFor(token)}`;
+  const revision = "a".repeat(43);
+  const asset = `/dsh-remote-portal/assets/mobile.css?v=${revision}`;
+  let requests = 0;
+  const targetPort = await listen(http.createServer((req, res) => {
+    requests++;
+    const headers = {
+      "content-type": "text/css",
+      "cache-control": "public, max-age=31536000, immutable",
+      vary: "Accept-Encoding",
+      etag: '"asset"',
+    };
+    const variant = req.headers["accept-encoding"] || "identity";
+    if (req.url.includes("mobile.js")) headers.vary = "Accept-Encoding, Cookie";
+    if (req.headers["if-none-match"] === headers.etag) {
+      res.writeHead(304, headers).end();
+    } else if (req.url.startsWith("/assets/") && !req.headers.cookie) {
+      res.writeHead(401).end();
+    } else {
+      res.writeHead(200, headers).end(`${variant}:${requests}`);
+    }
+  }));
+  const { relay, httpPort, agentPort } = await startRelay([token]);
+  await connectTunnel({ agentPort, token, targetPort });
+  const get = (path, headers) => request(httpPort, root + path, { headers });
+  const stored = () => relay.stats.cacheStored;
+  const identity = await get(asset);
+  assert.equal(identity.body.toString(), "identity:1");
+  assert.equal((await get(asset, { cookie: "session=another" })).headers["x-drp-cache"], "hit");
+  assert.equal(requests, 1);
+  const encoded = await get(asset, { "accept-encoding": "gzip" });
+  assert.equal(encoded.body.toString(), "gzip:2");
+  assert.equal((await get(asset, { "accept-encoding": "gzip" })).headers["x-drp-cache"], "hit");
+  const conditional = await get(asset, { "if-none-match": '"asset"' });
+  assert.equal(conditional.status, 304);
+  assert.equal(requests, 3, "client conditionals must reach the origin");
+  await get(asset, { authorization: "Bearer dummy" });
+  await get(asset, { "cache-control": "no-cache" });
+  assert.equal(requests, 5);
+  const before = stored();
+  const cookieVariant = asset.replace("mobile.css", "mobile.js");
+  await get(cookieVariant, { cookie: "session=first" });
+  assert.equal((await get(cookieVariant, { cookie: "session=second" })).headers["x-drp-cache"], undefined);
+  const protectedAsset = "/assets/private-12345678.js";
+  assert.equal((await get(protectedAsset, { cookie: "session=first" })).status, 200);
+  assert.equal((await get(protectedAsset)).status, 401);
+  assert.equal(stored(), before);
+});
+
 // ───────────────────────────────────────────────────────────────────────────
 
 test("forwards an HTTP request through the tunnel and strips the routing prefix", async () => {
@@ -271,10 +414,11 @@ test("WebSocket upgrades are tunnelled byte-for-byte", async () => {
   const token = "test-token-ws";
   const id = tunnelIdFor(token);
   const gatewayPort = await startGatewayDouble();
-  const { httpPort, agentPort } = await startRelay([token]);
+  const { httpPort, agentPort } = await startRelay([token], { requestTimeout: 750, httpIdleTimeout: 750 });
   await connectTunnel({ agentPort, token, targetPort: gatewayPort });
 
   const socket = net.connect({ host: "127.0.0.1", port: httpPort });
+  cleanups.push(() => socket.destroy());
   const received = [];
   await new Promise((resolve, reject) => {
     socket.once("error", reject);
@@ -293,6 +437,7 @@ test("WebSocket upgrades are tunnelled byte-for-byte", async () => {
   const head = Buffer.concat(received).toString("latin1");
   assert.match(head, /101 Switching Protocols/, "the upstream handshake must reach the client");
 
+  await new Promise((resolve) => setTimeout(resolve, 900));
   socket.write("ping-through-tunnel");
   await waitFor(
     () => Buffer.concat(received).toString("latin1").includes("echo:ping-through-tunnel"),
@@ -361,7 +506,11 @@ test("a stream that outlives the request timeout is failed, not leaked", async (
   const token = "test-token-timeout";
   const id = tunnelIdFor(token);
   // An upstream that never answers.
-  const hanging = http.createServer(() => { /* never respond */ });
+  let upstreamClosed = false;
+  const hanging = http.createServer((_req, res) => {
+    res.writeEarlyHints({ link: "</asset>; rel=preload; as=script" });
+    res.on("close", () => { upstreamClosed = true; });
+  });
   const hangingPort = await listen(hanging);
   const { relay, httpPort, agentPort } = await startRelay([token], { requestTimeout: 1200 });
   await connectTunnel({ agentPort, token, targetPort: hangingPort });
@@ -373,6 +522,221 @@ test("a stream that outlives the request timeout is failed, not leaked", async (
   assert.match(res.body.toString(), /did not answer/i);
   assert.ok(elapsed < 6000, `the timeout should fire quickly, took ${elapsed} ms`);
   assert.equal(relay.tunnels.get(id).streams.size, 0, "the stream must be released");
+  await waitFor(() => upstreamClosed, { label: "timed-out upstream closed" });
+});
+
+test("HTTP data refreshes the idle timeout, but a stalled body is aborted", async () => {
+  const token = "test-token-http-idle";
+  const id = tunnelIdFor(token);
+  const target = http.createServer((req, res) => {
+    res.writeHead(200);
+    res.write("start");
+    const count = req.url === "/active" ? 5 : 1;
+    let sent = 0;
+    const timer = setInterval(() => {
+      res.write(" chunk");
+      if (++sent === count) {
+        clearInterval(timer);
+        if (req.url === "/active") res.end(" end");
+      }
+    }, 200);
+    res.once("close", () => clearInterval(timer));
+  });
+  const targetPort = await listen(target);
+  const { relay, httpPort, agentPort } = await startRelay([token], {
+    requestTimeout: 750,
+    httpIdleTimeout: 500,
+  });
+  await connectTunnel({ agentPort, token, targetPort });
+
+  const active = await request(httpPort, `/__t/${id}/active`);
+  assert.equal(active.status, 200);
+  assert.equal(active.body.toString(), "start chunk chunk chunk chunk chunk end");
+
+  const stalled = await new Promise((resolve, reject) => {
+    const req = http.get({ host: "127.0.0.1", port: httpPort, path: `/__t/${id}/stalled` }, (res) => {
+      res.setEncoding("utf8");
+      let body = "";
+      res.on("data", (chunk) => { body += chunk; });
+      res.on("aborted", () => resolve({ body, complete: res.complete }));
+      res.on("error", reject);
+      res.on("end", () => reject(new Error("the stalled HTTP response ended normally")));
+    });
+    req.on("error", reject);
+    req.setTimeout(3000, () => req.destroy(new Error("relay did not abort the stalled HTTP response")));
+  });
+  assert.deepEqual(stalled, { body: "start chunk", complete: false });
+  assert.equal(relay.tunnels.get(id).streams.size, 0, "the stream must be released");
+});
+
+test("a partial WebSocket handshake is subject to the header deadline", async () => {
+  const token = "test-token-ws-header-timeout";
+  const id = tunnelIdFor(token);
+  const target = http.createServer();
+  let upstreamClosed = false;
+  target.on("upgrade", (_req, socket) => {
+    socket.write("HTTP/1.1 101 Switching Protocols\r\n");
+    socket.once("end", () => socket.end());
+    socket.once("close", () => { upstreamClosed = true; });
+    socket.resume();
+  });
+  const targetPort = await listen(target);
+  const { relay, httpPort, agentPort } = await startRelay([token], { requestTimeout: 500 });
+  await connectTunnel({ agentPort, token, targetPort });
+  const socket = net.connect(httpPort, "127.0.0.1");
+  cleanups.push(() => socket.destroy());
+  const data = await new Promise((resolve, reject) => {
+    let data = "";
+    socket.on("data", (chunk) => { data += chunk; });
+    socket.on("error", reject);
+    socket.on("close", () => resolve(data));
+    socket.setTimeout(2000, () => socket.destroy(new Error("relay did not close the incomplete upgrade")));
+    socket.write(`GET /__t/${id}/ws HTTP/1.1\r\nHost: relay.test\r\nConnection: Upgrade\r\nUpgrade: websocket\r\n\r\n`);
+  });
+  assert.equal(data, "HTTP/1.1 101 Switching Protocols\r\n");
+  assert.equal(relay.tunnels.get(id).streams.size, 0, "the stream must be released");
+  await waitFor(() => upstreamClosed, { label: "timed-out upgrade upstream closed" });
+});
+
+test("an interim WebSocket response does not clear the header deadline", async () => {
+  const token = "test-token-ws-early-hints";
+  const id = tunnelIdFor(token);
+  const target = http.createServer();
+  const hints = "HTTP/1.1 103 Early Hints\r\nLink: </asset>; rel=preload; as=script\r\n\r\n";
+  target.on("upgrade", (_req, socket) => {
+    socket.write(hints);
+    socket.once("end", () => socket.end());
+    socket.resume();
+  });
+  const targetPort = await listen(target);
+  const { relay, httpPort, agentPort } = await startRelay([token], { requestTimeout: 500 });
+  await connectTunnel({ agentPort, token, targetPort });
+  const socket = net.connect(httpPort, "127.0.0.1");
+  cleanups.push(() => socket.destroy());
+  const data = await new Promise((resolve, reject) => {
+    let data = "";
+    socket.on("data", (chunk) => { data += chunk; });
+    socket.on("error", reject);
+    socket.on("close", () => resolve(data));
+    socket.setTimeout(2000, () => socket.destroy(new Error("relay did not close the stalled upgrade after 103")));
+    socket.write(`GET /__t/${id}/ws HTTP/1.1\r\nHost: relay.test\r\nConnection: Upgrade\r\nUpgrade: websocket\r\n\r\n`);
+  });
+  assert.equal(data, hints);
+  assert.equal(relay.tunnels.get(id).streams.size, 0, "the stream must be released");
+});
+
+test("a timeout cancels a negotiated response before a late body can exhaust credit", async () => {
+  const token = "test-token-timeout-response-window";
+  const path = `/__t/${tunnelIdFor(token)}`;
+  let lateResponse;
+  let upstreamClosed = false;
+  const port = await listen(http.createServer((req, res) => {
+    if (req.url !== "/late") { res.end("ok"); return; }
+    lateResponse = res;
+    req.socket.once("close", () => { upstreamClosed = true; });
+  }));
+  const { relay, httpPort, agentPort } = await startRelay([token], { requestTimeout: 500 });
+  await connectTunnel({ agentPort, token, targetPort: port });
+  const entry = relay.tunnels.get(tunnelIdFor(token));
+  const agent = entry.socket;
+  assert.equal(entry.responseWindow, 256 * 1024);
+
+  assert.equal((await request(httpPort, path + "/late")).status, 504);
+  assert.equal(entry.streams.size, 0);
+  assert.ok(lateResponse, "the gateway must have received the request");
+  if (!lateResponse.destroyed) lateResponse.end(Buffer.alloc(1024 * 1024));
+  await waitFor(() => upstreamClosed, {
+    timeoutMs: 1200, label: "upstream cancellation",
+  });
+  assert.equal((await request(httpPort, path + "/next")).body.toString(), "ok");
+  assert.equal(entry.socket, agent, "the tunnel must not reconnect to clean up the stream");
+});
+
+test("a response that finishes above the visitor high water mark does not stall the tunnel", async () => {
+  const token = "test-token-finish";
+  const id = tunnelIdFor(token);
+  const { relay, httpPort, agentPort } = await startRelay([token], { requestTimeout: 1500 });
+  const { FRAME, encodeFrame, createFrameReader } = agentFraming;
+  const incoming = [];
+  const agent = net.connect(agentPort, "127.0.0.1");
+  cleanups.push(() => agent.destroy());
+  agent.on("data", createFrameReader((type, streamId) => {
+    if (type === FRAME.REQ_END) incoming.push(streamId);
+  }, assert.fail));
+  agent.write(encodeFrame(FRAME.HELLO, 0, JSON.stringify({ token })));
+  await waitFor(() => relay.tunnels.get(id).socket, { label: "agent attached" });
+
+  const tunnelSocket = relay.tunnels.get(id).socket;
+  const pause = tunnelSocket.pause.bind(tunnelSocket);
+  let pauses = 0;
+  tunnelSocket.pause = () => { pauses++; return pause(); };
+
+  function responseHead(streamId, length) {
+    return encodeFrame(FRAME.RES_HEAD, streamId, JSON.stringify({ status: 200, headers: { "content-length": length } }));
+  }
+
+  const first = request(httpPort, `/__t/${id}/large`);
+  await waitFor(() => incoming.length === 1, { label: "first request" });
+  const body = Buffer.alloc(128 * 1024, 65);
+  const frame = encodeFrame(FRAME.RES_BODY, incoming[0], body);
+  const split = frame.length - 1024;
+  const prefix = Buffer.concat([responseHead(incoming[0], body.length), frame.subarray(0, split)]);
+  const before = relay.stats.bytesIn;
+  agent.write(prefix);
+  await waitFor(() => relay.stats.bytesIn === before + prefix.length, { label: "response prefix read" });
+  agent.write(Buffer.concat([frame.subarray(split), encodeFrame(FRAME.RES_END, incoming[0])]));
+
+  const result = await first;
+  assert.equal(result.status, 200);
+  assert.deepEqual(result.body, body);
+  assert.ok(pauses > 0, "the large frame must trigger visitor backpressure");
+  const next = request(httpPort, `/__t/${id}/next`);
+  await waitFor(() => incoming.length === 2, { label: "next request" });
+  agent.write(Buffer.concat([responseHead(incoming[1], 0), encodeFrame(FRAME.RES_END, incoming[1])]));
+  assert.equal((await next).status, 200);
+});
+
+test("a stalled visitor does not pause a negotiated tunnel or block other streams", { timeout: 10000 }, async () => {
+  const token = "test-token-slow-visitor";
+  const path = `/__t/${tunnelIdFor(token)}`;
+  const total = 16 * 1024 * 1024;
+  const chunk = Buffer.alloc(64 * 1024, 42);
+  let produced = 0;
+  const gatewayPort = await startGatewayDouble((req, res) => {
+    if (req.url !== "/bulk") return false;
+    res.setHeader("content-length", total);
+    const write = () => {
+      while (produced < total && !res.destroyed) {
+        produced += chunk.length;
+        if (!res.write(chunk)) {
+          res.once("drain", write);
+          return;
+        }
+      }
+      res.end();
+    };
+    write();
+    return true;
+  });
+  const { relay, httpPort, agentPort } = await startRelay([token]);
+  await connectTunnel({ agentPort, token, targetPort: gatewayPort });
+  const connection = relay.tunnels.get(tunnelIdFor(token)).socket;
+  const pause = connection.pause.bind(connection);
+  let pauses = 0;
+  connection.pause = () => { pauses++; return pause(); };
+  const incoming = await new Promise((resolve, reject) => {
+    const req = http.get({ host: "127.0.0.1", port: httpPort, path: path + "/bulk" }, resolve);
+    req.on("error", reject);
+    cleanups.push(() => req.destroy());
+  });
+  await waitFor(() => produced >= 1024 * 1024, { label: "bulk transfer underway" });
+  assert.equal((await request(httpPort, path + "/interactive")).status, 200);
+  assert.ok(produced < total, "the stalled visitor must backpressure the origin");
+  assert.equal(pauses, 0, "only the slow stream should be backpressured");
+  let received = 0;
+  for await (const data of incoming) received += data.length;
+  assert.equal(received, total);
+  await waitFor(() => relay.tunnels.get(tunnelIdFor(token)).streams.size === 0, { label: "streams released" });
 });
 
 test("framing helpers round-trip a binary payload", async () => {
@@ -391,6 +755,43 @@ test("framing helpers round-trip a binary payload", async () => {
   assert.deepEqual([...frames[0].body], [...payload]);
 });
 
+for (const [name, framing, peer] of [
+  ["relay", relayFraming, agentFraming],
+  ["agent", agentFraming, relayFraming],
+]) {
+  test(`${name} decodes a fragmented maximum-size frame followed by coalesced frames`, () => {
+    const { RES_BODY, RES_END, PING } = peer.FRAME;
+    const body = Buffer.alloc(1024 * 1024);
+    for (let i = 0; i < body.length; i++) body[i] = i % 251;
+    const large = peer.encodeFrame(RES_BODY, 0x01020304, body);
+    const end = peer.encodeFrame(RES_END, 0x01020304);
+    const ping = peer.encodeFrame(PING, 0);
+    const calls = [];
+    const reader = framing.createFrameReader((...frame) => calls.push(frame), assert.fail);
+
+    for (let i = 0; i < 9; i++) reader(large.subarray(i, i + 1));
+    for (let i = 9; i < large.length - 1; i += 1024) {
+      reader(large.subarray(i, Math.min(i + 1024, large.length - 1)));
+    }
+    assert.deepEqual(calls, []);
+    reader(Buffer.concat([large.subarray(-1), end, ping]));
+    assert.deepEqual(calls, [[RES_BODY, 0x01020304, body], [RES_END, 0x01020304, Buffer.alloc(0)],
+      [PING, 0, Buffer.alloc(0)]]);
+  });
+
+  test(`${name} rejects an oversized frame without waiting for its payload`, () => {
+    const header = Buffer.from([22, 0, 0, 0, 0, 0, 16, 0, 1]);
+    const errors = [];
+    const reader = framing.createFrameReader(assert.fail, (error) => errors.push(error));
+    reader(header.subarray(0, 8));
+    assert.deepEqual(errors, []);
+    reader(header.subarray(8));
+    reader(peer.encodeFrame(peer.FRAME.PING, 0));
+    assert.equal(errors.length, 1);
+    assert.match(errors[0].message, /frame too large: 1048577/);
+    if (name === "relay") assert.equal(errors[0].firstByte, 22);
+  });
+}
 
 
 

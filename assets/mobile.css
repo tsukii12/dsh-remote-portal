@@ -21,7 +21,7 @@
  *
  *   [data-slot="root"] > div                            the three-column frame
  *   [data-slot="root"] > div > div:has(> [data-slot="sidebar"])    left column
- *   [data-slot="root"] > div > div:has(> [data-slot="main"])       centre column
+ *   [data-slot="root"] > div > div:has(> * > [data-slot="main"])   centre column
  *   [data-slot="root"] > div > div:has(> [data-slot="rightbar"])   right column
  *   [data-slot="root"] > div > div:has(> [data-slot="shell.bottom"]) bottom row
  *   [data-slot="sidebar"] > :first-child                the sidebar surface
@@ -95,7 +95,13 @@
 
   /* Explicit placement: the drawer leaves the flow, the right panel stacks on
      top of the centre column, the bottom row keeps its own row. */
-  html[data-drp-mobile] [data-slot="root"] > div > div:has(> [data-slot="main"]) {
+  /* dsh 0.2 wraps the main slot in a panel (`centerCol > mainPanel > main`);
+     without the second form the column kept its inline `grid-column: 2`, so
+     an implicit track opened and a page squeezed into the right ~45%. */
+  html[data-drp-mobile]
+    [data-slot="root"]
+    > div
+    > div:has(> [data-slot="main"], > * > [data-slot="main"]) {
     grid-area: 1 / 1 / 2 / 2;
     min-width: 0;
   }
@@ -172,6 +178,13 @@
     visibility: visible;
     transition: transform var(--drp-dur) var(--drp-ease),
       visibility 0s linear 0s;
+  }
+
+  /* dsh's own drawer mask (`[data-sidebar-mask]`, z-index 70 inside the frame)
+     sits above our drawer column (z 18), so every real tap on a sidebar row
+     hit the mask and only closed the drawer. The layer brings its own scrim. */
+  html[data-drp-mobile] [data-slot="root"] > div > [data-sidebar-mask] {
+    display: none;
   }
 
   /* Thumb-sized rows and icon buttons inside the drawer. */
@@ -674,12 +687,14 @@
 
 /* Coarse pointers only: grow icon-only hit areas to a comfortable 40 px. Kept
    separate so a hybrid laptop with a mouse keeps the dense desktop metrics
-   while a touch screen gets thumbs. */
+   while a touch screen gets thumbs. Switches and the password field's
+   show/hide button keep their own size: a 40 px minimum turns a 38×22 pill
+   into a blob and pushes the button out of its 36 px field. */
 @media (max-width: 900px) and (pointer: coarse) {
   html[data-drp-mobile]
     button[aria-label]:not(:has(> span:not(:empty))):not(
       [class*="_composer"]
-    ) {
+    ):not([role="switch"]):not([data-drp="panel"] .drp-pw-eye) {
     min-width: 40px;
     min-height: 40px;
   }

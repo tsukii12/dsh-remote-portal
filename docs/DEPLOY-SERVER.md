@@ -1,5 +1,7 @@
 # Deploying the relay
 
+[简体中文摘要](DEPLOY-SERVER.zh-CN.md) · [Documentation index](README.md)
+
 > Goal: dsh runs on the computer at home, and you open a **public address** on a
 > phone or laptop from the office, the subway, or a hotel. Home needs no public IP,
 > no router port forwarding, and no third-party tunnel service.
@@ -637,24 +639,17 @@ curl -s https://dsh.example.com/__relay/health | jq
 journalctl -u dsh-relay -f     # connect / disconnect
 ```
 
-### Static assets are cached at the relay
+### The relay caches only versioned public portal assets
 
-Every byte of the harness UI otherwise travels from the operator's uplink through the
-relay to the browser, and the UI pulls several megabytes on a first load. Assets under
-`/assets/` are therefore kept in process:
+The portal's `mobile.css` and `mobile.js` carry a content revision in their
+URLs. Only these assets are eligible for relay caching, and only when the portal
+marks the response public and immutable. The relay separates `Accept-Encoding`
+variants and forwards conditional, range, and authenticated-by-header requests
+to the origin. Harness assets and other content still go to the origin.
 
-| Asset | Behaviour |
-|---|---|
-| hashed name (`index-a1b2c3d4.js`) | immutable, served from memory, no round trip |
-| plain name with an `etag` | revalidated with `If-None-Match`; a 304 costs a few hundred bytes instead of the file |
-| `no-store` / `private` / `Set-Cookie` / `Vary: cookie` | never cached |
-| anything that is not a 200 | never cached |
-
-Measured on a live relay: ten misses moved 246 KB from the home uplink, ten hits moved
-**6.5 KB**. The size cap is 128 MB (`DSH_RELAY_CACHE_MB` to change it), objects over
-16 MB are skipped, and entries expire after six hours. `curl -D -` shows
-`x-drp-cache: hit` or `revalidated`; `/__relay/health` reports `cacheHits` and
-`cacheStored`.
+The size cap is 128 MB (`DSH_RELAY_CACHE_MB` to change it), objects over 16 MB
+are skipped, and entries expire after six hours. `curl -D -` shows
+`x-drp-cache: hit`; `/__relay/health` reports `cacheHits` and `cacheStored`.
 
 | Symptom | Cause | Fix |
 |---|---|---|

@@ -97,7 +97,7 @@ window.__ModuleLoader__.load({
         qrNotRunning: "门户未运行，请先设置访问密码并启用",
         qrNoteStopped: "门户没有在监听，二维码暂时不可用。设置密码并启用后会自动生成。",
         copyPairLink: "复制配对链接",
-        pairLinkCopied: "配对链接已复制，5 分钟内有效",
+        pairLinkCopied: "配对链接已复制，剩余 {t} 内有效",
         qrNotePair: "用手机相机扫描二维码，即可直接在这台手机上打开 dsh。",
         qrNotePlain: "用手机相机扫描二维码，打开后输入访问密码。",
         qrRefresh: "刷新二维码",
@@ -228,7 +228,7 @@ window.__ModuleLoader__.load({
         qrNotRunning: "The portal is not running. Set an access password and enable it",
         qrNoteStopped: "Nothing is listening yet, so there is no code to scan. Set a password and enable the portal; the code appears automatically.",
         copyPairLink: "Copy pairing link",
-        pairLinkCopied: "Pairing link copied — valid for 5 minutes",
+        pairLinkCopied: "Pairing link copied — valid for {t} more",
         qrNotePair: "Scan with the phone camera to open dsh on that phone right away.",
         qrNotePlain: "Scan with the phone camera, then enter the access password.",
         qrRefresh: "Refresh code",
@@ -781,6 +781,7 @@ window.__ModuleLoader__.load({
       ".drp-sheet{width:100%;max-height:100vh;max-height:100dvh;border-radius:0;border:0}",
       ".drp-sheet-body{padding:16px 14px calc(24px + env(safe-area-inset-bottom))}",
       ".drp-sheet-x{top:10px;right:10px;width:40px;height:40px}",
+      ".drp-picker-head .drp-sheet-x{position:static;flex:none}",
       ".drp-sheet .drp-head-top{padding-right:48px}",
       "}",
       "@media (max-width:640px){",
@@ -1108,7 +1109,7 @@ window.__ModuleLoader__.load({
       if (/^the local listener is not running$/i.test(text)) {
         return lang() === "zh" ? "门户未在监听：先设置访问密码并启用。" : "The portal is not listening — set a password and enable it.";
       }
-      return text;
+      return friendlyError(text);
     }
 
     // ── directory picker store ───────────────────────────────────────────────
@@ -1611,7 +1612,8 @@ window.__ModuleLoader__.load({
           canPair && pair && pair.expiresAt ? h(Countdown, { expiresAt: pair.expiresAt }) : null),
         h("div", { className: "drp-qr-frame" },
           !canPair
-            ? h("div", { className: "drp-qr-empty" }, t("qrNotRunning"))
+            ? h("div", { className: "drp-qr-empty" },
+                status && status.lastError && !blockedByPassword ? friendlyGateway(status.lastError) : t("qrNotRunning"))
             : qrSrc && !st.qrBroken
               ? h("img", {
                   className: "drp-qr-img",
@@ -1644,7 +1646,9 @@ window.__ModuleLoader__.load({
             onClick: function () {
               if (!pairUrl) return;
               copyText(pairUrl, function (ok) {
-                flash(ok ? "ok" : "err", ok ? t("pairLinkCopied") : t("copyFail"));
+                // The link expires with the QR beside it: quote the same countdown.
+                var left = Math.max(0, Math.ceil((pair.expiresAt - Date.now()) / 1000));
+                flash(ok ? "ok" : "err", ok ? t("pairLinkCopied", { t: mmss(left) }) : t("copyFail"));
               });
             }
           },
@@ -2069,8 +2073,8 @@ window.__ModuleLoader__.load({
       var roots = (listing && listing.roots) || [];
       var entries = (listing && listing.entries) || [];
 
-      return h("div", { className: "drp-overlay", "data-drp-overlay": "1", "data-drp": "picker" },
-        h("div", { className: "drp-ui drp-sheet", role: "dialog", "aria-modal": "true", "aria-label": t("pickTitle") },
+      return h("div", { className: "drp-overlay", "data-drp-overlay": "1" },
+        h("div", { className: "drp-ui drp-sheet", "data-drp": "picker", role: "dialog", "aria-modal": "true", "aria-label": t("pickTitle") },
           h("div", { className: "drp-sheet-body drp-picker-body" },
           h("div", { className: "drp-picker" },
             h("header", { className: "drp-picker-head" },
@@ -2326,7 +2330,7 @@ window.__ModuleLoader__.load({
 
       function mountCss() {
         try {
-          if (document.querySelector('[data-drp="mobile-css"]')) return;
+          if (document.querySelector('[data-drp="mobile-css"], [data-drp="mobile-css-host"]')) return;
         } catch (e) { /* ignore */ }
         fetch(BASE + "/assets/mobile.css?v=" + CLIENT_VERSION, { credentials: "same-origin" }).then(function (res) {
           if (!res.ok) return null;
@@ -2345,7 +2349,7 @@ window.__ModuleLoader__.load({
 
       function mountJs() {
         try {
-          if (document.querySelector('[data-drp="mobile-js"]')) return;
+          if (document.querySelector('[data-drp="mobile-js"], [data-drp="mobile-js-host"]')) return;
         } catch (e) { /* ignore */ }
         fetch(BASE + "/assets/mobile.js?v=" + CLIENT_VERSION, { credentials: "same-origin" }).then(function (res) {
           if (!res.ok) return null;

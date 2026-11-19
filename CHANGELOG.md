@@ -9,6 +9,51 @@ versions are the plugin's own, not dsh's.
 - DRP now preserves gateway sign-in failure reasons, localizes client errors and the local-network permission prompt, and recovers approval-input loading after failures. Real-listener tests cover authentication, isolated logout and approval requests.
 - DRP 现保留网关登录失败原因，提供双语客户端错误和本地网络权限提示，并支持工具授权输入加载失败后的重试。真实监听器测试覆盖认证、独立退出登录和工具授权请求。
 
+- Load the portal's presentation assets through the tunnel prefix without
+  duplicate fallback fetches. Browsers and the relay can reuse content-versioned
+  public assets without caching authenticated dsh responses.
+- Updated relay and agent peers isolate backpressured downloads and WebSockets
+  so they no longer pause unrelated traffic on the same tunnel. Mixed-version
+  connections still work using the previous flow control.
+- Phone layout: the menu button opens the drawer again (it closed itself at
+  once), and tapping a drawer row now opens it instead of only closing the
+  drawer.
+- Phone layout: Remote access and other main-area pages fill the screen
+  instead of a narrow strip on the right.
+- Tablet-width windows (768–900px): choosing Remote access, Plugins or another
+  page in the drawer now closes the drawer instead of leaving it over the page.
+- Phone layout: on/off switches and the password field's "Show" button keep
+  their shape on touch screens instead of swelling into a 40 px square.
+- Remote access: a busy port is explained in the panel's language, and the
+  pairing card names that error instead of asking you to set a password that
+  is already set.
+- Folder picker: listing a large folder no longer stats every subfolder one by
+  one, and a link to a file no longer marks the listing as cut short.
+- Fixed password and pairing form submissions from nested pages, including when
+  the portal is served under a reverse proxy path prefix.
+- When a pairing code is rejected, the portal now asks you to generate and scan
+  a new QR code instead of saying that no code was supplied.
+- "Copy pairing link" now says how long the link is still valid, matching the
+  QR countdown, instead of always claiming 5 minutes.
+- The relay now applies a deadline to response headers and a separate idle
+  timeout to HTTP bodies. Active streams and established WebSockets are no
+  longer cut off after two minutes.
+- Finishing or closing a backpressured visitor no longer stalls other requests
+  on the same relay tunnel.
+- The relay and tunnel agent now copy fewer bytes when decoding fragmented
+  frames, without changing the wire format.
+
+## 0.6.2 — 2026-10-24
+
+- `drp status` lists every public URL when the relay serves several dsh machines.
+  Single-tunnel status still shows one URL.
+
+## 0.6.1 — 2026-10-24
+
+- Manage several dsh machines from one relay: `drp token add` creates another
+  tunnel token, `drp tokens` lists tunnels and their state, `drp urls` lists
+  public addresses, and `drp token remove <id>` removes a tunnel.
+
 ## 0.6.0 — 2026-10-23
 
 ### Added — a real certificate, so browsers stop warning
@@ -1097,7 +1142,6 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
-
 
 
 
