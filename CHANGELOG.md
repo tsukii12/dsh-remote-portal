@@ -5,6 +5,9 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+- Load the portal's presentation assets through the tunnel prefix without
+  duplicate fallback fetches. Browsers and the relay can reuse content-versioned
+  public assets without caching authenticated dsh responses.
 - Folder picker: listing a large folder no longer stats every subfolder one by
   one, and a link to a file no longer marks the listing as cut short.
 - Fixed password and pairing form submissions from nested pages, including when

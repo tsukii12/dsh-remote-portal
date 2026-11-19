@@ -193,6 +193,57 @@ async function connectTunnel({ agentPort, token, targetPort }) {
   return tunnel;
 }
 
+test("the relay shares only versioned public mobile assets and separates encoding variants", async () => {
+  const token = "test-token-public-mobile-assets";
+  const root = `/__t/${tunnelIdFor(token)}`;
+  const revision = "a".repeat(43);
+  const asset = `/dsh-remote-portal/assets/mobile.css?v=${revision}`;
+  let requests = 0;
+  const targetPort = await listen(http.createServer((req, res) => {
+    requests++;
+    const headers = {
+      "content-type": "text/css",
+      "cache-control": "public, max-age=31536000, immutable",
+      vary: "Accept-Encoding",
+      etag: '"asset"',
+    };
+    const variant = req.headers["accept-encoding"] || "identity";
+    if (req.url.includes("mobile.js")) headers.vary = "Accept-Encoding, Cookie";
+    if (req.headers["if-none-match"] === headers.etag) {
+      res.writeHead(304, headers).end();
+    } else if (req.url.startsWith("/assets/") && !req.headers.cookie) {
+      res.writeHead(401).end();
+    } else {
+      res.writeHead(200, headers).end(`${variant}:${requests}`);
+    }
+  }));
+  const { relay, httpPort, agentPort } = await startRelay([token]);
+  await connectTunnel({ agentPort, token, targetPort });
+  const get = (path, headers) => request(httpPort, root + path, { headers });
+  const stored = () => relay.stats.cacheStored;
+  const identity = await get(asset);
+  assert.equal(identity.body.toString(), "identity:1");
+  assert.equal((await get(asset, { cookie: "session=another" })).headers["x-drp-cache"], "hit");
+  assert.equal(requests, 1);
+  const encoded = await get(asset, { "accept-encoding": "gzip" });
+  assert.equal(encoded.body.toString(), "gzip:2");
+  assert.equal((await get(asset, { "accept-encoding": "gzip" })).headers["x-drp-cache"], "hit");
+  const conditional = await get(asset, { "if-none-match": '"asset"' });
+  assert.equal(conditional.status, 304);
+  assert.equal(requests, 3, "client conditionals must reach the origin");
+  await get(asset, { authorization: "Bearer dummy" });
+  await get(asset, { "cache-control": "no-cache" });
+  assert.equal(requests, 5);
+  const before = stored();
+  const cookieVariant = asset.replace("mobile.css", "mobile.js");
+  await get(cookieVariant, { cookie: "session=first" });
+  assert.equal((await get(cookieVariant, { cookie: "session=second" })).headers["x-drp-cache"], undefined);
+  const protectedAsset = "/assets/private-12345678.js";
+  assert.equal((await get(protectedAsset, { cookie: "session=first" })).status, 200);
+  assert.equal((await get(protectedAsset)).status, 401);
+  assert.equal(stored(), before);
+});
+
 // ───────────────────────────────────────────────────────────────────────────
 
 test("forwards an HTTP request through the tunnel and strips the routing prefix", async () => {

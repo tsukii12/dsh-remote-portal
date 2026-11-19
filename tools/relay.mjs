@@ -375,9 +375,7 @@ const stats = { requests: 0, streams: 0, bytesIn: 0, bytesOut: 0, rejected: 0, c
 const seenClients = new Map(); // address -> first seen, capped
 const SEEN_CLIENT_LIMIT = 5000;
 
-// Static assets dominate a first load of the harness UI, and every byte of them
-// otherwise travels from the operator's uplink through this process. Hashed asset
-// URLs never change, so keep them here: a reload then costs nothing on the home side.
+// Only the portal's public, content-addressed presentation assets are shared.
 const ASSET_CACHE = new Map(); // key -> { at, status, headers, body }
 let assetCacheBytes = 0;
 const CACHE_MAX_BYTES = Number(process.env.DSH_RELAY_CACHE_MB) > 0
@@ -385,28 +383,25 @@ const CACHE_MAX_BYTES = Number(process.env.DSH_RELAY_CACHE_MB) > 0
   : 128 * 1024 * 1024;
 const CACHE_MAX_OBJECT = 16 * 1024 * 1024;
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000;
-const CACHEABLE_TYPE = /^(text\/css|text\/javascript|application\/javascript|application\/json|font\/|image\/|application\/font)/i;
-
-/** Hashed build output is immutable; anything else may carry per-session data. */
-function isCacheableAsset(pathname) {
-  if (!pathname.includes("/assets/")) return false;
-  return /\.(?:js|mjs|css|woff2?|ttf|otf|eot|png|jpe?g|gif|svg|webp|ico|map)$/i.test(pathname);
+function cacheableRequest(req, path, search) {
+  if (req.method !== "GET" || !/^\/dsh-remote-portal\/assets\/mobile\.(?:css|js)$/.test(path)) return false;
+  if (!/^\?v=[A-Za-z0-9_-]{43}$/.test(search)) return false;
+  for (const header of Object.keys(req.headers)) {
+    if (header === "range" || header.startsWith("if-")) return false;
+  }
+  return !req.headers.authorization && !req.headers["cache-control"] && !req.headers.pragma &&
+    String(req.headers["accept-encoding"] || "").length <= 128;
 }
 
-/** The origin decides; a no-store answer or Vary: cookie is not ours to keep. */
 function responseAllowsCache(headers, status) {
   if (status !== 200) return false;
-  if (headers["set-cookie"]) return false;
-  const cc = String(headers["cache-control"] || "");
-  if (/no-store|private/i.test(cc)) return false;
-  const vary = String(headers["vary"] || "");
-  if (vary.includes("*") || /cookie/i.test(vary)) return false;
-  return CACHEABLE_TYPE.test(String(headers["content-type"] || ""));
-}
-
-/** index-a1b2c3d4.js / vendor.9f8e7d6c.css: the name changes when the content does. */
-function isImmutableName(pathname) {
-  return /[.\-][0-9a-f]{8,}(?:\.[0-9a-f]{2,})?\.(?:js|mjs|css|woff2?|ttf|otf|png|jpe?g|gif|svg|webp|ico)$/i.test(pathname);
+  if (headers["set-cookie"] || headers["content-range"]) return false;
+  const directives = String(headers["cache-control"] || "").toLowerCase().split(",").map(s => s.trim());
+  if (!directives.includes("public") || !directives.includes("immutable")) return false;
+  if (directives.some(s => /^(?:private|no-cache|no-store|s-maxage)(?:=|$)/.test(s))) return false;
+  const vary = String(headers.vary || "").toLowerCase().split(",").map(s => s.trim());
+  if (vary.some(s => s && s !== "accept-encoding")) return false;
+  return directives.includes("max-age=31536000") && !headers.age;
 }
 
 function cacheGet(key) {
@@ -729,35 +724,16 @@ function cachePut(key, entry) {
     }
 
     const target = route.path + (url.search || "");
-    const cacheKey = req.method === "GET" && isCacheableAsset(url.pathname)
-      ? route.id + "\u0000" + target
+    const cacheKey = cacheableRequest(req, route.path, url.search)
+      ? route.id + "\u0000" + target + "\u0000" + String(req.headers["accept-encoding"] || "")
       : "";
-    let cached = null;
     if (cacheKey) {
       const hit = cacheGet(cacheKey);
       if (hit) {
-        const inm = req.headers["if-none-match"];
-        if (inm && hit.headers.etag && inm === hit.headers.etag) {
-          stats.cacheHits += 1;
-          res.writeHead(304, { ...hit.headers, "content-length": 0 });
-          res.end();
-          return;
-        }
-        // Hashed names are immutable: no round trip at all.
-        if (isImmutableName(url.pathname)) {
-          stats.cacheHits += 1;
-          res.writeHead(hit.status, { ...hit.headers, "x-drp-cache": "hit" });
-          res.end(hit.body);
-          return;
-        }
-        // Otherwise serve the stored copy only once the origin confirms it.
-        if (hit.headers.etag) cached = hit;
-        else {
-          stats.cacheHits += 1;
-          res.writeHead(hit.status, { ...hit.headers, "x-drp-cache": "hit" });
-          res.end(hit.body);
-          return;
-        }
+        stats.cacheHits += 1;
+        res.writeHead(hit.status, { ...hit.headers, age: Math.floor((Date.now() - hit.at) / 1000), "x-drp-cache": "hit" });
+        res.end(hit.body);
+        return;
       }
     }
 
@@ -765,8 +741,6 @@ function cachePut(key, entry) {
     // The agent's gateway rewrites Host/Origin for the upstream; what it needs
     // here is the *public* authority so its own same-origin check passes.
     const upstreamHeaders = { ...headers, "x-forwarded-proto": config.publicUrl.startsWith("https") ? "https" : "http" };
-    // Revalidate instead of re-downloading.
-    if (cached && cached.headers.etag) upstreamHeaders["if-none-match"] = cached.headers.etag;
     if (!upstreamHeaders["x-forwarded-for"]) upstreamHeaders["x-forwarded-for"] = clientIp(req);
     // The app is mounted under this prefix; it needs it to build correct
     // redirects and form actions (the relay strips the prefix before proxying).
@@ -781,19 +755,13 @@ function cachePut(key, entry) {
       onHead: (head) => {
         headSent = true;
         const status = Number(head.status) || 502;
-        if (cached && status === 304) {
-          stats.cacheHits += 1;
-          res.writeHead(cached.status, { ...cached.headers, "x-drp-cache": "revalidated" });
-          res.end(cached.body);
-          return;
-        }
         const responseHeaders = forwardableHeaders(head.headers || {});
         if (cacheKey && responseAllowsCache(head.headers || {}, status)) {
           cacheBuffer = { status, headers: responseHeaders, chunks: [], size: 0 };
         }
         // Keep the browser's cache semantics but never let the relay host's own
         // headers leak into a tunnel response.
-        res.writeHead(Number(head.status) || 502, responseHeaders);
+        res.writeHead(status, responseHeaders);
       },
       onBody: (chunk) => {
         stats.bytesOut += chunk.length;
