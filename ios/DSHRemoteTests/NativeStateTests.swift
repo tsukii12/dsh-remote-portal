@@ -17,6 +17,87 @@ final class StubAPI: RPCServing {
 
 @MainActor
 final class NativeStateTests: XCTestCase {
+    func testFileMentionGrammarQuotesDirectoriesUnicodeAndUnsafePaths() throws {
+        XCTAssertNil(FileMentionToken.active(in: "mail@example.com"))
+        XCTAssertNil(FileMentionToken.active(in: "ordinary text"))
+        let token = try XCTUnwrap(FileMentionToken.active(in: "See @src"))
+        XCTAssertEqual(token.query, "src")
+        XCTAssertEqual(token.inserting(["path": "src/main.swift", "kind": "file"], into: "See @src"), "See @src/main.swift ")
+        XCTAssertEqual(token.inserting(["path": "路径/a file.swift", "kind": "file"], into: "See @src"), "See @\"路径/a file.swift\" ")
+        XCTAssertEqual(token.inserting(["path": "a directory", "kind": "directory"], into: "See @src"), "See @\"a directory/")
+        let quoted = try XCTUnwrap(FileMentionToken.active(in: "@\"a directory/"))
+        XCTAssertEqual(quoted.query, "a directory/")
+        XCTAssertEqual(quoted.inserting(["path": "a directory/one.txt", "kind": "file"], into: "@\"a directory/"), "@\"a directory/one.txt\" ")
+        for path in ["", "a\"b", "a\nb", "a\u{0080}b"] { XCTAssertNil(token.inserting(["path": .string(path), "kind": "file"], into: "See @src")) }
+        XCTAssertNil(token.inserting(["path": "one", "kind": "file"], into: "changed"))
+    }
+    func testHostImageLimitsAndUnboundedGenericFileIntake() throws {
+        let store = AttachmentsStore(api: StubAPI(), sessionID: "S")
+        let limits: JSON = ["mediaTypes": ["image/png"], "maxImageBytes": 100, "maxMessageImageBytes": 80, "maxImagesPerMessage": 2]
+        XCTAssertNoThrow(try store.validate(bytes: 80, mediaType: "image/png", limits: limits))
+        XCTAssertNoThrow(try store.validate(bytes: Int.max, mediaType: nil, limits: [:]))
+        XCTAssertThrowsError(try store.validate(bytes: 101, mediaType: "image/png", limits: limits))
+        XCTAssertThrowsError(try store.validate(bytes: 81, mediaType: "image/png", limits: limits))
+        XCTAssertThrowsError(try store.validate(bytes: 10, mediaType: "image/heic", limits: limits))
+        var none = limits; none["maxImagesPerMessage"] = 0
+        XCTAssertThrowsError(try store.validate(bytes: 10, mediaType: "image/png", limits: none))
+        XCTAssertThrowsError(try store.validate(bytes: 10, mediaType: "image/png", limits: [:]))
+        XCTAssertTrue(store.items.isEmpty); XCTAssertTrue(store.ready)
+    }
+    func testUsageProjectionsZeroUnknownAndContextFallback() {
+        let usage: JSON = ["uncachedInputTokens": 10, "cacheReadTokens": 20, "cacheWriteTokens": 3, "outputTokens": 5, "reasoningTokens": 4]
+        XCTAssertEqual(UsagePresentation.total(usage), 38)
+        XCTAssertEqual(UsagePresentation.total(["uncachedInputTokens": 0, "cacheReadTokens": 0, "cacheWriteTokens": 0, "outputTokens": 0]), 0)
+        XCTAssertNil(UsagePresentation.total([:]))
+        var invalid = usage; invalid["outputTokens"] = -1; XCTAssertNil(UsagePresentation.total(invalid))
+        XCTAssertEqual(UsagePresentation.context(["projectedTokens": 0, "pressureTokens": 50, "contextWindow": 100])?.used, 0)
+        XCTAssertEqual(UsagePresentation.context(["pressureTokens": 25, "contextWindow": 100])?.percent, 25)
+        XCTAssertEqual(UsagePresentation.context(["projectedTokens": 250, "contextWindow": 100])?.percent, 100)
+        XCTAssertNil(UsagePresentation.context(["projectedTokens": 10]))
+        XCTAssertNil(UsagePresentation.context(["pressureTokens": 10, "contextWindow": 0]))
+    }
+    func testCapturedCompleteTurnUsageAndPartialHistorySuppression() throws {
+        var page = try fixture("live-hello-events")["result"]["value"]
+        let events = page["records"].array.map { $0["event"] }
+        XCTAssertEqual(TurnUsage.byTurn(events)[1]?["totalTokens"], 150)
+        XCTAssertEqual(TurnUsage.byTurn(events)[1]?["uncachedInputTokens"], 100)
+        page["type"] = "snapshot"
+        let chat = ChatStore(sessionID: "S", api: StubAPI()); chat.apply(page)
+        let assistant = try XCTUnwrap(chat.transcript.last { $0.role == "assistant" })
+        XCTAssertEqual(chat.usage(for: assistant)?["totalTokens"], 150)
+        XCTAssertNil(TurnUsage.derive([]))
+        let start = try XCTUnwrap(events.firstIndex { $0["type"] == "turn/start" })
+        XCTAssertNil(TurnUsage.derive(Array(events.dropFirst(start + 1))))
+        XCTAssertNil(TurnUsage.derive(Array(events[start...].prefix { $0["type"] != "turn/end" })))
+    }
+    func testTurnUsageRetryAccountingAndMalformedSamples() {
+        let first: JSON = ["inputTokens": 10, "outputTokens": 2, "totalTokens": 12]
+        let second: JSON = ["inputTokens": 20, "outputTokens": 4, "totalTokens": 29, "cacheReadTokens": 5, "cacheWriteTokens": 0, "reasoningTokens": 2]
+        let events: [JSON] = [
+            ["type": "turn/start", "data": ["turn": 1]],
+            ["type": "step/start", "data": ["turn": 1, "step": 1]],
+            ["type": "assistant/attempt", "data": ["turn": 1, "step": 1, "stream": [["type": "chunk", "chunk": ["type": "usage", "usage": first]]]]],
+            ["type": "llm/retry", "data": ["turn": 1, "step": 1]],
+            ["type": "llm/retry-started", "data": ["turn": 1, "step": 1]],
+            ["type": "assistant/message", "data": ["turn": 1, "step": 1, "usage": second, "message": ["source": ["provider": "fake", "model": "one"]]]],
+            ["type": "step/end", "data": ["turn": 1, "step": 1]],
+            ["type": "turn/end", "data": ["turn": 1]]
+        ]
+        let result = TurnUsage.derive(events)
+        XCTAssertEqual(result?["totalTokens"], 41); XCTAssertEqual(result?["outputTokens"], 6)
+        XCTAssertEqual(result?["uncachedInputTokens"], 30)
+        XCTAssertEqual(result?["cacheReadTokens"], .null); XCTAssertEqual(result?["reasoningTokens"], .null)
+        for key in ["inputTokens", "outputTokens", "reasoningTokens", "totalTokens"] {
+            var invalid = events; invalid[5]["data"]["usage"][key] = -1
+            XCTAssertNil(TurnUsage.derive(invalid))
+        }
+        var contradictory = events; contradictory[5]["data"]["usage"]["totalTokens"] = 100
+        XCTAssertNil(TurnUsage.derive(contradictory))
+        var reasoning = events; reasoning[5]["data"]["usage"]["reasoningTokens"] = 5
+        XCTAssertNil(TurnUsage.derive(reasoning))
+        var missingLifecycle = events; missingLifecycle.remove(at: 4)
+        XCTAssertNil(TurnUsage.derive(missingLifecycle))
+    }
     func testInteractionRoutingUsesCapturedWaterfallSessionAddress() throws {
         let events = RemoteEvents(api: StubAPI())
         for frame in try fixture("live-stream-all").array { events.apply(frame["value"]) }

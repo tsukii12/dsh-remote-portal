@@ -34,6 +34,7 @@ struct WorkspaceView: View {
     @State private var compactColumn: NavigationSplitViewColumn = .sidebar
     @State private var actionError: String?
     @State private var hasConnected = false
+    @State private var showingSettings = false
     @State private var interactions = InteractionRouting()
     init(connection: NativeConnection, serverName: String, addressLabel: String, onSwitch: @escaping () -> Void, onLogout: @escaping () async throws -> Void) {
         self.connection = connection; self.serverName = serverName; self.onSwitch = onSwitch; self.onLogout = onLogout
@@ -42,7 +43,7 @@ struct WorkspaceView: View {
     }
     var body: some View {
         NavigationSplitView(columnVisibility: $visibility, preferredCompactColumn: $compactColumn) {
-            SidebarView(store: sidebar, events: events, selection: selection, serverName: serverName, addressLabel: addressLabel, onSelect: { selection = $0; compactColumn = .detail }, onReview: review, onCreate: create, onSwitch: onSwitch, onLogout: onLogout)
+            SidebarView(store: sidebar, events: events, selection: selection, serverName: serverName, addressLabel: addressLabel, onSelect: { selection = $0; compactColumn = .detail }, onReview: review, onCreate: create, onSwitch: onSwitch, onLogout: onLogout, onSettings: { showingSettings = true })
                 .navigationSplitViewColumnWidth(min: 250, ideal: 290, max: 360)
                 .safeAreaInset(edge: .top, spacing: 0) { pendingBanner }
         } detail: {
@@ -70,6 +71,7 @@ struct WorkspaceView: View {
         .onChange(of: events.clientID, initial: true) { _, id in if id != nil { hasConnected = true } }
         .onChange(of: events.pending, initial: true) { _, pending in interactions.reconcile(pending, openSessionID: selection) }
         .onChange(of: selection) { _, id in interactions.reconcile(events.pending, openSessionID: id) }
+        .sheet(isPresented: $showingSettings) { HostSettingsView(api: connection.api) }
         .sheet(item: Binding(get: { events.pending.first { $0.id == interactions.presentedID } }, set: { if $0 == nil { interactions.dismiss() } })) { item in
             InteractionSheet(events: events, api: connection.api, item: item, sessionTitle: sidebar.sessions[item.agentID]?.title ?? L("Conversation", "对话"))
                 .id(item.id)
@@ -108,6 +110,7 @@ private struct SidebarView: View {
     let onCreate: (String?) -> Void
     let onSwitch: () -> Void
     let onLogout: () async throws -> Void
+    let onSettings: () -> Void
     @State private var renaming = false
     @State private var renameID = ""
     @State private var renameText = ""
@@ -213,6 +216,8 @@ private struct SidebarView: View {
                 }
                 HStack {
                     Button(action: onSwitch) { Label(L("Servers", "服务器"), systemImage: "arrow.left.arrow.right") }
+                    Spacer()
+                    Button(action: onSettings) { Label(L("Settings", "设置"), systemImage: "gearshape") }.accessibilityIdentifier("hostSettings")
                     Spacer()
                     Button { perform { try await onLogout() } } label: { Label(L("Log out", "退出"), systemImage: "rectangle.portrait.and.arrow.right") }
                 }.font(.caption)

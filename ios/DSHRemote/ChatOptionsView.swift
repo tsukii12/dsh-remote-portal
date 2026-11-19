@@ -70,7 +70,10 @@ struct ChatOptionsView: View {
                 Section {
                     Button { perform { try await chat.executeCommand(chat.planEnabled ? "/plan off" : "/plan") } } label: {
                         checked(L("Plan mode", "计划模式"), chat.planEnabled)
-                    }.disabled(chat.projections["plan"]["pending"].boolean)
+                    }.disabled(!chat.supportsPlan || chat.projections["plan"]["pending"].boolean)
+                    if !chat.supportsPlan {
+                        Text(L("This preset does not provide Plan mode.", "当前预设不支持计划模式。")).font(.caption).foregroundStyle(.secondary)
+                    }
                     ForEach(Array(chat.presetCatalog["presets"].array.enumerated()), id: \.offset) { _, preset in
                         Button { perform { try await chat.selectPreset(preset["id"].text) } } label: {
                             checked(ChatLabels.preset(preset["id"].text), chat.projections["agentPreset"] == preset["id"])

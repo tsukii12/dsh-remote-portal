@@ -1,1 +1,2 @@
 "NSLocalNetworkUsageDescription" = "Connect to your DeepSeek Harness on the local network.";
+"NSCameraUsageDescription" = "Take a photo to attach to your DeepSeek Harness message.";

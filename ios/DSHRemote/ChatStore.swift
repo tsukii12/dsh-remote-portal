@@ -8,9 +8,11 @@ struct TranscriptBlock: Equatable {
     var name = ""
     var arguments = ""
     var result: JSON?
+    var attachment: JSON = .null
     init(_ value: JSON) {
         kind = value["type"].text; text = value["text"].text
         callID = value["id"].text; name = value["name"].text; arguments = value["arguments"].text
+        attachment = value["attachment"]
     }
 }
 
@@ -75,6 +77,7 @@ final class ChatStore: ObservableObject {
     @Published private(set) var catalog: JSON = [:]
     @Published private(set) var selectedModel: JSON = [:]
     @Published private(set) var projections: JSON = [:]
+    @Published private(set) var turnUsage: [Int: JSON] = [:]
     @Published private(set) var queue: [JSON] = []
     @Published private(set) var permissionCatalog: JSON = [:]
     @Published private(set) var presetCatalog: JSON = [:]
@@ -82,7 +85,7 @@ final class ChatStore: ObservableObject {
     @Published private(set) var commandNotice: String?
     @Published private(set) var exportedFile: URL?
     @Published private(set) var error: String?
-    private let api: RPCServing
+    let api: RPCServing
     private weak var events: RemoteEvents?
     private var observer: UUID?
     private var followTask: Task<Void, Never>?
@@ -220,11 +223,13 @@ final class ChatStore: ObservableObject {
         default: break
         }
     }
-    func addOptimistic(text: String, requestID: String) {
-        optimistic.append(TranscriptItem(id: "request:" + requestID, role: "user", blocks: [TranscriptBlock(["type": "text", "text": .string(text)])], requestID: requestID, optimistic: true))
+    func addOptimistic(text: String, requestID: String, attachments: [JSON] = []) {
+        let content: [JSON] = (text.isEmpty ? [] : [["type": "text", "text": .string(text)]]) + attachments
+        optimistic.append(TranscriptItem(id: "request:" + requestID, role: "user", blocks: content.map(TranscriptBlock.init), requestID: requestID, optimistic: true))
         rebuild()
     }
     private func rebuild() {
+        turnUsage = TurnUsage.byTurn(history.sorted(by: { $0.key < $1.key }).map(\.value))
         var surface: [JSON] = []
         for event in history.sorted(by: { $0.key < $1.key }).map(\.value) {
             guard ["user/message", "assistant/message", "tool/result"].contains(event["type"].text) else { continue }
@@ -263,17 +268,24 @@ final class ChatStore: ObservableObject {
         transcript = items.sorted { (positions[$0.seq ?? -1] ?? 0) < (positions[$1.seq ?? -1] ?? 0) } + optimistic.filter { !queuedRequests.contains($0.requestID ?? "") }
     }
     @discardableResult
-    func send(_ text: String, steer: Bool = false) async throws -> String {
-        guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { throw PortalError.message(L("Enter a message.", "请输入消息。")) }
+    func send(_ text: String, steer: Bool = false, attachments: [DraftAttachment] = []) async throws -> String {
+        guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !attachments.isEmpty else { throw PortalError.message(L("Enter a message.", "请输入消息。")) }
+        guard attachments.allSatisfy(\.ready) else { throw PortalError.message(L("Wait for all uploads to finish or remove failed attachments.", "请等待所有上传完成，或移除失败的附件。")) }
         let id = UUID().uuidString
-        addOptimistic(text: text, requestID: id)
+        addOptimistic(text: text, requestID: id, attachments: attachments.map(\.reference))
         do {
-            _ = try await api.rpc("session/prompt", args: ["request": ["sessionId": .string(sessionID), "requestId": .string(id), "mode": steer && running ? "steer" : "queue", "content": [["type": "text", "text": .string(text)]], "clientTimeZone": .string(TimeZone.current.identifier)]])
+            let content: [JSON] = (text.isEmpty ? [] : [["type": "text", "text": .string(text)]]) + attachments.map(\.content)
+            _ = try await api.rpc("session/prompt", args: ["request": ["sessionId": .string(sessionID), "requestId": .string(id), "mode": steer && running ? "steer" : "queue", "content": .array(content), "clientTimeZone": .string(TimeZone.current.identifier)]])
             return id
         } catch {
             if let index = optimistic.firstIndex(where: { $0.requestID == id }) { optimistic[index].deliveryError = error.localizedDescription }
             rebuild(); throw error
         }
+    }
+    func usage(for item: TranscriptItem) -> JSON? {
+        guard item.role == "assistant", let turn = item.turn,
+              transcript.last(where: { $0.role == "assistant" && $0.turn == turn })?.id == item.id else { return nil }
+        return turnUsage[turn]
     }
     func cancel() async throws { _ = try await api.rpc("session/cancel", args: ["request": ["sessionId": .string(sessionID)]]) }
     func loadModels() async throws { catalog = try await api.rpc("session/modelCatalog", args: [:]) }
@@ -291,6 +303,7 @@ final class ChatStore: ObservableObject {
     }
     var sessionStarted: Bool { projections["sessionListMetadata"]["blank"] == false || transcript.contains { $0.role == "user" } || running }
     var planEnabled: Bool { projections["plan"]["pending"].boolean ? !projections["plan"]["active"].boolean : projections["plan"]["active"].boolean }
+    var supportsPlan: Bool { commands.contains { $0["name"] == "plan" } }
     func selectModel(provider: String, model: String, reasoningEffort: String? = nil, useDefaultEffort: Bool = false) async throws {
         var request: JSON = ["sessionId": .string(sessionID), "provider": .string(provider), "model": .string(model)]
         let sameRoute = currentModel["provider"].text == provider && currentModel["model"].text == model
@@ -309,9 +322,9 @@ final class ChatStore: ObservableObject {
         applyProjections(try await api.rpc("session/projections", args: ["request": ["sessionId": .string(sessionID)]]))
     }
     @discardableResult
-    func executeCommand(_ line: String) async throws -> JSON {
+    func executeCommand(_ line: String, attachments: [JSON] = []) async throws -> JSON {
         commandNotice = nil; exportedFile = nil
-        let response = try await api.rpc("commands/execute", args: ["agentId": .string(sessionID), "line": .string(line), "submittedAttachments": []])
+        let response = try await api.rpc("commands/execute", args: ["agentId": .string(sessionID), "line": .string(line), "submittedAttachments": .array(attachments)])
         guard response["result"]["kind"].string != nil else { throw PortalError.message(L("Unknown command. Choose a suggestion or send ordinary text.", "未知命令，请选择建议或发送普通文本。")) }
         let result = response["result"]
         if result["kind"] == "error" { throw PortalError.message(result["text"].string ?? L("Command failed.", "命令执行失败。")) }
@@ -324,6 +337,7 @@ final class ChatStore: ObservableObject {
     func selectPreset(_ preset: String) async throws {
         guard !sessionStarted else { throw PortalError.message(L("Choose a preset before the first message.", "请在发送第一条消息前选择预设。")) }
         _ = try await api.rpc("agentPresets/select", args: ["agentId": .string(sessionID), "agentPreset": .string(preset)])
+        commands = []
         try await loadControls()
     }
     func updateQueue(_ id: String, kind: String, text: String? = nil) async throws {

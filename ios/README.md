@@ -27,6 +27,16 @@ Chat supports live Markdown, expandable thinking, fenced code with copy/horizont
 
 服务器列表和侧栏标题为 **DeepSeek Remote**，主屏幕图标名称仍为 **DRP**。侧栏支持按名称或消息内容搜索、查看与恢复归档会话，以及通过门户主机文件夹浏览器创建、重命名和移除工作区。聊天输入区显示模型与思考强度，可选择访问权限、计划模式及首次发送前的代理预设；输入 `/` 查看命令建议。运行中可排队或立即引导消息，并编辑、移除或引导队列项目，停止按钮保持独立。
 
+Round 2 adds Photos/camera/Files attachments with host image limits, upload progress/retry/removal and receipt-based prompts. Photos use compatible images; HEIC camera-library images are converted to JPEG when necessary. Native pickers copy selected documents into protected app caches only for the draft lifetime. The camera is disabled where unavailable (including Simulator). Type `@` for workspace file/directory suggestions; paths with spaces use the official quoted mention syntax. The toolbar's Files panel browses the current session workspace and previews paged text/code or images, read-only. Token usage includes session totals and completed-turn attempts (including retries); context occupancy is approximate, not monetary cost. Incomplete turn history does not invent usage totals.
+
+第二轮新增照片图库、相机和“文件”附件，遵循主机图片限制并支持上传状态、重试、移除及回执发送；必要时将 HEIC 转为 JPEG，相机不可用时（如模拟器）禁用相机入口。选择的文件仅在草稿期间保存在应用缓存。输入 `@` 获取工作区文件/目录建议，含空格的路径使用官方引号格式。工具栏的“文件”面板只读浏览当前会话工作区，分页预览文本/代码或图片。用量显示会话累计值、已完成轮次的各次尝试（含重试），上下文占用为估算值，并非金额；历史不完整时不推测轮次用量。
+
+Sidebar Settings reads/writes the host's default model/effort and access mode, shows provider routability and Portal/LAN/public status, and lists/revokes remote devices with confirmation. Credentials are never displayed or edited. Writes use namespace revisions; a conflict reloads the host values and requires an explicit retry. Plan is disabled with an explanation for presets whose command catalog lacks `plan`, and selecting a preset refreshes availability.
+
+侧栏“设置”通过主机原有接口读写默认模型/思考强度与访问模式，展示提供商路由状态、门户/LAN/公网状态，以及可确认撤销的远程设备；不显示或编辑凭据。写入附带命名空间版本，冲突后重新加载主机值并由用户明确重试。当前预设的命令目录不含 `plan` 时禁用计划模式并说明原因，切换预设会刷新可用性。
+
+Endpoints: raw uploads use `POST api/session/uploadFileBinary?sessionId=…&name=…&mediaType=…` (`application/octet-stream`); prompts carry `{type:"file",receiptId}`. Mentions use `fileReferences/list {agentId,query}`. Files use `workspaceFiles/list {workspaceFileScopeId,path:"."}`, `workspaceFiles/read {workspaceFileScopeId,path,range:{offset:1,limit:200}}` (one-based line offsets), and `workspaceFiles/readBytes {workspaceFileScopeId,path,options:{}}` (multipart bytes). Historical images use `session/attachment {request:{sessionId,attachment}}`. Usage comes from `tokenUsage`/`contextPressure` projections and complete turn lifecycle events. Settings use `settings/describe`, `settings/mutate {ns,ops,expectedRevision}`, `session/modelCatalog`, and `permissionPresets/catalog`; Portal uses GET `dsh-remote-portal/status`, GET `devices`, POST `devices/revoke {id}`. All paths preserve relay prefixes.
+
 `Assets.xcassets/AppIcon.appiconset` contains the supplied opaque 1024px whale icon as a single-size iOS AppIcon.
 
 ## Native state layer
@@ -52,7 +62,9 @@ The real-relay `run tool` → **Allow once** capture contains a successful `ls` 
 
 ### Opt-in live smoke test
 
-Requires the local fake model setup at `~/fake-llm/README.md`, dsh on 3080 and the portal on 3081. It uses the throwaway password `demo-pass-123`, creates then archives one session, and allows only the requested fixture's pwd escalation. Never enable it against another service.
+Requires the local fake model setup at `~/fake-llm/README.md`, dsh on 3080 and the portal on 3081. It uses the throwaway password `demo-pass-123`, creates then archives temporary sessions, and allows only the requested fixture's pwd escalation. Round 2 also requires the external `~/fake-llm/r2-native-ui/` fixture (`r2 note.txt` and `whale.png`) and image-capable fake model definitions (`input: ["image"]`). It checks upload/receipt/history/image retrieval, file/mention APIs, token/context/turn usage, revision-safe default writes (restored afterward), provider/Portal/device reads, and Minimal/Standard Plan availability. Device revocation and conflicts use real local HTTP listeners, not live device revocation. Never enable it against another service.
+
+第二轮在线测试需要上述外部图片/文本夹具与支持图片的模拟模型，验证上传回执、历史图片、文件/提及、用量、默认值写入后恢复，以及计划模式可用性；设备撤销和版本冲突由真实本地 HTTP 监听器覆盖，不撤销正在使用的真实设备。
 
 ```sh
 TEST_RUNNER_DSH_LIVE_SMOKE=1 xcodebuild -project ios/DSHRemote.xcodeproj -scheme DSHRemote \
@@ -82,6 +94,6 @@ Set a throwaway password in dsh Settings → Remote access (or POST JSON `{"pass
 ## Limits
 
 - HTTP LAN connections are allowed by ATS. **Self-signed TLS is not bypassed**: use a trusted certificate or install and trust your local CA on the device. There is deliberately no global certificate bypass.
-- Attachments, settings and terminal UI are not implemented.
+- Terminal is deferred: the host has `terminal/attach`, but native client uplink sequencing/acknowledgements, PTY retention/reconnect and a VT/ANSI renderer are a separate feature. Remote-access configuration/credentials and filesystem writes are intentionally not exposed. 终端需另行实现客户端上行流、序号/确认、PTY 生命周期与 VT/ANSI 渲染；本轮不开放远程访问配置/凭据或文件写入。
 - Server addresses are not encrypted; avoid embedding secrets in URLs. Cookie files are in Application Support with iOS data protection; deleting a saved server does not revoke its remote session (log out first).
 - Real relay, physical-device networking, lockout and certificate flows need manual validation.

@@ -84,11 +84,13 @@ protocol RPCServing: AnyObject {
     func stream(_ endpoint: String, args: JSON) -> AsyncThrowingStream<JSON, Error>
     func portal(_ path: String, query: [URLQueryItem], body: JSON?) async throws -> JSON
     func exportSession(_ id: String) async throws -> URL
+    func upload(sessionID: String, file: URL, name: String, mediaType: String?) async throws -> JSON
 }
 
 extension RPCServing {
     func portal(_ path: String, query: [URLQueryItem], body: JSON?) async throws -> JSON { throw APIError.invalidResponse }
     func exportSession(_ id: String) async throws -> URL { throw APIError.invalidResponse }
+    func upload(sessionID: String, file: URL, name: String, mediaType: String?) async throws -> JSON { throw APIError.invalidResponse }
 }
 
 @MainActor
@@ -110,10 +112,11 @@ final class PortalAPI: ObservableObject, RPCServing {
     static func envelope(_ method: String, args: JSON, id: String = UUID().uuidString) -> JSON {
         ["type": "client-request", "rpcId": .string(id), "method": .string(method), "payload": ["args": args]]
     }
-    static func decode(_ data: Data, status: Int) throws -> JSON {
+    static func decode(_ data: Data, status: Int, contentType: String? = nil) throws -> JSON {
         if status == 401 { throw APIError.sessionExpired }
         guard (200..<300).contains(status) else { throw APIError.http(status) }
-        guard let body = try? JSONDecoder().decode(JSON.self, from: data), body["type"] == "server-response", [JSON.bool(true), .bool(false)].contains(body["result"]["ok"]) else { throw APIError.invalidResponse }
+        let decoded = try BinaryRPC.decode(data, contentType: contentType)
+        guard let body = try? JSONDecoder().decode(JSON.self, from: decoded), body["type"] == "server-response", [JSON.bool(true), .bool(false)].contains(body["result"]["ok"]) else { throw APIError.invalidResponse }
         guard body["result"]["ok"].boolean else {
             let error = body["result"]["error"]
             throw APIError.remote(error["code"].text, error["message"].string ?? L("Request failed.", "请求失败。"))
@@ -129,7 +132,31 @@ final class PortalAPI: ObservableObject, RPCServing {
             let (data, response) = try await client.session.data(for: request)
             guard let http = response as? HTTPURLResponse else { throw APIError.invalidResponse }
             try client.cookies.ingest(http, base: base)
-            return try Self.decode(data, status: http.statusCode)
+            return try Self.decode(data, status: http.statusCode, contentType: http.value(forHTTPHeaderField: "Content-Type"))
+        } catch APIError.sessionExpired { expire(); throw APIError.sessionExpired }
+    }
+    func upload(sessionID: String, file: URL, name: String, mediaType: String? = nil) async throws -> JSON {
+        var request = request("api/session/uploadFileBinary")
+        var components = URLComponents(url: request.url!, resolvingAgainstBaseURL: false)!
+        components.queryItems = [URLQueryItem(name: "sessionId", value: sessionID), URLQueryItem(name: "name", value: name)]
+        if let mediaType { components.queryItems?.append(URLQueryItem(name: "mediaType", value: mediaType)) }
+        components.percentEncodedQuery = components.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
+        request.url = components.url; request.httpMethod = "POST"
+        request.setValue("application/octet-stream", forHTTPHeaderField: "Content-Type")
+        do {
+            let (data, response) = try await client.session.upload(for: request, fromFile: file)
+            guard let http = response as? HTTPURLResponse else { throw APIError.invalidResponse }
+            try client.cookies.ingest(http, base: base)
+            if http.statusCode == 401 { throw APIError.sessionExpired }
+            guard (200..<300).contains(http.statusCode) else { throw APIError.http(http.statusCode) }
+            guard let body = try? JSONDecoder().decode(JSON.self, from: data), [JSON.bool(true), .bool(false)].contains(body["ok"]) else { throw APIError.invalidResponse }
+            guard body["ok"].boolean else {
+                throw APIError.remote(body["error"]["code"].text, body["error"]["message"].string ?? L("Upload failed.", "上传失败。"))
+            }
+            let value = body["value"]
+            guard let receipt = value["receiptId"].string, !receipt.isEmpty,
+                  value[mediaType == nil ? "file" : "image"]["attachmentId"].string != nil else { throw APIError.invalidResponse }
+            return value
         } catch APIError.sessionExpired { expire(); throw APIError.sessionExpired }
     }
     func login(secret: String, pairing: Bool) async throws {

@@ -6,6 +6,8 @@ versions are the plugin's own, not dsh's.
 ## Unreleased
 
 ### Added
+- Native DRP round 2: Photos/camera/Files uploads and file mentions, read-only workspace previews, token/context and completed-turn usage, revision-safe default model/access settings, provider status and Portal devices. Terminal remains deferred.
+- 原生 DRP 第二轮：照片/相机/文件附件与文件提及、只读工作区预览、令牌/上下文及轮次用量、版本安全的默认模型/权限设置、提供商状态与门户设备；终端留待后续实现。
 - Native iOS approvals can be closed without answering and reopened from the pending-request banner or session badges. Requests in other sessions no longer interrupt the current chat; routing uses the waterfall agentId as the exact session ID, matching Android.
 - 原生 iOS 授权弹窗可不作答直接关闭，并通过待处理请求横幅或会话角标重新打开。其他会话的请求不再打断当前对话；与 Android 一致，使用 waterfall 的 agentId 精确匹配会话 ID。
 - Native DRP round 1: prominent provider-grouped model/effort controls, session access and plan/preset selectors, slash-command suggestions, editable queue/steer controls, session search and archive recovery, and workspace management with Portal host-folder browsing. Server-list/sidebar titles are now DeepSeek Remote; the icon name remains DRP.
@@ -14,6 +16,8 @@ versions are the plugin's own, not dsh's.
 - 新 RPC/HTTP 路由由真实监听器测试覆盖；可选在线冒烟测试验证两个本地模拟模型的切换与明确思考强度、会话权限命令及门户文件夹浏览。
 
 ### Fixed
+- Disable native Plan mode with a bilingual explanation when the current preset's command catalog lacks `plan`; refresh availability after preset selection.
+- 当前预设的命令目录不含 `plan` 时禁用原生计划模式并显示双语说明，切换预设后刷新可用性。
 - Wait for the workspace baseline before grouping native sessions, including after reconnect, so workspace chats never flash under Ungrouped. Pending-request banners now sit below navigation titles in both sidebar and chat.
 - 原生会话列表在初次连接及重连后均等待工作区基线到达再分组，避免工作区对话短暂出现在“未分组”；侧栏与聊天的待处理请求横幅现位于导航标题下方。
 - Refresh native chat options on presentation, including newly created conversations.
@@ -1187,7 +1191,6 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
-
 
 
 
