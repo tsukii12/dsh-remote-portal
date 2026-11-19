@@ -524,6 +524,23 @@ test("a tunnel URL without its trailing slash redirects to one", async () => {
   assert.equal(res.headers.location, `/__t/${id}/`);
 });
 
+test("the relay home and missing-route pages are localized", async () => {
+  const { httpPort } = await startRelay(["test-token-local-pages"]);
+  for (const [lang, home, notFound] of [
+    ["en", "dsh remote portal relay", "Not found"],
+    ["zh", "dsh 远程访问中继", "找不到页面"],
+  ]) {
+    const options = { headers: { "accept-language": lang } };
+    for (const [path, status, title] of [["/", 200, home], ["/missing", 404, notFound]]) {
+      const res = await request(httpPort, path, options);
+      assert.equal(res.status, status);
+      assert.equal(res.headers["content-language"], lang);
+      assert.equal(res.headers.vary, "Accept-Language");
+      assert.ok(res.body.toString().includes(`<h1>${title}</h1>`));
+    }
+  }
+});
+
 test("an unknown tunnel id gets a page, not a proxy attempt", async () => {
   const { httpPort } = await startRelay(["only-this-token"]);
   const res = await request(httpPort, "/__t/doesnotexist/");
@@ -669,6 +686,39 @@ test("the tunnel reconnects after the relay drops the agent socket", async () =>
   const res = await request(httpPort, `/__t/${id}/after-reconnect`);
   assert.equal(res.status, 200);
   assert.equal(JSON.parse(res.body.toString()).url, "/after-reconnect");
+});
+
+test("a saturated tunnel and a failed upstream get distinct localized error pages", async () => {
+  const token = "test-token-localized-errors";
+  const path = `/__t/${tunnelIdFor(token)}/`;
+  let heldResponse;
+  const upstream = http.createServer((req, res) => {
+    if (req.url === "/hold") heldResponse = res;
+    else req.socket.destroy();
+  });
+  const targetPort = await listen(upstream);
+  const { httpPort, agentPort } = await startRelay([token], { maxStreams: 1 });
+  await connectTunnel({ agentPort, token, targetPort });
+  const held = request(httpPort, path + "hold");
+  const variants = [
+    ["en", "The relay is busy", "Tunnel error"],
+    ["zh", "中继繁忙", "隧道连接出错"],
+  ];
+  async function checkPage(route, status, lang, heading) {
+    const res = await request(httpPort, path + route, { headers: { "accept-language": lang } });
+    assert.equal(res.status, status);
+    assert.equal(res.headers["content-language"], lang);
+    assert.equal(res.headers.vary, "Accept-Language");
+    assert.ok(res.body.toString().includes(`<h1>${heading}</h1>`));
+  }
+  try {
+    await waitFor(() => heldResponse, { label: "the only stream to reach the upstream" });
+    for (const [lang, heading] of variants) await checkPage("fail", 503, lang, heading);
+  } finally {
+    heldResponse?.end("released");
+    await held;
+  }
+  for (const [lang, , heading] of variants) await checkPage("fail", 502, lang, heading);
 });
 
 test("a stream that outlives the request timeout is failed, not leaked", async () => {
