@@ -5,6 +5,13 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+- Public access: a relay entered as a bare `address:port` is TLS only. It used
+  to "fall back" to plain TCP after any TLS error, which would have sent the
+  tunnel token in clear text to anyone able to break the handshake (the
+  fallback never actually connected, so the panel sat on 连接中 / "Connecting"
+  with `ECONNRESET`). A relay that drops the TLS handshake now gets a clear
+  message in both languages: enter `tcp://address:port`. A connection error
+  no longer stays on screen once the tunnel is online.
 - Load the portal's presentation assets through the tunnel prefix without
   duplicate fallback fetches. Browsers and the relay can reuse content-versioned
   public assets without caching authenticated dsh responses.
