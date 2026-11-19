@@ -402,8 +402,9 @@ describe("mobile layer against the live dsh web UI", () => {
     if (!existsSync(CHROME)) { skipReason = `no Chrome/Chromium found (looked for ${CHROME}); set CHROME_PATH to enable these tests`; return; }
     if (!existsSync(CDP)) { skipReason = `driver missing at ${CDP}`; return; }
     if (ENV_BASE && ENV_TOKEN) {
-      BASE = (ENV_BASE.endsWith("/") ? ENV_BASE : ENV_BASE + "/") + "?drp=mobile";
-      TOKEN_URL = BASE + "?token=" + ENV_TOKEN;
+      const root = ENV_BASE.endsWith("/") ? ENV_BASE : ENV_BASE + "/";
+      BASE = root + "?drp=mobile";
+      TOKEN_URL = root + "?token=" + encodeURIComponent(ENV_TOKEN);
     } else {
       try {
         TOKEN_URL = await startInstance();
@@ -424,6 +425,13 @@ describe("mobile layer against the live dsh web UI", () => {
     const t = (b.textContent || '').trim();
     if (t === '继续' || t === 'Continue') { b.click(); break; }
   }
+  // A fresh profile without an API key opens a modal "Get started" dialog; the
+  // layer correctly steps aside for modals, so close it before measuring.
+  for (const d of document.querySelectorAll('[role="dialog"][aria-modal="true"]')) {
+    const x = d.querySelector('button[aria-label="Close"], button[aria-label="关闭"]');
+    if (x) x.click();
+  }
+  await new Promise((r) => setTimeout(r, 300));
   const style = document.createElement('style');
   style.id = 'drp-mobile-css';
   style.textContent = ${JSON.stringify(css)};
