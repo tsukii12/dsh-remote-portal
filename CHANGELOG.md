@@ -5,10 +5,12 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
-- Local network: the address list, the pairing QR code and the pairing link now
-  follow a change of the PC's address (another Wi-Fi, a new DHCP lease) within
-  about 15 s. They used to keep the address from when the listener started until
-  the portal was restarted, so a phone scanning the QR went to a dead address.
+- Local network: the address list and every pairing link or QR code made after
+  the PC's address changes (another Wi-Fi, a new DHCP lease) use the new address
+  within about 15 s. They used to keep the address from when the listener
+  started until the portal was restarted, so a phone scanning a fresh QR went
+  to a dead address. A QR already on screen keeps its link until it is
+  refreshed or expires.
 - Relay visitors now use the relay-observed address for device entries and
   password lockouts, instead of sharing the gateway's loopback address.
   The gateway does not trust visitor-supplied forwarding headers.
