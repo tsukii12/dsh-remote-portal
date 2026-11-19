@@ -438,6 +438,14 @@ sudo systemctl reload caddy
 Caddy obtains and renews the certificate; there is nothing else to configure. The
 prefix routing is the relay's job.
 
+Visitor identity uses the address of the socket connected to the relay, not
+HTTP forwarding headers. With a reverse proxy in front, visitors therefore
+share the proxy's address. To get per-address isolation, have visitors connect
+directly to the relay's HTTPS listener. Both the relay and the portal plugin
+must support visitor address metadata; an updated plugin connected to an older
+relay treats that tunnel as one shared visitor identity, separate from LAN
+clients.
+
 nginx equivalent:
 
 ```nginx

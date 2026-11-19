@@ -5,6 +5,9 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+- Relay visitors now use the relay-observed address for device entries and
+  password lockouts, instead of sharing the gateway's loopback address.
+  The gateway does not trust visitor-supplied forwarding headers.
 - Public access: a relay entered as a bare `address:port` is TLS only. It used
   to "fall back" to plain TCP after any TLS error, which would have sent the
   tunnel token in clear text to anyone able to break the handshake (the
