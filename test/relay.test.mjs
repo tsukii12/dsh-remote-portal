@@ -24,6 +24,8 @@ import { fileURLToPath } from "node:url";
 
 import { createRelay, tunnelIdFor } from "../tools/relay.mjs";
 import { createTunnel } from "../lib/tunnel.mjs";
+import * as agentFraming from "../lib/tunnel.mjs";
+import * as relayFraming from "../tools/relay.mjs";
 
 const quiet = { info() {}, warn() {}, error() {} };
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -391,6 +393,43 @@ test("framing helpers round-trip a binary payload", async () => {
   assert.deepEqual([...frames[0].body], [...payload]);
 });
 
+for (const [name, framing, peer] of [
+  ["relay", relayFraming, agentFraming],
+  ["agent", agentFraming, relayFraming],
+]) {
+  test(`${name} decodes a fragmented maximum-size frame followed by coalesced frames`, () => {
+    const { RES_BODY, RES_END, PING } = peer.FRAME;
+    const body = Buffer.alloc(1024 * 1024);
+    for (let i = 0; i < body.length; i++) body[i] = i % 251;
+    const large = peer.encodeFrame(RES_BODY, 0x01020304, body);
+    const end = peer.encodeFrame(RES_END, 0x01020304);
+    const ping = peer.encodeFrame(PING, 0);
+    const calls = [];
+    const reader = framing.createFrameReader((...frame) => calls.push(frame), assert.fail);
+
+    for (let i = 0; i < 9; i++) reader(large.subarray(i, i + 1));
+    for (let i = 9; i < large.length - 1; i += 1024) {
+      reader(large.subarray(i, Math.min(i + 1024, large.length - 1)));
+    }
+    assert.deepEqual(calls, []);
+    reader(Buffer.concat([large.subarray(-1), end, ping]));
+    assert.deepEqual(calls, [[RES_BODY, 0x01020304, body], [RES_END, 0x01020304, Buffer.alloc(0)],
+      [PING, 0, Buffer.alloc(0)]]);
+  });
+
+  test(`${name} rejects an oversized frame without waiting for its payload`, () => {
+    const header = Buffer.from([22, 0, 0, 0, 0, 0, 16, 0, 1]);
+    const errors = [];
+    const reader = framing.createFrameReader(assert.fail, (error) => errors.push(error));
+    reader(header.subarray(0, 8));
+    assert.deepEqual(errors, []);
+    reader(header.subarray(8));
+    reader(peer.encodeFrame(peer.FRAME.PING, 0));
+    assert.equal(errors.length, 1);
+    assert.match(errors[0].message, /frame too large: 1048577/);
+    if (name === "relay") assert.equal(errors[0].firstByte, 22);
+  });
+}
 
 
 
