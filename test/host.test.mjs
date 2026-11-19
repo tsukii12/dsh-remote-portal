@@ -522,6 +522,70 @@ test("a pairing token works exactly once", async () => {
   await gw.stop();
 });
 
+test("the login form posts to /__portal/login from any page it is served on", async () => {
+  // The action is relative (it must survive a stripped relay prefix), so it has
+  // to climb back to the root: from /__portal/login (the page after a typo) or a
+  // deep link like /chat/2, a bare "__portal/login" lands one level too deep and
+  // the password is silently dropped.
+  const { gw } = await startPortal();
+  await gw.setPassword("correct horse battery");
+  await gw.start();
+  const port = gw.status().port;
+  const actionOf = (body) => body.match(/<form[^>]*action="([^"]*)"/)[1];
+  const resolve = (page, action) => new URL(action, `http://portal.invalid${page}`).pathname;
+
+  const root = await request(port, "/", { headers: { accept: "text/html" } });
+  assert.equal(resolve("/", actionOf(root.body)), "/__portal/login");
+
+  const deep = await request(port, "/chat/2", { headers: { accept: "text/html" } });
+  assert.equal(resolve("/chat/2", actionOf(deep.body)), "/__portal/login");
+
+  const typo = await request(port, "/__portal/login", {
+    method: "POST",
+    headers: { accept: "text/html", "content-type": "application/x-www-form-urlencoded" },
+    body: "password=wrong+password",
+  });
+  assert.equal(typo.status, 401);
+  const retryAt = resolve("/__portal/login", actionOf(typo.body));
+  assert.equal(retryAt, "/__portal/login", "the retry must reach the login endpoint");
+
+  const retry = await request(port, retryAt, {
+    method: "POST",
+    headers: { accept: "text/html", "content-type": "application/x-www-form-urlencoded" },
+    body: "password=correct+horse+battery",
+  });
+  assert.equal(retry.status, 303);
+  assert.ok(cookieHeaderFrom(retry).portal.startsWith("dsh_portal="));
+
+  // Under a relay prefix the relative action still resolves inside the tunnel.
+  const mounted = await request(port, "/chat/2", {
+    headers: { accept: "text/html", "x-forwarded-prefix": "/__t/abc123" },
+  });
+  assert.equal(resolve("/__t/abc123/chat/2", actionOf(mounted.body)), "/__t/abc123/__portal/login");
+  await gw.stop();
+});
+
+test("a refused pairing code does not claim the device is locked or the code missing", async () => {
+  const { gw } = await startPortal();
+  await gw.setPassword("correct horse battery");
+  await gw.start();
+  const port = gw.status().port;
+  const pairing = await gw.mintPairing({ ttlSeconds: 120 });
+  await request(port, `/__portal/pair?t=${encodeURIComponent(pairing.token)}`, { headers: { accept: "text/html" } });
+
+  const reused = await request(port, `/__portal/pair?t=${encodeURIComponent(pairing.token)}`, {
+    headers: { accept: "text/html", "accept-language": "en" },
+  });
+  assert.equal(reused.status, 401);
+  assert.match(reused.body, /invalid or already used/);
+  assert.doesNotMatch(reused.body, /Temporarily locked/);
+  assert.doesNotMatch(reused.body, /No pairing code was supplied/);
+  // The "use a password instead" link must not land on /__portal/__portal/login.
+  const link = reused.body.match(/href="([^"]*__portal\/login\?mode=password)"/)[1];
+  assert.equal(new URL(link, "http://portal.invalid/__portal/pair").pathname, "/__portal/login");
+  await gw.stop();
+});
+
 test("logout clears the portal session and expires dsh cookies", async () => {
   const { gw } = await startPortal();
   await gw.setPassword("correct horse battery");
