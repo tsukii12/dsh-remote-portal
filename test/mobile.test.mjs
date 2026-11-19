@@ -734,12 +734,17 @@ describe("mobile layer against the live dsh web UI", () => {
       const entry = [...document.querySelectorAll('[data-slot="sidebar"] button')]
         .find((b) => /^(Remote access|远程访问)$/.test(b.getAttribute('aria-label') || ''));
       if (!entry) return JSON.stringify({ entry: false });
-      entry.click();
+      // Tap where a finger would: whatever is on top at the button's centre.
+      const box = entry.getBoundingClientRect();
+      const top = document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2);
+      const hitsEntry = !!top && entry.contains(top);
+      (top || entry).click();
       await sleep(1200);
       const page = document.querySelector('[data-slot="main"] .drp-page');
       const r = page ? page.getBoundingClientRect() : null;
       return JSON.stringify({
         entry: true,
+        hitsEntry,
         drawer: html.getAttribute('data-drp-drawer'),
         page: r ? { x: Math.round(r.x), w: Math.round(r.width) } : null,
         scrollW: document.documentElement.scrollWidth,
@@ -752,6 +757,7 @@ describe("mobile layer against the live dsh web UI", () => {
     assert.equal(code, 0, "cdp run failed: " + stderr.slice(-800));
     const out = JSON.parse(stdout.trim().split("\n").filter((l) => l.trim().startsWith("{")).pop());
     assert.equal(out.entry, true, "Remote access entry not found in the sidebar");
+    assert.equal(out.hitsEntry, true, "something covers the drawer: a tap on its rows never reaches them");
     assert.equal(out.drawer, null, "the drawer must close once a page is chosen");
     assert.ok(out.page, "the Remote access page did not render in the main slot");
     assert.equal(out.page.x, 0, "the page must start at the left edge (was squeezed into an implicit column)");

@@ -180,6 +180,13 @@
       visibility 0s linear 0s;
   }
 
+  /* dsh's own drawer mask (`[data-sidebar-mask]`, z-index 70 inside the frame)
+     sits above our drawer column (z 18), so every real tap on a sidebar row
+     hit the mask and only closed the drawer. The layer brings its own scrim. */
+  html[data-drp-mobile] [data-slot="root"] > div > [data-sidebar-mask] {
+    display: none;
+  }
+
   /* Thumb-sized rows and icon buttons inside the drawer. */
   html[data-drp-mobile] [data-slot="sidebar"] button {
     min-height: 40px;
