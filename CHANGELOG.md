@@ -5,6 +5,8 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+- The public relay's offline and other error pages now follow the visitor's
+  preferred language, with Chinese and English versions.
 - Local network: the address list and every pairing link or QR code made after
   the PC's address changes (another Wi-Fi, a new DHCP lease) use the new address
   within about 15 s. They used to keep the address from when the listener
