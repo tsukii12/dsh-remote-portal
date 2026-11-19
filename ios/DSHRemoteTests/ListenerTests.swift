@@ -136,6 +136,38 @@ final class ListenerTests: XCTestCase {
             }
         }
     }
+    func testUploadProgressReachesComposerBeforeReceiptOverRealHTTP() async throws {
+        let responseGate = DispatchSemaphore(value: 0)
+        let server = try HTTPListener { _ in
+            _ = responseGate.wait(timeout: .now() + 5)
+            return .init(body: "{\"ok\":true,\"value\":{\"receiptId\":\"R\",\"file\":{\"attachmentId\":\"F\"}}}")
+        }
+        let base = try await server.start(); let directory = root(); let client = client(directory)
+        let store = AttachmentsStore(api: PortalAPI(base: base, client: client), sessionID: "S", directory: directory.appendingPathComponent("drafts"))
+        defer { responseGate.signal(); store.clear(); server.stop(); client.session.invalidateAndCancel(); try? FileManager.default.removeItem(at: directory) }
+        let uploaded = expectation(description: "Bytes visible before receipt")
+        let observation = store.$items.first { $0.first?.sentBytes == 524288 && $0.first?.uploading == true }.sink { _ in uploaded.fulfill() }
+        defer { observation.cancel() }
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        let source = directory.appendingPathComponent("upload-progress.bin")
+        try Data(repeating: 42, count: 524288).write(to: source)
+        try store.add(file: source, limits: [:])
+        await fulfillment(of: [uploaded], timeout: 3)
+        XCTAssertEqual(store.items.first?.sentBytes, 524288); XCTAssertFalse(store.ready)
+        let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.first as? UIWindowScene)
+        let previous = scene.windows.first { $0.isKeyWindow }; let window = UIWindow(windowScene: scene)
+        let host = UIHostingController(rootView: ComposerAttachmentsView(store: store, limits: [:], disabled: false, imageInputError: nil, onError: { _ in }).padding())
+        window.rootViewController = host; window.frame = CGRect(x: 0, y: 0, width: 390, height: 240); window.makeKeyAndVisible()
+        defer { window.isHidden = true; previous?.makeKeyAndVisible() }
+        host.view.frame = window.bounds; host.view.layoutIfNeeded()
+        let image = UIGraphicsImageRenderer(bounds: host.view.bounds).image { _ in host.view.drawHierarchy(in: host.view.bounds, afterScreenUpdates: true) }
+        let attachment = XCTAttachment(image: image); attachment.name = "sync-upload-progress"; attachment.lifetime = .keepAlways; add(attachment)
+        let ready = expectation(description: "Receipt completes upload")
+        let completion = store.$items.first { $0.first?.ready == true }.sink { _ in ready.fulfill() }
+        defer { completion.cancel() }
+        responseGate.signal(); await fulfillment(of: [ready], timeout: 3)
+        XCTAssertTrue(store.ready)
+    }
     func testWorkspaceFileSearchNormalEmptyErrorAndStaleCancellationOverRealHTTP() async throws {
         let server = try HTTPListener { request in
             XCTAssertEqual(request.path, "/relay/api/workspaceFiles/search")
