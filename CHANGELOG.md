@@ -5,6 +5,10 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+- Updated relay and agent peers isolate backpressured downloads and WebSockets
+  so they no longer pause unrelated traffic on the same tunnel. Mixed-version
+  connections still work using the previous flow control.
+
 - Fixed password and pairing form submissions from nested pages, including when
   the portal is served under a reverse proxy path prefix.
 - When a pairing code is rejected, the portal now asks you to generate and scan
