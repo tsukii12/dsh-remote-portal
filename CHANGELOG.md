@@ -14,6 +14,8 @@ versions are the plugin's own, not dsh's.
 - 新 RPC/HTTP 路由由真实监听器测试覆盖；可选在线冒烟测试验证两个本地模拟模型的切换与明确思考强度、会话权限命令及门户文件夹浏览。
 
 ### Fixed
+- Wait for the workspace baseline before grouping native sessions, including after reconnect, so workspace chats never flash under Ungrouped. Pending-request banners now sit below navigation titles in both sidebar and chat.
+- 原生会话列表在初次连接及重连后均等待工作区基线到达再分组，避免工作区对话短暂出现在“未分组”；侧栏与聊天的待处理请求横幅现位于导航标题下方。
 - Refresh native chat options on presentation, including newly created conversations.
 - 打开原生聊天选项时自动刷新，新建会话无需手动刷新。
 - DRP now preserves gateway sign-in failure reasons, localizes client errors and the local-network permission prompt, and recovers approval-input loading after failures. Real-listener tests cover authentication, isolated logout and approval requests.

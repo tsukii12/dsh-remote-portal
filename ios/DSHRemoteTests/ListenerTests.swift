@@ -249,6 +249,7 @@ final class ListenerTests: XCTestCase {
         let directory = root(); let client = client(directory); let api = PortalAPI(base: base, client: client)
         defer { server.stop(); client.session.invalidateAndCancel(); try? FileManager.default.removeItem(at: directory) }
         let store = SidebarStore(api: api)
+        store.applyWorkspace(["type": "baseline", "value": ["items": []]])
         try await api.login(secret: "secret", pairing: false)
         let folders = try await store.folders(path: "/host/a b")
         let created = try await store.makeFolder(parent: "/host/a b", name: "new")

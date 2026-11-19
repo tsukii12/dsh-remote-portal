@@ -34,11 +34,21 @@ Chat supports live Markdown, expandable thinking, fenced code with copy/horizont
 - `PortalAPI`: RPC envelopes, login/logout, HTTP/business errors and session-expired state.
 - `PortalMux`: multiplexed logical AsyncThrowingStreams, unsubscribe/end/error, reconnect backoff and fresh stream openings. URLSession answers protocol pings automatically.
 - `NativeConnection`: owns a shared `RemoteEvents` stream and `SidebarStore`; call `start()`/`stop()` with screen lifecycle. Create chats with `chat(sessionID)` so they share that event generation.
-- `SidebarStore`: ordered workspace/session grouping, pinned/archive membership, live projections/status/activity and mutation actions.
+- `SidebarStore`: ordered workspace/session grouping, pinned/archive membership, live projections/status/activity and mutation actions. Grouping waits for the workspace baseline on first connection and reconnect; the sidebar shows a loading state until then. 初次连接与重连时等待工作区基线到达后再分组，期间显示加载状态，避免工作区会话闪现在“未分组”中。
 - `ChatStore`: snapshot/page/surface reducers, transient assistant blocks, compact stream expansion, paired tool results, optimistic request reconciliation, prompt/cancel/model actions. Call `start()`/`stop()` with chat lifecycle. `transcript` contains durable/optimistic items; `inProgress` is the separate transient assistant item.
 - `RemoteEvents`: pending approval/question requests, current clientId, cancellation and generation-safe answers. Approval decisions are `allowed-once`/`rejected`, not booleans on the wire.
 
 Sanitized `live-*.json` files in `DSHRemoteTests/Fixtures` are test-bundle resources. Reducer and transport-contract tests run offline by default.
+
+### Relay tool-output verification
+
+The real-relay `run tool` → **Allow once** capture contains a successful `ls` result with the literal text `(no output)` in `tool/result.data.message.content[0].text`. Its working folder contained only a hidden entry, so ordinary `ls` had nothing to print. A control session in a populated workspace returned its file listing through exactly the same field. The test model gave the same generic “The tool returned a result” response in both cases; that response does not establish nonempty stdout. No reducer change was needed.
+
+`live-relay-tool-results.json` retains the captured empty/nonempty tool-call and result shapes and output text, with identifiers/paths replaced and unrelated model replay metadata removed. The fixture test verifies exact output preservation and tool-call pairing. Credentials, cookies and relay addresses are not included.
+
+真实中继的 `run tool` → **Allow once** 抓包表明，成功执行的 `ls` 已在 `tool/result.data.message.content[0].text` 中返回字面值 `(no output)`。该工作文件夹仅有隐藏条目，普通 `ls` 因此没有输出；对照会话在有文件的工作区通过同一字段返回了文件列表。测试模型在两种情况下都回复相同的通用“工具已返回结果”文本，不能据此判断标准输出非空，无需修改归约器。
+
+`live-relay-tool-results.json` 保留两种抓包的调用、结果结构及输出文本，替换标识符与路径，并移除无关模型回放元数据；测试验证输出原样保留且正确关联工具调用，不含凭据、Cookie 或中继地址。
 
 ### Opt-in live smoke test
 

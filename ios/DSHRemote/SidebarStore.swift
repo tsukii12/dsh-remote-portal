@@ -45,6 +45,7 @@ final class SidebarStore: ObservableObject {
     private var tasks: [Task<Void, Never>] = []
     init(api: RPCServing) { self.api = api }
     var groups: [SessionGroup] {
+        guard loaded else { return [] }
         let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
         let foundIDs = Set(searchResults.compactMap { $0["sessionId"].string })
         let visible = sessions.values.filter {
@@ -123,7 +124,7 @@ final class SidebarStore: ObservableObject {
             })
         }
     }
-    func stop() { tasks.forEach { $0.cancel() }; tasks = [] }
+    func stop() { tasks.forEach { $0.cancel() }; tasks = []; loaded = false }
     func createSession(workspaceID: String? = nil, cwd: String? = nil) async throws -> String {
         var request: JSON = ["agentPreset": "standard"]
         if let workspaceID { request["workspaceId"] = .string(workspaceID) }

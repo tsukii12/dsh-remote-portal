@@ -44,18 +44,21 @@ struct WorkspaceView: View {
         NavigationSplitView(columnVisibility: $visibility, preferredCompactColumn: $compactColumn) {
             SidebarView(store: sidebar, events: events, selection: selection, serverName: serverName, addressLabel: addressLabel, onSelect: { selection = $0; compactColumn = .detail }, onReview: review, onCreate: create, onSwitch: onSwitch, onLogout: onLogout)
                 .navigationSplitViewColumnWidth(min: 250, ideal: 290, max: 360)
+                .safeAreaInset(edge: .top, spacing: 0) { pendingBanner }
         } detail: {
-            if let selection {
-                ChatView(chat: connection.chat(selection), title: sidebar.sessions[selection]?.title ?? L("New chat", "新对话"))
-                    .id(selection)
-            } else {
-                VStack(spacing: 20) {
-                    Image(systemName: "sparkle").font(.system(size: 42)).foregroundStyle(DRPStyle.accent)
-                    Text(L("What can we work on?", "今天一起做点什么？")).font(.title2.bold())
-                    Text(L("Choose a conversation or start a new chat.", "选择对话，或开始新的聊天。")).foregroundStyle(.secondary)
-                    Button(L("New chat", "新对话")) { create(sidebar.workspaces.first?.id) }.buttonStyle(.borderedProminent)
-                }.padding().frame(maxWidth: .infinity, maxHeight: .infinity).navigationTitle("DRP")
-            }
+            Group {
+                if let selection {
+                    ChatView(chat: connection.chat(selection), title: sidebar.sessions[selection]?.title ?? L("New chat", "新对话"))
+                        .id(selection)
+                } else {
+                    VStack(spacing: 20) {
+                        Image(systemName: "sparkle").font(.system(size: 42)).foregroundStyle(DRPStyle.accent)
+                        Text(L("What can we work on?", "今天一起做点什么？")).font(.title2.bold())
+                        Text(L("Choose a conversation or start a new chat.", "选择对话，或开始新的聊天。")).foregroundStyle(.secondary)
+                        Button(L("New chat", "新对话")) { create(sidebar.workspaces.first?.id) }.buttonStyle(.borderedProminent)
+                    }.padding().frame(maxWidth: .infinity, maxHeight: .infinity).navigationTitle("DRP")
+                }
+            }.safeAreaInset(edge: .top, spacing: 0) { pendingBanner }
         }
         .navigationSplitViewStyle(.balanced)
         .safeAreaInset(edge: .top, spacing: 0) {
@@ -63,12 +66,6 @@ struct WorkspaceView: View {
                 StatusBanner(message: hasConnected ? L("Connection lost. Reconnecting…", "连接已断开，正在重新连接…") : L("Connecting…", "正在连接…"), reconnecting: true)
             }
             if let actionError { StatusBanner(message: actionError, dismiss: { self.actionError = nil }) }
-            if let item = events.pending.first {
-                Button { review(item) } label: {
-                    Label(InteractionRouting.label(events.pending), systemImage: "exclamationmark.bubble")
-                        .font(.subheadline).frame(maxWidth: .infinity).padding(12)
-                }.background(DRPStyle.accent.opacity(0.1))
-            }
         }
         .onChange(of: events.clientID, initial: true) { _, id in if id != nil { hasConnected = true } }
         .onChange(of: events.pending, initial: true) { _, pending in interactions.reconcile(pending, openSessionID: selection) }
@@ -76,6 +73,14 @@ struct WorkspaceView: View {
         .sheet(item: Binding(get: { events.pending.first { $0.id == interactions.presentedID } }, set: { if $0 == nil { interactions.dismiss() } })) { item in
             InteractionSheet(events: events, api: connection.api, item: item, sessionTitle: sidebar.sessions[item.agentID]?.title ?? L("Conversation", "对话"))
                 .id(item.id)
+        }
+    }
+    @ViewBuilder private var pendingBanner: some View {
+        if let item = events.pending.first {
+            Button { review(item) } label: {
+                Label(InteractionRouting.label(events.pending), systemImage: "exclamationmark.bubble")
+                    .font(.subheadline).frame(maxWidth: .infinity).padding(12)
+            }.background(DRPStyle.accent.opacity(0.1)).background(.background)
         }
     }
     private func review(_ item: PendingInteraction) {
@@ -114,6 +119,9 @@ private struct SidebarView: View {
     var body: some View {
         List {
             if let actionError { StatusBanner(message: actionError, dismiss: { self.actionError = nil }).listRowInsets(EdgeInsets()) }
+            if !store.loaded {
+                HStack { Spacer(); ProgressView(L("Loading conversations…", "正在加载对话…")); Spacer() }
+            }
             ForEach(store.groups) { group in
                 if !group.sessions.isEmpty || !["pinned", "ungrouped"].contains(group.id) {
                     Section {

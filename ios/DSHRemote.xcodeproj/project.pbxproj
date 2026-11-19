@@ -17,6 +17,7 @@
 		30D52C9256F11802C1363A73 /* NativeStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC57A9E7125C1C7B7B1EBDF /* NativeStateTests.swift */; };
 		3476C850442F28B38BF77F00 /* PortalAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BDA4C515BC90EC918160FC7 /* PortalAPI.swift */; };
 		440948480E97A6A77AA0AB04 /* LiveSmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBF0DBBE82516D32040AE0D /* LiveSmokeTests.swift */; };
+		463E24E655BF43EF13E4FACC /* live-relay-tool-results.json in Resources */ = {isa = PBXBuildFile; fileRef = 4886DB0D6BB0C99F588495C8 /* live-relay-tool-results.json */; };
 		5A84AA8A6A5C7D3A66EF0330 /* live-session-create.json in Resources */ = {isa = PBXBuildFile; fileRef = 973DED5D475F8B79FE989954 /* live-session-create.json */; };
 		660B34C92A2416C5F3BC0CBC /* live-workspace-stream.json in Resources */ = {isa = PBXBuildFile; fileRef = A802E3426AD81E789CF18C84 /* live-workspace-stream.json */; };
 		682CF7AA9D40EEDEF5605417 /* InteractionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 695031F55C568529A75E26AD /* InteractionSheet.swift */; };
@@ -57,6 +58,7 @@
 		12D941C7E4498470F35A8489 /* live-model-catalog.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "live-model-catalog.json"; sourceTree = "<group>"; };
 		1FBF0DBBE82516D32040AE0D /* LiveSmokeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveSmokeTests.swift; sourceTree = "<group>"; };
 		2D80301D5FBB4C69FB8FA95D /* ConnectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionTests.swift; sourceTree = "<group>"; };
+		4886DB0D6BB0C99F588495C8 /* live-relay-tool-results.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "live-relay-tool-results.json"; sourceTree = "<group>"; };
 		4FC57A9E7125C1C7B7B1EBDF /* NativeStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeStateTests.swift; sourceTree = "<group>"; };
 		51E31BD29E3CF1DDCFBCB0A0 /* TransportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransportTests.swift; sourceTree = "<group>"; };
 		534EF24D99DA04F0ABBB33D4 /* WorkspaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceView.swift; sourceTree = "<group>"; };
@@ -144,6 +146,7 @@
 				EAB6DADADE845E2267928140 /* live-hello-prompt-request.json */,
 				B7F63A0D8CEB2C235E3FA3D0 /* live-hello-stream.json */,
 				12D941C7E4498470F35A8489 /* live-model-catalog.json */,
+				4886DB0D6BB0C99F588495C8 /* live-relay-tool-results.json */,
 				973DED5D475F8B79FE989954 /* live-session-create.json */,
 				F47AEBC220E3699A87934461 /* live-stream-all.json */,
 				A802E3426AD81E789CF18C84 /* live-workspace-stream.json */,
@@ -241,6 +244,7 @@
 				963126DBDA1CC342DBB60A9D /* live-hello-prompt-request.json in Resources */,
 				7D7A53CD2468EAB23563F035 /* live-hello-stream.json in Resources */,
 				C749EFF01CA2D46037481757 /* live-model-catalog.json in Resources */,
+				463E24E655BF43EF13E4FACC /* live-relay-tool-results.json in Resources */,
 				5A84AA8A6A5C7D3A66EF0330 /* live-session-create.json in Resources */,
 				0C1263A9F581026D3ADE67A8 /* live-stream-all.json in Resources */,
 				660B34C92A2416C5F3BC0CBC /* live-workspace-stream.json in Resources */,

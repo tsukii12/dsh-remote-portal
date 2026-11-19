@@ -1,4 +1,5 @@
 import XCTest
+import Combine
 @testable import DSHRemote
 
 @MainActor
@@ -126,6 +127,27 @@ final class NativeStateTests: XCTestCase {
         chat.apply(try snapshot("live-approval-events"))
         XCTAssertEqual(chat.transcript, before)
     }
+    func testCapturedRelayToolResultsPreserveHostOutput() throws {
+        let capture = try fixture("live-relay-tool-results")
+        for name in ["empty", "nonempty"] {
+            var page = capture[name]
+            page["type"] = "snapshot"
+            let chat = ChatStore(sessionID: "S", api: StubAPI())
+            chat.apply(page)
+            let call = try XCTUnwrap(chat.transcript.flatMap(\.blocks).first { $0.kind == "tool-call" })
+            let result = try XCTUnwrap(call.result)
+            let captured = try XCTUnwrap(page["records"].array.last?["event"]["data"])
+            XCTAssertEqual(result, captured)
+            XCTAssertEqual(ToolPresentation.summary(call.arguments), "ls")
+            XCTAssertFalse(result["message"]["isError"].boolean)
+            let output = ToolPresentation.result(result)
+            XCTAssertEqual(output, captured["message"]["content"].array.first?["text"].text)
+            if name == "empty" { XCTAssertEqual(output, "(no output)") }
+            else { XCTAssertTrue(output.contains("README.md\n")) }
+            XCTAssertEqual(chat.transcript.count, 1)
+            XCTAssertFalse(chat.transcript.contains { $0.role == "tool" })
+        }
+    }
     func testLiveChunksCommitAndOptimisticReconciliation() throws {
         let chat = ChatStore(sessionID: "S", api: StubAPI())
         let requestID = try fixture("live-hello-prompt-request")["payload"]["args"]["request"]["requestId"].text
@@ -192,6 +214,53 @@ final class NativeStateTests: XCTestCase {
         events.apply(["type": "connection-reset"])
         XCTAssertNil(events.clientID)
         do { try await events.answerApproval("E", allow: false); XCTFail("Stale approval answered") } catch { XCTAssertEqual(error as? APIError, .disconnected) }
+    }
+    func testWorkspaceGroupingWaitsForInitialAndReconnectBaselines() {
+        let store = SidebarStore(api: StubAPI())
+        var misplacedWorkspaceSession = false
+        let observation = store.objectWillChange.sink {
+            if store.groups.contains(where: { $0.id == "ungrouped" && $0.sessions.contains { $0.id == "A" } }) {
+                misplacedWorkspaceSession = true
+            }
+        }
+        defer { observation.cancel() }
+        store.applySessions(["items": [["sessionId": "A"], ["sessionId": "B"]]])
+        XCTAssertFalse(store.loaded)
+        XCTAssertTrue(store.groups.isEmpty)
+        store.applyEvent(["type": "emit", "event": "api-session/added", "args": [["sessionId": "C"]]])
+        XCTAssertTrue(store.groups.isEmpty)
+        store.applyWorkspace(["type": "baseline", "value": ["items": [["workspaceId": "W", "title": "Workspace", "sessionIds": ["A"]]], "pinnedSessionIds": ["B"], "archivedSessionIds": ["C"]]])
+        XCTAssertTrue(store.loaded)
+        XCTAssertEqual(store.groups.first { $0.id == "W" }?.sessions.map(\.id), ["A"])
+        XCTAssertEqual(store.groups.first?.sessions.map(\.id), ["B"])
+        XCTAssertTrue(store.groups.last!.sessions.isEmpty)
+        store.applyWorkspace(["type": "connection-reset"])
+        XCTAssertFalse(store.loaded)
+        XCTAssertTrue(store.groups.isEmpty)
+        store.applySessions(["items": [["sessionId": "A"], ["sessionId": "B"], ["sessionId": "C"], ["sessionId": "D"]]])
+        store.applyWorkspace(["type": "upsert", "workspace": ["workspaceId": "W2", "title": "Second", "sessionIds": ["A", "D"]]])
+        XCTAssertTrue(store.groups.isEmpty)
+        store.applyWorkspace(["type": "baseline", "value": ["items": [["workspaceId": "W2", "title": "Second", "sessionIds": ["A", "D"]]], "pinnedSessionIds": ["B"], "archivedSessionIds": ["C"]]])
+        XCTAssertEqual(store.groups.first { $0.id == "W2" }?.sessions.map(\.id), ["A", "D"])
+        XCTAssertTrue(store.groups.last!.sessions.isEmpty)
+        XCTAssertFalse(misplacedWorkspaceSession)
+        store.stop()
+        XCTAssertFalse(store.loaded)
+        XCTAssertTrue(store.groups.isEmpty)
+    }
+    func testWorkspaceEmptyBaselineAndBaselineBeforeSessions() {
+        let store = SidebarStore(api: StubAPI())
+        store.applyWorkspace(["type": "baseline", "value": ["items": []]])
+        XCTAssertTrue(store.loaded)
+        XCTAssertTrue(store.groups.allSatisfy { $0.sessions.isEmpty })
+        store.applySessions(["items": [["sessionId": "A"]]])
+        XCTAssertEqual(store.groups.last?.sessions.map(\.id), ["A"])
+        store.applyWorkspace(["type": "connection-reset"])
+        XCTAssertTrue(store.groups.isEmpty)
+        store.applyWorkspace(["type": "baseline", "value": ["items": [["workspaceId": "W", "sessionIds": ["A"]]]]])
+        store.applySessions(["items": [["sessionId": "A"], ["sessionId": "B"]]])
+        XCTAssertEqual(store.groups.first { $0.id == "W" }?.sessions.map(\.id), ["A"])
+        XCTAssertEqual(store.groups.last?.sessions.map(\.id), ["B"])
     }
     func testWorkspaceBaselineDeltasAndGrouping() throws {
         let store = SidebarStore(api: StubAPI())

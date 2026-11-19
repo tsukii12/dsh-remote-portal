@@ -1,0 +1,92 @@
+{
+  "empty": {
+    "records": [
+      {
+        "event": {
+          "seq": 33,
+          "type": "assistant/message",
+          "data": {
+            "turn": 3,
+            "step": 1,
+            "message": {
+              "role": "assistant",
+              "id": "assistant-message",
+              "content": [
+                {
+                  "type": "tool-call",
+                  "id": "relay-call",
+                  "name": "bash",
+                  "arguments": "{\"command\":\"ls\",\"description\":\"List files in the current workspace\",\"sandbox_permissions\":\"danger-full-access\",\"justification\":\"Request approval to test the approval prompt with a read-only ls command.\"}"
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "event": {
+          "seq": 39,
+          "type": "tool/result",
+          "data": {
+            "turn": 3,
+            "step": 1,
+            "message": {
+              "role": "tool",
+              "source": { "kind": "tool", "callId": "relay-call" },
+              "toolCallId": "relay-call",
+              "content": [{ "type": "text", "text": "(no output)" }],
+              "isError": false,
+              "id": "tool-result-message"
+            },
+            "meta": { "cwd": "/workspace/empty" }
+          }
+        }
+      }
+    ]
+  },
+  "nonempty": {
+    "records": [
+      {
+        "event": {
+          "seq": 25,
+          "type": "assistant/message",
+          "data": {
+            "turn": 2,
+            "step": 1,
+            "message": {
+              "role": "assistant",
+              "id": "assistant-message",
+              "content": [
+                {
+                  "type": "tool-call",
+                  "id": "relay-call",
+                  "name": "bash",
+                  "arguments": "{\"command\":\"ls\",\"description\":\"List files in the current workspace\",\"sandbox_permissions\":\"danger-full-access\",\"justification\":\"Request approval to test the approval prompt with a read-only ls command.\"}"
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "event": {
+          "seq": 31,
+          "type": "tool/result",
+          "data": {
+            "turn": 2,
+            "step": 1,
+            "message": {
+              "role": "tool",
+              "source": { "kind": "tool", "callId": "relay-call" },
+              "toolCallId": "relay-call",
+              "content": [{ "type": "text", "text": "ARCHITECTURE.md\nCHANGELOG.md\nCONTRIBUTING.md\nLICENSE\nREADME.en.md\nREADME.md\nSECURITY.md\nassets\nclient.js\ncordis.patch.yml\ndocs\nicon.svg\nindex.js\ninstall.ps1\ninstall.sh\nlib\nlocale\npackage.json\ntest\ntools\n" }],
+              "isError": false,
+              "id": "tool-result-message"
+            },
+            "meta": { "cwd": "/workspace/nonempty" }
+          }
+        }
+      }
+    ]
+  }
+}
