@@ -164,7 +164,9 @@ struct ConnectionView: View {
                             HStack { Image(systemName: "sparkle").font(.title); Text("DeepSeek").font(.title2.bold()); Text("HARNESS").font(.caption.bold()).padding(6).background(.quaternary, in: RoundedRectangle(cornerRadius: 5)) }
                             Text(L("REMOTE ACCESS", "远程访问")).font(.caption).foregroundStyle(.secondary)
                             Text(L("Verify this device", "验证这台设备")).font(.largeTitle.bold())
-                            Text(L("This device is reaching DeepSeek Harness on your computer. Enter the access password to continue.", "这台设备正在访问你电脑上的 DeepSeek Harness。输入访问密码即可进入工作区。")).foregroundStyle(.secondary)
+                            Text(pairing
+                                 ? L("Enter the pairing code generated on your computer to connect this device to DeepSeek Harness.", "输入在电脑端生成的配对码，将这台设备接入 DeepSeek Harness。")
+                                 : L("This device is reaching DeepSeek Harness on your computer. Enter the access password to continue.", "这台设备正在访问你电脑上的 DeepSeek Harness。输入访问密码即可进入工作区。")).foregroundStyle(.secondary)
                             Picker(L("Sign in with", "登录方式"), selection: $pairing) {
                                 Text(L("Password", "密码")).tag(false)
                                 Text(L("Pairing code", "配对码")).tag(true)
