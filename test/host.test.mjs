@@ -1539,3 +1539,26 @@ test("without a live session a pairing link is refused and locked out as before"
   const locked = await login(port, "correct horse battery");
   assert.equal(locked.response.status, 429, "five refused codes must lock the address as before");
 });
+
+test("the login page links the home-screen manifest, and the manifest follows the relay prefix", async (t) => {
+  // A phone adding the sign-in page to its home screen got a generic name and
+  // icon; through the relay the start page must stay inside the tunnel.
+  const { gw } = await startPortal();
+  t.after(() => gw.stop?.());
+  await gw.setPassword("correct horse battery");
+  await gw.start();
+  const port = gw.status().port;
+  const mounted = { "x-forwarded-prefix": "/__t/abc123" };
+
+  const page = await request(port, "/", { headers: { accept: "text/html", ...mounted } });
+  assert.match(page.body, /<link rel="manifest" href="__portal\/manifest\.webmanifest">/);
+  assert.match(page.body, /<link rel="apple-touch-icon" href="__portal\/icon\.svg">/);
+
+  const viaRelay = JSON.parse((await request(port, "/__portal/manifest.webmanifest", { headers: mounted })).body);
+  assert.equal(viaRelay.start_url, "/__t/abc123/");
+  assert.equal(viaRelay.scope, "/__t/abc123/");
+  for (const icon of viaRelay.icons) assert.ok(icon.src.startsWith("/__t/abc123/"), icon.src);
+
+  const direct = JSON.parse((await request(port, "/__portal/manifest.webmanifest")).body);
+  assert.equal(direct.start_url, "/");
+});
