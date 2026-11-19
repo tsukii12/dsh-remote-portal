@@ -81,14 +81,22 @@ dsh plugin --profile desktop add \
 
 ## 更新
 
-**先移除，再安装：**
+**用 `install.sh` / `install.ps1` 装的**（插件指向你的 checkout）：
+
+```bash
+cd dsh-remote-portal && git pull
+```
+
+然后重启 dsh，不用重新安装。
+
+**用 `dsh plugin add` 装的：先移除，再安装：**
 
 ```bash
 dsh plugin --profile desktop remove dsh-remote-portal
 dsh plugin --profile desktop add    https://github.com/tsukii12/dsh-remote-portal
 ```
 
-Web端把 `--profile desktop` 换成 `--profile web`。
+Web端把 `--profile desktop` 换成 `--profile web`。`dsh plugin` 需要 PATH 上有 pnpm（报 “pnpm was not found” 时先 `npm install -g pnpm`）。
 
 更新后**必须重启 dsh**：宿主侧代码（`index.js`、`lib/*`）只在启动时加载，光刷新页面只换到客户端一半。
 

@@ -111,6 +111,8 @@ window.__ModuleLoader__.load({
         swEnableNote: "关闭后门户立即停止监听，所有手机连接断开。",
         enabledOn: "已启用远程访问",
         enabledOff: "已关闭远程访问",
+        offConfirm: "这台设备正通过远程访问连接。关闭后它会立刻断开，之后只能在电脑上重新打开。确定关闭？",
+        offHere: "远程访问已关闭，这台设备已断开。请在电脑上的 dsh 里重新打开远程访问。",
         host: "监听地址",
         port: "端口",
         save: "保存",
@@ -146,6 +148,11 @@ window.__ModuleLoader__.load({
         pickNewHint: "文件夹名称",
         pickCreate: "创建",
         pickExists: "同名文件夹已存在。",
+        pickBadName: "文件夹名称无效：不能为空，也不能包含 / 或 \\。",
+        pickMkdirCode: "无法在这里新建文件夹（{code}）。",
+        pickNotFound: "这个文件夹不存在或已被移走。",
+        pickNotDir: "这不是一个文件夹。",
+        pwLong: "密码太长了，最多 200 位。",
         pickMkdirFailed: "创建文件夹失败，请检查名称或权限。",
         cancel: "取消",
 
@@ -245,6 +252,8 @@ window.__ModuleLoader__.load({
         swEnableNote: "Turning this off stops the listener immediately and drops every phone connection.",
         enabledOn: "Remote access enabled",
         enabledOff: "Remote access disabled",
+        offConfirm: "This device is connected through remote access. Turning it off disconnects it right away, and only the PC can turn it back on. Turn it off?",
+        offHere: "Remote access is off and this device is disconnected. Turn it back on in dsh on the PC.",
         host: "Bind address",
         port: "Port",
         save: "Save",
@@ -280,6 +289,11 @@ window.__ModuleLoader__.load({
         pickNewHint: "Folder name",
         pickCreate: "Create",
         pickExists: "A folder with that name already exists.",
+        pickBadName: "Invalid folder name: it can't be empty or contain / or \\.",
+        pickMkdirCode: "Can't create a folder here ({code}).",
+        pickNotFound: "That folder doesn't exist or was moved.",
+        pickNotDir: "That is not a folder.",
+        pwLong: "That password is too long; 200 characters at most.",
         pickMkdirFailed: "Could not create the folder — check the name or permissions.",
         cancel: "Cancel",
 
@@ -374,6 +388,7 @@ window.__ModuleLoader__.load({
       var raw = String(text || "");
       if (/password must be set|needs-password/i.test(raw)) return t("errNeedsPassword");
       if (/EADDRINUSE|already in use|已被占用/i.test(raw)) return t("errPortBusy");
+      if (/password is too long/i.test(raw)) return t("pwLong");
       return raw;
     }
 
@@ -1154,6 +1169,11 @@ window.__ModuleLoader__.load({
     }
 
     /** @returns {Promise<string|null>} an absolute path on this host, or null. */
+    /** This page reached dsh through the portal (a phone), not on the PC itself. */
+    function viaPortal() {
+      try { return /(?:^|;\s*)dsh_portal_client=1(?:;|$)/.test(document.cookie || ""); } catch (e) { return false; }
+    }
+
     function openPicker() {
       if (pickerState.open) return Promise.resolve(null);
       return new Promise(function (resolve) {
@@ -1314,7 +1334,9 @@ window.__ModuleLoader__.load({
         var sameStatus = false;
         try { sameStatus = JSON.stringify(next) === JSON.stringify(stRef.current.status); } catch (e) { sameStatus = false; }
         if (sameStatus && !stRef.current.pollErr && stRef.current.loaded) return;
-        patch({ status: next, pollErr: null, loaded: true });
+        var fresh = { status: next, pollErr: null, loaded: true };
+        if (next && next.enabled) fresh.selfOff = false; // turned back on from the PC
+        patch(fresh);
         // The QR card is only useful once the gateway listens; mint the first
         // pairing code without asking (the card otherwise has nothing to show).
         if (!pairOnce.current && next.running) {
@@ -1482,9 +1504,19 @@ window.__ModuleLoader__.load({
         var s = st.status;
         if (!s || st.busy) return;
         var next = !s.enabled;
+        // From a phone, switching off cuts the very connection the phone is on.
+        var remote = !next && viaPortal();
+        if (remote) {
+          var sure = true;
+          try { sure = window.confirm(t("offConfirm")); } catch (e) { sure = true; }
+          if (!sure) return;
+        }
         patch({ busy: "cfg" });
         api(BASE + "/config", { method: "POST", body: { enabled: next } }).then(function (r) {
           patch({ busy: "" });
+          // Over the relay the tunnel closes under the forwarded request: 502. A 503
+          // means the relay never forwarded it, so remote access is still on.
+          if (remote && (r.ok || r.status === 0 || r.status === 502)) { patch({ selfOff: true }); return; }
           if (!r.ok) { flash("err", r.error); return; }
           var n = normalizeStatus(r.data);
           if (n) applyStatus(n); else refreshStatus();
@@ -1518,7 +1550,7 @@ window.__ModuleLoader__.load({
         patch({ busy: "pw" });
         api(BASE + "/password", { method: "POST", body: { password: pw } }).then(function (r) {
           patch({ busy: "" });
-          if (!r.ok) { flash("err", r.error); return; }
+          if (!r.ok) { flash("err", friendlyError(r.error)); return; }
           patch({ pwd: "", showPwd: false });
           flash("ok", t("pwOk"));
           refreshStatus();
@@ -1576,7 +1608,11 @@ window.__ModuleLoader__.load({
         && /password/i.test(String(status.lastError));
 
       var alerts = [];
-      if (st.pollErr && !status) {
+      if (st.selfOff) {
+        alerts.push(h("div", { className: "drp-alert drp-alert-err", role: "alert", key: "selfOff" },
+          h(Icon, { name: "alert", size: 14 }),
+          h("div", null, t("offHere"))));
+      } else if (st.pollErr && !status) {
         alerts.push(h("div", { className: "drp-alert drp-alert-err", role: "alert", key: "poll" },
           h(Icon, { name: "alert", size: 14 }),
           h("div", null,
@@ -1691,8 +1727,8 @@ window.__ModuleLoader__.load({
             h("div", { className: "drp-toggle-title" }, t("swEnable")),
             h("div", { className: "drp-toggle-note" }, t("swEnableNote"))),
           h(Toggle, {
-            checked: !!(status && status.enabled),
-            disabled: !!busy,
+            checked: !st.selfOff && !!(status && status.enabled),
+            disabled: !!busy || !!st.selfOff,
             label: t("swEnable"),
             onClick: onToggleEnabled
           })),
@@ -2028,7 +2064,13 @@ window.__ModuleLoader__.load({
     function pickError(r, fallbackKey) {
       var message = r && typeof r.error === "string" && r.error !== "" ? r.error : "";
       if (!message && r && r.data && typeof r.data.error === "string") message = r.data.error;
-      if (r && r.data && r.data.code === "exists") return t("pickExists");
+      var code = r && r.data && r.data.code;
+      if (code === "exists") return t("pickExists");
+      if (code === "bad-name") return t("pickBadName");
+      if (code === "mkdir-failed") return t("pickMkdirCode", { code: String(message).replace(/^.*:\s*/, "") || "error" });
+      if (code === "not-found" || code === "bad-path") return t("pickNotFound");
+      if (code === "not-a-directory") return t("pickNotDir");
+      if (code === "password-too-long") return t("pwLong");
       if (!message && r && r.status === 404) message = t("pickHostOld");
       if (!message) message = t(fallbackKey || "network");
       return friendlyError(message);

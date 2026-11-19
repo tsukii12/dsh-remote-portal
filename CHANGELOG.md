@@ -30,6 +30,21 @@ versions are the plugin's own, not dsh's.
   name/content search and unarchive, and host-folder workspace management.
   Includes bilingual controls and JVM RPC/projection/failure coverage.
 
+- Folder picker and password: the host's errors for an invalid folder name, a
+  folder that can't be created, a missing folder, a file instead of a folder,
+  and a password over 200 characters now show in the panel's language instead
+  of raw English ("invalid folder name", "cannot create folder: EACCES", ...).
+- README: the update steps now cover installs made with `install.sh` /
+  `install.ps1` (`git pull` in the checkout, then restart), and say that
+  `dsh plugin` needs pnpm on PATH.
+- `install.sh` with no `-p` no longer stops at a missing desktop profile on a
+  server that only runs dsh web: it skips profiles that don't exist and installs
+  into the rest, and fails only if there are none. The installers' closing hint
+  now points to Remote access in the sidebar, not Settings.
+- Remote access on a phone: switching remote access off from the phone now
+  asks first, because it cuts that phone's own connection. Afterwards the panel
+  says the phone is disconnected and only the PC can turn it back on, instead
+  of a generic "cannot reach the portal" error with the switch still on.
 - Pairing: a phone that is already signed in and opens its pairing link again
   (scans the QR twice, or the browser restores the tab) goes straight into the
   app. It used to get "invalid or already used", and each try counted toward
@@ -1201,7 +1216,6 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
-
 
 
 

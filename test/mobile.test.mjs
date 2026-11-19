@@ -915,6 +915,54 @@ describe("mobile layer against the live dsh web UI", () => {
     assert.ok(out.scrollW <= w, "page overflows horizontally: " + out.scrollW);
   });
 
+  // A phone turning remote access off cuts its own connection: it must be
+  // asked first, and afterwards see that only the PC can turn it back on.
+  test("turning remote access off from a phone asks first and then says the phone is disconnected", async (t) => {
+    if (skipReason) return t.skip(skipReason);
+    const expr = `(async () => {
+      const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+      const cfg = (body) => fetch('/dsh-remote-portal/config', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }).then((r) => r.json());
+      const enabled = async () => (await (await fetch('/dsh-remote-portal/status')).json()).status.enabled;
+      await cfg({ enabled: true });
+      document.querySelector('.drp-drawer-btn').click();
+      await sleep(600);
+      [...document.querySelectorAll('[data-slot="sidebar"] button')]
+        .find((b) => /^(Remote access|远程访问)$/.test((b.getAttribute('aria-label') || b.textContent).trim())).click();
+      await sleep(2000);
+      const sw = () => document.querySelector('[data-slot="main"] [role="switch"]');
+      const alerts = () => [...document.querySelectorAll('[data-slot="main"] [role="alert"]')].map((a) => a.textContent.trim());
+      document.cookie = 'dsh_portal_client=1; path=/';
+      let asked = '';
+      window.confirm = (m) => { asked = m; return false; };
+      sw().click();
+      await sleep(1500);
+      const declined = { asked: !!asked, enabled: await enabled(), checked: sw().getAttribute('aria-checked') };
+      asked = '';
+      window.confirm = (m) => { asked = m; return true; };
+      sw().click();
+      await sleep(2500);
+      const accepted = { asked: !!asked, checked: sw().getAttribute('aria-checked'), alerts: alerts() };
+      document.cookie = 'dsh_portal_client=; path=/; max-age=0';
+      await cfg({ enabled: true });
+      await sleep(4500);
+      const back = { checked: sw().getAttribute('aria-checked'), alerts: alerts() };
+      return JSON.stringify({ declined, accepted, back });
+    })()`;
+    const { code, stdout, stderr } = await runCdp([
+      "eval", BASE, expr, "--token", TOKEN_URL, "--wait", "4000",
+      "--w", "390", "--h", "844", "--mobile", "--pre-file", join(tmp, "pre.js"), "--settle", "1200",
+    ]);
+    assert.equal(code, 0, "cdp run failed: " + stderr.slice(-800));
+    const out = JSON.parse(stdout.trim().split("\n").filter((l) => l.trim().startsWith("{")).pop());
+    assert.equal(out.declined.asked, true, "a phone must be asked before switching remote access off");
+    assert.equal(out.declined.enabled, true, "declining must leave remote access on");
+    assert.equal(out.accepted.checked, "false", "the switch must show off once it went through");
+    assert.ok(out.accepted.alerts.some((a) => /PC|电脑/.test(a)), "the phone must be told only the PC can turn it back on: " + JSON.stringify(out.accepted.alerts));
+    assert.equal(out.accepted.alerts.length, 1, "no generic connection error next to it: " + JSON.stringify(out.accepted.alerts));
+    assert.equal(out.back.checked, "true", "turned back on from the PC, the panel follows");
+    assert.ok(!out.back.alerts.some((a) => /PC|电脑/.test(a)), "the disconnected notice must clear");
+  });
+
   test("a slow /status link never has two polls open at once", async (t) => {
     if (skipReason) return t.skip(skipReason);
     // Every /status answer is held back 5 s, as on a slow relay. A fixed 3 s
