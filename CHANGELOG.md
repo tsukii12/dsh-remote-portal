@@ -5,6 +5,12 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+- Public access: a relay entered as a bare `address:port` (as the panel
+  suggests) now connects when the relay speaks plain TCP. The fallback from
+  TLS reconnected in plain TCP but waited for a TLS handshake that never came,
+  so the panel showed 连接中 / "Connecting" with `ECONNRESET` forever. The
+  reported endpoint now names the transport actually in use, and an
+  earlier connection error no longer stays on screen once the tunnel is online.
 - Load the portal's presentation assets through the tunnel prefix without
   duplicate fallback fetches. Browsers and the relay can reuse content-versioned
   public assets without caching authenticated dsh responses.

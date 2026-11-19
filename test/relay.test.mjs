@@ -795,3 +795,19 @@ for (const [name, framing, peer] of [
 
 
 
+
+test("a bare address:port falls back to a plain-TCP relay and comes online", { timeout: 20000 }, async () => {
+  const token = "bare-address-token-0123456789";
+  const { agentPort } = await startRelay([token]);
+  const tunnel = createTunnel({
+    url: `127.0.0.1:${agentPort}`,
+    token,
+    targetPort: () => 9,
+    log: quiet,
+  });
+  cleanups.push(() => tunnel.stop());
+  await tunnel.start();
+  await waitFor(() => tunnel.status().status === "online", { label: "tunnel online after the TLS attempt fails", timeoutMs: 15000 });
+  assert.equal(tunnel.status().endpoint, `tcp://127.0.0.1:${agentPort}`);
+  assert.equal(tunnel.status().lastError, null, "the failed TLS attempt must not linger once online");
+});
