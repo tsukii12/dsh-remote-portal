@@ -1517,7 +1517,7 @@ window.__ModuleLoader__.load({
           // Over the relay the tunnel closes under the forwarded request: 502. A 503
           // means the relay never forwarded it, so remote access is still on.
           if (remote && (r.ok || r.status === 0 || r.status === 502)) { patch({ selfOff: true }); return; }
-          if (!r.ok) { flash("err", friendlyError(r.error)); return; }
+          if (!r.ok) { flash("err", r.error); return; }
           var n = normalizeStatus(r.data);
           if (n) applyStatus(n); else refreshStatus();
           flash("ok", next ? t("enabledOn") : t("enabledOff"));
@@ -1550,7 +1550,7 @@ window.__ModuleLoader__.load({
         patch({ busy: "pw" });
         api(BASE + "/password", { method: "POST", body: { password: pw } }).then(function (r) {
           patch({ busy: "" });
-          if (!r.ok) { flash("err", r.error); return; }
+          if (!r.ok) { flash("err", friendlyError(r.error)); return; }
           patch({ pwd: "", showPwd: false });
           flash("ok", t("pwOk"));
           refreshStatus();
