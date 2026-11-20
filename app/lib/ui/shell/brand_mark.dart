@@ -35,7 +35,7 @@ class BrandLockup extends StatelessWidget {
   final String label;
   final Color? color;
   final Color? glyphColor;
-  static const glyphScale = 1.25;
+  static const glyphScale = 1.75;
   static const gapScale = 0.36;
   static double wordInset(double size) => size * (glyphScale + gapScale);
   @override
