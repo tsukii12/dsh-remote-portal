@@ -1,0 +1,403 @@
+{
+  "v": 1,
+  "generation": "11111111-1111-4111-8111-111111111111",
+  "cases": [
+    {
+      "name": "test success counts unknown",
+      "valid": true,
+      "source": {
+        "sessionId": "s-a",
+        "turn": 1,
+        "step": 1,
+        "callId": "call-a",
+        "seq": 4
+      },
+      "metadata": {
+        "v": 1,
+        "runId": "call-a",
+        "runKind": "test",
+        "result": "succeeded",
+        "exitCode": 0,
+        "durationMs": 11,
+        "passed": null,
+        "failed": null,
+        "skipped": null
+      }
+    },
+    {
+      "name": "failed exact nonzero",
+      "valid": true,
+      "source": {
+        "sessionId": "s-a",
+        "turn": 1,
+        "step": 1,
+        "callId": "call-a",
+        "seq": 4
+      },
+      "metadata": {
+        "v": 1,
+        "runId": "call-a",
+        "runKind": "test",
+        "result": "failed",
+        "exitCode": 2,
+        "durationMs": 11,
+        "passed": null,
+        "failed": null,
+        "skipped": null
+      }
+    },
+    {
+      "name": "command unknown",
+      "valid": true,
+      "source": {
+        "sessionId": "s-a",
+        "turn": 1,
+        "step": 1,
+        "callId": "call-a",
+        "seq": 4
+      },
+      "metadata": {
+        "v": 1,
+        "runId": "call-a",
+        "runKind": "command",
+        "result": "unknown",
+        "exitCode": 0,
+        "durationMs": 11,
+        "passed": null,
+        "failed": null,
+        "skipped": null
+      }
+    },
+    {
+      "name": "not-run",
+      "valid": true,
+      "source": {
+        "sessionId": "s-a",
+        "turn": 1,
+        "step": 1,
+        "callId": "call-a",
+        "seq": 4
+      },
+      "metadata": {
+        "v": 1,
+        "runId": "call-a",
+        "runKind": "test",
+        "result": "not_run",
+        "exitCode": null,
+        "durationMs": null,
+        "passed": null,
+        "failed": null,
+        "skipped": null
+      }
+    },
+    {
+      "name": "unicode scalar identifiers",
+      "valid": true,
+      "source": {
+        "sessionId": "\u4f1a\u8bdd\ud83d\udc31",
+        "turn": 1,
+        "step": 1,
+        "callId": "\u8c03\u7528\ud83d\udc08",
+        "seq": 4
+      },
+      "metadata": {
+        "v": 1,
+        "runId": "\u8c03\u7528\ud83d\udc08",
+        "runKind": "test",
+        "result": "succeeded",
+        "exitCode": 0,
+        "durationMs": 11,
+        "passed": null,
+        "failed": null,
+        "skipped": null
+      }
+    },
+    {
+      "name": "negative seq",
+      "valid": false,
+      "source": {
+        "sessionId": "s-a",
+        "turn": 1,
+        "step": 1,
+        "callId": "call-a",
+        "seq": -1
+      },
+      "metadata": {
+        "v": 1,
+        "runId": "call-a",
+        "runKind": "test",
+        "result": "succeeded",
+        "exitCode": 0,
+        "durationMs": 11,
+        "passed": null,
+        "failed": null,
+        "skipped": null
+      }
+    },
+    {
+      "name": "zero turn",
+      "valid": false,
+      "source": {
+        "sessionId": "s-a",
+        "turn": 0,
+        "step": 1,
+        "callId": "call-a",
+        "seq": 4
+      },
+      "metadata": {
+        "v": 1,
+        "runId": "call-a",
+        "runKind": "test",
+        "result": "succeeded",
+        "exitCode": 0,
+        "durationMs": 11,
+        "passed": null,
+        "failed": null,
+        "skipped": null
+      }
+    },
+    {
+      "name": "unsafe step",
+      "valid": false,
+      "source": {
+        "sessionId": "s-a",
+        "turn": 1,
+        "step": 9007199254740992,
+        "callId": "call-a",
+        "seq": 4
+      },
+      "metadata": {
+        "v": 1,
+        "runId": "call-a",
+        "runKind": "test",
+        "result": "succeeded",
+        "exitCode": 0,
+        "durationMs": 11,
+        "passed": null,
+        "failed": null,
+        "skipped": null
+      }
+    },
+    {
+      "name": "unknown source field",
+      "valid": false,
+      "source": {
+        "sessionId": "s-a",
+        "turn": 1,
+        "step": 1,
+        "callId": "call-a",
+        "seq": 4,
+        "stdout": "private"
+      },
+      "metadata": {
+        "v": 1,
+        "runId": "call-a",
+        "runKind": "test",
+        "result": "succeeded",
+        "exitCode": 0,
+        "durationMs": 11,
+        "passed": null,
+        "failed": null,
+        "skipped": null
+      }
+    },
+    {
+      "name": "wrong run id",
+      "valid": false,
+      "source": {
+        "sessionId": "s-a",
+        "turn": 1,
+        "step": 1,
+        "callId": "call-a",
+        "seq": 4
+      },
+      "metadata": {
+        "v": 1,
+        "runId": "other",
+        "runKind": "test",
+        "result": "succeeded",
+        "exitCode": 0,
+        "durationMs": 11,
+        "passed": null,
+        "failed": null,
+        "skipped": null
+      }
+    },
+    {
+      "name": "command cannot claim success",
+      "valid": false,
+      "source": {
+        "sessionId": "s-a",
+        "turn": 1,
+        "step": 1,
+        "callId": "call-a",
+        "seq": 4
+      },
+      "metadata": {
+        "v": 1,
+        "runId": "call-a",
+        "runKind": "command",
+        "result": "succeeded",
+        "exitCode": 0,
+        "durationMs": 11,
+        "passed": null,
+        "failed": null,
+        "skipped": null
+      }
+    },
+    {
+      "name": "success needs exit zero",
+      "valid": false,
+      "source": {
+        "sessionId": "s-a",
+        "turn": 1,
+        "step": 1,
+        "callId": "call-a",
+        "seq": 4
+      },
+      "metadata": {
+        "v": 1,
+        "runId": "call-a",
+        "runKind": "test",
+        "result": "succeeded",
+        "exitCode": null,
+        "durationMs": 11,
+        "passed": null,
+        "failed": null,
+        "skipped": null
+      }
+    },
+    {
+      "name": "failed needs nonzero",
+      "valid": false,
+      "source": {
+        "sessionId": "s-a",
+        "turn": 1,
+        "step": 1,
+        "callId": "call-a",
+        "seq": 4
+      },
+      "metadata": {
+        "v": 1,
+        "runId": "call-a",
+        "runKind": "test",
+        "result": "failed",
+        "exitCode": 0,
+        "durationMs": 11,
+        "passed": null,
+        "failed": null,
+        "skipped": null
+      }
+    },
+    {
+      "name": "counts unavailable",
+      "valid": false,
+      "source": {
+        "sessionId": "s-a",
+        "turn": 1,
+        "step": 1,
+        "callId": "call-a",
+        "seq": 4
+      },
+      "metadata": {
+        "v": 1,
+        "runId": "call-a",
+        "runKind": "test",
+        "result": "succeeded",
+        "exitCode": 0,
+        "durationMs": 11,
+        "passed": 12,
+        "failed": null,
+        "skipped": null
+      }
+    },
+    {
+      "name": "exit signed32",
+      "valid": false,
+      "source": {
+        "sessionId": "s-a",
+        "turn": 1,
+        "step": 1,
+        "callId": "call-a",
+        "seq": 4
+      },
+      "metadata": {
+        "v": 1,
+        "runId": "call-a",
+        "runKind": "test",
+        "result": "unknown",
+        "exitCode": 2147483648,
+        "durationMs": 11,
+        "passed": null,
+        "failed": null,
+        "skipped": null
+      }
+    },
+    {
+      "name": "duration capped",
+      "valid": false,
+      "source": {
+        "sessionId": "s-a",
+        "turn": 1,
+        "step": 1,
+        "callId": "call-a",
+        "seq": 4
+      },
+      "metadata": {
+        "v": 1,
+        "runId": "call-a",
+        "runKind": "test",
+        "result": "succeeded",
+        "exitCode": 0,
+        "durationMs": 604800001,
+        "passed": null,
+        "failed": null,
+        "skipped": null
+      }
+    },
+    {
+      "name": "lone surrogate",
+      "valid": false,
+      "source": {
+        "sessionId": "bad\ud800",
+        "turn": 1,
+        "step": 1,
+        "callId": "call-a",
+        "seq": 4
+      },
+      "metadata": {
+        "v": 1,
+        "runId": "call-a",
+        "runKind": "test",
+        "result": "succeeded",
+        "exitCode": 0,
+        "durationMs": 11,
+        "passed": null,
+        "failed": null,
+        "skipped": null
+      }
+    },
+    {
+      "name": "whole envelope budget",
+      "valid": false,
+      "source": {
+        "sessionId": "\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00\u4e00",
+        "turn": 1,
+        "step": 1,
+        "callId": "\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c",
+        "seq": 4
+      },
+      "metadata": {
+        "v": 1,
+        "runId": "\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c\u4e8c",
+        "runKind": "test",
+        "result": "succeeded",
+        "exitCode": 0,
+        "durationMs": 11,
+        "passed": null,
+        "failed": null,
+        "skipped": null
+      }
+    }
+  ]
+}

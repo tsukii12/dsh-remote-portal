@@ -1,0 +1,9 @@
+{
+  "usageStatsTitle": "Send anonymous usage stats",
+  "usageStatsSection": "Improve DSH Go",
+  "usageStatsFooter": "This switch controls dsh-go’s own statistics: feature counts (tavern messages, companion room visits and voice calls included), the token counts model replies report, versions, phone maker and model, and system version. It includes no chats, character cards, files or accounts, and does not control Google ML Kit SDK statistics.",
+  "usageNoticeBody": "No chats or personal info.\nTurn off anytime.",
+  "usageUpgradeNotice": "New: anonymous usage stats, to help improve DSH Go.\nNo chats or personal info.",
+  "usageUpgradeLearn": "Learn more",
+  "usageUpgradeOff": "Turn off"
+}

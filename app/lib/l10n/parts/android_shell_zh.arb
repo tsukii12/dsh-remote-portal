@@ -1,0 +1,84 @@
+{
+  "androidShellTitle": "Android Shell",
+  "androidShellEntryHint": "独立的系统命令通道，默认关闭",
+  "androidShellSubtitle": "通过 Shizuku 或自连 ADB 在这台手机上执行 Android 系统命令，不是 Ubuntu 里的 bash。",
+  "androidShellEnable": "允许 Android Shell",
+  "androidShellEnableHint": "独立开关，不随不打扰模式或屏幕免确认开启；只增加 Android 命令通道，不影响 Ubuntu 里的 bash / run_code 等工具，两者可同时使用。",
+  "androidShellConfirmationNote": "每条命令均需确认，可能修改系统和文件。",
+  "androidShellMasterOff": "先在上一页打开「手机操控」。",
+  "androidShellRiskTitle": "允许执行 Android 系统命令？",
+  "androidShellRiskBody": "命令使用所选通道的实际 UID，可能修改应用、系统设置和共享文件。它不受屏幕应用名单完整保护；每条命令仍会单独请求原生确认。只允许你理解并信任的命令。",
+  "androidShellRiskAction": "允许 Android Shell",
+  "androidShellBackend": "连接方式",
+  "androidShellDetails": "详情",
+  "androidShellReady": "已连接",
+  "androidShellShizukuHint": "使用已安装并启动的 Shizuku，需单独授权；不需要 Android 14、无障碍或不打扰模式。",
+  "androidShellAdb": "自连 ADB",
+  "androidShellAdbHint": "连接本机的无线调试，复用 App 的私有 ADB 身份；不会连接其他设备。",
+  "androidShellInstalled": "Shizuku 已安装",
+  "androidShellRunning": "Shizuku 正在运行",
+  "androidShellGranted": "Shizuku 已授权",
+  "androidShellPaired": "ADB 已配对",
+  "androidShellConnected": "ADB 已连接",
+  "androidShellAuthorize": "申请 Shizuku 授权",
+  "androidShellAuthorizeHint": "先安装并启动 Shizuku，再点此按钮允许 dsh-Go。打开本页或刷新不会申请授权。",
+  "androidShellStatus": "执行状态",
+  "androidShellUid": "实际 UID",
+  "androidShellUidUnknown": "尚未报告",
+  "androidShellRefresh": "刷新状态",
+  "androidShellStop": "停止 Android Shell",
+  "androidShellStopHint": "取消当前命令并停止独立 Shell 执行，不关闭屏幕操控。",
+  "androidShellPairingGuide": "在开发者选项中打开「无线调试」，选择「使用配对码配对设备」。配对码只在本次配对中使用，不保存、不写入日志。",
+  "androidShellStartPairing": "打开配对引导",
+  "androidShellPair": "输入配对码",
+  "androidShellPairSubmit": "配对",
+  "androidShellPairCode": "六位配对码",
+  "androidShellPairPort": "配对端口（可选）",
+  "androidShellPairPortHint": "填配对弹窗里的端口，不是无线调试主页的连接端口；留空时尝试自动发现。",
+  "androidShellConnect": "连接 ADB",
+  "androidShellConnectChannel": "连接所选通道",
+  "androidShellConnectPort": "连接端口（可选）",
+  "androidShellConnectPortHint": "填无线调试主页「IP 地址和端口」中的端口，不是配对端口。只连接本机；留空时尝试自动发现。",
+  "androidShellErrorCode": "错误码：{code}",
+  "@androidShellErrorCode": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "androidShellLimits": "单次最长 {seconds} 秒，输出最多 {bytes} 字节",
+  "@androidShellLimits": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      },
+      "bytes": {
+        "type": "int"
+      }
+    }
+  },
+  "androidShellErrorDisabled": "Android Shell 已关闭。",
+  "androidShellErrorNotConnected": "所选通道尚未连接。",
+  "androidShellErrorShizukuMissing": "请先安装 Shizuku。",
+  "androidShellErrorShizukuStopped": "请先启动 Shizuku，再刷新状态。",
+  "androidShellErrorPermissionRequired": "需要你在 Shizuku 中明确授权。",
+  "androidShellErrorAdbNotPaired": "请先完成本机无线调试配对，再连接 ADB。",
+  "androidShellErrorConnectFailed": "连接未成功。请检查所选通道和当前无线调试连接端口，再重试。",
+  "androidShellErrorIdentityChanged": "通道身份已改变，请停止后重新授权或连接。",
+  "androidShellErrorBusy": "另一项操作尚未结束，请稍后重试，或先停止 Android Shell。",
+  "androidShellErrorInvalidArguments": "输入无效。配对码须为六位数字，端口须在 1–65535 之间。",
+  "androidShellErrorCancelled": "操作已取消。",
+  "androidShellErrorTimeout": "操作超时。先核实结果；已派发的命令不要自动重试。",
+  "androidShellErrorConfirmationDenied": "未获准执行命令。",
+  "androidShellErrorCleanupFailed": "未能完成停止清理。请重试停止，暂勿执行新命令。",
+  "androidShellErrorLocked": "手机已锁定，请解锁后重试。",
+  "androidShellErrorConfirmationUnavailable": "当前无法显示原生确认，请回到 App 并检查通知权限。",
+  "androidShellErrorTransportLost": "通道已断开。先核实结果；已派发的命令不要自动重试，需要时重新连接。",
+  "androidShellErrorProtocolMismatch": "当前原生模块不支持此 Shell 协议，请更新 App。",
+  "androidShellErrorNativeUnavailable": "此构建的 Android Shell 原生模块不可用。",
+  "androidShellErrorInvalidResponse": "没有收到有效的原生状态，请刷新或更新 App。",
+  "androidShellErrorStopped": "本轮已结束或暂停，请重新开启后再试。",
+  "androidShellErrorStopFailed": "未确认已停止，请刷新状态并重试停止。",
+  "androidShellErrorUnknown": "未能确认操作结果。先核实结果；已派发的命令不要自动重试。"
+}

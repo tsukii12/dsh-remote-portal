@@ -1,0 +1,54 @@
+{
+  "selfUpdateTransport": "安装路线",
+  "selfUpdateSystem": "正常安装（默认）",
+  "selfUpdateShizuku": "Shizuku",
+  "selfUpdateAdb": "本机 ADB",
+  "selfUpdateSecurityNote": "各路线仍受 APK 签名、Android 与厂商安全策略约束，不保证跳过扫描。不支持 root，也不会在失败后自动切换路线。",
+  "selfUpdateNativeConfirm": "只安装已校验的本应用更新；稍后仍需原生安装确认。授权 Shizuku 不等于同意安装，不需要开启手机操控或 AI Shell。",
+  "selfUpdateAuthorize": "申请更新用 Shizuku 授权",
+  "selfUpdateRefresh": "刷新通道状态",
+  "selfUpdateShizukuStatus": "Shizuku：{status}",
+  "selfUpdateReady": "已授权",
+  "selfUpdatePermissionRequired": "请先安装、启动并授权 Shizuku",
+  "selfUpdateUnsupportedIdentity": "仅支持 shell UID 2000；root 与其他身份不受支持",
+  "selfUpdateAdbHint": "使用已配对的本机无线调试身份；点击安装才连接。未配对时可打开现有 Android Shell 配对页，无需开启手机操控或 AI Shell。配对码和端口不保存、不写入日志。",
+  "selfUpdatePairing": "打开 Android Shell 配对引导",
+  "selfUpdateAdbPaired": "本机 ADB 已配对",
+  "selfUpdateAdbNotPaired": "本机 ADB 尚未配对",
+  "selfUpdatePendingTitle": "正在核实安装结果",
+  "selfUpdatePendingMessage": "安装请求可能仍在处理。不会自动重试或切换路线；请查看系统提示，再读取实际安装状态。",
+  "selfUpdateUnknownTitle": "安装结果未知",
+  "selfUpdateUnknownMessage": "超时、失联或进程退出不能证明失败。不会自动重试或切换路线；请先读取实际安装状态。",
+  "selfUpdateReadResult": "读取实际安装状态",
+  "selfUpdateVerifiedTitle": "已核实当前安装版本",
+  "selfUpdateVerifiedVersion": "当前版本 {version}（构建 {code}），已由原生层核验。",
+  "selfUpdateFailedTitle": "安装未完成",
+  "selfUpdateFailedMessage": "原生层报告本次安装失败。请检查系统提示和错误码，再明确选择安装路线。",
+  "selfUpdateErrorCode": "错误码：{code}",
+  "@selfUpdateShizukuStatus": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "@selfUpdateVerifiedVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      },
+      "code": {
+        "type": "int"
+      }
+    }
+  },
+  "@selfUpdateErrorCode": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "selfUpdateEndWaiting": "结束本次等待",
+  "selfUpdateEndWaitingNote": "只有确认系统已不在安装时才结束等待。清除本次记录不等于取消系统安装；不会自动重试或切换路线，仍需再次原生确认。"
+}

@@ -1,0 +1,59 @@
+{
+  "provenance": {
+    "repo": "Fei2411/DS-Bot",
+    "ref": "6f3e1b3e8603abd84820b334a7f99985236dbbdf",
+    "scope": "Actual send Fetch handler, upstream fakeContext with injected prompt refusal/success; synthetic temporary team, no LLM/full Host"
+  },
+  "botFailure": {
+    "ok": false,
+    "error": {
+      "code": "bot/refused",
+      "message": "SYNTHETIC prompt refused",
+      "details": {}
+    }
+  },
+  "roomFailure": {
+    "ok": false,
+    "error": {
+      "code": "bot/refused",
+      "message": "SYNTHETIC prompt refused",
+      "details": {}
+    }
+  },
+  "success": {
+    "ok": true,
+    "value": true
+  },
+  "requests": [
+    {
+      "sessionId": "writer-now",
+      "mode": "queue",
+      "content": [
+        {
+          "type": "text",
+          "text": "SYNTHETIC old draft"
+        }
+      ]
+    },
+    {
+      "sessionId": "r1",
+      "mode": "queue",
+      "content": [
+        {
+          "type": "text",
+          "text": "SYNTHETIC old draft"
+        }
+      ]
+    },
+    {
+      "sessionId": "writer-now",
+      "mode": "queue",
+      "content": [
+        {
+          "type": "text",
+          "text": "SYNTHETIC current draft"
+        }
+      ]
+    }
+  ]
+}

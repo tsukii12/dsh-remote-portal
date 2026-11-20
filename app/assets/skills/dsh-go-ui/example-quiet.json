@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "density": "compact",
+  "hide": ["turnFooter", "tokenCount", "whaleTail", "activityStrip"],
+  "theme": { "mode": "dark", "accent": "#5F7A55" },
+  "drawer": { "groups": ["pinned", "today", "earlier"], "sort": "created" },
+  "shortcuts": [
+    { "keys": "ctrl+n", "action": { "type": "open", "page": "new-chat" } },
+    { "keys": "ctrl+shift+f", "action": { "type": "open", "page": "files" } },
+    { "keys": "alt+t", "action": { "type": "open", "page": "terminal" } }
+  ]
+}

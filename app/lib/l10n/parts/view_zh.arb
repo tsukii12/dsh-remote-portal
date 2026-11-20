@@ -1,0 +1,1387 @@
+{
+  "viewArtifactSaved": "已存到 {value}",
+  "@viewArtifactSaved": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewDownloadFolder": "下载/",
+  "viewArtifactNoPreview": "无法预览",
+  "viewArtifactNotText": "不是文本文件",
+  "viewArtifactLarge": "文件较大",
+  "viewArtifactMissing": "文件已经不在了",
+  "viewArtifactNotFile": "这不是文件",
+  "viewArtifactOpenFailed": "没能打开",
+  "viewArtifactMore": "更多操作",
+  "viewWorkspace": "工作区",
+  "viewArtifactEmpty": "空文件",
+  "viewArtifactLines": "文件较大，只显示前 {count} 行",
+  "@viewArtifactLines": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewArtifactRows": "只显示前 {count} 行",
+  "@viewArtifactRows": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewArtifactColumns": "只显示前 200 列",
+  "viewArtifactWorksheet": "工作表 {value}",
+  "@viewArtifactWorksheet": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "viewArtifactEmptySheet": "空工作表",
+  "viewArtifactEmptyTable": "空表格",
+  "viewArtifactConvertFailed": "没能转换",
+  "viewArtifactConverting": "正在转换为 PDF 预览…",
+  "viewArtifactImageFailed": "无法显示这张图片",
+  "viewArtifactPhoneOpen": "用手机上的应用打开",
+  "viewArtifactPdfFailed": "无法打开这个 PDF，试试用其他应用打开",
+  "viewArtifactPages": "共 {count} 页",
+  "@viewArtifactPages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewArtifactPage": "第 {value} 页",
+  "@viewArtifactPage": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "viewBalanceInvalidKey": "Key 无效，查不到余额",
+  "viewBalancePrefix": "余额 ",
+  "viewBalanceLowSuffix": " · 余额不足",
+  "viewBalanceUnavailableSuffix": " · 已不能调用",
+  "viewBalanceTopUp": "充值",
+  "viewBalanceTitle": "DeepSeek 余额",
+  "viewBalanceKeyRequired": "填写 API Key 后可查询余额",
+  "viewBalanceKeyInvalid": "API Key 无效，无法查询余额",
+  "viewBalancePaid": "充值 {value}",
+  "@viewBalancePaid": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewBalanceGranted": "赠送 {value}",
+  "@viewBalanceGranted": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewBalanceLow": "余额不足",
+  "viewBalanceUnavailable": "已无法调用",
+  "viewBalanceChecking": "正在查询余额…",
+  "viewBalanceCheckFailed": "暂时无法查询余额",
+  "viewBalanceNoAlert": "不提醒",
+  "viewBalanceBannerHidden": "本次运行不再显示余额提醒",
+  "viewBalanceTurnOff": "不再提醒",
+  "viewBalanceBelow": "低于 {value}",
+  "@viewBalanceBelow": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewBalanceAlert": "低余额提醒",
+  "viewBalanceThreshold": "提醒线",
+  "viewBalanceGoTopUp": "去充值",
+  "viewBalanceRemaining": "余额仅剩 {value}",
+  "@viewBalanceRemaining": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewBalanceModelDisabled": "余额不足，模型已停用",
+  "viewBalanceRestore": "充值后恢复",
+  "viewUiIncomplete": "视图没有生成完",
+  "viewUiInvalid": "这个视图格式有误",
+  "viewUiResend": "让它重发",
+  "viewChartUnit": "单位：{value}",
+  "@viewChartUnit": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewChartSeries": "第 {value} 组",
+  "@viewChartSeries": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "viewChartTotal": "合计",
+  "viewChartBar": "柱状图",
+  "viewChartHorizontalBar": "横向柱状图",
+  "viewChartLine": "折线图",
+  "viewChartDonut": "环形图",
+  "viewUiResendMessage": "上一个 dsh-ui 视图无法显示：{value}。请修正后重发。",
+  "@viewUiResendMessage": {
+    "placeholders": {
+      "value": {
+        "type": "Object"
+      }
+    }
+  },
+  "viewUiBytesLimit": "视图有 {first} 字节，超过上限 {second} 字节",
+  "@viewUiBytesLimit": {
+    "placeholders": {
+      "first": {
+        "type": "int"
+      },
+      "second": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiEmptyCode": "代码块是空的",
+  "viewUiInvalidJson": "不是合法的 JSON（{message}）",
+  "@viewUiInvalidJson": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiJsonRepaired": "含注释或尾逗号，已忽略",
+  "viewUiExpectedObject": "应该是一个组件对象",
+  "viewUiDepthLimit": "第 {first} 层，超过上限 {second} 层",
+  "@viewUiDepthLimit": {
+    "placeholders": {
+      "first": {
+        "type": "int"
+      },
+      "second": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiMissingType": "缺少 type",
+  "viewUiUnknownComponent": "未知组件 {value}",
+  "@viewUiUnknownComponent": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiAvailableTypes": "{first}；可用：{second}",
+  "@viewUiAvailableTypes": {
+    "placeholders": {
+      "first": {
+        "type": "String"
+      },
+      "second": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiExpectedChildren": "应该是 1 到 {limit} 个组件的数组",
+  "@viewUiExpectedChildren": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiHiddenItems": "已截断：还有 {count} 项没有显示",
+  "@viewUiHiddenItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiNodeLimit": "超过 {first} 个组件，后 {second} 项已截断",
+  "@viewUiNodeLimit": {
+    "placeholders": {
+      "first": {
+        "type": "int"
+      },
+      "second": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiChildLimit": "超过 {first} 项，后 {second} 项已截断",
+  "@viewUiChildLimit": {
+    "placeholders": {
+      "first": {
+        "type": "int"
+      },
+      "second": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiExpectedString": "应该是字符串",
+  "viewUiTextLimit": "{first} 个字符，超过上限 {second}",
+  "@viewUiTextLimit": {
+    "placeholders": {
+      "first": {
+        "type": "int"
+      },
+      "second": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiTextTruncated": "已截断：文字过长",
+  "viewUiExpectedFinite": "应该是有限的数",
+  "viewUiYes": "是",
+  "viewUiNo": "否",
+  "viewUiExpectedStringNumber": "应该是字符串或数字",
+  "viewUiUnknownTone": "未知 tone {value}，已忽略；可用：good, warn, bad",
+  "@viewUiUnknownTone": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiUnknownChart": "未知图表 {value}，按柱状图画；可用：bar, hbar, line, donut",
+  "@viewUiUnknownChart": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiExpectedCategories": "应该是非空的标签数组",
+  "viewUiCategoryLimit": "{first} 个类别，超过上限 {second}",
+  "@viewUiCategoryLimit": {
+    "placeholders": {
+      "first": {
+        "type": "int"
+      },
+      "second": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiFirstPoints": "只显示前 {limit} 个点",
+  "@viewUiFirstPoints": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiExpectedSeries": "应该是非空的数组，每项是 {shape}",
+  "viewUiSkippedSeries": "应该是数字数组，这组已跳过",
+  "viewUiValuesCategories": "{first} 个值对 {second} 个类别，多的截掉、缺的留空",
+  "@viewUiValuesCategories": {
+    "placeholders": {
+      "first": {
+        "type": "int"
+      },
+      "second": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiNonFiniteValues": "{count} 个值不是有限的数，已留空",
+  "@viewUiNonFiniteValues": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiNoSeries": "没有一组能画的数据",
+  "viewUiDonutSeries": "环形图只画一组数据，其余 {count} 组已忽略",
+  "@viewUiDonutSeries": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiFirstSeries": "只画第一组数据",
+  "viewUiSeriesLimit": "{first} 组数据，超过上限 {second}",
+  "@viewUiSeriesLimit": {
+    "placeholders": {
+      "first": {
+        "type": "int"
+      },
+      "second": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiFirstSeriesCount": "只显示前 {limit} 组数据",
+  "@viewUiFirstSeriesCount": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiNoFiniteValues": "没有一个有限的数值",
+  "viewUiTruncated": "已截断：{value}",
+  "@viewUiTruncated": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiExpectedCompare": "应该是 2 到 {limit} 项的数组，每项是 {shape}",
+  "@viewUiExpectedCompare": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      },
+      "shape": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiItemLimit": "{first} 项，超过上限 {second}",
+  "@viewUiItemLimit": {
+    "placeholders": {
+      "first": {
+        "type": "int"
+      },
+      "second": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiFirstItems": "只显示前 {limit} 项",
+  "@viewUiFirstItems": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiSkippedCompare": "应该是 {shape}，已跳过",
+  "viewUiSkippedItemLabel": "应该是非空字符串，这项已跳过",
+  "viewUiRowLimit": "{first} 行，超过上限 {second}",
+  "@viewUiRowLimit": {
+    "placeholders": {
+      "first": {
+        "type": "int"
+      },
+      "second": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiSkippedRow": "应该是 [名称, 值]，已跳过",
+  "viewUiNoItems": "没有一项能画",
+  "viewUiFirstRows": "每项只显示前 {limit} 行",
+  "@viewUiFirstRows": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiExpectedSteps": "应该是非空数组，每项是 {shape}",
+  "viewUiStepLimit": "{first} 步，超过上限 {second}",
+  "@viewUiStepLimit": {
+    "placeholders": {
+      "first": {
+        "type": "int"
+      },
+      "second": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiFirstSteps": "已截断：只显示前 {limit} 步",
+  "@viewUiFirstSteps": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiSkippedStep": "应该是 {shape}，已跳过",
+  "viewUiUnknownStatus": "未知状态 {value}，按 todo 画；可用：done, current, todo, failed",
+  "@viewUiUnknownStatus": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiNoSteps": "没有一步能画",
+  "viewUiUnknownCalloutTone": "未知 tone {value}，按 info 画；可用：info, good, warn, bad",
+  "@viewUiUnknownCalloutTone": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiExpectedOptions": "应该是 1 到 {limit} 个选项的数组，每项是 {shape}",
+  "@viewUiExpectedOptions": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      },
+      "shape": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiOptionLimit": "{first} 个选项，超过上限 {second}",
+  "@viewUiOptionLimit": {
+    "placeholders": {
+      "first": {
+        "type": "int"
+      },
+      "second": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiFirstOptions": "已截断：只显示前 {limit} 个选项",
+  "@viewUiFirstOptions": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiDuplicateLabel": "重复的 label {value}，已跳过",
+  "@viewUiDuplicateLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiNoOptions": "没有一个能用的选项",
+  "viewUiSummaryBody": "[视图] {value}",
+  "@viewUiSummaryBody": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiSummaryTitleBody": "[视图] {first}：{second}",
+  "@viewUiSummaryTitleBody": {
+    "placeholders": {
+      "first": {
+        "type": "String"
+      },
+      "second": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiSummaryInvalid": "[视图]（格式有误，未能显示）",
+  "viewUiSummaryText": "文字：{value}",
+  "@viewUiSummaryText": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiSummaryChart": "图表：{summary}",
+  "@viewUiSummaryChart": {
+    "placeholders": {
+      "summary": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiSummaryCompare": "对比：{value}",
+  "@viewUiSummaryCompare": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiSummarySteps": "步骤：{value}",
+  "@viewUiSummarySteps": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiSummaryCallout": "提示：{value}",
+  "@viewUiSummaryCallout": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiSummaryOptions": "选项：{value}",
+  "@viewUiSummaryOptions": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiSummaryConfirm": "确认：{first}/{second}",
+  "@viewUiSummaryConfirm": {
+    "placeholders": {
+      "first": {
+        "type": "String"
+      },
+      "second": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiReplyChoice": "选择：{value}",
+  "@viewUiReplyChoice": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiReplyConfirm": "确认：{value}",
+  "@viewUiReplyConfirm": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiReplyCancel": "取消：{value}",
+  "@viewUiReplyCancel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiReplyOther": "其他：{value}",
+  "@viewUiReplyOther": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiFreeTextHint": "其他（自己填）",
+  "viewUiChosenOther": "已填写：{value}",
+  "@viewUiChosenOther": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiChosen": "已选择：{value}",
+  "@viewUiChosen": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiConfirmed": "已确认",
+  "viewUiConfirmedValue": "已确认：{value}",
+  "@viewUiConfirmedValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiCancelledValue": "已取消：{value}",
+  "@viewUiCancelledValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiReplied": "已回复",
+  "viewUiGenerating": "正在生成视图",
+  "viewUiReplyAfterEnd": "回复结束后可选",
+  "viewUiExpired": "已失效",
+  "viewUiNotStarted": "未开始",
+  "viewUiMultiple": "可多选",
+  "viewSuggestWorkspace": "看看工作区",
+  "viewSuggestWorkspacePrompt": "看看工作区里现在有哪些文件和项目，简单介绍一下。",
+  "viewSuggestWordCount": "写个小脚本",
+  "viewSuggestWordCountPrompt": "写一个 Python 脚本：统计一个文本文件里出现最多的 20 个词，并运行一次给我看结果。",
+  "viewSuggestNode": "新建项目",
+  "viewSuggestNodePrompt": "在工作区新建一个 Node.js 项目，配好 TypeScript 和一个最小的单元测试。",
+  "viewSuggestGit": "讲讲 Git",
+  "viewSuggestGitPrompt": "用一个具体例子解释 git rebase 和 git merge 的区别，各自什么时候用。",
+  "viewSuggestWorkspaceHint": "列出文件和项目",
+  "viewSuggestWordCountHint": "统计词频并跑一次",
+  "viewSuggestNodeHint": "Node.js 带测试",
+  "viewSuggestGitHint": "rebase 和 merge",
+  "viewTipNext": "下一条小技巧",
+  "viewTipLabel": "小技巧：{value}",
+  "@viewTipLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewTipSteer": "生成中长按发送键，可以插话、排队或打断",
+  "viewTipMidRun": "AI 干活时也能发消息，它下一步就会看到",
+  "viewTipSlash": "输入 / 唤出指令：压缩上下文、切换模型等",
+  "viewTipMention": "输入 @ 可以引用工作区里的文件或别的对话",
+  "viewTipReplyMenu": "长按 AI 的回复，可以复制、引用或重新生成",
+  "viewTipEditResend": "长按自己的消息，可以改写后重发，原对话不动",
+  "viewTipQuote": "选中回复里的一段，点「引用」就只追问那一段",
+  "viewTipTitleDetails": "点顶部的对话标题，能看改动、文件和终端",
+  "viewTipContextRing": "发送键旁的小圆环是上下文用量，点开看详情",
+  "viewTipDrawerMenu": "长按侧栏里的对话，可以置顶、改名或归档",
+  "viewTipSearch": "主机支持时，搜索对话还能搜到聊天内容，不只是标题",
+  "viewTipSettingsSearch": "长按侧栏的设置键，可以直接搜索设置项",
+  "viewTipQuickPanel": "在对话页向左滑，打开快捷入口",
+  "viewTipFolderNewChat": "长按侧栏的文件夹，可以直接在里面开新对话",
+  "viewTipSwitchHost": "点侧栏底部的主机名，可以切到电脑上的 DSH",
+  "viewTipPasteImage": "输入法里的截图和贴图，可以直接贴进输入框",
+  "viewTipLauncher": "长按桌面图标，可以直接语音提问或开新对话",
+  "viewTipPetBubble": "宠物冒泡时点一下，就跳到等你的那个对话",
+  "viewTipPetPlay": "连点宠物三下会挠痒痒，长按可以换宠物",
+  "viewTipActivityStrip": "生成时点一下状态条，看这一轮的完整轨迹",
+  "viewTipImageZoom": "看图时双击放大、双指缩放，长按可以保存",
+  "viewTipQueuedRecall": "排队中的消息可以撤回到输入框再改",
+  "viewTipKeyboard": "接了键盘：Ctrl+Enter 发送，连按两次 Esc 停止",
+  "viewTipShareIn": "在别的 App 里分享文字或图片给 DSH Go，会填进新对话",
+  "viewTipShareSelect": "分享对话时长按再滑动，可以一次选中多条消息",
+  "viewTipChartDrag": "回复里的图表可以左右拖动，看每个点的数值",
+  "viewTipCopyPath": "改动卡里长按某个文件，可以复制它的路径",
+  "viewTipCompanion": "「伙伴小屋」藏在切换主机的面板里",
+  "viewTipAnswerInline": "AI 向你提问时，直接在输入框里打字就是回答",
+  "viewTipWallpaper": "壁纸可以拖动、缩放，还能调模糊和明暗",
+  "viewTipModelHere": "这里就能换模型、预设和权限，只对这次对话生效",
+  "viewNewChatFolder": "文件夹",
+  "viewNewChatPresetTitle": "这次对话的预设",
+  "viewNewChatPermissionTitle": "这次对话的权限",
+  "viewNewChatDefault": "默认",
+  "viewNewChatUnavailable": "不可用",
+  "viewNewChatChange": "更改",
+  "viewNewChatModesFailed": "没能设置预设或权限，消息还没发出",
+  "viewGreetingMorning": "早上好",
+  "viewGreetingNoon": "中午好",
+  "viewGreetingAfternoon": "下午好",
+  "viewGreetingEvening": "晚上好",
+  "viewGreetingNight": "夜深了",
+  "viewEmptySubtitle": "今天想做点什么？",
+  "viewEmptyStarting": "正在启动引擎…",
+  "viewEmptyConnecting": "正在连接引擎…",
+  "viewEmptyDisconnected": "引擎未连接",
+  "viewEmptyReconnect": "重新连接",
+  "viewEmptyWorkspace": "在「{value}」中",
+  "@viewEmptyWorkspace": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewEmptySwitchWorkspace": "切换工作区",
+  "viewEmptyHostDefaultDirectory": "主机默认目录",
+  "viewScheduleTitle": "自动化任务",
+  "viewScheduleRefreshFailed": "没能刷新",
+  "viewScheduleNone": "没有进行中的任务",
+  "viewScheduleNext": "下次 {value}",
+  "@viewScheduleNext": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewScheduleUntitled": "未命名任务",
+  "viewScheduleSendFailed": "没能发送",
+  "viewScheduleEnded": "已结束",
+  "viewScheduleUpcoming": "接下来",
+  "viewScheduleSending": "发送中…",
+  "viewScheduleRunNow": "立即运行",
+  "viewScheduleManage": "管理",
+  "viewScheduleToday": "今天 {value}",
+  "@viewScheduleToday": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewScheduleTomorrow": "明天 {value}",
+  "@viewScheduleTomorrow": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewScheduleYesterday": "昨天 {value}",
+  "@viewScheduleYesterday": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewScheduleWeekday": "周{first} {second}",
+  "@viewScheduleWeekday": {
+    "placeholders": {
+      "first": {
+        "type": "String"
+      },
+      "second": {
+        "type": "String"
+      }
+    }
+  },
+  "viewScheduleDue": "即将运行",
+  "viewScheduleDaysAhead": "{count} 天后",
+  "@viewScheduleDaysAhead": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewScheduleDaysOverdue": "已逾期 {count} 天",
+  "@viewScheduleDaysOverdue": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewScheduleSingleLabel": "自动化任务：{title}",
+  "@viewScheduleSingleLabel": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "viewScheduleCountLabel": "{count} 个自动化任务",
+  "@viewScheduleCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewModelSelect": "选择模型",
+  "viewModelThinkingOff": "不思考",
+  "viewModelThinkingMinimal": "极少",
+  "viewModelThinkingLow": "低",
+  "viewModelThinkingMedium": "中",
+  "viewModelThinkingHigh": "高",
+  "viewModelThinkingMax": "最高",
+  "viewModelLabel": "模型：{value}",
+  "@viewModelLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewModelEffortLabel": "思考深度{value}",
+  "@viewModelEffortLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewModelLoadFailed": "模型列表加载失败",
+  "viewModelDisconnected": "未连接引擎",
+  "viewModelConnectHint": "连接后即可选择模型",
+  "viewModelEffort": "思考深度",
+  "viewModelKeyRequired": "需要 API Key",
+  "viewModelProvidersHint": "支持 DeepSeek 和其他模型渠道",
+  "viewModelEnterKey": "填写 API Key",
+  "viewModelAddProvider": "添加其他渠道",
+  "viewModelNone": "暂无可用模型",
+  "viewModelKeyHint": "Key 可能尚未生效或已失效",
+  "viewModelManageProviders": "管理渠道",
+  "viewContinuePrompt": "接着附件里这段对话聊：",
+  "viewContinueRange": "第 {first}–{second} 轮，共 {third} 轮",
+  "@viewContinueRange": {
+    "placeholders": {
+      "first": {
+        "type": "int"
+      },
+      "second": {
+        "type": "int"
+      },
+      "third": {
+        "type": "int"
+      }
+    }
+  },
+  "viewContinueHeader": "> 分享的 DSH Go 对话 · {value}\n",
+  "@viewContinueHeader": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewContinueUser": "\n## 用户\n\n",
+  "viewImageCount": "{count} 张图片",
+  "@viewImageCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewContinueAttachments": "\n（附件：{value}）\n",
+  "@viewContinueAttachments": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewContinueAssistant": "\n## 助手\n\n",
+  "viewContinueInterrupted": "\n（回复被中断）\n",
+  "viewContinueFailed": "（失败）",
+  "viewContinueDeclined": "（被拒绝）",
+  "viewContinueCancelled": "（已取消）",
+  "viewLinkWeek": "7 天",
+  "viewLinkMonth": "30 天",
+  "viewLinkForever": "永久",
+  "viewShareChat": "对话",
+  "viewShareNoPermission": "没有存储权限，没能保存",
+  "viewShareOpenFailed": "没能打开分享",
+  "viewShareLinkFailed": "没能生成链接，稍后再试",
+  "viewShareLinkText": "「{first}」· DSH Go 对话\n{second}",
+  "@viewShareLinkText": {
+    "placeholders": {
+      "first": {
+        "type": "String"
+      },
+      "second": {
+        "type": "String"
+      }
+    }
+  },
+  "viewShareEmpty": "这个对话还没有内容",
+  "viewShareMessageCount": "{count} 条消息",
+  "@viewShareMessageCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewShareToolCount": "{count} 次工具调用",
+  "@viewShareToolCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewShareFileHint": "在 DSH Go 里回放、接着聊",
+  "viewShareWebHint": "任何浏览器都能打开，不用联网",
+  "viewShareMarkdownHint": "纯文本，随处可读",
+  "viewShareLinkHint": "端到端加密，服务器看不到内容",
+  "viewSharePreview": "预览",
+  "viewShareWhole": "整段对话",
+  "viewShareScopeReply": "这条回复",
+  "viewShareScopePicked": "选中消息",
+  "viewShareThinking": "思考过程",
+  "viewShareIncludeTools": "工具调用",
+  "viewShareChatFile": "对话文件",
+  "viewShareWebPage": "网页",
+  "viewShareLink": "链接",
+  "viewShareAsImage": "图片",
+  "viewShareAsFile": "文件",
+  "viewShareAsText": "文字",
+  "viewShareRedacted": "密钥已隐藏",
+  "viewShareAdjust": "调整",
+  "viewShareTooLarge": "超过 {value} MB，请缩小范围",
+  "@viewShareTooLarge": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "viewShareCreateLink": "生成链接",
+  "viewShareStop": "停止分享",
+  "viewShareStopTitle": "停止分享？",
+  "viewShareStopped": "已停止分享",
+  "viewQrCode": "二维码",
+  "viewShareTurn": "第 {value} 轮",
+  "@viewShareTurn": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "viewReplayContinue": "接着聊",
+  "viewReplayTurns": "第 {first}–{second} 轮",
+  "@viewReplayTurns": {
+    "placeholders": {
+      "first": {
+        "type": "int"
+      },
+      "second": {
+        "type": "int"
+      }
+    }
+  },
+  "viewReplaySeconds": "{count} 秒",
+  "@viewReplaySeconds": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewReplayMinutes": "{count} 分钟",
+  "@viewReplayMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewReplayFull": "全文",
+  "viewReplayPause": "暂停",
+  "viewReplayRestart": "重新播放",
+  "viewReplayPlay": "播放",
+  "viewReplaySpeed": "倍速 {value}×",
+  "@viewReplaySpeed": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "viewTemplatePaper": "纸张",
+  "viewTemplateGlass": "玻璃",
+  "viewTemplateCard": "卡片",
+  "viewShareProjectQr": "项目主页二维码",
+  "viewShareBrandLine": "手机上的 DSH · 扫码获取",
+  "viewShareBrandLineNoQr": "手机上的 DSH",
+  "viewShareSteps": "{count} 步",
+  "@viewShareSteps": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewShareWebSearch": "联网搜索",
+  "viewShareOpenPage": "打开网页",
+  "viewShareRunCommand": "运行命令",
+  "viewShareReadFile": "查看文件",
+  "viewShareEditFile": "修改文件",
+  "viewShareSubagent": "子代理",
+  "viewShareSkill": "使用技能",
+  "viewSharePresentFiles": "交付文件",
+  "viewShareWorkflow": "工作流",
+  "viewSharePlugin": "调用插件",
+  "viewShareStars": "星标",
+  "viewSharePluginTitle": "DSH 插件「{value}」",
+  "@viewSharePluginTitle": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewShareInstallCommand": "安装：dsh plugin add {value}",
+  "@viewShareInstallCommand": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewSharePhoneInstall": "手机上一键安装：{value}",
+  "@viewSharePhoneInstall": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewShareImages": "图片",
+  "viewSharePickMessages": "选择消息",
+  "viewShareDoneCount": "完成（{count}）",
+  "@viewShareDoneCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewShareImageMarker": "〔图片〕",
+  "viewShareImagesMarker": "〔{count} 张图片〕",
+  "@viewShareImagesMarker": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewShareYou": "你",
+  "viewShareImageFailed": "没能生成图片，请重试",
+  "viewShareQuestion": "提问",
+  "viewShareModelSteps": "模型与过程",
+  "viewShareImagePreview": "分享图片预览",
+  "viewShareSaveImage": "保存图片",
+  "viewScheduleHoursAhead": "{count} 小时后",
+  "@viewScheduleHoursAhead": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewScheduleHoursOverdue": "已逾期 {count} 小时",
+  "@viewScheduleHoursOverdue": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewScheduleMinutesAhead": "{count} 分钟后",
+  "@viewScheduleMinutesAhead": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewScheduleMinutesOverdue": "已逾期 {count} 分钟",
+  "@viewScheduleMinutesOverdue": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewScheduleSecondsAhead": "{count} 秒后",
+  "@viewScheduleSecondsAhead": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewScheduleSecondsOverdue": "已逾期 {count} 秒",
+  "@viewScheduleSecondsOverdue": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewScheduleDate": "{date} {clock}",
+  "@viewScheduleDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "clock": {
+        "type": "String"
+      }
+    }
+  },
+  "viewScheduleYearDate": "{year}年{date} {clock}",
+  "@viewScheduleYearDate": {
+    "placeholders": {
+      "year": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      },
+      "clock": {
+        "type": "String"
+      }
+    }
+  },
+  "viewScheduleWeekdayName": "{day, select, 1{一} 2{二} 3{三} 4{四} 5{五} 6{六} other{日}}",
+  "@viewScheduleWeekdayName": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "viewReplayDate": "{month} 月 {day} 日",
+  "@viewReplayDate": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      },
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "viewReplayHours": "{count} 小时",
+  "@viewReplayHours": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewReplayHoursMinutes": "{hours} 小时 {minutes} 分钟",
+  "@viewReplayHoursMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiHundredMillion": "{value}亿",
+  "@viewUiHundredMillion": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiTenThousand": "{value}万",
+  "@viewUiTenThousand": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiMillion": "{value}M",
+  "@viewUiMillion": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewListSeparator": "，",
+  "viewAttachmentSeparator": "、",
+  "@viewUiSkippedCompare": {
+    "placeholders": {
+      "shape": {
+        "type": "String"
+      }
+    }
+  },
+  "@viewUiExpectedSteps": {
+    "placeholders": {
+      "shape": {
+        "type": "String"
+      }
+    }
+  },
+  "@viewUiSkippedStep": {
+    "placeholders": {
+      "shape": {
+        "type": "String"
+      }
+    }
+  },
+  "@viewUiExpectedSeries": {
+    "placeholders": {
+      "shape": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiInvalidJsonOffset": "不是合法的 JSON（{message}，第 {offset} 个字符附近）",
+  "@viewUiInvalidJsonOffset": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      },
+      "offset": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiUnavailableChart": "图表无法显示",
+  "viewUiUnavailableMetric": "指标无法显示",
+  "viewUiUnavailableCompare": "对比无法显示",
+  "viewUiUnavailableSteps": "步骤无法显示",
+  "viewUiUnavailableCallout": "提示无法显示",
+  "viewUiUnavailableOptions": "选项无法显示",
+  "viewUiUnavailableConfirm": "确认无法显示",
+  "viewUiUnavailableText": "文字无法显示",
+  "viewUiUnavailableGroup": "这一组无法显示",
+  "viewUiUnavailablePart": "这部分无法显示",
+  "viewScheduleSingleNextLabel": "自动化任务：{title}，下次{when}",
+  "@viewScheduleSingleNextLabel": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "viewScheduleCountNextLabel": "{count} 个自动化任务，下次{when}",
+  "@viewScheduleCountNextLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiSkippedStepLabel": "应该是字符串，这步已跳过",
+  "viewLabeledValue": "{label}：{value}",
+  "@viewLabeledValue": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewDescribedValue": "{label}，{description}",
+  "@viewDescribedValue": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "description": {
+        "type": "String"
+      }
+    }
+  },
+  "viewSemicolonSeparator": "；",
+  "viewChartSemantics": "{kind}。{data}",
+  "@viewChartSemantics": {
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      },
+      "data": {
+        "type": "String"
+      }
+    }
+  },
+  "viewMetricSemantics": "{label} {value}",
+  "@viewMetricSemantics": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewMetricCaptionSemantics": "{label} {value}，{caption}",
+  "@viewMetricCaptionSemantics": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "value": {
+        "type": "String"
+      },
+      "caption": {
+        "type": "String"
+      }
+    }
+  },
+  "viewScheduleZone": "{rule}（{city} · {offset}）",
+  "@viewScheduleZone": {
+    "placeholders": {
+      "rule": {
+        "type": "String"
+      },
+      "city": {
+        "type": "String"
+      },
+      "offset": {
+        "type": "String"
+      }
+    }
+  },
+  "viewContinueNotice": "\n（{text}）\n",
+  "@viewContinueNotice": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "viewShareAltMarker": "〔{alt}〕",
+  "@viewShareAltMarker": {
+    "placeholders": {
+      "alt": {
+        "type": "String"
+      }
+    }
+  },
+  "viewModelThinkingXhigh": "超高",
+  "viewUiDialectWebOnly": "{kind} · 在网页版查看",
+  "@viewUiDialectWebOnly": {
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiDialectKindInteractive": "可交互内容",
+  "viewUiDialectKindChart": "图表",
+  "viewUiDialectKindDiagram": "示意图",
+  "viewUiDialectKindImage": "图片",
+  "viewUiDialectKindAudio": "音频",
+  "viewUiDialectKindVideo": "视频",
+  "viewUiDialectKindScene": "3D 场景",
+  "viewUiDialectKindFiles": "文件树",
+  "viewUiDialectKindMap": "地图",
+  "viewUiDialectKindOther": "这部分",
+  "viewUiDialectInvalid": "这块内容在网页版查看",
+  "viewUiDialectNote": "在网页版查看"
+}

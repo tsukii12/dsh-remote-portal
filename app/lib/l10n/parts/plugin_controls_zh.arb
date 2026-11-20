@@ -1,0 +1,79 @@
+{
+  "plugInputRequired": "请填写此项",
+  "plugInputInvalidValue": "此处的值无效",
+  "plugInputNumber": "请输入有效数字",
+  "plugInputBounds": "请输入 {min}–{max} 之间的值",
+  "@plugInputBounds": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "plugInputLength": "长度需为 {min}–{max} 个字符",
+  "@plugInputLength": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "plugInputPattern": "格式不正确",
+  "plugInputDate": "请选择有效日期",
+  "plugInputTime": "请选择有效时间",
+  "plugInputUnavailable": "此处不支持这个组件",
+  "plugInputNoPassword": "插件不能使用密码输入框",
+  "plugInputBadBinding": "输入绑定必须是 data 下的字段路径",
+  "plugInputDuplicateBinding": "一个字段只能绑定一个输入组件",
+  "plugInputNamedPattern": "只支持内置的格式校验",
+  "plugInputNestedForm": "表单不能嵌套",
+  "plugInputSubmitMissing": "表单缺少提交动作",
+  "plugInputTooLarge": "内容过多，请缩短后重试",
+  "plugInputCheckFields": "请检查标出的项目",
+  "plugInputFailed": "未保存，请重试",
+  "plugInputSubmit": "保存",
+  "plugInputChoose": "选择",
+  "plugInputPrevious": "上一页",
+  "plugInputNext": "下一页",
+  "plugInputDecrease": "减少{label}",
+  "@plugInputDecrease": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "plugInputIncrease": "增加{label}",
+  "@plugInputIncrease": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "plugInputRating": "{label}：{value} 分，共 {max} 分",
+  "@plugInputRating": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "value": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "plugInputFormula": "公式无效或超出上限",
+  "plugInputDatePicker": "插件日期",
+  "plugInputTimePicker": "插件时间",
+  "plugInputChoices": "插件选项",
+  "plugInputGestureRequired": "该效果需要用户点按"
+}

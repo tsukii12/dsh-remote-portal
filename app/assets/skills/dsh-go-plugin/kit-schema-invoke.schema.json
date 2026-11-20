@@ -1,0 +1,737 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://go.dshtui.com/schema/plugin-kit/v1/invoke.schema.json",
+  "title": "POST /dsh-go/v1/invoke, protocol v1",
+  "description": "docs/design/native-plugins-protocol.md §4.4, §5. The root validates the request; $defs.response the 200 body; $defs.effect one effect. v1.1 (bridge 0.3.0): request.stream, response.pending, $defs.deferredEffect (§4.7). v1.3: explicit userGesture, negotiated files, pickFile/pickImage and bounded one-shot file selection callbacks.",
+  "$ref": "#/$defs/request",
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,39}$"
+    },
+    "pkg": {
+      "type": "string",
+      "pattern": "^(@[a-z0-9][a-z0-9._~-]*/)?[a-z0-9][a-z0-9._~-]*$",
+      "maxLength": 214
+    },
+    "scopeValue": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+    },
+    "scope": {
+      "type": "object",
+      "properties": {
+        "sessionId": {
+          "$ref": "#/$defs/scopeValue"
+        },
+        "turnId": {
+          "$ref": "#/$defs/scopeValue"
+        },
+        "messageId": {
+          "$ref": "#/$defs/scopeValue"
+        },
+        "callId": {
+          "$ref": "#/$defs/scopeValue"
+        }
+      }
+    },
+    "request": {
+      "type": "object",
+      "required": [
+        "v",
+        "pkg",
+        "id",
+        "surface"
+      ],
+      "properties": {
+        "v": {
+          "const": 1
+        },
+        "pkg": {
+          "$ref": "#/$defs/pkg"
+        },
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "surface": {
+          "enum": [
+            "composer.actions",
+            "message.actions",
+            "composer.strip",
+            "panel",
+            "composer.tools",
+            "session.actions"
+          ]
+        },
+        "action": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "description": "panel only"
+        },
+        "value": {
+          "description": "panel only; any JSON, <= 4 KiB serialized"
+        },
+        "scope": {
+          "$ref": "#/$defs/scope"
+        },
+        "context": {
+          "type": "object",
+          "description": "Only honoured when declared in dshGo.wants and allowed for the surface; each field <= 16 KiB UTF-8.",
+          "properties": {
+            "draft": {
+              "type": "string"
+            },
+            "clipboard": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            }
+          }
+        },
+        "locale": {
+          "type": "string",
+          "maxLength": 35
+        },
+        "stream": {
+          "type": "string",
+          "maxLength": 64,
+          "description": "v1.1: welcome.conn of the app's stream connection; required for a deferred result to be delivered"
+        },
+        "userGesture": {
+          "type": "boolean",
+          "description": "v1.3: true only for a direct user tap/submit; false for onChange, lifecycle and callbacks. Required true for files effects."
+        }
+      }
+    },
+    "response": {
+      "type": "object",
+      "required": [
+        "v",
+        "effects"
+      ],
+      "properties": {
+        "v": {
+          "const": 1
+        },
+        "effects": {
+          "type": "array",
+          "maxItems": 4,
+          "items": {
+            "$ref": "#/$defs/effect"
+          }
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "$ref": "contributions.schema.json#/$defs/issue"
+          }
+        },
+        "pending": {
+          "type": "object",
+          "required": [
+            "id",
+            "timeoutMs"
+          ],
+          "description": "v1.1: the handler deferred; exactly one stream `done` or `void` with this id follows on the `stream` connection (effects is then empty)",
+          "properties": {
+            "id": {
+              "type": "string",
+              "maxLength": 64
+            },
+            "label": {
+              "type": "string",
+              "maxLength": 16
+            },
+            "timeoutMs": {
+              "type": "integer",
+              "minimum": 1000,
+              "maximum": 60000
+            }
+          }
+        }
+      }
+    },
+    "error": {
+      "$ref": "contributions.schema.json#/$defs/error"
+    },
+    "effect": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/insert"
+        },
+        {
+          "$ref": "#/$defs/command"
+        },
+        {
+          "$ref": "#/$defs/open"
+        },
+        {
+          "$ref": "#/$defs/link"
+        },
+        {
+          "$ref": "#/$defs/toast"
+        },
+        {
+          "$ref": "#/$defs/copy"
+        },
+        {
+          "$ref": "#/$defs/refresh"
+        },
+        {
+          "$ref": "#/$defs/patch"
+        },
+        {
+          "$ref": "#/$defs/audio"
+        },
+        {
+          "$ref": "#/$defs/voice"
+        },
+        {
+          "$ref": "#/$defs/overlay"
+        },
+        {
+          "$ref": "#/$defs/pickFile"
+        },
+        {
+          "$ref": "#/$defs/pickImage"
+        }
+      ]
+    },
+    "staticEffect": {
+      "description": "Effects allowed in a manifest action's static `effect` (no refresh / patch).",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/insert"
+        },
+        {
+          "$ref": "#/$defs/command"
+        },
+        {
+          "$ref": "#/$defs/open"
+        },
+        {
+          "$ref": "#/$defs/link"
+        },
+        {
+          "$ref": "#/$defs/toast"
+        },
+        {
+          "$ref": "#/$defs/copy"
+        }
+      ]
+    },
+    "insert": {
+      "type": "object",
+      "required": [
+        "type",
+        "text"
+      ],
+      "properties": {
+        "type": {
+          "const": "insert"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        }
+      },
+      "description": "Put text into the composer at the cursor. Never sends."
+    },
+    "command": {
+      "type": "object",
+      "required": [
+        "type",
+        "name"
+      ],
+      "properties": {
+        "type": {
+          "const": "command"
+        },
+        "name": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}$"
+        },
+        "args": {
+          "type": "string",
+          "maxLength": 500
+        }
+      }
+    },
+    "open": {
+      "type": "object",
+      "required": [
+        "type",
+        "page"
+      ],
+      "properties": {
+        "type": {
+          "const": "open"
+        },
+        "page": {
+          "type": "string",
+          "pattern": "^(panel:[A-Za-z0-9][A-Za-z0-9_.-]{0,39}|[a-z][a-z0-9-]{0,31})$"
+        }
+      }
+    },
+    "link": {
+      "type": "object",
+      "required": [
+        "type",
+        "url"
+      ],
+      "properties": {
+        "type": {
+          "const": "link"
+        },
+        "url": {
+          "type": "string",
+          "pattern": "^https://[^\\s@/]+(/\\S*)?$",
+          "maxLength": 2048
+        }
+      }
+    },
+    "toast": {
+      "type": "object",
+      "required": [
+        "type",
+        "text"
+      ],
+      "properties": {
+        "type": {
+          "const": "toast"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        }
+      }
+    },
+    "copy": {
+      "type": "object",
+      "required": [
+        "type",
+        "text"
+      ],
+      "properties": {
+        "type": {
+          "const": "copy"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 8000
+        }
+      }
+    },
+    "refresh": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "const": "refresh"
+        },
+        "id": {
+          "$ref": "#/$defs/id"
+        }
+      }
+    },
+    "patch": {
+      "type": "object",
+      "required": [
+        "type",
+        "data"
+      ],
+      "properties": {
+        "type": {
+          "const": "patch"
+        },
+        "data": {
+          "type": "object",
+          "description": "JSON Merge Patch (RFC 7386), <= 16 KiB"
+        },
+        "id": {
+          "$ref": "#/$defs/id"
+        }
+      }
+    },
+    "deferredEffect": {
+      "description": "Effects a deferred result may carry (§4.7).",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/insert"
+        },
+        {
+          "$ref": "#/$defs/copy"
+        },
+        {
+          "$ref": "#/$defs/toast"
+        },
+        {
+          "$ref": "#/$defs/patch"
+        }
+      ]
+    },
+    "audio": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "op",
+            "instance",
+            "src"
+          ],
+          "properties": {
+            "type": {
+              "const": "audio"
+            },
+            "op": {
+              "const": "play"
+            },
+            "instance": {
+              "$ref": "manifest.schema.json#/$defs/id"
+            },
+            "lease": {
+              "type": "string",
+              "maxLength": 64,
+              "description": "Bridge-added opaque connection-bound lease, never supplied as authority by the plugin."
+            },
+            "src": {
+              "type": "string",
+              "pattern": "^media:[A-Za-z0-9][A-Za-z0-9_.-]{0,39}$"
+            },
+            "key": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{1,128}$"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "op",
+            "instance"
+          ],
+          "properties": {
+            "type": {
+              "const": "audio"
+            },
+            "op": {
+              "enum": [
+                "pause",
+                "resume",
+                "stop"
+              ]
+            },
+            "instance": {
+              "$ref": "manifest.schema.json#/$defs/id"
+            },
+            "lease": {
+              "type": "string",
+              "maxLength": 64,
+              "description": "Bridge-added opaque connection-bound lease, never supplied as authority by the plugin."
+            },
+            "src": false,
+            "key": false
+          }
+        }
+      ]
+    },
+    "voice": {
+      "type": "object",
+      "required": [
+        "type",
+        "op",
+        "instance"
+      ],
+      "properties": {
+        "type": {
+          "const": "voice"
+        },
+        "op": {
+          "enum": [
+            "start",
+            "stop"
+          ]
+        },
+        "instance": {
+          "$ref": "manifest.schema.json#/$defs/id"
+        },
+        "lease": {
+          "type": "string",
+          "maxLength": 64,
+          "description": "Bridge-added opaque connection-bound lease, never supplied as authority by the plugin."
+        }
+      }
+    },
+    "overlay": {
+      "type": "object",
+      "required": [
+        "type",
+        "op",
+        "instance",
+        "id"
+      ],
+      "properties": {
+        "type": {
+          "const": "overlay"
+        },
+        "op": {
+          "enum": [
+            "show",
+            "hide"
+          ]
+        },
+        "instance": {
+          "$ref": "manifest.schema.json#/$defs/id"
+        },
+        "lease": {
+          "type": "string",
+          "maxLength": 64,
+          "description": "Bridge-added opaque connection-bound lease, never supplied as authority by the plugin."
+        },
+        "id": {
+          "$ref": "manifest.schema.json#/$defs/id"
+        }
+      }
+    },
+    "pickFile": {
+      "type": "object",
+      "required": [
+        "type",
+        "action"
+      ],
+      "properties": {
+        "type": {
+          "const": "pickFile"
+        },
+        "action": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,63}$"
+        },
+        "maxFiles": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4,
+          "default": 1
+        },
+        "request": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{32}$",
+          "description": "Bridge-added single-use token, bound to the invoking stream and callback registration."
+        },
+        "maxBytes": {
+          "const": 8388608,
+          "description": "Bridge-added per-file byte cap."
+        },
+        "maxTotalBytes": {
+          "const": 16777216,
+          "description": "Bridge-added total selection byte cap."
+        }
+      },
+      "description": "Immediate explicit tap only; requires declared and negotiated files. Never valid as static, deferred or selection callback effect."
+    },
+    "pickImage": {
+      "type": "object",
+      "required": [
+        "type",
+        "action"
+      ],
+      "properties": {
+        "type": {
+          "const": "pickImage"
+        },
+        "action": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,63}$"
+        },
+        "maxFiles": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4,
+          "default": 1
+        },
+        "request": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{32}$",
+          "description": "Bridge-added single-use token, bound to the invoking stream and callback registration."
+        },
+        "maxBytes": {
+          "const": 8388608,
+          "description": "Bridge-added per-file byte cap."
+        },
+        "maxTotalBytes": {
+          "const": 16777216,
+          "description": "Bridge-added total selection byte cap."
+        }
+      },
+      "description": "Immediate explicit tap only; requires declared and negotiated files. Never valid as static, deferred or selection callback effect."
+    },
+    "pickedFile": {
+      "type": "object",
+      "required": [
+        "handle",
+        "name",
+        "bytes",
+        "mediaType",
+        "access"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "handle": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{32}$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8388608
+        },
+        "mediaType": {
+          "type": "string",
+          "maxLength": 129,
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9!#$&^_.+-]{0,63}/[a-zA-Z0-9][a-zA-Z0-9!#$&^_.+-]{0,63}$"
+        },
+        "access": {
+          "const": "read"
+        }
+      },
+      "description": "Read-only byte snapshot; readPickedFile(handle) returns a copy during the awaited callback only. Name/MIME are untrusted display metadata, never a filesystem path."
+    },
+    "fileSelection": {
+      "description": "The callback event.value; selected has complete files; cancelled/error have none. Total selected bytes <=16 MiB.",
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "files"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "const": "selected"
+            },
+            "files": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 4,
+              "items": {
+                "$ref": "#/$defs/pickedFile"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "files"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "enum": [
+                "cancelled",
+                "error"
+              ]
+            },
+            "files": {
+              "type": "array",
+              "maxItems": 0,
+              "items": {
+                "$ref": "#/$defs/pickedFile"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "fileCompletion": {
+      "type": "object",
+      "required": [
+        "status"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "selected",
+            "cancelled",
+            "error"
+          ]
+        }
+      },
+      "description": "POST files/<request>/complete?stream=<welcome.conn>, application/json. The bridge supplies metadata; the client cannot forge handles."
+    },
+    "fileUploadResponse": {
+      "type": "object",
+      "required": [
+        "v",
+        "file"
+      ],
+      "properties": {
+        "v": {
+          "const": 1
+        },
+        "file": {
+          "$ref": "#/$defs/pickedFile"
+        }
+      },
+      "description": "POST files/<request>/upload?stream=...&name=...&mediaType=..., application/octet-stream. Same authenticated HTTP carrier as invoke."
+    },
+    "fileCallbackEffect": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/patch"
+        },
+        {
+          "$ref": "#/$defs/refresh"
+        },
+        {
+          "$ref": "#/$defs/toast"
+        }
+      ]
+    },
+    "fileCompletionResponse": {
+      "type": "object",
+      "required": [
+        "v",
+        "effects"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "v": {
+          "const": 1
+        },
+        "effects": {
+          "type": "array",
+          "maxItems": 4,
+          "items": {
+            "$ref": "#/$defs/fileCallbackEffect"
+          }
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "$ref": "contributions.schema.json#/$defs/issue"
+          }
+        }
+      }
+    }
+  }
+}

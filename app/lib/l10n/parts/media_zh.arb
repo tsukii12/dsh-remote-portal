@@ -1,0 +1,258 @@
+{
+  "mediaGenerateTile": "生成",
+  "mediaAiGenerated": "AI 生成",
+  "mediaCostEstimate": "约 {amount}",
+  "@mediaCostEstimate": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "mediaSavedCount": "已保存 {count} 张到相册",
+  "@mediaSavedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaRegenerate": "重新生成",
+  "mediaCopyPrompt": "复制提示词",
+  "mediaFileGone": "文件已不在",
+  "mediaKindImage": "图像",
+  "mediaKindVideo": "视频",
+  "mediaTitleImage": "生成图像",
+  "mediaTitleVideo": "生成视频",
+  "mediaOpenElsewhere": "在其他应用中打开",
+  "mediaShowInFiles": "在文件中显示",
+  "mediaGenerating": "生成中",
+  "mediaGeneratingProgress": "生成中 · {progress}",
+  "@mediaGeneratingProgress": {
+    "placeholders": {
+      "progress": {
+        "type": "String"
+      }
+    }
+  },
+  "mediaCancelled": "已取消",
+  "mediaNotGenerated": "未生成",
+  "mediaPartial": "{done} / {total} 张",
+  "@mediaPartial": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaCount": "{count} 张",
+  "@mediaCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaSeconds": "{seconds} 秒",
+  "@mediaSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaImageOf": "第 {index} 张，共 {count} 张",
+  "@mediaImageOf": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaPageOf": "{index} / {count}",
+  "@mediaPageOf": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaErrorPolicyInput": "描述未通过内容审核",
+  "mediaErrorPolicyOutput": "生成结果未通过内容审核",
+  "mediaErrorAuth": "服务未授权",
+  "mediaErrorBalance": "余额不足",
+  "mediaErrorQuota": "今天的额度已用完",
+  "mediaErrorUnavailable": "服务暂时不可用",
+  "mediaErrorExpired": "结果已过期",
+  "mediaErrorGeneric": "没能生成",
+  "mediaVary": "变体",
+  "mediaEdit": "编辑",
+  "mediaRevise": "修改",
+  "mediaUpscale": "放大",
+  "mediaMakeVideo": "做成视频",
+  "mediaDetailModel": "模型",
+  "mediaDetailSize": "尺寸",
+  "mediaDetailCost": "费用",
+  "mediaDetailProvenance": "来源标识",
+  "mediaDetailFile": "文件",
+  "mediaOriginalPrompt": "原文：{text}",
+  "@mediaOriginalPrompt": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "mediaProvenanceC2pa": "C2PA",
+  "mediaProvenanceImplicit": "隐式",
+  "mediaProvenanceVisible": "可见水印",
+  "mediaModeExit": "退出生成",
+  "mediaModeLabel": "生成参数：{summary}",
+  "@mediaModeLabel": {
+    "placeholders": {
+      "summary": {
+        "type": "String"
+      }
+    }
+  },
+  "mediaParamModel": "模型",
+  "mediaParamAspect": "比例",
+  "mediaParamCount": "数量",
+  "mediaParamQuality": "清晰度",
+  "mediaParamDuration": "时长",
+  "mediaQualityAuto": "自动",
+  "mediaQualityStandard": "标准",
+  "mediaQualityHigh": "高清",
+  "mediaQuality4k": "4K",
+  "mediaQualityLevelLow": "低",
+  "mediaQualityLevelMedium": "中",
+  "mediaQualityLevelHigh": "高",
+  "mediaModelPick": "请选择",
+  "mediaPickModelFirst": "先选一个模型",
+  "mediaPricePerImage": "{price} / 张",
+  "@mediaPricePerImage": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "mediaPricePerSecond": "{price} / 秒",
+  "@mediaPricePerSecond": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "mediaManageModels": "管理",
+  "mediaHintImage": "描述你想要的画面…",
+  "mediaHintVideo": "描述画面和镜头…",
+  "mediaHintEdit": "想怎么改…",
+  "mediaFirstFrame": "首帧",
+  "mediaLastFrame": "尾帧",
+  "mediaNoLastFrame": "这个模型不支持尾帧",
+  "mediaNoRefs": "这个模型不支持参考图",
+  "mediaRefLimit": "最多 {count} 张参考图",
+  "@mediaRefLimit": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaNoDescription": "先写下想要的画面",
+  "mediaDescriptionTooLong": "描述太长，删短一些再生成",
+  "mediaInstallTitle": "图像与视频",
+  "mediaInstallBody": "这台主机还没有图像与视频插件",
+  "mediaInstallAction": "在此主机上安装",
+  "mediaUnavailableTitle": "生成模式不可用",
+  "mediaUnavailableBody": "这台主机的图像与视频插件版本不兼容。仍可直接在对话里描述想要的画面。",
+  "mediaUnavailableAction": "管理插件",
+  "mediaSettingsTitle": "图像与视频",
+  "searchKwMediaGeneration": "生图,画图,文生图,视频生成,AI 绘画,生成图片,生成视频",
+  "mediaSettingsDefaults": "默认",
+  "mediaSettingsLegacyDefault": "旧版通用默认",
+  "mediaSettingsLegacyDefaultHint": "0.2.x 的设置；图片和视频没有单独默认时使用",
+  "mediaSettingsLegacyDefaultStale": "指向的服务已不可用；清除它可避免生成时报错",
+  "mediaSettingsLegacyDefaultClear": "清除旧版通用默认",
+  "mediaSettingsDefaultModel": "默认模型",
+  "mediaSettingsDefaultFooterLegacy": "旧版插件只有一个默认模型；更新插件后可以分别设置图片和视频。",
+  "mediaSettingsDefaultsFooter": "图片和视频分别选择默认模型；留空自动使用第一个可用的。",
+  "mediaSettingsNoVideoModels": "这台主机的目录里还没有视频模型",
+  "mediaSettingsServices": "服务",
+  "mediaSettingsAddService": "添加服务",
+  "mediaSettingsAddServiceHint": "从服务商预设开始，地址、协议和模型都会自动带好",
+  "mediaSettingsServiceLimit": "最多 {count} 个服务",
+  "@mediaSettingsServiceLimit": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaSettingsNoServices": "还没有服务。添加一个服务商就能开始生成图片或视频。",
+  "mediaSettingsNoModels": "未选模型",
+  "mediaSettingsKeyMissing": "未配置 API Key",
+  "mediaSettingsCatalogMissing": "这个主机的插件没有提供模型目录；已有服务仍可编辑，但暂时不能新增服务或选择默认模型。",
+  "mediaSettingsCatalogBroken": "模型目录读不了（可能版本不兼容）；已有服务仍可编辑，但暂时不能新增服务或选择默认模型。",
+  "mediaSettingsCatalogEmpty": "模型目录里还没有模型；已有服务仍可编辑，但暂时不能新增服务或选择默认模型。",
+  "mediaSettingsNoPresets": "目录里还没有可添加的服务。",
+  "mediaSettingsLimits": "请求上限",
+  "mediaSettingsLimitsHint": "限制单次请求的图片张数和字节数；默认是插件硬上限",
+  "mediaSettingsMaxImages": "单次图片张数",
+  "mediaSettingsMaxImageBytes": "单张原件字节上限",
+  "mediaSettingsMaxResponseBytes": "服务响应字节上限",
+  "mediaSettingsMaxTotalImageBytes": "单次图片总字节上限",
+  "mediaSettingsMaxVideoBytes": "视频原件字节上限",
+  "mediaSettingsBudget": "费用保护",
+  "mediaSettingsDailyBudget": "每日预算（元）",
+  "mediaSettingsDailyBudgetHint": "按上海日期重置；用完即暂停生成",
+  "mediaSettingsUnknownPriceHold": "无可靠价格时每次预留（元）",
+  "mediaSettingsUnknownPriceHoldHint": "逐次确认的预留金额，不是供应商的收费上限",
+  "mediaSettingsApiKey": "API Key",
+  "mediaSettingsReuseKey": "复用密钥",
+  "mediaSettingsReuseKeyHint": "同一服务商的图片和视频共用一个 API Key，不用再填一次。",
+  "mediaSettingsReuseKeyNone": "同一服务商还没有其它服务。",
+  "mediaSettingsReuseKeyShared": "已复用",
+  "mediaSettingsModels": "模型",
+  "mediaSettingsModelsEmpty": "目录里没有这个协议的模型",
+  "mediaSettingsModelKeepOne": "至少保留一个模型",
+  "mediaSettingsModelMissing": "目录中不存在",
+  "mediaSettingsAdvanced": "高级",
+  "mediaSettingsBaseUrl": "API 根地址",
+  "mediaSettingsBaseUrlInvalid": "地址要以 https:// 开头",
+  "mediaSettingsProvider": "服务商标识",
+  "mediaSettingsKeyRef": "凭据名",
+  "mediaSettingsKeyRefInvalid": "凭据名只能包含字母、数字和下划线",
+  "mediaSettingsResponseFormat": "返回格式",
+  "mediaSettingsResponseFormatAuto": "按协议",
+  "mediaSettingsServiceId": "服务 ID",
+  "mediaSettingsServiceGone": "这个服务已经不在了",
+  "mediaSettingsServiceGoneBody": "它可能已在别处被删掉。返回上一页可以重新添加。",
+  "mediaSettingsDelete": "删除服务",
+  "mediaSettingsDeleteTitle": "删除「{name}」？",
+  "@mediaSettingsDeleteTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "mediaSettingsDeleteBody": "只会从这台主机的设置里删掉这个服务，API Key 会保留；指向它的默认模型会一并清空。",
+  "mediaSettingsNoImageModels": "目录里还没有图像模型",
+  "mediaSettingsNoAvailableService": "还没有可用的服务（先添加并填好 Key）",
+  "mediaSettingsNoImageService": "还没有可用的图像服务（先添加并填好 Key）",
+  "mediaSettingsNoVideoService": "还没有可用的视频服务（先添加并填好 Key）",
+  "mediaSettingsKeyExternal": "由其它设置管理，这里只引用",
+  "mediaSettingsEnabledHint": "关闭后不再用这个服务生成"
+}

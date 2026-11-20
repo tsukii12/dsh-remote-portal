@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+<!-- dsh-go feature tile · duotone · models. Tones: wash / mid / ink / on (see app/tool/make_feature_tiles.py); the colours here are the default accent in light, for previews only. -->
+<style>.wash{fill:#BACCF8}.ink{fill:#4B67B4}.line{fill:none}.line.wash,.fat.wash{stroke:#BACCF8}.line.ink,.fat.ink{stroke:#4B67B4}.cut{fill:#000}.line.cut{stroke:#000}</style>
+<path class="line ink" d="M36 38C52 38 60 25 85 25" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="line ink" d="M38 48H86" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="line ink" d="M36 58C52 58 60 71 85 71" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="wash" d="M30 22Q35.28 41.76 52 48Q35.28 54.24 30 74Q24.72 54.24 8 48Q24.72 41.76 30 22Z"/>
+</svg>

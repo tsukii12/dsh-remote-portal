@@ -1,0 +1,239 @@
+{
+  "plugslotsSurfaceComposerTools": "加号面板",
+  "plugslotsSurfaceSessionActions": "对话操作",
+  "plugslotsSurfaceTurnNote": "回合尾注",
+  "plugslotsSurfaceComposerActions": "输入框按钮",
+  "plugslotsSurfaceMessageActions": "消息菜单",
+  "plugslotsSurfaceComposerStrip": "状态条",
+  "plugslotsSurfacePanel": "面板",
+  "plugslotsNativeUi": "原生界面",
+  "plugslotsIssueCount": "{count} 项有误",
+  "@plugslotsIssueCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "plugslotsAllGood": "正常",
+  "plugslotsViewSize": "视图 {size}",
+  "@plugslotsViewSize": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "plugslotsInvokeMs": "响应 {ms} ms",
+  "@plugslotsInvokeMs": {
+    "placeholders": {
+      "ms": {
+        "type": "int"
+      }
+    }
+  },
+  "plugslotsLastView": "最近视图",
+  "plugslotsLastInvoke": "最近响应",
+  "plugslotsProblems": "问题",
+  "plugslotsNoProblems": "没有问题",
+  "plugslotsWantsDraft": "「{plugin}」要读取输入框",
+  "@plugslotsWantsDraft": {
+    "placeholders": {
+      "plugin": {
+        "type": "String"
+      }
+    }
+  },
+  "plugslotsWantsClipboard": "「{plugin}」要读取剪贴板",
+  "@plugslotsWantsClipboard": {
+    "placeholders": {
+      "plugin": {
+        "type": "String"
+      }
+    }
+  },
+  "plugslotsWantsBoth": "「{plugin}」要读取输入框和剪贴板",
+  "@plugslotsWantsBoth": {
+    "placeholders": {
+      "plugin": {
+        "type": "String"
+      }
+    }
+  },
+  "plugslotsWantsWhen": "只在点按它时读取",
+  "plugslotsAllow": "允许",
+  "plugslotsNoResponse": "「{plugin}」没有响应",
+  "@plugslotsNoResponse": {
+    "placeholders": {
+      "plugin": {
+        "type": "String"
+      }
+    }
+  },
+  "plugslotsFailed": "「{plugin}」出错了",
+  "@plugslotsFailed": {
+    "placeholders": {
+      "plugin": {
+        "type": "String"
+      }
+    }
+  },
+  "plugslotsNeedsChat": "先打开一个对话",
+  "plugslotsFromPlugin": "来自「{plugin}」",
+  "@plugslotsFromPlugin": {
+    "placeholders": {
+      "plugin": {
+        "type": "String"
+      }
+    }
+  },
+  "plugslotsPanelOffline": "连不上插件",
+  "plugslotsIssueTooMany": "最多 {max} 个，其余不显示",
+  "@plugslotsIssueTooMany": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "plugslotsIssueTrimmed": "超过 {max} 字，已截断",
+  "@plugslotsIssueTrimmed": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "plugslotsIssueNeedsApp": "需要 DSH Go {version} 或更新版本",
+  "@plugslotsIssueNeedsApp": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "plugslotsIssueNewerProtocol": "需要更新 App",
+  "plugslotsIssueUnknownIcon": "不认识的图标，已换成默认图标",
+  "plugslotsIssueUnknownEffect": "不支持的效果「{name}」",
+  "@plugslotsIssueUnknownEffect": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "plugslotsIssueLate": "点按 3 秒后才返回，已忽略",
+  "plugslotsIssueHttps": "只支持 https 链接",
+  "plugslotsIssueUnknownPage": "没有「{page}」这个页面",
+  "@plugslotsIssueUnknownPage": {
+    "placeholders": {
+      "page": {
+        "type": "String"
+      }
+    }
+  },
+  "plugslotsIssueThrottled": "提示太频繁，已略过",
+  "plugslotsIssueInvoke": "调用失败：{message}",
+  "@plugslotsIssueInvoke": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "plugslotsIssueStream": "数据出错：{message}",
+  "@plugslotsIssueStream": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "plugslotsIssueMissing": "缺少必填项",
+  "plugslotsIssueDuplicate": "id 重复，已略过",
+  "plugslotsIssueNoPlacement": "没有可放的位置",
+  "plugslotsWantsMessage": "「{plugin}」要读取这条回复",
+  "@plugslotsWantsMessage": {
+    "placeholders": {
+      "plugin": {
+        "type": "String"
+      }
+    }
+  },
+  "plugslotsCodeInvalidManifest": "声明有误，原生部分已停用",
+  "plugslotsCodeInvalidField": "格式不对，已略过",
+  "plugslotsCodeUnknownField": "不认识的字段，已忽略",
+  "plugslotsCodeUnknownSurface": "这个位置还不支持，已忽略",
+  "plugslotsCodeTooMany": "超出数量，多余的不显示",
+  "plugslotsCodeTooLong": "文字太长，已截断",
+  "plugslotsCodeNoHandler": "插件还没处理这一项，暂不显示",
+  "plugslotsCodeUndeclared": "注册了清单里没有的项，已忽略",
+  "plugslotsCodeViewFile": "视图文件读不出",
+  "plugslotsCodeBadEffect": "动作格式不对，已略过",
+  "plugslotsCodeViolation": "出错 {count} 次",
+  "@plugslotsCodeViolation": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "plugslotsCodeDegraded": "出错太多，已停用到下次启动",
+  "plugslotsCodeTimeout": "插件没有及时响应",
+  "plugslotsCodeRateLimited": "点得太快了",
+  "plugslotsCodeNotFound": "插件已停用或找不到",
+  "plugslotsCodePluginError": "插件出错",
+  "plugslotsCodeInvalidView": "视图有误",
+  "plugslotsCodeLimit": "订阅太多",
+  "plugslotsCodeOther": "其他问题",
+  "plugslotsCodeUnknownEffect": "不支持的动作，已略过",
+  "plugslotsNotDone": "没完成",
+  "plugslotsWorking": "进行中",
+  "plugslotsTapToCancel": "点按取消",
+  "plugslotsCodeTooManyPending": "还有两件没做完",
+  "plugslotsCodeNoStream": "连接断了",
+  "plugslotsVoiceAsk": "允许「{plugin}」听你开口？",
+  "@plugslotsVoiceAsk": {
+    "placeholders": {
+      "plugin": {
+        "type": "String"
+      }
+    }
+  },
+  "plugslotsVoiceWhen": "朗读时你一开口就停。声音只在手机上判断，不保存、不上传",
+  "plugslotsVoiceDeny": "不允许",
+  "plugslotsVoiceSwitch": "听你开口",
+  "plugslotsPickerUnavailable": "此设备暂不支持文件选择",
+  "plugslotsPickerBusy": "请先完成当前文件选择",
+  "plugslotsPickerLimit": "最多选 {count} 个文件，单个 8 MiB，总计 16 MiB",
+  "@plugslotsPickerLimit": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "plugslotsPickerFailed": "文件未能交给插件，请重试",
+  "plugslotsWebPlacesTitle": "网页版界面",
+  "plugslotsPlaceBesideComposer": "输入框旁",
+  "plugslotsPlaceHeader": "对话顶栏",
+  "plugslotsPlaceMessages": "消息里",
+  "plugslotsPlaceOverlay": "浮层",
+  "plugslotsPlaceSidebar": "侧栏",
+  "plugslotsPlaceRightbar": "右侧栏",
+  "plugslotsPlaceFiles": "文件预览",
+  "plugslotsPlaceSettings": "设置",
+  "plugslotsPlacePlugins": "插件页",
+  "plugslotsPlaceNewChat": "新对话页",
+  "plugslotsPlaceElsewhere": "其他位置",
+  "plugslotsPlaceUnknown": "它的网页界面",
+  "plugslotsChatEntry": "插件",
+  "plugslotsChatWebFrom": "网页插件 · {names}",
+  "@plugslotsChatWebFrom": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  }
+}

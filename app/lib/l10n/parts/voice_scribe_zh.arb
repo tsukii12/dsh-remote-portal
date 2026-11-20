@@ -1,0 +1,25 @@
+{
+  "voiceScribeReadFailed": "没能读取语音设置，请重试。",
+  "voiceScribeSavedReadFailed": "已保存，刷新后可查看最新设置。",
+  "voiceScribeSaveUnconfirmed": "没能确认保存，请刷新或重试。",
+  "voiceScribeTitle": "语音设置",
+  "voiceScribePolishPrompt": "润色提示词",
+  "voiceScribeLanguage": "识别语言",
+  "voiceScribeRefresh": "刷新",
+  "voiceScribeHostChanged": "连接已变化，请重新打开。",
+  "voiceScribeUnsupported": "当前连接暂不支持语音设置。",
+  "voiceScribePluginDefault": "默认",
+  "voiceScribeBuiltInPrompt": "内置提示词",
+  "voiceScribeProviders": "识别服务",
+  "voiceScribeKeySet": "已设置密钥",
+  "voiceScribeNoKey": "未设置密钥",
+  "voiceScribeHotwords": "热词",
+  "voiceScribeHotwordRules": "{count} 条规则",
+  "@voiceScribeHotwordRules": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
+}

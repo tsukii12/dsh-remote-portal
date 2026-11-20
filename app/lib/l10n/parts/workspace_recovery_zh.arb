@@ -1,0 +1,16 @@
+{
+  "workspaceRecoveryTitle": "工作区索引救援",
+  "workspaceRecoveryEnable": "启用工作区索引救援",
+  "workspaceRecoveryDisable": "恢复使用原索引",
+  "workspaceRecoveryHint": "仅本机：原工作区索引异常时，使用另一份索引访问可读取的对话。",
+  "workspaceRecoveryActive": "已选择独立救援索引；原索引和救援索引都会保留。",
+  "workspaceRecoveryWorking": "处理中…",
+  "workspaceRecoveryEnableBody": "将停止本机引擎，改用独立救援索引后重新启动。原工作区索引保持不动，对话文件、插件和凭据不删除。\n\n首次启用时，新索引从可读取的会话及其仍存在的目录建立。旧工作区名称、顺序、默认、归档和置顶等设置不会自动继承；空工作区或目录已失效的会话不保证出现在新列表中。本机原有分组和置顶偏好保留。\n\n救援索引会保留，下次启用继续使用。这是绕过原索引故障，未修复原索引。",
+  "workspaceRecoveryDisableBody": "将停止本机引擎，恢复使用原工作区索引后重新启动。原故障可能再次出现。\n\n救援期间产生的对话文件和救援索引都会保留；两个索引的工作区关系和排序不会自动同步。原索引可能不显示救援期间新增的会话，再次启用可继续使用救援索引。",
+  "workspaceRecoveryEnableStart": "启用并重启",
+  "workspaceRecoveryDisableStart": "使用原索引并重启",
+  "workspaceRecoveryUnavailable": "当前版本尚不支持工作区索引救援，请检查本机引擎状态并更新应用。",
+  "workspaceRecoveryRestartIncomplete": "索引模式已切换，但还无法确认引擎已停止，未重新启动。请等停止完成后再启动。",
+  "workspaceRecoverySaveFailed": "索引模式保存失败，未请求重新启动。请查看本机引擎状态和日志。",
+  "workspaceRecoveryFailed": "操作未完成，请查看本机引擎状态和日志。已切换的模式可在本页确认。"
+}

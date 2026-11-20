@@ -1,0 +1,23 @@
+{
+  "nearbyThisChat": "This chat",
+  "nearbyPermissionTitle": "Permissions for this chat",
+  "nearbyNewChatDefault": "New chats: {name}",
+  "@nearbyNewChatDefault": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "nearbySetAsDefault": "Use for new chats",
+  "nearbyManageModels": "Manage models",
+  "nearbyPermissionPill": "Permissions for this chat: {name}",
+  "@nearbyPermissionPill": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "nearbyChange": "Change"
+}

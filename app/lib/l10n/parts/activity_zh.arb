@@ -1,0 +1,818 @@
+{
+  "activityThinkingUntangle": "嗯…让我捋捋",
+  "activityThinkingWorkThrough": "盘一下盘一下",
+  "activityThinkingGears": "大脑转起来了",
+  "activityThinkingSecond": "给我一秒",
+  "activityThinkingSmoking": "脑子在冒烟",
+  "activityThinkingOnIt": "想呢想呢",
+  "activityThinkingNoRush": "别催别催",
+  "activityThinkingPonder": "让我琢磨下",
+  "activityThinkingLogic": "正在盘逻辑",
+  "activityThinkingBrain": "小脑瓜动一下",
+  "activityThinkingSort": "让我理理",
+  "activityThinkingMemory": "翻翻脑子",
+  "activityThinkingStorm": "脑内风暴中",
+  "activityThinkingSavor": "嗯…让我品品",
+  "activityThinkingMoment": "稍等，在想",
+  "activityThinkingHeadScratch": "挠头…",
+  "activityThinkingPlayOut": "让子弹飞一会",
+  "activityThinkingLoading": "思路加载中",
+  "activityThinkingMulling": "琢磨中",
+  "activityThinkingBreakDown": "嗯…让我拆一下",
+  "activityThinkingTrain": "脑内跑火车",
+  "activityThinkingSomething": "嗯…有点东西",
+  "activityThinkingJog": "小跑一下思路",
+  "activityThinkingPicture": "等下，有画面了",
+  "activityThinkingBubbles": "思考泡泡",
+  "activityThinkingWaves": "脑电波传输中",
+  "activityThinkingCoffee": "脑子在煮咖啡",
+  "activityThinkingDraft": "我打个腹稿",
+  "activityThinkingComing": "嗯，来了来了",
+  "activityThinkingBubbling": "脑子冒泡泡",
+  "activityThinkingTackle": "嗯…盘它",
+  "activityThinkingSpark": "闪个思路",
+  "activityThinkingLogicFirst": "先捋一下逻辑",
+  "activityThinkingLocate": "定位一下",
+  "activityThinkingInvestigate": "排查一下",
+  "activityThinkingGif": "思考.gif",
+  "activityThinkingLook": "让我康康",
+  "activityThinkingInteresting": "嗯…有点意思",
+  "activityThinkingHands": "搓搓手想想",
+  "activityThinkingFiveMinutes": "5 分钟，大工程",
+  "activityThinkingSerious": "这把我得认真",
+  "activityThinkingTricky": "确实有点绕",
+  "activityThinkingAscend": "我在修仙",
+  "activityThinkingAlmostPromise": "快好了，真的",
+  "activityThinkingLongWay": "盘了一大圈",
+  "activityThinkingWrapping": "在收尾了",
+  "activityThinkingSong": "给我一首歌的时间",
+  "activityThinkingBigMove": "憋大招中",
+  "activityThinkingSimple": "这个需求很简单（不是）",
+  "activityThinkingOneMinute": "1 分钟，还在想",
+  "activityThinkingChallenge": "这题有点东西",
+  "activityThinkingDig": "让我再钻研下",
+  "activityThinkingNotSimple": "问题不简单",
+  "activityThinkingDeep": "盘得有点深",
+  "activityThinkingBurning": "脑细胞在燃烧",
+  "activityThinkingNearlyClear": "快盘清了",
+  "activityThinkingTwisty": "这个有点绕…",
+  "activityThinkingWorkout": "烧脑中…",
+  "activityThinkingStay": "别走，快了",
+  "activityThinkingCloser": "嗯，让我细想想",
+  "activityThinkingThirtySeconds": "30 秒了，还在盘",
+  "activityThinkingSoon": "别急，快出结果了",
+  "activityThinkingAnotherPass": "让我再捋一捋",
+  "activityThinkingTrack": "思路没断",
+  "activityThinkingLead": "有眉目了",
+  "activityThinkingCircles": "转圈圈…",
+  "activityThinkingAnyMoment": "马上马上",
+  "activityThinkingStillLocate": "还在定位",
+  "activityWaitingCall": "呼叫模型…",
+  "activityWaitingOnWay": "模型在路上了",
+  "activityWaitingSpeak": "等它开口…",
+  "activityWaitingWords": "它在组织语言",
+  "activityWaitingAwake": "模型醒了么",
+  "activityWaitingStretch": "等它伸懒腰",
+  "activityWaitingYawn": "它打了个哈欠",
+  "activityWaitingComing": "模型：来了来了",
+  "activityWaitingText": "等它出字",
+  "activityWaitingQueue": "还在排队",
+  "activityWaitingBrew": "它在酝酿",
+  "activityWaitingWater": "模型在喝水",
+  "activityWaitingWarmup": "等它热身",
+  "activityWaitingMeditate": "模型在冥想",
+  "activityWaitingBlink": "等它眨个眼",
+  "activityWaitingMoment": "它说稍等",
+  "activityWritingWords": "组织语言中",
+  "activityWritingTyping": "码字中",
+  "activityWritingInspired": "下笔如有神",
+  "activityWritingOnIt": "在写了在写了",
+  "activityWritingCareful": "字斟句酌",
+  "activityWritingFlow": "一气呵成",
+  "activityWritingPlain": "整理成人话",
+  "activityWritingIdeas": "把想法写下来",
+  "activityWritingKeys": "敲字中",
+  "activityWritingAlmost": "马上写完",
+  "activityWritingTell": "娓娓道来",
+  "activityWritingFast": "奋笔疾书",
+  "activityWritingBreeze": "笔下生风",
+  "activityWritingFormat": "排个版",
+  "activityNightAscend": "修仙中…",
+  "activityNightHello": "深夜冒泡",
+  "activityNightOwl": "你也是夜猫子呀",
+  "activityNightMoon": "月亮不睡我不睡",
+  "activityNightSlow": "夜里脑子慢，谅解",
+  "activityNightChampion": "熬夜冠军上线",
+  "activityNightSleepy": "困了，但能行",
+  "activityNightMidnight": "过了零点照样肝",
+  "activityNightOpen": "深夜档营业",
+  "activityNightStars": "星星都睡了",
+  "activityNightDawn": "凌晨还在盘",
+  "activityWeekendChill": "周末摸鱼中",
+  "activityWeekendHere": "周末也在！",
+  "activityWeekendCompany": "放假也陪你",
+  "activityWeekendOnline": "周末不关机",
+  "activityWeekendSneak": "周末偷着盘",
+  "activityWeekendWorking": "周末也在卷？",
+  "activityWeekendMode": "周末模式 ON",
+  "activityWeekendBugs": "周末在修 bug",
+  "activityWeekendSkin": "周末限定皮肤",
+  "activityNewYearCheers": "新年快乐！",
+  "activityNewYearDay": "元旦快乐",
+  "activityNewYearBugs": "新的一年，新的 bug",
+  "activityNewYearFirstLine": "新年第一行代码",
+  "activityNewYearWork": "开工大吉",
+  "activityValentineCode": "情人节也在敲代码",
+  "activityValentineLove": "代码才是真爱",
+  "activityValentineDate": "今天不约会？",
+  "activityValentineKeyboard": "键盘就是玫瑰",
+  "activityPiDay": "π 节快乐",
+  "activityPiCircle": "今天的圆格外圆",
+  "activityAprilFools": "愚人节快乐",
+  "activityAprilBug": "这个 bug 是假的吧",
+  "activityAprilErrors": "小心假报错",
+  "activityAprilKidding": "骗你的，没报错",
+  "activityLaborWorking": "劳动节还在卷",
+  "activityLaborPride": "劳动最光荣",
+  "activityLaborSpirit": "打工人打工魂",
+  "activityChildrenDay": "儿童节快乐",
+  "activityChildrenHeart": "谁还不是个宝宝",
+  "activityChildrenCode": "今天代码要写得可爱",
+  "activityProgrammerCheers": "1024 程序员节快乐",
+  "activityProgrammerDay": "今天是程序员节",
+  "activityProgrammer1024": "1024，节日快乐",
+  "activityProgrammerCode": "程序员节也在写代码",
+  "activityHalloween": "万圣节快乐",
+  "activityHalloweenTreat": "不给糖就捣蛋",
+  "activityHalloweenCode": "代码也会吓人",
+  "activityChristmasEve": "平安夜快乐",
+  "activityChristmasEveThinking": "平安夜也在盘",
+  "activityChristmasEveGift": "今晚写代码有礼物",
+  "activityChristmas": "圣诞快乐",
+  "activityChristmasCompany": "圣诞也陪你",
+  "activityChristmasEgg": "圣诞限定彩蛋",
+  "activityChristmasReindeer": "麋鹿送代码来了",
+  "activityYearEndEve": "跨年夜",
+  "activityYearEndLast": "今年最后一盘",
+  "activityYearEndReady": "准备跨年",
+  "activityYearEndSeeYou": "明年见！",
+  "activityZodiacRat": "鼠",
+  "activityZodiacOx": "牛",
+  "activityZodiacTiger": "虎",
+  "activityZodiacRabbit": "兔",
+  "activityZodiacDragon": "龙",
+  "activityZodiacSnake": "蛇",
+  "activityZodiacHorse": "马",
+  "activityZodiacGoat": "羊",
+  "activityZodiacMonkey": "猴",
+  "activityZodiacRooster": "鸡",
+  "activityZodiacDog": "狗",
+  "activityZodiacPig": "猪",
+  "activityLunarCheers": "春节快乐！",
+  "activityLunarCode": "过年还在写代码",
+  "activityLunarEnvelope": "红包拿来",
+  "activityLunarSpring": "新春快乐",
+  "activityLunarGreeting": "过年好",
+  "activityLunarCodeGreeting": "代码也拜个年",
+  "activityRareSsr": "SSR！稀有彩蛋",
+  "activityRareUr": "UR 掉落",
+  "activityRareLegend": "金色传说！",
+  "activityRareOrange": "出橙了",
+  "activityRareEgg": "彩蛋砸脸",
+  "activityRareChosen": "天选时刻",
+  "activityRareHidden": "你发现了隐藏款",
+  "activityRareChat": "触发隐藏对话",
+  "activityRareMax": "稀有度 MAX",
+  "activityRareLucky": "欧皇降临",
+  "activityRareCritical": "暴击了",
+  "activityRareNextLevel": "这波在大气层",
+  "activityFailCrash": "翻车了",
+  "activityFailOops": "哎呀",
+  "activityFailRun": "没跑通",
+  "activityFailTrip": "摔了一跤",
+  "activityFailWrong": "这不对",
+  "activityFailHiccup": "出岔子了",
+  "activityFailBroken": "不灵了",
+  "activityFailLocal": "我本地能跑啊",
+  "activityFailYesterday": "昨天还能跑",
+  "activityFailTough": "难绷",
+  "activityFailCrack": "裂开",
+  "activityFailPressure": "血压上来了",
+  "activityFailCareless": "这波大意了",
+  "activityFailSlip": "手滑",
+  "activityFailTryAgain": "换个姿势再来",
+  "activityFailChance": "再给我一次机会",
+  "activityTestGreen": "测试全绿",
+  "activityTestAllGreen": "全绿，舒服",
+  "activityTestFirstTry": "一次过！",
+  "activityTestNoErrors": "没报错",
+  "activityTestPassed": "过了过了",
+  "activityTestSolid": "稳了",
+  "activityTestRed": "红了，看看哪挂了",
+  "activityTestInvestigate": "测试挂了，排查一下",
+  "activityTestStubborn": "有个用例不服",
+  "activityTestFix": "红灯，再改改",
+  "activityGitCommitSave": "提交了，存个档",
+  "activityGitSaved": "存档成功",
+  "activityGitCommitRelief": "commit 一下，安心",
+  "activityGitPushed": "推上去了",
+  "activityGitPushDone": "push 完成，起飞",
+  "activityGitCodeOut": "代码出门了",
+  "activityInstallDone": "依赖装好了",
+  "activityInstallInternet": "下载了半个互联网",
+  "activityInstallPackages": "包都到齐了",
+  "activityMilestoneFive": "工具 x5，手感来了",
+  "activityMilestoneTen": "工具连击 x10",
+  "activityMilestoneTwenty": "工具 x20，停不下来",
+  "activityMilestoneFifty": "工具 x50，劳模本模",
+  "activityRetryWait": "稍等，重试中",
+  "activityRetryBackoff": "刚被拒了，退避一下",
+  "activityRetryKnock": "再敲一次门",
+  "activityRateLimited": "被限流了，缓缓再试",
+  "activityRate429": "429 了，歇口气再来",
+  "activityRateQueue": "排队的人有点多",
+  "activityCompactContext": "收拾一下上下文…",
+  "activityCompactBag": "整理背包中…",
+  "activityCompactSpace": "腾地方中",
+  "activityCompactMemory": "给记忆瘦个身",
+  "activityCompactChats": "打包旧对话",
+  "activityReminderWater": "半小时了，喝口水？",
+  "activityReminderTenMinutes": "10 分钟了，这活不小",
+  "activityDiffTitle": "本轮改动",
+  "activityDiffCopied": "已复制补丁",
+  "activityDiffNoWrap": "不换行",
+  "activityDiffWrap": "自动换行",
+  "activityDiffCopy": "复制补丁",
+  "activityDiffEmpty": "空文件，没有可显示的改动",
+  "activityDiffNewFile": "新建文件",
+  "activityDiffUnknownLines": "行号未知",
+  "activityDiffCopyPath": "复制路径",
+  "activityThinking": "思考",
+  "activityReplyInterrupted": "回复（已中断）",
+  "activityWaitingApproval": "等待确认",
+  "activityWaitingAnswer": "等待回答",
+  "activityWriting": "写回复中",
+  "activityThinkingNow": "思考中",
+  "activityRetrying": "重试中",
+  "activityCompacting": "压缩上下文",
+  "activityVerbRun": "跑",
+  "activityVerbWrite": "写",
+  "activityVerbEdit": "改",
+  "activityVerbImage": "看图",
+  "activityVerbRead": "读",
+  "activityVerbFind": "找",
+  "activityVerbSearch": "搜",
+  "activityVerbWebSearch": "搜网页",
+  "activityVerbWebView": "看网页",
+  "activityVerbSubagent": "派子代理",
+  "activityVerbTodo": "更新待办",
+  "activitySecretHide": "隐藏密钥",
+  "activitySecretShow": "显示密钥",
+  "activitySlashNoMatch": "没有匹配的指令，按普通消息发送",
+  "activitySlashCommands": "指令",
+  "activitySlashEnterArgs": "输入参数后发送",
+  "activitySlashRunIntent": "命令 · 执行",
+  "activitySlashInsertIntent": "命令 · 填入",
+  "activitySlashSkillIntent": "技能 · 填入",
+  "activityStepTitle": "步骤详情",
+  "activityStepMissing": "这一步不在已加载的记录里",
+  "activityStepQuestion": "提问",
+  "activityStepSuccess": "成功",
+  "activityStepNeedsPermission": "需要授权",
+  "activityTools": "工具",
+  "activityStepDispatched": "发出",
+  "activityStepExecution": "执行",
+  "activityStepLocation": "所在",
+  "activityStepArguments": "参数",
+  "activityStepChanges": "改动",
+  "activityStepFullScreen": "全屏查看",
+  "activityStepReadContent": "读到的内容",
+  "activityStepWrittenContent": "写入的内容",
+  "activityStepError": "错误",
+  "activityOutput": "输出",
+  "activityStepResult": "结果",
+  "activityStepDeclined": "你拒绝了这次调用",
+  "activityStepNoOutput": "没有输出",
+  "activityStepStart": "开始",
+  "activityDuration": "用时",
+  "activityFirstToken": "首字",
+  "activityStepGeneration": "生成",
+  "activityStepSpeed": "速度",
+  "activityModel": "模型",
+  "activityStepTiming": "计时",
+  "activityUsage": "用量",
+  "activityInput": "输入",
+  "activityStepCacheHit": "  命中缓存",
+  "activityStepCacheMiss": "  未命中",
+  "activityStepCacheWrite": "  写入缓存",
+  "activityStepReasoning": "  推理",
+  "activityStepAnswer": "  回答",
+  "activityStepThinking": "思考过程",
+  "activityStepExplanation": "说明",
+  "activityStepToolCalls": "本步调用的工具",
+  "activityStepProcessing": "模型正在处理",
+  "activityApprovalAllowed": "允许了",
+  "activityApprovalUnanswered": "无人确认",
+  "activityApprovalAnswered": "已答复",
+  "activityToolRead": "读取",
+  "activityToolWrite": "写入",
+  "activityToolCall": "调用工具",
+  "activityTraceTitle": "本轮轨迹",
+  "activityTraceNotLoaded": "本轮记录尚未加载",
+  "activityTraceOutputLimit": "输出达到上限",
+  "activityTraceEngineRestarted": "引擎重启，已中断",
+  "activityTraceBlocked": "已被拦截",
+  "activityTraceHeading": "本轮轨迹  ",
+  "activityTraceWaiting": "等你",
+  "activityTraceNoSteps": "本轮没有可计时的步骤",
+  "activityUsageInputIncludesCache": "输入含缓存命中",
+  "activityCacheHit": "缓存命中",
+  "activitySummaryTodo": "更新了待办",
+  "activityUsageBalance": "DeepSeek 余额",
+  "activityUsageContext": "上下文",
+  "activityUsageChat": "本对话",
+  "activityUsageAfterMessage": "发送消息后显示",
+  "activityUsageWaiting": "等待上下文用量数据",
+  "activityUsageProjected": "预计下次请求",
+  "activityUsageLastRequest": "上次请求",
+  "activityUsageBreakdownEstimate": "分项为独立估算，可能与总量不同",
+  "activityUsageCumulativeInput": "累计输入",
+  "activityUsageContextFull": "上下文将满，发送 /compact 可压缩",
+  "activitySpanZero": "0 秒",
+  "activitySpanTiny": "<0.1 秒",
+  "activityTokensTenThousands": "{value} 万",
+  "@activityTokensTenThousands": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "activityTokensHundredMillions": "{value} 亿",
+  "@activityTokensHundredMillions": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "activityUsageContextSemantics": "上下文已用 {percent}，查看用量",
+  "@activityUsageContextSemantics": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "activityUsageSystemTokens": "系统 {tokens}",
+  "@activityUsageSystemTokens": {
+    "placeholders": {
+      "tokens": {
+        "type": "String"
+      }
+    }
+  },
+  "activityUsageToolTokens": "工具 {tokens}",
+  "@activityUsageToolTokens": {
+    "placeholders": {
+      "tokens": {
+        "type": "String"
+      }
+    }
+  },
+  "activityUsageMessageTokens": "消息 {tokens}",
+  "@activityUsageMessageTokens": {
+    "placeholders": {
+      "tokens": {
+        "type": "String"
+      }
+    }
+  },
+  "activityUsageTurns": "共 {count} 轮",
+  "@activityUsageTurns": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activityUsageCacheWriteTokens": "写入缓存 {tokens}",
+  "@activityUsageCacheWriteTokens": {
+    "placeholders": {
+      "tokens": {
+        "type": "String"
+      }
+    }
+  },
+  "activitySummaryCommands": "执行 {count} 条命令",
+  "@activitySummaryCommands": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activitySummaryEditedFiles": "改了 {count} 个文件",
+  "@activitySummaryEditedFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activitySummaryReadFiles": "读了 {count} 个文件",
+  "@activitySummaryReadFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activitySummarySearches": "搜索 {count} 次",
+  "@activitySummarySearches": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activitySummaryWeb": "联网 {count} 次",
+  "@activitySummaryWeb": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activitySummarySubagents": "调用子代理 {count} 次",
+  "@activitySummarySubagents": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activitySummaryOther": "其他工具 {count} 次",
+  "@activitySummaryOther": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activitySummaryTotal": "使用了 {count} 个工具",
+  "@activitySummaryTotal": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activityDiffBlockMarker": "@@ 第 {index}/{total} 处修改 @@",
+  "@activityDiffBlockMarker": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "activityDiffEditMarker": "第 {index} 次修改（共 {total} 次）",
+  "@activityDiffEditMarker": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "activityTraceSpanSemantics": "{title} {detail}，用时 {duration}",
+  "@activityTraceSpanSemantics": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "detail": {
+        "type": "String"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "activityTraceGroupSemantics": "{label}，用时 {duration}",
+  "@activityTraceGroupSemantics": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "activityTraceEstimatedCost": "{cost}（按官方单价估算）",
+  "@activityTraceEstimatedCost": {
+    "placeholders": {
+      "cost": {
+        "type": "String"
+      }
+    }
+  },
+  "activityTraceReasoningTokens": "其中推理 {tokens}",
+  "@activityTraceReasoningTokens": {
+    "placeholders": {
+      "tokens": {
+        "type": "String"
+      }
+    }
+  },
+  "activityStepPosition": "第 {turn} 轮 · 第 {step} 步",
+  "@activityStepPosition": {
+    "placeholders": {
+      "turn": {
+        "type": "int"
+      },
+      "step": {
+        "type": "Object"
+      }
+    }
+  },
+  "activityStepTokenSpeed": "{speed} tokens/秒",
+  "@activityStepTokenSpeed": {
+    "placeholders": {
+      "speed": {
+        "type": "String"
+      }
+    }
+  },
+  "activityStepRetryCount": "{count} 次",
+  "@activityStepRetryCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activityStepTruncated": "{text}\n…（仅显示前 {count}k 字，复制可得全文）",
+  "@activityStepTruncated": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activityStepLiveElapsed": "{elapsed} · 进行中{suffix}",
+  "@activityStepLiveElapsed": {
+    "placeholders": {
+      "elapsed": {
+        "type": "String"
+      },
+      "suffix": {
+        "type": "String"
+      }
+    }
+  },
+  "activityStepCopySection": "复制{title}",
+  "@activityStepCopySection": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "activityStepCopiedSection": "已复制{title}",
+  "@activityStepCopiedSection": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "activitySlashDescriptionArgs": "{description} · 输入参数后发送",
+  "@activitySlashDescriptionArgs": {
+    "placeholders": {
+      "description": {
+        "type": "String"
+      }
+    }
+  },
+  "activitySpanSecondsText": "{seconds} 秒",
+  "@activitySpanSecondsText": {
+    "placeholders": {
+      "seconds": {
+        "type": "String"
+      }
+    }
+  },
+  "activitySpanSeconds": "{seconds} 秒",
+  "@activitySpanSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "activitySpanMinutesSeconds": "{minutes} 分 {seconds} 秒",
+  "@activitySpanMinutesSeconds": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      },
+      "seconds": {
+        "type": "String"
+      }
+    }
+  },
+  "activitySpanHoursMinutes": "{hours} 小时 {minutes} 分",
+  "@activitySpanHoursMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "activityCostUnderCent": "不到 {symbol}0.01",
+  "@activityCostUnderCent": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "activityCostApprox": "约 {symbol}{amount}",
+  "@activityCostApprox": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "activitySpanRetries": "重试 {count} 次",
+  "@activitySpanRetries": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activitySpanToolCalls": "决定调用 {count} 个工具",
+  "@activitySpanToolCalls": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activityRunningItems": "等 {count} 项",
+  "@activityRunningItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activityRetryAttempt": "第 {count} 次",
+  "@activityRetryAttempt": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activityDiffFileCount": "{count} 个文件",
+  "@activityDiffFileCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activityDiffFileSemantics": "{path}，新增 {added} 行，删除 {removed} 行",
+  "@activityDiffFileSemantics": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      },
+      "added": {
+        "type": "int"
+      },
+      "removed": {
+        "type": "int"
+      }
+    }
+  },
+  "activityDiffEditNumber": "第 {edit} 次修改",
+  "@activityDiffEditNumber": {
+    "placeholders": {
+      "edit": {
+        "type": "int"
+      }
+    }
+  },
+  "activityDiffHunkNumber": "第 {index} 处",
+  "@activityDiffHunkNumber": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "activityDiffFromLine": "第 {line} 行起",
+  "@activityDiffFromLine": {
+    "placeholders": {
+      "line": {
+        "type": "int"
+      }
+    }
+  },
+  "activityDiffEditCount": "修改 {count} 次",
+  "@activityDiffEditCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activityLunarZodiac": "{animal}年大吉",
+  "@activityLunarZodiac": {
+    "placeholders": {
+      "animal": {
+        "type": "String"
+      }
+    }
+  },
+  "activityReminderHours": "已经连续干了 {hours} 小时，歇会儿？",
+  "@activityReminderHours": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "activityStepModelRequest": "一次模型请求",
+  "activityStepModelRequestDetail": "一次模型请求 · {detail}",
+  "@activityStepModelRequestDetail": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "activityUsageEstimatedCost": "约 {symbol}{amount}",
+  "@activityUsageEstimatedCost": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "activitySlashCommandSemantics": "{label}，/{name}",
+  "@activitySlashCommandSemantics": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "activityQuotaTitle": "订阅额度",
+  "activityQuotaRefresh": "刷新额度",
+  "activityQuotaPermissionDenied": "订阅没有权限查询额度",
+  "activityQuotaAuthError": "登录已过期或无权查询，请检查订阅登录",
+  "activityQuotaNetworkError": "网络连接失败，请稍后重试",
+  "activityQuotaRateLimited": "查询过于频繁，请稍后重试",
+  "activityQuotaLoading": "正在查询订阅额度…",
+  "activityQuotaUnavailable": "暂时无法查询订阅额度，请稍后重试",
+  "activityQuotaUnsupported": "此主机暂不支持查询订阅额度",
+  "activityQuotaSignedOut": "订阅未登录",
+  "activityQuotaPrimary": "主要额度",
+  "activityQuotaSecondary": "次要额度",
+  "activityQuotaFiveHour": "5 小时",
+  "activityQuotaSevenDay": "7 天",
+  "activityQuotaSevenDaySonnet": "7 天 · Sonnet",
+  "activityQuotaSevenDayOpus": "7 天 · Opus",
+  "activityQuotaUsed": "已使用 {value}",
+  "@activityQuotaUsed": {"placeholders": {"value": {"type": "String"}}},
+  "activityQuotaReset": "重置时间：{time}",
+  "@activityQuotaReset": {"placeholders": {"time": {"type": "String"}}},
+  "activityToolListSeparator": "、"
+}

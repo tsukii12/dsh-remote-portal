@@ -1,0 +1,11 @@
+{
+  "name": "dsh-go-ui",
+  "files": {
+    "SKILL.md": "SKILL.md",
+    "schema.json": "schema.json",
+    "check.mjs": "scripts/check.mjs",
+    "example-full.json": "examples/full.json",
+    "example-header.json": "examples/header.json",
+    "example-quiet.json": "examples/quiet.json"
+  }
+}

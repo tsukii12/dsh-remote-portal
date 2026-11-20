@@ -1,0 +1,649 @@
+{
+ "zh": {
+  "commonCancel": "取消",
+  "commonConfirm": "确认",
+  "plugInputBadBinding": "输入绑定必须是 data 下的字段路径",
+  "plugInputBounds": "请输入 {min}–{max} 之间的值",
+  "plugInputCheckFields": "请检查标出的项目",
+  "plugInputChoices": "插件选项",
+  "plugInputChoose": "选择",
+  "plugInputDate": "请选择有效日期",
+  "plugInputDatePicker": "插件日期",
+  "plugInputDecrease": "减少{label}",
+  "plugInputDuplicateBinding": "一个字段只能绑定一个输入组件",
+  "plugInputFailed": "未保存，请重试",
+  "plugInputFormula": "公式无效或超出上限",
+  "plugInputGestureRequired": "该效果需要用户点按",
+  "plugInputIncrease": "增加{label}",
+  "plugInputInvalidValue": "此处的值无效",
+  "plugInputLength": "长度需为 {min}–{max} 个字符",
+  "plugInputNamedPattern": "只支持内置的格式校验",
+  "plugInputNestedForm": "表单不能嵌套",
+  "plugInputNext": "下一页",
+  "plugInputNoPassword": "插件不能使用密码输入框",
+  "plugInputNumber": "请输入有效数字",
+  "plugInputPattern": "格式不正确",
+  "plugInputPrevious": "上一页",
+  "plugInputRating": "{label}：{value} 分，共 {max} 分",
+  "plugInputRequired": "请填写此项",
+  "plugInputSubmit": "保存",
+  "plugInputSubmitMissing": "表单缺少提交动作",
+  "plugInputTime": "请选择有效时间",
+  "plugInputTimePicker": "插件时间",
+  "plugInputTooLarge": "内容过多，请缩短后重试",
+  "plugInputUnavailable": "此处不支持这个组件",
+  "plugViewArgsLimit": "动作参数超过 {limit} 字节，已忽略",
+  "plugViewBadAction": "动作应该是 id 字符串或 {shape}，已忽略",
+  "plugViewBadActionId": "动作 id {value} 不合规，这个元素不可点",
+  "plugViewBadAspect": "aspect 应该是 0.25 到 4 之间的数，已忽略",
+  "plugViewBadImageSource": "图片只收插件资源 asset:<路径>（png、jpg、webp、gif）或 data:image/…",
+  "plugViewBadMax": "max 应该是大于 0 的数，按 100 算",
+  "plugViewBadTrend": "trend 要 2–{max} 个数字（可以有 null），已忽略",
+  "plugViewColumnLimit": "{first} 列，超过上限 {second}",
+  "plugViewContrastAdjusted": "{mode}：{before} 已校正为 {after}，对比度至少 {minimum}:1",
+  "plugViewEmpty": "暂无数据",
+  "plugViewExpectedItems": "应该是数组，每项是 {shape}",
+  "plugViewFirstColumns": "只显示前 {limit} 列",
+  "plugViewFirstRows": "只显示前 {limit} 行",
+  "plugViewFrom": "来自 {name}",
+  "plugViewGalleryPicture": "第 {index} 张",
+  "plugViewImageDecode": "图片无法解码（只收 PNG、JPEG、WebP、GIF）",
+  "plugViewImagePixels": "图片尺寸超过上限：单边 4096、总数 400 万像素",
+  "plugViewImageTooLarge": "data: 图片超过 {limit} 字节",
+  "plugViewImageUnavailable": "图片无法显示",
+  "plugViewInvalid": "插件界面有误",
+  "plugViewOnePrimary": "一张视图只能有一个主按钮，这个按普通按钮画",
+  "plugViewRichLimit": "富文本超出上限，已截断",
+  "plugViewSkippedItem": "应该是 {shape}，这项已跳过",
+  "plugViewStyleContainerOnly": "此样式仅用于 stack 和 row",
+  "plugViewStyleInvalid": "样式无效，支持 {values}",
+  "plugViewStyleReserved": "此样式由 App 保留，已忽略",
+  "plugViewStyleTextOnly": "此样式仅用于 text、metric 和 callout",
+  "plugViewTooDeep": "JSON 嵌套超过 {limit} 层",
+  "plugViewUnavailableActions": "按钮无法显示",
+  "plugViewUnavailableKeyValue": "信息无法显示",
+  "plugViewUnavailableList": "列表无法显示",
+  "plugViewUnavailableProgress": "进度无法显示",
+  "plugViewUnavailableTable": "表格无法显示",
+  "plugViewUnknownIcon": "未知图标 {value}，画默认图标",
+  "plugViewUnknownTone": "未知 tone {value}，已忽略；可用：good, warn, bad, info, muted",
+  "plugViewV2Content": "插件内容",
+  "plugViewVersionFallback": "暂不支持视图版本 {version}，已使用兼容显示",
+  "viewLabeledValue": "{label}：{value}",
+  "viewListSeparator": "，",
+  "viewSemicolonSeparator": "；",
+  "viewUiAvailableTypes": "{first}；可用：{second}",
+  "viewUiBytesLimit": "视图有 {first} 字节，超过上限 {second} 字节",
+  "viewUiCancelledValue": "已取消：{value}",
+  "viewUiCategoryLimit": "{first} 个类别，超过上限 {second}",
+  "viewUiChildLimit": "超过 {first} 项，后 {second} 项已截断",
+  "viewUiChosen": "已选择：{value}",
+  "viewUiConfirmed": "已确认",
+  "viewUiConfirmedValue": "已确认：{value}",
+  "viewUiDepthLimit": "第 {first} 层，超过上限 {second} 层",
+  "viewUiDialectInvalid": "这块内容在网页版查看",
+  "viewUiDialectKindAudio": "音频",
+  "viewUiDialectKindChart": "图表",
+  "viewUiDialectKindDiagram": "示意图",
+  "viewUiDialectKindFiles": "文件树",
+  "viewUiDialectKindImage": "图片",
+  "viewUiDialectKindInteractive": "可交互内容",
+  "viewUiDialectKindMap": "地图",
+  "viewUiDialectKindOther": "这部分",
+  "viewUiDialectKindScene": "3D 场景",
+  "viewUiDialectKindVideo": "视频",
+  "viewUiDialectNote": "在网页版查看",
+  "viewUiDialectWebOnly": "{kind} · 在网页版查看",
+  "viewUiDonutSeries": "环形图只画一组数据，其余 {count} 组已忽略",
+  "viewUiDuplicateLabel": "重复的 label {value}，已跳过",
+  "viewUiEmptyCode": "代码块是空的",
+  "viewUiExpectedCategories": "应该是非空的标签数组",
+  "viewUiExpectedChildren": "应该是 1 到 {limit} 个组件的数组",
+  "viewUiExpectedCompare": "应该是 2 到 {limit} 项的数组，每项是 {shape}",
+  "viewUiExpectedFinite": "应该是有限的数",
+  "viewUiExpectedObject": "应该是一个组件对象",
+  "viewUiExpectedOptions": "应该是 1 到 {limit} 个选项的数组，每项是 {shape}",
+  "viewUiExpectedSeries": "应该是非空的数组，每项是 {shape}",
+  "viewUiExpectedSteps": "应该是非空数组，每项是 {shape}",
+  "viewUiExpectedString": "应该是字符串",
+  "viewUiExpectedStringNumber": "应该是字符串或数字",
+  "viewUiExpired": "已失效",
+  "viewUiFirstItems": "只显示前 {limit} 项",
+  "viewUiFirstOptions": "已截断：只显示前 {limit} 个选项",
+  "viewUiFirstPoints": "只显示前 {limit} 个点",
+  "viewUiFirstRows": "每项只显示前 {limit} 行",
+  "viewUiFirstSeries": "只画第一组数据",
+  "viewUiFirstSeriesCount": "只显示前 {limit} 组数据",
+  "viewUiFirstSteps": "已截断：只显示前 {limit} 步",
+  "viewUiGenerating": "正在生成视图",
+  "viewUiHiddenItems": "已截断：还有 {count} 项没有显示",
+  "viewUiHundredMillion": "{value}亿",
+  "viewUiIncomplete": "视图没有生成完",
+  "viewUiInvalid": "这个视图格式有误",
+  "viewUiInvalidJson": "不是合法的 JSON（{message}）",
+  "viewUiInvalidJsonOffset": "不是合法的 JSON（{message}，第 {offset} 个字符附近）",
+  "viewUiItemLimit": "{first} 项，超过上限 {second}",
+  "viewUiJsonRepaired": "含注释或尾逗号，已忽略",
+  "viewUiMillion": "{value}M",
+  "viewUiMissingType": "缺少 type",
+  "viewUiMultiple": "可多选",
+  "viewUiNo": "否",
+  "viewUiNoFiniteValues": "没有一个有限的数值",
+  "viewUiNoItems": "没有一项能画",
+  "viewUiNoOptions": "没有一个能用的选项",
+  "viewUiNoSeries": "没有一组能画的数据",
+  "viewUiNoSteps": "没有一步能画",
+  "viewUiNodeLimit": "超过 {first} 个组件，后 {second} 项已截断",
+  "viewUiNonFiniteValues": "{count} 个值不是有限的数，已留空",
+  "viewUiNotStarted": "未开始",
+  "viewUiOptionLimit": "{first} 个选项，超过上限 {second}",
+  "viewUiReplied": "已回复",
+  "viewUiReplyAfterEnd": "回复结束后可选",
+  "viewUiReplyCancel": "取消：{value}",
+  "viewUiReplyChoice": "选择：{value}",
+  "viewUiReplyConfirm": "确认：{value}",
+  "viewUiResend": "让它重发",
+  "viewUiResendMessage": "上一个 dsh-ui 视图无法显示：{value}。请修正后重发。",
+  "viewUiRowLimit": "{first} 行，超过上限 {second}",
+  "viewUiSeriesLimit": "{first} 组数据，超过上限 {second}",
+  "viewUiSkippedCompare": "应该是 {shape}，已跳过",
+  "viewUiSkippedItemLabel": "应该是非空字符串，这项已跳过",
+  "viewUiSkippedRow": "应该是 [名称, 值]，已跳过",
+  "viewUiSkippedSeries": "应该是数字数组，这组已跳过",
+  "viewUiSkippedStep": "应该是 {shape}，已跳过",
+  "viewUiSkippedStepLabel": "应该是字符串，这步已跳过",
+  "viewUiStepLimit": "{first} 步，超过上限 {second}",
+  "viewUiSummaryBody": "[视图] {value}",
+  "viewUiSummaryCallout": "提示：{value}",
+  "viewUiSummaryChart": "图表：{summary}",
+  "viewUiSummaryCompare": "对比：{value}",
+  "viewUiSummaryConfirm": "确认：{first}/{second}",
+  "viewUiSummaryInvalid": "[视图]（格式有误，未能显示）",
+  "viewUiSummaryOptions": "选项：{value}",
+  "viewUiSummarySteps": "步骤：{value}",
+  "viewUiSummaryText": "文字：{value}",
+  "viewUiSummaryTitleBody": "[视图] {first}：{second}",
+  "viewUiTenThousand": "{value}万",
+  "viewUiTextLimit": "{first} 个字符，超过上限 {second}",
+  "viewUiTextTruncated": "已截断：文字过长",
+  "viewUiTruncated": "已截断：{value}",
+  "viewUiUnavailableCallout": "提示无法显示",
+  "viewUiUnavailableChart": "图表无法显示",
+  "viewUiUnavailableCompare": "对比无法显示",
+  "viewUiUnavailableConfirm": "确认无法显示",
+  "viewUiUnavailableGroup": "这一组无法显示",
+  "viewUiUnavailableMetric": "指标无法显示",
+  "viewUiUnavailableOptions": "选项无法显示",
+  "viewUiUnavailablePart": "这部分无法显示",
+  "viewUiUnavailableSteps": "步骤无法显示",
+  "viewUiUnavailableText": "文字无法显示",
+  "viewUiUnknownCalloutTone": "未知 tone {value}，按 info 画；可用：info, good, warn, bad",
+  "viewUiUnknownChart": "未知图表 {value}，按柱状图画；可用：bar, hbar, line, donut",
+  "viewUiUnknownComponent": "未知组件 {value}",
+  "viewUiUnknownStatus": "未知状态 {value}，按 todo 画；可用：done, current, todo, failed",
+  "viewUiUnknownTone": "未知 tone {value}，已忽略；可用：good, warn, bad",
+  "viewUiValuesCategories": "{first} 个值对 {second} 个类别，多的截掉、缺的留空",
+  "viewUiYes": "是"
+ },
+ "en": {
+  "commonCancel": "Cancel",
+  "commonConfirm": "Confirm",
+  "plugInputBadBinding": "Input binding must be a field path under data",
+  "plugInputBounds": "Enter a value from {min} to {max}",
+  "plugInputCheckFields": "Check the highlighted fields",
+  "plugInputChoices": "Plugin choices",
+  "plugInputChoose": "Choose",
+  "plugInputDate": "Choose a valid date",
+  "plugInputDatePicker": "Plugin date",
+  "plugInputDecrease": "Decrease {label}",
+  "plugInputDuplicateBinding": "Each field can bind to only one input",
+  "plugInputFailed": "Not saved. Try again",
+  "plugInputFormula": "Invalid formula or formula limit exceeded",
+  "plugInputGestureRequired": "This effect requires a user tap",
+  "plugInputIncrease": "Increase {label}",
+  "plugInputInvalidValue": "Invalid value",
+  "plugInputLength": "Use {min}–{max} characters",
+  "plugInputNamedPattern": "Use a built-in validation pattern",
+  "plugInputNestedForm": "Forms cannot be nested",
+  "plugInputNext": "Next",
+  "plugInputNoPassword": "Plugins cannot use password fields",
+  "plugInputNumber": "Enter a valid number",
+  "plugInputPattern": "Check the format",
+  "plugInputPrevious": "Previous",
+  "plugInputRating": "{label}: {value} out of {max}",
+  "plugInputRequired": "Complete this field",
+  "plugInputSubmit": "Save",
+  "plugInputSubmitMissing": "Form needs a submit action",
+  "plugInputTime": "Choose a valid time",
+  "plugInputTimePicker": "Plugin time",
+  "plugInputTooLarge": "Too much content. Shorten it and try again",
+  "plugInputUnavailable": "This component is not supported here",
+  "plugViewArgsLimit": "Action args exceed {limit, plural, =1{1 byte} other{{limit} bytes}}; ignored",
+  "plugViewBadAction": "An action must be an id string or {shape}; ignored",
+  "plugViewBadActionId": "Invalid action id {value}; this element isn’t tappable",
+  "plugViewBadAspect": "aspect must be a number from 0.25 to 4; ignored",
+  "plugViewBadImageSource": "Images take a plugin asset (asset:<path>, png, jpg, webp or gif) or a data:image/… URL",
+  "plugViewBadMax": "max must be a number above 0; using 100",
+  "plugViewBadTrend": "trend takes 2–{max} numbers (nulls allowed); ignored",
+  "plugViewColumnLimit": "{first, plural, =1{1 column} other{{first} columns}}, exceeding the limit of {second}",
+  "plugViewContrastAdjusted": "{mode}: {before} adjusted to {after}, contrast at least {minimum}:1",
+  "plugViewEmpty": "No data yet",
+  "plugViewExpectedItems": "Expected an array of {shape}",
+  "plugViewFirstColumns": "Showing only the first {limit, plural, =1{1 column} other{{limit} columns}}",
+  "plugViewFirstRows": "Showing only the first {limit, plural, =1{1 row} other{{limit} rows}}",
+  "plugViewFrom": "From {name}",
+  "plugViewGalleryPicture": "Picture {index}",
+  "plugViewImageDecode": "Image can’t be decoded (PNG, JPEG, WebP or GIF only)",
+  "plugViewImagePixels": "Image exceeds the size limit: 4096 per side, 4 million pixels in total",
+  "plugViewImageTooLarge": "data: image exceeds {limit, plural, =1{1 byte} other{{limit} bytes}}",
+  "plugViewImageUnavailable": "Can’t display image",
+  "plugViewInvalid": "Plugin view has an error",
+  "plugViewOnePrimary": "A view has at most one primary button; this one is drawn as plain",
+  "plugViewRichLimit": "Rich text exceeds the limit; truncated",
+  "plugViewSkippedItem": "Expected {shape}; item skipped",
+  "plugViewStyleContainerOnly": "This style is only available on stack and row",
+  "plugViewStyleInvalid": "Invalid style; expected {values}",
+  "plugViewStyleReserved": "This appearance is reserved for the app; ignored",
+  "plugViewStyleTextOnly": "This style is only available on text, metric and callout",
+  "plugViewTooDeep": "JSON nested deeper than {limit, plural, =1{1 level} other{{limit} levels}}",
+  "plugViewUnavailableActions": "Can’t display buttons",
+  "plugViewUnavailableKeyValue": "Can’t display details",
+  "plugViewUnavailableList": "Can’t display list",
+  "plugViewUnavailableProgress": "Can’t display progress",
+  "plugViewUnavailableTable": "Can’t display table",
+  "plugViewUnknownIcon": "Unknown icon {value}; drawn with the default icon",
+  "plugViewUnknownTone": "Unknown tone {value}, ignored; available: good, warn, bad, info, muted",
+  "plugViewV2Content": "Plugin content",
+  "plugViewVersionFallback": "View version {version} is not supported; using the compatible view",
+  "viewLabeledValue": "{label}: {value}",
+  "viewListSeparator": ", ",
+  "viewSemicolonSeparator": "; ",
+  "viewUiAvailableTypes": "{first}; available: {second}",
+  "viewUiBytesLimit": "View is {first, plural, =1{second byte} other{{first} bytes}}, exceeding the limit of {second, plural, =1{second byte} other{{second} bytes}}",
+  "viewUiCancelledValue": "Cancelled: {value}",
+  "viewUiCategoryLimit": "{first, plural, =1{second category} other{{first} categories}}, exceeding the limit of {second}",
+  "viewUiChildLimit": "Exceeded {first, plural, =1{second item} other{{first} items}}; last {second, plural, =1{second item truncated} other{{second} items truncated}}",
+  "viewUiChosen": "Selected: {value}",
+  "viewUiConfirmed": "Confirmed",
+  "viewUiConfirmedValue": "Confirmed: {value}",
+  "viewUiDepthLimit": "Depth {first} exceeds the limit of {second}",
+  "viewUiDialectInvalid": "This block shows in DSH Web",
+  "viewUiDialectKindAudio": "Audio",
+  "viewUiDialectKindChart": "Chart",
+  "viewUiDialectKindDiagram": "Diagram",
+  "viewUiDialectKindFiles": "File tree",
+  "viewUiDialectKindImage": "Image",
+  "viewUiDialectKindInteractive": "Interactive part",
+  "viewUiDialectKindMap": "Map",
+  "viewUiDialectKindOther": "This part",
+  "viewUiDialectKindScene": "3D scene",
+  "viewUiDialectKindVideo": "Video",
+  "viewUiDialectNote": "Shown in DSH Web",
+  "viewUiDialectWebOnly": "{kind} · View in DSH Web",
+  "viewUiDonutSeries": "Donut chart uses one series; {count, plural, =1{1 other series ignored} other{{count} other series ignored}}",
+  "viewUiDuplicateLabel": "Duplicate label {value}; skipped",
+  "viewUiEmptyCode": "Code block is empty",
+  "viewUiExpectedCategories": "Expected a non-empty array of labels",
+  "viewUiExpectedChildren": "Expected an array of 1 to {limit} components",
+  "viewUiExpectedCompare": "Expected an array of 2 to {limit} {shape} objects",
+  "viewUiExpectedFinite": "Expected a finite number",
+  "viewUiExpectedObject": "Expected a component object",
+  "viewUiExpectedOptions": "Expected an array of 1 to {limit} {shape} options",
+  "viewUiExpectedSeries": "Expected a non-empty array of {shape} objects",
+  "viewUiExpectedSteps": "Expected a non-empty array of {shape} objects",
+  "viewUiExpectedString": "Expected a string",
+  "viewUiExpectedStringNumber": "Expected a string or number",
+  "viewUiExpired": "Expired",
+  "viewUiFirstItems": "Showing only the first {limit, plural, =1{1 item} other{{limit} items}}",
+  "viewUiFirstOptions": "Truncated: showing only the first {limit, plural, =1{1 option} other{{limit} options}}",
+  "viewUiFirstPoints": "Showing only the first {limit, plural, =1{1 point} other{{limit} points}}",
+  "viewUiFirstRows": "Showing only the first {limit, plural, =1{1 row} other{{limit} rows}} per item",
+  "viewUiFirstSeries": "Drawing only the first series",
+  "viewUiFirstSeriesCount": "Showing only the first {limit, plural, =1{1 series} other{{limit} series}}",
+  "viewUiFirstSteps": "Truncated: showing only the first {limit, plural, =1{1 step} other{{limit} steps}}",
+  "viewUiGenerating": "Generating view",
+  "viewUiHiddenItems": "Truncated: {count, plural, =1{1 more item hidden} other{{count} more items hidden}}",
+  "viewUiHundredMillion": "{value}B",
+  "viewUiIncomplete": "View is still generating",
+  "viewUiInvalid": "This view has a formatting error",
+  "viewUiInvalidJson": "Invalid JSON ({message})",
+  "viewUiInvalidJsonOffset": "Invalid JSON ({message}, near character {offset})",
+  "viewUiItemLimit": "{first, plural, =1{second item} other{{first} items}}, exceeding the limit of {second}",
+  "viewUiJsonRepaired": "Comments or trailing commas ignored",
+  "viewUiMillion": "{value}M",
+  "viewUiMissingType": "Missing type",
+  "viewUiMultiple": "Select multiple",
+  "viewUiNo": "No",
+  "viewUiNoFiniteValues": "No finite values",
+  "viewUiNoItems": "No items to draw",
+  "viewUiNoOptions": "No usable options",
+  "viewUiNoSeries": "No series to draw",
+  "viewUiNoSteps": "No steps to draw",
+  "viewUiNodeLimit": "Exceeded {first, plural, =1{second component} other{{first} components}}; last {second, plural, =1{second item truncated} other{{second} items truncated}}",
+  "viewUiNonFiniteValues": "{count, plural, =1{1 non-finite value} other{{count} non-finite values}} left blank",
+  "viewUiNotStarted": "Not started",
+  "viewUiOptionLimit": "{first, plural, =1{second option} other{{first} options}}, exceeding the limit of {second}",
+  "viewUiReplied": "Replied",
+  "viewUiReplyAfterEnd": "Choose when the reply is complete",
+  "viewUiReplyCancel": "Cancel: {value}",
+  "viewUiReplyChoice": "Select: {value}",
+  "viewUiReplyConfirm": "Confirm: {value}",
+  "viewUiResend": "Ask to resend",
+  "viewUiResendMessage": "The previous dsh-ui view couldn’t be displayed: {value}. Fix it and resend.",
+  "viewUiRowLimit": "{first, plural, =1{second row} other{{first} rows}}, exceeding the limit of {second}",
+  "viewUiSeriesLimit": "{first, plural, =1{second series} other{{first} series}}, exceeding the limit of {second}",
+  "viewUiSkippedCompare": "Expected {shape}; item skipped",
+  "viewUiSkippedItemLabel": "Expected a non-empty string; item skipped",
+  "viewUiSkippedRow": "Expected [name, value]; row skipped",
+  "viewUiSkippedSeries": "Expected an array of numbers; series skipped",
+  "viewUiSkippedStep": "Expected {shape}; step skipped",
+  "viewUiSkippedStepLabel": "Expected a string; step skipped",
+  "viewUiStepLimit": "{first, plural, =1{second step} other{{first} steps}}, exceeding the limit of {second}",
+  "viewUiSummaryBody": "[View] {value}",
+  "viewUiSummaryCallout": "Note: {value}",
+  "viewUiSummaryChart": "Chart: {summary}",
+  "viewUiSummaryCompare": "Compare: {value}",
+  "viewUiSummaryConfirm": "Confirm: {first}/{second}",
+  "viewUiSummaryInvalid": "[View] (formatting error, couldn’t display)",
+  "viewUiSummaryOptions": "Options: {value}",
+  "viewUiSummarySteps": "Steps: {value}",
+  "viewUiSummaryText": "Text: {value}",
+  "viewUiSummaryTitleBody": "[View] {first}: {second}",
+  "viewUiTenThousand": "{value}K",
+  "viewUiTextLimit": "{first, plural, =1{second character} other{{first} characters}}, exceeding the limit of {second}",
+  "viewUiTextTruncated": "Truncated: text too long",
+  "viewUiTruncated": "Truncated: {value}",
+  "viewUiUnavailableCallout": "Can’t display note",
+  "viewUiUnavailableChart": "Can’t display chart",
+  "viewUiUnavailableCompare": "Can’t display comparison",
+  "viewUiUnavailableConfirm": "Can’t display confirmation",
+  "viewUiUnavailableGroup": "Can’t display this group",
+  "viewUiUnavailableMetric": "Can’t display metric",
+  "viewUiUnavailableOptions": "Can’t display options",
+  "viewUiUnavailablePart": "Can’t display this section",
+  "viewUiUnavailableSteps": "Can’t display steps",
+  "viewUiUnavailableText": "Can’t display text",
+  "viewUiUnknownCalloutTone": "Unknown tone {value}, drawn as info; available: info, good, warn, bad",
+  "viewUiUnknownChart": "Unknown chart {value}, drawn as bars; available: bar, hbar, line, donut",
+  "viewUiUnknownComponent": "Unknown component {value}",
+  "viewUiUnknownStatus": "Unknown status {value}, drawn as todo; available: done, current, todo, failed",
+  "viewUiUnknownTone": "Unknown tone {value}, ignored; available: good, warn, bad",
+  "viewUiValuesCategories": "{first, plural, =1{second value} other{{first} values}} for {second, plural, =1{second category} other{{second} categories}}; extra values dropped, missing values left blank",
+  "viewUiYes": "Yes"
+ },
+ "params": {
+  "plugInputBounds": [
+   "min",
+   "max"
+  ],
+  "plugInputDecrease": [
+   "label"
+  ],
+  "plugInputIncrease": [
+   "label"
+  ],
+  "plugInputLength": [
+   "min",
+   "max"
+  ],
+  "plugInputRating": [
+   "label",
+   "value",
+   "max"
+  ],
+  "plugViewArgsLimit": [
+   "limit"
+  ],
+  "plugViewBadAction": [
+   "shape"
+  ],
+  "plugViewBadActionId": [
+   "value"
+  ],
+  "plugViewBadTrend": [
+   "max"
+  ],
+  "plugViewColumnLimit": [
+   "first",
+   "second"
+  ],
+  "plugViewContrastAdjusted": [
+   "mode",
+   "before",
+   "after",
+   "minimum"
+  ],
+  "plugViewExpectedItems": [
+   "shape"
+  ],
+  "plugViewFirstColumns": [
+   "limit"
+  ],
+  "plugViewFirstRows": [
+   "limit"
+  ],
+  "plugViewFrom": [
+   "name"
+  ],
+  "plugViewGalleryPicture": [
+   "index"
+  ],
+  "plugViewImageTooLarge": [
+   "limit"
+  ],
+  "plugViewSkippedItem": [
+   "shape"
+  ],
+  "plugViewStyleInvalid": [
+   "values"
+  ],
+  "plugViewTooDeep": [
+   "limit"
+  ],
+  "plugViewUnknownIcon": [
+   "value"
+  ],
+  "plugViewUnknownTone": [
+   "value"
+  ],
+  "plugViewVersionFallback": [
+   "version"
+  ],
+  "viewLabeledValue": [
+   "label",
+   "value"
+  ],
+  "viewUiAvailableTypes": [
+   "first",
+   "second"
+  ],
+  "viewUiBytesLimit": [
+   "first",
+   "second"
+  ],
+  "viewUiCancelledValue": [
+   "value"
+  ],
+  "viewUiCategoryLimit": [
+   "first",
+   "second"
+  ],
+  "viewUiChildLimit": [
+   "first",
+   "second"
+  ],
+  "viewUiChosen": [
+   "value"
+  ],
+  "viewUiConfirmedValue": [
+   "value"
+  ],
+  "viewUiDepthLimit": [
+   "first",
+   "second"
+  ],
+  "viewUiDialectWebOnly": [
+   "kind"
+  ],
+  "viewUiDonutSeries": [
+   "count"
+  ],
+  "viewUiDuplicateLabel": [
+   "value"
+  ],
+  "viewUiExpectedChildren": [
+   "limit"
+  ],
+  "viewUiExpectedCompare": [
+   "limit",
+   "shape"
+  ],
+  "viewUiExpectedOptions": [
+   "limit",
+   "shape"
+  ],
+  "viewUiExpectedSeries": [
+   "shape"
+  ],
+  "viewUiExpectedSteps": [
+   "shape"
+  ],
+  "viewUiFirstItems": [
+   "limit"
+  ],
+  "viewUiFirstOptions": [
+   "limit"
+  ],
+  "viewUiFirstPoints": [
+   "limit"
+  ],
+  "viewUiFirstRows": [
+   "limit"
+  ],
+  "viewUiFirstSeriesCount": [
+   "limit"
+  ],
+  "viewUiFirstSteps": [
+   "limit"
+  ],
+  "viewUiHiddenItems": [
+   "count"
+  ],
+  "viewUiHundredMillion": [
+   "value"
+  ],
+  "viewUiInvalidJson": [
+   "message"
+  ],
+  "viewUiInvalidJsonOffset": [
+   "message",
+   "offset"
+  ],
+  "viewUiItemLimit": [
+   "first",
+   "second"
+  ],
+  "viewUiMillion": [
+   "value"
+  ],
+  "viewUiNodeLimit": [
+   "first",
+   "second"
+  ],
+  "viewUiNonFiniteValues": [
+   "count"
+  ],
+  "viewUiOptionLimit": [
+   "first",
+   "second"
+  ],
+  "viewUiReplyCancel": [
+   "value"
+  ],
+  "viewUiReplyChoice": [
+   "value"
+  ],
+  "viewUiReplyConfirm": [
+   "value"
+  ],
+  "viewUiResendMessage": [
+   "value"
+  ],
+  "viewUiRowLimit": [
+   "first",
+   "second"
+  ],
+  "viewUiSeriesLimit": [
+   "first",
+   "second"
+  ],
+  "viewUiSkippedCompare": [
+   "shape"
+  ],
+  "viewUiSkippedStep": [
+   "shape"
+  ],
+  "viewUiStepLimit": [
+   "first",
+   "second"
+  ],
+  "viewUiSummaryBody": [
+   "value"
+  ],
+  "viewUiSummaryCallout": [
+   "value"
+  ],
+  "viewUiSummaryChart": [
+   "summary"
+  ],
+  "viewUiSummaryCompare": [
+   "value"
+  ],
+  "viewUiSummaryConfirm": [
+   "first",
+   "second"
+  ],
+  "viewUiSummaryOptions": [
+   "value"
+  ],
+  "viewUiSummarySteps": [
+   "value"
+  ],
+  "viewUiSummaryText": [
+   "value"
+  ],
+  "viewUiSummaryTitleBody": [
+   "first",
+   "second"
+  ],
+  "viewUiTenThousand": [
+   "value"
+  ],
+  "viewUiTextLimit": [
+   "first",
+   "second"
+  ],
+  "viewUiTruncated": [
+   "value"
+  ],
+  "viewUiUnknownCalloutTone": [
+   "value"
+  ],
+  "viewUiUnknownChart": [
+   "value"
+  ],
+  "viewUiUnknownComponent": [
+   "value"
+  ],
+  "viewUiUnknownStatus": [
+   "value"
+  ],
+  "viewUiUnknownTone": [
+   "value"
+  ],
+  "viewUiValuesCategories": [
+   "first",
+   "second"
+  ]
+ }
+}

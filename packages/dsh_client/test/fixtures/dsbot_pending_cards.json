@@ -1,0 +1,291 @@
+{
+  "provenance": {
+    "repo": "Fei2411/DS-Bot",
+    "ref": "6f3e1b3e8603abd84820b334a7f99985236dbbdf",
+    "scope": "Actual ask_user/show_view tools, state/answer Fetch; upstream fakeContext and synthetic temporary team, no LLM/full Host claim"
+  },
+  "questionState": {
+    "ok": true,
+    "value": {
+      "revision": 2,
+      "workspaceId": null,
+      "mainBotId": "chief",
+      "mainBotIds": [
+        "chief"
+      ],
+      "bots": [
+        {
+          "id": "chief",
+          "name": "Chief",
+          "role": "Lead",
+          "sessionId": "chief",
+          "createdAt": 1,
+          "capabilities": [],
+          "avatar": {
+            "shape": "whale"
+          },
+          "color": "deepseek",
+          "parts": []
+        },
+        {
+          "id": "writer",
+          "name": "Writer",
+          "role": "Write",
+          "sessionId": "writer-now",
+          "createdAt": 2,
+          "capabilities": [],
+          "parts": [
+            "writer-old"
+          ]
+        }
+      ],
+      "rooms": [
+        {
+          "id": "r1",
+          "name": "Ops",
+          "members": [
+            "writer"
+          ],
+          "mode": "admin",
+          "admin": "writer",
+          "named": true,
+          "relayLimitDefault": 3,
+          "parts": [
+            "writer-group"
+          ]
+        }
+      ],
+      "exchangeTurns": {},
+      "questions": {
+        "writer-now": {
+          "id": "7c623147-ca48-4272-9992-9b986a9d9b26",
+          "callId": "synthetic-question",
+          "question": "Synthetic question?",
+          "options": [
+            {
+              "label": "Synthetic A"
+            },
+            {
+              "label": "Synthetic B"
+            }
+          ],
+          "multiSelect": false,
+          "allowCustom": true,
+          "askedAt": 1793141787381
+        }
+      },
+      "views": {},
+      "btwCards": {},
+      "sideChats": {},
+      "agents": [],
+      "secrets": [],
+      "capabilities": [],
+      "secretRequests": {},
+      "colors": [
+        "deepseek",
+        "blue",
+        "violet",
+        "orange",
+        "green",
+        "magenta",
+        "cyan",
+        "red",
+        "yellow",
+        "brown",
+        "gray",
+        "black",
+        "aurora",
+        "charcoal",
+        "graphite",
+        "rose",
+        "sky",
+        "tangerine",
+        "cobalt"
+      ],
+      "models": [],
+      "defaultModel": null,
+      "permissions": null,
+      "modelsKey": "|",
+      "prefs": {},
+      "browser": false,
+      "memory": true,
+      "readOnly": null,
+      "activity": {},
+      "work": {
+        "bots": {},
+        "rooms": {},
+        "approvals": [],
+        "waiting": {},
+        "turns": {},
+        "steered": {}
+      },
+      "memoryNews": {},
+      "memoryReviews": 0,
+      "connectors": [
+        {
+          "id": "github",
+          "name": "GitHub",
+          "state": "off",
+          "account": null
+        }
+      ],
+      "capabilityStatuses": {
+        "chief": {},
+        "writer": {}
+      }
+    }
+  },
+  "failedAnswer": {
+    "ok": false,
+    "error": {
+      "code": "bot/refused",
+      "message": "synthetic flush failure",
+      "details": {}
+    }
+  },
+  "answer": {
+    "ok": true,
+    "value": true
+  },
+  "viewState": {
+    "ok": true,
+    "value": {
+      "revision": 4,
+      "workspaceId": null,
+      "mainBotId": "chief",
+      "mainBotIds": [
+        "chief"
+      ],
+      "bots": [
+        {
+          "id": "chief",
+          "name": "Chief",
+          "role": "Lead",
+          "sessionId": "chief",
+          "createdAt": 1,
+          "capabilities": [],
+          "avatar": {
+            "shape": "whale"
+          },
+          "color": "deepseek",
+          "parts": []
+        },
+        {
+          "id": "writer",
+          "name": "Writer",
+          "role": "Write",
+          "sessionId": "writer-now",
+          "createdAt": 2,
+          "capabilities": [],
+          "parts": [
+            "writer-old"
+          ]
+        }
+      ],
+      "rooms": [
+        {
+          "id": "r1",
+          "name": "Ops",
+          "members": [
+            "writer"
+          ],
+          "mode": "admin",
+          "admin": "writer",
+          "named": true,
+          "relayLimitDefault": 3,
+          "parts": [
+            "writer-group"
+          ]
+        }
+      ],
+      "exchangeTurns": {},
+      "questions": {},
+      "views": {
+        "writer-now": {
+          "id": "2c702b75-e110-446d-95e7-b84a859e2005",
+          "callId": "call-1",
+          "title": "Synthetic view",
+          "view": {
+            "type": "options",
+            "id": "pick",
+            "options": [
+              {
+                "label": "A"
+              },
+              {
+                "label": "B"
+              }
+            ]
+          },
+          "askedAt": 1793141787416
+        }
+      },
+      "btwCards": {},
+      "sideChats": {},
+      "agents": [],
+      "secrets": [],
+      "capabilities": [],
+      "secretRequests": {},
+      "colors": [
+        "deepseek",
+        "blue",
+        "violet",
+        "orange",
+        "green",
+        "magenta",
+        "cyan",
+        "red",
+        "yellow",
+        "brown",
+        "gray",
+        "black",
+        "aurora",
+        "charcoal",
+        "graphite",
+        "rose",
+        "sky",
+        "tangerine",
+        "cobalt"
+      ],
+      "models": [],
+      "defaultModel": null,
+      "permissions": null,
+      "modelsKey": "|",
+      "prefs": {},
+      "browser": false,
+      "memory": true,
+      "readOnly": null,
+      "activity": {},
+      "work": {
+        "bots": {},
+        "rooms": {},
+        "approvals": [],
+        "waiting": {},
+        "turns": {},
+        "steered": {}
+      },
+      "memoryNews": {},
+      "memoryReviews": 0,
+      "connectors": [
+        {
+          "id": "github",
+          "name": "GitHub",
+          "state": "off",
+          "account": null
+        }
+      ],
+      "capabilityStatuses": {
+        "chief": {},
+        "writer": {}
+      }
+    }
+  },
+  "failedView": {
+    "ok": false,
+    "error": {
+      "code": "bot/refused",
+      "message": "synthetic flush failure",
+      "details": {}
+    }
+  }
+}

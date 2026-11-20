@@ -1,0 +1,107 @@
+{
+  "marketSectionOfficial": "Official",
+  "marketSectionAdapted": "Made for DSH Go",
+  "marketSectionAll": "All",
+  "marketSectionLoading": "Loading…",
+  "marketSectionFailed": "The official catalogue didn't load",
+  "marketSectionEmpty": "None yet",
+  "marketTierOfficial": "Official",
+  "marketTierAdapted": "Made for DSH Go",
+  "marketRiskMedium": "Medium risk",
+  "marketRiskHigh": "High risk",
+  "marketFlagInstallScripts": "Runs install scripts",
+  "marketFlagInstallScriptsBody": "Runs the package's own scripts while installing (preinstall, install or postinstall)",
+  "marketFlagNativeCode": "Native code",
+  "marketFlagNativeCodeBody": "Contains compiled native code (.node, binding.gyp or binaries) that can't be read as source",
+  "marketFlagShell": "Runs commands",
+  "marketFlagShellBody": "Its code runs system commands (child_process)",
+  "marketFlagNetwork": "Network access",
+  "marketFlagNetworkBody": "Its code makes network requests (fetch, http, WebSocket)",
+  "marketFlagFilesystem": "Writes outside the workspace",
+  "marketFlagFilesystemBody": "Writes to paths outside the workspace",
+  "marketFlagObfuscated": "Hard to review",
+  "marketFlagObfuscatedBody": "Has large minified or obfuscated files; hard to tell what they do",
+  "marketFlagNotAdapted": "Not made for DSH Go",
+  "marketFlagNotAdaptedBody": "Declares no DSH Go native protocol, so it has no native screens in the app",
+  "marketFlagOtherBody": "Another trait the automatic checks reported",
+  "marketChecksTitle": "Automatic checks",
+  "marketChecksClean": "No risky traits found",
+  "marketChecksNote": "Traits the automatic checks found; they don't mean the plugin is malicious",
+  "marketCheckedOn": "Checked {date}",
+  "@marketCheckedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "marketScreenshot": "Screenshot {index}",
+  "@marketScreenshot": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "marketRiskConfirmTitle": "{name} has risky traits",
+  "@marketRiskConfirmTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "marketRiskConfirmAction": "Install anyway",
+  "marketPinnedVersion": "Pinned version",
+  "marketRequiresApp": "Requires DSH Go",
+  "marketNeedsApp": "Needs DSH Go {version} or later",
+  "@marketNeedsApp": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "marketUpdateAvailable": "Update available",
+  "marketBlockedTitle": "This version was withdrawn",
+  "marketBlockedMessage": "The installed {version} was withdrawn from the plugin market. Uninstalling it is recommended.",
+  "@marketBlockedMessage": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "marketBlockedRow": "Withdrawn version: uninstall recommended",
+  "marketBlockedBadge": "Withdrawn",
+  "marketVerifying": "Checking the version…",
+  "marketMismatchTitle": "Version check failed",
+  "marketMismatchMessage": "{version} on npm isn't the package the plugin market checked. Nothing was installed.",
+  "@marketMismatchMessage": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "marketSubmit": "Submit a plugin",
+  "marketSubmitHint": "On GitHub; listed once the automatic checks pass",
+  "marketLinkNotFound": "{name} isn't in the plugin market",
+  "@marketLinkNotFound": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "marketVerificationUnavailableTitle": "Could not verify the version",
+  "marketVerificationUnavailableBody": "npm did not return integrity information. Installation has not started. Check your connection and try again.",
+  "marketCombinedCount": "{count} plugins",
+  "@marketCombinedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
+}

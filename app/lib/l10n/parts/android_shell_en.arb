@@ -1,0 +1,84 @@
+{
+  "androidShellTitle": "Android Shell",
+  "androidShellEntryHint": "Separate system-command channel, off by default",
+  "androidShellSubtitle": "Run Android system commands on this phone through Shizuku or self-ADB, not bash inside Ubuntu.",
+  "androidShellEnable": "Allow Android Shell",
+  "androidShellEnableHint": "A separate switch, independent of non-disruptive mode and screen confirmation. It only adds an Android command channel; Ubuntu tools such as bash and run_code keep working, and both can be used together.",
+  "androidShellConfirmationNote": "Every command needs confirmation and may change system settings and files.",
+  "androidShellMasterOff": "Turn on Phone control on the previous page first.",
+  "androidShellRiskTitle": "Allow Android system commands?",
+  "androidShellRiskBody": "Commands use the selected channel's actual UID and may change apps, system settings, and shared files. Screen app rules cannot fully protect against them. Every command still requires separate native confirmation. Only allow commands you understand and trust.",
+  "androidShellRiskAction": "Allow Android Shell",
+  "androidShellBackend": "Connection method",
+  "androidShellDetails": "Details",
+  "androidShellReady": "Connected",
+  "androidShellShizukuHint": "Use an installed, running Shizuku with explicit authorization. Android 14, accessibility, and non-disruptive mode are not required.",
+  "androidShellAdb": "Self-ADB",
+  "androidShellAdbHint": "Connect to this phone's wireless debugging with the app's private ADB identity. Other devices are not contacted.",
+  "androidShellInstalled": "Shizuku installed",
+  "androidShellRunning": "Shizuku running",
+  "androidShellGranted": "Shizuku authorized",
+  "androidShellPaired": "ADB paired",
+  "androidShellConnected": "ADB connected",
+  "androidShellAuthorize": "Request Shizuku authorization",
+  "androidShellAuthorizeHint": "Install and start Shizuku, then press this button to authorize dsh-Go. Opening or refreshing this page never requests permission.",
+  "androidShellStatus": "Execution status",
+  "androidShellUid": "Actual UID",
+  "androidShellUidUnknown": "Not reported yet",
+  "androidShellRefresh": "Refresh status",
+  "androidShellStop": "Stop Android Shell",
+  "androidShellStopHint": "Cancel current commands and stop separate Shell execution without turning off screen control.",
+  "androidShellPairingGuide": "In Developer options, enable Wireless debugging and choose Pair device with pairing code. The code is used only for this pairing and is not saved or logged.",
+  "androidShellStartPairing": "Open pairing guidance",
+  "androidShellPair": "Enter pairing code",
+  "androidShellPairSubmit": "Pair",
+  "androidShellPairCode": "Six-digit pairing code",
+  "androidShellPairPort": "Pairing port (optional)",
+  "androidShellPairPortHint": "Use the port in the pairing dialog, not the connection port on the main Wireless debugging page. Leave blank for discovery.",
+  "androidShellConnect": "Connect ADB",
+  "androidShellConnectChannel": "Connect selected channel",
+  "androidShellConnectPort": "Connection port (optional)",
+  "androidShellConnectPortHint": "Use the port under IP address & port on the main Wireless debugging page, not the pairing port. Only this phone is contacted. Leave blank for discovery.",
+  "androidShellErrorCode": "Error code: {code}",
+  "@androidShellErrorCode": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "androidShellLimits": "Up to {seconds} seconds and {bytes} output bytes per command",
+  "@androidShellLimits": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      },
+      "bytes": {
+        "type": "int"
+      }
+    }
+  },
+  "androidShellErrorDisabled": "Android Shell is off.",
+  "androidShellErrorNotConnected": "The selected channel is not connected.",
+  "androidShellErrorShizukuMissing": "Install Shizuku first.",
+  "androidShellErrorShizukuStopped": "Start Shizuku, then refresh the status.",
+  "androidShellErrorPermissionRequired": "Explicit authorization in Shizuku is required.",
+  "androidShellErrorAdbNotPaired": "Pair this phone with wireless debugging, then connect ADB.",
+  "androidShellErrorConnectFailed": "Connection failed. Check the selected channel and current wireless-debugging connection port, then retry.",
+  "androidShellErrorIdentityChanged": "The channel identity changed. Stop, then authorize or connect again.",
+  "androidShellErrorBusy": "Another operation is still pending. Retry later or stop Android Shell first.",
+  "androidShellErrorInvalidArguments": "Invalid input. Use a six-digit pairing code and a port from 1 to 65535.",
+  "androidShellErrorCancelled": "The operation was cancelled.",
+  "androidShellErrorTimeout": "The operation timed out. Verify its outcome first; never automatically retry a dispatched command.",
+  "androidShellErrorConfirmationDenied": "The command was not approved.",
+  "androidShellErrorCleanupFailed": "Stop cleanup did not finish. Retry stopping before running new commands.",
+  "androidShellErrorLocked": "The phone is locked. Unlock it and retry.",
+  "androidShellErrorConfirmationUnavailable": "Native confirmation cannot be shown. Return to the app and check notification permission.",
+  "androidShellErrorTransportLost": "The channel disconnected. Verify the outcome first; never automatically retry a dispatched command. Reconnect if needed.",
+  "androidShellErrorProtocolMismatch": "The native module does not support this Shell protocol. Update the app.",
+  "androidShellErrorNativeUnavailable": "The Android Shell native module is unavailable in this build.",
+  "androidShellErrorInvalidResponse": "No valid native status was received. Refresh or update the app.",
+  "androidShellErrorStopped": "This round has ended or is paused. Turn it on again and retry.",
+  "androidShellErrorStopFailed": "Stopping was not confirmed. Refresh the status and retry stopping.",
+  "androidShellErrorUnknown": "The outcome could not be confirmed. Verify it first; never automatically retry a dispatched command."
+}

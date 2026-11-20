@@ -1,0 +1,26 @@
+{
+  "name": "local-my-plugin",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "lib/index.js",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "engines": {
+    "dsh": ">=0.2.1-rc.2 <0.3.0-0"
+  },
+  "dshGo": {
+    "v": 1,
+    "title": { "zh": "我的插件", "en": "My plugin" },
+    "icon": "bolt",
+    "wants": ["clipboard"],
+    "contributes": {
+      "composer.actions": [
+        { "id": "paste-quote", "label": { "zh": "引用剪贴板", "en": "Quote clip" }, "icon": "document" }
+      ]
+    }
+  }
+}

@@ -1,0 +1,388 @@
+/* 伙伴小屋's scene. Everything here is either static or a composited transform,
+   so the water costs almost nothing next to the model. Colours follow the hour
+   (`data-tod` on <html>, set by stage.js). */
+
+:root {
+  --top: #8fd3e6;
+  --upper: #4aa6cb;
+  --mid: #2a78a8;
+  --low: #164c7c;
+  --deep: #0d2f55;
+  --sun: 255, 250, 225;
+  --sun-strength: 0.75;
+  --shaft: 240, 252, 255;
+  --shaft-strength: 0.2;
+  --glow: 196, 236, 250;
+  --glow-strength: 0.5;
+  --reef-far: #1c5f8c;
+  --reef-near: #123f68;
+  --whale: #0f4a78;
+  --vignette: 5, 20, 44;
+  /* Her corner of the seabed (Pro C204 palette). */
+  --floor-fill: #4c8a97;
+  --object-ink: #194860;
+  --shell-fill: #d8ebe6;
+  --shell-rim: #96c7cc;
+  --mat-fill: #6eb5a8;
+  --mat-shade: #468e92;
+  --bubble-fill: #b4dfe8;
+  --bubble-edge: #e2f7f2;
+  --warm: 242, 213, 172;
+}
+
+html[data-tod='dawn'] {
+  --floor-fill: #36798b;
+  --object-ink: #143d55;
+  --shell-fill: #d6e9dd;
+  --shell-rim: #92c4bd;
+  --mat-fill: #65a79e;
+  --mat-shade: #3e7e83;
+  --bubble-fill: #bde5e9;
+  --bubble-edge: #daf5f0;
+  --warm: 237, 207, 164;
+  --top: #f3c9b8;
+  --upper: #a9bfcf;
+  --mid: #5f8db0;
+  --low: #2f5c88;
+  --deep: #17345c;
+  --sun: 255, 214, 186;
+  --sun-strength: 0.8;
+  --shaft: 255, 232, 214;
+  --glow: 250, 222, 214;
+  --reef-far: #355f88;
+  --reef-near: #1f4068;
+  --whale: #2a527c;
+}
+
+html[data-tod='dusk'] {
+  --floor-fill: #627f94;
+  --object-ink: #293d61;
+  --shell-fill: #d9d1df;
+  --shell-rim: #aeabc8;
+  --mat-fill: #809ea8;
+  --mat-shade: #546f93;
+  --bubble-fill: #c9d5eb;
+  --bubble-edge: #eee6f5;
+  --warm: 235, 198, 186;
+  --top: #e9a48f;
+  --upper: #a77fa0;
+  --mid: #5f5f96;
+  --low: #2f3a72;
+  --deep: #18204a;
+  --sun: 255, 190, 150;
+  --sun-strength: 0.72;
+  --shaft: 255, 214, 190;
+  --shaft-strength: 0.16;
+  --glow: 244, 200, 208;
+  --glow-strength: 0.42;
+  --reef-far: #3d3f76;
+  --reef-near: #252a5a;
+  --whale: #33386e;
+  --vignette: 14, 12, 42;
+}
+
+html[data-tod='night'] {
+  --floor-fill: #254c61;
+  --object-ink: #102c43;
+  --shell-fill: #93b6c6;
+  --shell-rim: #5d8fa6;
+  --mat-fill: #4d858f;
+  --mat-shade: #2c5e78;
+  --bubble-fill: #7db7cd;
+  --bubble-edge: #c2e6ec;
+  --warm: 213, 188, 158;
+  --top: #27507f;
+  --upper: #1c3f6d;
+  --mid: #142f58;
+  --low: #0d2144;
+  --deep: #071431;
+  --sun: 205, 226, 255;
+  --sun-strength: 0.42;
+  --shaft: 190, 216, 255;
+  --shaft-strength: 0.11;
+  --glow: 140, 186, 240;
+  --glow-strength: 0.3;
+  --reef-far: #122a52;
+  --reef-near: #0a1a38;
+  --whale: #16325c;
+  --vignette: 2, 7, 22;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--deep);
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.scene,
+.water,
+.vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.scene {
+  overflow: hidden;
+}
+
+.water {
+  background: linear-gradient(
+    180deg,
+    var(--top) 0%,
+    var(--upper) 18%,
+    var(--mid) 44%,
+    var(--low) 72%,
+    var(--deep) 100%
+  );
+}
+
+/* Where the light enters, and the soft halo that lifts her from the water. */
+.sun {
+  position: absolute;
+  left: 50%;
+  top: -24vh;
+  width: 150vw;
+  height: 96vh;
+  margin-left: -75vw;
+  opacity: var(--sun-strength);
+  background:
+    radial-gradient(closest-side, rgba(var(--sun), 0.95), rgba(var(--sun), 0.34) 42%, rgba(var(--sun), 0) 100%);
+}
+
+.shafts {
+  position: absolute;
+  inset: -12vh -30vw 22vh;
+  mix-blend-mode: screen;
+}
+
+.shafts i {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  transform-origin: 50% 0;
+  background: linear-gradient(180deg, rgba(var(--shaft), var(--shaft-strength)) 0%, rgba(var(--shaft), 0) 92%);
+  filter: blur(9px);
+  will-change: transform, opacity;
+  animation: shaft 19s ease-in-out infinite alternate;
+}
+
+.shafts i:nth-child(1) { left: 24%; width: 9vw; --tilt: 13deg; animation-duration: 21s; }
+.shafts i:nth-child(2) { left: 39%; width: 15vw; --tilt: 6deg; animation-duration: 27s; animation-delay: -9s; }
+.shafts i:nth-child(3) { left: 55%; width: 7vw; --tilt: -3deg; animation-duration: 17s; animation-delay: -4s; }
+.shafts i:nth-child(4) { left: 68%; width: 12vw; --tilt: -11deg; animation-duration: 24s; animation-delay: -15s; }
+
+@keyframes shaft {
+  from { transform: rotate(calc(var(--tilt) - 1.6deg)); opacity: 0.55; }
+  to { transform: rotate(calc(var(--tilt) + 1.6deg)); opacity: 1; }
+}
+
+/* A whale far off, passing now and then. */
+.whale {
+  position: absolute;
+  top: 31%;
+  left: 0;
+  width: 92px;
+  height: 34px;
+  fill: var(--whale);
+  opacity: 0;
+  filter: blur(1px);
+  will-change: transform, opacity;
+  animation: whale 74s linear infinite;
+  animation-delay: -38s;
+}
+
+@keyframes whale {
+  0% { transform: translate3d(-24vw, 16px, 0); opacity: 0; }
+  4% { opacity: 0.5; }
+  46% { opacity: 0.5; }
+  50% { transform: translate3d(120vw, -22px, 0); opacity: 0; }
+  100% { transform: translate3d(120vw, -22px, 0); opacity: 0; }
+}
+
+.reef {
+  position: absolute;
+  left: -4vw;
+  width: 108vw;
+  bottom: 0;
+  will-change: transform;
+}
+
+.reef.far {
+  height: 34vh;
+  fill: var(--reef-far);
+  opacity: 0.55;
+  filter: blur(3px);
+}
+
+.reef.near {
+  height: 24vh;
+  fill: var(--reef-near);
+  opacity: 0.9;
+  filter: blur(1px);
+}
+
+#stage,
+#fx {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+#stage {
+  touch-action: none;
+  opacity: 0;
+  transform: translate3d(0, 22px, 0) scale(0.985);
+  transition: opacity 0.9s ease, transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+html[data-ready='1'] #stage {
+  opacity: 1;
+  transform: none;
+}
+
+#fx {
+  pointer-events: none;
+}
+
+/* Her things. The stage canvas takes every touch and asks where they are. */
+.props {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.floor {
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  bottom: 19%;
+  height: 12%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--floor-fill), rgba(0, 0, 0, 0));
+  opacity: 0.6;
+}
+
+.prop {
+  position: absolute;
+  overflow: visible;
+}
+
+.prop .press {
+  transform-box: fill-box;
+  transform-origin: 50% 90%;
+  transition: transform 0.18s ease-out;
+}
+
+.prop.squash .press {
+  transform: scale(1.02, 0.95);
+  transition-duration: 0.09s;
+}
+
+#prop-snack {
+  width: 27%;
+  left: 4%;
+  bottom: 21.5%;
+}
+
+#prop-snack .dish {
+  transition: fill 0.6s ease;
+}
+
+/* A little warmth stays in the dish after a snack. */
+#prop-snack.warm .dish {
+  fill: rgb(var(--warm));
+}
+
+#prop-rest {
+  width: 34%;
+  right: 2%;
+  bottom: 22%;
+}
+
+#prop-rest.resting .press {
+  transform: scale(1.01, 0.96);
+  transition-duration: 0.6s;
+}
+
+#prop-play {
+  width: 16%;
+  right: 5%;
+  top: 46%;
+}
+
+#prop-play .ball {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+}
+
+#prop-play.lively .ball circle:first-child {
+  stroke-width: 2.6;
+}
+
+.vignette {
+  background:
+    radial-gradient(130% 92% at 50% 42%, rgba(var(--vignette), 0) 58%, rgba(var(--vignette), 0.42) 100%),
+    linear-gradient(180deg, rgba(var(--vignette), 0.26) 0, rgba(var(--vignette), 0) 11%),
+    linear-gradient(0deg, rgba(var(--vignette), 0.58) 0, rgba(var(--vignette), 0) 34%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shafts i,
+  .whale {
+    animation: none;
+  }
+}
+
+html[data-motion='reduced'] .shafts i,
+html[data-motion='reduced'] .whale {
+  animation: none;
+}
+
+html[data-motion='reduced'] #stage {
+  transition: none;
+}
+
+html[data-paused='1'] .shafts i,
+html[data-paused='1'] .whale {
+  animation-play-state: paused;
+}
+
+/* A bare stage (bare.js): only the model, the page behind it showing through.
+   Her room stays laid out, unseen, so nothing that measures it moves. */
+html[data-bare='1'],
+html[data-bare='1'] body {
+  background: transparent;
+}
+
+html[data-bare='1'] .scene,
+html[data-bare='1'] .props,
+html[data-bare='1'] .vignette {
+  visibility: hidden;
+}
+
+/* Native float mode owns gestures and crops a fixed viewport to alpha bounds. */
+html[data-mode='float'],
+html[data-mode='float'] body {
+  background: transparent;
+}
+html[data-mode='float'] .scene,
+html[data-mode='float'] .props,
+html[data-mode='float'] #fx,
+html[data-mode='float'] .vignette {
+  display: none;
+}
+html[data-mode='float'] #stage {
+  opacity: 1;
+  transform: none;
+  transition: none;
+  pointer-events: none;
+}

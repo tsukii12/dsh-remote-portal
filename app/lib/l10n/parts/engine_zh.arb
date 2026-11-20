@@ -1,0 +1,718 @@
+{
+  "engineNewChatDefaultsLast": "新对话默认（上次选择）",
+  "engineNewChatDefaultsFixed": "新对话默认（固定）",
+  "engineNewChatUseLast": "沿用上次",
+  "engineNewChatUseFixed": "固定默认",
+  "engineNewChatDefaultsHint": "保存在当前主机，只影响新对话的模型和思考深度。权限仍用独立默认，不继承临时会话授权。",
+  "engineNewChatDefaultsLegacy": "此引擎仅支持沿用上次选择；不支持固定默认，也无法确认切换时默认值是否保存成功。",
+  "engineNewChatDefaultsUnsupported": "此主机没有可编辑的默认模型设置",
+  "engineNewChatDefaultsSelectionUnavailable": "此模型或思考深度已不可用，请重新选择。",
+  "engineNewChatDefaultsInheritedEffort": "主机基础配置指定了思考深度，不能在这里为无思考模型清除。请先调整主机配置。",
+  "engineNewChatDefaultsSaving": "正在保存并确认默认值…",
+  "engineNewChatDefaultsUnconfirmed": "没能确认完整默认值，请刷新后检查模型和思考深度。主机基础配置或其他客户端可能已改变它们。",
+  "engineModelDefaultSaveFailed": "当前对话的模型已切换，但新对话默认未保存。请到设置 › 模型检查并重试。",
+  "engineAccountSignedIn": "已登录 DeepSeek 账号",
+  "engineAccountSignOutTitle": "退出 DeepSeek 账号？",
+  "engineAccountSignOutBusy": "有任务正在使用账号模型，退出会立即中断它们。对话和文件都会保留。",
+  "engineAccountSignOutBody": "账号模型将不可用。对话、文件和 API Key 都会保留，随时可以重新登录。",
+  "engineAccountSignOutUnknown": "无法确认是否有任务在使用账号模型；如果有，退出会中断它们。",
+  "engineAccountSignOutFailed": "没能退出，稍后再试",
+  "engineAccountTitle": "账号",
+  "engineAccountRefresh": "刷新",
+  "engineAccountDeepSeek": "DeepSeek 账号",
+  "engineAccountProfileUnavailable": "资料暂时读不到",
+  "engineAccountBalance": "余额",
+  "engineAccountBalanceHint": "账号模型的费用从余额中扣除",
+  "engineAccountBalanceEngineOff": "引擎未运行，启动后显示余额",
+  "engineAccountTopUp": "去充值",
+  "engineAccountUsageDetails": "用量明细",
+  "engineAccountToppedUpBalance": "充值余额",
+  "engineAccountGrantedBalance": "赠送余额",
+  "engineAccountBalanceUnavailable": "余额暂时读不到",
+  "engineAccountNoKeyNeeded": "登录后无需 API Key",
+  "engineAccountUnsupported": "当前引擎不支持账号登录",
+  "engineAccountSignInDeepSeek": "用 DeepSeek 账号登录",
+  "engineAccountAutoStart": "引擎未运行，登录时会自动启动",
+  "engineAccountReplaceKey": "更换 Key",
+  "engineAccountClearKeyTitle": "清除 API Key？",
+  "engineAccountClearKeyBody": "删除 App 里保存的 Key。本机引擎运行时，引擎里的 Key 也会一并删除。",
+  "engineAccountBrowserFailed": "没能打开浏览器",
+  "engineAccountSignInSuccess": "登录成功",
+  "engineAccountAlmostReady": "马上就好",
+  "engineAccountStartingEngine": "正在启动引擎",
+  "engineAccountOpenSignInNext": "随后打开登录页",
+  "engineAccountPreparingSignIn": "正在准备登录",
+  "engineAccountOpenDeepSeekNext": "马上打开 DeepSeek 登录页",
+  "engineAccountFinishInBrowser": "在浏览器中完成登录",
+  "engineAccountReturnToDsh": "登录完成后回到 DSH Go",
+  "engineAccountFinishingSignIn": "正在完成登录",
+  "engineAccountSavingSignIn": "正在保存登录信息",
+  "engineAccountAwaitingResult": "还没收到登录结果",
+  "engineAccountCopySignInLink": "复制登录链接",
+  "engineAccountReopenSignIn": "重新打开登录页",
+  "engineAccountCancelSignIn": "取消登录",
+  "engineAccountSignInLinkCopied": "登录链接已复制",
+  "engineAccountSigningIn": "登录中",
+  "engineAccountSignedOut": "未登录",
+  "engineAccountUsageFact": "用量从账号余额中扣除",
+  "engineAccountBrowserFact": "在浏览器中登录，密码不经过 DSH",
+  "engineAccountCredentialsFact": "登录凭据只保存在本机",
+  "engineSubagentTitle": "子代理",
+  "engineAgentLoopTitle": "Agent 循环",
+  "engineShellTitle": "命令执行",
+  "engineSearchTitle": "联网搜索",
+  "engineSearchNewApiBadge": "新版 API",
+  "engineGeneralTitle": "通用设置",
+  "engineSettingsTitle": "引擎参数",
+  "engineSettingsReadFailed": "没能读取设置",
+  "engineSettingsRun": "运行",
+  "engineSettingsPlugins": "插件",
+  "engineSettingsPluginInventory": "插件清单",
+  "engineSettingsPluginStopped": "插件没有在运行",
+  "engineSettingsEnablePlugin": "启用后再来设置",
+  "engineSettingsNoEditableFields": "没有可以在这里改的设置",
+  "engineFieldRestoreDefault": "恢复默认",
+  "engineFieldDecrease": "减少",
+  "engineFieldIncrease": "增加",
+  "engineFieldRemove": "移除",
+  "engineFieldShow": "显示",
+  "engineFieldFromEnvironment": "由启动环境提供",
+  "engineFieldItem": "项",
+  "engineFieldAlreadyAdded": "已经添加过",
+  "engineFieldEnterName": "填写名称",
+  "engineFieldEnterNumber": "填写数值",
+  "engineFieldValue": "值",
+  "engineFieldNew": "新建",
+  "engineFieldRequired": "必填",
+  "engineGeneralMissing": "这台主机没有通用设置",
+  "engineSettingsVersionRequired": "需要 DSH 0.2.1 或更新版本",
+  "engineGeneralWebDisplay": "网页版显示",
+  "engineGeneralWebSending": "网页版发送",
+  "engineGeneralWebOnlyHint": "这组设置仅影响当前主机的网页版，不改变原生聊天。",
+  "engineGeneralData": "数据",
+  "engineSubagentModelsTitle": "子代理模型",
+  "engineChatLogTitle": "对话日志",
+  "engineThinkingTranslationTitle": "思考过程翻译",
+  "enginePluginIndexesTitle": "插件市场索引",
+  "enginePermissionTitle": "权限",
+  "engineAgentPresetsTitle": "Agent 预设",
+  "engineDefaultModelTitle": "默认模型",
+  "engineWebAppearanceTitle": "网页版外观",
+  "engineLanguageTitle": "语言",
+  "engineFieldCommandTimeout": "命令超时",
+  "engineFieldMaxOutput": "输出上限",
+  "engineFieldMaxTimeout": "最长可申请超时",
+  "engineFieldMaxSpill": "转存文件上限",
+  "engineFieldGracePeriod": "终止宽限时间",
+  "engineFieldDefaultCwd": "默认工作目录",
+  "engineFieldFollowChat": "跟随对话",
+  "engineSubagentMaxDepth": "最大递归深度",
+  "engineFieldLayersUnit": "层",
+  "engineSubagentMaxActive": "同时运行上限",
+  "engineFieldCountUnit": "个",
+  "engineSubagentAllowModelChoice": "允许 AI 给子代理选模型",
+  "engineSubagentAllowedModels": "可选模型",
+  "engineAgentMaxParallelCalls": "每步并行工具调用上限",
+  "engineFieldSearchProvider": "搜索服务",
+  "engineFieldFetchProvider": "网页抓取服务",
+  "engineFieldBaseUrl": "服务地址",
+  "engineSearchMaxUses": "每次请求最多搜索",
+  "engineFieldTimesUnit": "次",
+  "engineSearchHelperModel": "辅助模型",
+  "engineFieldApiVersion": "API 版本",
+  "engineFieldMaxTokens": "最大输出长度",
+  "engineSearchResultsPerSearch": "每次搜索结果数",
+  "engineFieldResultsUnit": "条",
+  "engineSearchSendOriginalQuestion": "搜索时附带用户原问题",
+  "engineChatLogUpload": "向 DeepSeek 上传对话日志",
+  "engineTranslationProvider": "翻译服务",
+  "engineTranslationAccountPaid": "DeepSeek 账号（付费）",
+  "engineTranslationApiPaid": "DeepSeek API（付费）",
+  "engineTranslationTargetLanguage": "目标语言",
+  "engineTranslationFollowLanguage": "跟随界面语言",
+  "engineTranslationLanguageHint": "填 auto 或语言代码，如 zh、en、ja",
+  "enginePluginIndexSources": "索引源",
+  "enginePluginIndexUrl": "索引地址",
+  "engineFieldHttpUrlHint": "以 http:// 或 https:// 开头的地址",
+  "enginePermissionNewChat": "新对话默认权限",
+  "engineAgentDefaultPreset": "默认 Agent 预设",
+  "engineProviderTitle": "渠道",
+  "engineModelTitle": "模型",
+  "engineFieldReasoningEffort": "思考深度",
+  "engineGeneralShowCodingView": "显示代码工作视图",
+  "engineGeneralWorkDetails": "工作步骤展示",
+  "engineFieldCompact": "简洁",
+  "engineFieldStandard": "标准",
+  "engineFieldDetailed": "详细",
+  "engineFieldVerbose": "完全展开",
+  "engineGeneralCollapseTiming": "工作步骤收起时机",
+  "engineGeneralOnCompletion": "回答结束后",
+  "engineGeneralOnNewMessage": "有新消息时",
+  "engineGeneralPerformanceUsage": "性能与用量",
+  "engineGeneralLinkOpening": "链接打开方式",
+  "engineGeneralAppSidebar": "应用内侧栏",
+  "engineGeneralDefaultBrowser": "默认浏览器",
+  "engineGeneralBusySend": "AI 工作时发送",
+  "engineGeneralQueueSend": "排队发送",
+  "engineGeneralSteerSend": "插话发送",
+  "engineFieldTheme": "主题",
+  "engineFieldFontSize": "字号",
+  "engineFieldCodeFontSize": "代码字号",
+  "engineFieldTerminalFontSize": "终端字号",
+  "engineFieldTextFont": "正文字体",
+  "engineFieldCodeFont": "代码字体",
+  "engineFieldTerminalFont": "终端字体",
+  "engineFieldInterfaceLanguage": "界面语言",
+  "engineFieldSecondsUnit": "秒",
+  "engineFieldBytesUnit": "字节",
+  "engineFieldGreaterThanZero": "大于 0",
+  "engineFieldEnterNumeric": "请填数字",
+  "engineFieldEnterInteger": "请填整数",
+  "engineFieldInvalidFormat": "格式不对",
+  "engineFieldAddress": "地址",
+  "engineFieldToken": "令牌",
+  "engineFieldService": "服务",
+  "engineFieldTimeout": "超时",
+  "engineFieldQuantity": "数量",
+  "engineFieldMaxUses": "最多次数",
+  "engineFieldMaxRetries": "最多重试次数",
+  "engineFieldConcurrency": "并发数",
+  "engineFieldInterval": "间隔",
+  "engineFieldPrompt": "提示词",
+  "engineFieldSystemPrompt": "系统提示词",
+  "engineFieldTemperature": "温度",
+  "engineFieldDebugMode": "调试模式",
+  "engineFieldVerboseLogs": "详细日志",
+  "engineFieldPath": "路径",
+  "engineFieldCwd": "工作目录",
+  "engineFieldCommand": "命令",
+  "engineFieldArguments": "参数",
+  "engineFieldEnvironment": "环境变量",
+  "engineFieldHeaders": "请求头",
+  "engineFieldProxy": "代理",
+  "engineFieldAuto": "自动",
+  "engineFieldEnabled": "开启",
+  "engineFieldOn": "开",
+  "engineFieldOff": "关",
+  "engineFieldLow": "低",
+  "engineFieldMedium": "中",
+  "engineFieldHigh": "高",
+  "engineFieldMax": "最高",
+  "engineFieldNone": "无",
+  "engineFieldModified": "已修改",
+  "engineFieldLocked": "由配置文件固定",
+  "engineFieldSharedWithModel": "与模型共用",
+  "engineFieldNotConfigured": "未配置",
+  "engineFieldConfigured": "已配置",
+  "engineSettingsMissing": "这台主机没有这项设置",
+  "engineSettingsPluginDisabled": "相关插件未启用",
+  "engineSettingsReadOnly": "引擎设置是只读的，这里只能查看",
+  "engineSubagentSavedUnavailable": "已保存但当前不可用",
+  "engineSubagentKeepOneModel": "至少保留一个模型",
+  "engineSubagentLimits": "运行限制",
+  "engineSubagentModelSelection": "模型选择",
+  "engineSubagentPickFirstModel": "选一个模型后生效",
+  "engineSubagentReadModelsFailed": "没能读取模型",
+  "engineSubagentNoModels": "还没有可选的模型",
+  "engineSubagentConnectModel": "接入模型",
+  "engineSearchDeepSeek": "DeepSeek 搜索",
+  "engineSearchNewApi": "新版搜索 API",
+  "engineProviderDeleteBody": "渠道和它的 API Key 会一起删除，用它的对话需要换个模型。",
+  "engineProviderReadFailed": "没能读取渠道",
+  "engineProviderGone": "这个渠道已不在",
+  "engineProviderProtocol": "协议",
+  "engineProviderEnterKey": "填写 API Key",
+  "engineProviderIssues": "问题",
+  "engineProviderRejectedConfig": "引擎拒绝了部分配置",
+  "engineProviderConnection": "连接",
+  "engineProviderHeaders": "请求头（可选）",
+  "engineProviderHeadersWarning": "请求头以明文保存，不参与日志脱敏。敏感凭据请使用 API Key 或凭据引用。",
+  "engineProviderHeaderName": "名称",
+  "engineProviderHeaderValue": "值",
+  "engineProviderHeaderAdd": "添加请求头",
+  "engineProviderHeaderInvalidName": "请求头名称只能包含英文字母、数字或 HTTP 标记符号，不能包含空格或冒号",
+  "engineProviderHeaderReserved": "User-Agent 由引擎设置，请移除此请求头",
+  "engineProviderHeaderLocked": "由引擎管理，保留现有配置",
+  "engineProviderHeaderDuplicate": "请求头名称重复（不区分大小写）",
+  "engineProviderHeaderInvalidValue": "请求头值只能包含单行 Latin-1 文本，不支持换行或控制字符（制表符除外）",
+  "engineProviderDefaultUrl": "默认地址",
+  "engineProviderKeyNotRequired": "不需要",
+  "engineProviderNoModels": "还没有模型",
+  "engineProviderWebConfigured": "这个渠道在网页版里配置，这里只能查看和删除",
+  "engineProviderDelete": "删除渠道",
+  "engineProviderConfigFile": "由引擎配置文件提供，无法在这里删除",
+  "engineProviderTesting": "正在测试",
+  "engineProviderTestConnection": "测试连接",
+  "engineProviderKeyFirst": "先填写 API Key",
+  "engineProviderNoDiscoveredModels": "服务没有列出模型，请手动添加",
+  "engineProviderNeedModel": "至少添加一个模型",
+  "engineProviderEdit": "编辑渠道",
+  "engineProviderAdd": "添加渠道",
+  "engineProviderBasicInfo": "基本信息",
+  "engineProviderNameHint": "比如：我的网关",
+  "engineProviderCompatibleProtocol": "兼容协议",
+  "engineProviderKeepStoredKey": "已保存，留空则不修改",
+  "engineProviderSaving": "正在保存",
+  "engineProviderWaitingEngine": "等待引擎连接",
+  "engineProviderFetchingModels": "正在获取模型",
+  "engineProviderFetchModels": "获取模型",
+  "engineProviderAddManually": "手动添加",
+  "engineProviderManualModel": "手动添加模型",
+  "engineProviderModelId": "模型 ID",
+  "engineProviderSelectModels": "选择模型",
+  "engineProviderSearchModels": "搜索模型",
+  "engineProviderDeselectAll": "全不选",
+  "engineProviderSelectAll": "全选",
+  "engineProviderNoMatchingModels": "没有匹配的模型",
+  "engineProviderAlreadyAdded": "已添加",
+  "engineProviderReady": "可用",
+  "engineProviderMissingKey": "缺少 API Key",
+  "engineProviderMisconfigured": "配置有误",
+  "engineProviderInactive": "未启用",
+  "engineProviderConfiguredInWeb": "网页版配置",
+  "engineProvidersTitle": "模型",
+  "engineProvidersNotConnected": "没有连上引擎",
+  "engineProvidersStartEngine": "引擎运行后可添加渠道",
+  "engineProvidersUnsupported": "这台主机不支持自定义渠道",
+  "engineProvidersNotConfiguredHere": "未在这台主机上配置",
+  "engineProvidersSigningIn": "正在登录…",
+  "engineProvidersSignInOrKey": "登录账号或填写 API Key",
+  "engineProvidersOfficial": "官方",
+  "engineProvidersSubscription": "订阅",
+  "engineProvidersCustom": "自定义",
+  "engineProvidersCompatibleHint": "OpenAI、Anthropic 兼容的服务",
+  "engineProvidersReadOnly": "引擎设置是只读的，无法添加",
+  "engineSubscriptionSignOutBody": "它的模型会从模型选择里移除。",
+  "engineSubscriptionNoModels": "暂无模型",
+  "engineSubscriptionModelsFailed": "没能读取模型",
+  "engineSubscriptionPreparing": "正在准备…",
+  "engineSubscriptionCancelled": "登录已取消",
+  "engineSubscriptionIncomplete": "登录没有完成",
+  "engineSubscriptionWaitingSignIn": "等待登录…",
+  "engineSubscriptionReopen": "重新打开",
+  "engineSubscriptionCode": "验证码",
+  "engineSubscriptionWaitingVerification": "等待验证…",
+  "engineSubscriptionCopyCode": "复制验证码",
+  "engineSubscriptionOpenVerification": "打开验证页",
+  "engineSubscriptionPasteRedirect": "粘贴跳转后的链接",
+  "engineSubscriptionPasteCode": "粘贴授权码",
+  "engineSubscriptionPasteHere": "粘贴到这里",
+  "engineSubscriptionConfirm": "确定",
+  "engineSubscriptionTryAgain": "再试一次",
+  "engineAccountWelcome": "欢迎，{name}",
+  "@engineAccountWelcome": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "engineLayerCount": "{count} 层",
+  "@engineLayerCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "engineFieldDefaultValue": "默认 {value}",
+  "@engineFieldDefaultValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "engineFieldDefaultValueUnit": "默认 {value} {unit}",
+  "@engineFieldDefaultValueUnit": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "engineFieldCurrentValue": "当前 {value}",
+  "@engineFieldCurrentValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "engineFieldRemoveItem": "移除 {name}",
+  "@engineFieldRemoveItem": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "engineFieldAddItem": "添加{item}",
+  "@engineFieldAddItem": {
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
+  },
+  "engineFieldItemIndex": "第 {index} 项",
+  "@engineFieldItemIndex": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "engineFieldByteCount": "{count} 字节",
+  "@engineFieldByteCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "engineFieldHours": "{value} 小时",
+  "@engineFieldHours": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "engineFieldMinutes": "{value} 分钟",
+  "@engineFieldMinutes": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "engineFieldSeconds": "{value} 秒",
+  "@engineFieldSeconds": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "engineFieldMilliseconds": "{value} 毫秒",
+  "@engineFieldMilliseconds": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "engineFieldPositiveMax": "大于 0，不超过 {max}",
+  "@engineFieldPositiveMax": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "engineFieldMin": "不小于 {min}",
+  "@engineFieldMin": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      }
+    }
+  },
+  "engineFieldMaxBound": "不超过 {max}",
+  "@engineFieldMaxBound": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "engineFieldBelowMin": "不能小于 {min}",
+  "@engineFieldBelowMin": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      }
+    }
+  },
+  "engineFieldAboveMax": "不能大于 {max}",
+  "@engineFieldAboveMax": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "engineFieldMultiple": "需是 {step} 的倍数",
+  "@engineFieldMultiple": {
+    "placeholders": {
+      "step": {
+        "type": "String"
+      }
+    }
+  },
+  "engineFieldMinCharacters": "至少 {count} 个字符",
+  "@engineFieldMinCharacters": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "engineFieldMaxCharacters": "最多 {count} 个字符",
+  "@engineFieldMaxCharacters": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "engineSubagentUnavailableProvider": "{provider} · 当前不可用",
+  "@engineSubagentUnavailableProvider": {
+    "placeholders": {
+      "provider": {
+        "type": "String"
+      }
+    }
+  },
+  "engineProviderDeleteTitle": "删除「{name}」？",
+  "@engineProviderDeleteTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "engineProviderDeleteFailed": "没能删除：{error}",
+  "@engineProviderDeleteFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "engineProviderModelCount": "模型 · {count}",
+  "@engineProviderModelCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "engineProviderContext": "上下文 {size}",
+  "@engineProviderContext": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "engineProviderTestPassed": "连接正常 · 列出 {count} 个模型",
+  "@engineProviderTestPassed": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "engineProviderCompletedUrl": "已补全为 {url}",
+  "@engineProviderCompletedUrl": {
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "engineProviderSaveFailed": "没能保存：{error}",
+  "@engineProviderSaveFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "engineProviderCandidateCount": "共 {count} 个",
+  "@engineProviderCandidateCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "engineProviderAddModels": "添加 {count} 个模型",
+  "@engineProviderAddModels": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "engineProviderModels": "{count} 个模型",
+  "@engineProviderModels": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "engineProvidersSummary": "{total} 个渠道 · {ready} 个可用",
+  "@engineProvidersSummary": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "ready": {
+        "type": "int"
+      }
+    }
+  },
+  "engineProvidersAccount": "账号 · {name}",
+  "@engineProvidersAccount": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "engineProvidersSignedInAccount": "已登录 · {account}",
+  "@engineProvidersSignedInAccount": {
+    "placeholders": {
+      "account": {
+        "type": "String"
+      }
+    }
+  },
+  "engineSubscriptionSignIn": "登录 {provider}",
+  "@engineSubscriptionSignIn": {
+    "placeholders": {
+      "provider": {
+        "type": "String"
+      }
+    }
+  },
+  "engineSubscriptionSignOutTitle": "退出 {provider}？",
+  "@engineSubscriptionSignOutTitle": {
+    "placeholders": {
+      "provider": {
+        "type": "String"
+      }
+    }
+  },
+  "engineSubscriptionSignOutFailed": "没能退出：{error}",
+  "@engineSubscriptionSignOutFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "engineSubscriptionCodeSemantics": "验证码 {code}",
+  "@engineSubscriptionCodeSemantics": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "engineFieldItemCount": "{count} 个",
+  "@engineFieldItemCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "engineFieldUseCount": "{count} 次",
+  "@engineFieldUseCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "engineFieldResultCount": "{count} 条",
+  "@engineFieldResultCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "engineFieldMinCharactersDecimal": "至少 {bound} 个字符",
+  "@engineFieldMinCharactersDecimal": {
+    "placeholders": {
+      "bound": {
+        "type": "String"
+      }
+    }
+  },
+  "engineFieldMaxCharactersDecimal": "最多 {bound} 个字符",
+  "@engineFieldMaxCharactersDecimal": {
+    "placeholders": {
+      "bound": {
+        "type": "String"
+      }
+    }
+  },
+  "engineLayerValue": "{value} 层",
+  "@engineLayerValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "engineFieldEnterPositiveRange": "请填 大于 0，不超过 {max} 之间的数",
+  "@engineFieldEnterPositiveRange": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "engineFieldEnterBoundedRange": "请填 {min}–{max} 之间的数",
+  "@engineFieldEnterBoundedRange": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "engineModelTokenLimits": "Token 上限",
+  "engineModelContextLength": "上下文长度",
+  "engineModelContextOverrideHint": "留空使用渠道目录里的值；改大后引擎按新值计算上下文占用与压缩。",
+  "engineModelMaxOutput": "最大输出",
+  "engineModelDefaultSize": "默认 {size}",
+  "@engineModelDefaultSize": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "engineModelCapabilities": "能力",
+  "engineModelInputType": "输入类型",
+  "engineModelInputText": "文本",
+  "engineModelInputTextImage": "文本和图片",
+  "engineModelThinking": "思考",
+  "engineModelVision": "识图",
+  "engineModelLevels": "可选档位",
+  "engineModelNeedLevel": "至少选一个档位",
+  "engineFieldEditOnWeb": "在网页版编辑此项",
+  "engineSettingsHostChanged": "主机已切换，请重新打开设置后编辑。",
+  "engineSecretTargetChanged": "此项已变化，请重新打开后编辑。",
+  "engineSettingsGroupCount": "{count} 项",
+  "@engineSettingsGroupCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
+}

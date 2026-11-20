@@ -1,0 +1,793 @@
+{
+  "stateDiagnosticsSubject": "DSH Go 诊断包",
+  "stateStoragePermission": "没有存储权限，存不进「下载」",
+  "stateDiagnosticsStorageFull": "存储空间不足，没能生成诊断包",
+  "stateDiagnosticsExportFailed": "没能导出诊断包",
+  "stateForumUnreachable": "没能连上论坛",
+  "stateSignInExpired": "登录已失效，请重新登录",
+  "stateForbidden": "没有权限",
+  "stateForumContentMissing": "内容不存在或已删除",
+  "stateTooManyActions": "操作太频繁，稍后再试",
+  "stateForumSendFailed": "没能发出去",
+  "stateForumServerError": "论坛暂时出了问题",
+  "stateBrowserOpenFailed": "没能打开浏览器",
+  "stateSignInStartFailed": "没能开始登录",
+  "stateSignInIncompleteRetry": "登录没有完成，请重试",
+  "statePluginLabel": "插件",
+  "stateConfigLabel": "配置",
+  "stateConfigShare": "配置分享",
+  "stateShareCode": "分享码",
+  "stateCopyShareCodeFirst": "先在分享里复制分享码",
+  "stateFileOpenFailed": "无法打开这个文件",
+  "stateLinkOpenFailed": "无法打开这个链接",
+  "stateAlertPublicDone": "有一轮完成了",
+  "stateAlertPublicFailed": "有一轮出错了",
+  "stateAlertPublicStopped": "有一轮停下了",
+  "stateAlertPublicApproval": "有一步等你确认",
+  "stateAlertPublicQuestion": "有个问题等你回答",
+  "stateAlertTurnDone": "这一轮已完成",
+  "stateAlertOutputLimit": "已结束 · 达到单次输出长度上限",
+  "stateAlertTurnBlocked": "这一轮被拦截了",
+  "stateAlertEngineRestarted": "已中断 · 引擎重启过",
+  "stateAlertMissingKey": "出错了 · 还没有配置密钥",
+  "stateAlertTurnFailed": "这一轮出错了",
+  "stateRunCommand": "运行命令",
+  "stateWriteFile": "写入文件",
+  "stateEditFile": "修改文件",
+  "stateOpenPage": "打开网页",
+  "stateWebSearch": "联网搜索",
+  "stateAlertQuestion": "问你一个问题",
+  "stateSizeSmall": "小",
+  "stateSizeStandard": "标准",
+  "stateSizeLarge": "大",
+  "stateSizeCustom": "自定义",
+  "statePetDone": "做完了",
+  "statePetFailed": "出错了",
+  "statePhoneNotReady": "手机操控模块未就绪",
+  "stateBackgroundRestricted": "后台联网被系统限制",
+  "stateBackgroundFinish": "让对话在后台也能跑完",
+  "stateDeepSeekAccount": "DeepSeek 账号",
+  "stateAccountUnreachable": "连不上 DeepSeek",
+  "stateAccountUnavailable": "DeepSeek 暂时无法登录",
+  "stateSignInIncomplete": "登录没有完成",
+  "stateSignInTimeout": "登录超时",
+  "stateSignInSaveFailed": "登录信息没能保存",
+  "stateEngineNotReady": "引擎还没准备好",
+  "stateSignInInterrupted": "登录被中断",
+  "stateAccountUnsupported": "当前引擎不支持账号登录",
+  "stateCheckPhoneNetwork": "检查手机网络后重试",
+  "stateServiceUnavailableRetry": "服务暂时不可用，稍后重试",
+  "stateAuthorizationFailed": "授权没有成功，重新登录",
+  "stateAuthorizationExpired": "授权页面已失效，重新登录",
+  "stateRestartEngineRetry": "在「引擎」页重启后重试",
+  "stateEngineStartingRetry": "引擎正在启动，稍后再试",
+  "stateEngineDisconnectedSignIn": "引擎连接已断开，重新登录",
+  "stateUpdateRuntimeOrKey": "更新运行环境，或改用 API Key",
+  "stateEngineDisconnected": "引擎未连接",
+  "stateAgentError": "出错",
+  "stateNotRunning": "未运行",
+  "stateAgentOneShot": "一次性",
+  "stateAgentContinuable": "可继续",
+  "stateAgentExternal": "外部任务",
+  "stateSubagent": "子代理",
+  "stateParentChat": "上级对话",
+  "statePreparing": "准备中",
+  "stateIconMist": "雾蓝",
+  "stateIconNight": "夜幕",
+  "stateIconFrost": "霜白",
+  "stateIconInk": "墨",
+  "stateAppDisclaimer": "基于 DeepSeek Harness 构建 · 非 DeepSeek 官方应用",
+  "stateWallpaper": "壁纸",
+  "stateFileMissing": "找不到这个文件了，可能已被删除或移走",
+  "stateFileNoApp": "手机上没有能打开这类文件的应用",
+  "stateFileConnectionLimit": "文件太大，这个连接传不过来",
+  "stateFileReadUnsupported": "这个连接不支持读取文件",
+  "stateArtifactImage": "图片",
+  "stateArtifactDocument": "文档",
+  "stateArtifactSheet": "表格",
+  "stateArtifactSlides": "演示文稿",
+  "stateArtifactArchive": "压缩包",
+  "stateArtifactAudio": "音频",
+  "stateArtifactVideo": "视频",
+  "stateArtifactWeb": "网页",
+  "stateArtifactText": "文本",
+  "stateArtifactFile": "文件",
+  "statePrivateKeyTooLarge": "文件太大，不像是私钥",
+  "stateBotTeamBusy": "另一个 DSH 正在使用这个团队",
+  "stateBotOperationFailed": "没能完成操作，再试一次",
+  "stateBotMissing": "这台主机没有 DS Bot",
+  "stateHostAuthFailed": "没能通过主机的验证",
+  "stateUnexpectedError": "出了点问题",
+  "stateGroupChat": "群聊",
+  "stateBotNewMessage": "Bot 有新消息",
+  "stateChatAgentBusy": "AI 正忙，稍后再试",
+  "stateChatWriterHeld": "这个对话正在别处使用",
+  "stateChatModelUnavailable": "这个模型现在用不了",
+  "stateChatAttachmentInvalid": "这个附件发不了",
+  "stateChatForkUnavailable": "这里不能分叉",
+  "stateChatImagesTooLarge": "图片太大，少选几张再发",
+  "stateChatSyncInterrupted": "对话同步中断",
+  "stateChatSynchronizing": "正在同步对话",
+  "stateChatSyncRetry": "重新同步",
+  "stateChatSyncRequired": "对话尚未同步，请重新同步后再试",
+  "stateChatAutoApproveFailed": "自动允许失败",
+  "stateCommandMissing": "没有这个指令",
+  "stateCommandFailed": "指令没有执行",
+  "stateChatStopSteered": "没能停下本轮，已作为插话发送",
+  "stateChatTextOnlyModel": "当前模型未声明支持图片，已按文件发送。可换模型，或把自定义模型的输入类型设为「文本和图片」",
+  "stateAttachmentUploadFailed": "附件上传失败",
+  "stateChatImageModelRequired": "当前模型未声明支持图片。请换模型，或把自定义模型的输入类型设为「文本和图片」再发",
+  "stateSendFailed": "发送失败",
+  "stateChatStopFailed": "没能停下，再试一次",
+  "stateChatTurnEnded": "这一轮已经结束，消息会作为新一轮发送",
+  "stateChatSteerFailed": "插话失败",
+  "stateChatUndoTooLate": "来不及了，AI 已经读到这条消息",
+  "stateChatUndoFailed": "撤回失败",
+  "stateChatApprovalFailed": "审批提交失败",
+  "stateChatAnswerFailed": "回答提交失败",
+  "stateChatModelSwitchFailed": "切换模型失败",
+  "stateChatHistoryFailed": "加载历史失败",
+  "stateChatBranchLastReply": "只能从已完成的一轮的最后一条回复分叉",
+  "stateChatBranchFailed": "分叉失败",
+  "stateChatEarlierHistoryFailed": "读取更早的记录失败",
+  "stateChatNoEarlierHistory": "这条消息之前没有能保留的记录，直接新建对话就好",
+  "stateCommandNewDescription": "开始一个新对话",
+  "stateModelLabel": "模型",
+  "stateCommandModelDescription": "切换模型与思考深度",
+  "stateCommandExportLabel": "导出日志",
+  "stateCommandExportDescription": "把这个对话的完整记录打包成 ZIP，分享或存到「下载」",
+  "stateAllFeatures": "全部功能",
+  "stateCommandFeaturesDescription": "官方网页版每项功能的入口",
+  "stateCompactLabel": "压缩",
+  "stateCommandCompactDescription": "压缩以上对话内容，腾出上下文",
+  "statePermissionLabel": "权限",
+  "stateCommandPermissionDescription": "切换权限预设（沙箱模式与审批策略）",
+  "stateCommandPermissionHint": "<预设名>",
+  "statePlanLabel": "计划",
+  "stateCommandPlanDescription": "进入或退出计划模式",
+  "stateGoalLabel": "目标",
+  "stateCommandGoalDescription": "设置或查看长期任务目标",
+  "stateFeedbackLabel": "反馈",
+  "stateCommandFeedbackDescription": "发送关于当前对话的反馈",
+  "stateCommandFeedbackHint": "<内容>",
+  "stateShareFileTooLarge": "有文件太大，未添加",
+  "stateShareFileUnreadable": "有文件没能读取",
+  "stateShareImagesOnly": "当前主机只能发送图片",
+  "stateComposerInserted": "已放进输入框",
+  "stateCordisPending": "待确认",
+  "stateCordisStarting": "启动中",
+  "stateCordisRunFailed": "运行失败",
+  "stateCordisNoApproval": "没有获得运行许可",
+  "stateCordisBackendFailed": "后台部分没能启动",
+  "stateCordisClientLoadFailed": "界面没能加载",
+  "stateCordisRenderFailed": "界面显示出错",
+  "stateCordisFailed": "没能运行",
+  "stateDrawerAll": "全部",
+  "stateDrawerUnread": "未读",
+  "stateDrawerToday": "今天",
+  "stateDrawerThisWeek": "本周",
+  "stateDrawerEarlier": "更早",
+  "stateEngineAuthFailed": "没能通过引擎的验证",
+  "stateChatMissing": "这个对话已经不在了",
+  "stateChatFormatUnsupported": "当前引擎无法读取此对话的日志格式，请导出诊断包排查",
+  "stateEngineUnsupported": "当前引擎版本不支持",
+  "stateEngineServiceUnavailable": "所需的引擎服务未就绪，请查看引擎日志或导出诊断包",
+  "stateEngineOperationUnavailable": "引擎当前无法执行此操作，请查看引擎日志",
+  "stateSettingsRefreshed": "刚在别处改过，已刷新",
+  "stateCredentialFromEnvironment": "引擎的启动环境已提供这个 Key，无法在这里修改",
+  "stateSettingsFromFile": "由配置文件固定",
+  "stateSettingsInteger": "请填整数",
+  "stateSettingsInvalidFormat": "格式不对",
+  "stateSettingsReadOnly": "引擎设置是只读的",
+  "statePluginDisabled": "插件已停用",
+  "stateSettingsRestartRequired": "这一项要重启引擎才能改",
+  "stateSettingsInvalidValue": "值不合法",
+  "stateSettingsRejected": "引擎没有接受这个值",
+  "stateInventoryEnabled": "已启用",
+  "stateInventoryDisabled": "未启用",
+  "stateLoading": "加载中",
+  "stateInventoryWaiting": "等待依赖",
+  "stateInventoryConditional": "条件启用",
+  "stateBundleBuiltIn": "DSH 内置",
+  "stateBundleHeadless": "无界面运行",
+  "stateConfigFile": "配置文件",
+  "stateGoalEmpty": "目标不能为空",
+  "stateGoalPauseFailed": "没能暂停",
+  "stateGoalResumeFailed": "没能恢复",
+  "stateGoalClearOffline": "没能清除：没能连上引擎",
+  "stateGoalClearFailed": "没能清除",
+  "stateGoalStale": "目标刚有变化，再试一次",
+  "stateGoalMissing": "目标已不在",
+  "stateGoalChatNotReady": "对话未就绪，稍后再试",
+  "stateGoalTurnsExhausted": "轮次已用完",
+  "stateGoalStateChanged": "目标状态已变化",
+  "stateSshHost": "SSH 主机",
+  "stateHostBrowserFailed": "没能打开浏览器，可以复制登录链接到浏览器里完成。",
+  "stateSignInFailed": "没能登录",
+  "stateMarketTooLarge": "插件目录太大，已停止下载",
+  "stateMarketUnreachable": "没能连上插件目录",
+  "stateMarketInsecure": "没能和插件目录建立安全连接",
+  "stateMarketTimeout": "插件目录加载超时",
+  "stateMarketInterrupted": "插件目录下载中断",
+  "stateRegistryDefault": "默认安装源",
+  "stateRegistryNpm": "npm 官方源",
+  "stateRegistryMirror": "npmmirror 镜像",
+  "statePluginIncompatible": "这个插件不支持当前的 DSH 版本。",
+  "statePluginInstallCancelled": "已取消安装",
+  "statePluginNoChanges": "没有改动任何东西",
+  "statePluginIncompatibleTitle": "和当前 DSH 不兼容",
+  "statePluginNetworkFailed": "网络连不上",
+  "statePluginSourceUnreachable": "连不上插件源码所在的网站",
+  "statePluginDownloadTimeout": "下载超时",
+  "statePluginRegistryUnavailable": "安装源暂时没有响应",
+  "statePluginPnpmMissing": "缺少 pnpm",
+  "statePluginPhonePnpmMissing": "这台手机缺少 pnpm",
+  "statePluginHostPnpmMissing": "这台主机缺少 pnpm",
+  "statePluginNotFound": "找不到这个插件",
+  "statePluginPackageMissing": "安装源里没有这个包",
+  "statePluginTooNew": "版本太新",
+  "statePluginWaitForRelease": "发布满 24 小时后才能安装",
+  "statePluginVersionMissing": "找不到这个版本",
+  "statePluginRegistryVersionMissing": "安装源里还没有这个版本",
+  "stateDeviceStorageFull": "设备存储空间不足",
+  "statePluginNoWritePermission": "没有写入权限",
+  "statePluginConfigReadOnly": "引擎配置目录不可写",
+  "statePluginIntegrityFailed": "文件校验失败",
+  "statePluginDownloadIncomplete": "下载的文件不完整",
+  "statePluginBuildScripts": "需要运行构建脚本",
+  "statePluginBuildApproval": "构建脚本等待允许",
+  "statePluginAlreadyInstalled": "已经装过了",
+  "statePluginUninstallFirst": "换版本需先卸载",
+  "statePluginInvalid": "这不是 DSH 插件",
+  "statePluginNoEntry": "这个包没有插件入口，已撤销安装",
+  "statePluginInUse": "插件正在被使用",
+  "statePluginHasDependents": "有其他插件依赖它",
+  "statePluginManagedElsewhere": "不能在这里修改",
+  "statePluginEngineManaged": "这个插件由引擎单独管理",
+  "statePluginAuthorizationExpired": "授权已过期",
+  "statePluginBuildChanged": "构建脚本已变化，需要重新安装",
+  "statePluginInvalidAddress": "安装地址无效",
+  "statePluginCatalogInvalidAddress": "插件目录的安装地址不正确",
+  "statePluginOperationIncomplete": "操作没有完成",
+  "statePluginRemoteForbidden": "这台主机不允许远程安装",
+  "statePluginRelayToggleOnly": "经中转连接只能开关插件",
+  "statePluginManagementUnsupported": "主机不支持插件管理",
+  "statePluginEngineUnsupported": "当前引擎不支持插件管理",
+  "statePluginResultMissing": "没能拿到安装结果",
+  "statePluginResultPending": "安装结果待确认",
+  "statePluginDisconnected": "连接断开了",
+  "statePluginQueued": "排队中",
+  "statePluginRemoving": "正在卸载旧版本",
+  "statePluginInstalling": "正在下载安装",
+  "statePluginApplying": "正在启用",
+  "statePluginCancelling": "正在取消",
+  "statePluginInstalledRestart": "已安装，重启后生效",
+  "statePluginInstallFailed": "安装失败",
+  "statePluginConnectFirst": "连接后可安装插件",
+  "stateProviderOpenAi": "OpenAI 兼容",
+  "stateProviderAnthropic": "Anthropic 兼容",
+  "stateProviderUrlRequired": "填写 Base URL",
+  "stateProviderUrlInvalid": "以 http:// 或 https:// 开头的完整地址",
+  "stateProviderUrlSuffix": "去掉 ? 或 # 之后的部分",
+  "stateProviderKeyRequired": "填写 API Key",
+  "stateProviderKeyOnly": "只粘贴 Key 本身，不带变量名",
+  "stateProviderKeyQuotes": "去掉两边的引号",
+  "stateProviderKeyInvalid": "Key 含有无效字符",
+  "stateProviderModelRequired": "填写模型 ID",
+  "stateProviderModelSpaces": "模型 ID 不能有空格",
+  "stateProviderAlreadyAdded": "已经添加过",
+  "stateProviderConflict": "渠道刚被改过，返回后重试",
+  "stateProviderUnsupported": "当前引擎版本不支持这个操作",
+  "stateProviderKeyRejected": "API Key 无效或没有权限",
+  "stateProviderModelsMissing": "找不到模型列表，检查 Base URL",
+  "stateProviderRateLimited": "请求太频繁，稍后再试",
+  "stateProviderResponseTooLarge": "返回的内容过大",
+  "stateProviderUnreachable": "连不上这个地址，检查 Base URL 和网络",
+  "stateProviderModelsUnreadable": "没有读到模型列表，检查 Base URL",
+  "stateProviderManualModels": "这个协议不能获取模型，请手动添加",
+  "stateProviderConfigRejected": "引擎拒绝了这个配置，检查协议和模型",
+  "stateProviderOffline": "没有连上引擎",
+  "stateSafeStartupFailed": "启动失败",
+  "stateSafeCrashedEarly": "启动后很快崩溃",
+  "stateSafeCrashedLate": "运行中崩溃",
+  "stateSafeKilled": "被系统结束",
+  "stateSafeManualEntry": "我手动进入了安全模式",
+  "stateScheduleNotCreated": "对话结束了，但没有建成任务",
+  "stateScheduleChatFailed": "对话出错了",
+  "stateScheduleResultPending": "还没等到结果",
+  "statePlanPending": "计划待审",
+  "stateQuestionPending": "待回答",
+  "stateExportRelayUnsupported": "经中转连接暂不支持导出",
+  "stateExportChatMissing": "找不到这个对话了",
+  "stateExportFailed": "没能导出",
+  "stateSizeExtraLarge": "特大",
+  "stateSubscriptionUnsupported": "当前引擎不支持订阅登录",
+  "stateSubscriptionUnreachable": "连不上登录服务，检查网络后重试",
+  "stateSubscriptionSignInFailed": "没能完成登录，再试一次",
+  "stateSubscriptionTimeout": "请求超时，检查网络后重试",
+  "stateSubscriptionDisconnected": "和引擎的连接断开了，稍后重试",
+  "stateTerminalLimit": "终端数量已达上限",
+  "stateTerminalStartFailed": "没能启动终端",
+  "stateTerminalDisabledOnHost": "这台电脑关掉了远程终端。在电脑上打开 Remote 设置里的「终端」，再回来重试",
+  "stateTileDuotone": "扁平双色",
+  "stateTileGeometric": "极简几何",
+  "stateTileGlassy": "玻璃渐变",
+  "stateUiNative": "原生",
+  "stateDefaultWorkspace": "默认工作区",
+  "stateDiagnosticsSaved": "已存到 {where}",
+  "@stateDiagnosticsSaved": {
+    "placeholders": {
+      "where": {
+        "type": "String"
+      }
+    }
+  },
+  "stateDownloadsPrefix": "下载/",
+  "stateSharePluginCount": "{count} 个插件",
+  "@stateSharePluginCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stateShareSkillCount": "{count} 个技能",
+  "@stateShareSkillCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stateShareSettingCount": "{count} 组设置",
+  "@stateShareSettingCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stateAlertCompletedReply": "已完成 · {reply}",
+  "@stateAlertCompletedReply": {
+    "placeholders": {
+      "reply": {
+        "type": "String"
+      }
+    }
+  },
+  "stateAlertErrorDetail": "出错了 · {detail}",
+  "@stateAlertErrorDetail": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "stateAlertUseTool": "使用工具 {name}",
+  "@stateAlertUseTool": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "stateAlertApprovalAction": "等你确认：{action}",
+  "@stateAlertApprovalAction": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      }
+    }
+  },
+  "stateAlertApprovalReason": "等你确认：{action} · {reason}",
+  "@stateAlertApprovalReason": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      },
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "stateAlertQuestions": "问你：{question}（共 {count} 个）",
+  "@stateAlertQuestions": {
+    "placeholders": {
+      "question": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stateAlertQuestionText": "问你：{question}",
+  "@stateAlertQuestionText": {
+    "placeholders": {
+      "question": {
+        "type": "String"
+      }
+    }
+  },
+  "statePetChatsDone": "{count} 个对话做完了",
+  "@statePetChatsDone": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "statePetChatsFailed": "{count} 个对话出错了",
+  "@statePetChatsFailed": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "statePetChatsApproval": "{count} 个对话等你确认",
+  "@statePetChatsApproval": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "statePetChatsQuestion": "{count} 个对话等你回答",
+  "@statePetChatsQuestion": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stateAttachmentEmpty": "「{name}」是空文件",
+  "@stateAttachmentEmpty": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "stateAttachmentImageLimit": "图片「{name}」超过 20 MB",
+  "@stateAttachmentImageLimit": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "stateAttachmentFileLimit": "文件「{name}」超过 200 MB",
+  "@stateAttachmentFileLimit": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "stateAttachmentTotalLimit": "附件总大小超过 400 MB",
+  "stateBotFinished": "{name} 完成了工作",
+  "@stateBotFinished": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "stateBotQuestion": "{name} 问你：{text}",
+  "@stateBotQuestion": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "stateBotApproval": "{name} 等你批准：{text}",
+  "@stateBotApproval": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "stateCommandPlanHint": "[off | 要求]",
+  "stateCommandGoalHint": "[目标 | clear | pause | resume]",
+  "stateShareReadFailed": "没能读取「{name}」",
+  "@stateShareReadFailed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "stateShareAttachmentLimit": "每条消息最多 {count} 个附件",
+  "@stateShareAttachmentLimit": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stateShareNamedFileTooLarge": "「{name}」太大，未添加",
+  "@stateShareNamedFileTooLarge": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "stateShareTextTruncated": "文字太长，只保留了前 {count} 字",
+  "@stateShareTextTruncated": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stateSettingsMinimum": "不能小于 {bound}",
+  "@stateSettingsMinimum": {
+    "placeholders": {
+      "bound": {
+        "type": "String"
+      }
+    }
+  },
+  "stateSettingsMaximum": "不能大于 {bound}",
+  "@stateSettingsMaximum": {
+    "placeholders": {
+      "bound": {
+        "type": "String"
+      }
+    }
+  },
+  "stateSettingsMultiple": "需是 {bound} 的倍数",
+  "@stateSettingsMultiple": {
+    "placeholders": {
+      "bound": {
+        "type": "String"
+      }
+    }
+  },
+  "stateSettingsMinLength": "至少 {count} 个字符",
+  "@stateSettingsMinLength": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stateSettingsMaxLength": "最多 {count} 个字符",
+  "@stateSettingsMaxLength": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stateEngineHttpRejected": "引擎拒绝了请求（{status}）",
+  "@stateEngineHttpRejected": {
+    "placeholders": {
+      "status": {
+        "type": "int"
+      }
+    }
+  },
+  "stateGoalActionOffline": "{action}：没能连上引擎",
+  "@stateGoalActionOffline": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      }
+    }
+  },
+  "stateHostRemoteLabel": "{name} · 远程",
+  "@stateHostRemoteLabel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "stateMarketHttpError": "插件目录暂时打不开（HTTP {status}）",
+  "@stateMarketHttpError": {
+    "placeholders": {
+      "status": {
+        "type": "int"
+      }
+    }
+  },
+  "statePluginRuntimeIncompatible": "这个插件不支持当前的 DSH 版本（{version}）。",
+  "@statePluginRuntimeIncompatible": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "statePluginRequiredVersion": "这个插件要求 DSH {wanted}，当前是 {current}。",
+  "@statePluginRequiredVersion": {
+    "placeholders": {
+      "wanted": {
+        "type": "String"
+      },
+      "current": {
+        "type": "String"
+      }
+    }
+  },
+  "statePluginRegistryUnreachable": "没能连上安装源",
+  "statePluginNamedRegistryUnreachable": "没能连上安装源（{registry}）",
+  "@statePluginNamedRegistryUnreachable": {
+    "placeholders": {
+      "registry": {
+        "type": "String"
+      }
+    }
+  },
+  "statePluginBuildsPending": "等待允许：{builds}",
+  "@statePluginBuildsPending": {
+    "placeholders": {
+      "builds": {
+        "type": "String"
+      }
+    }
+  },
+  "statePluginRegistryProgress": "换用{registry}下载（第 {attempt}/{attempts} 个源）",
+  "@statePluginRegistryProgress": {
+    "placeholders": {
+      "registry": {
+        "type": "String"
+      },
+      "attempt": {
+        "type": "int"
+      },
+      "attempts": {
+        "type": "int"
+      }
+    }
+  },
+  "stateProviderServiceUnavailable": "服务暂时不可用（{status}）",
+  "@stateProviderServiceUnavailable": {
+    "placeholders": {
+      "status": {
+        "type": "int"
+      }
+    }
+  },
+  "stateProviderServiceStatus": "服务返回了 {status}",
+  "@stateProviderServiceStatus": {
+    "placeholders": {
+      "status": {
+        "type": "int"
+      }
+    }
+  },
+  "stateProviderKeySaveFailed": "渠道已保存，Key 没有存上：{reason}",
+  "@stateProviderKeySaveFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "stateSafeSuspectPlugins": "{what}，可疑插件：{plugins}",
+  "@stateSafeSuspectPlugins": {
+    "placeholders": {
+      "what": {
+        "type": "String"
+      },
+      "plugins": {
+        "type": "String"
+      }
+    }
+  },
+  "stateSafePreflightFailed": "{what}，启动检查没通过：{checks}",
+  "@stateSafePreflightFailed": {
+    "placeholders": {
+      "what": {
+        "type": "String"
+      },
+      "checks": {
+        "type": "String"
+      }
+    }
+  },
+  "stateListSeparator": "、",
+  "stateSafeRepairPrompt": "我的 DSH 正常模式出了问题（{what}）。请按「安全模式」说明排查原因，先用可逆的办法修好 web 配置，修完用 dsh-app-plugins trial 试启动验证，再告诉我改了什么。",
+  "@stateSafeRepairPrompt": {
+    "placeholders": {
+      "what": {
+        "type": "String"
+      }
+    }
+  },
+  "stateScheduleCreatePrompt": "新建自动化任务「{title}」：{rule}。\n只调用一次 schedule_create，参数原样使用；现在不要执行任务内容。\n\n```json\n{args}\n```",
+  "@stateScheduleCreatePrompt": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "rule": {
+        "type": "String"
+      },
+      "args": {
+        "type": "String"
+      }
+    }
+  },
+  "stateActionReason": "{action}：{reason}",
+  "@stateActionReason": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      },
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "stateAlertPreviewRun": "运行：{value}",
+  "@stateAlertPreviewRun": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "stateAlertPreviewWrite": "写入：{value}",
+  "@stateAlertPreviewWrite": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "stateAlertPreviewEdit": "修改：{value}",
+  "@stateAlertPreviewEdit": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "stateAlertPreviewOpen": "打开：{value}",
+  "@stateAlertPreviewOpen": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "stateAlertPreviewUse": "使用工具：{value}",
+  "@stateAlertPreviewUse": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "stateUiWeb": "网页",
+  "statePluginRegistryProgressUnknown": "换用{registry}下载（第 {attempt}/null 个源）",
+  "@statePluginRegistryProgressUnknown": {
+    "placeholders": {
+      "registry": {
+        "type": "String"
+      },
+      "attempt": {
+        "type": "int"
+      }
+    }
+  },
+  "stateProviderTokenCountInvalid": "填写数字，如 128K",
+  "appSlogan": "随时随刻，想go就Go！",
+  "statePasteEmpty": "剪贴板中没有可粘贴的文本。",
+  "statePasteDenied": "系统未授予粘贴权限，请重新点击粘贴按钮。",
+  "statePasteBusy": "粘贴窗口尚未结束或仍在关闭，请完成或取消后重试。",
+  "statePasteFailed": "无法读取剪贴板，请重试或手动输入。"
+}

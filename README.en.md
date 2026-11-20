@@ -4,6 +4,11 @@
 
 # dsh-remote-portal
 
+License scope: the portal gateway is [MIT](LICENSE). The Flutter client in
+`app/` and its Dart packages are [AGPL-3.0](app/LICENSE), derived from dsh-Go
+v1.2.0; see [provenance](app/NOTICE) and [third-party exceptions](app/THIRD_PARTY_NOTICES.md).
+`ios/` temporarily retains the previous Swift client as a migration reference.
+
 [Native iOS app (Simulator preview)](ios/README.md)
 
 **Remote access for DeepSeek Harness — over your LAN or through your own server.**

@@ -1,0 +1,4 @@
+{
+  "hostDetailsConnectionType": "连接方式",
+  "hostDetailsSshNetworkHint": "通过 SSH 隧道连接。此连接不提供 LAN / P2P 路径检测或延迟测量。"
+}

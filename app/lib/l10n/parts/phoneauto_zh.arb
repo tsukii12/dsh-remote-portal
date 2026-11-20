@@ -1,0 +1,83 @@
+{
+  "phoneModeTitle": "选择确认方式",
+  "phoneModeMessage": "随时可在设置里更改",
+  "phoneModeAsk": "关键步骤先问我",
+  "phoneModeAskHint": "进新 App、发送、删除、付款前先问",
+  "phoneModeAuto": "全程自动",
+  "phoneModeAutoHint": "不再询问，全程免打扰",
+  "phoneModeAutoNoteTitle": "这些仍由你来操作",
+  "phoneModeAutoNote": "系统设置和权限页面、密码和验证码、DSH Go 自身仍由你来操作；银行、支付类 App 默认不碰，可在设置里调整。",
+  "phoneModeAutoUnlockNote": "如需让 AI 操作系统设置、密码等，可在 设置 › 手机操控 › 解除限制 中开启。",
+  "phoneModeConfirmAuto": "开启全程自动",
+  "phoneYoursTitle": "这些由你来操作",
+  "phoneYoursSystem": "系统设置和权限页面",
+  "phoneYoursSecrets": "密码和验证码",
+  "phoneYoursOwnApp": "DSH Go 自身",
+  "phoneYoursDenyList": "应用名单里「不碰」的 App，默认含银行、支付类",
+  "phoneUnlockTitle": "解除限制",
+  "phoneUnlockSubtitle": "让 AI 去做默认由你来做的事",
+  "phoneUnlockSystem": "系统设置",
+  "phoneUnlockSystemHint": "含权限页、安装器、安全中心、通知栏",
+  "phoneUnlockSecrets": "密码和验证码",
+  "phoneUnlockSecretsHint": "填写密码、验证码和支付密码",
+  "phoneUnlockOwnApp": "DSH Go 自身",
+  "phoneUnlockOwnAppHint": "在 DSH Go 里点按和输入",
+  "phoneUnlockBusy": "任务进行中，结束后才能开启",
+  "phoneUnlockFootnote": "开启后的后果由你承担。建议只在需要时开启，用完关闭。",
+  "phoneUnlockBanks": "银行、支付类 App",
+  "phoneUnlockBanksHint": "在应用名单里调整",
+  "phoneUnlockNone": "均未开启",
+  "phoneUnlockCount": "{count, plural, other{已开启 {count} 项}}",
+  "@phoneUnlockCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "phoneUnlockedBadge": "已解除限制",
+  "phoneUnlockConfirmSystemTitle": "允许 AI 操作系统设置？",
+  "phoneUnlockConfirmSecretsTitle": "允许 AI 填写密码和验证码？",
+  "phoneUnlockConfirmOwnAppTitle": "允许 AI 操作 DSH Go 自身？",
+  "phoneUnlockCanTitle": "开启后，AI 可以",
+  "phoneUnlockRiskTitle": "可能出什么事",
+  "phoneUnlockDisclaimerTitle": "免责声明",
+  "phoneUnlockSystemCan1": "打开和更改系统设置，包括权限、无障碍和开发者选项",
+  "phoneUnlockSystemCan2": "在安装器里安装、更新或卸载应用",
+  "phoneUnlockSystemCan3": "在安全中心和通知栏里点按，包括通知上的按钮",
+  "phoneUnlockSystemRisk1": "网页、消息或文件里的恶意指令可能诱导 AI 关掉保护、给其他应用授权或安装应用",
+  "phoneUnlockSystemRisk2": "改错的网络、账号或安全设置，需要你自己改回来",
+  "phoneUnlockSecretsCan1": "在密码、验证码和支付密码框里输入",
+  "phoneUnlockSecretsCan2": "用它在对话、短信或通知里看到的验证码完成登录或验证",
+  "phoneUnlockSecretsCan3": "操作记录里只显示 ••••，不记下填写的内容",
+  "phoneUnlockSecretsRisk1": "恶意指令可能诱导 AI 把验证码填到别处，让他人登录你的账号",
+  "phoneUnlockSecretsRisk2": "可能完成你并不想要的付款或转账",
+  "phoneUnlockOwnAppCan1": "在 DSH Go 里点按和输入，包括修改设置",
+  "phoneUnlockOwnAppCan2": "读取 DSH Go 界面上的对话和设置",
+  "phoneUnlockOwnAppRisk1": "恶意指令可能诱导 AI 批准它自己发起的操作，或关掉确认",
+  "phoneUnlockOwnAppRisk2": "这些界面上的内容会发给模型",
+  "phoneUnlockDisclaimer1": "开启后，AI 可以在无人确认的情况下执行上述操作。",
+  "phoneUnlockDisclaimer2": "AI 可能被网页、消息或文件中的内容误导。",
+  "phoneUnlockDisclaimer3": "由此造成的账号、资金、数据或设备损失由你自行承担，DSH Go 及其开发者不承担责任。",
+  "phoneUnlockDisclaimer4": "建议只在需要时临时开启，用完关闭。",
+  "phoneUnlockDisclaimer5": "不建议在存有支付或银行信息的设备上开启。",
+  "phoneUnlockHold": "我了解风险，开启",
+  "phoneUnlockHoldHint": "按住按钮约 1.5 秒",
+  "phoneUnlockOnNotice": "已开启「{name}」",
+  "@phoneUnlockOnNotice": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneUnlockOffNotice": "已关闭「{name}」",
+  "@phoneUnlockOffNotice": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "searchKwPhoneUnlock": "解除限制,放开限制,密码,验证码,系统设置,自身,风险,免责"
+}

@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "release": "0.2.2-rc.1",
+  "labels": {
+    "pluginsBack": ["返回插件", "Back to plugins"],
+    "more": ["更多", "More"],
+    "openRightbar": ["打开右侧边栏", "Open right sidebar"],
+    "newTab": ["新标签页", "New tab"],
+    "closeSidebar": ["收起侧边栏", "Collapse sidebar"],
+    "moreViews": ["更多会话视图", "More conversation views"]
+  },
+  "official": {
+    "settings": ["general", "models", "plugins", "agent-presets", "account"],
+    "panels": ["plugins", "schedules"],
+    "rightbar": ["files", "terminal"]
+  },
+  "slots": {
+    "settings.section": { "forms": ["page"], "open": "settings", "stretch": "scroller", "pad": [16, 16] },
+    "settings.general.item": { "forms": ["page"], "open": "settings-general", "stretch": "scroller", "pad": [16, 16] },
+    "sidebar.footer.action": { "forms": ["page"], "open": "sidebar", "stretch": "parent", "pad": [16, 16] },
+    "settings.plugins.tab": { "forms": ["page"], "open": "settings-plugins", "stretch": "parent", "pad": [16, 16] },
+    "plugins.detail.section": { "forms": ["page"], "open": "plugin-detail", "stretch": "scroller", "pad": [16, 16] },
+    "plugins.bundle.config": { "forms": ["page"], "open": "plugin", "stretch": "scroller", "pad": [16, 16] },
+    "plugins.row.config": { "forms": ["page"], "open": "plugin-row", "stretch": "scroller", "pad": [16, 16] },
+    "main": { "forms": ["page"], "open": "panel", "stretch": "child", "pad": [16, 12] },
+    "sidebar.right.pane.tab": { "forms": ["page"], "open": "rightbar", "stretch": "child", "pad": [16, 12], "session": true },
+    "tool.view.cordis": { "forms": ["page"], "open": "session", "stretch": "child", "pad": [16, 12], "session": true },
+    "conversation.view": { "forms": ["page"], "open": "session-view", "stretch": "child", "pad": [16, 12], "session": true, "ready": "view" },
+    "conversation.input.dock": { "forms": ["panel"], "open": "session", "stretch": "parent", "pad": [12, 8], "session": true },
+    "conversation.input.left": { "forms": ["panel"], "open": "session", "stretch": "parent", "pad": [12, 8], "session": true },
+    "conversation.input.right": { "forms": ["panel"], "open": "session", "stretch": "parent", "pad": [12, 8], "session": true },
+    "conversation.input.overlay": { "forms": ["panel"], "open": "session", "stretch": "parent", "pad": [12, 8], "session": true },
+    "conversation.composer.dock": { "forms": ["panel"], "open": "session", "stretch": "parent", "pad": [12, 8], "session": true },
+    "conversation.session.header.actions": { "forms": ["panel"], "open": "session", "stretch": "parent", "pad": [12, 8], "session": true },
+    "conversation.session.header.utilities": { "forms": ["panel"], "open": "session", "stretch": "parent", "pad": [12, 8], "session": true },
+    "shell.overlay": { "forms": ["overlay"], "open": "none", "stretch": "none", "pad": [0, 0] },
+    "dsh-go.chat": {
+      "forms": ["panel"], "open": "session", "stretch": "common", "pad": [12, 8], "session": true, "ready": "sheet",
+      "slots": [
+        "conversation.session.header.actions", "conversation.session.header.utilities", "conversation.input.dock",
+        "conversation.input.left", "conversation.input.right", "conversation.input.overlay", "conversation.composer.dock"
+      ]
+    }
+  }
+}

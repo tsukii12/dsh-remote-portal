@@ -1,0 +1,30 @@
+{
+  "fileImageName": "图片",
+  "fileSharedText": "分享的文字.txt",
+  "fileChatFallback": "对话",
+  "fileUploadToHost": "传文件到电脑",
+  "fileUploadToHostHint": "放进这个对话在电脑上的工作区，原文件不压缩",
+  "fileUploadProgress": "正在传 {done}/{total}：{name}",
+  "@fileUploadProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "fileUploadDone": "已传到电脑：{names}",
+  "@fileUploadDone": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "fileUploadFailed": "没能传到电脑"
+}

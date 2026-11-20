@@ -1,0 +1,904 @@
+{
+  "featuresCordisSubtitle": "动态插件 · 引擎重启后清空",
+  "featuresCordisUnavailable": "这个连接看不到 Cordis",
+  "featuresCordisRemoteUnavailable": "经 DSH Remote 中转时不可用",
+  "featuresCordisReadFailed": "没能读取插件",
+  "featuresCordisEmpty": "还没有动态插件",
+  "featuresCordisEmptyHint": "插件创建后会出现在这里",
+  "featuresCurrentChat": "当前对话",
+  "featuresOtherChats": "其他对话",
+  "featuresPresetDefaultSet": "新对话将使用「{name}」",
+  "@featuresPresetDefaultSet": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresPresetDefaultFailed": "没能设为默认",
+  "featuresPresetDeleteTitle": "删除「{name}」？",
+  "@featuresPresetDeleteTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresPresetDeleteHint": "新对话不能再选它，已开始的对话不受影响。",
+  "featuresDeleted": "已删除",
+  "featuresDeleteFailed": "没能删除",
+  "featuresPresetAlreadyDefault": "已是新对话默认",
+  "featuresPresetSetDefault": "设为新对话默认",
+  "featuresPresetViewConfig": "查看配置",
+  "featuresPresetDuplicate": "复制为新预设",
+  "featuresPresetDefaultDeleteHint": "先把别的预设设为新对话默认",
+  "featuresAgentPresets": "Agent 预设",
+  "featuresAgentPresetsSubtitle": "新对话的工具与工作方式",
+  "featuresNew": "新建",
+  "featuresPresetsReadFailed": "没能读取 Agent 预设",
+  "featuresLoadFailed": "加载失败",
+  "featuresNewChatDefault": "新对话默认",
+  "featuresEmptyDocument": "（空）",
+  "featuresReadFailed": "没能读取",
+  "featuresTodayTime": "今天 {time}",
+  "@featuresTodayTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresTomorrowTime": "明天 {time}",
+  "@featuresTomorrowTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresYesterdayTime": "昨天 {time}",
+  "@featuresYesterdayTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresScheduleSummaryNext": "{rule} · 下次 {time}",
+  "@featuresScheduleSummaryNext": {
+    "placeholders": {
+      "rule": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresEnded": "已结束",
+  "featuresScheduleSummaryEnded": "已结束 · {time} 运行过",
+  "@featuresScheduleSummaryEnded": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresJobElapsed": "已运行 {span}",
+  "@featuresJobElapsed": {
+    "placeholders": {
+      "span": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresJobDuration": "用时 {span}",
+  "@featuresJobDuration": {
+    "placeholders": {
+      "span": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresPermissionReadOnly": "仅可查看",
+  "featuresPermissionWorkspaceWrite": "工作区内修改",
+  "featuresPermissionFullAccess": "完全权限",
+  "featuresPermissionAutoReview": "自动审查",
+  "featuresPermissionCustom": "自定义",
+  "featuresPermissionReadOnlyHint": "只看文件，不做修改",
+  "featuresPermissionWorkspaceWriteHint": "可改工作区内的文件，越界先问你",
+  "featuresPermissionFullAccessHint": "不再确认，直接执行",
+  "featuresPermissionAutoReviewHint": "由模型逐次审查，拿不准再问你",
+  "featuresPresetStandard": "标准模式",
+  "featuresPresetPtc": "PTC 模式",
+  "featuresPresetMinimal": "极简模式",
+  "featuresPresetCreator": "创造模式",
+  "featuresPresetStandardDescription": "代码、文件和资料，适合大多数任务",
+  "featuresPresetPtcDescription": "批量调用工具，再筛选、统计、汇总",
+  "featuresPresetMinimalDescription": "只用终端和读图，适合测试对比",
+  "featuresPresetCreatorDescription": "让 Agent 写插件，定制 DSH 本身",
+  "featuresHostUnreachable": "连不上「{name}」",
+  "@featuresHostUnreachable": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresHostConnecting": "正在连接「{name}」…",
+  "@featuresHostConnecting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresJobs": "后台任务",
+  "featuresJobsSubtitle": "引擎重启后清空",
+  "featuresJobsReadFailed": "没能读取后台任务",
+  "featuresJobsEmpty": "没有后台任务",
+  "featuresJobsEmptyHint": "开发服务器这类命令会在这里",
+  "featuresJobsEndedCount": "已结束 · {count}",
+  "@featuresJobsEndedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresJobStopTitle": "停止这个任务？",
+  "featuresJobAlreadyEnded": "任务已经结束了",
+  "featuresJobStopFailed": "没能停止",
+  "featuresJobOutput": "任务输出",
+  "featuresOutput": "输出",
+  "featuresJobRecentLines": "最近 {count} 行",
+  "@featuresJobRecentLines": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresJobOutputSubject": "DSH 任务输出",
+  "featuresJobOutputReadFailed": "没能读取输出",
+  "featuresJobOutputWaiting": "等待输出…",
+  "featuresJobOutputEmpty": "没有输出",
+  "featuresPermissionAutoTitle": "开启自动审查？",
+  "featuresPermissionAutoWarning": "每次操作由模型判断放不放行，可能误判。",
+  "featuresSwitchFailed": "没能切换",
+  "featuresPermissions": "权限",
+  "featuresPermissionsSubtitle": "执行命令、修改文件前，要不要先问你",
+  "featuresPermissionsReadFailed": "没能读取权限设置",
+  "featuresPermissionCustomHint": "当前用的是自定义权限，选预设会替换它",
+  "featuresModuleInstructions": "工作区指令加载",
+  "featuresModuleTime": "时间感知",
+  "featuresModuleBash": "Bash 命令工具",
+  "featuresModulePersistentBash": "持久 Bash 工具",
+  "featuresModulePowerShell": "PowerShell 命令工具",
+  "featuresModuleFiles": "文件读写工具",
+  "featuresModuleFileSearch": "文件搜索工具",
+  "featuresModuleJobs": "后台任务工具",
+  "featuresModuleSchedule": "自动化任务工具",
+  "featuresModuleLocalSkills": "本地技能加载",
+  "featuresModuleSkillTool": "技能加载工具",
+  "featuresModuleGoalCommand": "目标管理命令",
+  "featuresModuleGoalTool": "目标管理工具",
+  "featuresModulePlan": "计划模式",
+  "featuresModuleCompaction": "上下文压缩",
+  "featuresModuleCompactCommand": "上下文压缩命令",
+  "featuresModuleAskUser": "向用户提问工具",
+  "featuresModuleTodo": "待办清单工具",
+  "featuresModuleWeb": "网页搜索与读取工具",
+  "featuresModulePresent": "文件交付工具",
+  "featuresModuleCordis": "插件 API 查询工具",
+  "featuresModuleSubagent": "子代理委派工具",
+  "featuresModuleSubagentControl": "子代理控制工具",
+  "featuresModuleWorkflow": "工作流工具",
+  "featuresModulePluginManager": "插件管理工具",
+  "featuresModulePluginMarket": "插件市场工具",
+  "featuresModuleToolCalls": "工具调用方式",
+  "featuresModuleTerminal": "持久终端服务",
+  "featuresModulePersona": "智能体角色设定",
+  "featuresGroupDelegation": "子代理委派",
+  "featuresGroupTerminal": "持久终端",
+  "featuresPresetIdRequired": "填写标识",
+  "featuresPresetIdLength": "最多 40 个字符",
+  "featuresPresetIdFormat": "只用小写字母、数字和连字符",
+  "featuresPresetIdTaken": "这个标识已被使用",
+  "featuresPresetCopyName": "{name} 副本",
+  "@featuresPresetCopyName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresPresetBasedOn": "基于",
+  "featuresNameRequired": "填写名称",
+  "featuresCreatorOpenFailed": "没能打开创造模式",
+  "featuresPresetNameHint": "比如：代码审查",
+  "featuresPresetId": "标识",
+  "featuresPresetIdHint": "小写字母、数字和连字符",
+  "featuresPresetDescription": "说明",
+  "featuresPresetDescriptionHint": "一句话说明它适合做什么",
+  "featuresPresetConfigReadFailed": "没能读取预设配置",
+  "featuresPresetCreateTitle": "新建 Agent 预设",
+  "featuresPresetDuplicateTitle": "复制 Agent 预设",
+  "featuresPresetEditTitle": "编辑 Agent 预设",
+  "featuresCreatorOpening": "正在打开创造模式",
+  "featuresWaitingEngine": "等待引擎连接",
+  "featuresCreatorUnavailable": "创造模式不可用",
+  "featuresPresetStartUpdate": "开始更新",
+  "featuresPresetStartCreate": "开始创建",
+  "featuresPresetSystemPrompt": "系统提示",
+  "featuresPresetSystemPromptHint": "你是谁、怎么工作",
+  "featuresPresetReplaceSystemPrompt": "完整替换系统提示",
+  "featuresPresetTools": "工具",
+  "featuresSkills": "技能",
+  "featuresPresetContextModes": "上下文与模式",
+  "featuresCronMinute": "分钟",
+  "featuresCronHour": "小时",
+  "featuresDate": "日期",
+  "featuresCronMonth": "月份",
+  "featuresCronWeekday": "星期",
+  "featuresCronRequired": "填写 5 段 Cron 表达式",
+  "featuresCronWhitespace": "首尾不能有空格",
+  "featuresCronFieldCount": "需要 5 段，现在是 {count} 段",
+  "@featuresCronFieldCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresCronInvalidField": "第 {index} 段（{name}）写法不对",
+  "@featuresCronInvalidField": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresWeekdayMon": "一",
+  "featuresWeekdayTue": "二",
+  "featuresWeekdayWed": "三",
+  "featuresWeekdayThu": "四",
+  "featuresWeekdayFri": "五",
+  "featuresWeekdaySat": "六",
+  "featuresWeekdaySun": "日",
+  "featuresMonthJan": "一月",
+  "featuresMonthFeb": "二月",
+  "featuresMonthMar": "三月",
+  "featuresMonthApr": "四月",
+  "featuresMonthMay": "五月",
+  "featuresMonthJun": "六月",
+  "featuresMonthJul": "七月",
+  "featuresMonthAug": "八月",
+  "featuresMonthSep": "九月",
+  "featuresMonthOct": "十月",
+  "featuresMonthNov": "十一月",
+  "featuresMonthDec": "十二月",
+  "featuresWeekdayName": "周{day}",
+  "@featuresWeekdayName": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresCronWeekdayRange": "{first}至{last}",
+  "@featuresCronWeekdayRange": {
+    "placeholders": {
+      "first": {
+        "type": "String"
+      },
+      "last": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresCronEveryDay": "每天{months}",
+  "@featuresCronEveryDay": {
+    "placeholders": {
+      "months": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresCronMonthDays": "每月 {days} 日{months}",
+  "@featuresCronMonthDays": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      },
+      "months": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresCronMonthDaysAndWeekdays": "每月 {days} 日且{weekdays}{months}",
+  "@featuresCronMonthDaysAndWeekdays": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      },
+      "weekdays": {
+        "type": "String"
+      },
+      "months": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresCronMonthDaysOrWeekdays": "每月 {days} 日或{weekdays}{months}",
+  "@featuresCronMonthDaysOrWeekdays": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      },
+      "weekdays": {
+        "type": "String"
+      },
+      "months": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresCronHourRange": "{first} 至 {last}",
+  "@featuresCronHourRange": {
+    "placeholders": {
+      "first": {
+        "type": "String"
+      },
+      "last": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresEveryMinute": "每分钟",
+  "featuresCronEveryMinutes": "每 {count} 分钟",
+  "@featuresCronEveryMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresEveryHour": "每小时",
+  "featuresCronHourlyMinutes": "每小时的第 {minutes} 分钟",
+  "@featuresCronHourlyMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresCronHoursEveryMinute": "{hours} 点的每分钟",
+  "@featuresCronHoursEveryMinute": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresCronHoursEveryMinutes": "{hours} 点内每 {count} 分钟",
+  "@featuresCronHoursEveryMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresCronEveryHours": "每 {count} 小时",
+  "@featuresCronEveryHours": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresCronHoursMinutes": "{hours} 点的第 {minutes} 分钟",
+  "@featuresCronHoursMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      },
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresRepeatDaily": "每天",
+  "featuresRepeatWeekdays": "工作日",
+  "featuresRepeatWeekly": "每周",
+  "featuresRepeatMonthly": "每月",
+  "featuresRepeatInterval": "间隔",
+  "featuresRepeatOnce": "仅一次",
+  "featuresRepeatAdvanced": "高级",
+  "featuresRepeatCustom": "自定义",
+  "featuresIntervalSeconds": "秒",
+  "featuresZoneUnavailable": "时区不可用",
+  "featuresChooseDay": "至少选一天",
+  "featuresIntervalMinimum": "间隔至少为 1",
+  "featuresMinimumMinute": "至少 1 分钟",
+  "featuresTimeDoesNotExist": "这个时间在该时区不存在",
+  "featuresChooseFutureTime": "选一个以后的时间",
+  "featuresCronNeverRuns": "这个表达式不会运行",
+  "featuresRuleDaily": "每天 {time}",
+  "@featuresRuleDaily": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresRuleWeekdays": "每个工作日 {time}",
+  "@featuresRuleWeekdays": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresRuleWeekends": "每个周末 {time}",
+  "@featuresRuleWeekends": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresRuleWeekly": "每周{days} {time}",
+  "@featuresRuleWeekly": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresRuleMonthly": "每月 {days} 日 {time}",
+  "@featuresRuleMonthly": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresRepeat": "重复",
+  "featuresChat": "对话",
+  "featuresWorkspace": "工作区",
+  "featuresInstructionRequired": "填写指令",
+  "featuresScheduleSaveError": "没能保存：{reason}",
+  "@featuresScheduleSaveError": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresScheduleCreateError": "没能创建：{reason}",
+  "@featuresScheduleCreateError": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresScheduleNameHint": "比如：每日站会提醒",
+  "featuresScheduleInstruction": "指令",
+  "featuresScheduleInstructionHint": "比如：整理昨天的提交，发我摘要",
+  "featuresScheduleRunTime": "运行时间",
+  "featuresScheduleOpenChat": "去对话里看看",
+  "featuresScheduleEditTitle": "编辑自动化任务",
+  "featuresScheduleCreateTitle": "新建自动化任务",
+  "featuresScheduleSaving": "正在保存",
+  "featuresScheduleCreating": "正在对话里创建",
+  "featuresTime": "时间",
+  "featuresNotSelected": "未选",
+  "featuresMonthDaysLabel": "{days} 日",
+  "@featuresMonthDaysLabel": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresTimeZone": "时区",
+  "featuresScheduleRunLocation": "在哪里运行",
+  "featuresJustCreatedChat": "刚建的对话",
+  "featuresModel": "模型",
+  "featuresRequestRefused": "引擎没有接受这个请求",
+  "featuresScheduleNotFound": "这个任务已经不在了",
+  "featuresScheduleEndedError": "任务已结束，不能再改",
+  "featuresScheduleConflict": "任务刚被改过，返回后再试",
+  "featuresScheduleInvalidPrompt": "名称和指令不能为空，名称最多 120 字",
+  "featuresScheduleInvalidTime": "运行时间不对",
+  "featuresScheduleIntervalTooShort": "间隔至少 1 分钟",
+  "featuresScheduleTimeOutOfRange": "时间超出范围",
+  "featuresScheduleSubagentError": "这个对话收不到自动化任务",
+  "featuresEvery": "每",
+  "featuresCronExpression": "Cron 表达式",
+  "featuresCronFieldGuide": "分  时  日  月  周",
+  "featuresZoneTimeSuffix": "（{city}时间）",
+  "@featuresZoneTimeSuffix": {
+    "placeholders": {
+      "city": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresScheduleNextLocal": "接下来（本机时间）",
+  "featuresScheduleNext": "接下来",
+  "featuresMonthDayChoice": "{day} 日",
+  "@featuresMonthDayChoice": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresZonesCommon": "常用",
+  "featuresZonesAll": "全部",
+  "featuresZoneSearchHint": "搜索城市、时区或 UTC 偏移",
+  "featuresZonesNoMatch": "没有匹配的时区",
+  "featuresZoneUTC": "协调世界时",
+  "featuresZoneShanghai": "上海",
+  "featuresZoneUrumqi": "乌鲁木齐",
+  "featuresZoneHongKong": "香港",
+  "featuresZoneMacau": "澳门",
+  "featuresZoneTaipei": "台北",
+  "featuresZoneTokyo": "东京",
+  "featuresZoneSeoul": "首尔",
+  "featuresZoneSingapore": "新加坡",
+  "featuresZoneKualaLumpur": "吉隆坡",
+  "featuresZoneBangkok": "曼谷",
+  "featuresZoneHoChiMinh": "胡志明市",
+  "featuresZoneJakarta": "雅加达",
+  "featuresZoneManila": "马尼拉",
+  "featuresZoneKolkata": "加尔各答",
+  "featuresZoneDubai": "迪拜",
+  "featuresZoneJerusalem": "耶路撒冷",
+  "featuresZoneLondon": "伦敦",
+  "featuresZoneDublin": "都柏林",
+  "featuresZoneLisbon": "里斯本",
+  "featuresZoneParis": "巴黎",
+  "featuresZoneBerlin": "柏林",
+  "featuresZoneMadrid": "马德里",
+  "featuresZoneRome": "罗马",
+  "featuresZoneAmsterdam": "阿姆斯特丹",
+  "featuresZoneZurich": "苏黎世",
+  "featuresZoneStockholm": "斯德哥尔摩",
+  "featuresZoneWarsaw": "华沙",
+  "featuresZoneAthens": "雅典",
+  "featuresZoneIstanbul": "伊斯坦布尔",
+  "featuresZoneMoscow": "莫斯科",
+  "featuresZoneCairo": "开罗",
+  "featuresZoneJohannesburg": "约翰内斯堡",
+  "featuresZoneLagos": "拉各斯",
+  "featuresZoneNewYork": "纽约",
+  "featuresZoneToronto": "多伦多",
+  "featuresZoneChicago": "芝加哥",
+  "featuresZoneDenver": "丹佛",
+  "featuresZonePhoenix": "凤凰城",
+  "featuresZoneLosAngeles": "洛杉矶",
+  "featuresZoneVancouver": "温哥华",
+  "featuresZoneAnchorage": "安克雷奇",
+  "featuresZoneMexicoCity": "墨西哥城",
+  "featuresZoneBogota": "波哥大",
+  "featuresZoneLima": "利马",
+  "featuresZoneSantiago": "圣地亚哥",
+  "featuresZoneSaoPaulo": "圣保罗",
+  "featuresZoneBuenosAires": "布宜诺斯艾利斯",
+  "featuresZoneHonolulu": "檀香山",
+  "featuresZoneAuckland": "奥克兰",
+  "featuresZoneSydney": "悉尼",
+  "featuresZoneMelbourne": "墨尔本",
+  "featuresZoneBrisbane": "布里斯班",
+  "featuresZonePerth": "珀斯",
+  "featuresScheduleCreated": "已创建",
+  "featuresSchedulesReadFailed": "没能读取自动化任务",
+  "featuresSchedulesEmpty": "还没有自动化任务",
+  "featuresSchedulesEmptyHint": "到点自动发进对话，替你跑一遍",
+  "featuresScheduleNewTask": "新建任务",
+  "featuresSchedulesNoMatch": "没有匹配的任务",
+  "featuresSchedulesNoActive": "没有开启中的任务",
+  "featuresSchedulesNoEnded": "没有已结束的任务",
+  "featuresSchedules": "自动化任务",
+  "featuresSchedulesSubtitle": "到点自动发进原来的对话",
+  "featuresSchedulesSearch": "搜索任务",
+  "featuresSchedulesAllCount": "全部 {count}",
+  "@featuresSchedulesAllCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresScheduleUntitled": "未命名任务",
+  "featuresScheduleSent": "已发进对话",
+  "featuresView": "查看",
+  "featuresSendFailed": "没能发送",
+  "featuresScheduleDeleteTitle": "删除这个任务？",
+  "featuresScheduleDeleteHint": "会停止之后的运行，并删掉它的运行记录。原来的对话不受影响。",
+  "featuresScheduleDeleted": "任务已删除",
+  "featuresScheduleActive": "已开启",
+  "featuresScheduleRun": "运行",
+  "featuresScheduleNextRun": "下次",
+  "featuresScheduleLastRun": "上次",
+  "featuresScheduleRule": "规则",
+  "featuresScheduleLinkedChat": "关联对话",
+  "featuresScheduleChatDeleted": "对话已删除",
+  "featuresScheduleEdit": "编辑任务",
+  "featuresScheduleRunNow": "立即运行",
+  "featuresScheduleHistory": "运行记录",
+  "featuresScheduleNeverRun": "还没有运行过",
+  "featuresScheduleHistoryUnavailable": "记录不可用",
+  "featuresScheduleHistoryReadFailed": "没能读取运行记录",
+  "featuresScheduleDelete": "删除任务",
+  "featuresExportSavedTo": "已存到 {path}",
+  "@featuresExportSavedTo": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresExportTitle": "导出对话日志",
+  "featuresExportSubtitle": "打包成一个 ZIP，用于反馈或备份",
+  "featuresExportUnavailable": "这个连接导不了",
+  "featuresExportRemoteHint": "经 DSH Remote 中转时拿不到日志，可以在电脑上的网页版导出",
+  "featuresExportShareHint": "附在问题反馈里，或发给自己",
+  "featuresExportSaveDownloads": "存到「下载」",
+  "featuresExportDownloadsHint": "存进 下载/DSH-Go",
+  "featuresExportContents": "含这个对话和子代理的全部记录与附件",
+  "featuresSkillUseHere": "在对话里用",
+  "featuresSkillUseNew": "新对话里用",
+  "featuresSkillsCallHint": "输入 /技能名 调用",
+  "featuresSkillsReadFailed": "没能读取技能",
+  "featuresSkillsEmpty": "这个对话还没有技能",
+  "featuresSkillsEmptyHint": "放进 .dsh/skills 的技能会出现在这里",
+  "featuresSkillsSourceHint": "来自项目和 ~/.dsh 下的 skills 目录",
+  "featuresSkillUsage": "适用：{usage}",
+  "@featuresSkillUsage": {
+    "placeholders": {
+      "usage": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresSkillManual": "仅手动",
+  "featuresArtifactsSemantic": "产出的文件，共 {count} 个，查看全部",
+  "@featuresArtifactsSemantic": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresArtifactsTitle": "产出的文件",
+  "featuresArtifactsAllCount": "全部 {count} 个",
+  "@featuresArtifactsAllCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresArtifactsCount": "{count} 个",
+  "@featuresArtifactsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresArtifactsNoFiles": "还没有文件",
+  "featuresArtifactsTotal": "{count} 个文件 · 交付的和生成的",
+  "@featuresArtifactsTotal": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresArtifactsEmpty": "还没有产出文件",
+  "featuresArtifactsEmptyHint": "AI 交付或生成的文件会出现在这里",
+  "featuresListSeparator": "、",
+  "featuresErrorReason": "{title}：{reason}",
+  "@featuresErrorReason": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresYearDate": "{year}年{date}",
+  "@featuresYearDate": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresDateWeekdayTime": "{date} {week} {time}",
+  "@featuresDateWeekdayTime": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "week": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresDateWeekday": "{date} 周{day}",
+  "@featuresDateWeekday": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresOnceDescription": "{rule} · {date} {time}",
+  "@featuresOnceDescription": {
+    "placeholders": {
+      "rule": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresCronMonthSuffix": "（{months}）",
+  "@featuresCronMonthSuffix": {
+    "placeholders": {
+      "months": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresRuleIntervalSeconds": "每 {count} 秒",
+  "@featuresRuleIntervalSeconds": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresRuleIntervalMinutes": "每 {count} 分钟",
+  "@featuresRuleIntervalMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresRuleIntervalHours": "每 {count} 小时",
+  "@featuresRuleIntervalHours": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresSchedulesActiveCount": "已开启 {count}",
+  "@featuresSchedulesActiveCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresSchedulesEndedCount": "已结束 {count}",
+  "@featuresSchedulesEndedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresScheduleRetention": "只保留最近 {days} 天、最多 {count} 条",
+  "@featuresScheduleRetention": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresScheduleRetentionUnknown": "只保留最近 {days} 天、最多 — 条",
+  "@featuresScheduleRetentionUnknown": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresArtifactsDeliveredTurn": "第 {turn} 轮 · 交付",
+  "@featuresArtifactsDeliveredTurn": {
+    "placeholders": {
+      "turn": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresArtifactsGeneratedTurn": "第 {turn} 轮 · 生成",
+  "@featuresArtifactsGeneratedTurn": {
+    "placeholders": {
+      "turn": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresPresetCreateRequest": "新建 Agent 预设「{name}」（{id}）：在工作区写下这两个文件（内容原样），再用 plugin_manager 的 install_bundle 安装 `{directory}` 目录。只做这些。\n\n",
+  "@featuresPresetCreateRequest": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "id": {
+        "type": "String"
+      },
+      "directory": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresPresetUpdateRequest": "更新 Agent 预设「{name}」（{id}）：在工作区写下这两个文件（内容原样），用 plugin_manager 先移除组合包 `{replacing}`，再用 install_bundle 安装 `{directory}` 目录。只做这些。\n\n",
+  "@featuresPresetUpdateRequest": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "id": {
+        "type": "String"
+      },
+      "replacing": {
+        "type": "String"
+      },
+      "directory": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresZoneThisPhone": "{city} · 本机",
+  "@featuresZoneThisPhone": {
+    "placeholders": {
+      "city": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresPermissionResetHint": "新对话的默认权限已失效",
+  "featuresPermissionResetDefault": "恢复默认"
+}

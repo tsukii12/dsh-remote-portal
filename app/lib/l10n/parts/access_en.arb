@@ -1,0 +1,139 @@
+{
+  "@@locale": "en",
+  "accessPickTitle": "What should DSH Go help with?",
+  "accessPickMessage": "Pick any, then turn each one on",
+  "accessPickConfirm": "Turn on selected",
+  "accessSkip": "Skip",
+  "accessFeatureFiles": "Read and write phone files",
+  "accessFeatureFilesNeeds": "Needs file access",
+  "accessFeaturePet": "Pet over other apps",
+  "accessFeaturePetNeeds": "Needs display over other apps",
+  "accessFeaturePhone": "Phone control",
+  "accessFeaturePhoneNeeds": "Needs accessibility and notifications",
+  "accessFeatureBackground": "Keep running in background",
+  "accessFeatureBackgroundNeeds": "Tells you when tasks finish; needs notifications and background access",
+  "accessFeatureVoice": "Voice input",
+  "accessFeatureVoiceNeeds": "Needs the microphone",
+  "accessFeatureAlerts": "Reply alerts",
+  "accessFeatureAlertsNeeds": "Needs notifications",
+  "accessVoiceModel": "Works offline; downloads a voice model of about {size} MB",
+  "@accessVoiceModel": {
+    "placeholders": {
+      "size": {
+        "type": "int"
+      }
+    }
+  },
+  "accessVoiceMetered": "You're on mobile data; the download will use it",
+  "accessFilesRiskBody": "AI can read and change your photos, downloads and documents.",
+  "accessStepCount": "{index} / {total}",
+  "@accessStepCount": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "accessTurnOn": "Turn on",
+  "accessOpenSettings": "Open settings",
+  "accessItsSet": "It's set",
+  "accessOpenAgain": "Open again",
+  "accessIsOn": "On",
+  "accessNotOnYet": "Not on yet",
+  "accessDidYouSet": "Did you turn it on there?",
+  "accessWhere": "Where: {path}",
+  "@accessWhere": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "accessOpenFailed": "Couldn't open system settings",
+  "accessMicTitle": "Allow the microphone",
+  "accessMicWhy": "For voice input",
+  "accessStorageTitle": "Allow file access",
+  "accessStorageWhy": "Lets AI read and write photos, downloads and documents",
+  "accessNotifyTitle": "Allow notifications",
+  "accessNotifyWhy": "Tells you when a task finishes or needs you",
+  "accessBatteryTitle": "Allow background running",
+  "accessBatteryWhy": "Tasks keep going when you switch apps",
+  "accessVendorBackgroundWhy": "Keeps the system from cutting tasks off in the background",
+  "accessAutostartTitle": "Allow auto-start",
+  "accessAutostartWhy": "Lets DSH Go come back after the system clears it",
+  "accessVivoAutostartPath": "Permission management › Auto-start › {app}",
+  "@accessVivoAutostartPath": {
+    "placeholders": {
+      "app": {
+        "type": "String"
+      }
+    }
+  },
+  "accessXiaomiAutostartPath": "Manage apps › {app} › Autostart",
+  "@accessXiaomiAutostartPath": {
+    "placeholders": {
+      "app": {
+        "type": "String"
+      }
+    }
+  },
+  "accessA11yTitle": "Turn on accessibility",
+  "accessA11yWhy": "Phone control reads the screen and taps through it",
+  "accessPopupTitle": "Allow pop-ups in background",
+  "accessPopupWhy": "Brings you back to DSH Go when phone control is done",
+  "accessVivoPopupPath": "Permission management › {app} › Display pop-up windows in background",
+  "@accessVivoPopupPath": {
+    "placeholders": {
+      "app": {
+        "type": "String"
+      }
+    }
+  },
+  "accessXiaomiPopupPath": "Manage apps › {app} › Other permissions › Display pop-up windows while running in the background",
+  "@accessXiaomiPopupPath": {
+    "placeholders": {
+      "app": {
+        "type": "String"
+      }
+    }
+  },
+  "accessOverlayTitle": "Allow display over other apps",
+  "accessOverlayWhy": "Lets your pet appear over other apps",
+  "accessOverlayGreyed": "Switch greyed out?",
+  "accessRestrictedTitle": "Allow restricted settings first",
+  "accessRestrictedTap": "In Accessibility, tap “DSH Phone Control”; when “Restricted setting” appears, tap OK",
+  "accessRestrictedMenu": "In App info, tap the three dots at the top right and choose “Allow restricted settings”",
+  "accessRestrictedAdvanced": "In App info, open “Advanced settings” and turn on “Allow restricted settings”",
+  "accessRestrictedBack": "Back in Accessibility, turn on “DSH Phone Control”",
+  "accessRestrictedHelp": "See how",
+  "accessOpenA11y": "Open accessibility",
+  "accessOpenAppInfo": "Open app info",
+  "accessStateOn": "On",
+  "accessStateOff": "Off",
+  "accessStateVisited": "Visited",
+  "accessStateUnknown": "Set up",
+  "accessSummaryAllSet": "All set",
+  "accessSummaryLeft": "{count, plural, =1{1 still off} other{{count} still off}}",
+  "@accessSummaryLeft": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accessSummaryMessage": "Turn on the rest anytime in Settings › General › System permissions",
+  "accessFinishFailed": "Couldn’t finish setup",
+  "accessVoiceDownload": "The voice model (about {size} MB) starts downloading once the engine is ready. Follow it in Settings › General › Voice input.",
+  "@accessVoiceDownload": {
+    "placeholders": {
+      "size": {
+        "type": "int"
+      }
+    }
+  },
+  "accessPageTitle": "System permissions",
+  "accessPageSubtitle": "What each feature needs from Android"
+}

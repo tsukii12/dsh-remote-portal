@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "header": {
+    "actions": [
+      "newChat",
+      { "id": "todo", "icon": "todo", "label": "待办", "action": { "type": "send", "text": "读一下 TODO.md，告诉我今天先做什么" } },
+      { "id": "files", "icon": "folder", "label": "文件", "action": { "type": "open", "page": "files" } }
+    ]
+  },
+  "composer": {
+    "quickActions": [
+      { "label": "继续", "action": { "type": "send", "text": "继续" } },
+      { "label": "解释代码", "action": { "type": "send", "text": "逐段解释上面这段代码在做什么" } },
+      { "label": "压缩上下文", "action": { "type": "command", "name": "compact" } },
+      { "label": "更新日志", "action": { "type": "link", "url": "https://github.com/ccch1mneyyy/dsh-Go/releases" } }
+    ]
+  }
+}

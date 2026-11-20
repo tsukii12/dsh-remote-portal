@@ -1,0 +1,6 @@
+{"type":"baseline","value":{"items":[],"archivedSessionIds":[],"pinnedSessionIds":[]}}
+{"type":"upsert","workspace":{"workspaceId":"4e563711-523d-490d-af70-2f98bdb1d974","path":"/tmp/dsh-home/ws","title":"ws","sessionIds":[],"createdAt":"2026-10-22T19:10:41.862Z","updatedAt":"2026-10-22T19:10:41.862Z"}}
+{"type":"order","workspaceIds":["4e563711-523d-490d-af70-2f98bdb1d974"]}
+{"type":"upsert","workspace":{"workspaceId":"4e563711-523d-490d-af70-2f98bdb1d974","path":"/tmp/dsh-home/ws","title":"ws","sessionIds":["session-7e05c307-9700-4fee-81d4-f1aab6352c2a"],"createdAt":"2026-10-22T19:10:41.862Z","updatedAt":"2026-10-22T19:10:41.900Z"}}
+{"type":"archived","archivedSessionIds":["session-5e903793-e13f-412c-a9ad-9edadd3ca3ff"]}
+{"type":"archived","archivedSessionIds":[]}

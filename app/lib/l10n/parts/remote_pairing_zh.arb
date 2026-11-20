@@ -1,0 +1,90 @@
+{
+  "remotePairEntry": "扫码配对电脑",
+  "remotePairEntryHint": "扫电脑上 Remote 插件显示的二维码，不用注册 Remote 账号（需要先登录 DeepSeek）",
+  "remotePairAddComputer": "扫码添加电脑",
+  "remotePairTitle": "扫码配对电脑",
+  "remotePairSubtitle": "不用注册 Remote 账号，也不会传 DeepSeek 密码或登录凭据",
+  "remotePairNeedsDeepSeek": "先登录 DeepSeek 账号",
+  "remotePairNeedsDeepSeekBody": "扫码配对要先在 DSH Go 里登录 DeepSeek 账号。配对时只附带账号 ID 用来标记这台手机，不传密码、Cookie 或 Token。",
+  "remotePairScanHint": "对准电脑上 Remote 插件显示的配对二维码",
+  "remotePairPasteLink": "粘贴配对链接",
+  "remotePairPasteEmpty": "剪贴板里没有配对链接",
+  "remotePairScannerFailed": "二维码识别器不可用。可以粘贴配对链接继续配对。",
+  "remotePairFromImage": "从相册识别",
+  "remotePairImageNoCode": "这张图里没找到二维码",
+  "remotePairCameraDenied": "没有相机权限。可以在系统设置里打开，或者用「从相册识别」「粘贴配对链接」",
+  "remotePairCameraFailed": "相机打不开。可以用「从相册识别」或「粘贴配对链接」",
+  "remotePairSystemScan": "扫码",
+  "remotePairSystemScanHint": "打开系统扫码，里面也能从相册选截图",
+  "remotePairReading": "正在读取配对信息…",
+  "remotePairConfirmTitle": "要连接这台电脑吗？",
+  "remotePairComputer": "电脑",
+  "remotePairServer": "服务器",
+  "remotePairFingerprint": "电脑指纹",
+  "remotePairFingerprintHint": "和电脑 Remote 插件上显示的指纹核对一致再继续。",
+  "remotePairConfirm": "确认是这台电脑，开始配对",
+  "remotePairNotThis": "不是这台，重新扫",
+  "remotePairClaiming": "正在生成验证码…",
+  "remotePairCodeTitle": "在电脑上输入这 8 位验证码",
+  "remotePairCodeSemantics": "验证码 {digits}",
+  "@remotePairCodeSemantics": {
+    "placeholders": {
+      "digits": {
+        "type": "String"
+      }
+    }
+  },
+  "remotePairCodeHint": "在电脑的 Remote 插件里输入，点「确认绑定」。手机不用再操作。",
+  "remotePairOneAttempt": "只有一次机会：输错后这次配对作废，要在电脑上重新生成二维码再扫。",
+  "remotePairWaiting": "等电脑确认 · 剩余 {countdown}",
+  "@remotePairWaiting": {
+    "placeholders": {
+      "countdown": {
+        "type": "String"
+      }
+    }
+  },
+  "remotePairApproved": "电脑已确认，正在完成绑定…",
+  "remotePairCodeExpired": "验证码已过期，请在电脑上重新生成二维码",
+  "remotePairConnecting": "配对完成，正在连接 {name}…",
+  "@remotePairConnecting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "remotePairFailedTitle": "没能配对",
+  "remotePairOtherServerBody": "这个二维码来自 {server}，和 DSH Go 现在用的 Remote 服务器不同。切换过去继续吗？两个服务器的登录各自保留。",
+  "@remotePairOtherServerBody": {
+    "placeholders": {
+      "server": {
+        "type": "String"
+      }
+    }
+  },
+  "remotePairSwitchServer": "切换服务器并继续",
+  "remotePairScanAgain": "重新扫码",
+  "remotePairErrInvalidCode": "这不是 DSH Go 的配对二维码",
+  "remotePairErrOtherServer": "这个二维码来自另一个 Remote 服务器",
+  "remotePairErrUnsupported": "这个 Remote 服务器还不支持扫码配对",
+  "remotePairErrExpired": "二维码已过期或已经用过了。请在电脑上重新生成二维码",
+  "remotePairErrCodeRejected": "电脑上输入的验证码不对，这次配对已作废。请在电脑上重新生成二维码再扫",
+  "remotePairErrCancelled": "配对已取消",
+  "remotePairErrAccountConflict": "这台手机已经登录了另一个 Remote 账号，和这台电脑的账号不一致。原来的登录保持不变；要换绑请先在 Remote 里退出登录",
+  "remotePairErrIdentity": "配对信息和这台电脑或这台手机对不上，已经停止。请在电脑上重新生成二维码",
+  "remotePairErrHostLimit": "这个账号绑定的电脑已经到上限了",
+  "remotePairErrNetwork": "连不上 Remote 服务器，检查网络后重试",
+  "remotePairErrFailed": "配对没有完成，请重新扫码",
+  "remotePairSwitchFailedTitle": "已和 {name} 配对",
+  "remotePairSwitchFailedBody": "但没能切换到这台电脑。可以重试，或者回到「远程主机」里点这台电脑。",
+  "remotePairDone": "完成",
+  "@remotePairSwitchFailedTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "remotePairErrPinSave": "已经配对，但没能在手机上保存这台电脑的指纹。请在电脑上重新生成二维码，再扫一次"
+}

@@ -1,0 +1,1060 @@
+{
+  "botsFolderGone": "这个文件夹已经不在了",
+  "botsFolderReadFailed": "没能读取这个文件夹",
+  "botsFolderOpenFailed": "打不开这个文件夹",
+  "botsFolderCount": "{count} 个文件夹",
+  "botsWorkingFolder": "工作目录",
+  "botsFolderTeamDefault": "团队工作区",
+  "botsFolderRoomDefault": "每位 Bot 各自的目录",
+  "botsFolderHint": "目录位于已连接的主机。",
+  "botsFolderCurrent": "当前目录",
+  "botsFolderUnavailable": "连接或目录已变化，请重新打开。",
+  "botsFolderNoChoices": "主机上暂无其他目录。",
+  "botsFolderConfirm": "使用此工作目录？",
+  "botsFolderRefused": "主机拒绝了此目录：它可能已不存在、无法访问或受保护。请另选目录或重试。",
+  "botsChildCount": "{count} 个下级",
+  "@botsChildCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "botsCurrentChat": "当前对话",
+  "botsSubagentCount": "{count} 个子代理",
+  "@botsSubagentCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "botsRunningCount": "{count} 个运行中",
+  "@botsRunningCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "botsFailedCount": "{count} 个出错",
+  "@botsFailedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "botsNestedCount": "含 {count} 个下级",
+  "@botsNestedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "botsBackToParent": "返回「{title}」",
+  "@botsBackToParent": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "botsTeamMemberCount": "智能体团队，{count} 位成员",
+  "@botsTeamMemberCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "botsAgentTeam": "智能体团队",
+  "botsSubagentRunningCount": "{count} 个子代理，{running} 个运行中",
+  "@botsSubagentRunningCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "running": {
+        "type": "int"
+      }
+    }
+  },
+  "botsSubagents": "子代理",
+  "botsNoSubagents": "没有派出子代理",
+  "botsOpenChatFirst": "先打开一个对话",
+  "botsTeamReadFailed": "没能读到团队",
+  "botsNoTeamOnHost": "这台主机没有智能体团队",
+  "botsTeamNotEnabled": "智能体团队未开启",
+  "botsTeamDescription": "多个智能体分工协作，共用一块任务板",
+  "botsTeamEnabling": "正在开启…",
+  "botsTeamEnable": "开启团队",
+  "botsMembersWorking": "{count} 位成员在工作",
+  "@botsMembersWorking": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "botsTeamStandby": "都在待命",
+  "botsMembers": "成员",
+  "botsTasks": "任务",
+  "botsTeamRecordUnreadable": "团队记录有一条读不出来",
+  "botsMessages": "消息",
+  "botsOwner": "负责人",
+  "botsTeamCreateHint": "在对话里请 AI 组建团队",
+  "botsCurrent": "当前",
+  "botsNoTasks": "还没有任务",
+  "botsTodo": "待办",
+  "botsUnassigned": "未分配",
+  "botsTaskWaitingFor": "等 {dependencies}",
+  "@botsTaskWaitingFor": {
+    "placeholders": {
+      "dependencies": {
+        "type": "String"
+      }
+    }
+  },
+  "botsWriteOverlap": "写入范围重叠",
+  "botsWaitingDependencies": "等依赖",
+  "botsReadyToStart": "可开始",
+  "botsTaskId": "编号",
+  "botsDependencies": "依赖",
+  "botsWriteScopes": "写入范围",
+  "botsMessagesReadFailed": "没能读到消息",
+  "botsNoMemberMessages": "成员之间还没有消息",
+  "botsMessagesIncomplete": "部分成员的消息没能读到 · 重试",
+  "botsDateTime": "{date} {time}",
+  "@botsDateTime": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "botsViewDetails": "查看详情",
+  "botsAdmin": "管理员",
+  "botsFullTextChanged": "对话已变化",
+  "botsFullTextReopen": "请重新打开这条消息",
+  "botsFullTextReadFailed": "没能读取全文",
+  "botsShowAll": "显示全部",
+  "botsImagePlaceholder": "［图片］",
+  "botsSending": "发送中",
+  "botsWriteOwn": "自己写",
+  "botsSubmit": "提交",
+  "botsChooseModelFor": "给 {name} 选一个模型",
+  "@botsChooseModelFor": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsModelGreeting": "选好后它就会打招呼",
+  "botsChooseModel": "选择模型",
+  "botsSkipAnswer": "不回答",
+  "botsBotGone": "这个 Bot 已不在",
+  "botsWaitingModel": "等你选模型",
+  "botsThinking": "正在思考",
+  "botsMainBot": "主 Bot",
+  "botsIdle": "空闲",
+  "botsAnsweredQuestion": "你回答了它的问题",
+  "botsEarlierMessages": "更早的部分",
+  "botsComposerHint": "给 {name} 发消息…",
+  "@botsComposerHint": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsDeleteNamed": "删除「{name}」？",
+  "@botsDeleteNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsDeleteBotBody": "它的对话还在，记忆会移到归档里。",
+  "botsTokensToday": "24 小时 tokens",
+  "botsMemoryUnit": "条记忆",
+  "botsRoomUnit": "个群聊",
+  "botsProfile": "资料",
+  "botsModel": "模型",
+  "botsBotName": "名字",
+  "botsRole": "角色",
+  "botsWriterExample": "比如：写手",
+  "botsInstructions": "说明",
+  "botsInstructionsHint": "它该怎么做事",
+  "botsColor": "颜色",
+  "botsUsage": "用量",
+  "botsUsageScanning": "正在统计历史对话，数据稍后补全。",
+  "botsUsageRefresh": "刷新",
+  "botsToday": "近 24 小时",
+  "botsLastWeek": "近 7 天",
+  "botsLastMonth": "近 30 天",
+  "botsMonthCalls": "近 30 天 · {count} 次调用",
+  "@botsMonthCalls": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "botsFullRecord": "完整记录",
+  "botsEveryToolCall": "每一步工具调用",
+  "botsUnsetMain": "取消主 Bot",
+  "botsSetMain": "设为主 Bot",
+  "botsDeleteBot": "删除 Bot",
+  "botsEffortOff": "不思考",
+  "botsEffortMinimal": "极少",
+  "botsEffortLow": "低",
+  "botsEffortMedium": "中",
+  "botsEffortHigh": "高",
+  "botsEffortMax": "最高",
+  "botsNamedRecord": "{name} · 完整记录",
+  "@botsNamedRecord": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsOrganizingNotes": "正在整理笔记",
+  "botsToolRun": "运行命令",
+  "botsToolRead": "查看文件",
+  "botsToolEdit": "修改文件",
+  "botsToolSearch": "联网搜索",
+  "botsToolBrowse": "看网页",
+  "botsToolMessage": "联系其他 Bot",
+  "botsToolGroup": "在群里沟通",
+  "botsToolMemory": "整理记忆",
+  "botsToolRecall": "翻看记录",
+  "botsToolTeam": "安排团队",
+  "botsToolAsk": "准备问你",
+  "botsToolWork": "干活",
+  "botsJustNow": "刚刚",
+  "botsCountHundredMillion": "{value} 亿",
+  "@botsCountHundredMillion": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "botsCountTenThousand": "{value} 万",
+  "@botsCountTenThousand": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "botsModelNotSelected": "未选择",
+  "botsYourPreview": "你：{preview}",
+  "@botsYourPreview": {
+    "placeholders": {
+      "preview": {
+        "type": "String"
+      }
+    }
+  },
+  "botsEventWorking": "{name} 开始干活",
+  "@botsEventWorking": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsEventApproval": "{name} 在等你批准",
+  "@botsEventApproval": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsEventDone": "{name} 完成了工作",
+  "@botsEventDone": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsEventStopped": "你停下了 {name} 的工作",
+  "@botsEventStopped": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsEventFailed": "{name} 没能回答",
+  "@botsEventFailed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsEventMissed": "{name} 没有及时回应",
+  "@botsEventMissed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsEventLookup": "{name} 翻看了自己的聊天",
+  "@botsEventLookup": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsEventLookupQuery": "{name} 在自己的聊天里找「{query}」",
+  "@botsEventLookupQuery": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "botsEventResumed": "{name} 重启后接着干",
+  "@botsEventResumed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsEventCut": "{name} 又被重启打断，停下了",
+  "@botsEventCut": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsAutomation": "定时任务",
+  "botsAutomationText": "定时任务：{text}",
+  "@botsAutomationText": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "botsOtherBot": "其他 Bot",
+  "botsMessageFrom": "来自 {name} 的消息",
+  "@botsMessageFrom": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsEventReplied": "{name} 回复了",
+  "@botsEventReplied": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsGroupReplied": "群里有了回复",
+  "botsNamedGroupReplied": "「{name}」里有了回复",
+  "@botsNamedGroupReplied": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsEventCalledStop": "{name} 叫停了工作",
+  "@botsEventCalledStop": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsChooseMember": "选择成员",
+  "botsMentionMember": "提到成员",
+  "botsRelayUnavailable": "经中转连接时用不了 Bot",
+  "botsUseSsh": "用 SSH 连接这台电脑即可使用",
+  "botsTeamLoadFailed": "没能读取 Bot 团队",
+  "botsBotCount": "{count} 个 Bot",
+  "@botsBotCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "botsRoomCount": "{count} 个群聊",
+  "@botsRoomCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "botsNewBot": "新建 Bot",
+  "botsGroupChat": "群聊",
+  "botsNewGroup": "新建群聊",
+  "botsDuplicateCreated": "已复制，稍后会出现在列表中。",
+  "botsDuplicate": "复制 Bot",
+  "botsDuplicateHint": "沿用设置，对话与记忆从头开始",
+  "botsDuplicateNamed": "复制 {name}？",
+  "botsDuplicateBody": "新 Bot 沿用职责、指令和模型设置，对话与个人记忆从头开始，名称由主机分配。模型可用时，它会先发送一句问候。",
+  "@botsDuplicateNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsChooseModelStart": "选一个模型开始",
+  "botsNoChats": "还没有对话",
+  "botsUnreadCount": "{count} 条未读",
+  "@botsUnreadCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "botsMainTag": "主",
+  "botsMemberNeedsApproval": "有成员等你批准",
+  "botsNamedWorking": "{name} 正在干活",
+  "@botsNamedWorking": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsNamesWorking": "{names} 正在干活",
+  "@botsNamesWorking": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "botsMemberCount": "{count} 位成员",
+  "@botsMemberCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "botsUpdateRequired": "DS Bot 需要更新",
+  "botsInstall": "安装 DS Bot",
+  "botsUpdateForPhone": "新版才能在手机上用",
+  "botsInstallDescription": "一组长期在线的 Bot，各有记忆和分工",
+  "botsInstallOnHost": "在{host}上装好后就能用",
+  "@botsInstallOnHost": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "botsRunsOnHost": "在{host}上运行",
+  "@botsRunsOnHost": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "botsInstalling": "正在安装",
+  "botsMemory": "记忆",
+  "botsEditMemory": "编辑记忆",
+  "botsAddMemory": "添加记忆",
+  "botsMemoryReplyExample": "比如：回复尽量简短",
+  "botsMemoryDraftExample": "比如：周五前交初稿",
+  "botsMemoryCount": "记忆 · {count}",
+  "@botsMemoryCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "botsMemoryReadFailed": "没能读取记忆",
+  "botsSummary": "概要",
+  "botsNoMemory": "还没有记忆",
+  "botsTeam": "团队",
+  "botsSelf": "自己",
+  "botsWrittenByYou": "你写的",
+  "botsNameRequired": "起个名字",
+  "botsRoleHint": "一句话说它是做什么的",
+  "botsNewInstructionsHint": "它该怎么做事，有什么要注意的",
+  "botsAppearance": "外观",
+  "botsCreating": "正在创建",
+  "botsGroupNameOptional": "群名（可不填）",
+  "botsMembersSelected": "成员 · 已选 {count}",
+  "@botsMembersSelected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "botsPickTwoBots": "至少选两个 Bot",
+  "botsFullText": "全文",
+  "botsTextPartial": "仅显示前 {count} 个字符",
+  "@botsTextPartial": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "botsTextCompletenessUnknown": "无法确认是否为完整内容",
+  "botsRoomGone": "这个群聊已不在",
+  "botsNamedSpeaking": "{name} 正在发言",
+  "@botsNamedSpeaking": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsNamedActivity": "{name} {activity}",
+  "@botsNamedActivity": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "activity": {
+        "type": "String"
+      }
+    }
+  },
+  "botsWorking": "正在干活",
+  "botsDiscussing": "正在讨论",
+  "botsTyping": "正在输入",
+  "botsGroupComposerHint": "给大家发消息…",
+  "botsDecline": "拒绝",
+  "botsAllowOnce": "允许本次",
+  "botsPrivateChat": "私聊",
+  "botsSetAdmin": "设为管理员",
+  "botsRemoveMember": "移出群聊",
+  "botsDeleteRoomBody": "群里的记录还在，群记忆会移到归档里。",
+  "botsNamedAdmin": "管理员 {name}",
+  "@botsNamedAdmin": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsRoomWorkingCount": "{count} 位在干活",
+  "@botsRoomWorkingCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "botsMembersCountTitle": "成员 · {count}",
+  "@botsMembersCountTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "botsStopMember": "停下",
+  "botsAddMember": "添加成员",
+  "botsWhoAnswers": "谁先回答",
+  "botsAdminFirst": "管理员先答",
+  "botsEveryoneInTurn": "全员轮流",
+  "botsGroupName": "群名",
+  "botsGroupNotice": "群公告",
+  "botsGroupNoticeHint": "每个成员发言前都会看到",
+  "botsDeleteGroup": "删除群聊",
+  "botsDiscardTitle": "放弃修改？",
+  "botsKeepEditing": "继续编辑",
+  "botsDiscard": "放弃",
+  "botsProgress": "进度",
+  "botsGlyphRun": "运行",
+  "botsGlyphJobOutput": "查看后台任务",
+  "botsGlyphJobs": "后台任务",
+  "botsGlyphStopJob": "停止后台任务",
+  "botsGlyphRead": "读取",
+  "botsGlyphImage": "查看图片",
+  "botsGlyphDeliver": "交付文件",
+  "botsGlyphWrite": "写入",
+  "botsGlyphSearch": "搜索",
+  "botsGlyphFindFiles": "查找文件",
+  "botsGlyphOpenWeb": "打开网页",
+  "botsGlyphMessageAgent": "发消息给子代理",
+  "botsGlyphInterruptAgent": "打断子代理",
+  "botsGlyphListModels": "列出子代理模型",
+  "botsGlyphWorkflow": "工作流",
+  "botsGlyphLoop": "循环任务",
+  "botsGlyphSkill": "使用技能",
+  "botsGlyphTodo": "更新待办",
+  "botsGlyphSetGoal": "设定目标",
+  "botsGlyphViewGoal": "查看目标",
+  "botsGlyphUpdateGoal": "更新目标",
+  "botsGlyphAsk": "提问",
+  "botsCommunityEmpty": "暂时没有内容",
+  "botsCommunityGroups": "交流群",
+  "botsCommunity": "社区",
+  "botsForum": "论坛",
+  "botsForumSubtitle": "提问、分享、找同好",
+  "botsProjectHome": "DSH Go 项目主页",
+  "botsOpenSource": "开源项目",
+  "botsPluginCatalogFailed": "插件目录没打开",
+  "botsTapRetry": "点一下重试",
+  "botsFeaturedPlugins": "精选插件",
+  "botsPluginSource": "插件信息来自 dshfind",
+  "botsPromptIdeas": "玩法",
+  "botsUpdates": "更新动态",
+  "botsLink": "链接",
+  "botsLinkOpenFailed": "没能打开 {host}",
+  "@botsLinkOpenFailed": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "botsYearMonth": "{year}年{month}月",
+  "@botsYearMonth": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      },
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "botsCopyGroupNumber": "复制群号",
+  "botsQrCodeLabel": "{title}二维码",
+  "@botsQrCodeLabel": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "botsFiles": "文件",
+  "botsEmptyCell": "（空）",
+  "botsYesterdayTime": "昨天 {time}",
+  "@botsYesterdayTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "botsOutsideWorkspace": "不在工作区里",
+  "botsNotFolder": "这不是文件夹",
+  "botsChatNotFound": "找不到这个对话",
+  "botsBrowseUnsupported": "这个连接不支持浏览文件",
+  "botsWorkspace": "工作区",
+  "botsSearchFiles": "搜索文件",
+  "botsGoUp": "回到上一级",
+  "botsEmptyFolder": "空文件夹",
+  "@botsFolderCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "botsFileCount": "{count} 个文件",
+  "@botsFileCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "botsTruncatedItems": "只列出了前 {count} 项",
+  "@botsTruncatedItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "botsMoreActions": "更多操作",
+  "botsSearchFailed": "没能搜索",
+  "botsNoResults": "没有找到",
+  "botsCopyPath": "复制路径",
+  "botsPetOutsideApp": "App 外显示",
+  "botsPetNotAuthorized": "未授权",
+  "botsPetDisplayWhen": "显示时机",
+  "botsPetWhenActive": "有事时显示",
+  "botsPetAlways": "一直显示",
+  "botsPetOverlayShows": "悬浮窗里显示",
+  "botsPetOverlayPixel": "像素宠物",
+  "botsPetOverlayCompanion": "小屋里的她",
+  "botsPetOverlayCompanionNamed": "小屋里的{name}",
+  "@botsPetOverlayCompanionNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsPetOverlayNoPack": "先去伙伴小屋里请一位角色",
+  "botsPetOverlayPackBroken": "角色包不完整，去伙伴小屋里重新导入",
+  "botsPetOverlayUnavailable": "这台手机暂时请不出她",
+  "botsPetOverlayCompanionHint": "点一下和她互动，连点两下打开对话。比像素宠物更耗电，熄屏和隐藏时会停下来",
+  "botsPetOverlayLoading": "正在请她出来…",
+  "botsPetOverlayFallback": "她没能出来，先由像素宠物顶班",
+  "botsPetOverlayFraming": "取景",
+  "botsPetOverlayFramingFull": "全身",
+  "botsPetOverlayFramingHalf": "半身",
+  "botsPetOverlayFramingHint": "换取景会重新加载她",
+  "botsPetSwitchDisabled": "开关点不动",
+  "botsPetRestrictedSettings": "允许受限制的设置",
+  "botsPetHiddenToday": "今天不再显示",
+  "botsPetRestore": "恢复",
+  "botsPetChange": "换宠物",
+  "botsPetHideHour": "藏起来 1 小时",
+  "botsPetSettings": "宠物设置",
+  "botsPetDeepy": "Deepy 小鲸鱼",
+  "botsPetWhaleGirl": "鲸娘",
+  "botsPetNone": "不显示",
+  "botsPets": "宠物",
+  "botsPetSource": "来自 DSH-TUI",
+  "botsPetImport": "导入",
+  "botsPetImportHint": "导入你自己的像素宠物：一个 zip，里面是 pack.json 和序列帧 PNG，格式见仓库里的 docs/design/pets.md。长按导入的宠物可以删除。",
+  "botsPetMake": "让 AI 做一只宠物",
+  "botsPetMakeSubtitle": "把 GIF、表情包或主题转成宠物包",
+  "botsPetImportDone": "「{name}」来了",
+  "botsPetCodexTitle": "「{name}」是从 Codex 宠物转过来的",
+  "botsPetCodexBody": "大部分照原样，有几处不完全一样：",
+  "botsPetCodexOk": "知道了",
+  "botsPetCodexLoops": "动作会一直循环到状态变化，不像 Codex 里跑几遍就回到待机",
+  "botsPetCodexRoamLeft": "往左走用的是往右走那一行的镜像",
+  "botsPetCodexDrag": "拖着它时一律用朝右的那一行",
+  "botsPetCodexSleep": "睡觉时用待机的第一帧",
+  "botsPetCodexLook": "看向不同方向的那些格子没用上",
+  "botsPetCodexWebp": "WebP 图转成了 PNG",
+  "botsPetCodexCustomTracks": "自定义的动作行没接到任何状态上",
+  "botsPetCodexFps": "帧率换算成毫秒时取了整",
+  "botsPetCodexOneShot": "只播一次的动作，播完回到哪里由 DSH 决定",
+  "botsPetCodexMissingAuthor": "包里没写作者",
+  "botsPetCodexMissingLicense": "包里没写授权",
+  "botsPetCodexMissingSource": "包里没写来源",
+  "@botsPetImportDone": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@botsPetCodexTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsPetImportReplaced": "「{name}」换成了新的",
+  "@botsPetImportReplaced": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsPetImportNotZip": "这不是 zip 文件",
+  "botsPetImportNoPack": "zip 里没有 pack.json",
+  "botsPetImportBadPack": "pack.json 有问题：{detail}",
+  "@botsPetImportBadPack": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "botsPetImportMissingSheet": "zip 里少了序列帧图 {name}",
+  "@botsPetImportMissingSheet": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsPetImportBadSheet": "序列帧图不对：{name}（要完整的 PNG，每边不超过 4096 像素，每一帧都在图内）",
+  "@botsPetImportBadSheet": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsPetImportTooLarge": "这个宠物包太大了",
+  "botsPetImportStorage": "没能存到手机上，再试一次",
+  "botsPetRemoveTitle": "删除「{name}」？",
+  "@botsPetRemoveTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsPetRemoveBody": "删除后可以再导入。",
+  "botsPetRemoveFailed": "没能删除「{name}」，再试一次",
+  "@botsPetRemoveFailed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsPetSize": "大小",
+  "botsPetCustomSize": "自定义大小",
+  "botsPetQuiet": "安静模式",
+  "botsPetQuietSubtitle": "只做动作，不冒气泡",
+  "botsPetShowNow": "立即显示",
+  "botsPetHiddenUntil": "藏到 {time}",
+  "@botsPetHiddenUntil": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "botsKeyEsc": "发送 Esc",
+  "botsKeyTab": "发送 Tab",
+  "botsKeyLeft": "左",
+  "botsKeyUp": "上",
+  "botsKeyDown": "下",
+  "botsKeyRight": "右",
+  "botsKeyPipe": "竖线",
+  "botsKeyTilde": "波浪号",
+  "botsKeySlash": "斜杠",
+  "botsKeyDash": "短横线",
+  "botsTerminal": "终端",
+  "botsTerminalRename": "重命名终端",
+  "botsTerminalName": "终端名称",
+  "botsTerminalRenameFailed": "没能重命名",
+  "botsTerminalCloseNamed": "关闭「{title}」？",
+  "@botsTerminalCloseNamed": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "botsTerminalCloseBody": "里面的进程会结束",
+  "botsTerminalUnsupported": "这个连接用不了终端",
+  "botsTerminalSupportedHosts": "在本机、SSH 主机或 Remote 电脑上可用",
+  "botsTerminalOpening": "正在打开终端…",
+  "botsTerminalNone": "没有打开的终端",
+  "botsTerminalNew": "新建终端",
+  "botsTerminalClose": "关闭终端",
+  "botsTerminalChooseShell": "选择 Shell",
+  "botsTerminalShellFailed": "没能读取 Shell",
+  "botsTerminalReading": "正在读取…",
+  "botsTerminalDefaultShell": "默认 Shell",
+  "botsTerminalOtherDevice": "其他设备正在输入",
+  "botsTerminalTakeOver": "接管",
+  "botsTerminalStarting": "正在启动…",
+  "botsTerminalConnecting": "正在连接…",
+  "botsTerminalDisconnected": "连接已断开",
+  "botsTerminalReconnect": "重新连接",
+  "botsTerminalEnded": "已结束",
+  "botsTerminalExitCode": "已结束 · 退出码 {code}",
+  "@botsTerminalExitCode": {
+    "placeholders": {
+      "code": {
+        "type": "int"
+      }
+    }
+  },
+  "botsTerminalGone": "这个终端已不在了",
+  "botsTerminalLimit": "先关掉不用的终端",
+  "botsToolWorkingRun": "正在运行命令",
+  "botsToolApprovalRun": "{name} 想运行命令",
+  "@botsToolApprovalRun": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsToolWorkingRead": "正在查看文件",
+  "botsToolApprovalRead": "{name} 想查看文件",
+  "@botsToolApprovalRead": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsToolWorkingEdit": "正在修改文件",
+  "botsToolApprovalEdit": "{name} 想修改文件",
+  "@botsToolApprovalEdit": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsToolWorkingSearch": "正在联网搜索",
+  "botsToolApprovalSearch": "{name} 想联网搜索",
+  "@botsToolApprovalSearch": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsToolWorkingBrowse": "正在看网页",
+  "botsToolApprovalBrowse": "{name} 想看网页",
+  "@botsToolApprovalBrowse": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsToolWorkingMessage": "正在联系其他 Bot",
+  "botsToolApprovalMessage": "{name} 想联系其他 Bot",
+  "@botsToolApprovalMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsToolWorkingGroup": "正在在群里沟通",
+  "botsToolApprovalGroup": "{name} 想在群里沟通",
+  "@botsToolApprovalGroup": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsToolWorkingMemory": "正在整理记忆",
+  "botsToolApprovalMemory": "{name} 想整理记忆",
+  "@botsToolApprovalMemory": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsToolWorkingRecall": "正在翻看记录",
+  "botsToolApprovalRecall": "{name} 想翻看记录",
+  "@botsToolApprovalRecall": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsToolWorkingTeam": "正在安排团队",
+  "botsToolApprovalTeam": "{name} 想安排团队",
+  "@botsToolApprovalTeam": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsToolWorkingAsk": "正在准备问你",
+  "botsToolApprovalAsk": "{name} 想准备问你",
+  "@botsToolApprovalAsk": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsToolWorkingWork": "正在干活",
+  "botsToolApprovalWork": "{name} 想干活",
+  "@botsToolApprovalWork": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "botsEveryone": "所有人",
+  "botsActivelyRunning": "正在运行",
+  "botsListSeparator": "，",
+  "botsNameSeparator": "、",
+  "botsGlyphSubagent": "子代理",
+  "botsGlyphWebSearch": "联网搜索",
+  "botsSenderPreview": "{name}：{preview}",
+  "@botsSenderPreview": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "preview": {
+        "type": "String"
+      }
+    }
+  },
+  "botsAgentSemantics": "{title}，{state}",
+  "@botsAgentSemantics": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "state": {
+        "type": "String"
+      }
+    }
+  },
+  "botsViewMetric": "{label}：{value}",
+  "@botsViewMetric": {
+    "placeholders": {
+      "label": {
+        "type": "Object"
+      },
+      "value": {
+        "type": "Object"
+      }
+    }
+  },
+  "botsEffortXhigh": "超高",
+  "botsRelayLimit": "Bot 互叫上限",
+  "botsRelayLimitHint": "从你最近一次发言起，Bot 之间互叫达到此次数后暂停。填写 1–200 的整数，留空使用默认值。",
+  "botsRelayLimitDefault": "默认：{count}",
+  "botsRelayLimitInvalid": "请填写 1–200 的整数",
+  "botsRelayLimitRestore": "恢复默认",
+  "botsRelayLimitConnectionChanged": "连接已变化，请关闭后重新打开。",
+  "@botsRelayLimitDefault": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "botsMobileUnsupportedTitle": "DS Bot 暂不支持手机端",
+  "botsMobileApiRequired": "可先在网页版中使用",
+  "botsMobileApiMissing": "手机端暂不支持，可先在网页版中使用",
+  "botsCreationConnectionChanged": "连接已变化，请重新打开创建页面后再操作。"
+}

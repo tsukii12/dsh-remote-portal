@@ -1,0 +1,50 @@
+{
+  "webTitle": "DSH 网页版",
+  "webSshAppOnly": "经 SSH 隧道的地址只能在 App 内打开",
+  "webRelayUnavailable": "经 DSH Remote 中转时打不开网页版，请在那台电脑上打开",
+  "webSshHost": "SSH 主机",
+  "webLocalAppOnly": "本机地址带启动令牌，只能在 App 内打开",
+  "webEngineStatus": "引擎状态",
+  "webEngineStarting": "正在启动引擎",
+  "webEngineStartFailed": "引擎没能启动",
+  "webEngineNotRunning": "引擎没有运行",
+  "webEngineProblem": "引擎遇到了问题",
+  "webStartingSoon": "稍等片刻，网页版马上就好",
+  "webStartToOpen": "网页版由本机引擎提供，启动后就能打开",
+  "webRestart": "重新启动",
+  "webStartEngine": "启动引擎",
+  "webSwitchToWeb": "切换到网页界面",
+  "webNativeFeatures": "原生功能",
+  "webSwitchToNative": "切回原生界面",
+  "webAppSettings": "App 设置",
+  "webSwitchHost": "切换主机",
+  "webAttachmentTooLarge": "附件太大，没能带进网页版",
+  "webTextCopied": "文字已复制，粘贴到输入框即可",
+  "webAttachmentFailed": "附件没能带进网页版",
+  "webHostUnavailable": "这台主机打不开网页版",
+  "webChatGone": "这个对话已不在了",
+  "webPageClosed": "网页已关闭",
+  "webChatsWorkspaces": "对话与工作区",
+  "webRefresh": "刷新",
+  "webOpenInBrowser": "在浏览器打开",
+  "webBrowserUnavailable": "不能在浏览器打开",
+  "webReopen": "重新打开",
+  "webPageNotOpened": "页面没有打开",
+  "webCheckConnection": "检查网络或引擎状态后再试",
+  "webTargetSessionMissing": "网页版里没找到这个对话，已停在首页",
+  "webTargetNotLoaded": "网页版没有加载完成",
+  "webTargetSettingsMissing": "没找到这页设置，可能需要先登录或开启对应插件",
+  "webTargetPluginMissing": "没找到这个插件，可能当前配置里没有它",
+  "webTargetSidebarFailed": "没能打开侧边栏，先在网页版里打开这个对话再试",
+  "webTargetCordisMissing": "没找到 Cordis 面板，插件可能已经移除",
+  "webTargetNewChatFailed": "没能新建对话，已停在网页版首页",
+  "webTargetPageFailed": "没能直接打开这一页，已停在网页版首页",
+  "webConnectHostFirst": "还没连上「{name}」，连上后再打开网页版",
+  "@webConnectHostFirst": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
+}

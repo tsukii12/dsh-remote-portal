@@ -1,0 +1,18 @@
+{
+  "a11yRestoreTitle": "自动恢复无障碍",
+  "searchKwA11yRestore": "无障碍,恢复,重连,自动恢复,掉线,授权,ADB,Shizuku,Sui,root",
+  "a11yRestoreNeedsGrant": "需要授权",
+  "a11yRestoreNotice": "开启后，在系统设置里关掉无障碍会被自动打开；要关闭手机操控，请在 DSH Go 里关。",
+  "a11yRestoreForceStop": "被强制停止后，重新打开 DSH Go 才能恢复。",
+  "a11yRestoreGrant": "授权并开启",
+  "a11yRestoreGrantShizuku": "通过 Shizuku 授予",
+  "a11yRestoreGrantShizukuPermission": "先授权 Shizuku，再授予权限",
+  "a11yRestoreGrantAdb": "通过自连 ADB 授予",
+  "a11yRestoreRootNote": "通过已授权的 root 连接，只授予这一项权限。",
+  "a11yRestoreSetup": "配置 Shizuku 或无线调试",
+  "a11yRestoreWaiting": "请在 Shizuku 中允许授权",
+  "a11yRestoreWaitingSui": "请在 Sui 中允许授权",
+  "a11yRestoreComputer": "也可以连接电脑，执行一次：",
+  "a11yRestoreCopy": "复制授权命令",
+  "a11yRestoreCopied": "授权命令已复制"
+}

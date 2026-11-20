@@ -1,0 +1,66 @@
+{
+  "pluginConfigUnsaved": "未保存",
+  "pluginConfigSecretSet": "已设置",
+  "pluginConfigAdvanced": "高级",
+  "pluginConfigSearchHint": "搜索设置",
+  "pluginConfigNoMatch": "没有匹配的设置",
+  "pluginConfigOpenWeb": "在网页版设置",
+  "pluginConfigOpenWebHint": "插件自带的设置页",
+  "pluginConfigResetAll": "全部恢复默认",
+  "pluginConfigResetAllTitle": "全部恢复默认？",
+  "pluginConfigReset": "恢复",
+  "pluginConfigChanges": "{count} 项更改",
+  "@pluginConfigChanges": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pluginConfigAppliesOnReload": "保存后重新载入插件",
+  "pluginConfigSaving": "正在保存…",
+  "pluginConfigReloading": "正在重新载入…",
+  "pluginConfigApplied": "已生效",
+  "pluginConfigFailed": "没能生效",
+  "pluginConfigRestored": "已恢复原设置",
+  "pluginConfigStopped": "没能生效，原设置也没能恢复",
+  "pluginConfigRestore": "恢复原设置",
+  "pluginConfigDiscard": "放弃",
+  "pluginConfigNotStarted": "插件没有启动",
+  "pluginConfigNone": "没有可设置的项",
+  "pluginConfigInvalidOperation": "这项改动无法应用",
+  "pluginConfigGone": "插件已不在运行，已刷新",
+  "pluginConfigUnknown": "连接中断，已重新读取",
+  "pluginConfigUnsupported": "暂不支持在这里设置",
+  "pluginConfigSecretUnbound": "需插件适配后设置",
+  "pluginConfigListFailed": "插件清单读取失败，稍后重试",
+  "pluginConfigListUpdating": "插件清单正在更新，请稍后再试",
+  "pluginConfigFixed": "由配置文件固定",
+  "pluginConfigFixedNote": "由配置文件固定，这里只能查看",
+  "pluginConfigReadOnly": "只读",
+  "pluginConfigEntryTitle": "{bundle} · {entry}",
+  "@pluginConfigEntryTitle": {
+    "placeholders": {
+      "bundle": {
+        "type": "String"
+      },
+      "entry": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginConfigNameSpeechToText": "语音识别",
+  "pluginConfigNameSenseVoice": "SenseVoice 识别",
+  "pluginConfigNameSpeechApi": "转写接口",
+  "pluginConfigNameTranslator": "翻译服务",
+  "pluginConfigNameSessionIndex": "会话索引",
+  "pluginConfigNameSessionSearchTool": "会话搜索工具",
+  "pluginConfigNameTerminalService": "终端服务",
+  "pluginConfigNameTerminalBash": "Bash 终端",
+  "pluginConfigNameTerminalPwsh": "PowerShell 终端",
+  "pluginConfigNameTerminalTools": "终端工具",
+  "pluginConfigNameWorktree": "工作树管理",
+  "pluginConfigNameWorktreeTools": "工作树工具",
+  "pluginConfigNameRalphWorkflow": "工作流引擎",
+  "pluginConfigNameRalphTools": "Ralph 工具"
+}

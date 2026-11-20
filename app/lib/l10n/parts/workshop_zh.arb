@@ -1,0 +1,178 @@
+{
+  "workshopTitle": "创意工坊",
+  "workshopSubtitle": "大家做的宠物和伙伴，挑喜欢的装上",
+  "workshopEntrySubtitle": "找别人做的宠物和伙伴",
+  "workshopTabBrowse": "发现",
+  "workshopTabMine": "我的投稿",
+  "workshopKindAll": "全部",
+  "workshopKindPet": "像素宠物",
+  "workshopKindCompanion": "伙伴",
+  "workshopSearchHint": "搜索名称或作者",
+  "workshopGet": "获取",
+  "workshopRefresh": "刷新",
+  "workshopByAuthor": "{author} 制作",
+  "@workshopByAuthor": {
+    "placeholders": {
+      "author": {
+        "type": "String"
+      }
+    }
+  },
+  "workshopEmptyTitle": "这里还空着",
+  "workshopEmptyMessage": "还没有人投稿。做了宠物或伙伴的话，可以第一个发上来。",
+  "workshopNoMatchTitle": "没有找到",
+  "workshopNoMatchMessage": "换个名字或作者再试试。",
+  "workshopUnavailableTitle": "暂时打不开工坊",
+  "workshopNotOpenTitle": "工坊还没有开放",
+  "workshopNotOpenMessage": "这个版本还没有接入工坊服务。",
+  "workshopShowingOlder": "没能刷新，显示的是 {when} 取到的内容。",
+  "@workshopShowingOlder": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "workshopLocalUnknown": "读不出本机已装了哪些，「已安装」的标记可能不准。",
+  "workshopStatVersion": "版本",
+  "workshopStatSize": "大小",
+  "workshopStatLicense": "许可",
+  "workshopAbout": "简介",
+  "workshopNoDescription": "作者没有写简介。",
+  "workshopSource": "来源",
+  "workshopMinApp": "需要 DSH Go {version} 或更新的版本。",
+  "@workshopMinApp": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "workshopInstalledVersion": "已安装 {version}",
+  "@workshopInstalledVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "workshopUpdateTo": "更新到 {version}",
+  "@workshopUpdateTo": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "workshopInstalledWithdrawn": "你装的这个版本已经被撤回。它还能用；有新版本就更新，没有的话建议卸载。",
+  "workshopPhasePreparing": "正在准备…",
+  "workshopPhaseDownloading": "正在下载",
+  "workshopPhaseVerifying": "正在校验…",
+  "workshopPhaseCancelling": "正在取消…",
+  "workshopProgressBytes": "{received} / {total}",
+  "@workshopProgressBytes": {
+    "placeholders": {
+      "received": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "workshopInstallDone": "装好了",
+  "workshopInstallDonePet": "装好了，到宠物页就能换上它。",
+  "workshopInstallDoneCompanion": "装好了，到伙伴小屋就能见到她。",
+  "workshopInstallDoneRefreshIssue": "装好了，但列表没能刷新，重新进来就能看到。",
+  "workshopInstallCancelled": "已取消，没有改动本机的内容。",
+  "workshopInstallBusy": "上一个安装或卸载还没结束，等它完成再试。",
+  "workshopReplaceTitle": "覆盖本机已有的？",
+  "workshopReplaceMessage": "本机已经有一个同名的资源，不是从工坊这一条装的。继续会用「{title}」替换它，替换后找不回来。",
+  "@workshopReplaceMessage": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "workshopReplaceConfirm": "覆盖",
+  "workshopReport": "举报",
+  "workshopErrorNetwork": "网络不通，稍后再试。",
+  "workshopErrorTimeout": "等得太久没有回应，稍后再试。",
+  "workshopErrorServer": "工坊服务暂时出了问题，稍后再试。",
+  "workshopErrorRateLimited": "操作太频繁了，过一会儿再试。",
+  "workshopErrorBadData": "工坊返回的内容不对，没有采用。稍后再试。",
+  "workshopErrorCatalogChanged": "这个作品刚刚有变化，请刷新后再看。",
+  "workshopErrorNotFound": "找不到这个作品了，可能已经下架。",
+  "workshopErrorWithdrawn": "这个版本已经被撤回，不能安装。",
+  "workshopErrorMinApp": "App 版本太旧，更新后才能安装。",
+  "workshopErrorUnsupported": "这个版本的 App 还不认识这类作品。",
+  "workshopErrorCompanionOff": "伙伴类作品暂时关闭了。",
+  "workshopErrorUploadOff": "工坊暂时不接收投稿。",
+  "workshopErrorNoSpace": "手机空间不够，腾出一些再试。",
+  "workshopErrorStorage": "没能读写手机上的文件。",
+  "workshopErrorIntegrity": "下载的内容和登记的不一致，已丢弃。请重试。",
+  "workshopErrorDowngrade": "本机装的版本更新，不会换成旧的。",
+  "workshopErrorRuntimeMissing": "要先在伙伴小屋里请过一位角色，才能装别的伙伴。",
+  "workshopErrorReadersBusy": "她正在用着，先离开伙伴小屋或关掉悬浮窗再试。",
+  "workshopErrorInstallRecord": "本机的安装记录对不上，没有动它。",
+  "workshopErrorOtherOrigin": "这是从别的工坊装的。",
+  "workshopErrorSignIn": "需要先登录 GitHub 账号。",
+  "workshopErrorConsent": "需要先同意把登录凭据交给工坊核对身份。",
+  "workshopErrorAccountMismatch": "登录的账号来源和工坊认的不一致，请重新登录。",
+  "workshopErrorAccountDown": "暂时没能向 GitHub 核对身份，稍后再试。",
+  "workshopErrorPreferences": "没能保存本机的记录，这一步没有继续。",
+  "workshopErrorBusy": "上一步还没结束，稍等。",
+  "workshopErrorCancelled": "已取消。",
+  "workshopErrorUnknownResult": "不确定有没有成功。先刷新看看，别急着重试。",
+  "workshopErrorGeneric": "没有成功，稍后再试。",
+  "workshopErrorWithCode": "没有成功，稍后再试。（{code}）",
+  "@workshopErrorWithCode": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "workshopErrorPackage": "包里有文件不符合要求，没法上传（{code}）。",
+  "@workshopErrorPackage": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "workshopDisclosureTitle": "让工坊核对你的 GitHub 身份",
+  "workshopDisclosureLead": "投稿、管理自己的投稿和举报，工坊都要先知道你是谁。办法是把你的 GitHub 登录凭据发给下面这个工坊服务，由它去问 GitHub 你是哪个账号。",
+  "workshopDisclosureWorker": "收到凭据的工坊",
+  "workshopDisclosureAccount": "核对身份的账号服务",
+  "workshopDisclosureUse": "投稿、查看或撤回自己的投稿、举报时都会带上它。工坊只拿它向 GitHub 确认身份，不保存。",
+  "workshopDisclosureKept": "凭据只存在这台手机上，本机另外记下你同意过这两个地址；换了其中一个会再问。",
+  "workshopDisclosureStale": "地址刚刚有变化，请按现在显示的重新确认。",
+  "workshopDisclosureAccept": "同意并继续",
+  "workshopDisclosureDecline": "暂不",
+  "workshopDisclosureUnsaved": "这次同意已经生效，但没能记在本机，下次可能再问一遍。",
+  "workshopSignInTitle": "用 GitHub 登录",
+  "workshopSignInLead": "工坊用 GitHub 账号认人。这次授权只能读你的公开资料（用户名和账号编号），不能动你的仓库。",
+  "workshopSignInPreparing": "正在向 GitHub 要验证码…",
+  "workshopSignInSteps": "在 GitHub 验证页输入验证码并授权，再回到这里。",
+  "workshopSignInOpen": "复制并打开 GitHub",
+  "workshopSignInCopied": "验证码已复制",
+  "workshopSignInWaiting": "等你在 GitHub 上授权…",
+  "workshopSignInExpired": "验证码过期了。",
+  "workshopSignInDenied": "你在 GitHub 上取消了授权。",
+  "workshopSignInNetwork": "连不上 GitHub，检查网络后再试。",
+  "workshopSignInUnconfigured": "这个工坊还没开通 GitHub 登录。",
+  "workshopSignInAgain": "重新获取验证码",
+  "workshopAccountLine": "GitHub 账号 {login}",
+  "workshopAccountSignOut": "退出登录",
+  "workshopAccountSignedOut": "已退出。要彻底收回授权，去 GitHub 设置里的 Applications 页撤销。",
+  "workshopAccountSignOutFailed": "没能退出，稍后再试。",
+  "@workshopAccountLine": {
+    "placeholders": {
+      "login": {
+        "type": "String"
+      }
+    }
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "provenance": {
+    "repo": "Fei2411/DS-Bot",
+    "official": "4a7b55069ad300eae8be42a74f31bc170b40ead7",
+    "mobilePr": "6f3e1b3e8603abd84820b334a7f99985236dbbdf",
+    "scope": "Actual roomItems projection and Fetch file-text endpoint; upstream fakeAttachments chunks split UTF8 characters. Only synthetic text. Not complete DSH Host."
+  },
+  "event": {
+    "seq": 1,
+    "time": 1000,
+    "type": "user/message",
+    "data": {
+      "source": {
+        "kind": "bot",
+        "role": "post",
+        "senderSessionId": "b2",
+        "senderName": "Writer",
+        "length": 723
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "Short excerpt"
+        },
+        {
+          "type": "file",
+          "attachment": {
+            "attachmentId": "sha256:1",
+            "name": "synthetic-post.txt",
+            "bytes": 2127
+          }
+        }
+      ]
+    }
+  },
+  "projected": [
+    {
+      "id": "1",
+      "kind": "bot",
+      "botId": "b2",
+      "name": "Writer",
+      "text": "Short excerpt",
+      "time": 1000,
+      "whole": {
+        "length": 723,
+        "file": {
+          "attachmentId": "sha256:1",
+          "name": "synthetic-post.txt",
+          "bytes": 2127
+        }
+      }
+    }
+  ],
+  "full": {
+    "ok": true,
+    "value": {
+      "text": "SYNTHETIC_LONG_POST 正文\n合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。合成正文段落。",
+      "whole": true
+    }
+  },
+  "missing": {
+    "ok": false,
+    "error": {
+      "code": "bot/unavailable",
+      "message": "This file cannot be read here",
+      "details": {}
+    }
+  }
+}

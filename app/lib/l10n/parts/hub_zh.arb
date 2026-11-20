@@ -1,0 +1,340 @@
+{
+  "hubSessionDetails": "对话详情",
+  "hubTerminal": "终端",
+  "hubSessionNoTurns": "还没有完整的一轮",
+  "hubSessionElapsed": "用时",
+  "hubSessionSteps": "步骤",
+  "hubSessionChangedFiles": "改动文件",
+  "hubSessionTrajectoryHint": "每一轮的步骤和用时会排在这里",
+  "hubSessionLoadEarlier": "加载更早的轮次",
+  "hubSessionError": "出错",
+  "hubSessionInterrupted": "被中断",
+  "hubSessionOutputLimit": "达到输出上限",
+  "hubSessionNoChanges": "还没有改过文件",
+  "hubSessionShellChangesHint": "用 shell 命令改的文件不在这里",
+  "hubSessionChanges": "对话改动",
+  "hubSessionChangesNote": "只统计已加载的记录里，用写入和编辑工具做的改动",
+  "hubSessionNoGoal": "还没有目标或待办",
+  "hubSessionGoalHint": "复杂任务里 AI 会列出待办，进度在这里看",
+  "hubSessionGoal": "目标",
+  "hubSessionPlanMode": "计划模式",
+  "hubSessionPlanSwitching": "正在切换计划模式",
+  "hubSessionPlanHint": "AI 先出方案，不改文件",
+  "hubSessionTodos": "待办",
+  "hubSessionNotStarted": "未开始",
+  "hubSessionTurnUsage": "每轮用量",
+  "hubSessionNoSubagents": "没有派出子代理",
+  "hubSessionDelegations": "派活记录",
+  "hubTabTrajectory": "轨迹",
+  "hubTabChanges": "改动",
+  "hubTabFiles": "文件",
+  "hubTabProgress": "进度",
+  "hubTabContext": "上下文",
+  "hubTabSubagents": "子代理",
+  "hubPlugins": "插件",
+  "hubSettingsFullAccessTitle": "开启完全权限？",
+  "hubSettingsFullAccessBody": "AI 执行命令、改动文件前不再问你。",
+  "hubSettingsStorageTitle": "让 AI 访问手机文件？",
+  "hubSettingsStorageAllow": "允许读写",
+  "hubSettingsStorageDenied": "没有拿到存储权限。到系统设置里给 DSH Go 开启「所有文件访问」后再试",
+  "hubSettingsRestartRequired": "重启引擎后生效",
+  "hubSettingsRestartNow": "立即重启",
+  "hubSettingsInterface": "界面",
+  "hubSettingsChat": "对话",
+  "hubSettingsAutoCommands": "自动执行命令",
+  "hubSettingsPhoneFiles": "访问手机文件",
+  "hubSettingsPhoneFilesHint": "AI 可读写手机存储",
+  "hubSettingsVisualReplies": "可视化回复",
+  "hubSettingsVisualRepliesHint": "图表、对比卡和可点的选项",
+  "hubSettingsPhoneControl": "手机操控",
+  "hubSettingsPhoneControlHint": "看屏幕、帮你点按",
+  "hubSettingsPreferences": "个人偏好",
+  "hubSettingsAppearance": "外观",
+  "hubSettingsChatTextSize": "对话字号",
+  "hubSettingsCollapseSteps": "完成后收起过程",
+  "hubSettingsCollapseStepsHint": "思考与工具调用收成一行",
+  "hubSettingsWebPhoneLayout": "网页版手机布局",
+  "hubSettingsWebPhoneLayoutHint": "为手机屏幕重排网页版",
+  "hubSettingsEngineExtensions": "引擎与扩展",
+  "hubSettingsEngine": "本机引擎",
+  "hubSettingsProviders": "模型",
+  "hubSettingsEngineSettings": "引擎参数",
+  "hubSettingsShareConfig": "分享配置",
+  "hubSettingsAllFeatures": "全部功能",
+  "hubSettingsAbout": "关于",
+  "hubSettingsCommunity": "社区",
+  "hubSettingsLicenses": "开源许可",
+  "hubSettingsAccount": "DeepSeek 账号",
+  "hubSettingsSigningIn": "正在登录…",
+  "hubSettingsInvalidKey": "Key 无效，查不到余额",
+  "hubSettingsNoApiKey": "未设置 API Key",
+  "hubSettingsApiKeyHint": "填写 Key 后即可对话",
+  "hubSettingsSignInAccount": "登录 DeepSeek 账号",
+  "hubSettingsOrApiKey": "或填写 API Key",
+  "hubPluginShare": "分享插件",
+  "hubPluginDetails": "插件详情",
+  "hubPluginFeatured": "dshfind 推荐",
+  "hubPluginWebOnly": "仅网页版",
+  "hubPluginStars": "星标",
+  "hubPluginSource": "来源",
+  "hubPluginInstalledVersion": "已装版本",
+  "hubPluginRequiresDsh": "需要 DSH",
+  "hubPluginPackageName": "包名",
+  "hubPluginHomepage": "主页",
+  "hubPluginRepository": "代码仓库",
+  "hubPluginManageTitle": "管理插件",
+  "hubPluginManage": "管理",
+  "hubPluginSafeModeInstall": "安全模式下不能安装",
+  "hubPluginInstallCommand": "获取安装命令",
+  "hubPluginInstallComputer": "在电脑上安装",
+  "hubPluginInstalling": "安装中…",
+  "hubPluginAllowBuilds": "允许构建脚本并重试",
+  "hubPluginRetryInstall": "重试安装",
+  "hubPluginOfficial": "DSH 官方",
+  "hubPluginNotLoaded": "没有正常加载",
+  "hubPluginComponents": "组件",
+  "hubPluginSafeModeRemove": "安全模式下不能卸载",
+  "hubPluginRemoveCommand": "获取卸载命令",
+  "hubPluginRemoveComputer": "在电脑上卸载",
+  "hubPluginUninstall": "卸载",
+  "hubSessionTurns": "共 {count} 轮",
+  "@hubSessionTurns": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "hubSessionTurnsRunning": "共 {count} 轮 · 进行中",
+  "@hubSessionTurnsRunning": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "hubSessionStepCount": "{count} 步",
+  "@hubSessionStepCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "hubSessionWaitTime": "等你 {duration}",
+  "@hubSessionWaitTime": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "hubSessionTurn": "第 {turn} 轮",
+  "@hubSessionTurn": {
+    "placeholders": {
+      "turn": {
+        "type": "int"
+      }
+    }
+  },
+  "hubSessionFileCount": "改动了 {count} 个文件",
+  "@hubSessionFileCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "hubSessionEditCount": "改了 {count} 次",
+  "@hubSessionEditCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "hubSessionTurnOf": "第 {turn} / {total} 轮",
+  "@hubSessionTurnOf": {
+    "placeholders": {
+      "turn": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "hubSessionCacheHit": "命中 {percent}",
+  "@hubSessionCacheHit": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "hubSessionBlocked": "受阻",
+  "hubSessionBlockedReason": "受阻：{reason}",
+  "@hubSessionBlockedReason": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "hubSessionTodoSemantics": "{content},{status}",
+  "@hubSessionTodoSemantics": {
+    "placeholders": {
+      "content": {
+        "type": "String"
+      },
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "hubSettingsStorageBody": "AI 能读取和修改相册、下载、文档等手机文件，引擎会重启一次。",
+  "hubSettingsBalance": "余额 {amount}",
+  "@hubSettingsBalance": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "hubSettingsBalanceLow": "余额 {amount} · 余额不足",
+  "@hubSettingsBalanceLow": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "hubSettingsAccountSemantics": "账号：{title}，{subtitle}",
+  "@hubSettingsAccountSemantics": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "subtitle": {
+        "type": "String"
+      }
+    }
+  },
+  "hubSettingsHostSemantics": "远程主机：{name}，{status}",
+  "@hubSettingsHostSemantics": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "hubSettingsApiKey": "DeepSeek API Key",
+  "hubPluginBrowserFailed": "没能打开浏览器，请手动访问 {address}",
+  "@hubPluginBrowserFailed": {
+    "placeholders": {
+      "address": {
+        "type": "String"
+      }
+    }
+  },
+  "hubPluginYearMonth": "{year}年{month}月",
+  "@hubPluginYearMonth": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      },
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "hubPluginUpdateTo": "更新到 {version}",
+  "@hubPluginUpdateTo": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "hubPluginInstallOn": "安装到{host}",
+  "@hubPluginInstallOn": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "hubPluginComponentCount": "{count} 个",
+  "@hubPluginComponentCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "hubPluginComponentSeparator": "、",
+  "hubGroupAi": "AI",
+  "hubGroupCapabilities": "能力",
+  "hubGroupGeneral": "通用",
+  "hubGroupHosts": "主机",
+  "hubGroupHelp": "帮助与关于",
+  "hubPersonalization": "个性化",
+  "hubPersonalizationAboutYou": "关于你",
+  "hubPersonalizationReplies": "回答",
+  "hubPersonalizationWorkStyle": "工作方式",
+  "hubPrivacy": "隐私与分享",
+  "hubPrivacySharing": "分享",
+  "hubInterfaceHome": "首页",
+  "hubInterfaceWebHint": "DSH 官方网页版",
+  "hubInterfaceOpenWeb": "打开网页版",
+  "hubInterfacePhoneLayout": "手机布局",
+  "hubTableTint": "表格底色",
+  "hubTableTintFollow": "跟随主题",
+  "hubTableTintFill": "淡底整表",
+  "hubTableTintNone": "无底色",
+  "hubTableTintFillHint": "隔行淡一档，长表格更好扫读",
+  "hubTableTintFollowHint": "表头浅底，表身跟随正文",
+  "hubTableTintNoneHint": "只剩网格线，最轻",
+  "hubAbout": "关于 DSH Go",
+  "hubAboutAuthor": "DSH Go 原作者",
+  "hubAboutBilibili": "B站主页",
+  "hubAboutX": "X 主页",
+  "hubAboutGithub": "GitHub 主页",
+  "hubAboutNewVersion": "有新版本",
+  "hubValueSet": "已设置",
+  "hubValueOff": "未开启",
+  "hubValueOneStep": "还差一步",
+  "hubValueAllowed": "已允许",
+  "hubValueNeedsSetup": "需设置",
+  "hubValueHosts": "{count} 台",
+  "@hubValueHosts": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "hubValueNoHosts": "未添加",
+  "hubValuePlugins": "{count} 个",
+  "@hubValuePlugins": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "hubEngineStartup": "启动",
+  "hubThemeLightDark": "明暗",
+  "hubPermissionPhone": "手机",
+  "hubPermissionPhoneConfirm": "手机操控确认",
+  "hubHardwareEnterSends": "外接键盘按 Enter 发送",
+  "hubHardwareEnterSendsHint": "开启后，Shift+Enter 换行。屏幕键盘仍换行；Ctrl/⌘+Enter 始终可发送。",
+  "hubQuickPanel": "左滑快捷入口",
+  "hubQuickPanelSwipe": "左滑打开",
+  "hubQuickPanelSwipeHint": "在对话里从右向左滑。代码块、表格这些能横向滚动的内容不受影响。",
+  "hubQuickPanelItems": "显示的入口",
+  "hubQuickPanelItemsNone": "没有选择，左滑不会打开"
+}

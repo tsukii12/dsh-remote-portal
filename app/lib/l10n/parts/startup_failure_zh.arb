@@ -1,0 +1,13 @@
+{
+  "phoneStartupFailureStopping": "启动失败，正在停止",
+  "phoneStartupFailureStoppingDetail": "启动失败，正在停止。{reason}",
+  "@phoneStartupFailureStoppingDetail": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneStartupTokenTimeout": "启动等待已超时（180 秒内未收到启动标记），请查看日志",
+  "phoneStartupPortNotReady": "已收到启动标记，但本机服务端口尚未就绪，请查看日志"
+}

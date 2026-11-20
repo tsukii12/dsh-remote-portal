@@ -1,0 +1,16 @@
+{
+  "workspaceRecoveryTitle": "Workspace index recovery",
+  "workspaceRecoveryEnable": "Use a recovery workspace index",
+  "workspaceRecoveryDisable": "Use the original index again",
+  "workspaceRecoveryHint": "This phone only: use a separate index to access readable conversations when the original workspace index fails.",
+  "workspaceRecoveryActive": "The separate recovery index is selected. Both the original and recovery indexes are retained.",
+  "workspaceRecoveryWorking": "Working…",
+  "workspaceRecoveryEnableBody": "The local engine will stop, switch to a separate recovery index, and start again. The original workspace index stays untouched. Conversation files, plugins, and credentials are not deleted.\n\nOn first use, the new index is built from readable conversations whose folders still exist. Old workspace names, order, defaults, archived state, and pins are not inherited automatically. Empty workspaces and conversations with missing folders may not appear. Original local grouping and pin preferences are retained.\n\nThe recovery index is retained and reused the next time you enable it. This bypasses the original index failure; it does not repair the original index.",
+  "workspaceRecoveryDisableBody": "The local engine will stop, switch back to the original workspace index, and start again. The original failure may return.\n\nConversation files created during recovery and the recovery index are both retained. Workspace membership and order do not sync between the two indexes. Some conversations created during recovery may not appear with the original index. Enable the recovery index again to continue using it.",
+  "workspaceRecoveryEnableStart": "Enable and restart",
+  "workspaceRecoveryDisableStart": "Use original and restart",
+  "workspaceRecoveryUnavailable": "This version does not support workspace index recovery. Check the local engine status and update the app.",
+  "workspaceRecoveryRestartIncomplete": "The index mode changed, but the engine has not been confirmed stopped or restarted. Wait for it to stop before starting it again.",
+  "workspaceRecoverySaveFailed": "The index mode could not be saved. No new start was requested. Check the local engine status and logs.",
+  "workspaceRecoveryFailed": "The operation did not finish. Check the local engine status and logs. This page shows whether the index mode changed."
+}

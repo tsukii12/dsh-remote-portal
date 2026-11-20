@@ -1,0 +1,107 @@
+{
+  "marketSectionOfficial": "官方",
+  "marketSectionAdapted": "适配 DSH Go",
+  "marketSectionAll": "全部",
+  "marketSectionLoading": "正在载入…",
+  "marketSectionFailed": "官方目录没打开",
+  "marketSectionEmpty": "暂无",
+  "marketTierOfficial": "官方",
+  "marketTierAdapted": "适配 DSH Go",
+  "marketRiskMedium": "中风险",
+  "marketRiskHigh": "高风险",
+  "marketFlagInstallScripts": "安装时运行脚本",
+  "marketFlagInstallScriptsBody": "安装时会自动运行包里的脚本（preinstall、install 或 postinstall）",
+  "marketFlagNativeCode": "含原生程序",
+  "marketFlagNativeCodeBody": "包里有编译好的原生程序（.node、binding.gyp 或二进制文件），没法直接阅读",
+  "marketFlagShell": "执行命令",
+  "marketFlagShellBody": "代码里会调用系统命令（child_process）",
+  "marketFlagNetwork": "联网",
+  "marketFlagNetworkBody": "代码里会发起网络请求（fetch、http、WebSocket）",
+  "marketFlagFilesystem": "写工作区外的文件",
+  "marketFlagFilesystemBody": "会写入工作区以外的路径",
+  "marketFlagObfuscated": "代码难以审阅",
+  "marketFlagObfuscatedBody": "有压缩或混淆过的大文件，看不出它做什么",
+  "marketFlagNotAdapted": "未适配 DSH Go",
+  "marketFlagNotAdaptedBody": "没有声明 DSH Go 原生协议，在 App 里没有原生界面",
+  "marketFlagOtherBody": "自动检查报告的其他特征",
+  "marketChecksTitle": "自动检查",
+  "marketChecksClean": "没有发现风险特征",
+  "marketChecksNote": "自动检查发现的特征，不代表插件有恶意",
+  "marketCheckedOn": "检查于 {date}",
+  "@marketCheckedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "marketScreenshot": "截图 {index}",
+  "@marketScreenshot": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "marketRiskConfirmTitle": "「{name}」有风险特征",
+  "@marketRiskConfirmTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "marketRiskConfirmAction": "仍然安装",
+  "marketPinnedVersion": "锁定版本",
+  "marketRequiresApp": "需要 DSH Go",
+  "marketNeedsApp": "需要 DSH Go {version} 或更高版本",
+  "@marketNeedsApp": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "marketUpdateAvailable": "有更新",
+  "marketBlockedTitle": "这个版本已下架",
+  "marketBlockedMessage": "已安装的 {version} 已从插件市场下架，建议卸载",
+  "@marketBlockedMessage": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "marketBlockedRow": "此版本已下架，建议卸载",
+  "marketBlockedBadge": "已下架",
+  "marketVerifying": "正在核对版本…",
+  "marketMismatchTitle": "版本校验不一致",
+  "marketMismatchMessage": "npm 上的 {version} 和插件市场检查过的不是同一个包，已停止安装",
+  "@marketMismatchMessage": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "marketSubmit": "提交插件",
+  "marketSubmitHint": "在 GitHub 提交，通过自动检查即上架",
+  "marketLinkNotFound": "插件市场里没有 {name}",
+  "@marketLinkNotFound": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "marketVerificationUnavailableTitle": "暂时无法核对版本",
+  "marketVerificationUnavailableBody": "没能取得 npm 的版本校验信息，尚未开始安装。请检查网络后重试。",
+  "marketCombinedCount": "{count} 个插件",
+  "@marketCombinedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
+}

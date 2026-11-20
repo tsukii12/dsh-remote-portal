@@ -1,0 +1,463 @@
+{
+ "managementAvailable": true,
+ "entries": [
+  {
+   "entryId": "include",
+   "moduleName": "cordis:include",
+   "enabled": true,
+   "fiberPhase": "active"
+  },
+  {
+   "entryId": "include:tool-plugin-manager",
+   "moduleName": "@deepseek-ai/dsh-plugin-manager/tools",
+   "enabled": false,
+   "fiberPhase": null,
+   "meta": {
+    "title": {
+     "en": "plugin-manager/tools",
+     "zh": "插件管理工具"
+    }
+   }
+  },
+  {
+   "entryId": "include:plugin-manager",
+   "moduleName": "@deepseek-ai/dsh-plugin-manager",
+   "enabled": true,
+   "fiberPhase": "active",
+   "meta": {
+    "title": {
+     "en": "plugin-manager",
+     "zh": "插件管理服务"
+    },
+    "description": {
+     "en": "Current-profile plugin and bundle management shared by dsh CLI, Web and agent tools",
+     "zh": "管理当前运行配置中的插件与插件包，支持安装、移除和启停。"
+    }
+   }
+  },
+  {
+   "entryId": "include:session-log-deepseek",
+   "moduleName": "@deepseek-ai/dsh-session-log-deepseek",
+   "enabled": true,
+   "fiberPhase": "active",
+   "meta": {
+    "title": {
+     "en": "session-log-deepseek",
+     "zh": "DeepSeek 会话日志上传"
+    },
+    "description": {
+     "en": "Incremental lossless session-log request extension for the official DeepSeek LLM API",
+     "zh": "启用后，随官方模型 API 请求向 DeepSeek 上传会话日志。"
+    }
+   }
+  },
+  {
+   "entryId": "include:remote-access",
+   "moduleName": "@deepseek-ai/dsh-api-remote-access",
+   "enabled": true,
+   "fiberPhase": "active",
+   "meta": {
+    "title": "@deepseek-ai/dsh-api-remote-access",
+    "description": "Method-level Remote access control for non-owner Peers and the per-Peer access snapshot"
+   }
+  },
+  {
+   "entryId": "include:bash-sandbox",
+   "moduleName": "@deepseek-ai/dsh-bash-sandbox",
+   "enabled": true,
+   "fiberPhase": "active",
+   "meta": {
+    "title": {
+     "en": "bash-sandbox",
+     "zh": "Bash 沙箱执行"
+    },
+    "description": {
+     "en": "Sandbox-consuming implementation of the DeepSeek Harness bash executor seam (confines every command via ctx.sandbox, reports denial/enforcement result facts)",
+     "zh": "在当前沙箱权限范围内执行 Bash 命令。"
+    }
+   }
+  },
+  {
+   "entryId": "include:subagent",
+   "moduleName": "@deepseek-ai/dsh-subagent",
+   "enabled": true,
+   "fiberPhase": "active",
+   "meta": {
+    "title": {
+     "en": "subagent",
+     "zh": "子智能体服务"
+    },
+    "description": {
+     "en": "Abstract subagent seam (ctx.subagents): named-provider registry for delegating to child agents",
+     "zh": "管理子智能体后端，为任务委派提供统一接口。"
+    }
+   }
+  },
+  {
+   "entryId": "include:web",
+   "moduleName": "@deepseek-ai/dsh-web",
+   "enabled": true,
+   "fiberPhase": "active",
+   "meta": {
+    "title": {
+     "en": "web",
+     "zh": "网页访问服务"
+    },
+    "description": {
+     "en": "Abstract web access capability seam (ctx.web) for the DeepSeek Harness — search/fetch provider registry, registration-order-independent selection, request/result vocabulary, and the WebError taxonomy",
+     "zh": "统一管理网页搜索和内容获取的服务提供方。"
+    }
+   }
+  },
+  {
+   "entryId": "include:web-search-deepseek",
+   "moduleName": "@deepseek-ai/dsh-web-search-deepseek",
+   "enabled": true,
+   "fiberPhase": "active",
+   "meta": {
+    "title": {
+     "en": "web-search-deepseek",
+     "zh": "DeepSeek 网页搜索"
+    },
+    "description": {
+     "en": "DeepSeek-backed search provider (native web_search via the Anthropic-compatible API) for the DeepSeek Harness web capability seam (ctx.web)",
+     "zh": "通过 DeepSeek 提供网页搜索结果。"
+    }
+   }
+  },
+  {
+   "entryId": "include:web-deepseek-api",
+   "moduleName": "@deepseek-ai/dsh-web-deepseek-api",
+   "enabled": true,
+   "fiberPhase": "active",
+   "meta": {
+    "title": {
+     "en": "web-deepseek-api",
+     "zh": "DeepSeek 网页搜索与抓取 API"
+    },
+    "description": {
+     "en": "DeepSeek Search and Fetch API providers for the DeepSeek Harness web capability seam (ctx.web)",
+     "zh": "通过 DeepSeek Search API 搜索网页、Fetch API 抓取网页正文。"
+    }
+   }
+  },
+  {
+   "entryId": "include:agent-loop",
+   "moduleName": "@deepseek-ai/dsh-agent-loop",
+   "enabled": true,
+   "fiberPhase": "active",
+   "meta": {
+    "title": {
+     "en": "agent-loop",
+     "zh": "智能体运行循环"
+    },
+    "description": {
+     "en": "The concrete agent loop plugin for the DeepSeek Harness",
+     "zh": "协调模型请求、工具调用和后续步骤，推进智能体任务。"
+    }
+   }
+  },
+  {
+   "entryId": "include:subagent-model-selection-settings",
+   "moduleName": "@deepseek-ai/dsh-tool-subagent/model-selection-settings",
+   "enabled": true,
+   "fiberPhase": "active",
+   "meta": {
+    "title": {
+     "en": "tool-subagent/model-selection-settings",
+     "zh": "子智能体模型选择设置"
+    }
+   }
+  },
+  {
+   "entryId": "include:ui-theme",
+   "moduleName": "@deepseek-ai/dsh-client-ui-theme",
+   "enabled": true,
+   "fiberPhase": "active",
+   "meta": {
+    "title": {
+     "en": "ui-theme",
+     "zh": "界面主题"
+    },
+    "description": {
+     "en": "Theme plugin: Host bootstrap for the pre-plugin palette; DOM-free ThemeRuntime for light/dark/system state; --dsw-* token styles and Appearance settings row",
+     "zh": "提供浅色、深色和跟随系统的主题设置。"
+    }
+   }
+  },
+  {
+   "entryId": "959f2f0f",
+   "moduleName": "@deepseek-ai/dsh-host-directory-picker-native",
+   "enabled": true,
+   "fiberPhase": "active",
+   "meta": {
+    "title": {
+     "en": "directory-picker-native",
+     "zh": "系统目录选择服务"
+    },
+    "description": {
+     "en": "Native-OS-chooser backend of the directory-picker seam for the DeepSeek Harness web GUI host",
+     "zh": "调用操作系统的目录选择对话框。"
+    }
+   }
+  },
+  {
+   "entryId": "include:pwsh-sandbox",
+   "moduleName": "@deepseek-ai/dsh-pwsh-sandbox",
+   "enabled": false,
+   "fiberPhase": null,
+   "meta": {
+    "title": {
+     "en": "pwsh-sandbox",
+     "zh": "PowerShell 沙箱执行"
+    },
+    "description": {
+     "en": "Sandbox-consuming implementation of the DeepSeek Harness PowerShell executor seam (confines every command via ctx.sandbox, reports denial/enforcement result facts)",
+     "zh": "在当前沙箱权限范围内执行 PowerShell 命令。"
+    }
+   }
+  },
+  {
+   "entryId": "include:tool-bash",
+   "moduleName": "@deepseek-ai/dsh-tool-bash",
+   "enabled": false,
+   "fiberPhase": null,
+   "meta": {
+    "title": {
+     "en": "tool-bash",
+     "zh": "Bash 命令工具"
+    },
+    "description": {
+     "en": "Model-facing bash tool with optional generic background-job and sandbox-escalation support",
+     "zh": "让 AI 执行 Bash 命令，并按配置管理后台运行和权限申请。"
+    }
+   }
+  },
+  {
+   "entryId": "include:tool-pwsh",
+   "moduleName": "@deepseek-ai/dsh-tool-pwsh",
+   "enabled": false,
+   "fiberPhase": null,
+   "meta": {
+    "title": {
+     "en": "tool-pwsh",
+     "zh": "PowerShell 命令工具"
+    },
+    "description": {
+     "en": "Model-facing pwsh tool over the bash executor seam",
+     "zh": "让 AI 执行 PowerShell 命令。"
+    }
+   }
+  }
+ ],
+ "agentPresets": [
+  {
+   "id": "standard",
+   "isDefault": true,
+   "rows": [
+    {
+     "entryId": "persona",
+     "moduleName": "@deepseek-ai/dsh-persona",
+     "enabled": true,
+     "fiberPhase": "active",
+     "meta": {
+      "title": {
+       "en": "persona",
+       "zh": "智能体角色设定"
+      },
+      "description": {
+       "en": "Composition-authored deployment persona section for the DeepSeek Harness",
+       "zh": "为当前智能体提供组合中定义的角色与行为说明。"
+      }
+     }
+    },
+    {
+     "entryId": "agent-instructions",
+     "moduleName": "@deepseek-ai/dsh-agent-instructions",
+     "enabled": true,
+     "fiberPhase": "active",
+     "meta": {
+      "title": {
+       "en": "agent-instructions",
+       "zh": "工作区指令加载"
+      },
+      "description": {
+       "en": "Workspace context loader for AGENTS.md/CLAUDE.md instruction files",
+       "zh": "读取 AGENTS.md、CLAUDE.md 等文件，为 AI 提供工作区规则。"
+      }
+     }
+    },
+    {
+     "entryId": "time-context",
+     "moduleName": "@deepseek-ai/dsh-time-context",
+     "enabled": true,
+     "fiberPhase": "active",
+     "meta": {
+      "title": {
+       "en": "Time awareness",
+       "zh": "时间感知"
+      },
+      "description": {
+       "en": "Tells the model the current time, the browser's time zone, and the time since the previous message at each step.",
+       "zh": "每一步把当前时间、浏览器时区和距上一条消息的时长告诉模型。"
+      }
+     }
+    },
+    {
+     "entryId": "tool-bash",
+     "moduleName": "@deepseek-ai/dsh-tool-bash",
+     "enabled": true,
+     "condition": "process.platform === 'win32'",
+     "fiberPhase": "active",
+     "meta": {
+      "title": {
+       "en": "tool-bash",
+       "zh": "Bash 命令工具"
+      },
+      "description": {
+       "en": "Model-facing bash tool with optional generic background-job and sandbox-escalation support",
+       "zh": "让 AI 执行 Bash 命令，并按配置管理后台运行和权限申请。"
+      }
+     }
+    },
+    {
+     "entryId": "tool-pwsh",
+     "moduleName": "@deepseek-ai/dsh-tool-pwsh",
+     "enabled": false,
+     "condition": "process.platform !== 'win32'",
+     "fiberPhase": null,
+     "meta": {
+      "title": {
+       "en": "tool-pwsh",
+       "zh": "PowerShell 命令工具"
+      },
+      "description": {
+       "en": "Model-facing pwsh tool over the bash executor seam",
+       "zh": "让 AI 执行 PowerShell 命令。"
+      }
+     }
+    },
+    {
+     "entryId": "tool-fs",
+     "moduleName": "@deepseek-ai/dsh-tool-fs",
+     "enabled": true,
+     "fiberPhase": "active",
+     "meta": {
+      "title": {
+       "en": "tool-fs",
+       "zh": "文件读写工具"
+      },
+      "description": {
+       "en": "Model-facing filesystem tools (read, write, edit) over the DeepSeek Harness filesystem seam (ctx.fs)",
+       "zh": "让 AI 读取、创建和编辑工作文件。"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "ptc",
+   "isDefault": false,
+   "rows": [
+    {
+     "entryId": "persona",
+     "moduleName": "@deepseek-ai/dsh-persona",
+     "enabled": true,
+     "fiberPhase": "active",
+     "meta": {
+      "title": {
+       "en": "persona",
+       "zh": "智能体角色设定"
+      },
+      "description": {
+       "en": "Composition-authored deployment persona section for the DeepSeek Harness",
+       "zh": "为当前智能体提供组合中定义的角色与行为说明。"
+      }
+     }
+    },
+    {
+     "entryId": "agent-instructions",
+     "moduleName": "@deepseek-ai/dsh-agent-instructions",
+     "enabled": true,
+     "fiberPhase": "active",
+     "meta": {
+      "title": {
+       "en": "agent-instructions",
+       "zh": "工作区指令加载"
+      },
+      "description": {
+       "en": "Workspace context loader for AGENTS.md/CLAUDE.md instruction files",
+       "zh": "读取 AGENTS.md、CLAUDE.md 等文件，为 AI 提供工作区规则。"
+      }
+     }
+    },
+    {
+     "entryId": "time-context",
+     "moduleName": "@deepseek-ai/dsh-time-context",
+     "enabled": true,
+     "fiberPhase": "active",
+     "meta": {
+      "title": {
+       "en": "Time awareness",
+       "zh": "时间感知"
+      },
+      "description": {
+       "en": "Tells the model the current time, the browser's time zone, and the time since the previous message at each step.",
+       "zh": "每一步把当前时间、浏览器时区和距上一条消息的时长告诉模型。"
+      }
+     }
+    },
+    {
+     "entryId": "tool-bash",
+     "moduleName": "@deepseek-ai/dsh-tool-bash",
+     "enabled": true,
+     "condition": "process.platform === 'win32'",
+     "fiberPhase": "active",
+     "meta": {
+      "title": {
+       "en": "tool-bash",
+       "zh": "Bash 命令工具"
+      },
+      "description": {
+       "en": "Model-facing bash tool with optional generic background-job and sandbox-escalation support",
+       "zh": "让 AI 执行 Bash 命令，并按配置管理后台运行和权限申请。"
+      }
+     }
+    },
+    {
+     "entryId": "tool-pwsh",
+     "moduleName": "@deepseek-ai/dsh-tool-pwsh",
+     "enabled": false,
+     "condition": "process.platform !== 'win32'",
+     "fiberPhase": null,
+     "meta": {
+      "title": {
+       "en": "tool-pwsh",
+       "zh": "PowerShell 命令工具"
+      },
+      "description": {
+       "en": "Model-facing pwsh tool over the bash executor seam",
+       "zh": "让 AI 执行 PowerShell 命令。"
+      }
+     }
+    },
+    {
+     "entryId": "tool-fs",
+     "moduleName": "@deepseek-ai/dsh-tool-fs",
+     "enabled": true,
+     "fiberPhase": "active",
+     "meta": {
+      "title": {
+       "en": "tool-fs",
+       "zh": "文件读写工具"
+      },
+      "description": {
+       "en": "Model-facing filesystem tools (read, write, edit) over the DeepSeek Harness filesystem seam (ctx.fs)",
+       "zh": "让 AI 读取、创建和编辑工作文件。"
+      }
+     }
+    }
+   ]
+  }
+ ]
+}

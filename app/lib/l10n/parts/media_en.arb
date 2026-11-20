@@ -1,0 +1,244 @@
+{
+  "mediaGenerateTile": "Create",
+  "mediaAiGenerated": "AI-generated",
+  "mediaCostEstimate": "About {amount}",
+  "@mediaCostEstimate": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "mediaSavedCount": "Saved {count} to Photos",
+  "@mediaSavedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaRegenerate": "Regenerate",
+  "mediaCopyPrompt": "Copy prompt",
+  "mediaFileGone": "File is gone",
+  "mediaKindImage": "Image",
+  "mediaKindVideo": "Video",
+  "mediaTitleImage": "New image",
+  "mediaTitleVideo": "New video",
+  "mediaOpenElsewhere": "Open in another app",
+  "mediaShowInFiles": "Show in files",
+  "mediaGenerating": "Generating",
+  "mediaGeneratingProgress": "Generating · {progress}",
+  "@mediaGeneratingProgress": {
+    "placeholders": {
+      "progress": {
+        "type": "String"
+      }
+    }
+  },
+  "mediaCancelled": "Cancelled",
+  "mediaNotGenerated": "Not created",
+  "mediaPartial": "{done} of {total}",
+  "@mediaPartial": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaCount": "{count, plural, =1{1 image} other{{count} images}}",
+  "@mediaCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaSeconds": "{seconds} s",
+  "@mediaSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaImageOf": "Image {index} of {count}",
+  "@mediaImageOf": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaPageOf": "{index} / {count}",
+  "@mediaPageOf": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaErrorPolicyInput": "The description didn't pass content review",
+  "mediaErrorPolicyOutput": "The result didn't pass content review",
+  "mediaErrorAuth": "Service not authorized",
+  "mediaErrorBalance": "Insufficient balance",
+  "mediaErrorQuota": "Today's limit is used up",
+  "mediaErrorUnavailable": "Service unavailable for now",
+  "mediaErrorExpired": "The result expired",
+  "mediaErrorGeneric": "Couldn't create it",
+  "mediaVary": "Vary",
+  "mediaEdit": "Edit",
+  "mediaRevise": "Revise",
+  "mediaUpscale": "Upscale",
+  "mediaMakeVideo": "Make a video",
+  "mediaDetailModel": "Model",
+  "mediaDetailSize": "Size",
+  "mediaDetailCost": "Cost",
+  "mediaDetailProvenance": "Provenance",
+  "mediaDetailFile": "File",
+  "mediaOriginalPrompt": "Original: {text}",
+  "@mediaOriginalPrompt": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "mediaProvenanceC2pa": "C2PA",
+  "mediaProvenanceImplicit": "Embedded",
+  "mediaProvenanceVisible": "Visible mark",
+  "mediaModeExit": "Leave create mode",
+  "mediaModeLabel": "Create settings: {summary}",
+  "@mediaModeLabel": {
+    "placeholders": {
+      "summary": {
+        "type": "String"
+      }
+    }
+  },
+  "mediaParamModel": "Model",
+  "mediaParamAspect": "Aspect",
+  "mediaParamCount": "Number",
+  "mediaParamQuality": "Quality",
+  "mediaParamDuration": "Length",
+  "mediaQualityAuto": "Auto",
+  "mediaQualityStandard": "Standard",
+  "mediaQualityHigh": "HD",
+  "mediaQuality4k": "4K",
+  "mediaQualityLevelLow": "Low",
+  "mediaQualityLevelMedium": "Medium",
+  "mediaQualityLevelHigh": "High",
+  "mediaModelPick": "Choose",
+  "mediaPickModelFirst": "Choose a model first",
+  "mediaPricePerImage": "{price} / image",
+  "@mediaPricePerImage": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "mediaPricePerSecond": "{price} / s",
+  "@mediaPricePerSecond": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "mediaManageModels": "Manage",
+  "mediaHintImage": "Describe the picture…",
+  "mediaHintVideo": "Describe the scene and the shot…",
+  "mediaHintEdit": "How should it change…",
+  "mediaFirstFrame": "First",
+  "mediaLastFrame": "Last",
+  "mediaNoLastFrame": "This model takes no last frame",
+  "mediaNoRefs": "This model takes no reference images",
+  "mediaRefLimit": "Up to {count} reference images",
+  "@mediaRefLimit": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaNoDescription": "Describe it first",
+  "mediaDescriptionTooLong": "Too long to generate. Shorten the description",
+  "mediaInstallTitle": "Images and video",
+  "mediaInstallBody": "This host has no image and video plugin yet",
+  "mediaInstallAction": "Install on this host",
+  "mediaUnavailableTitle": "Generation mode unavailable",
+  "mediaUnavailableBody": "The image and video plugin on this host isn't compatible. You can still describe what you want in chat.",
+  "mediaUnavailableAction": "Manage plugins",
+  "mediaSettingsTitle": "Images and video",
+  "searchKwMediaGeneration": "image generation,text to image,video generation,AI art,generate images,generate video",
+  "mediaSettingsDefaults": "Defaults",
+  "mediaSettingsLegacyDefault": "Older general default",
+  "mediaSettingsLegacyDefaultHint": "The 0.2.x setting; used when a kind has no default of its own",
+  "mediaSettingsLegacyDefaultStale": "Its service is unavailable; clear it so generation does not fail",
+  "mediaSettingsLegacyDefaultClear": "Clear the older general default",
+  "mediaSettingsDefaultModel": "Default model",
+  "mediaSettingsDefaultFooterLegacy": "An older plugin has one default model; update it to set images and video separately.",
+  "mediaSettingsDefaultsFooter": "Choose a default model for images and for video; leave it on Auto to use the first available one.",
+  "mediaSettingsNoVideoModels": "This host's catalogue has no video models yet",
+  "mediaSettingsServices": "Services",
+  "mediaSettingsAddService": "Add service",
+  "mediaSettingsAddServiceHint": "Start from a provider preset; endpoint, protocol and models come filled in",
+  "mediaSettingsServiceLimit": "Up to {count} services",
+  "mediaSettingsNoServices": "No services yet. Add a provider to start making images or video.",
+  "mediaSettingsNoModels": "No models selected",
+  "mediaSettingsKeyMissing": "No API key",
+  "mediaSettingsCatalogMissing": "The plugin on this host offers no model catalogue. Existing services can still be edited, but nothing can be added and no default chosen yet.",
+  "mediaSettingsCatalogBroken": "The model catalogue can't be read (it may be an incompatible version). Existing services can still be edited, but nothing can be added and no default chosen yet.",
+  "mediaSettingsCatalogEmpty": "The model catalogue has no models yet. Existing services can still be edited, but nothing can be added and no default chosen yet.",
+  "mediaSettingsNoPresets": "There are no services to add from this catalogue yet.",
+  "mediaSettingsLimits": "Request limits",
+  "mediaSettingsLimitsHint": "Caps images and bytes per request; defaults are the plugin hard limits",
+  "mediaSettingsMaxImages": "Images per request",
+  "mediaSettingsMaxImageBytes": "Max bytes per original",
+  "mediaSettingsMaxResponseBytes": "Max provider response bytes",
+  "mediaSettingsMaxTotalImageBytes": "Max image bytes per request",
+  "mediaSettingsMaxVideoBytes": "Max video bytes",
+  "mediaSettingsBudget": "Cost protection",
+  "mediaSettingsDailyBudget": "Daily budget (CNY)",
+  "mediaSettingsDailyBudgetHint": "Resets on the Shanghai date; generation pauses once it's used up",
+  "mediaSettingsUnknownPriceHold": "Hold per request when the price is unknown (CNY)",
+  "mediaSettingsUnknownPriceHoldHint": "Reserved per request; not a cap the provider charges by",
+  "mediaSettingsApiKey": "API key",
+  "mediaSettingsReuseKey": "Reuse key",
+  "mediaSettingsReuseKeyHint": "Images and video from one provider can share one API key; no need to enter it again.",
+  "mediaSettingsReuseKeyNone": "No other service from this provider yet.",
+  "mediaSettingsReuseKeyShared": "Shared",
+  "mediaSettingsModels": "Models",
+  "mediaSettingsModelsEmpty": "The catalogue has no models for this protocol",
+  "mediaSettingsModelKeepOne": "Keep at least one model",
+  "mediaSettingsModelMissing": "Not in the catalogue",
+  "mediaSettingsAdvanced": "Advanced",
+  "mediaSettingsBaseUrl": "API base URL",
+  "mediaSettingsBaseUrlInvalid": "The address must start with https://",
+  "mediaSettingsProvider": "Provider id",
+  "mediaSettingsKeyRef": "Credential name",
+  "mediaSettingsKeyRefInvalid": "Use letters, digits and underscores only",
+  "mediaSettingsResponseFormat": "Response format",
+  "mediaSettingsResponseFormatAuto": "By protocol",
+  "mediaSettingsServiceId": "Service ID",
+  "mediaSettingsServiceGone": "This service is gone",
+  "mediaSettingsServiceGoneBody": "It may have been removed elsewhere. Go back to add it again.",
+  "mediaSettingsDelete": "Delete service",
+  "mediaSettingsDeleteTitle": "Delete “{name}”?",
+  "mediaSettingsDeleteBody": "Only this host's service entry is removed; the API key is kept. Defaults pointing at it are cleared too.",
+  "mediaSettingsNoImageModels": "The catalogue has no image models yet",
+  "mediaSettingsNoAvailableService": "No service is ready yet (add one and enter its key)",
+  "mediaSettingsNoImageService": "No image service is ready yet (add one and enter its key)",
+  "mediaSettingsNoVideoService": "No video service is ready yet (add one and enter its key)",
+  "mediaSettingsKeyExternal": "Managed by another setting; only referenced here",
+  "mediaSettingsEnabledHint": "Turns this service off for generation"
+}

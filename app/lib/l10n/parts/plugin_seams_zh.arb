@@ -1,0 +1,8 @@
+{
+  "seamsTitle": "App 内界面",
+  "seamsOverlay": "聊天页浮层",
+  "seamsOverlayNote": "常驻聊天区域，内存紧张时自动让位",
+  "seamsSidebarPage": "侧栏入口",
+  "seamsSettingsPage": "插件设置页",
+  "seamsDetailPage": "插件详情扩展"
+}

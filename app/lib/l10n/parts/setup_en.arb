@@ -1,0 +1,13 @@
+{
+  "setupAppearanceTitle": "Choose a look",
+  "setupAppearanceMessage": "You can change this anytime in Settings",
+  "setupLightMode": "Lightweight mode",
+  "setupCapsulePreparing": "Preparing runtime",
+  "setupCapsuleProgress": "Runtime {percent}%",
+  "setupCapsuleProgressSemantics": "Preparing the runtime, {percent}% done",
+  "setupCapsuleReady": "Runtime ready",
+  "setupCapsuleFailed": "Install failed",
+  "setupWaitingBody": "Continues on its own when ready",
+  "setupNotifyWhenDone": "We’ll notify you when it’s done",
+  "setupAwaitSignIn": "DeepSeek sign-in opens when it’s ready"
+}

@@ -1,0 +1,60 @@
+{
+  "provenance": {
+    "ref": "6f3e1b3e8603abd84820b334a7f99985236dbbdf",
+    "scope": "Clean PR checkout; actual group_relay tool running/abort, Fetch room-chat and HTTP SSE room signal; synthetic fakeContext agents/history, no LLM/full Host"
+  },
+  "running": {
+    "ok": true,
+    "value": {
+      "roomId": "r1",
+      "items": [
+        {
+          "id": "1",
+          "kind": "user",
+          "text": "SYNTHETIC group request",
+          "time": 1000
+        }
+      ],
+      "cursor": null,
+      "running": true,
+      "speaking": "b"
+    }
+  },
+  "finished": {
+    "ok": true,
+    "value": {
+      "roomId": "r1",
+      "items": [
+        {
+          "id": "1",
+          "kind": "user",
+          "text": "SYNTHETIC group request",
+          "time": 1000
+        },
+        {
+          "id": "4",
+          "kind": "bot",
+          "botId": "b",
+          "name": "Writer",
+          "text": "SYNTHETIC final reply",
+          "time": 1003
+        }
+      ],
+      "cursor": null,
+      "running": false,
+      "speaking": null
+    }
+  },
+  "signal": {
+    "event": "room",
+    "data": {
+      "roomId": "r1"
+    }
+  },
+  "ended": {
+    "event": "room",
+    "data": {
+      "roomId": "r1"
+    }
+  }
+}

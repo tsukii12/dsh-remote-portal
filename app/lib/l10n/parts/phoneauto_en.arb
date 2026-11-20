@@ -1,0 +1,83 @@
+{
+  "phoneModeTitle": "How DSH confirms",
+  "phoneModeMessage": "You can change this in Settings anytime",
+  "phoneModeAsk": "Ask me at key steps",
+  "phoneModeAskHint": "Before a new app, sending, deleting or paying",
+  "phoneModeAuto": "Fully automatic",
+  "phoneModeAutoHint": "Never asks, never interrupts",
+  "phoneModeAutoNoteTitle": "These stay with you",
+  "phoneModeAutoNote": "System settings and permission pages, passwords and verification codes, and DSH Go itself stay with you. Banking and payment apps are off limits by default; you can change that in Settings.",
+  "phoneModeAutoUnlockNote": "To let AI handle system settings, passwords and the like, turn it on in Settings › Phone control › Lift limits.",
+  "phoneModeConfirmAuto": "Go fully automatic",
+  "phoneYoursTitle": "These stay with you",
+  "phoneYoursSystem": "System settings and permission pages",
+  "phoneYoursSecrets": "Passwords and verification codes",
+  "phoneYoursOwnApp": "DSH Go itself",
+  "phoneYoursDenyList": "Apps set to Hands off in App rules, banking and payment by default",
+  "phoneUnlockTitle": "Lift limits",
+  "phoneUnlockSubtitle": "Let AI do what’s yours by default",
+  "phoneUnlockSystem": "System settings",
+  "phoneUnlockSystemHint": "Permissions, installers, security center, notifications",
+  "phoneUnlockSecrets": "Passwords and codes",
+  "phoneUnlockSecretsHint": "Fill in passwords, verification and payment codes",
+  "phoneUnlockOwnApp": "DSH Go itself",
+  "phoneUnlockOwnAppHint": "Tap and type inside DSH Go",
+  "phoneUnlockBusy": "Can’t turn on while a task is running",
+  "phoneUnlockFootnote": "Once on, the consequences are yours. Turn on only when needed, and off when done.",
+  "phoneUnlockBanks": "Banking and payment apps",
+  "phoneUnlockBanksHint": "Change in App rules",
+  "phoneUnlockNone": "None on",
+  "phoneUnlockCount": "{count, plural, =1{1 on} other{{count} on}}",
+  "@phoneUnlockCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "phoneUnlockedBadge": "Limits lifted",
+  "phoneUnlockConfirmSystemTitle": "Let AI operate system settings?",
+  "phoneUnlockConfirmSecretsTitle": "Let AI fill in passwords and codes?",
+  "phoneUnlockConfirmOwnAppTitle": "Let AI operate DSH Go itself?",
+  "phoneUnlockCanTitle": "Once on, AI can",
+  "phoneUnlockRiskTitle": "What could go wrong",
+  "phoneUnlockDisclaimerTitle": "Disclaimer",
+  "phoneUnlockSystemCan1": "Open and change system settings, including permissions, accessibility and developer options",
+  "phoneUnlockSystemCan2": "Install, update or uninstall apps in the installer",
+  "phoneUnlockSystemCan3": "Tap in the security center and the notification shade, including buttons on notifications",
+  "phoneUnlockSystemRisk1": "Malicious instructions in a web page, message or file could lead AI to turn off protections, grant permissions to other apps or install apps",
+  "phoneUnlockSystemRisk2": "Network, account or security settings changed by mistake are yours to restore",
+  "phoneUnlockSecretsCan1": "Type into password, verification-code and payment-code fields",
+  "phoneUnlockSecretsCan2": "Use codes it sees in chats, texts or notifications to sign in or verify",
+  "phoneUnlockSecretsCan3": "The action log shows •••• and never what was typed",
+  "phoneUnlockSecretsRisk1": "Malicious instructions could lead AI to enter a code somewhere else, letting someone into your account",
+  "phoneUnlockSecretsRisk2": "It could complete a payment or transfer you didn’t intend",
+  "phoneUnlockOwnAppCan1": "Tap and type inside DSH Go, including changing settings",
+  "phoneUnlockOwnAppCan2": "Read conversations and settings on DSH Go’s screens",
+  "phoneUnlockOwnAppRisk1": "Malicious instructions could lead AI to approve its own requests or turn confirmations off",
+  "phoneUnlockOwnAppRisk2": "What’s on these screens is sent to the model",
+  "phoneUnlockDisclaimer1": "Once on, AI can do the above without anyone confirming.",
+  "phoneUnlockDisclaimer2": "AI can be misled by content in web pages, messages or files.",
+  "phoneUnlockDisclaimer3": "Any resulting loss to your accounts, money, data or device is yours to bear. DSH Go and its developers accept no liability.",
+  "phoneUnlockDisclaimer4": "Turn it on only when you need it, and off when you’re done.",
+  "phoneUnlockDisclaimer5": "We advise against turning it on for a device that holds payment or banking details.",
+  "phoneUnlockHold": "I understand the risks, turn on",
+  "phoneUnlockHoldHint": "Press and hold for about 1.5 seconds",
+  "phoneUnlockOnNotice": "“{name}” is on",
+  "@phoneUnlockOnNotice": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneUnlockOffNotice": "“{name}” is off",
+  "@phoneUnlockOffNotice": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "searchKwPhoneUnlock": "lift limits,unlock,passwords,codes,system settings,itself,risk,disclaimer"
+}

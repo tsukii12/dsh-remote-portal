@@ -1,0 +1,177 @@
+{
+  "plugViewInvalid": "插件界面有误",
+  "plugViewEmpty": "暂无数据",
+  "plugViewImageUnavailable": "图片无法显示",
+  "plugViewUnavailableList": "列表无法显示",
+  "plugViewUnavailableKeyValue": "信息无法显示",
+  "plugViewUnavailableProgress": "进度无法显示",
+  "plugViewUnavailableTable": "表格无法显示",
+  "plugViewUnavailableActions": "按钮无法显示",
+  "plugViewFrom": "来自 {name}",
+  "@plugViewFrom": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "plugViewUnknownTone": "未知 tone {value}，已忽略；可用：good, warn, bad, info, muted",
+  "@plugViewUnknownTone": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "plugViewBadActionId": "动作 id {value} 不合规，这个元素不可点",
+  "@plugViewBadActionId": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "plugViewBadAction": "动作应该是 id 字符串或 {shape}，已忽略",
+  "@plugViewBadAction": {
+    "placeholders": {
+      "shape": {
+        "type": "String"
+      }
+    }
+  },
+  "plugViewArgsLimit": "动作参数超过 {limit} 字节，已忽略",
+  "@plugViewArgsLimit": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "plugViewUnknownIcon": "未知图标 {value}，画默认图标",
+  "@plugViewUnknownIcon": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "plugViewExpectedItems": "应该是数组，每项是 {shape}",
+  "@plugViewExpectedItems": {
+    "placeholders": {
+      "shape": {
+        "type": "String"
+      }
+    }
+  },
+  "plugViewSkippedItem": "应该是 {shape}，这项已跳过",
+  "@plugViewSkippedItem": {
+    "placeholders": {
+      "shape": {
+        "type": "String"
+      }
+    }
+  },
+  "plugViewBadMax": "max 应该是大于 0 的数，按 100 算",
+  "plugViewColumnLimit": "{first} 列，超过上限 {second}",
+  "@plugViewColumnLimit": {
+    "placeholders": {
+      "first": {
+        "type": "int"
+      },
+      "second": {
+        "type": "int"
+      }
+    }
+  },
+  "plugViewFirstColumns": "只显示前 {limit} 列",
+  "@plugViewFirstColumns": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "plugViewFirstRows": "只显示前 {limit} 行",
+  "@plugViewFirstRows": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "plugViewOnePrimary": "一张视图只能有一个主按钮，这个按普通按钮画",
+  "plugViewBadImageSource": "图片只收插件资源 asset:<路径>（png、jpg、webp、gif）或 data:image/…",
+  "plugViewBadAspect": "aspect 应该是 0.25 到 4 之间的数，已忽略",
+  "plugViewImageTooLarge": "data: 图片超过 {limit} 字节",
+  "@plugViewImageTooLarge": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "plugViewImageDecode": "图片无法解码（只收 PNG、JPEG、WebP、GIF）",
+  "plugViewImagePixels": "图片尺寸超过上限：单边 4096、总数 400 万像素",
+  "plugViewTooDeep": "JSON 嵌套超过 {limit} 层",
+  "@plugViewTooDeep": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "plugViewV2Content": "插件内容",
+  "plugViewVersionFallback": "暂不支持视图版本 {version}，已使用兼容显示",
+  "@plugViewVersionFallback": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "plugViewStyleInvalid": "样式无效，支持 {values}",
+  "@plugViewStyleInvalid": {
+    "placeholders": {
+      "values": {
+        "type": "String"
+      }
+    }
+  },
+  "plugViewStyleReserved": "此样式由 App 保留，已忽略",
+  "plugViewStyleContainerOnly": "此样式仅用于 stack 和 row",
+  "plugViewStyleTextOnly": "此样式仅用于 text、metric 和 callout",
+  "plugViewContrastAdjusted": "{mode}：{before} 已校正为 {after}，对比度至少 {minimum}:1",
+  "@plugViewContrastAdjusted": {
+    "placeholders": {
+      "mode": {
+        "type": "String"
+      },
+      "before": {
+        "type": "String"
+      },
+      "after": {
+        "type": "String"
+      },
+      "minimum": {
+        "type": "String"
+      }
+    }
+  },
+  "plugViewRichLimit": "富文本超出上限，已截断",
+  "plugViewBadTrend": "trend 要 2–{max} 个数字（可以有 null），已忽略",
+  "@plugViewBadTrend": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "plugViewGalleryPicture": "第 {index} 张",
+  "@plugViewGalleryPicture": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  }
+}

@@ -1,0 +1,775 @@
+{
+  "chatBackgroundTaskNotice": "后台任务通知",
+  "chatBackgroundTaskMessage": "后台任务消息",
+  "chatDeclineQuestion": "不回答",
+  "chatChats": "对话列表",
+  "chatViewChatDetails": "查看对话详情",
+  "chatUnsent": "未发送",
+  "chatFailedSubmission": "未送达 · 已保留",
+  "chatEditFailedSubmission": "编辑后重发",
+  "chatErrReasoningEffortUnsupported": "当前模型不支持此推理档位，请调整档位或换模型",
+  "chatSteerNextStep": "插话 · 下一步生效",
+  "chatQueuedAfterTurn": "排队中 · 本轮结束后发送",
+  "chatSteering": "插话中",
+  "chatQueued": "排队中",
+  "chatStoppingTurn": "正在停止本轮",
+  "chatSending": "发送中",
+  "chatSendNow": "立即发送",
+  "chatSwitchToSteer": "改为插话",
+  "chatWithdraw": "撤回",
+  "chatContinuedInNewChat": "已在新对话中继续",
+  "chatReadOriginalImageFailed": "读取原图失败，请重试",
+  "chatRegenerateFailed": "重新回答失败",
+  "chatRegeneratedInNewChat": "已在新对话中重新回答",
+  "chatOpenedInNewChatReattach": "已在新对话中打开，附件需重新添加",
+  "chatOpenedInNewChat": "已在新对话中打开",
+  "chatForkQueuedLeft": "{message}（{left} 条排队消息未能带走）",
+  "@chatForkQueuedLeft": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      },
+      "left": {
+        "type": "int"
+      }
+    }
+  },
+  "chatReturnToOriginal": "返回原对话",
+  "chatWaitingCount": "{count} 项待确认",
+  "@chatWaitingCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatWaitingBackToBottom": "{count} 项待确认，回到底部",
+  "@chatWaitingBackToBottom": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatBackToBottom": "回到底部",
+  "chatCreateFailed": "新建对话失败",
+  "chatSendMode": "发送方式",
+  "chatSteer": "插话",
+  "chatSteerHint": "不打断，AI 下一步会看到",
+  "chatInterruptAndSend": "中断并发送",
+  "chatInterruptHint": "停下当前任务，先处理这条",
+  "chatQueue": "排队",
+  "chatQueueHint": "本轮结束后发送",
+  "chatWithdrawnEditable": "已撤回，可修改后再发",
+  "chatWithdrawn": "已撤回",
+  "chatAttachmentLimit": "每条消息最多 {count} 个附件",
+  "@chatAttachmentLimit": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatAttachmentPermission": "没有权限，可在系统设置中开启",
+  "chatOpenAttachmentFailed": "没能打开附件",
+  "chatReadFailed": "读取失败",
+  "chatReadImageFailed": "没能读取图片",
+  "chatOpenChatFirst": "先打开一个对话",
+  "chatTurnCompleted": "这一轮已完成",
+  "chatTurnError": "这一轮出错了",
+  "chatAnswerHint": "输入回答…",
+  "chatAnswerMode": "发送文字将回答待答问题",
+  "chatMessageMode": "发送新消息",
+  "chatQuestionAnswered": "已回答",
+  "chatStarting": "正在启动",
+  "chatConnecting": "正在连接",
+  "chatDisconnected": "连接已断开",
+  "chatReconnecting": "重新连接中",
+  "chatGenerating": "生成中",
+  "chatGoToSettings": "去设置",
+  "chatListeningEllipsis": "正在聆听…",
+  "chatTranscribingEllipsis": "正在转写…",
+  "chatConnectToSend": "连接引擎后即可发送",
+  "chatGeneratingSteerHint": "生成中 · 可直接插话",
+  "chatComposerHint": "给 DSH 发消息…",
+  "chatStopGenerating": "停止生成",
+  "chatVoiceInput": "语音输入",
+  "chatStopVoiceInput": "停止语音输入",
+  "chatGoal": "目标",
+  "chatGoalActions": "目标操作",
+  "chatGoalBlocked": "受阻",
+  "chatGoalRoundLimit": "第 {rounds} / {max} 轮",
+  "@chatGoalRoundLimit": {
+    "placeholders": {
+      "rounds": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "chatGoalRound": "第 {rounds} 轮",
+  "@chatGoalRound": {
+    "placeholders": {
+      "rounds": {
+        "type": "int"
+      }
+    }
+  },
+  "chatEditGoal": "编辑目标",
+  "chatPauseGoal": "暂停",
+  "chatPauseGoalHint": "先不自动推进",
+  "chatResumeGoal": "恢复",
+  "chatResumeGoalHint": "继续自动推进",
+  "chatClearGoal": "清除目标",
+  "chatGoalHint": "要完成什么",
+  "chatClearGoalTitle": "清除目标？",
+  "chatTodoCurrent": "正在：{content}",
+  "@chatTodoCurrent": {
+    "placeholders": {
+      "content": {
+        "type": "String"
+      }
+    }
+  },
+  "chatTodoNext": "下一步：{content}",
+  "@chatTodoNext": {
+    "placeholders": {
+      "content": {
+        "type": "String"
+      }
+    }
+  },
+  "chatTodoAllDone": "全部完成",
+  "chatTodoSemantics": "待办 {count}，{label}",
+  "@chatTodoSemantics": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "chatCollapseTodos": "收起清单",
+  "chatExpandTodos": "展开清单",
+  "chatDockFolded": "{count} 条状态已叠起",
+  "@chatDockFolded": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatDockSpread": "展开",
+  "chatDockFold": "收起状态条",
+  "chatDockNext": "下一张",
+  "chatDockPrevious": "上一张",
+  "chatTodoNotStarted": "未开始",
+  "chatFile": "文件",
+  "chatFolder": "文件夹",
+  "chatChat": "对话",
+  "chatSubagent": "子代理",
+  "chatRecent": "最近",
+  "chatMentionSearching": "正在查找…",
+  "chatMentionNoFiles": "没有匹配的文件",
+  "chatMentionNoMatches": "没有匹配的文件或对话",
+  "chatQuote": "引用",
+  "chatOpenFolder": "打开文件夹",
+  "chatJustNow": "刚刚",
+  "chatMentionAgeMinutes": "{count}分钟",
+  "@chatMentionAgeMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatMentionAgeHours": "{count}小时",
+  "@chatMentionAgeHours": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatMentionAgeDays": "{count}天",
+  "@chatMentionAgeDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatMentionAgeMonths": "{count}个月",
+  "@chatMentionAgeMonths": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatMentionAgeYears": "{count}年",
+  "@chatMentionAgeYears": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatMermaidChart": "Mermaid 图表",
+  "chatPreview": "预览",
+  "chatUnwrapLines": "不换行",
+  "chatWrapLines": "自动换行",
+  "chatAlertNote": "注意",
+  "chatAlertTip": "提示",
+  "chatAlertImportant": "重要",
+  "chatAlertWarning": "警告",
+  "chatAlertCaution": "小心",
+  "chatImage": "图片",
+  "chatImageNotFound": "找不到图片",
+  "chatImageOffline": "未连接 DSH",
+  "chatImageTooLarge": "图片过大",
+  "chatImageReadFailed": "无法读取文件",
+  "chatImageDisplayFailed": "无法显示",
+  "chatImageTapToView": "轻点查看",
+  "chatImageTapToRetry": "轻点重试",
+  "chatImageUnsupportedAddress": "不支持的地址",
+  "chatMermaidNeedsNetwork": "需要联网",
+  "chatMermaidSyntaxError": "图表语法有误",
+  "chatChartPreview": "图表预览",
+  "chatCopyCode": "复制代码",
+  "chatChartClosed": "图表已关闭",
+  "chatVoiceMicrophoneFailed": "没能打开麦克风",
+  "chatVoicePermissionOff": "麦克风权限已关闭",
+  "chatVoicePermissionNeeded": "需要麦克风权限才能语音输入",
+  "chatVoiceUnavailable": "这台手机没有可用的语音识别",
+  "chatVoiceNotHeard": "没有听清，再说一次",
+  "chatVoiceTranscriptionFailed": "没能转写这段语音",
+  "chatVoiceNetworkFailed": "网络不太好，没能识别",
+  "chatVoiceLanguageUnsupported": "暂不支持这种语言",
+  "chatVoiceMicrophoneBusy": "麦克风正被占用",
+  "chatVoiceBusy": "语音识别正忙，稍后再试",
+  "chatVoiceRecognitionFailed": "语音识别出错了",
+  "chatListening": "正在聆听",
+  "chatTranscribing": "正在转写",
+  "chatCancelVoiceInput": "取消语音输入",
+  "chatViewTurnTrace": "查看本轮轨迹",
+  "chatTokensPerSecond": "约 {count} tokens/秒",
+  "@chatTokensPerSecond": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatNoTokensStreaming": "没有在出字",
+  "chatCurrentStep": "这一步 {step}",
+  "@chatCurrentStep": {
+    "placeholders": {
+      "step": {
+        "type": "String"
+      }
+    }
+  },
+  "chatTodoProgress": "待办进度 {done}/{total}",
+  "@chatTodoProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "chatProgress": "进度 {done}/{total}",
+  "@chatProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "chatApproveCommand": "允许运行这条命令？",
+  "chatApproveWrite": "允许写入这个文件？",
+  "chatApproveEdit": "允许修改这个文件？",
+  "chatApproveWebpage": "允许打开这个网页？",
+  "chatApproveSearch": "允许联网搜索？",
+  "chatApproveTool": "允许使用「{name}」？",
+  "@chatApproveTool": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "chatDecline": "拒绝",
+  "chatAllowOnce": "允许本次",
+  "chatAllowForChat": "本对话都允许",
+  "chatSaveToDownloads": "存到「下载」",
+  "chatCopyPath": "复制路径",
+  "chatOpenInDefaultApp": "用默认应用打开",
+  "chatDownloadsFolderHint": "下载/DSH-Go 文件夹",
+  "chatSavedToDownloadsPath": "已存到 下载/{path}",
+  "@chatSavedToDownloadsPath": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "chatSavedToPath": "已存到 {path}",
+  "@chatSavedToPath": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "chatDeliveredFiles": "交付了 {count} 个文件",
+  "@chatDeliveredFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatGeneratedFiles": "生成了 {count} 个文件",
+  "@chatGeneratedFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatAllFiles": "全部 {count} 个文件",
+  "@chatAllFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatCollapseFileList": "收起文件列表",
+  "chatExpandAllFiles": "展开全部 {count} 个文件",
+  "@chatExpandAllFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatDownloading": "正在下载…",
+  "chatDownloadingPercent": "正在下载… {percent}%",
+  "@chatDownloadingPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "chatOpening": "正在打开…",
+  "chatSavingToDownloads": "正在存到「下载」…",
+  "chatOpenInPhoneApp": "用手机上的应用打开",
+  "chatMoreActions": "更多操作",
+  "chatAlreadyInDownloads": "已在手机的「下载」里",
+  "chatArtifactCopyPathOnly": "当前连接无法读取文件，只能复制路径",
+  "chatReplying": "正在回复",
+  "chatInterrupted": "已中断",
+  "chatGallery": "相册",
+  "chatTakePhoto": "拍照",
+  "chatAddAttachment": "添加图片或文件",
+  "chatRemoveAttachment": "移除「{name}」",
+  "@chatRemoveAttachment": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "chatAutoApproveCommands": "自动允许命令",
+  "chatAutoApproving": "自动允许中",
+  "chatViewMoreChanges": "查看改动，还有 {count} 个文件",
+  "@chatViewMoreChanges": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatViewChanges": "查看改动",
+  "chatChangedFiles": "改动了 {count} 个文件",
+  "@chatChangedFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatMoreFiles": "还有 {count} 个文件",
+  "@chatMoreFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatFileChangeSemantics": "{path}，新增 {added} 行，删除 {removed} 行",
+  "@chatFileChangeSemantics": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      },
+      "added": {
+        "type": "int"
+      },
+      "removed": {
+        "type": "int"
+      }
+    }
+  },
+  "chatNewFileSuffix": "  新建",
+  "chatPathCopied": "已复制路径",
+  "chatCommandCompacted": "已压缩 {count} 条历史记录（约 {tokens} tokens）",
+  "@chatCommandCompacted": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "tokens": {
+        "type": "String"
+      }
+    }
+  },
+  "chatCommandPermissionChanged": "已切换为{name}",
+  "@chatCommandPermissionChanged": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "chatCommandCurrentPermission": "当前权限：{name}",
+  "@chatCommandCurrentPermission": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "chatCommandUnknownPermission": "没有这个权限预设",
+  "chatCommandFeedbackRequired": "写上反馈内容再发送",
+  "chatCommandFeedbackSubmitted": "反馈已提交",
+  "chatCommandNothingToCompact": "还没有可压缩的内容",
+  "chatCommandCompactionCancelled": "已取消压缩",
+  "chatCommandCompactionBusy": "正在忙，稍后再压缩",
+  "chatCommandCompactedSaveFailed": "已压缩，但没能保存",
+  "chatCommandCompactUsage": "/compact 不带参数",
+  "chatCommandHistoryChanged": "对话有变化，请再试一次",
+  "chatCommandCompactionFailed": "没能完成压缩，请再试一次",
+  "chatCommandCompactionIncomplete": "压缩未完成，请查看对话",
+  "chatCommandPlanEnabled": "已进入计划模式",
+  "chatCommandPlanEnabling": "下一步起进入计划模式",
+  "chatCommandPlanDisabled": "已退出计划模式",
+  "chatCommandPlanDisabling": "下一步起退出计划模式",
+  "chatCommandPlanCancelled": "已取消进入计划模式",
+  "chatCommandPlanInactive": "当前未开启计划模式",
+  "chatCommandPlanNoAttachments": "退出计划模式时不能附带文件",
+  "chatCommandNoGoal": "还没有目标",
+  "chatCommandGoalRequired": "写上新的目标再发送",
+  "chatCommandGoalAttachments": "附件需要和目标一起发送",
+  "chatCommandGoalCleared": "已清除目标",
+  "chatCommandGoalInvalid": "当前无法执行，请查看目标",
+  "chatCommandGoalExists": "已有目标，请编辑或清除后再设置",
+  "chatCommandGoalCreated": "已设置目标",
+  "chatCommandGoalUpdated": "已更新目标",
+  "chatCommandGoalPaused": "已暂停目标",
+  "chatCommandGoalResumed": "已继续目标",
+  "chatCommandCurrentGoal": "当前目标",
+  "chatCommandGoalBlocked": "等待处理",
+  "chatCommandGoalSummary": "{title}\n{objective}\n{status} · 第 {rounds}/{max} 轮",
+  "@chatCommandGoalSummary": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "objective": {
+        "type": "String"
+      },
+      "status": {
+        "type": "String"
+      },
+      "rounds": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "chatCommandFailed": "执行失败",
+  "chatImageStorageDenied": "没有存储权限，未能保存",
+  "chatImageCannotSave": "这张图片无法保存",
+  "chatImageDownloadFailed": "图片下载失败，请重试",
+  "chatImageSaveFailed": "保存失败，请重试",
+  "chatImageSavedToPhotos": "已保存到相册",
+  "chatShareFailed": "无法打开分享",
+  "chatSubmit": "提交",
+  "chatSelectText": "选择文字",
+  "chatRegenerate": "重新回答",
+  "chatBranchFromHere": "从这里分叉",
+  "chatEditAndResend": "编辑后重发",
+  "chatRegenerateHint": "在新对话中重新生成，原对话不变",
+  "chatBranchHint": "在新对话中继续，原对话不变",
+  "chatEditResendHint": "在新对话中改写，图片和文件需重新添加；原对话不变",
+  "chatSaveToPhotos": "保存到相册",
+  "chatCopyAll": "全部复制",
+  "chatRequestRetrying": "请求失败，正在重试",
+  "chatRequestRetryAttempt": "请求失败，正在重试（第 {count} 次）",
+  "@chatRequestRetryAttempt": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatRequestRetryLimit": "请求失败，正在重试（{count}/{max}）",
+  "@chatRequestRetryLimit": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "chatSubscriptionExpired": "{name} 登录已失效",
+  "@chatSubscriptionExpired": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "chatProviderKeyMissing": "这个模型渠道还没有密钥",
+  "chatDeepSeekKeyMissing": "还没有 DeepSeek API Key",
+  "chatOutputLimitReached": "已达单次输出上限",
+  "chatTurnBlocked": "本轮已被拦截",
+  "chatTurnEngineRestarted": "引擎重启过，本轮已中断",
+  "chatSignInAgain": "重新登录",
+  "chatQuestionsTitle": "有 {count} 个问题想问你",
+  "@chatQuestionsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatOneQuestion": "有个问题想问你",
+  "chatMultipleChoices": "可多选",
+  "chatCustomAnswer": "其他回答",
+  "chatCustomAnswerHint": "输入你的回答",
+  "chatQuoteSemantics": "引用：{text}",
+  "@chatQuoteSemantics": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "chatRemoveQuote": "移除引用",
+  "chatReadOnlySubagent": "一次性子代理，只能查看",
+  "chatThinkingActive": "思考中",
+  "chatThinking": "思考",
+  "chatTranslate": "翻译",
+  "chatTranslationUnavailable": "翻译暂不可用",
+  "chatViewOriginal": "查看原文",
+  "chatViewTranslation": "查看译文",
+  "chatTranslating": "正在翻译",
+  "chatToolFailures": "{label},{count} 个失败",
+  "@chatToolFailures": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatToolNeedsApproval": "需要授权后才能执行",
+  "chatCommand": "命令",
+  "chatToolLineRange": " · 第 {first}⁠–⁠{last} 行",
+  "@chatToolLineRange": {
+    "placeholders": {
+      "first": {
+        "type": "int"
+      },
+      "last": {
+        "type": "int"
+      }
+    }
+  },
+  "chatParameters": "参数",
+  "chatOutput": "输出",
+  "chatResult": "结果",
+  "chatError": "错误",
+  "chatChanges": "改动",
+  "chatContent": "内容",
+  "chatNoOutput": "没有输出",
+  "chatToolDeclined": "已拒绝这次调用",
+  "chatToolRunning": "正在执行…",
+  "chatNoDetails": "暂无详情",
+  "chatOutputHiddenLines": "{count, plural, other{中间省略 {shown} 行}}",
+  "@chatOutputHiddenLines": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "shown": {
+        "type": "String"
+      }
+    }
+  },
+  "chatOutputHiddenChars": "中间省略 {count} 字",
+  "@chatOutputHiddenChars": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "chatOutputSummary": "{count, plural, other{共 {lines} 行}} · {chars} 字",
+  "@chatOutputSummary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "lines": {
+        "type": "String"
+      },
+      "chars": {
+        "type": "String"
+      }
+    }
+  },
+  "chatOutputViewAll": "查看全部",
+  "chatOutputCopyAll": "复制全文",
+  "chatOutputCopied": "已复制全文",
+  "chatOutputToEnd": "跳到末尾",
+  "chatOutputToStart": "回到开头",
+  "chatErrApiKey": "API Key 无效或已过期",
+  "chatErrForbidden": "凭据不可用或权限不足",
+  "chatErrBalance": "余额不足",
+  "chatErrAccountQuota": "账号额度已用完",
+  "chatErrRateLimit": "请求太频繁，稍后再试",
+  "chatErrContextLength": "对话太长。若 /compact 也失败，请新建对话或换模型",
+  "chatErrModelUnavailable": "模型服务暂时不可用",
+  "chatErrModelTimeout": "模型响应超时",
+  "chatErrModelConnection": "没能连上模型服务",
+  "chatErrModelEmpty": "模型没有返回内容",
+  "chatErrEngineOutdated": "这个模型需要新版引擎",
+  "chatErrModelUnsupported": "当前模型不可用",
+  "chatSwitchModel": "换模型",
+  "chatErrTurn": "本轮出错了",
+  "chatTurnSteps": "{count} 步",
+  "@chatTurnSteps": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatTurnFootnoteSemantics": "本轮 {summary}，查看本轮轨迹",
+  "@chatTurnFootnoteSemantics": {
+    "placeholders": {
+      "summary": {
+        "type": "String"
+      }
+    }
+  },
+  "chatTurnToolCalls": "{count} 次工具调用",
+  "@chatTurnToolCalls": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatTurnMessages": "{count} 条消息",
+  "@chatTurnMessages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatTurnThoughts": "{count} 段思考",
+  "@chatTurnThoughts": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatMe": "我",
+  "chatGoalSemantics": "目标，{objective}",
+  "@chatGoalSemantics": {
+    "placeholders": {
+      "objective": {
+        "type": "String"
+      }
+    }
+  },
+  "chatGoalStateSemantics": "目标，{objective}，{state}",
+  "@chatGoalStateSemantics": {
+    "placeholders": {
+      "objective": {
+        "type": "String"
+      },
+      "state": {
+        "type": "String"
+      }
+    }
+  },
+  "chatTodoItemSemantics": "{content}，{state}",
+  "@chatTodoItemSemantics": {
+    "placeholders": {
+      "content": {
+        "type": "String"
+      },
+      "state": {
+        "type": "String"
+      }
+    }
+  },
+  "chatMentionSemantics": "{kind}：{label}",
+  "@chatMentionSemantics": {
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      },
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "chatArtifactSemantics": "{name}，{description}",
+  "@chatArtifactSemantics": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "description": {
+        "type": "String"
+      }
+    }
+  }
+}

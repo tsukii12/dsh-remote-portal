@@ -1,0 +1,1168 @@
+[
+ {
+  "endpoint": "session/list",
+  "args": {
+   "_request": {}
+  },
+  "response": {
+   "type": "server-response",
+   "rpcId": "2a468a15-d2bd-4b15-893c-d7c112afde7c",
+   "result": {
+    "ok": true,
+    "value": {
+     "items": []
+    }
+   }
+  }
+ },
+ {
+  "endpoint": "workspace/initializeDefault",
+  "args": {},
+  "response": {
+   "type": "server-response",
+   "rpcId": "41580304-972f-4594-84dd-832f39358095",
+   "result": {
+    "ok": false,
+    "error": {
+     "code": "gateway/internal",
+     "message": "system Documents directory is unavailable",
+     "details": {}
+    }
+   }
+  }
+ },
+ {
+  "endpoint": "workspace/create",
+  "args": {
+   "request": {
+    "path": "/tmp/dsh-home/ws"
+   }
+  },
+  "response": {
+   "type": "server-response",
+   "rpcId": "9da89da0-cd97-414e-b441-df24f8c36dbe",
+   "result": {
+    "ok": true,
+    "value": {
+     "workspace": {
+      "workspaceId": "4e563711-523d-490d-af70-2f98bdb1d974",
+      "path": "/tmp/dsh-home/ws",
+      "title": "ws",
+      "sessionIds": [],
+      "createdAt": "2026-10-22T19:10:41.862Z",
+      "updatedAt": "2026-10-22T19:10:41.862Z"
+     },
+     "created": true
+    }
+   }
+  }
+ },
+ {
+  "endpoint": "session/create",
+  "args": {
+   "request": {
+    "cwd": "/tmp/dsh-home/ws"
+   }
+  },
+  "response": {
+   "type": "server-response",
+   "rpcId": "da182aa4-05ad-467f-8fc7-7876eaa37738",
+   "result": {
+    "ok": true,
+    "value": {
+     "sessionId": "session-ba6e1a21-ae26-4ab1-9aef-51b30808a6d6",
+     "agentPreset": "standard"
+    }
+   }
+  }
+ },
+ {
+  "endpoint": "session/create",
+  "args": {
+   "request": {
+    "workspaceId": "4e563711-523d-490d-af70-2f98bdb1d974"
+   }
+  },
+  "response": {
+   "type": "server-response",
+   "rpcId": "6e3cddc7-f908-4c87-a40a-80617df509cf",
+   "result": {
+    "ok": true,
+    "value": {
+     "sessionId": "session-7e05c307-9700-4fee-81d4-f1aab6352c2a",
+     "agentPreset": "standard"
+    }
+   }
+  }
+ },
+ {
+  "endpoint": "session/create",
+  "args": {
+   "request": {}
+  },
+  "response": {
+   "type": "server-response",
+   "rpcId": "9a8b06e1-6879-49fa-afa9-54d5b265d870",
+   "result": {
+    "ok": true,
+    "value": {
+     "sessionId": "session-5e903793-e13f-412c-a9ad-9edadd3ca3ff",
+     "agentPreset": "standard"
+    }
+   }
+  }
+ },
+ {
+  "endpoint": "session/list",
+  "args": {
+   "_request": {}
+  },
+  "response": {
+   "type": "server-response",
+   "rpcId": "6f1b17e6-0840-4dd5-baa8-1b7e36217a24",
+   "result": {
+    "ok": true,
+    "value": {
+     "items": [
+      {
+       "sessionId": "session-5e903793-e13f-412c-a9ad-9edadd3ca3ff",
+       "updatedAt": 1792696241905,
+       "agentAvailable": true,
+       "running": false,
+       "blank": true,
+       "cwd": "/tmp/dsh-home/ws",
+       "projections": {
+        "kind": "sequenced",
+        "asOfSeq": 2,
+        "values": {
+         "title": null,
+         "goal": null,
+         "tokenUsage": {
+          "uncachedInputTokens": 0,
+          "outputTokens": 0,
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0
+         },
+         "contextPressure": {},
+         "contextBreakdown": {
+          "systemTokens": 0,
+          "toolsTokens": 0,
+          "messageTokens": 0
+         },
+         "inbox": {
+          "next-turn": [],
+          "next-step": []
+         },
+         "sessionStats": {
+          "turns": 0,
+          "steps": 0,
+          "llmMs": 0,
+          "toolMs": 0,
+          "ttftMs": 0,
+          "ttftSteps": 0,
+          "decodeMs": 0,
+          "decodeTokens": 0
+         },
+         "turnOutline": [],
+         "agentPreset": "standard",
+         "userQuestions": {
+          "active": [],
+          "settled": []
+         },
+         "subagentCatalog": [],
+         "subagentTiming": {
+          "settledMs": 0
+         },
+         "subagent": null,
+         "permissions": {
+          "currentValue": "workspace-write"
+         },
+         "todos": null,
+         "plan": {
+          "active": false,
+          "pending": false
+         },
+         "modelSelection": {
+          "lastUsed": null,
+          "next": null
+         },
+         "sessionListMetadata": {
+          "blank": true,
+          "lastPromptAt": null
+         },
+         "imageLimits": {
+          "maxImageBytes": 20971520,
+          "maxImagesPerMessage": 20,
+          "maxMessageImageBytes": 209715200,
+          "maxImagePixels": 64000000,
+          "maxImageDimension": 8192,
+          "mediaTypes": [
+           "image/png",
+           "image/jpeg",
+           "image/webp",
+           "image/gif"
+          ]
+         }
+        }
+       }
+      },
+      {
+       "sessionId": "session-7e05c307-9700-4fee-81d4-f1aab6352c2a",
+       "updatedAt": 1792696241892,
+       "agentAvailable": true,
+       "running": false,
+       "blank": true,
+       "cwd": "/tmp/dsh-home/ws",
+       "projections": {
+        "kind": "sequenced",
+        "asOfSeq": 2,
+        "values": {
+         "title": null,
+         "goal": null,
+         "tokenUsage": {
+          "uncachedInputTokens": 0,
+          "outputTokens": 0,
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0
+         },
+         "contextPressure": {},
+         "contextBreakdown": {
+          "systemTokens": 0,
+          "toolsTokens": 0,
+          "messageTokens": 0
+         },
+         "inbox": {
+          "next-turn": [],
+          "next-step": []
+         },
+         "sessionStats": {
+          "turns": 0,
+          "steps": 0,
+          "llmMs": 0,
+          "toolMs": 0,
+          "ttftMs": 0,
+          "ttftSteps": 0,
+          "decodeMs": 0,
+          "decodeTokens": 0
+         },
+         "turnOutline": [],
+         "agentPreset": "standard",
+         "userQuestions": {
+          "active": [],
+          "settled": []
+         },
+         "subagentCatalog": [],
+         "subagentTiming": {
+          "settledMs": 0
+         },
+         "subagent": null,
+         "permissions": {
+          "currentValue": "workspace-write"
+         },
+         "todos": null,
+         "plan": {
+          "active": false,
+          "pending": false
+         },
+         "modelSelection": {
+          "lastUsed": null,
+          "next": null
+         },
+         "sessionListMetadata": {
+          "blank": true,
+          "lastPromptAt": null
+         },
+         "imageLimits": {
+          "maxImageBytes": 20971520,
+          "maxImagesPerMessage": 20,
+          "maxMessageImageBytes": 209715200,
+          "maxImagePixels": 64000000,
+          "maxImageDimension": 8192,
+          "mediaTypes": [
+           "image/png",
+           "image/jpeg",
+           "image/webp",
+           "image/gif"
+          ]
+         }
+        }
+       }
+      },
+      {
+       "sessionId": "session-ba6e1a21-ae26-4ab1-9aef-51b30808a6d6",
+       "updatedAt": 1792696241869,
+       "agentAvailable": true,
+       "running": false,
+       "blank": true,
+       "cwd": "/tmp/dsh-home/ws",
+       "projections": {
+        "kind": "sequenced",
+        "asOfSeq": 2,
+        "values": {
+         "title": null,
+         "goal": null,
+         "tokenUsage": {
+          "uncachedInputTokens": 0,
+          "outputTokens": 0,
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0
+         },
+         "contextPressure": {},
+         "contextBreakdown": {
+          "systemTokens": 0,
+          "toolsTokens": 0,
+          "messageTokens": 0
+         },
+         "inbox": {
+          "next-turn": [],
+          "next-step": []
+         },
+         "sessionStats": {
+          "turns": 0,
+          "steps": 0,
+          "llmMs": 0,
+          "toolMs": 0,
+          "ttftMs": 0,
+          "ttftSteps": 0,
+          "decodeMs": 0,
+          "decodeTokens": 0
+         },
+         "turnOutline": [],
+         "agentPreset": "standard",
+         "userQuestions": {
+          "active": [],
+          "settled": []
+         },
+         "subagentCatalog": [],
+         "subagentTiming": {
+          "settledMs": 0
+         },
+         "subagent": null,
+         "permissions": {
+          "currentValue": "workspace-write"
+         },
+         "todos": null,
+         "plan": {
+          "active": false,
+          "pending": false
+         },
+         "modelSelection": {
+          "lastUsed": null,
+          "next": null
+         },
+         "sessionListMetadata": {
+          "blank": true,
+          "lastPromptAt": null
+         },
+         "imageLimits": {
+          "maxImageBytes": 20971520,
+          "maxImagesPerMessage": 20,
+          "maxMessageImageBytes": 209715200,
+          "maxImagePixels": 64000000,
+          "maxImageDimension": 8192,
+          "mediaTypes": [
+           "image/png",
+           "image/jpeg",
+           "image/webp",
+           "image/gif"
+          ]
+         }
+        }
+       }
+      }
+     ]
+    }
+   }
+  }
+ },
+ {
+  "endpoint": "session/projections",
+  "args": {
+   "request": {
+    "sessionId": "session-ba6e1a21-ae26-4ab1-9aef-51b30808a6d6"
+   }
+  },
+  "response": {
+   "type": "server-response",
+   "rpcId": "ca44eae6-e889-4b39-8414-b6a95991ec9f",
+   "result": {
+    "ok": true,
+    "value": {
+     "asOfSeq": 2,
+     "values": {
+      "title": null,
+      "goal": null,
+      "tokenUsage": {
+       "uncachedInputTokens": 0,
+       "outputTokens": 0,
+       "cacheReadTokens": 0,
+       "cacheWriteTokens": 0
+      },
+      "contextPressure": {},
+      "contextBreakdown": {
+       "systemTokens": 0,
+       "toolsTokens": 0,
+       "messageTokens": 0
+      },
+      "inbox": {
+       "next-turn": [],
+       "next-step": []
+      },
+      "sessionStats": {
+       "turns": 0,
+       "steps": 0,
+       "llmMs": 0,
+       "toolMs": 0,
+       "ttftMs": 0,
+       "ttftSteps": 0,
+       "decodeMs": 0,
+       "decodeTokens": 0
+      },
+      "turnOutline": [],
+      "agentPreset": "standard",
+      "userQuestions": {
+       "active": [],
+       "settled": []
+      },
+      "subagentCatalog": [],
+      "subagentTiming": {
+       "settledMs": 0
+      },
+      "subagent": null,
+      "permissions": {
+       "currentValue": "workspace-write"
+      },
+      "todos": null,
+      "plan": {
+       "active": false,
+       "pending": false
+      },
+      "modelSelection": {
+       "lastUsed": null,
+       "next": null
+      },
+      "sessionListMetadata": {
+       "blank": true,
+       "lastPromptAt": null
+      },
+      "imageLimits": {
+       "maxImageBytes": 20971520,
+       "maxImagesPerMessage": 20,
+       "maxMessageImageBytes": 209715200,
+       "maxImagePixels": 64000000,
+       "maxImageDimension": 8192,
+       "mediaTypes": [
+        "image/png",
+        "image/jpeg",
+        "image/webp",
+        "image/gif"
+       ]
+      }
+     }
+    }
+   }
+  }
+ },
+ {
+  "endpoint": "session/modelCatalog",
+  "args": {},
+  "response": {
+   "type": "server-response",
+   "rpcId": "9f8f1ff9-e12c-426d-9785-28012f8ae616",
+   "result": {
+    "ok": true,
+    "value": {
+     "default": {
+      "provider": "deepseek-official",
+      "model": "deepseek-flash"
+     },
+     "routableProviders": [
+      "deepseek-official"
+     ],
+     "groups": [
+      {
+       "id": "deepseek-official",
+       "name": "DeepSeek",
+       "models": [
+        {
+         "id": "deepseek-flash",
+         "name": "DeepSeek-V41-Flash",
+         "reasoning": {
+          "efforts": [
+           {
+            "id": "off",
+            "name": "Off",
+            "description": "Use for simple tasks that do not need reasoning."
+           },
+           {
+            "id": "low",
+            "name": "Low",
+            "description": "Prefer for routine or latency-sensitive tasks."
+           },
+           {
+            "id": "high",
+            "name": "High",
+            "description": "The default balance for most tasks."
+           },
+           {
+            "id": "max",
+            "name": "Max",
+            "description": "Reserve for the hardest quality-first tasks."
+           }
+          ],
+          "defaultEffort": "high"
+         }
+        },
+        {
+         "id": "deepseek-v4-pro",
+         "name": "DeepSeek-V4-Pro",
+         "description": "Stronger agentic coding, knowledge, and difficult reasoning; suited to complex or quality-critical tasks at higher cost.",
+         "reasoning": {
+          "efforts": [
+           {
+            "id": "off",
+            "name": "Off",
+            "description": "Use for simple tasks that do not need reasoning."
+           },
+           {
+            "id": "low",
+            "name": "Low",
+            "description": "Prefer for routine or latency-sensitive tasks."
+           },
+           {
+            "id": "high",
+            "name": "High",
+            "description": "The default balance for most tasks."
+           },
+           {
+            "id": "max",
+            "name": "Max",
+            "description": "Reserve for the hardest quality-first tasks."
+           }
+          ],
+          "defaultEffort": "high"
+         }
+        }
+       ]
+      }
+     ],
+     "failures": []
+    }
+   }
+  }
+ },
+ {
+  "endpoint": "llm/listProviders",
+  "args": {},
+  "response": {
+   "type": "server-response",
+   "rpcId": "69bebdef-a7ea-4255-8f5d-072ad20962bb",
+   "result": {
+    "ok": true,
+    "value": [
+     {
+      "id": "deepseek-official",
+      "name": "DeepSeek"
+     },
+     {
+      "id": "deepseek-account",
+      "name": "DeepSeek Account"
+     }
+    ]
+   }
+  }
+ },
+ {
+  "endpoint": "llm/listConfigurableProviders",
+  "args": {},
+  "response": {
+   "type": "server-response",
+   "rpcId": "fa6e7c13-b0ba-48c7-b3fe-74bc86808b83",
+   "result": {
+    "ok": true,
+    "value": [
+     {
+      "provider": "amazon-bedrock",
+      "displayName": "amazon-bedrock",
+      "settingsNs": "llm-pi-ai",
+      "settingsPath": [
+       "providers",
+       "amazon-bedrock"
+      ],
+      "declared": false
+     },
+     {
+      "provider": "ant-ling",
+      "displayName": "ant-ling",
+      "settingsNs": "llm-pi-ai",
+      "settingsPath": [
+       "providers",
+       "ant-ling"
+      ],
+      "declared": false
+     },
+     {
+      "provider": "anthropic",
+      "displayName": "anthropic",
+      "settingsNs": "llm-pi-ai",
+      "settingsPath": [
+       "providers",
+       "anthropic"
+      ],
+      "declared": false
+     }
+    ]
+   }
+  }
+ },
+ {
+  "endpoint": "permissionPresets/catalog",
+  "args": {},
+  "response": {
+   "type": "server-response",
+   "rpcId": "0694ce59-48d7-494e-ba6c-478fd893036b",
+   "result": {
+    "ok": true,
+    "value": {
+     "options": [
+      {
+       "value": "read-only",
+       "name": "read-only"
+      },
+      {
+       "value": "workspace-write",
+       "name": "workspace-write"
+      },
+      {
+       "value": "danger-full-access",
+       "name": "danger-full-access"
+      }
+     ],
+     "defaultOptions": [
+      {
+       "value": "read-only",
+       "name": "read-only"
+      },
+      {
+       "value": "workspace-write",
+       "name": "workspace-write"
+      },
+      {
+       "value": "danger-full-access",
+       "name": "danger-full-access"
+      }
+     ],
+     "defaultPreset": "workspace-write"
+    }
+   }
+  }
+ },
+ {
+  "endpoint": "agentPresets/list",
+  "args": {},
+  "response": {
+   "type": "server-response",
+   "rpcId": "2e62d39b-5381-486f-8963-9b03ca028dcd",
+   "result": {
+    "ok": true,
+    "value": {
+     "presets": [
+      {
+       "id": "standard",
+       "order": 1,
+       "isDefault": true
+      },
+      {
+       "id": "ptc",
+       "order": 2,
+       "isDefault": false
+      },
+      {
+       "id": "minimal",
+       "order": 3,
+       "isDefault": false
+      },
+      {
+       "id": "cordis",
+       "order": 4,
+       "isDefault": false
+      }
+     ]
+    }
+   }
+  }
+ },
+ {
+  "endpoint": "credentials/describe",
+  "args": {
+   "refs": [
+    "DEEPSEEK_API_KEY",
+    "DSH_APP_PROBE_DUMMY"
+   ]
+  },
+  "response": {
+   "type": "server-response",
+   "rpcId": "43eec0dc-6ed3-4d1d-abbc-c98fd37d5f81",
+   "result": {
+    "ok": true,
+    "value": {
+     "DEEPSEEK_API_KEY": {
+      "configured": true,
+      "source": "env",
+      "writable": false
+     },
+     "DSH_APP_PROBE_DUMMY": {
+      "configured": false,
+      "writable": true
+     }
+    }
+   }
+  }
+ },
+ {
+  "endpoint": "credentials/set",
+  "args": {
+   "ref": "DSH_APP_PROBE_DUMMY",
+   "value": "dummy-value-not-a-secret"
+  },
+  "response": {
+   "type": "server-response",
+   "rpcId": "0f4b9756-b8a1-4c34-a475-918c09af76da",
+   "result": {
+    "ok": true
+   }
+  }
+ },
+ {
+  "endpoint": "credentials/describe",
+  "args": {
+   "refs": [
+    "DSH_APP_PROBE_DUMMY"
+   ]
+  },
+  "response": {
+   "type": "server-response",
+   "rpcId": "3d5f7fd9-a164-436c-b533-aa55b94a12b9",
+   "result": {
+    "ok": true,
+    "value": {
+     "DSH_APP_PROBE_DUMMY": {
+      "configured": true,
+      "source": "file",
+      "writable": true
+     }
+    }
+   }
+  }
+ },
+ {
+  "endpoint": "credentials/set",
+  "args": {
+   "ref": "DEEPSEEK_API_KEY",
+   "value": "dummy-value-not-a-secret"
+  },
+  "response": {
+   "type": "server-response",
+   "rpcId": "b80aceb4-bdd6-421c-a0e9-74df78c52073",
+   "result": {
+    "ok": false,
+    "error": {
+     "code": "credential/rejected",
+     "message": "credentials-local: \"DEEPSEEK_API_KEY\" is supplied read-only by the launching environment, so set would be shadowed; unset it in the shell you start dsh from instead",
+     "details": {
+      "ref": "DEEPSEEK_API_KEY"
+     }
+    }
+   }
+  }
+ },
+ {
+  "endpoint": "credentials/unset",
+  "args": {
+   "ref": "DSH_APP_PROBE_DUMMY"
+  },
+  "response": {
+   "type": "server-response",
+   "rpcId": "8bef7d62-ccfc-4431-b5eb-ed5e2042170c",
+   "result": {
+    "ok": true
+   }
+  }
+ },
+ {
+  "endpoint": "session/cancel",
+  "response": {
+   "type": "server-response",
+   "rpcId": "7809a884-0022-42e1-9413-dfde33e5f76e",
+   "result": {
+    "ok": true,
+    "value": {
+     "accepted": true
+    }
+   }
+  }
+ },
+ {
+  "endpoint": "session/rename",
+  "response": {
+   "type": "server-response",
+   "rpcId": "413904be-675d-40de-a375-db3b03824d24",
+   "result": {
+    "ok": true,
+    "value": {
+     "title": "Probe session",
+     "seq": 3
+    }
+   }
+  }
+ },
+ {
+  "endpoint": "session/selectModel",
+  "response": {
+   "type": "server-response",
+   "rpcId": "f47be65f-eb05-4dad-a3c4-8806a45f2e49",
+   "result": {
+    "ok": true,
+    "value": {
+     "selected": {
+      "provider": "deepseek-official",
+      "model": "deepseek-flash",
+      "reasoningEffort": "high"
+     }
+    }
+   }
+  }
+ },
+ {
+  "endpoint": "session/selectModel",
+  "args": {
+   "request": {
+    "sessionId": "session-ba6e1a21-ae26-4ab1-9aef-51b30808a6d6",
+    "provider": "deepseek-official",
+    "model": "deepseek-flash"
+   }
+  },
+  "response": {
+   "type": "server-response",
+   "rpcId": "fa0a1031-19f0-45d7-8525-b6499a220b53",
+   "result": {
+    "ok": false,
+    "error": {
+     "code": "session/model-unavailable",
+     "message": "Select an available model before sending a message.",
+     "details": {
+      "provider": "deepseek-official",
+      "model": "no-such-model"
+     }
+    }
+   }
+  }
+ },
+ {
+  "endpoint": "workspace/archiveSession",
+  "response": {
+   "type": "server-response",
+   "rpcId": "74d21584-06c9-431f-bd9b-1e7cf8b16e81",
+   "result": {
+    "ok": true,
+    "value": {
+     "archivedSessionIds": [
+      "session-5e903793-e13f-412c-a9ad-9edadd3ca3ff"
+     ]
+    }
+   }
+  }
+ },
+ {
+  "endpoint": "session/list",
+  "response": {
+   "type": "server-response",
+   "rpcId": "3960295f-f219-4871-a354-fde21266f8e4",
+   "result": {
+    "ok": true,
+    "value": {
+     "items": [
+      {
+       "sessionId": "session-5e903793-e13f-412c-a9ad-9edadd3ca3ff",
+       "updatedAt": 1792696241905,
+       "agentAvailable": true,
+       "running": false,
+       "blank": true,
+       "cwd": "/tmp/dsh-home/ws",
+       "projections": {
+        "kind": "sequenced",
+        "asOfSeq": 2,
+        "values": {
+         "title": null,
+         "goal": null,
+         "tokenUsage": {
+          "uncachedInputTokens": 0,
+          "outputTokens": 0,
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0
+         },
+         "contextPressure": {},
+         "contextBreakdown": {
+          "systemTokens": 0,
+          "toolsTokens": 0,
+          "messageTokens": 0
+         },
+         "inbox": {
+          "next-turn": [],
+          "next-step": []
+         },
+         "sessionStats": {
+          "turns": 0,
+          "steps": 0,
+          "llmMs": 0,
+          "toolMs": 0,
+          "ttftMs": 0,
+          "ttftSteps": 0,
+          "decodeMs": 0,
+          "decodeTokens": 0
+         },
+         "turnOutline": [],
+         "agentPreset": "standard",
+         "userQuestions": {
+          "active": [],
+          "settled": []
+         },
+         "subagentCatalog": [],
+         "subagentTiming": {
+          "settledMs": 0
+         },
+         "subagent": null,
+         "permissions": {
+          "currentValue": "workspace-write"
+         },
+         "todos": null,
+         "plan": {
+          "active": false,
+          "pending": false
+         },
+         "modelSelection": {
+          "lastUsed": null,
+          "next": null
+         },
+         "sessionListMetadata": {
+          "blank": true,
+          "lastPromptAt": null
+         },
+         "imageLimits": {
+          "maxImageBytes": 20971520,
+          "maxImagesPerMessage": 20,
+          "maxMessageImageBytes": 209715200,
+          "maxImagePixels": 64000000,
+          "maxImageDimension": 8192,
+          "mediaTypes": [
+           "image/png",
+           "image/jpeg",
+           "image/webp",
+           "image/gif"
+          ]
+         }
+        }
+       }
+      },
+      {
+       "sessionId": "session-7e05c307-9700-4fee-81d4-f1aab6352c2a",
+       "updatedAt": 1792696241892,
+       "agentAvailable": true,
+       "running": false,
+       "blank": true,
+       "cwd": "/tmp/dsh-home/ws",
+       "projections": {
+        "kind": "sequenced",
+        "asOfSeq": 2,
+        "values": {
+         "title": null,
+         "goal": null,
+         "tokenUsage": {
+          "uncachedInputTokens": 0,
+          "outputTokens": 0,
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0
+         },
+         "contextPressure": {},
+         "contextBreakdown": {
+          "systemTokens": 0,
+          "toolsTokens": 0,
+          "messageTokens": 0
+         },
+         "inbox": {
+          "next-turn": [],
+          "next-step": []
+         },
+         "sessionStats": {
+          "turns": 0,
+          "steps": 0,
+          "llmMs": 0,
+          "toolMs": 0,
+          "ttftMs": 0,
+          "ttftSteps": 0,
+          "decodeMs": 0,
+          "decodeTokens": 0
+         },
+         "turnOutline": [],
+         "agentPreset": "standard",
+         "userQuestions": {
+          "active": [],
+          "settled": []
+         },
+         "subagentCatalog": [],
+         "subagentTiming": {
+          "settledMs": 0
+         },
+         "subagent": null,
+         "permissions": {
+          "currentValue": "workspace-write"
+         },
+         "todos": null,
+         "plan": {
+          "active": false,
+          "pending": false
+         },
+         "modelSelection": {
+          "lastUsed": null,
+          "next": null
+         },
+         "sessionListMetadata": {
+          "blank": true,
+          "lastPromptAt": null
+         },
+         "imageLimits": {
+          "maxImageBytes": 20971520,
+          "maxImagesPerMessage": 20,
+          "maxMessageImageBytes": 209715200,
+          "maxImagePixels": 64000000,
+          "maxImageDimension": 8192,
+          "mediaTypes": [
+           "image/png",
+           "image/jpeg",
+           "image/webp",
+           "image/gif"
+          ]
+         }
+        }
+       }
+      },
+      {
+       "sessionId": "session-ba6e1a21-ae26-4ab1-9aef-51b30808a6d6",
+       "updatedAt": 1792696241869,
+       "agentAvailable": true,
+       "running": false,
+       "blank": true,
+       "cwd": "/tmp/dsh-home/ws",
+       "projections": {
+        "kind": "sequenced",
+        "asOfSeq": 4,
+        "values": {
+         "title": "Probe session",
+         "goal": null,
+         "tokenUsage": {
+          "uncachedInputTokens": 0,
+          "outputTokens": 0,
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0
+         },
+         "contextPressure": {},
+         "contextBreakdown": {
+          "systemTokens": 0,
+          "toolsTokens": 0,
+          "messageTokens": 0
+         },
+         "inbox": {
+          "next-turn": [],
+          "next-step": []
+         },
+         "sessionStats": {
+          "turns": 0,
+          "steps": 0,
+          "llmMs": 0,
+          "toolMs": 0,
+          "ttftMs": 0,
+          "ttftSteps": 0,
+          "decodeMs": 0,
+          "decodeTokens": 0
+         },
+         "turnOutline": [],
+         "agentPreset": "standard",
+         "userQuestions": {
+          "active": [],
+          "settled": []
+         },
+         "subagentCatalog": [],
+         "subagentTiming": {
+          "settledMs": 0
+         },
+         "subagent": null,
+         "permissions": {
+          "currentValue": "workspace-write"
+         },
+         "todos": null,
+         "plan": {
+          "active": false,
+          "pending": false
+         },
+         "modelSelection": {
+          "lastUsed": null,
+          "next": {
+           "provider": "deepseek-official",
+           "model": "deepseek-flash",
+           "reasoningEffort": "high"
+          }
+         },
+         "sessionListMetadata": {
+          "blank": true,
+          "lastPromptAt": null
+         },
+         "imageLimits": {
+          "maxImageBytes": 20971520,
+          "maxImagesPerMessage": 20,
+          "maxMessageImageBytes": 209715200,
+          "maxImagePixels": 64000000,
+          "maxImageDimension": 8192,
+          "mediaTypes": [
+           "image/png",
+           "image/jpeg",
+           "image/webp",
+           "image/gif"
+          ]
+         }
+        }
+       }
+      }
+     ]
+    }
+   }
+  }
+ },
+ {
+  "endpoint": "workspace/unarchiveSession",
+  "response": {
+   "type": "server-response",
+   "rpcId": "4330c0d5-18dc-4ae2-925b-09c925f88b39",
+   "result": {
+    "ok": true,
+    "value": {
+     "archivedSessionIds": []
+    }
+   }
+  }
+ },
+ {
+  "endpoint": "session/prompt",
+  "response": {
+   "type": "server-response",
+   "rpcId": "a0f34fee-7771-4dd6-86ca-a48c5990abad",
+   "result": {
+    "ok": false,
+    "error": {
+     "code": "gateway/bad-request",
+     "message": "prompt content must include non-whitespace text or an attachment",
+     "details": {}
+    }
+   }
+  }
+ }
+]

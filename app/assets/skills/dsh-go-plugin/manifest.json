@@ -1,0 +1,28 @@
+{
+  "name": "dsh-go-plugin",
+  "files": {
+    "SKILL.md": "SKILL.md",
+    "template-package.json": "template/package.json",
+    "template-cordis.patch.yml": "template/cordis.patch.yml",
+    "template-lib-index.js": "template/lib/index.js",
+    "kit-bin-check.mjs": "kit/bin/check.mjs",
+    "kit-lib-check.js": "kit/lib/check.js",
+    "kit-lib-view-check.js": "kit/lib/view-check.js",
+    "kit-lib-style-check.js": "kit/lib/style-check.js",
+    "kit-lib-controls-check.js": "kit/lib/controls-check.js",
+    "kit-lib-formula.js": "kit/lib/formula.js",
+    "kit-lib-messages.json": "kit/lib/messages.json",
+    "kit-lib-testing.js": "kit/lib/testing.js",
+    "kit-lib-json-schema.js": "kit/lib/json-schema.js",
+    "kit-lib-bridge-limits.js": "kit/lib/bridge/limits.js",
+    "kit-lib-bridge-util.js": "kit/lib/bridge/util.js",
+    "kit-lib-bridge-effects.js": "kit/lib/bridge/effects.js",
+    "kit-lib-bridge-manifest.js": "kit/lib/bridge/manifest.js",
+    "kit-lib-bridge-capabilities.js": "kit/lib/bridge/capabilities.js",
+    "kit-schema-contributions.schema.json": "kit/schema/contributions.schema.json",
+    "kit-schema-invoke.schema.json": "kit/schema/invoke.schema.json",
+    "kit-schema-manifest.schema.json": "kit/schema/manifest.schema.json",
+    "kit-schema-stream.schema.json": "kit/schema/stream.schema.json",
+    "kit-schema-view.schema.json": "kit/schema/view.schema.json"
+  }
+}

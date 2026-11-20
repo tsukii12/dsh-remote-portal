@@ -1,0 +1,21 @@
+{
+  "@@locale": "zh",
+  "phoneKeepTitle": "{mode, select, shizuku{保持 Shizuku 通道} sui{保持 Sui 通道} root{保持 root 通道} adb{保持自连 ADB 通道} other{保持这个通道}}",
+  "@phoneKeepTitle": {
+    "placeholders": {
+      "mode": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneKeepRootDescription": "断开、重开 App 或重启手机后，DSH Go 会自己再向 root 管理器申请；给不给仍由管理器决定。",
+  "phoneKeepSharedDescription": "断开、重开 App 或重启手机后，DSH Go 用已有的授权自己连回去，不会替你申请授权。",
+  "phoneKeepAdbDescription": "断开、重开 App 或重启手机后，DSH Go 用已有的配对在 Wi‑Fi 下自己连回去；有「自动恢复无障碍」的权限时，还会试着打开一次无线调试。",
+  "phoneKeepRestoring": "正在重新连接",
+  "phoneKeepWaiting": "等通道可用后再连",
+  "phoneKeepWaitingService": "等所选服务运行后再连",
+  "phoneKeepWaitingPermission": "还没有授权；授权后会自己连上",
+  "phoneKeepWaitingNetwork": "等连上 Wi‑Fi 后再连",
+  "phoneKeepNotPaired": "还没有配对，请先完成无线调试配对",
+  "phoneKeepFailed": "没连上；下次打开 App 或开始操控时再试"
+}

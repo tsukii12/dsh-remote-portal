@@ -1,0 +1,374 @@
+// 模型渠道 (a list page): where the chat's models come from. DeepSeek (account or
+// API Key, kept by the app) first, then the ChatGPT / Claude subscriptions
+// (when the engine has the sign-in bridge), then the custom providers of the
+// active engine (llm-pi-ai routes) and 「添加渠道」.
+
+import 'package:dsh_client/dsh_client.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../l10n/l10n.dart';
+import '../../state/account_state.dart';
+import '../../state/connection_state.dart';
+import '../../state/models_state.dart';
+import '../../state/providers_state.dart';
+import '../../state/read_list_cache.dart';
+import '../../state/read_list_identity.dart';
+import '../../state/settings_state.dart';
+import '../../state/subscriptions_state.dart';
+import '../account/account_page.dart';
+import '../common/list_page_row.dart';
+import '../common/read_list_status.dart';
+import '../common/status_chip.dart';
+import '../features/feature_kit.dart';
+import '../features/feature_widgets.dart';
+import '../onboarding/api_key_page.dart' show maskApiKey;
+import '../settings/index/spots.dart';
+import '../shell/page_frame.dart';
+import '../theme/app_icons.dart';
+import '../theme/theme.dart';
+import 'new_chat_defaults_card.dart';
+import 'provider_detail_page.dart';
+import 'provider_form_page.dart';
+import 'provider_widgets.dart';
+import 'subscription_page.dart';
+import 'subscription_sheet.dart';
+
+class ProvidersPage extends ConsumerWidget {
+  const ProvidersPage({super.key});
+
+  void _push(BuildContext context, Widget page) =>
+      Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => page));
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final conn = ref.watch(readListLiveConnectionProvider);
+    final async = ref.watch(customProvidersProvider);
+    final view = ref.watch(providerListViewProvider);
+    final snapshot = view.authoritative ? async.value : null;
+    final summary = _summary(ref, conn, snapshot);
+    return AppPage.list(
+      title: l10n.engineProvidersTitle,
+      subtitle: view.readOnly && (view.value != null || snapshot != null)
+          ? Text(readListStatusText(view.status), maxLines: 1, overflow: TextOverflow.ellipsis)
+          : summary == null
+          ? null
+          : Text(summary),
+      children: [
+        const NewChatDefaultsCard(),
+        const _DeepSeekCard(),
+        const _SubscriptionAccounts(),
+        if (view.value?.supported == false)
+          FeatureMessage(
+            icon: AppIcons.unsupported,
+            title: l10n.engineProvidersUnsupported,
+            body: l10n.engineSettingsVersionRequired,
+          )
+        else if (view.value != null)
+          _CustomCard(cached: view.value, readOnly: true, onOpen: (_) {}, onAdd: () {})
+        else if (conn == null)
+          FeatureMessage(
+            icon: AppIcons.offline,
+            title: l10n.engineProvidersNotConnected,
+            body: l10n.engineProvidersStartEngine,
+          )
+        else if (snapshot == null && async.hasError)
+          FeatureMessage(
+            icon: AppIcons.error,
+            title: l10n.engineProviderReadFailed,
+            body: describeProviderError(async.error!),
+            action: (l10n.commonRetry, () => ref.invalidate(customProvidersProvider)),
+          )
+        else if (snapshot == null)
+          const QuietSpinner(padding: EdgeInsets.symmetric(vertical: 40))
+        else if (!snapshot.supported)
+          FeatureMessage(
+            icon: AppIcons.unsupported,
+            title: l10n.engineProvidersUnsupported,
+            body: l10n.engineSettingsVersionRequired,
+          )
+        else
+          _CustomCard(
+            snapshot: snapshot,
+            readOnly: view.readOnly,
+            onOpen: (id) {
+              if (!ref.read(providerListViewProvider).readOnly &&
+                  identical(ref.read(customProvidersProvider).value, snapshot)) {
+                _push(context, ProviderDetailPage(providerId: id));
+              }
+            },
+            onAdd: () {
+              if (!ref.read(providerListViewProvider).readOnly &&
+                  identical(ref.read(customProvidersProvider).value, snapshot)) {
+                _push(context, const ProviderFormPage());
+              }
+            },
+          ),
+      ],
+    );
+  }
+}
+
+/// 「4 个渠道 · 2 个可用」(prefixed with the host when it is a remote one):
+/// every row but 「添加渠道」, and those ready to serve. Null until the
+/// custom providers are read, so the figures never jump.
+String? _summary(WidgetRef ref, HostConnection? conn, ProvidersSnapshot? snapshot) {
+  if (conn == null || snapshot == null) return null;
+  final remote = !conn.isLocal;
+  final bool deepSeek;
+  if (remote) {
+    deepSeek = catalogHasDeepSeek(ref.watch(modelCatalogProvider).value);
+  } else {
+    final account = ref.watch(accountProvider);
+    deepSeek = account.signedIn || ref.watch(settingsProvider.select((s) => s.hasApiKey));
+  }
+  final subs = ref.watch(subscriptionsProvider).value;
+  final statuses = subs != null && subs.available ? subs.statuses : const <SubscriptionStatus>[];
+  final total = 1 + statuses.length + snapshot.providers.length;
+  final ready = [
+    deepSeek,
+    for (final s in statuses) s.signedIn,
+    for (final p in snapshot.providers) snapshot.healthOf(p) == ProviderHealth.ready,
+  ].where((ok) => ok).length;
+  final counts = appL10n.engineProvidersSummary(total, ready);
+  return remote ? '${conn.label} · $counts' : counts;
+}
+
+/// DeepSeek: the app's own account / API Key on 本机, the engine's catalog on
+/// a remote host (whose DeepSeek setup lives on that host).
+class _DeepSeekCard extends ConsumerWidget {
+  const _DeepSeekCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final conn = ref.watch(activeConnectionProvider).value;
+    final Widget row;
+    if (conn != null && !conn.isLocal) {
+      final ready = catalogHasDeepSeek(ref.watch(modelCatalogProvider).value);
+      row = ListPageRow(
+        leading: const Monogram('DeepSeek'),
+        title: 'DeepSeek',
+        subtitle: ready ? l10n.engineFieldConfigured : l10n.engineProvidersNotConfiguredHere,
+        trailing: ProviderDot(ready ? StatusTone.ok : StatusTone.idle),
+      );
+    } else {
+      final account = ref.watch(accountProvider);
+      final settings = ref.watch(settingsProvider);
+      final (String subtitle, StatusTone tone) = switch (account.phase) {
+        AccountPhase.signedIn => (
+          l10n.engineProvidersAccount(account.profile?.displayName ?? l10n.commonSignedIn),
+          StatusTone.ok,
+        ),
+        AccountPhase.signingIn => (l10n.engineProvidersSigningIn, StatusTone.busy),
+        _ when settings.hasApiKey => ('API Key · ${maskApiKey(settings.apiKey)}', StatusTone.ok),
+        _ => (l10n.engineProvidersSignInOrKey, StatusTone.idle),
+      };
+      row = ListPageRow(
+        leading: const Monogram('DeepSeek'),
+        title: 'DeepSeek',
+        subtitle: subtitle,
+        trailing: ProviderDot(tone),
+        chevron: true,
+        onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const AccountPage())),
+      );
+    }
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 24),
+      child: ListPageCard(title: l10n.engineProvidersOfficial, children: [row]),
+    );
+  }
+}
+
+/// 「订阅」: ChatGPT and Claude, signed in through the engine's bridge. Left
+/// out entirely when the engine has no bridge (older DSH, a remote host
+/// without it) or is not connected.
+class _SubscriptionAccounts extends ConsumerWidget {
+  const _SubscriptionAccounts();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final snapshot = ref.watch(subscriptionsProvider).value;
+    if (snapshot == null || !snapshot.available || snapshot.statuses.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 24),
+      child: ListPageCard(
+        title: l10n.engineProvidersSubscription,
+        children: [
+          for (final status in snapshot.statuses)
+            _SubscriptionRow(
+              status: status,
+              onSignIn: () => showSubscriptionLogin(context, status.subscription),
+              onOpen: () => Navigator.of(context)
+                  .push(MaterialPageRoute<void>(builder: (_) => SubscriptionPage(subscription: status.subscription))),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SubscriptionRow extends StatelessWidget {
+  const _SubscriptionRow({required this.status, required this.onSignIn, required this.onOpen});
+
+  final SubscriptionStatus status;
+  final VoidCallback onSignIn;
+  final VoidCallback onOpen;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final label = subscriptionLabel(status.subscription);
+    final account = status.account?.trim();
+    if (status.signedIn) {
+      return ListPageRow(
+        leading: Monogram(label, letter: subscriptionLetter(status.subscription)),
+        title: label,
+        subtitle: account == null || account.isEmpty
+            ? l10n.commonSignedIn
+            : l10n.engineProvidersSignedInAccount(account),
+        trailing: const ProviderDot(StatusTone.ok),
+        chevron: true,
+        onTap: onOpen,
+      );
+    }
+    return ListPageRow(
+      leading: Monogram(label, letter: subscriptionLetter(status.subscription)),
+      title: label,
+      trailing: LoginCapsule(onPressed: onSignIn, semanticLabel: l10n.engineSubscriptionSignIn(label)),
+      onTap: onSignIn,
+    );
+  }
+}
+
+/// The small 「登录」 capsule at the end of a row; its right edge is the row's
+/// 16dp edge, like the label on the left.
+class LoginCapsule extends StatelessWidget {
+  const LoginCapsule({super.key, required this.onPressed, this.semanticLabel});
+
+  final VoidCallback? onPressed;
+  final String? semanticLabel;
+
+  static const height = 32.0;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return Semantics(
+      label: semanticLabel,
+      button: true,
+      excludeSemantics: semanticLabel != null,
+      child: FilledButton.tonal(
+        onPressed: onPressed,
+        style: FilledButton.styleFrom(
+          minimumSize: const Size(0, height),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          visualDensity: VisualDensity.standard,
+          shape: const StadiumBorder(),
+          textStyle: Theme.of(context).textTheme.labelLarge,
+        ),
+        child: Text(l10n.commonSignIn),
+      ),
+    );
+  }
+}
+
+class _CustomCard extends StatelessWidget {
+  const _CustomCard({this.snapshot, this.cached, required this.onOpen, required this.onAdd, required this.readOnly});
+
+  final ProvidersSnapshot? snapshot;
+  final CachedProviders? cached;
+  final bool readOnly;
+  final ValueChanged<String> onOpen;
+  final VoidCallback onAdd;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final live = snapshot;
+    final providers =
+        cached?.rows ??
+        [
+          for (final p in live!.providers)
+            CachedProvider(
+              id: p.id,
+              name: p.displayName,
+              api: p.api,
+              models: p.models.length,
+              health: live.healthOf(p),
+            ),
+        ];
+    final writable = !readOnly && (live?.writable ?? false);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ListPageCard(
+          title: l10n.engineProvidersCustom,
+          children: [
+            for (final (i, p) in providers.indexed)
+              FadeSlideIn(
+                key: ValueKey(p.id),
+                index: i,
+                child: _ProviderRow(provider: p, onTap: readOnly ? null : () => onOpen(p.id)),
+              ),
+            ListPageRow(
+              icon: AppIcons.add,
+              iconColor: writable ? Theme.of(context).colorScheme.primary : null,
+              spot: Spots.addProvider,
+              subtitle: providers.isEmpty ? l10n.engineProvidersCompatibleHint : null,
+              chevron: false,
+              onTap: writable ? onAdd : null,
+            ),
+          ],
+        ),
+        if (live != null && !live.writable) FeatureNote(l10n.engineProvidersReadOnly),
+      ],
+    );
+  }
+}
+
+class _ProviderRow extends StatelessWidget {
+  const _ProviderRow({required this.provider, required this.onTap});
+
+  final CachedProvider provider;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final health = provider.health;
+    final view = ProviderHealthView.of(health);
+    final colors = DshColors.of(context);
+    return Semantics(
+      label: '${provider.name}，${view.label}',
+      child: ListPageRow(
+        leading: Monogram(provider.name),
+        title: provider.name,
+        subtitle: health != ProviderHealth.ready
+            ? view.label
+            : [
+                if (provider.api case final api?) protocolLabel(api) else context.l10n.engineProviderConfiguredInWeb,
+                if (provider.models > 0) context.l10n.engineProviderModels(provider.models),
+              ].join(' · '),
+        subtitleColor: switch (health) {
+          ProviderHealth.missingKey => colors.warning,
+          ProviderHealth.misconfigured => colors.danger,
+          _ => null,
+        },
+        trailing: ProviderDot(view.tone),
+        chevron: onTap != null,
+        onTap: onTap,
+      ),
+    );
+  }
+}
+
+/// For callers outside this page (the model sheet, onboarding).
+void openProviders(BuildContext context) =>
+    Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const ProvidersPage()));
+
+/// A remote engine's catalog lists DeepSeek models (account or API Key).
+bool catalogHasDeepSeek(ModelCatalog? catalog) =>
+    catalog?.groups.any((g) => g.id.startsWith('deepseek') && g.models.isNotEmpty) ?? false;

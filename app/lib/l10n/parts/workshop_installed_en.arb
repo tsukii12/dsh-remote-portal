@@ -1,0 +1,59 @@
+{
+  "workshopInstalledEmptyTitle": "Nothing from the Workshop yet",
+  "workshopInstalledEmptyMessage": "Pets and companions you get in Browse show up here.",
+  "workshopInstalledEmptyAction": "Browse",
+  "workshopInstalledLoadFailedTitle": "Can't read what's installed",
+  "workshopInstalledLoadStale": "Couldn't read this phone again. Showing the last result.",
+  "workshopInstalledCatalogStale": "Update and withdrawal info may be out of date.",
+  "workshopInstalledCatalogUnknown": "Update and withdrawal info isn't available right now.",
+  "workshopInstalledStatusUpdate": "Update available",
+  "workshopInstalledStatusWithdrawn": "This version was withdrawn",
+  "workshopInstalledStatusOtherOrigin": "From a different Workshop",
+  "workshopInstalledStatusNotListed": "Not in the Workshop right now",
+  "workshopInstalledStatusCompanionOff": "Companion items are off for now",
+  "workshopInstalledStatusRewritten": "Differs from the same version in the Workshop",
+  "workshopInstalledStatusRemoving": "Uninstalling…",
+  "workshopInstalledStatusRemoveFailed": "Couldn't uninstall",
+  "workshopInstalledStatusRemoved": "Uninstalled",
+  "workshopInstalledIssueBroken": "This pack is damaged",
+  "workshopInstalledIssueUnreadable": "This pack can't be read",
+  "workshopInstalledIssueRecord": "Install record doesn't match",
+  "workshopInstalledIssueOther": "Something is wrong with this item",
+  "workshopInstalledNoteBroken": "This pack is damaged and may not work.",
+  "workshopInstalledNoteUnreadable": "Couldn't read this pack's files.",
+  "workshopInstalledNoteRecord": "Its install record doesn't match.",
+  "workshopInstalledNoteOther": "Something is wrong with this item, and nothing more can be read.",
+  "workshopInstalledNoteUntrusted": "Its install record can't be trusted, so it can't be uninstalled from here.",
+  "workshopInstalledNoteOtherOrigin": "This came from a different Workshop, so its updates can't be checked here.",
+  "workshopInstalledNoteNotListed": "The Workshop doesn't list it right now. The copy on this phone isn't affected.",
+  "workshopInstalledNoteRewritten": "The same version in the Workshop has different contents. The copy on this phone wasn't changed.",
+  "workshopInstalledNoteMinApp": "The version now in the Workshop needs a newer app.",
+  "workshopInstalledNoteUnavailable": "The version now in the Workshop can't be installed right now.",
+  "workshopInstalledNoteGone": "This item is no longer on this phone.",
+  "workshopInstalledNoteUnread": "The install records on this phone can't be read right now. This is what was there a moment ago.",
+  "workshopInstalledRemoveFailed": "Couldn't uninstall. {reason}",
+  "@workshopInstalledRemoveFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "workshopInstalledFactKind": "Kind",
+  "workshopInstalledFactId": "Item ID",
+  "workshopInstalledFactOrigin": "From",
+  "workshopInstalledFactLocalId": "Local ID",
+  "workshopInstalledRemoveTitle": "Uninstall \"{title}\"?",
+  "@workshopInstalledRemoveTitle": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "workshopInstalledRemoveMessage": "This deletes the copy on this phone. To use it again, get it from the Workshop again.",
+  "workshopInstalledRemoveNoReinstall": "The Workshop doesn't list it right now, so you may not be able to get it back.",
+  "workshopInstalledRemovedRefreshIssue": "Uninstalled, but the list couldn't refresh. Pull down to refresh it.",
+  "workshopInstalledRemovedLocalIssue": "Uninstalled, but some places didn't catch up. Reopen the app to bring them up to date.",
+  "workshopInstalledDismissFailure": "Got it"
+}

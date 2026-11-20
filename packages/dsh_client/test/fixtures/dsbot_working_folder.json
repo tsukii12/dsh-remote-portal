@@ -1,0 +1,316 @@
+{
+  "provenance": {
+    "repo": "Fei2411/DS-Bot",
+    "base": "4a7b55069ad300eae8be42a74f31bc170b40ead7",
+    "mobilePr": "6f3e1b3e8603abd84820b334a7f99985236dbbdf",
+    "note": "Actual createRuntime Fetch routes and real temporary filesystem directories, upstream fakeContext workspace registry. No model call. Does not emulate a native/browser directory picker."
+  },
+  "folders": {
+    "ok": true,
+    "value": {
+      "team": "/tmp/ds-bot-mobile-uO1REl/workspace",
+      "picker": null,
+      "folders": [
+        {
+          "path": "/tmp/ds-bot-folder-fixture-eq2lYz/Project 中国",
+          "title": "Project 中国"
+        }
+      ]
+    }
+  },
+  "botSet": {
+    "ok": true,
+    "value": {
+      "id": "s2",
+      "name": "Writer",
+      "role": "",
+      "model": "deepseek/deepseek-v4-flash",
+      "instructions": "",
+      "createdAt": 1793135030120,
+      "createdBy": null,
+      "capabilities": [],
+      "appliedModel": "deepseek/deepseek-v4-flash",
+      "workDir": "/tmp/ds-bot-folder-fixture-eq2lYz/Project 中国"
+    }
+  },
+  "botCustom": {
+    "id": "s2",
+    "name": "Writer",
+    "role": "",
+    "model": "deepseek/deepseek-v4-flash",
+    "instructions": "",
+    "createdAt": 1793135030120,
+    "createdBy": null,
+    "capabilities": [],
+    "appliedModel": "deepseek/deepseek-v4-flash",
+    "workDir": "/tmp/ds-bot-folder-fixture-eq2lYz/Project 中国",
+    "sessionId": "s2",
+    "parts": []
+  },
+  "roomSet": {
+    "ok": true,
+    "value": {
+      "room": {
+        "id": "s3",
+        "name": "Folder fixture",
+        "named": true,
+        "members": [
+          "s1",
+          "s2"
+        ],
+        "admin": "s1",
+        "mode": "admin",
+        "notice": "",
+        "createdAt": 1793135030122,
+        "createdBy": null,
+        "workDir": "/tmp/ds-bot-folder-fixture-eq2lYz/Project 中国",
+        "relayLimitDefault": 6,
+        "parts": []
+      },
+      "changes": [
+        "every member now works in /tmp/ds-bot-folder-fixture-eq2lYz/Project 中国 here"
+      ]
+    }
+  },
+  "roomCustom": {
+    "id": "s3",
+    "name": "Folder fixture",
+    "named": true,
+    "members": [
+      "s1",
+      "s2"
+    ],
+    "admin": "s1",
+    "mode": "admin",
+    "notice": "",
+    "createdAt": 1793135030122,
+    "createdBy": null,
+    "workDir": "/tmp/ds-bot-folder-fixture-eq2lYz/Project 中国",
+    "relayLimitDefault": 6,
+    "parts": []
+  },
+  "invalid": [
+    {
+      "workDir": "relative-folder",
+      "response": {
+        "ok": false,
+        "error": {
+          "code": "bot/refused",
+          "message": "Give the full path of the folder, not relative-folder",
+          "details": {}
+        }
+      }
+    },
+    {
+      "workDir": "/tmp/ds-bot-folder-fixture-eq2lYz/gone",
+      "response": {
+        "ok": false,
+        "error": {
+          "code": "bot/refused",
+          "message": "There is no folder at /tmp/ds-bot-folder-fixture-eq2lYz/gone",
+          "details": {}
+        }
+      }
+    },
+    {
+      "workDir": "/tmp/ds-bot-folder-fixture-eq2lYz/not-a-folder.txt",
+      "response": {
+        "ok": false,
+        "error": {
+          "code": "bot/refused",
+          "message": "/tmp/ds-bot-folder-fixture-eq2lYz/not-a-folder.txt is a file, not a folder",
+          "details": {}
+        }
+      }
+    },
+    {
+      "workDir": "/tmp/ds-bot-mobile-uO1REl",
+      "response": {
+        "ok": false,
+        "error": {
+          "code": "bot/refused",
+          "message": "/tmp/ds-bot-mobile-uO1REl holds DeepSeek Harness data, so Bots cannot work there",
+          "details": {}
+        }
+      }
+    }
+  ],
+  "afterInvalid": {
+    "id": "s2",
+    "name": "Writer",
+    "role": "",
+    "model": "deepseek/deepseek-v4-flash",
+    "instructions": "",
+    "createdAt": 1793135030120,
+    "createdBy": null,
+    "capabilities": [],
+    "appliedModel": "deepseek/deepseek-v4-flash",
+    "workDir": "/tmp/ds-bot-folder-fixture-eq2lYz/Project 中国",
+    "sessionId": "s2",
+    "parts": []
+  },
+  "botReset": {
+    "ok": true,
+    "value": {
+      "id": "s2",
+      "name": "Writer",
+      "role": "",
+      "model": "deepseek/deepseek-v4-flash",
+      "instructions": "",
+      "createdAt": 1793135030120,
+      "createdBy": null,
+      "capabilities": [],
+      "appliedModel": "deepseek/deepseek-v4-flash"
+    }
+  },
+  "roomReset": {
+    "ok": true,
+    "value": {
+      "room": {
+        "id": "s3",
+        "name": "Folder fixture",
+        "named": true,
+        "members": [
+          "s1",
+          "s2"
+        ],
+        "admin": "s1",
+        "mode": "admin",
+        "notice": "",
+        "createdAt": 1793135030122,
+        "createdBy": null,
+        "relayLimitDefault": 6,
+        "parts": []
+      },
+      "changes": [
+        "every member works in its own folder again"
+      ]
+    }
+  },
+  "final": {
+    "revision": 10,
+    "workspaceId": "w1",
+    "mainBotId": "s1",
+    "mainBotIds": [
+      "s1"
+    ],
+    "bots": [
+      {
+        "id": "s1",
+        "name": "Chief",
+        "role": "Chief of Staff",
+        "color": "deepseek",
+        "avatar": {
+          "shape": "whale"
+        },
+        "instructions": "",
+        "createdAt": 1793135030118,
+        "createdBy": null,
+        "capabilities": [],
+        "sessionId": "s1",
+        "parts": [],
+        "waiting": true
+      },
+      {
+        "id": "s2",
+        "name": "Writer",
+        "role": "",
+        "model": "deepseek/deepseek-v4-flash",
+        "instructions": "",
+        "createdAt": 1793135030120,
+        "createdBy": null,
+        "capabilities": [],
+        "appliedModel": "deepseek/deepseek-v4-flash",
+        "sessionId": "s2",
+        "parts": []
+      }
+    ],
+    "rooms": [
+      {
+        "id": "s3",
+        "name": "Folder fixture",
+        "named": true,
+        "members": [
+          "s1",
+          "s2"
+        ],
+        "admin": "s1",
+        "mode": "admin",
+        "notice": "",
+        "createdAt": 1793135030122,
+        "createdBy": null,
+        "relayLimitDefault": 6,
+        "parts": []
+      }
+    ],
+    "exchangeTurns": {},
+    "questions": {},
+    "views": {},
+    "btwCards": {},
+    "sideChats": {},
+    "agents": [],
+    "secrets": [],
+    "capabilities": [],
+    "secretRequests": {},
+    "colors": [
+      "deepseek",
+      "blue",
+      "violet",
+      "orange",
+      "green",
+      "magenta",
+      "cyan",
+      "red",
+      "yellow",
+      "brown",
+      "gray",
+      "black",
+      "aurora",
+      "charcoal",
+      "graphite",
+      "rose",
+      "sky",
+      "tangerine",
+      "cobalt"
+    ],
+    "models": [
+      {
+        "ref": "deepseek/deepseek-v4-flash",
+        "provider": "deepseek",
+        "providerName": "DeepSeek",
+        "id": "deepseek-v4-flash",
+        "name": "deepseek-v4-flash"
+      }
+    ],
+    "defaultModel": "deepseek/deepseek-v4-flash",
+    "permissions": null,
+    "modelsKey": "deepseek/deepseek-v4-flash|deepseek/deepseek-v4-flash",
+    "prefs": {},
+    "browser": false,
+    "memory": true,
+    "readOnly": null,
+    "activity": {},
+    "work": {
+      "bots": {},
+      "rooms": {},
+      "approvals": [],
+      "waiting": {},
+      "turns": {},
+      "steered": {}
+    },
+    "memoryNews": {},
+    "memoryReviews": 0,
+    "connectors": [
+      {
+        "id": "github",
+        "name": "GitHub",
+        "state": "off",
+        "account": null
+      }
+    ],
+    "capabilityStatuses": {
+      "s1": {},
+      "s2": {}
+    }
+  }
+}

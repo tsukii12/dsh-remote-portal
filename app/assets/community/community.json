@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "revision": 1,
+  "updatedAt": "2026-10-24T00:00:00Z",
+  "_comment": "社区页内容（docs/design/community.md）。线上版放仓库根目录 community.json，改一次 revision 加 1。group 的 url / qr / copy 全空时该项不显示。",
+  "tagline": "开源项目，欢迎点星",
+  "plugins": [
+    { "name": "@liustack/modsearch", "note": "免费的联网搜索" },
+    { "name": "@liustack/modlens", "note": "让纯文本模型看懂图片" },
+    { "name": "dsh-context", "note": "看清并管理上下文用量" },
+    { "name": "@xmanrui/dsh-im", "note": "把飞书、微信、QQ 机器人接进 DSH" },
+    { "name": "dsh-univer-office", "note": "表格和文档的办公环境" }
+  ],
+  "prompts": [
+    {
+      "title": "整理周报",
+      "summary": "按提交记录写一份周报",
+      "icon": "doc",
+      "prompt": "看看工作区里最近一周的 Git 提交，按项目整理成一份周报：完成了什么、遇到的问题、下周计划。用 Markdown 输出。"
+    },
+    {
+      "title": "读懂报错",
+      "summary": "原因、修法和验证",
+      "icon": "bug",
+      "prompt": "我贴一段报错信息，帮我解释原因，给出最可能的修复办法，并说明怎么确认修好了。报错如下：\n\n"
+    },
+    {
+      "title": "数据做成图表",
+      "summary": "表格、合计和一张图",
+      "icon": "chart",
+      "prompt": "把我接下来给的数据整理成表格，算出合计和环比，再画一张合适的图表。数据如下：\n\n"
+    },
+    {
+      "title": "两周入门一门语言",
+      "summary": "按天的计划和练习",
+      "icon": "school",
+      "prompt": "我想在两周内入门 Rust。给我一份按天的学习计划，每天一个小练习，现在就带我做第一天的练习。"
+    },
+    {
+      "title": "给项目写 README",
+      "summary": "介绍、安装和用法",
+      "icon": "code",
+      "prompt": "读一下工作区里的项目，写一份 README：一句话介绍、功能、安装、使用示例和目录结构。"
+    },
+    {
+      "title": "规划一次旅行",
+      "summary": "三天行程和预算",
+      "icon": "travel",
+      "prompt": "帮我规划一次三天的杭州旅行：每天的路线、交通、吃什么，再估一份预算。我喜欢人少的地方。"
+    }
+  ],
+  "groups": [
+    { "kind": "qq", "title": "QQ 交流群", "subtitle": "", "url": "", "qr": "", "copy": "" },
+    { "kind": "wechat", "title": "微信公众号", "subtitle": "", "url": "", "qr": "", "copy": "" },
+    { "kind": "telegram", "title": "Telegram", "subtitle": "", "url": "", "qr": "", "copy": "" },
+    {
+      "kind": "github",
+      "title": "问题反馈",
+      "subtitle": "GitHub Issues",
+      "url": "https://github.com/ccch1mneyyy/dsh-go/issues"
+    }
+  ],
+  "updates": [
+    {
+      "date": "2026-10-24",
+      "title": "社区页上线",
+      "summary": "精选插件、玩法和交流群都在这里，内容会持续更新。",
+      "url": "https://github.com/ccch1mneyyy/dsh-go"
+    }
+  ]
+}

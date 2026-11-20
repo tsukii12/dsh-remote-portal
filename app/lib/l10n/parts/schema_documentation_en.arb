@@ -1,0 +1,21 @@
+{
+  "schemaDocumentationTitle": "Field descriptions",
+  "schemaDocumentationOverview": "Overview",
+  "schemaDocumentationEach": "Each item",
+  "schemaDocumentationPosition": "Item {position}",
+  "@schemaDocumentationPosition": {
+    "placeholders": {
+      "position": {
+        "type": "int"
+      }
+    }
+  },
+  "schemaDocumentationOption": "Option {option}",
+  "@schemaDocumentationOption": {
+    "placeholders": {
+      "option": {
+        "type": "int"
+      }
+    }
+  }
+}

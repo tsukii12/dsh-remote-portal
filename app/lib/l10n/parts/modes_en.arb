@@ -1,0 +1,9 @@
+{
+  "modeSheetTitle": "Mode",
+  "modeKeyTooltip": "Switch mode",
+  "modeWork": "Work",
+  "modeWorkSubtitle": "Get things done with DSH",
+  "modeCompanionShort": "Companion",
+  "modeTavernSubtitle": "Import a character card and start a story",
+  "modeStartup": "Open on launch"
+}

@@ -1,0 +1,42 @@
+{
+  "riskDontShowAgain": "不再提示",
+  "riskAskAi": "不确定？问 AI",
+  "riskConfirmAlwaysAction": "始终免确认",
+  "riskFullAccessAction": "开启完全权限",
+  "riskAutoReviewAction": "开启自动审查",
+  "riskAllowForChatTitle": "本对话都允许？",
+  "riskAllowForChatBody": "这个对话之后的命令和改动都直接放行，可在输入框上方随时关闭。",
+  "riskAllowForChatAction": "全部允许",
+  "riskPetOverlayTitle": "显示在其他应用上层？",
+  "riskPetOverlayBody": "要在系统设置里为 DSH Go 打开「显示在其他应用上层」，宠物才能出现在别的 App 上。",
+  "riskPetOverlayAction": "去设置",
+  "askAiTooltip": "问 AI",
+  "askAiHelpTitle": "使用帮助",
+  "askAiHelpSubtitle": "不懂的地方，问 AI",
+  "askAiAboutApp": "关于 DSH Go App：{question}",
+  "@askAiAboutApp": {
+    "placeholders": {
+      "question": {
+        "type": "String"
+      }
+    }
+  },
+  "askAiWithGuide": "关于 DSH Go App：{question}\n请按附件里的使用说明回答。",
+  "@askAiWithGuide": {
+    "placeholders": {
+      "question": {
+        "type": "String"
+      }
+    }
+  },
+  "askAiNoGuide": "这台主机没有 DSH Go 使用说明，回答可能不准确",
+  "askAiQuestionOverview": "DSH Go 能做什么？我该从哪里开始？",
+  "askAiQuestionPhoneControl": "手机操控是怎么工作的？有什么风险？",
+  "askAiQuestionPhoneAlways": "手机操控选「始终免确认」会怎样？和「每次都询问」比风险在哪？",
+  "askAiQuestionAppRules": "手机操控的应用名单有什么用？放开银行、支付类 App 有什么风险？",
+  "askAiQuestionFullAccess": "「完全权限」打开后会怎样？有什么风险？",
+  "askAiQuestionPhoneFiles": "「访问手机文件」打开后，AI 能读写哪些文件？怎么关掉？",
+  "askAiQuestionAllowForChat": "「本对话都允许」会放行哪些操作？怎么关掉？",
+  "askAiQuestionPlugins": "插件能做什么？装第三方插件要注意什么？",
+  "askAiQuestionRemote": "怎么连接自己的电脑或服务器？和用本机有什么不同？"
+}

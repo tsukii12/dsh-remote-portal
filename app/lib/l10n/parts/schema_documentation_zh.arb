@@ -1,0 +1,21 @@
+{
+  "schemaDocumentationTitle": "字段说明",
+  "schemaDocumentationOverview": "概述",
+  "schemaDocumentationEach": "每一项",
+  "schemaDocumentationPosition": "第 {position} 项",
+  "@schemaDocumentationPosition": {
+    "placeholders": {
+      "position": {
+        "type": "int"
+      }
+    }
+  },
+  "schemaDocumentationOption": "选项 {option}",
+  "@schemaDocumentationOption": {
+    "placeholders": {
+      "option": {
+        "type": "int"
+      }
+    }
+  }
+}

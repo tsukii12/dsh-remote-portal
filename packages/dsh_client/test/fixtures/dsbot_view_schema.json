@@ -1,0 +1,1080 @@
+{
+  "ref": "4a7b55069ad300eae8be42a74f31bc170b40ead7",
+  "cases": [
+    {
+      "name": "text",
+      "native": true,
+      "valid": true,
+      "view": {
+        "type": "stack",
+        "children": [
+          {
+            "type": "text",
+            "text": "Static"
+          },
+          {
+            "type": "confirm",
+            "id": "act",
+            "confirmLabel": "Confirm",
+            "cancelLabel": "Cancel"
+          }
+        ]
+      },
+      "result": {
+        "title": "Synthetic text",
+        "view": {
+          "type": "stack",
+          "children": [
+            {
+              "type": "text",
+              "text": "Static"
+            },
+            {
+              "type": "confirm",
+              "id": "act",
+              "confirmLabel": "Confirm",
+              "cancelLabel": "Cancel"
+            }
+          ]
+        },
+        "interactive": true
+      }
+    },
+    {
+      "name": "metric",
+      "native": true,
+      "valid": true,
+      "view": {
+        "type": "stack",
+        "children": [
+          {
+            "type": "metric",
+            "label": "Count",
+            "value": 2
+          },
+          {
+            "type": "confirm",
+            "id": "act",
+            "confirmLabel": "Confirm",
+            "cancelLabel": "Cancel"
+          }
+        ]
+      },
+      "result": {
+        "title": "Synthetic metric",
+        "view": {
+          "type": "stack",
+          "children": [
+            {
+              "type": "metric",
+              "label": "Count",
+              "value": 2
+            },
+            {
+              "type": "confirm",
+              "id": "act",
+              "confirmLabel": "Confirm",
+              "cancelLabel": "Cancel"
+            }
+          ]
+        },
+        "interactive": true
+      }
+    },
+    {
+      "name": "percent",
+      "native": true,
+      "valid": true,
+      "view": {
+        "type": "stack",
+        "children": [
+          {
+            "type": "progress",
+            "label": "Done",
+            "percent": 50
+          },
+          {
+            "type": "confirm",
+            "id": "act",
+            "confirmLabel": "Confirm",
+            "cancelLabel": "Cancel"
+          }
+        ]
+      },
+      "result": {
+        "title": "Synthetic percent",
+        "view": {
+          "type": "stack",
+          "children": [
+            {
+              "type": "progress",
+              "label": "Done",
+              "percent": 50
+            },
+            {
+              "type": "confirm",
+              "id": "act",
+              "confirmLabel": "Confirm",
+              "cancelLabel": "Cancel"
+            }
+          ]
+        },
+        "interactive": true
+      }
+    },
+    {
+      "name": "choice-confirm",
+      "native": true,
+      "valid": true,
+      "view": {
+        "type": "stack",
+        "children": [
+          {
+            "type": "choice",
+            "id": "count",
+            "label": "Count",
+            "options": [
+              {
+                "label": "One",
+                "value": 1
+              },
+              {
+                "label": "Two",
+                "value": 2
+              }
+            ],
+            "value": 1
+          },
+          {
+            "type": "confirm",
+            "id": "act",
+            "confirmLabel": "Confirm",
+            "cancelLabel": "Cancel"
+          }
+        ]
+      },
+      "result": {
+        "title": "Synthetic choice-confirm",
+        "view": {
+          "type": "stack",
+          "children": [
+            {
+              "type": "choice",
+              "id": "count",
+              "label": "Count",
+              "options": [
+                {
+                  "label": "One",
+                  "value": 1
+                },
+                {
+                  "label": "Two",
+                  "value": 2
+                }
+              ],
+              "value": 1
+            },
+            {
+              "type": "confirm",
+              "id": "act",
+              "confirmLabel": "Confirm",
+              "cancelLabel": "Cancel"
+            }
+          ]
+        },
+        "interactive": true
+      }
+    },
+    {
+      "name": "choice-form",
+      "native": true,
+      "valid": true,
+      "view": {
+        "type": "stack",
+        "children": [
+          {
+            "type": "choice",
+            "id": "count",
+            "label": "Count",
+            "options": [
+              {
+                "label": "One",
+                "value": 1
+              },
+              {
+                "label": "Two",
+                "value": 2
+              }
+            ],
+            "value": 1
+          },
+          {
+            "type": "form",
+            "id": "act",
+            "fields": [
+              {
+                "id": "note",
+                "label": "Note"
+              }
+            ]
+          }
+        ]
+      },
+      "result": {
+        "title": "Synthetic choice-form",
+        "view": {
+          "type": "stack",
+          "children": [
+            {
+              "type": "choice",
+              "id": "count",
+              "label": "Count",
+              "options": [
+                {
+                  "label": "One",
+                  "value": 1
+                },
+                {
+                  "label": "Two",
+                  "value": 2
+                }
+              ],
+              "value": 1
+            },
+            {
+              "type": "form",
+              "id": "act",
+              "fields": [
+                {
+                  "id": "note",
+                  "label": "Note"
+                }
+              ]
+            }
+          ]
+        },
+        "interactive": true
+      }
+    },
+    {
+      "name": "choice-options",
+      "native": true,
+      "valid": true,
+      "view": {
+        "type": "stack",
+        "children": [
+          {
+            "type": "choice",
+            "id": "count",
+            "label": "Count",
+            "options": [
+              {
+                "label": "One",
+                "value": 1
+              },
+              {
+                "label": "Two",
+                "value": 2
+              }
+            ],
+            "value": 1
+          },
+          {
+            "type": "options",
+            "id": "act",
+            "options": [
+              {
+                "label": "Yes"
+              }
+            ]
+          }
+        ]
+      },
+      "result": {
+        "title": "Synthetic choice-options",
+        "view": {
+          "type": "stack",
+          "children": [
+            {
+              "type": "choice",
+              "id": "count",
+              "label": "Count",
+              "options": [
+                {
+                  "label": "One",
+                  "value": 1
+                },
+                {
+                  "label": "Two",
+                  "value": 2
+                }
+              ],
+              "value": 1
+            },
+            {
+              "type": "options",
+              "id": "act",
+              "options": [
+                {
+                  "label": "Yes"
+                }
+              ]
+            }
+          ]
+        },
+        "interactive": true
+      }
+    },
+    {
+      "name": "choice-submit",
+      "native": true,
+      "valid": true,
+      "view": {
+        "type": "stack",
+        "children": [
+          {
+            "type": "choice",
+            "id": "count",
+            "label": "Count",
+            "options": [
+              {
+                "label": "One",
+                "value": 1
+              },
+              {
+                "label": "Two",
+                "value": 2
+              }
+            ],
+            "value": 1
+          },
+          {
+            "type": "submit",
+            "id": "act"
+          }
+        ]
+      },
+      "result": {
+        "title": "Synthetic choice-submit",
+        "view": {
+          "type": "stack",
+          "children": [
+            {
+              "type": "choice",
+              "id": "count",
+              "label": "Count",
+              "options": [
+                {
+                  "label": "One",
+                  "value": 1
+                },
+                {
+                  "label": "Two",
+                  "value": 2
+                }
+              ],
+              "value": 1
+            },
+            {
+              "type": "submit",
+              "id": "act"
+            }
+          ]
+        },
+        "interactive": true
+      }
+    },
+    {
+      "name": "slider",
+      "native": false,
+      "valid": true,
+      "view": {
+        "type": "stack",
+        "children": [
+          {
+            "type": "slider",
+            "id": "n",
+            "label": "N",
+            "min": 0,
+            "max": 10,
+            "value": 1
+          },
+          {
+            "type": "confirm",
+            "id": "act",
+            "confirmLabel": "Confirm",
+            "cancelLabel": "Cancel"
+          }
+        ]
+      },
+      "result": {
+        "title": "Synthetic slider",
+        "view": {
+          "type": "stack",
+          "children": [
+            {
+              "type": "slider",
+              "id": "n",
+              "label": "N",
+              "min": 0,
+              "max": 10,
+              "value": 1
+            },
+            {
+              "type": "confirm",
+              "id": "act",
+              "confirmLabel": "Confirm",
+              "cancelLabel": "Cancel"
+            }
+          ]
+        },
+        "interactive": true
+      }
+    },
+    {
+      "name": "number",
+      "native": false,
+      "valid": true,
+      "view": {
+        "type": "stack",
+        "children": [
+          {
+            "type": "number",
+            "id": "n",
+            "label": "N",
+            "value": 1
+          },
+          {
+            "type": "confirm",
+            "id": "act",
+            "confirmLabel": "Confirm",
+            "cancelLabel": "Cancel"
+          }
+        ]
+      },
+      "result": {
+        "title": "Synthetic number",
+        "view": {
+          "type": "stack",
+          "children": [
+            {
+              "type": "number",
+              "id": "n",
+              "label": "N",
+              "value": 1
+            },
+            {
+              "type": "confirm",
+              "id": "act",
+              "confirmLabel": "Confirm",
+              "cancelLabel": "Cancel"
+            }
+          ]
+        },
+        "interactive": true
+      }
+    },
+    {
+      "name": "toggle",
+      "native": false,
+      "valid": true,
+      "view": {
+        "type": "stack",
+        "children": [
+          {
+            "type": "toggle",
+            "id": "flag",
+            "label": "Flag",
+            "value": false
+          },
+          {
+            "type": "confirm",
+            "id": "act",
+            "confirmLabel": "Confirm",
+            "cancelLabel": "Cancel"
+          }
+        ]
+      },
+      "result": {
+        "title": "Synthetic toggle",
+        "view": {
+          "type": "stack",
+          "children": [
+            {
+              "type": "toggle",
+              "id": "flag",
+              "label": "Flag",
+              "value": false
+            },
+            {
+              "type": "confirm",
+              "id": "act",
+              "confirmLabel": "Confirm",
+              "cancelLabel": "Cancel"
+            }
+          ]
+        },
+        "interactive": true
+      }
+    },
+    {
+      "name": "formula",
+      "native": false,
+      "valid": true,
+      "view": {
+        "type": "stack",
+        "children": [
+          {
+            "type": "choice",
+            "id": "count",
+            "label": "Count",
+            "options": [
+              {
+                "label": "One",
+                "value": 1
+              },
+              {
+                "label": "Two",
+                "value": 2
+              }
+            ],
+            "value": 1
+          },
+          {
+            "type": "text",
+            "text": {
+              "=": "format(count, 0)"
+            }
+          },
+          {
+            "type": "confirm",
+            "id": "act",
+            "confirmLabel": "Confirm",
+            "cancelLabel": "Cancel"
+          }
+        ]
+      },
+      "result": {
+        "title": "Synthetic formula",
+        "view": {
+          "type": "stack",
+          "children": [
+            {
+              "type": "choice",
+              "id": "count",
+              "label": "Count",
+              "options": [
+                {
+                  "label": "One",
+                  "value": 1
+                },
+                {
+                  "label": "Two",
+                  "value": 2
+                }
+              ],
+              "value": 1
+            },
+            {
+              "type": "text",
+              "text": {
+                "=": "format(count, 0)"
+              }
+            },
+            {
+              "type": "confirm",
+              "id": "act",
+              "confirmLabel": "Confirm",
+              "cancelLabel": "Cancel"
+            }
+          ]
+        },
+        "interactive": true
+      }
+    },
+    {
+      "name": "let",
+      "native": false,
+      "valid": true,
+      "view": {
+        "type": "stack",
+        "let": {
+          "answer": "1 + 1"
+        },
+        "children": [
+          {
+            "type": "text",
+            "text": "Static"
+          },
+          {
+            "type": "confirm",
+            "id": "act",
+            "confirmLabel": "Confirm",
+            "cancelLabel": "Cancel"
+          }
+        ]
+      },
+      "result": {
+        "title": "Synthetic let",
+        "view": {
+          "type": "stack",
+          "let": {
+            "answer": "1 + 1"
+          },
+          "children": [
+            {
+              "type": "text",
+              "text": "Static"
+            },
+            {
+              "type": "confirm",
+              "id": "act",
+              "confirmLabel": "Confirm",
+              "cancelLabel": "Cancel"
+            }
+          ]
+        },
+        "interactive": true
+      }
+    },
+    {
+      "name": "metric-caption",
+      "native": false,
+      "valid": true,
+      "view": {
+        "type": "stack",
+        "children": [
+          {
+            "type": "metric",
+            "label": "Count",
+            "value": 2,
+            "caption": "Extra meaning"
+          },
+          {
+            "type": "confirm",
+            "id": "act",
+            "confirmLabel": "Confirm",
+            "cancelLabel": "Cancel"
+          }
+        ]
+      },
+      "result": {
+        "title": "Synthetic metric-caption",
+        "view": {
+          "type": "stack",
+          "children": [
+            {
+              "type": "metric",
+              "label": "Count",
+              "value": 2,
+              "caption": "Extra meaning"
+            },
+            {
+              "type": "confirm",
+              "id": "act",
+              "confirmLabel": "Confirm",
+              "cancelLabel": "Cancel"
+            }
+          ]
+        },
+        "interactive": true
+      }
+    },
+    {
+      "name": "progress-ratio",
+      "native": false,
+      "valid": true,
+      "view": {
+        "type": "stack",
+        "children": [
+          {
+            "type": "progress",
+            "value": 1,
+            "max": 2
+          },
+          {
+            "type": "confirm",
+            "id": "act",
+            "confirmLabel": "Confirm",
+            "cancelLabel": "Cancel"
+          }
+        ]
+      },
+      "result": {
+        "title": "Synthetic progress-ratio",
+        "view": {
+          "type": "stack",
+          "children": [
+            {
+              "type": "progress",
+              "value": 1,
+              "max": 2
+            },
+            {
+              "type": "confirm",
+              "id": "act",
+              "confirmLabel": "Confirm",
+              "cancelLabel": "Cancel"
+            }
+          ]
+        },
+        "interactive": true
+      }
+    },
+    {
+      "name": "chart",
+      "native": false,
+      "valid": true,
+      "view": {
+        "type": "stack",
+        "children": [
+          {
+            "type": "chart",
+            "categories": [
+              "A"
+            ],
+            "series": [
+              {
+                "values": [
+                  1
+                ]
+              }
+            ]
+          },
+          {
+            "type": "confirm",
+            "id": "act",
+            "confirmLabel": "Confirm",
+            "cancelLabel": "Cancel"
+          }
+        ]
+      },
+      "result": {
+        "title": "Synthetic chart",
+        "view": {
+          "type": "stack",
+          "children": [
+            {
+              "type": "chart",
+              "categories": [
+                "A"
+              ],
+              "series": [
+                {
+                  "values": [
+                    1
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "confirm",
+              "id": "act",
+              "confirmLabel": "Confirm",
+              "cancelLabel": "Cancel"
+            }
+          ]
+        },
+        "interactive": true
+      }
+    },
+    {
+      "name": "callout",
+      "native": false,
+      "valid": true,
+      "view": {
+        "type": "stack",
+        "children": [
+          {
+            "type": "callout",
+            "text": "Check carefully"
+          },
+          {
+            "type": "confirm",
+            "id": "act",
+            "confirmLabel": "Confirm",
+            "cancelLabel": "Cancel"
+          }
+        ]
+      },
+      "result": {
+        "title": "Synthetic callout",
+        "view": {
+          "type": "stack",
+          "children": [
+            {
+              "type": "callout",
+              "text": "Check carefully"
+            },
+            {
+              "type": "confirm",
+              "id": "act",
+              "confirmLabel": "Confirm",
+              "cancelLabel": "Cancel"
+            }
+          ]
+        },
+        "interactive": true
+      }
+    },
+    {
+      "name": "table",
+      "native": false,
+      "valid": true,
+      "view": {
+        "type": "stack",
+        "children": [
+          {
+            "type": "table",
+            "columns": [
+              {
+                "key": "x",
+                "label": "X"
+              }
+            ],
+            "rows": [
+              [
+                1
+              ]
+            ]
+          },
+          {
+            "type": "confirm",
+            "id": "act",
+            "confirmLabel": "Confirm",
+            "cancelLabel": "Cancel"
+          }
+        ]
+      },
+      "result": {
+        "title": "Synthetic table",
+        "view": {
+          "type": "stack",
+          "children": [
+            {
+              "type": "table",
+              "columns": [
+                {
+                  "key": "x",
+                  "label": "X"
+                }
+              ],
+              "rows": [
+                [
+                  1
+                ]
+              ]
+            },
+            {
+              "type": "confirm",
+              "id": "act",
+              "confirmLabel": "Confirm",
+              "cancelLabel": "Cancel"
+            }
+          ]
+        },
+        "interactive": true
+      }
+    },
+    {
+      "name": "sources",
+      "native": false,
+      "valid": true,
+      "view": {
+        "type": "stack",
+        "children": [
+          {
+            "type": "sources",
+            "items": [
+              {
+                "label": "Source",
+                "url": "https://example.com"
+              }
+            ]
+          },
+          {
+            "type": "confirm",
+            "id": "act",
+            "confirmLabel": "Confirm",
+            "cancelLabel": "Cancel"
+          }
+        ]
+      },
+      "result": {
+        "title": "Synthetic sources",
+        "view": {
+          "type": "stack",
+          "children": [
+            {
+              "type": "sources",
+              "items": [
+                {
+                  "label": "Source",
+                  "url": "https://example.com"
+                }
+              ]
+            },
+            {
+              "type": "confirm",
+              "id": "act",
+              "confirmLabel": "Confirm",
+              "cancelLabel": "Cancel"
+            }
+          ]
+        },
+        "interactive": true
+      }
+    },
+    {
+      "name": "html",
+      "native": false,
+      "valid": true,
+      "view": {
+        "type": "stack",
+        "children": [
+          {
+            "type": "html",
+            "html": "<p>Sample</p>",
+            "summary": "Sample"
+          },
+          {
+            "type": "confirm",
+            "id": "act",
+            "confirmLabel": "Confirm",
+            "cancelLabel": "Cancel"
+          }
+        ]
+      },
+      "result": {
+        "title": "Synthetic html",
+        "view": {
+          "type": "stack",
+          "children": [
+            {
+              "type": "html",
+              "html": "<p>Sample</p>",
+              "summary": "Sample"
+            },
+            {
+              "type": "confirm",
+              "id": "act",
+              "confirmLabel": "Confirm",
+              "cancelLabel": "Cancel"
+            }
+          ]
+        },
+        "interactive": true
+      }
+    },
+    {
+      "name": "deep",
+      "native": false,
+      "valid": true,
+      "view": {
+        "type": "stack",
+        "children": [
+          {
+            "type": "stack",
+            "children": [
+              {
+                "type": "stack",
+                "children": [
+                  {
+                    "type": "stack",
+                    "children": [
+                      {
+                        "type": "stack",
+                        "children": [
+                          {
+                            "type": "stack",
+                            "children": [
+                              {
+                                "type": "stack",
+                                "children": [
+                                  {
+                                    "type": "text",
+                                    "text": "Deep"
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "result": {
+        "title": "Synthetic deep",
+        "view": {
+          "type": "stack",
+          "children": [
+            {
+              "type": "stack",
+              "children": [
+                {
+                  "type": "stack",
+                  "children": [
+                    {
+                      "type": "stack",
+                      "children": [
+                        {
+                          "type": "stack",
+                          "children": [
+                            {
+                              "type": "stack",
+                              "children": [
+                                {
+                                  "type": "stack",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "text": "Deep"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "interactive": false
+      }
+    },
+    {
+      "name": "future-input",
+      "native": false,
+      "valid": false,
+      "view": {
+        "type": "stack",
+        "children": [
+          {
+            "type": "future-input",
+            "id": "unknown"
+          },
+          {
+            "type": "confirm",
+            "id": "act",
+            "confirmLabel": "Confirm",
+            "cancelLabel": "Cancel"
+          }
+        ]
+      },
+      "result": {
+        "error": "view.children[0].type: unknown component \"future-input\"; allowed: stack, row, text, metric, table, chart, progress, callout, sources, html, slider, choice, toggle, number, options, confirm, form, submit"
+      }
+    }
+  ]
+}

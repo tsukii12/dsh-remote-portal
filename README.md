@@ -4,6 +4,10 @@
 
 # dsh-remote-portal
 
+许可范围：门户网关为 [MIT](LICENSE)；跨平台 Flutter 客户端 `app/` 及其 Dart 包为
+[AGPL-3.0](app/LICENSE)，基于 dsh-Go v1.2.0。来源及第三方例外见 [app/NOTICE](app/NOTICE)
+与 [第三方声明](app/THIRD_PARTY_NOTICES.md)。`ios/` 暂时保留旧 Swift 客户端作为迁移对照。
+
 [原生 iOS App（Simulator 试用）](ios/README.md)
 
 **为 DeepSeek Harness 提供远程能力：局域网或公网远程访问。**

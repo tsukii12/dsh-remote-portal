@@ -1,0 +1,4239 @@
+[
+  {
+    "name": "secondary-four-logics",
+    "books": [
+      {
+        "id": "book",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [
+                "sea",
+                "cloud"
+              ],
+              "content": "entry 0",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            },
+            "1": {
+              "uid": 1,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [
+                "sea",
+                "cloud"
+              ],
+              "content": "entry 1",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 1,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            },
+            "2": {
+              "uid": 2,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [
+                "cloud"
+              ],
+              "content": "entry 2",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 2,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            },
+            "3": {
+              "uid": 3,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [
+                "sea",
+                "beacon"
+              ],
+              "content": "entry 3",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 3,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            },
+            "4": {
+              "uid": 4,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [
+                "sea",
+                "cloud"
+              ],
+              "content": "entry 4",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 3,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            },
+            "5": {
+              "uid": 5,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [
+                "sea"
+              ],
+              "content": "entry 5",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 2,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            },
+            "6": {
+              "uid": 6,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "entry 6",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            },
+            "7": {
+              "uid": 7,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [
+                "missing"
+              ],
+              "content": "entry 7",
+              "constant": false,
+              "selective": false,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            },
+            "8": {
+              "uid": 8,
+              "key": [],
+              "keysecondary": [],
+              "content": "entry 8",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            },
+            "9": {
+              "uid": 9,
+              "key": [],
+              "keysecondary": [],
+              "content": "entry 9",
+              "constant": true,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            },
+            "10": {
+              "uid": 10,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "entry 10",
+              "constant": true,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "disable": true
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "beacon sea",
+        "speaker": "Keeper"
+      }
+    ],
+    "mustActivate": [
+      "book.0",
+      "book.1",
+      "book.2",
+      "book.3",
+      "book.6",
+      "book.7",
+      "book.9"
+    ],
+    "expected": {
+      "activated": [
+        "book.0",
+        "book.1",
+        "book.2",
+        "book.3",
+        "book.6",
+        "book.7",
+        "book.9"
+      ],
+      "before": "entry 9\nentry 7\nentry 6\nentry 3\nentry 2\nentry 1\nentry 0",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "beacon",
+        "sea",
+        "beacon",
+        "sea",
+        "cloud",
+        "beacon",
+        "cloud",
+        "beacon",
+        "sea",
+        "beacon",
+        "beacon",
+        "sea",
+        "cloud",
+        "beacon",
+        "sea",
+        "beacon",
+        "beacon",
+        "entry 0",
+        "entry 1",
+        "entry 2",
+        "entry 3",
+        "entry 6",
+        "entry 7",
+        "entry 9"
+      ]
+    }
+  },
+  {
+    "name": "case-and-ascii-wholeword",
+    "books": [
+      {
+        "id": "book",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "entry 0",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "matchWholeWords": true
+            },
+            "1": {
+              "uid": 1,
+              "key": [
+                "red sea"
+              ],
+              "keysecondary": [],
+              "content": "entry 1",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "matchWholeWords": true
+            },
+            "2": {
+              "uid": 2,
+              "key": [
+                "灯塔"
+              ],
+              "keysecondary": [],
+              "content": "entry 2",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "matchWholeWords": true
+            },
+            "3": {
+              "uid": 3,
+              "key": [
+                "cap"
+              ],
+              "keysecondary": [],
+              "content": "entry 3",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "caseSensitive": true
+            },
+            "4": {
+              "uid": 4,
+              "key": [
+                "cap"
+              ],
+              "keysecondary": [],
+              "content": "entry 4",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            },
+            "5": {
+              "uid": 5,
+              "key": [
+                "🐳"
+              ],
+              "keysecondary": [],
+              "content": "entry 5",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "matchWholeWords": true
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "CAP beaconish red seawall 超灯塔旁 🐳",
+        "speaker": "Keeper"
+      }
+    ],
+    "mustActivate": [
+      "book.1",
+      "book.2",
+      "book.4",
+      "book.5"
+    ],
+    "expected": {
+      "activated": [
+        "book.1",
+        "book.2",
+        "book.4",
+        "book.5"
+      ],
+      "before": "entry 5\nentry 4\nentry 2\nentry 1",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "beacon",
+        "red sea",
+        "灯塔",
+        "cap",
+        "cap",
+        "🐳",
+        "entry 1",
+        "entry 2",
+        "entry 4",
+        "entry 5"
+      ]
+    }
+  },
+  {
+    "name": "regex-flags-delimiters-and-sticky",
+    "books": [
+      {
+        "id": "book",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "/gate\\d+/i"
+              ],
+              "keysecondary": [],
+              "content": "entry 0",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "caseSensitive": true
+            },
+            "1": {
+              "uid": 1,
+              "key": [
+                "/red.blue/s"
+              ],
+              "keysecondary": [],
+              "content": "entry 1",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            },
+            "2": {
+              "uid": 2,
+              "key": [
+                "/^blue/m"
+              ],
+              "keysecondary": [],
+              "content": "entry 2",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            },
+            "3": {
+              "uid": 3,
+              "key": [
+                "/foo\\/bar/"
+              ],
+              "keysecondary": [],
+              "content": "entry 3",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            },
+            "4": {
+              "uid": 4,
+              "key": [
+                "/bad/ii"
+              ],
+              "keysecondary": [],
+              "content": "entry 4",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            },
+            "5": {
+              "uid": 5,
+              "key": [
+                "/Gate42/y"
+              ],
+              "keysecondary": [],
+              "content": "entry 5",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            },
+            "6": {
+              "uid": 6,
+              "key": [
+                "/\\x01Gate42/y"
+              ],
+              "keysecondary": [],
+              "content": "entry 6",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "Gate42\nred\nblue foo/bar /bad/ii",
+        "speaker": "Keeper"
+      }
+    ],
+    "settings": {
+      "world_info_include_names": false
+    },
+    "mustActivate": [
+      "book.0",
+      "book.1",
+      "book.2",
+      "book.3",
+      "book.4",
+      "book.6"
+    ],
+    "expected": {
+      "activated": [
+        "book.0",
+        "book.1",
+        "book.2",
+        "book.3",
+        "book.4",
+        "book.6"
+      ],
+      "before": "entry 6\nentry 4\nentry 3\nentry 2\nentry 1\nentry 0",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "/gate\\d+/i",
+        "/red.blue/s",
+        "/^blue/m",
+        "/foo\\/bar/",
+        "/bad/ii",
+        "/Gate42/y",
+        "/\\x01Gate42/y",
+        "entry 0",
+        "entry 1",
+        "entry 2",
+        "entry 3",
+        "entry 4",
+        "entry 6"
+      ]
+    }
+  },
+  {
+    "name": "scan-depth-overrides",
+    "books": [
+      {
+        "id": "book",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "old"
+              ],
+              "keysecondary": [],
+              "content": "entry 0",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            },
+            "1": {
+              "uid": 1,
+              "key": [
+                "old"
+              ],
+              "keysecondary": [],
+              "content": "entry 1",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "scanDepth": 2
+            },
+            "2": {
+              "uid": 2,
+              "key": [
+                "persona"
+              ],
+              "keysecondary": [],
+              "content": "entry 2",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "scanDepth": 0,
+              "matchPersonaDescription": true
+            },
+            "3": {
+              "uid": 3,
+              "key": [
+                "now"
+              ],
+              "keysecondary": [],
+              "content": "entry 3",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "old",
+        "speaker": "Keeper"
+      },
+      {
+        "text": "now",
+        "speaker": "Keeper"
+      }
+    ],
+    "settings": {
+      "world_info_depth": 1
+    },
+    "personaDescription": "persona",
+    "mustActivate": [
+      "book.1",
+      "book.3"
+    ],
+    "expected": {
+      "activated": [
+        "book.1",
+        "book.3"
+      ],
+      "before": "entry 3\nentry 1",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "old",
+        "old",
+        "persona",
+        "now",
+        "entry 1",
+        "entry 3"
+      ]
+    }
+  },
+  {
+    "name": "names-enabled",
+    "books": [
+      {
+        "id": "book",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "Keeper"
+              ],
+              "keysecondary": [],
+              "content": "entry 0",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "beacon",
+        "speaker": "Keeper"
+      }
+    ],
+    "mustActivate": [
+      "book.0"
+    ],
+    "expected": {
+      "activated": [
+        "book.0"
+      ],
+      "before": "entry 0",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "Keeper",
+        "entry 0"
+      ]
+    }
+  },
+  {
+    "name": "names-disabled",
+    "books": [
+      {
+        "id": "book",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "Keeper"
+              ],
+              "keysecondary": [],
+              "content": "entry 0",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "beacon",
+        "speaker": "Keeper"
+      }
+    ],
+    "settings": {
+      "world_info_include_names": false
+    },
+    "mustActivate": [],
+    "expected": {
+      "activated": [],
+      "before": "",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "Keeper"
+      ]
+    }
+  },
+  {
+    "name": "global-fields-and-injections",
+    "books": [
+      {
+        "id": "book",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "persona"
+              ],
+              "keysecondary": [],
+              "content": "entry 0",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "matchPersonaDescription": true
+            },
+            "1": {
+              "uid": 1,
+              "key": [
+                "persona"
+              ],
+              "keysecondary": [],
+              "content": "entry 1",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            },
+            "2": {
+              "uid": 2,
+              "key": [
+                "description"
+              ],
+              "keysecondary": [],
+              "content": "entry 2",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "matchCharacterDescription": true
+            },
+            "3": {
+              "uid": 3,
+              "key": [
+                "personality"
+              ],
+              "keysecondary": [],
+              "content": "entry 3",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "matchCharacterPersonality": true
+            },
+            "4": {
+              "uid": 4,
+              "key": [
+                "depthnote"
+              ],
+              "keysecondary": [],
+              "content": "entry 4",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "matchCharacterDepthPrompt": true
+            },
+            "5": {
+              "uid": 5,
+              "key": [
+                "scene"
+              ],
+              "keysecondary": [],
+              "content": "entry 5",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "matchScenario": true
+            },
+            "6": {
+              "uid": 6,
+              "key": [
+                "creator"
+              ],
+              "keysecondary": [],
+              "content": "entry 6",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "matchCreatorNotes": true
+            },
+            "7": {
+              "uid": 7,
+              "key": [
+                "injected"
+              ],
+              "keysecondary": [],
+              "content": "entry 7",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "beacon",
+        "speaker": "Keeper"
+      }
+    ],
+    "personaDescription": "persona",
+    "characterDescription": "description",
+    "characterPersonality": "personality",
+    "characterDepthPrompt": "depthnote",
+    "scenario": "scene",
+    "creatorNotes": "creator",
+    "scanInjections": [
+      "injected"
+    ],
+    "mustActivate": [
+      "book.0",
+      "book.2",
+      "book.3",
+      "book.4",
+      "book.5",
+      "book.6",
+      "book.7"
+    ],
+    "expected": {
+      "activated": [
+        "book.0",
+        "book.2",
+        "book.3",
+        "book.4",
+        "book.5",
+        "book.6",
+        "book.7"
+      ],
+      "before": "entry 7\nentry 6\nentry 5\nentry 4\nentry 3\nentry 2\nentry 0",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "persona",
+        "persona",
+        "description",
+        "personality",
+        "depthnote",
+        "scene",
+        "creator",
+        "injected",
+        "entry 0",
+        "entry 2",
+        "entry 3",
+        "entry 4",
+        "entry 5",
+        "entry 6",
+        "entry 7"
+      ]
+    }
+  },
+  {
+    "name": "all-positions-stable-ties",
+    "books": [
+      {
+        "id": "book",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "position0",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "outletName": "named"
+            },
+            "1": {
+              "uid": 1,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "position1",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 99,
+              "position": 1,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "outletName": "named"
+            },
+            "2": {
+              "uid": 2,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "position2",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 98,
+              "position": 2,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "outletName": "named"
+            },
+            "3": {
+              "uid": 3,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "position3",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 97,
+              "position": 3,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "outletName": "named"
+            },
+            "4": {
+              "uid": 4,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "position4",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 96,
+              "position": 4,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "outletName": "named"
+            },
+            "5": {
+              "uid": 5,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "position5",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 95,
+              "position": 5,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "outletName": "named"
+            },
+            "6": {
+              "uid": 6,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "position6",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 94,
+              "position": 6,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "outletName": "named"
+            },
+            "7": {
+              "uid": 7,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "position7",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 93,
+              "position": 7,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "outletName": "named"
+            },
+            "8": {
+              "uid": 8,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "depth low",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 20,
+              "position": 4,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            },
+            "9": {
+              "uid": 9,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "depth user",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 4,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 1
+            },
+            "10": {
+              "uid": 10,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "depth assistant",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 4,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 2
+            },
+            "11": {
+              "uid": 11,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "outlet low",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 10,
+              "position": 7,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "outletName": "named"
+            },
+            "12": {
+              "uid": 12,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "unplaced",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 99,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            },
+            "13": {
+              "uid": 13,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            },
+            "14": {
+              "uid": 14,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "tie last",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "beacon",
+        "speaker": "Keeper"
+      }
+    ],
+    "expected": {
+      "activated": [
+        "book.0",
+        "book.9",
+        "book.10",
+        "book.12",
+        "book.13",
+        "book.14",
+        "book.1",
+        "book.2",
+        "book.3",
+        "book.4",
+        "book.5",
+        "book.6",
+        "book.7",
+        "book.8",
+        "book.11"
+      ],
+      "before": "tie last\nposition0",
+      "after": "position1",
+      "examplesBefore": [
+        "position5"
+      ],
+      "examplesAfter": [
+        "position6"
+      ],
+      "authorNoteBefore": [
+        "position2"
+      ],
+      "authorNoteAfter": [
+        "position3"
+      ],
+      "depths": [
+        {
+          "depth": 4,
+          "entries": [
+            "depth user"
+          ],
+          "role": 1
+        },
+        {
+          "depth": 4,
+          "entries": [
+            "depth assistant"
+          ],
+          "role": 2
+        },
+        {
+          "depth": 4,
+          "entries": [
+            "depth low",
+            "position4"
+          ],
+          "role": 0
+        }
+      ],
+      "outlets": {
+        "named": [
+          "position7",
+          "outlet low"
+        ]
+      },
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "beacon",
+        "beacon",
+        "beacon",
+        "beacon",
+        "beacon",
+        "beacon",
+        "beacon",
+        "beacon",
+        "beacon",
+        "beacon",
+        "beacon",
+        "beacon",
+        "beacon",
+        "beacon",
+        "beacon",
+        "position0",
+        "depth user",
+        "depth assistant",
+        "unplaced",
+        "",
+        "tie last",
+        "position1",
+        "position2",
+        "position3",
+        "position4",
+        "position5",
+        "position6",
+        "position7",
+        "depth low",
+        "outlet low"
+      ]
+    }
+  },
+  {
+    "name": "budget-equality-and-ignore",
+    "books": [
+      {
+        "id": "book",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "ab",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            },
+            "1": {
+              "uid": 1,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "x",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            },
+            "2": {
+              "uid": 2,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "i",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "ignoreBudget": true
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "beacon",
+        "speaker": "Keeper"
+      }
+    ],
+    "maxContext": 12,
+    "mustActivate": [
+      "book.2"
+    ],
+    "expected": {
+      "activated": [
+        "book.2"
+      ],
+      "before": "i",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 3,
+      "overflowed": true,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "beacon",
+        "beacon",
+        "beacon",
+        "ab",
+        "i"
+      ]
+    }
+  },
+  {
+    "name": "budget-zero-becomes-one",
+    "books": [
+      {
+        "id": "book",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "beacon",
+        "speaker": "Keeper"
+      }
+    ],
+    "maxContext": 1,
+    "settings": {
+      "world_info_budget": 0
+    },
+    "mustActivate": [],
+    "expected": {
+      "activated": [],
+      "before": "",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 1,
+      "overflowed": true,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "beacon",
+        ""
+      ]
+    }
+  },
+  {
+    "name": "budget-round-and-cap",
+    "books": [
+      {
+        "id": "book",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "abc",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "beacon",
+        "speaker": "Keeper"
+      }
+    ],
+    "maxContext": 10,
+    "settings": {
+      "world_info_budget": 45,
+      "world_info_budget_cap": 4
+    },
+    "mustActivate": [],
+    "expected": {
+      "activated": [],
+      "before": "",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 4,
+      "overflowed": true,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "beacon",
+        "abc"
+      ]
+    }
+  },
+  {
+    "name": "source-character-first",
+    "books": [
+      {
+        "id": "chat",
+        "source": "chat",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "C",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 1,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            }
+          }
+        }
+      },
+      {
+        "id": "persona",
+        "source": "persona",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "P",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 1,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            }
+          }
+        }
+      },
+      {
+        "id": "global",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "G",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 999,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            }
+          }
+        }
+      },
+      {
+        "id": "character",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "K",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "beacon",
+        "speaker": "Keeper"
+      }
+    ],
+    "maxContext": 28,
+    "settings": {
+      "world_info_character_strategy": 1
+    },
+    "mustActivate": [
+      "chat.0",
+      "persona.0",
+      "character.0"
+    ],
+    "expected": {
+      "activated": [
+        "chat.0",
+        "persona.0",
+        "character.0"
+      ],
+      "before": "P\nC\nK",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 7,
+      "overflowed": true,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "beacon",
+        "beacon",
+        "beacon",
+        "beacon",
+        "C",
+        "P",
+        "K",
+        "G"
+      ]
+    }
+  },
+  {
+    "name": "source-global-first",
+    "books": [
+      {
+        "id": "chat",
+        "source": "chat",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "C",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 1,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            }
+          }
+        }
+      },
+      {
+        "id": "persona",
+        "source": "persona",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "P",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 1,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            }
+          }
+        }
+      },
+      {
+        "id": "global",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "G",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 999,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            }
+          }
+        }
+      },
+      {
+        "id": "character",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "K",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "beacon",
+        "speaker": "Keeper"
+      }
+    ],
+    "maxContext": 28,
+    "settings": {
+      "world_info_character_strategy": 2
+    },
+    "mustActivate": [
+      "chat.0",
+      "persona.0",
+      "global.0"
+    ],
+    "expected": {
+      "activated": [
+        "chat.0",
+        "persona.0",
+        "global.0"
+      ],
+      "before": "P\nC\nG",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 7,
+      "overflowed": true,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "beacon",
+        "beacon",
+        "beacon",
+        "beacon",
+        "C",
+        "P",
+        "G",
+        "K"
+      ]
+    }
+  },
+  {
+    "name": "source-evenly",
+    "books": [
+      {
+        "id": "chat",
+        "source": "chat",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "C",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 1,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            }
+          }
+        }
+      },
+      {
+        "id": "persona",
+        "source": "persona",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "P",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 1,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            }
+          }
+        }
+      },
+      {
+        "id": "global",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "G",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 999,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            }
+          }
+        }
+      },
+      {
+        "id": "character",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "K",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "beacon",
+        "speaker": "Keeper"
+      }
+    ],
+    "maxContext": 28,
+    "settings": {
+      "world_info_character_strategy": 0
+    },
+    "mustActivate": [
+      "chat.0",
+      "persona.0",
+      "global.0"
+    ],
+    "expected": {
+      "activated": [
+        "chat.0",
+        "persona.0",
+        "global.0"
+      ],
+      "before": "P\nC\nG",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 7,
+      "overflowed": true,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "beacon",
+        "beacon",
+        "beacon",
+        "beacon",
+        "C",
+        "P",
+        "G",
+        "K"
+      ]
+    }
+  },
+  {
+    "name": "source-book-dedup",
+    "books": [
+      {
+        "id": "same",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "entry 0",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            }
+          }
+        }
+      },
+      {
+        "id": "same",
+        "source": "chat",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "entry 0",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            }
+          }
+        }
+      },
+      {
+        "id": "same",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "entry 0",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "beacon",
+        "speaker": "Keeper"
+      }
+    ],
+    "mustActivate": [
+      "same.0"
+    ],
+    "expected": {
+      "activated": [
+        "same.0"
+      ],
+      "before": "entry 0",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "beacon",
+        "entry 0"
+      ]
+    }
+  },
+  {
+    "name": "recursive-chain-and-flags",
+    "books": [
+      {
+        "id": "book",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "a"
+              ],
+              "keysecondary": [],
+              "content": "b",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            },
+            "1": {
+              "uid": 1,
+              "key": [
+                "b"
+              ],
+              "keysecondary": [],
+              "content": "c",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            },
+            "2": {
+              "uid": 2,
+              "key": [
+                "c"
+              ],
+              "keysecondary": [],
+              "content": "d",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "preventRecursion": true
+            },
+            "3": {
+              "uid": 3,
+              "key": [
+                "d"
+              ],
+              "keysecondary": [],
+              "content": "entry 3",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            },
+            "4": {
+              "uid": 4,
+              "key": [
+                "b"
+              ],
+              "keysecondary": [],
+              "content": "entry 4",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "excludeRecursion": true
+            },
+            "5": {
+              "uid": 5,
+              "key": [],
+              "keysecondary": [],
+              "content": "z",
+              "constant": true,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "delayUntilRecursion": 1
+            },
+            "6": {
+              "uid": 6,
+              "key": [
+                "z"
+              ],
+              "keysecondary": [],
+              "content": "last",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "delayUntilRecursion": 2
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "a",
+        "speaker": "Keeper"
+      }
+    ],
+    "settings": {
+      "world_info_recursive": true
+    },
+    "mustActivate": [
+      "book.0",
+      "book.1",
+      "book.5",
+      "book.2",
+      "book.6"
+    ],
+    "expected": {
+      "activated": [
+        "book.0",
+        "book.1",
+        "book.5",
+        "book.2",
+        "book.6"
+      ],
+      "before": "last\nd\nz\nc\nb",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 5,
+      "randomUsed": 0,
+      "expandCalls": [
+        "a",
+        "b",
+        "c",
+        "d",
+        "b",
+        "b",
+        "b",
+        "c",
+        "d",
+        "c",
+        "z",
+        "c",
+        "d",
+        "d",
+        "d",
+        "z",
+        "last",
+        "d"
+      ]
+    }
+  },
+  {
+    "name": "probability-inclusive-boundaries",
+    "books": [
+      {
+        "id": "book",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "entry 0",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 0,
+              "depth": 4,
+              "role": 0
+            },
+            "1": {
+              "uid": 1,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "entry 1",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 50,
+              "depth": 4,
+              "role": 0
+            },
+            "2": {
+              "uid": 2,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "entry 2",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 50,
+              "depth": 4,
+              "role": 0
+            },
+            "3": {
+              "uid": 3,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "entry 3",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            },
+            "4": {
+              "uid": 4,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "entry 4",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": false,
+              "probability": 0,
+              "depth": 4,
+              "role": 0
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "beacon",
+        "speaker": "Keeper"
+      }
+    ],
+    "random": [
+      0,
+      0.5,
+      0.5001
+    ],
+    "mustActivate": [
+      "book.0",
+      "book.1",
+      "book.3",
+      "book.4"
+    ],
+    "expected": {
+      "activated": [
+        "book.0",
+        "book.1",
+        "book.3",
+        "book.4"
+      ],
+      "before": "entry 4\nentry 3\nentry 1\nentry 0",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 3,
+      "expandCalls": [
+        "beacon",
+        "beacon",
+        "beacon",
+        "beacon",
+        "beacon",
+        "entry 0",
+        "entry 1",
+        "entry 3",
+        "entry 4"
+      ]
+    }
+  },
+  {
+    "name": "probability-failure-not-rerolled",
+    "books": [
+      {
+        "id": "book",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "a"
+              ],
+              "keysecondary": [],
+              "content": "entry 0",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 0,
+              "depth": 4,
+              "role": 0
+            },
+            "1": {
+              "uid": 1,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "a",
+              "constant": true,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "a",
+        "speaker": "Keeper"
+      }
+    ],
+    "settings": {
+      "world_info_recursive": true
+    },
+    "random": [
+      0.7
+    ],
+    "mustActivate": [
+      "book.1"
+    ],
+    "expected": {
+      "activated": [
+        "book.1"
+      ],
+      "before": "a",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 2,
+      "randomUsed": 1,
+      "expandCalls": [
+        "a",
+        "a"
+      ]
+    }
+  },
+  {
+    "name": "group-weight-inclusive-boundary",
+    "books": [
+      {
+        "id": "book",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "entry 0",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "group": "g"
+            },
+            "1": {
+              "uid": 1,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "entry 1",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "group": "g"
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "beacon",
+        "speaker": "Keeper"
+      }
+    ],
+    "random": [
+      0.5
+    ],
+    "mustActivate": [
+      "book.0"
+    ],
+    "expected": {
+      "activated": [
+        "book.0"
+      ],
+      "before": "entry 0",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 1,
+      "expandCalls": [
+        "beacon",
+        "beacon",
+        "entry 0"
+      ]
+    }
+  },
+  {
+    "name": "group-before-probability-no-fallback",
+    "books": [
+      {
+        "id": "book",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "entry 0",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 0,
+              "depth": 4,
+              "role": 0,
+              "group": "g"
+            },
+            "1": {
+              "uid": 1,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "entry 1",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "group": "g"
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "beacon",
+        "speaker": "Keeper"
+      }
+    ],
+    "random": [
+      0,
+      0.8
+    ],
+    "mustActivate": [],
+    "expected": {
+      "activated": [],
+      "before": "",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 2,
+      "expandCalls": [
+        "beacon",
+        "beacon"
+      ]
+    }
+  },
+  {
+    "name": "group-override-order",
+    "books": [
+      {
+        "id": "book",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "entry 0",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 10,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "group": "g",
+              "groupOverride": true
+            },
+            "1": {
+              "uid": 1,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "entry 1",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 20,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "group": "g",
+              "groupOverride": true
+            },
+            "2": {
+              "uid": 2,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "entry 2",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 10000,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "group": "g"
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "beacon",
+        "speaker": "Keeper"
+      }
+    ],
+    "mustActivate": [
+      "book.1"
+    ],
+    "expected": {
+      "activated": [
+        "book.1"
+      ],
+      "before": "entry 1",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "beacon",
+        "beacon",
+        "beacon",
+        "entry 1"
+      ]
+    }
+  },
+  {
+    "name": "group-score-and-opt-out",
+    "books": [
+      {
+        "id": "book",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "a",
+                "b"
+              ],
+              "keysecondary": [
+                "c"
+              ],
+              "content": "entry 0",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 3,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "group": "g"
+            },
+            "1": {
+              "uid": 1,
+              "key": [
+                "a"
+              ],
+              "keysecondary": [
+                "absent"
+              ],
+              "content": "entry 1",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 2,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "group": "g"
+            },
+            "2": {
+              "uid": 2,
+              "key": [
+                "a"
+              ],
+              "keysecondary": [],
+              "content": "entry 2",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "group": "g",
+              "useGroupScoring": false
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "a b c",
+        "speaker": "Keeper"
+      }
+    ],
+    "settings": {
+      "world_info_use_group_scoring": true
+    },
+    "random": [
+      0.75
+    ],
+    "mustActivate": [
+      "book.2"
+    ],
+    "expected": {
+      "activated": [
+        "book.2"
+      ],
+      "before": "entry 2",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 1,
+      "expandCalls": [
+        "a",
+        "c",
+        "a",
+        "absent",
+        "a",
+        "entry 2"
+      ]
+    }
+  },
+  {
+    "name": "group-score-does-not-expand-keys",
+    "books": [
+      {
+        "id": "book",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "{{key}}"
+              ],
+              "keysecondary": [],
+              "content": "{{value}}",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "group": "g"
+            },
+            "1": {
+              "uid": 1,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "entry 1",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "group": "g"
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "beacon",
+        "speaker": "Keeper"
+      }
+    ],
+    "settings": {
+      "world_info_use_group_scoring": true
+    },
+    "macros": {
+      "{{key}}": "beacon",
+      "{{value}}": "expanded"
+    },
+    "mustActivate": [
+      "book.1"
+    ],
+    "expected": {
+      "activated": [
+        "book.1"
+      ],
+      "before": "entry 1",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "{{key}}",
+        "beacon",
+        "entry 1"
+      ]
+    }
+  },
+  {
+    "name": "overlapping-groups-splice-minus-one",
+    "books": [
+      {
+        "id": "book",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "loser",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 300,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "group": "a,b"
+            },
+            "1": {
+              "uid": 1,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "winner",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 200,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "group": "a,b",
+              "groupOverride": true
+            },
+            "2": {
+              "uid": 2,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "unrelated tail",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "beacon",
+        "speaker": "Keeper"
+      }
+    ],
+    "mustActivate": [
+      "book.1"
+    ],
+    "expected": {
+      "activated": [
+        "book.1"
+      ],
+      "before": "winner",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "beacon",
+        "beacon",
+        "beacon",
+        "winner"
+      ]
+    }
+  },
+  {
+    "name": "min-activations-depth-plus-one",
+    "books": [
+      {
+        "id": "book",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "old"
+              ],
+              "keysecondary": [],
+              "content": "entry 0",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "old",
+        "speaker": "Keeper"
+      },
+      {
+        "text": "new",
+        "speaker": "Keeper"
+      }
+    ],
+    "settings": {
+      "world_info_depth": 1,
+      "world_info_min_activations": 1,
+      "world_info_min_activations_depth_max": 1
+    },
+    "mustActivate": [
+      "book.0"
+    ],
+    "expected": {
+      "activated": [
+        "book.0"
+      ],
+      "before": "entry 0",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 2,
+      "randomUsed": 0,
+      "expandCalls": [
+        "old",
+        "old",
+        "entry 0"
+      ]
+    }
+  },
+  {
+    "name": "min-activations-omits-recursive-buffer",
+    "books": [
+      {
+        "id": "book",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "TOKEN",
+              "constant": true,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            },
+            "1": {
+              "uid": 1,
+              "key": [
+                "old"
+              ],
+              "keysecondary": [
+                "TOKEN"
+              ],
+              "content": "entry 1",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 2,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "old",
+        "speaker": "Keeper"
+      },
+      {
+        "text": "new",
+        "speaker": "Keeper"
+      }
+    ],
+    "settings": {
+      "world_info_depth": 1,
+      "world_info_min_activations": 2,
+      "world_info_recursive": true
+    },
+    "mustActivate": [
+      "book.0",
+      "book.1"
+    ],
+    "expected": {
+      "activated": [
+        "book.0",
+        "book.1"
+      ],
+      "before": "entry 1\nTOKEN",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 4,
+      "randomUsed": 0,
+      "expandCalls": [
+        "old",
+        "TOKEN",
+        "old",
+        "old",
+        "TOKEN",
+        "entry 1"
+      ]
+    }
+  },
+  {
+    "name": "delayed-levels-with-recursion-disabled",
+    "books": [
+      {
+        "id": "book",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "entry 0",
+              "constant": true,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "delayUntilRecursion": 1
+            },
+            "1": {
+              "uid": 1,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "entry 1",
+              "constant": true,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "delayUntilRecursion": 2,
+              "excludeRecursion": true
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "beacon",
+        "speaker": "Keeper"
+      }
+    ],
+    "mustActivate": [
+      "book.0",
+      "book.1"
+    ],
+    "expected": {
+      "activated": [
+        "book.0",
+        "book.1"
+      ],
+      "before": "entry 1\nentry 0",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 2,
+      "randomUsed": 0,
+      "expandCalls": [
+        "entry 0",
+        "entry 1"
+      ]
+    }
+  },
+  {
+    "name": "single-delayed-level-needs-a-recursive-pass",
+    "books": [
+      {
+        "id": "book",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "entry 0",
+              "constant": true,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "delayUntilRecursion": 1
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "beacon",
+        "speaker": "Keeper"
+      }
+    ],
+    "mustActivate": [],
+    "expected": {
+      "activated": [],
+      "before": "",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": []
+    }
+  },
+  {
+    "name": "explicit-depth-does-not-expand",
+    "books": [
+      {
+        "id": "book",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "old"
+              ],
+              "keysecondary": [],
+              "content": "entry 0",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "scanDepth": 1
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "old",
+        "speaker": "Keeper"
+      },
+      {
+        "text": "middle",
+        "speaker": "Keeper"
+      },
+      {
+        "text": "new",
+        "speaker": "Keeper"
+      }
+    ],
+    "settings": {
+      "world_info_depth": 1,
+      "world_info_min_activations": 1,
+      "world_info_min_activations_depth_max": 2
+    },
+    "mustActivate": [],
+    "expected": {
+      "activated": [],
+      "before": "",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 3,
+      "randomUsed": 0,
+      "expandCalls": [
+        "old",
+        "old",
+        "old"
+      ]
+    }
+  },
+  {
+    "name": "prevent-recursion-not-carried-in-later-budget",
+    "books": [
+      {
+        "id": "book",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "a"
+              ],
+              "keysecondary": [],
+              "content": "1234",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "preventRecursion": true
+            },
+            "1": {
+              "uid": 1,
+              "key": [
+                "a"
+              ],
+              "keysecondary": [],
+              "content": "b",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            },
+            "2": {
+              "uid": 2,
+              "key": [
+                "b"
+              ],
+              "keysecondary": [],
+              "content": "5678",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "a",
+        "speaker": "Keeper"
+      }
+    ],
+    "maxContext": 36,
+    "settings": {
+      "world_info_recursive": true
+    },
+    "mustActivate": [
+      "book.0",
+      "book.1",
+      "book.2"
+    ],
+    "expected": {
+      "activated": [
+        "book.0",
+        "book.1",
+        "book.2"
+      ],
+      "before": "5678\nb\n1234",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 9,
+      "overflowed": false,
+      "scanRounds": 3,
+      "randomUsed": 0,
+      "expandCalls": [
+        "a",
+        "a",
+        "b",
+        "1234",
+        "b",
+        "b",
+        "5678"
+      ]
+    }
+  },
+  {
+    "name": "max-recursion-steps-includes-initial",
+    "books": [
+      {
+        "id": "book",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "a"
+              ],
+              "keysecondary": [],
+              "content": "b",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            },
+            "1": {
+              "uid": 1,
+              "key": [
+                "b"
+              ],
+              "keysecondary": [],
+              "content": "entry 1",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "a",
+        "speaker": "Keeper"
+      }
+    ],
+    "settings": {
+      "world_info_recursive": true,
+      "world_info_max_recursion_steps": 1
+    },
+    "mustActivate": [
+      "book.0"
+    ],
+    "expected": {
+      "activated": [
+        "book.0"
+      ],
+      "before": "b",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "a",
+        "b",
+        "b"
+      ]
+    }
+  },
+  {
+    "name": "triggers-and-character-filters",
+    "books": [
+      {
+        "id": "book",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "entry 0",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "triggers": [
+                "continue"
+              ]
+            },
+            "1": {
+              "uid": 1,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "entry 1",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "triggers": [
+                "normal"
+              ]
+            },
+            "2": {
+              "uid": 2,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "entry 2",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "characterFilter": {
+                "names": [
+                  "keeper"
+                ],
+                "isExclude": false
+              }
+            },
+            "3": {
+              "uid": 3,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "entry 3",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "characterFilter": {
+                "names": [
+                  "keeper"
+                ],
+                "isExclude": true
+              }
+            },
+            "4": {
+              "uid": 4,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "entry 4",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "characterFilter": {
+                "tags": [
+                  "sea"
+                ],
+                "isExclude": false
+              }
+            },
+            "5": {
+              "uid": 5,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "entry 5",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "characterFilter": {
+                "tags": [
+                  "sea"
+                ],
+                "isExclude": true
+              }
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "beacon",
+        "speaker": "Keeper"
+      }
+    ],
+    "characterName": "keeper",
+    "characterTags": [
+      "sea"
+    ],
+    "mustActivate": [
+      "book.1",
+      "book.2",
+      "book.4"
+    ],
+    "expected": {
+      "activated": [
+        "book.1",
+        "book.2",
+        "book.4"
+      ],
+      "before": "entry 4\nentry 2\nentry 1",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "beacon",
+        "beacon",
+        "beacon",
+        "entry 1",
+        "entry 2",
+        "entry 4"
+      ]
+    }
+  },
+  {
+    "name": "missing-tag-map-skips-tag-filter",
+    "books": [
+      {
+        "id": "book",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "entry 0",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0,
+              "characterFilter": {
+                "tags": [
+                  "sea"
+                ],
+                "isExclude": false
+              }
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "beacon",
+        "speaker": "Keeper"
+      }
+    ],
+    "mustActivate": [
+      "book.0"
+    ],
+    "expected": {
+      "activated": [
+        "book.0"
+      ],
+      "before": "entry 0",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "beacon",
+        "entry 0"
+      ]
+    }
+  },
+  {
+    "name": "whitespace-and-empty-keys",
+    "books": [
+      {
+        "id": "book",
+        "source": "character",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "   "
+              ],
+              "keysecondary": [],
+              "content": "entry 0",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            },
+            "1": {
+              "uid": 1,
+              "key": [
+                ""
+              ],
+              "keysecondary": [],
+              "content": "entry 1",
+              "constant": false,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            },
+            "2": {
+              "uid": 2,
+              "key": [
+                "beacon"
+              ],
+              "keysecondary": [],
+              "content": "",
+              "constant": true,
+              "selective": true,
+              "selectiveLogic": 0,
+              "order": 100,
+              "position": 0,
+              "useProbability": true,
+              "probability": 100,
+              "depth": 4,
+              "role": 0
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "beacon",
+        "speaker": "Keeper"
+      }
+    ],
+    "mustActivate": [
+      "book.0",
+      "book.2"
+    ],
+    "expected": {
+      "activated": [
+        "book.0",
+        "book.2"
+      ],
+      "before": "entry 0",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "   ",
+        "",
+        "entry 0",
+        ""
+      ]
+    }
+  },
+  {
+    "name": "v3-character-book-mapping",
+    "books": [
+      {
+        "id": "cardbook",
+        "source": "character",
+        "json": {
+          "name": "自制 V3 世界书",
+          "unknown_root": {
+            "keep": [
+              null,
+              "鲸鱼"
+            ]
+          },
+          "entries": [
+            {
+              "id": 7,
+              "keys": [
+                "beacon"
+              ],
+              "secondary_keys": [
+                "sea"
+              ],
+              "selective": true,
+              "enabled": true,
+              "constant": false,
+              "insertion_order": 15,
+              "content": "{{value}}",
+              "extensions": {
+                "position": 4,
+                "depth": 2,
+                "role": 1,
+                "selectiveLogic": 0,
+                "sticky": 3,
+                "unknown": {
+                  "x": [
+                    1,
+                    2
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "beacon sea",
+        "speaker": "Keeper"
+      }
+    ],
+    "macros": {
+      "{{value}}": "原文 🐳"
+    },
+    "mustActivate": [
+      "cardbook.7"
+    ],
+    "expected": {
+      "activated": [
+        "cardbook.7"
+      ],
+      "before": "",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [
+        {
+          "depth": 2,
+          "entries": [
+            "原文 🐳"
+          ],
+          "role": 1
+        }
+      ],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "beacon",
+        "sea",
+        "{{value}}"
+      ]
+    }
+  }
+]

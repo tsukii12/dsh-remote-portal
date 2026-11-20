@@ -1,0 +1,166 @@
+{
+  "updateCheck": "检查更新",
+  "updateAutoCheck": "自动检查更新",
+  "updateAutoCheckDaily": "每天检查一次",
+  "updateTileDownloading": "下载中",
+  "updateTileDownloadingPercent": "下载中 {percent}%",
+  "@updateTileDownloadingPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "updateTileVerifying": "校验中",
+  "updateTileReady": "可以安装",
+  "updateTileInstalling": "安装中",
+  "updateTileSkipped": "已跳过 {version}",
+  "@updateTileSkipped": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "updateTileNewVersion": "新版本 {version}",
+  "@updateTileNewVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "updateTileUpToDate": "已是最新",
+  "updateTileUnavailable": "暂时检查不了",
+  "updateUpToDate": "已是最新版本",
+  "updateCheckUnavailable": "暂时检查不了更新，稍后再试",
+  "updateDownloadInterrupted": "下载中断了",
+  "updateDownloadInterruptedMessage": "网络断开或太慢，重试会接着下载。",
+  "updateDownloadUnavailable": "下载地址暂时打不开",
+  "updateDownloadUnavailableMessage": "稍后再试，或去发布页手动下载。",
+  "updateChecksumFailed": "安装包校验没通过",
+  "updateChecksumFailedMessage": "文件和发布时不一致，已删除，请重试。",
+  "updateChecksumMissing": "缺少校验信息",
+  "updateChecksumMissingMessage": "为了安全不在 App 内安装，可以去发布页手动下载。",
+  "updateStorageWriteFailed": "写不进安装包",
+  "updateStorageWriteFailedMessage": "存储可能已满，清理一些空间后重试。",
+  "updateFreeSpaceRetry": "清理一些空间后重试。",
+  "updateSpaceRequired": "需要约 {size} 可用空间，清理后重试。",
+  "@updateSpaceRequired": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "updateSettingsOpenFailed": "没能打开系统设置",
+  "updateSettingsOpenFailedMessage": "到「设置 → 应用 → DSH Go」里允许「安装未知应用」，再回来安装。",
+  "updateInstallCancelled": "已取消安装",
+  "updateInstallCancelledMessage": "安装包还在，随时可以再装。",
+  "updateInstallUnconfirmed": "尚未确认安装结果",
+  "updateInstallUnconfirmedMessage": "安装包已保留。可先检查系统提示，再重试或用系统安装器打开。",
+  "updateSignatureMismatch": "签名不一致，不能直接覆盖",
+  "updateSignatureMismatchMessage": "手机上的 DSH Go 签名不同（多半是测试包），需要先卸载旧版再装新版。卸载会清空对话、Linux 环境和设置。",
+  "updateWrongPackage": "不是 DSH 的安装包",
+  "updateWrongPackageMessage": "下载到的文件不对，已删除，请稍后重试。",
+  "updateDowngradeBlocked": "不能降级安装",
+  "updateDowngradeBlockedMessage": "手机上的 DSH 比这个安装包还新。",
+  "updateIncompatible": "和这台手机不兼容",
+  "updateIncompatibleMessage": "安装包要求的系统版本或处理器架构和手机不符。",
+  "updatePackageCorrupt": "安装包已损坏",
+  "updatePackageCorruptMessage": "已删除，请重新下载。",
+  "updateInstallBlocked": "安装被拦截了",
+  "updateInstallBlockedMessage": "在系统的安装确认里允许；如果系统直接拦下（小米等机型），试试下面的「安装路线」：Shizuku 或本机 ADB，不用重新签名。",
+  "updateInstallIncomplete": "安装没有完成",
+  "updateInstallIncompleteMessage": "可以重试，或去发布页手动下载。",
+  "updateBrowserOpenFailed": "没能打开浏览器，请手动访问 {host}{path}",
+  "@updateBrowserOpenFailed": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      },
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "updateUpToDateVersion": "已是最新版本 {version}",
+  "@updateUpToDateVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "updateCurrentVersion": "当前 {version}",
+  "@updateCurrentVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "updateNewVersionFound": "发现新版本",
+  "updateReleaseNotes": "更新内容",
+  "updateNoReleaseNotes": "这个版本没有写更新说明。",
+  "updateInstallKeepsData": "安装时 DSH Go 会退出，对话和设置都会保留",
+  "updateNoCompatiblePackage": "没有适合本机的安装包",
+  "updateDownloading": "正在下载",
+  "updateDownloadSource": "经由 {source}",
+  "@updateDownloadSource": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "updateDownloadInBackgroundNote": "关掉窗口也会继续下载",
+  "updateVerifyingPackage": "正在校验安装包…",
+  "updateVerifyingPackageNote": "确认文件和发布时一致",
+  "updateInstalling": "正在安装…",
+  "updateConfirmInstallNote": "在系统弹窗里确认安装",
+  "updatePackageDownloaded": "安装包已下载",
+  "updateReadyToInstall": "校验通过，可以安装了。",
+  "updateAllowInstall": "允许 DSH Go 安装应用",
+  "updateAllowInstallMessage": "在系统设置里打开「安装未知应用」，回来后自动继续。",
+  "updateOpenReleasePage": "打开发布页",
+  "updateUpdateNow": "立即更新",
+  "updateSkipVersion": "跳过这个版本",
+  "updateInstallWithSystem": "用系统安装器安装",
+  "updateSystemInstallerFailed": "没能打开系统安装器",
+  "updateExportApk": "导出安装包",
+  "updateExportApkTitle": "导出安装包？",
+  "updateExportApkMessage": "会把这次下载并校验过的安装包复制到「下载/DSH-Go」，可以用 MT 管理器之类的工具重新签名后再装。\n\n重新签名后，手机上的签名和官方包不同，App 内更新会一直提示「签名不一致」，以后每次更新都要这样手动重签安装。\n\n如果只是系统拦着装不上（小米等机型），先试「安装路线」里的 Shizuku 或本机 ADB，那条路不用重新签名。",
+  "updateExportApkDone": "已存到 下载/{path}",
+  "@updateExportApkDone": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "updateExportApkFailed": "没能导出安装包",
+  "updateStarProject": "去 Star",
+  "updateCancelDownload": "取消下载",
+  "updateDownloadInBackground": "后台下载",
+  "updateVerifying": "正在校验…",
+  "updateInstallingBusy": "安装中…",
+  "updateOpenPermissionSettings": "去开启",
+  "updateNoAbiPackage": "这个版本还没有 {abi} 安装包，可以去发布页看看。",
+  "@updateNoAbiPackage": {
+    "placeholders": {
+      "abi": {
+        "type": "String"
+      }
+    }
+  },
+  "updateNoPackage": "这个版本还没有安装包，可以去发布页看看。",
+  "updateDownloadingPercent": "正在下载 {percent}%",
+  "@updateDownloadingPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  }
+}

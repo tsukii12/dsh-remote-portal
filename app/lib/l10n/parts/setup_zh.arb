@@ -1,0 +1,27 @@
+{
+  "setupAppearanceTitle": "选择外观",
+  "setupAppearanceMessage": "随时可以在设置里更改",
+  "setupLightMode": "轻量模式",
+  "setupCapsulePreparing": "准备运行环境",
+  "setupCapsuleProgress": "运行环境 {percent}%",
+  "@setupCapsuleProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "setupCapsuleProgressSemantics": "正在准备运行环境，已完成 {percent}%",
+  "@setupCapsuleProgressSemantics": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "setupCapsuleReady": "运行环境已就绪",
+  "setupCapsuleFailed": "安装未完成",
+  "setupWaitingBody": "完成后自动进入",
+  "setupNotifyWhenDone": "完成时会通知你",
+  "setupAwaitSignIn": "就绪后自动打开 DeepSeek 登录"
+}

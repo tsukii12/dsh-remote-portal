@@ -1,0 +1,587 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://go.dshtui.com/schema/plugin-kit/v1/stream.schema.json",
+  "title": "WS /dsh-go/v1/stream messages, protocol v1",
+  "description": "docs/design/native-plugins-protocol.md §4.3. One JSON object per text frame; `t` is the type. $defs.up = app -> bridge (<= 4 KiB per frame), $defs.down = bridge -> app (<= 48 KiB). Unknown `t` values and fields are ignored by both sides. v1.1: welcome.conn, up `cancel`, down `done` / `void` (deferred results, §4.7).",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/up"
+    },
+    {
+      "$ref": "#/$defs/down"
+    }
+  ],
+  "$defs": {
+    "sub": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32
+    },
+    "rev": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "up": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "t",
+            "v"
+          ],
+          "properties": {
+            "t": {
+              "const": "hello"
+            },
+            "v": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "locale": {
+              "type": "string",
+              "maxLength": 35,
+              "description": "BCP 47; passed to data functions and part of the data source key"
+            },
+            "features": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "enum": [
+                  "audio",
+                  "voice",
+                  "micro",
+                  "overlay",
+                  "files"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "t",
+            "sub",
+            "pkg",
+            "id"
+          ],
+          "properties": {
+            "t": {
+              "const": "sub"
+            },
+            "sub": {
+              "$ref": "#/$defs/sub"
+            },
+            "pkg": {
+              "$ref": "invoke.schema.json#/$defs/pkg"
+            },
+            "id": {
+              "$ref": "invoke.schema.json#/$defs/id"
+            },
+            "scope": {
+              "$ref": "invoke.schema.json#/$defs/scope"
+            },
+            "rev": {
+              "$ref": "#/$defs/rev"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "t",
+            "sub"
+          ],
+          "properties": {
+            "t": {
+              "const": "unsub"
+            },
+            "sub": {
+              "$ref": "#/$defs/sub"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "t"
+          ],
+          "properties": {
+            "t": {
+              "const": "ping"
+            },
+            "at": {
+              "type": "number"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "t",
+            "pending"
+          ],
+          "properties": {
+            "t": {
+              "const": "cancel"
+            },
+            "pending": {
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          "description": "v1.1: cancel a deferred result started on this connection"
+        },
+        {
+          "type": "object",
+          "required": [
+            "t",
+            "sub",
+            "pkg",
+            "id"
+          ],
+          "properties": {
+            "t": {
+              "const": "micro.sub"
+            },
+            "sub": {
+              "$ref": "#/$defs/sub"
+            },
+            "pkg": {
+              "$ref": "invoke.schema.json#/$defs/pkg"
+            },
+            "id": {
+              "$ref": "manifest.schema.json#/$defs/id"
+            },
+            "scope": {
+              "$ref": "invoke.schema.json#/$defs/scope"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "t",
+            "sub"
+          ],
+          "properties": {
+            "t": {
+              "const": "micro.unsub"
+            },
+            "sub": {
+              "$ref": "#/$defs/sub"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "t",
+            "lease",
+            "seq",
+            "event"
+          ],
+          "properties": {
+            "t": {
+              "const": "cap.event"
+            },
+            "lease": {
+              "type": "string",
+              "maxLength": 64
+            },
+            "seq": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "event": {
+              "enum": [
+                "audio.ended",
+                "audio.stopped",
+                "audio.error",
+                "voice.speechStart",
+                "voice.speechEnd",
+                "voice.stopped",
+                "voice.error",
+                "overlay.closed"
+              ]
+            },
+            "reason": {
+              "type": "string",
+              "maxLength": 120
+            }
+          }
+        }
+      ]
+    },
+    "down": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "t",
+            "v",
+            "bridge",
+            "hb"
+          ],
+          "properties": {
+            "t": {
+              "const": "welcome"
+            },
+            "v": {
+              "const": 1
+            },
+            "bridge": {
+              "type": "string"
+            },
+            "hb": {
+              "type": "integer"
+            },
+            "conn": {
+              "type": "string",
+              "maxLength": 64,
+              "description": "v1.1: id of this connection; send it as invoke.stream"
+            },
+            "features": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "enum": [
+                  "audio",
+                  "voice",
+                  "micro",
+                  "overlay",
+                  "files"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "t",
+            "sub",
+            "rev",
+            "data"
+          ],
+          "properties": {
+            "t": {
+              "const": "data"
+            },
+            "sub": {
+              "$ref": "#/$defs/sub"
+            },
+            "rev": {
+              "$ref": "#/$defs/rev"
+            },
+            "data": {
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "t",
+            "sub",
+            "rev",
+            "base",
+            "merge"
+          ],
+          "properties": {
+            "t": {
+              "const": "patch"
+            },
+            "sub": {
+              "$ref": "#/$defs/sub"
+            },
+            "rev": {
+              "$ref": "#/$defs/rev"
+            },
+            "base": {
+              "$ref": "#/$defs/rev"
+            },
+            "merge": {
+              "type": "object",
+              "description": "JSON Merge Patch (RFC 7386); null deletes"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "t",
+            "sub",
+            "rev"
+          ],
+          "properties": {
+            "t": {
+              "const": "sync"
+            },
+            "sub": {
+              "$ref": "#/$defs/sub"
+            },
+            "rev": {
+              "$ref": "#/$defs/rev"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "t",
+            "sub"
+          ],
+          "properties": {
+            "t": {
+              "const": "stale"
+            },
+            "sub": {
+              "$ref": "#/$defs/sub"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "t",
+            "sub",
+            "reason"
+          ],
+          "properties": {
+            "t": {
+              "const": "end"
+            },
+            "sub": {
+              "$ref": "#/$defs/sub"
+            },
+            "reason": {
+              "enum": [
+                "not-found",
+                "degraded",
+                "not-native",
+                "limit",
+                "error"
+              ]
+            },
+            "code": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "t"
+          ],
+          "properties": {
+            "t": {
+              "const": "changed"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "t",
+            "code"
+          ],
+          "properties": {
+            "t": {
+              "const": "error"
+            },
+            "code": {
+              "enum": [
+                "bad-request",
+                "unsupported-version",
+                "protocol"
+              ]
+            },
+            "message": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "t"
+          ],
+          "properties": {
+            "t": {
+              "const": "pong"
+            },
+            "at": {
+              "type": "number"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "t",
+            "pending",
+            "effects"
+          ],
+          "description": "v1.1: deferred result delivered",
+          "properties": {
+            "t": {
+              "const": "done"
+            },
+            "pending": {
+              "type": "string"
+            },
+            "effects": {
+              "type": "array",
+              "maxItems": 4,
+              "items": {
+                "$ref": "invoke.schema.json#/$defs/deferredEffect"
+              }
+            },
+            "issues": {
+              "type": "array",
+              "items": {
+                "$ref": "contributions.schema.json#/$defs/issue"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "t",
+            "pending",
+            "reason"
+          ],
+          "description": "v1.1: deferred result void; nothing else will arrive for this id",
+          "properties": {
+            "t": {
+              "const": "void"
+            },
+            "pending": {
+              "type": "string"
+            },
+            "reason": {
+              "enum": [
+                "timeout",
+                "error",
+                "cancelled"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "t",
+            "sub",
+            "rev",
+            "data"
+          ],
+          "properties": {
+            "t": {
+              "const": "micro.data"
+            },
+            "sub": {
+              "$ref": "#/$defs/sub"
+            },
+            "rev": {
+              "$ref": "#/$defs/microRev"
+            },
+            "data": {
+              "$ref": "#/$defs/microData"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "t",
+            "sub",
+            "reason"
+          ],
+          "properties": {
+            "t": {
+              "const": "micro.end"
+            },
+            "sub": {
+              "$ref": "#/$defs/sub"
+            },
+            "reason": {
+              "enum": [
+                "unsupported",
+                "limit",
+                "no-handler",
+                "not-found",
+                "error",
+                "closed"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "stripData": {
+      "description": "Data model of a composer.strip subscription (§4.5).",
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "text": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 24
+        },
+        "icon": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{0,31}$"
+        },
+        "tone": {
+          "enum": [
+            "good",
+            "warn",
+            "bad",
+            "info",
+            "muted"
+          ]
+        }
+      }
+    },
+    "microData": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "type": "string",
+          "maxLength": 240
+        },
+        "progress": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "description": "Complete model; serialized UTF-8 <=1024 bytes, no unknown fields; <=10Hz."
+    },
+    "microRev": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{16}\\.(?:[1-9][0-9]{0,14}|[1-8][0-9]{15}|900[0-6][0-9]{12}|90070[0-9]{11}|90071[0-8][0-9]{10}|900719[0-8][0-9]{9}|9007199[0-1][0-9]{8}|90071992[0-4][0-9]{7}|900719925[0-3][0-9]{6}|9007199254[0-6][0-9]{5}|90071992547[0-3][0-9]{4}|9007199254740[0-8][0-9]{2}|90071992547409[0-8][0-9]{1}|9007199254740990|9007199254740991)$",
+      "description": "v1.2 only: 16 lowercase hexadecimal epoch, dot, canonical positive decimal seq <=9007199254740991. Bind epoch per subscription; accept only larger seq."
+    }
+  }
+}

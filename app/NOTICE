@@ -1,0 +1,19 @@
+DRP Flutter application, derived from dsh-Go v1.2.0
+https://github.com/ccch1mneyyy/dsh-Go
+Source commit: c1a84e3f833ad59ff07a5027994dae3935907a2d
+
+The native plugin-view test schema in legacy_test/fixtures/plugin_view.schema.json
+is from sdk/plugin-kit at the same commit; its MIT license is preserved in
+legacy_test/fixtures/plugin_view.LICENSE.
+
+The application and accompanying Dart packages are AGPL-3.0 (see LICENSE),
+with upstream third-party exceptions preserved in THIRD_PARTY_NOTICES.md.
+Modified for dsh-remote-portal: portal-only authentication/transport, removal
+of embedded runtimes and WebViews, and DRP branding. Original copyright and
+third-party notices remain with their source files.
+
+Brand and mascot assets excluded by upstream ASSETS.md are omitted/replaced.
+The DRP whale icon is reused from this repository's existing iOS application;
+it identifies the dsh/DeepSeek service and does not imply official endorsement.
+
+The separate portal gateway at the repository root remains MIT licensed.

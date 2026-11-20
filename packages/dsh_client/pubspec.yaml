@@ -1,0 +1,19 @@
+name: dsh_client
+description: >-
+  Pure-Dart client for the DeepSeek Harness (DSH) `dsh web` API: launch-token
+  login, typed unary RPC over POST /api/<endpoint>, the /api/remote.mux
+  WebSocket with its $events stream, and high-level session helpers.
+  Verified against DSH 0.2.0-rc.2 and 0.2.1-rc.2.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.11.0
+
+executables:
+  dsh_probe: probe
+
+dev_dependencies:
+  fake_async: ^1.3.3
+  lints: ^6.0.0
+  test: ^1.26.0

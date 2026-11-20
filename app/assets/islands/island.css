@@ -1,0 +1,125 @@
+/* dsh-go web island: the official DSH Web client with everything hidden but
+ * one slot (docs/design/plugin-seams.md §6.1). island.js marks the nodes; this
+ * sheet only reacts to its data-dsh-go-island marks and never to hashed class
+ * names, so a DSH upgrade can make an island fail its ready gate but never
+ * show the wrong page.
+ *
+ *   html[data-dsh-go-island]          island mode is on
+ *   [data-dsh-go-island~=frame]       the box pinned to the viewport
+ *   [data-dsh-go-island~=path]        wrappers between the frame and the slot
+ *   [data-dsh-go-island~=off]         siblings of the path: out of the layout
+ *   [data-dsh-go-island~=chain]       ancestors of the frame: no containing
+ *                                     block for a fixed box (transforms off)
+ *   [data-dsh-go-island~=shown]       the slot outlet (display: contents)
+ *   [data-dsh-go-island~=layer]       menus / popovers the island's own
+ *                                     content opened (portals on <body>)
+ */
+
+html[data-dsh-go-island],
+html[data-dsh-go-island] body {
+  background: transparent !important;
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
+}
+
+html[data-dsh-go-island] body {
+  --dsh-boot-bg: transparent;
+}
+
+/* Everything outside the island off. Visibility (not display) keeps the
+ * official layout and its state intact, and hidden boxes take no touches.
+ * Set on every node, not just <body>'s children: sliding panels set their
+ * own `visibility: visible` and would show through an inherited hide. Inside
+ * the frame, the slot and the layers nothing is touched, so their own
+ * hidden parts (tooltips, collapsed rows) stay hidden. */
+html[data-dsh-go-island] body *:not(
+    [data-dsh-go-island~="frame"], [data-dsh-go-island~="frame"] *,
+    [data-dsh-go-island~="shown"], [data-dsh-go-island~="shown"] *,
+    [data-dsh-go-island~="layer"], [data-dsh-go-island~="layer"] *) {
+  visibility: hidden !important;
+}
+
+html[data-dsh-go-island] [data-dsh-go-island~="chain"] {
+  transform: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  perspective: none !important;
+  contain: none !important;
+  will-change: auto !important;
+}
+
+html[data-dsh-go-island] [data-dsh-go-island~="frame"] {
+  visibility: visible !important;
+  position: fixed !important;
+  top: var(--dsh-go-island-top, 0px) !important;
+  bottom: var(--dsh-go-island-bottom, 0px) !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+  background: transparent !important;
+  transform: none !important;
+  animation: none !important;
+  transition: none !important;
+  opacity: 1 !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box !important;
+  padding: var(--dsh-go-island-pad-y, 0px) var(--dsh-go-island-pad-x, 0px) !important;
+  z-index: 1 !important;
+}
+
+html[data-dsh-go-island] [data-dsh-go-island~="frame"][data-dsh-go-island~="block"] {
+  display: block !important;
+}
+
+/* A panel island grows to its content first (size messages), so the
+ * scrollbar only shows once the panel is full. */
+html[data-dsh-go-island][data-dsh-go-island-form="panel"] [data-dsh-go-island~="frame"] {
+  scrollbar-width: none !important;
+}
+
+/* Wrappers between the frame and the slot hold one visible child each (the
+ * rest is out of the layout): plain blocks, so a grid or a centred column
+ * around the slot doesn't push it sideways. */
+html[data-dsh-go-island] [data-dsh-go-island~="path"] {
+  display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  width: auto !important;
+  max-width: none !important;
+  min-height: 0 !important;
+  height: auto !important;
+  position: static !important;
+  transform: none !important;
+}
+
+html[data-dsh-go-island] [data-dsh-go-island~="off"] {
+  display: none !important;
+}
+
+html[data-dsh-go-island] [data-dsh-go-island~="shown"],
+html[data-dsh-go-island] [data-dsh-go-island~="layer"] {
+  visibility: visible !important;
+}
+
+/* An overlay island leaves the official frame where it is: only its own
+ * entries show, and the WebView passes touches outside them through. */
+html[data-dsh-go-island][data-dsh-go-island-form="overlay"] [data-dsh-go-island~="shown"] {
+  pointer-events: auto;
+}

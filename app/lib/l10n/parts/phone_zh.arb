@@ -1,0 +1,923 @@
+{
+  "phoneDiagnosticsCollecting": "正在收集…",
+  "phoneDiagnosticsPacking": "正在打包…",
+  "phoneDiagnosticsSharing": "正在打开分享…",
+  "phoneDiagnosticsSaving": "正在存到「下载」…",
+  "phoneDiagnosticsShare": "分享诊断包",
+  "phoneDiagnosticsShareHint": "附在问题反馈里",
+  "phoneDiagnosticsSave": "存到「下载」",
+  "phoneDiagnosticsSaveHint": "存进 下载/DSH-Go",
+  "phoneDiagnosticsNote": "含版本、设备、日志和最近一次崩溃，不含 Key 和令牌",
+  "phoneDiagnosticsExport": "导出诊断包",
+  "phoneSafeMode": "安全模式",
+  "phoneEngineStartingSafeEllipsis": "正在以安全模式启动…",
+  "phoneEngineStartingEllipsis": "正在启动…",
+  "phoneEngineTidyingFilesEllipsis": "正在整理插件文件…",
+  "phoneEngineStoppingEllipsis": "正在停止…",
+  "phoneEngineStoppedNextSafe": "已停止 · 下次以安全模式启动",
+  "phoneEngineInstallingRuntime": "正在安装运行环境…",
+  "phoneEngineRuntimeNotInstalled": "运行环境未安装",
+  "phoneEngineErrorSeeLogs": "引擎出错了，日志里有详情",
+  "phoneEngineTitle": "本机引擎",
+  "phoneEngineLocal": "本机引擎",
+  "phoneEngineLogs": "日志",
+  "phoneEngineAutoStart": "打开 App 时自动启动",
+  "phoneEngineKeepAlive": "后台运行",
+  "phoneEngineKeepAliveHint": "防止引擎被系统结束",
+  "phoneEngineDiagnostics": "诊断",
+  "phoneEngineDiagnosticsHint": "运行信息与问题反馈",
+  "phoneEngineRuntime": "运行环境",
+  "phoneEngineArchitecture": "架构",
+  "phoneEngineStopTitle": "停止引擎？",
+  "phoneEngineStopBody": "进行中的对话会中断，随时可以再启动。",
+  "phoneEngineInstallRuntime": "安装运行环境",
+  "phoneEngineStartAgain": "重新启动",
+  "phoneEngineStart": "启动",
+  "phoneEngineRestart": "重启",
+  "phoneEngineResetFailed": "没能重置",
+  "phoneEngineReset": "重置运行环境",
+  "phoneEngineResetHint": "删除对话和文件后重新解压",
+  "phoneEngineResetTitle": "重置运行环境？",
+  "phoneResetAlsoDeletes": "家目录（/root）里没有保留的内容也会一起删除，包括工作区里的文件、AGENTS.md，以及插件自己存的数据（比如记忆）。",
+  "phoneEngineKeepUiSkills": "保留界面配置和技能",
+  "phoneEngineKeepPluginsSettings": "保留已装插件和设置",
+  "phoneEngineDeleteReset": "删除并重置",
+  "phoneEngineNotInstalled": "未安装",
+  "phoneEngineInstalling": "正在安装",
+  "phoneEngineStoppedSafe": "已停止 · 安全模式",
+  "phoneEngineStartingSafe": "正在以安全模式启动",
+  "phoneEngineStarting": "正在启动",
+  "phoneEngineTidyingFiles": "正在整理插件文件",
+  "phoneEngineRunningProbation": "运行中 · 试用",
+  "phoneEngineStartupFailed": "启动失败",
+  "phoneEngineCrashed": "已崩溃",
+  "phoneEngineKilled": "被系统结束",
+  "phoneEngineError": "出错了",
+  "phoneEngineRuntimeCorrupt": "App 内的运行环境包已损坏，请重新安装 App",
+  "phoneEngineExited": "引擎意外退出了",
+  "phoneEngineRuntimeMissing": "运行环境还没有安装",
+  "phoneEngineSafeUnsupported": "这个版本的运行环境不支持安全模式，请更新 App",
+  "phoneEngineRuntimeIncomplete": "App 内的运行环境包不完整，请重新安装 App",
+  "phoneLogEmpty": "还没有日志",
+  "phoneLogShareTitle": "DSH 引擎日志",
+  "phoneLogCopyAll": "复制全部",
+  "phoneBackgroundAllow": "去放行",
+  "phoneToolScreen": "看屏幕",
+  "phoneToolCollect": "滚动收集",
+  "phoneToolTap": "点按",
+  "phoneToolType": "输入",
+  "phoneToolScroll": "滑动",
+  "phoneToolKey": "按键",
+  "phoneToolTapCoordinates": "点坐标",
+  "phoneToolHandoff": "交还给你",
+  "phoneToolOpenApp": "打开 App",
+  "phoneToolListApps": "查看应用",
+  "phoneToolIntent": "系统动作",
+  "phoneToolNotify": "发通知",
+  "phoneToolClipboard": "剪贴板",
+  "phoneToolAction": "操作",
+  "phoneDecisionContinued": "你点了继续",
+  "phoneDecisionDone": "已执行",
+  "phoneDecisionAllowed": "你允许了",
+  "phoneDecisionPauseExpired": "暂停太久",
+  "phoneDecisionBlocked": "已拦下",
+  "phoneDecisionTimeout": "超时",
+  "phoneDecisionUnavailable": "不可用",
+  "phoneDecisionScreenChanged": "屏幕变了",
+  "phoneDecisionFailed": "没成功",
+  "phoneActionLogTitle": "操作记录",
+  "phoneActionLogSubtitle": "只记做了什么，不记屏幕内容",
+  "phoneActionLogRefresh": "刷新",
+  "phoneActionLogEmpty": "还没有记录",
+  "phoneActionLogEmptyHint": "DSH 在手机上的每一步都会记在这里",
+  "phoneAppRuleDeny": "不碰",
+  "phoneAppRuleConfirm": "每一步都确认",
+  "phoneAppRuleNormal": "照常",
+  "phoneAppRuleDenyHint": "不读也不点，银行、支付类默认如此",
+  "phoneAppRuleConfirmHint": "可以读，点按和输入前先问你",
+  "phoneAppRuleNormalHint": "只有发送这类敏感操作先问你",
+  "phoneAppRulesTitle": "应用名单",
+  "phoneAppRulesSubtitle": "没列出的 App 照常处理，敏感操作仍先问你",
+  "phoneAppRulesUnavailable": "读不到应用名单",
+  "phoneTryLater": "稍后再试",
+  "phoneAppRulesChanged": "照常 · 你改过的",
+  "phoneAppRulesAdd": "添加 App",
+  "phoneAppRulesAddHint": "按包名添加",
+  "phoneSensitiveActionsNote": "密码、验证码、付款和系统设置都由你来",
+  "phoneAppRulesSaveFailed": "没有保存成功，稍后再试",
+  "phoneAppRulesAcceptRisk": "我知道风险，仍然修改",
+  "phoneAppRulesPackage": "包名",
+  "phoneAppRulesPackageHint": "在「设置 → 应用 → 应用信息」里能找到",
+  "phoneAlwaysAllowTitle": "始终允许",
+  "phoneAlwaysAllowOff": "未开启",
+  "phoneAlwaysAllowCount": "已允许 {count} 个应用",
+  "@phoneAlwaysAllowCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "phoneAlwaysAllowSwitchHint": "不再询问就把内容发到你选的应用",
+  "phoneAlwaysAllowWarning": "开启后 DSH 可不再询问就把内容发到这些应用，发出后无法撤回。",
+  "phoneAlwaysAllowConfirm": "确认开启",
+  "phoneAlwaysAllowAdd": "添加应用",
+  "phoneAlwaysAllowEmpty": "还没有允许的应用",
+  "phoneAlwaysAllowRemove": "移除",
+  "phoneAlwaysAllowSaveFailed": "保存失败",
+  "phoneDndRequiresAndroid": "需要 Android 14 及以上",
+  "phoneDndHiddenScreen": "在看不见的屏幕上操作",
+  "phoneNotReadyYet": "还没准备好",
+  "phoneActionFailedLater": "没有成功，稍后再试",
+  "phoneDndDisabled": "不打扰模式已关闭",
+  "phoneDndEnabled": "不打扰模式已启用",
+  "phoneDndShizukuPermissionFailed": "没有拿到授权。可以在 Shizuku 的「应用管理」里给 DSH Go 授权",
+  "phoneDndPairedConnect": "配对成功，点「连接」",
+  "phoneDndTitle": "不打扰模式",
+  "phoneDndSubtitle": "在看不见的屏幕上操作，不耽误你用手机",
+  "phoneDndUnsupported": "这台手机用不了：需要 Android 14 及以上。",
+  "phoneDndRequirements": "使用条件",
+  "phoneDndKeepUnlocked": "保持亮屏、解锁。",
+  "phoneDndReactivate": "重启手机后重新激活。",
+  "phoneDndKeepDebugging": "用 Shizuku 或自连 ADB 时，连接 Wi‑Fi 并保持无线调试开启。",
+  "phoneReady": "可以用了",
+  "phoneDndDirectAdb": "自连 ADB",
+  "phoneDndChannels": "连接方式",
+  "phoneDndShizukuFor": "装了 Shizuku App 的手机",
+  "phoneDndSuiFor": "Magisk 或 KernelSU 装了 Sui 模块",
+  "phoneDndRootFor": "已 root 的手机",
+  "phoneDndAdbFor": "不装别的 App，用无线调试",
+  "phoneDndStateInUse": "使用中",
+  "phoneDndStateNotReady": "未就绪",
+  "phoneDndStateUsable": "可以用",
+  "phoneDndStateNeedsGrant": "待授权",
+  "phoneDndStateNotRunning": "未运行",
+  "phoneDndStateNotInstalled": "未安装",
+  "phoneDndStateNotFound": "未检测到",
+  "phoneDndStateViaSui": "由 Sui 提供",
+  "phoneDndStateWaiting": "等待授权",
+  "phoneDndStateDisconnected": "未连接",
+  "phoneDndStateNotPaired": "未配对",
+  "phoneDndShizukuViaSui": "这台手机的 Shizuku 接口由 Sui 提供，请改用 Sui。",
+  "phoneDndSuiMissing": "没有检测到 Sui。在 Magisk 或 KernelSU 里装好 Sui 模块并重启手机，再回到这里。",
+  "phoneDndSuiRunning": "Sui 接口可用",
+  "phoneDndSuiStopped": "Sui 接口当前不可用。确认 Sui 模块已启用，重启手机后再试。",
+  "phoneDndSuiAllSet": "Sui 已启动并授权，接下来连接后台屏。",
+  "phoneDndSuiPermissionFailed": "没能请求 Sui 授权。确认 Sui 模块已启用后再试。",
+  "phoneDndRootWaiting": "正在等待 root 授权，请在 root 管理器的弹窗里选择。",
+  "phoneDndRootConnected": "root 已连接。断开后要回到这里再选一次；打开「更多设置」中的「保持 root 通道」，DSH Go 才会自己再去申请。",
+  "phoneDndRootConnectedKept": "root 已连接。断开后 DSH Go 会自己向 root 管理器再次申请。",
+  "phoneDndRootRetry": "重新申请 root 授权",
+  "phoneDndInstallShizuku": "先安装 Shizuku（免费、开源）。",
+  "phoneDndOpenShizukuSite": "打开 Shizuku 官网",
+  "phoneDndStartShizuku": "打开 Shizuku，按里面「通过无线调试启动」的说明做一遍（要连 Wi‑Fi）。回到这里会自动刷新。",
+  "phoneDndGrantShizukuHint": "Shizuku 已在运行，还要给 DSH Go 授权。",
+  "phoneDndGrantShizuku": "授权给 DSH Go",
+  "phoneDndShizukuAllSet": "Shizuku 已启动并授权，接下来连接后台屏。",
+  "phoneDndShizukuInstalled": "已安装 Shizuku",
+  "phoneDndShizukuRunning": "Shizuku 正在运行",
+  "phoneDndShizukuGranted": "已授权给 DSH Go",
+  "phoneDndShizukuCompatibility": "这版 Android 与官方版 Shizuku 存在兼容问题。",
+  "phoneDndWirelessDebuggingOn": "无线调试已打开",
+  "phoneDndPaired": "已配对",
+  "phoneDndConnected": "已连接",
+  "phoneDndDeveloperOptionsStep": "打开开发者选项：在「关于手机」里连点「版本号」7 次。小米在「我的设备 → 全部参数与信息」里点「OS 版本」，vivo 点「软件版本号」。",
+  "phoneDndWirelessDebuggingStep": "在开发者选项里打开「无线调试」，要连着 Wi‑Fi。开发者选项一般在「系统」或「其他设置」里。",
+  "phoneDndStartPairingStep": "回到这里点「开始配对」，DSH 会发一条通知。",
+  "phoneDndGetPairingCodeStep": "在「无线调试」里点「使用配对码配对设备」，屏幕上会出现 6 位配对码。",
+  "phoneDndEnterPairingCodeStep": "下拉通知栏，把配对码填进 DSH 的通知。配对成功后点「连接」。",
+  "phoneDndStartPairing": "开始配对",
+  "phoneDndPairingNotificationSent": "通知已发出，去「无线调试」里拿配对码",
+  "phoneDndManualEntry": "手动填写",
+  "phoneDndConnect": "连接",
+  "phoneDndManualEntryHint": "通知里没有输入框时，用「手动填写」",
+  "phoneDndXiaomiUsbHint": "打开「USB 调试（安全设置）」需插入 SIM 卡并登录小米账号。",
+  "phoneDndEnterCodeTitle": "填写配对码",
+  "phoneDndCodeLabel": "6 位配对码",
+  "phoneDndPortLabel": "端口（可不填）",
+  "phoneDndPortHint": "配对码下面「IP 地址和端口」冒号后的数字",
+  "phoneDndPair": "配对",
+  "phoneConfirmAsk": "每次都询问",
+  "phoneConfirmTask": "本任务免确认",
+  "phoneConfirmAlways": "始终免确认",
+  "phoneConfirmAskHint": "进新 App、发送、删除、付款前先问你",
+  "phoneConfirmTaskHint": "本轮只问一次",
+  "phoneConfirmAlwaysHint": "从不询问，直接操作",
+  "phoneConfirmTitle": "确认方式",
+  "phoneConfirmAlwaysTitle": "始终免确认？",
+  "phoneConfirmAlwaysBody": "打开 App、点按、发送、删除都直接做，不再问你。",
+  "phoneConfirmSaveFailed": "没改成，稍后再试",
+  "phoneEnableFailed": "没能开启，稍后再试",
+  "phoneDisableFailed": "没能关闭，稍后再试",
+  "phoneEnabled": "已开启",
+  "phoneDisabled": "已关闭",
+  "phoneOpenAccessibilityFailed": "打不开系统设置，请到「设置 → 无障碍」里找到 DSH",
+  "phoneOpenAppInfoFailed": "打不开应用信息，请到「设置 → 应用」里找到 DSH Go",
+  "phoneStopFailed": "没能停止，可以点悬浮条或通知上的「停止」",
+  "phoneControlTitle": "手机操控",
+  "phoneControlSubtitle": "看屏幕、帮你点按，随时可以停",
+  "phoneControlWorking": "正在操作手机",
+  "phoneControlTaskNoConfirmHint": "本任务免确认 · 悬浮条上也能暂停或停止",
+  "phoneControlFloatingBarHint": "悬浮条上也能暂停或停止",
+  "phoneControlAdvanced": "更多设置",
+  "phoneDndMoreChannels": "更多连接方式（Root / Sui）",
+  "phoneDndChangeChannel": "更换连接方式",
+  "phoneDndPairingHelp": "配对帮助 / 手动填写",
+  "phoneDndConnectHelp": "连接不上？",
+  "phoneDndPairNext": "先在系统开发者选项打开「无线调试」，再点「开始配对」，按通知填写配对码。",
+  "phoneControlKeepAliveHint": "防止系统关掉无障碍",
+  "phoneControlReadingEllipsis": "正在读取…",
+  "phoneControlNotReady": "未就绪",
+  "phoneControlNotEnabled": "未开启",
+  "phoneControlSafeModeNotLoaded": "安全模式下不加载",
+  "phoneControlLocalOnly": "只在本机引擎可用",
+  "phoneControlAfterEngineStarts": "引擎启动后生效",
+  "phoneControlNeedsAccessibility": "还差一步：打开无障碍",
+  "phoneControlReady": "可以操作手机",
+  "phoneControlSetup": "准备",
+  "phoneControlAccessibilityService": "无障碍服务",
+  "phoneControlAccessibilityReady": "能看屏幕、帮你点按了",
+  "phoneControlAccessibilityReconnect": "服务没连上，关掉再打开一次",
+  "phoneControlAccessibilityHint": "看屏幕和点按都靠它",
+  "phoneControlGoSettings": "去设置",
+  "phoneControlGoEnable": "去开启",
+  "phoneControlAccessibilityBlocked": "无障碍开关点不动？",
+  "phoneControlRestrictedAfterAttempt": "看起来没开成。侧载的 App 要先「允许受限制的设置」",
+  "phoneControlRestrictedHint": "侧载安装的 App 要先「允许受限制的设置」",
+  "phoneControlNotifications": "通知",
+  "phoneControlNotificationsPairingHint": "确认、停止和配对码都走通知",
+  "phoneControlNotificationsHint": "确认和「停止」按钮要用到",
+  "phoneControlAllowed": "已允许",
+  "phoneControlTry": "试一下",
+  "phoneControlReadScreen": "读一下当前屏幕",
+  "phoneControlReadScreenHint": "看看 DSH 读到了什么，不发给模型",
+  "phoneControlEnableAccessibilityFirst": "先打开无障碍服务",
+  "phoneControlLoading": "读取中",
+  "phoneControlRules": "规则",
+  "phoneControlRecentActions": "最近操作",
+  "phoneControlRecentActionsHint": "每一步都会记下，不含屏幕内容",
+  "phoneControlAllActions": "全部记录",
+  "phoneControlModuleNotReady": "这个版本里，手机操控模块还没有就绪",
+  "phoneControlSafeModeUnavailable": "安全模式下不可用",
+  "phoneControlSafeModeHint": "安全模式不加载插件，恢复正常模式后可用",
+  "phoneControlRemoteHost": "当前连的是远程主机",
+  "phoneControlCapabilities": "开启后能做什么",
+  "phoneControlIntents": "定闹钟、建日程、导航、分享",
+  "phoneControlNoExtraPermissions": "不用额外权限",
+  "phoneControlReadToTable": "读屏幕，整理成表格或待办",
+  "phoneControlNeedsAccessibilityHint": "需要打开无障碍",
+  "phoneControlTapType": "帮你点按、输入",
+  "phoneControlSensitiveHint": "发送、下单前先问你，付款由你来",
+  "phoneDisclosureWhatTitle": "读什么",
+  "phoneDisclosureWhatBody": "当前屏幕上的文字。用能看图的模型时，可能附一张截图。",
+  "phoneDisclosureWhenTitle": "什么时候读",
+  "phoneDisclosureWhenBody": "只在你发起任务，或点「读一下当前屏幕」时。平时不读。",
+  "phoneDisclosureWhoTitle": "发给谁",
+  "phoneDisclosureWhoBody": "发给你选的 DeepSeek 模型（云端）。银行卡号、身份证号会先打码。",
+  "phoneDisclosureNeverTitle": "默认不做",
+  "phoneDisclosureNeverBody": "不输密码和验证码，不改系统设置，遇到就交还给你。银行、支付类 App 也不碰。",
+  "phoneDisclosureStopTitle": "你随时能停",
+  "phoneDisclosureStopBody": "操作时屏幕上有悬浮条，可以暂停、停止或插话。手机要亮屏、解锁。",
+  "phoneDisclosureTitle": "开启手机操控前",
+  "phoneDisclosureIntro": "DSH 会像你一样看屏幕、点按，帮你把事办完。开启前，先了解这几点：",
+  "phoneDisclosureRestartNote": "开启后引擎会重启一次，进行中的回复会中断",
+  "phoneDisclosureNotNow": "先不开",
+  "phoneDisclosureAgreeEnable": "同意并开启",
+  "phoneCheckUnknown": "不确定",
+  "phoneCheckYes": "是",
+  "phoneCheckNotYet": "还没有",
+  "phoneRomStock": "原生 / 其他",
+  "phoneRestrictedAccessibility": "无障碍",
+  "phoneRestrictedOpenAccessibility": "去开无障碍",
+  "phoneRestrictedOverlay": "悬浮窗",
+  "phoneRestrictedOpenOverlay": "去开悬浮窗",
+  "phoneRestrictedTryAccessibility": "先去「无障碍」里点一次 DSH 的开关，看到「受限制的设置」提示后点「确定」。做过这一步，下面的选项才会出现。",
+  "phoneRestrictedOpenInfoStep": "回到这里，点「打开应用信息」。",
+  "phoneRestrictedBackAccessibility": "回到「无障碍」，打开 DSH。",
+  "phoneRestrictedMenuStep": "点右上角的三个点，选「允许受限制的设置」，按提示验证锁屏密码。",
+  "phoneRestrictedTryOverlay": "先去「悬浮窗」设置里点一次 DSH Go 的开关，看到「受限制的设置」提示后点「确定」。做过这一步，下面的选项才会出现。",
+  "phoneRestrictedBackOverlay": "回到「悬浮窗」设置，打开 DSH Go。",
+  "phoneRestrictedHuaweiOverlay": "华为 HarmonyOS 4 及更早的系统大多没有这一步，直接去「悬浮窗」设置打开 DSH Go。",
+  "phoneRestrictedHuaweiAccessibility": "华为 HarmonyOS 4 及更早的系统大多没有这一步，直接去「无障碍」打开 DSH。",
+  "phoneRestrictedVivoNote": "不同 OriginOS 版本位置可能不同。右上角没有三个点时，把应用信息页往下翻到底找一找。",
+  "phoneRestrictedAdvancedStep": "在「高级设置」里找到「允许受限制的设置」，打开它。",
+  "phoneRestrictedOppoNote": "ColorOS 有时找不到这个选项。这时用系统自带的「文件管理」找到 DSH 的安装包，点它覆盖安装一次（不用卸载，对话和设置都在），再去开无障碍。",
+  "phoneRestrictedHuaweiNote": "如果在无障碍里看到「受限制的设置」提示，按「原生 / 其他」的步骤做。",
+  "phoneRestrictedTitle": "允许受限制的设置",
+  "phoneRestrictedSteps": "步骤",
+  "phoneRestrictedDiagram": "图示",
+  "phoneRestrictedOpenInfo": "打开应用信息",
+  "phoneRestrictedOpenOverlayFailed": "打不开悬浮窗设置，请到「设置」里搜索「悬浮窗」",
+  "phoneRestrictedOpenAccessibilityFailed": "打不开无障碍设置，请到「设置」里搜索「无障碍」",
+  "phoneRestrictedFootnote": "名称因系统而异，找不到就在设置里搜「受限制」；仍打不开时重启手机再试",
+  "phoneRestrictedAppInfo": "应用信息",
+  "phoneRestrictedPermissionsManager": "权限管理",
+  "phoneRestrictedBatterySaver": "省电策略",
+  "phoneRestrictedAdvanced": "高级设置",
+  "phoneRestrictedPermissions": "权限",
+  "phoneRestrictedBattery": "电池",
+  "phoneRestrictedDiagramAdvanced": "图示：应用信息页里点「高级设置」，再打开「允许受限制的设置」",
+  "phoneRestrictedDiagramMenu": "图示：应用信息页点右上角三个点，再选「允许受限制的设置」",
+  "phoneRestrictedCaptionAdvanced": "① 点「高级设置」",
+  "phoneRestrictedCaptionMenu": "① 点右上角三个点",
+  "phoneRestrictedCaptionToggle": "② 打开这个开关",
+  "phoneRestrictedCaptionOption": "② 选这一项",
+  "phoneScreenReadFailed": "没能读到屏幕",
+  "phoneScreenUnknownReason": "原因不明",
+  "phoneScreenReadFailedHint": "确认无障碍已开启。密码、支付这类页面系统不让读",
+  "phoneScreenCurrent": "当前屏幕",
+  "phoneScreenEmpty": "（屏幕上没有可读的文字）",
+  "phoneScreenReadNote": "模型看到的就是这些文字，这次读取没有发给模型",
+  "phoneFailureSafeStartup": "安全模式也没能启动",
+  "phoneFailureSafeStartupHint": "问题多半在全局配置或运行环境",
+  "phoneFailureKilled": "引擎被系统结束了",
+  "phoneFailureKilledHint": "多半是内存不足或系统省电",
+  "phoneFailureLaunch": "本机运行环境未能启动",
+  "phoneFailureLaunchHint": "查看日志了解原因，或连接远程主机继续使用",
+  "phoneFailureNoSpaceHint": "清理一些空间后重试",
+  "phoneFailureStartup": "DSH 启动失败",
+  "phoneFailureCrashedEarly": "DSH 启动后很快崩溃了",
+  "phoneFailureCrashedLate": "DSH 运行中崩溃了",
+  "phoneFailureFatal": "引擎报告了致命错误",
+  "phoneFailureRestore": "恢复配置",
+  "phoneFailureEnterSafe": "进入安全模式",
+  "phoneFailureStartNormal": "正常启动",
+  "phoneFailureGlobalPatch": "全局补丁",
+  "phoneFailureEnvironment": "环境变量",
+  "phoneSafeMoveAsideTitle": "先移开这些文件？",
+  "phoneSafeMoveAsideIntro": "它们对所有配置都生效，安全模式也会受影响：",
+  "phoneSafeMoveAsideNote": "只是改名（加上 .off-时间），不会删除，修好后可以改回来。",
+  "phoneSafeStartDirectly": "直接启动",
+  "phoneSafeMoveAsideStart": "移开并启动",
+  "phoneSafeNoRestoreNeeded": "配置和上次正常时一样，无需恢复",
+  "phoneSafeNoRestoreRecord": "还没有正常运行过的配置记录",
+  "phoneSafeRestoreTitle": "恢复上次正常的配置？",
+  "phoneSafeRestoreStart": "恢复并启动",
+  "phoneSafeRestoredStarting": "已恢复上次正常的配置，正在启动…",
+  "phoneSafeRestoreFailed": "没能恢复",
+  "phoneSafeStopIncomplete": "还无法确认引擎已停止，未更改配置。请查看引擎日志后重试。",
+  "phoneSafeRestartIncomplete": "配置操作已完成，但引擎还未停止，暂未重启。请等待停止完成后再启动。",
+  "phoneSafeRestoreIntro": "DSH 会回到上次正常运行时的配置：",
+  "phoneSafeRestoreSettings": "• 设置恢复到当时的版本（现在的另存为备份）",
+  "phoneSafeRestoreNote": "不会卸载任何插件，也不需要联网。停用的插件以后可以重新打开。",
+  "phoneSafeLeaveTitle": "恢复正常模式？",
+  "phoneSafeLeaveBody": "用原来的配置和插件启动。安全模式期间改的网页版设置不会保留。",
+  "phoneSafeLeave": "恢复正常模式",
+  "phoneSafeMovePatch": "移开补丁",
+  "phoneSafeMoveFiles": "移开文件",
+  "phoneSafeFailureLog": "失败前后的日志",
+  "phoneSafeFailureLogEmpty": "没有记录到失败时的输出",
+  "phoneSafeBannerTitle": "安全模式 · 插件没有加载",
+  "phoneSafeBannerProbation": "正在试用正常模式",
+  "phoneSafeBannerProbationHint": "2 分钟内不再出错就算恢复，否则自动回到安全模式",
+  "phoneSafeBannerRunningHint": "对话都在，修好配置后恢复正常模式",
+  "phoneSafeBannerFailedHint": "安全模式也没能启动，去引擎页查看",
+  "phoneSafeBannerStoppedHint": "引擎已停止，下次启动仍是安全模式",
+  "phoneSafeRepair": "帮我修复",
+  "phoneSafeReasonStartup": "连续两次启动失败",
+  "phoneSafeReasonProbation": "恢复正常后又崩溃了",
+  "phoneSafeReasonManual": "手动开启",
+  "phoneSafeNormalSettingsHint": "用原有配置和插件重启",
+  "phoneSafeStartSettings": "以安全模式启动",
+  "phoneSafeStartSettingsHint": "不加载插件，排查启动问题",
+  "phoneSafeAutoSettings": "自动进入安全模式",
+  "phoneSafeAutoSettingsHint": "连续启动失败时自动启用",
+  "phoneAccentMist": "雾蓝",
+  "phoneAccentDaiqing": "黛青",
+  "phoneAccentDusk": "暮紫",
+  "phoneAccentTurquoise": "松石",
+  "phoneAccentAmber": "琥珀",
+  "phoneAccentGraphite": "石墨",
+  "phoneAccentCustom": "自定义",
+  "phoneEngineInstallPercent": "正在安装 · {percent}%",
+  "@phoneEngineInstallPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "phoneEngineStatusSemantics": "{prefix}引擎：{status}",
+  "@phoneEngineStatusSemantics": {
+    "placeholders": {
+      "prefix": {
+        "type": "String"
+      },
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneLogLineCount": "{count} 行",
+  "@phoneLogLineCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "phoneLogCopiedLines": "已复制 {count} 行",
+  "@phoneLogCopiedLines": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "phoneAppRuleDefault": "默认：{rule}",
+  "@phoneAppRuleDefault": {
+    "placeholders": {
+      "rule": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneAppRulesLoosenTitle": "让 DSH 操作「{app}」？",
+  "@phoneAppRulesLoosenTitle": {
+    "placeholders": {
+      "app": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneAppRulesSkipStepsTitle": "「{app}」不再逐步确认？",
+  "@phoneAppRulesSkipStepsTitle": {
+    "placeholders": {
+      "app": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneDndBrowserFailed": "打不开浏览器。网址：{url}",
+  "@phoneDndBrowserFailed": {
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneDndChannelReady": "{channel} · 可以用了",
+  "@phoneDndChannelReady": {
+    "placeholders": {
+      "channel": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneDndChannelStatus": "{channel} · {reason}",
+  "@phoneDndChannelStatus": {
+    "placeholders": {
+      "channel": {
+        "type": "String"
+      },
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneDndUsing": "正在使用：{channel}",
+  "@phoneDndUsing": {
+    "placeholders": {
+      "channel": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneDndEnableWith": "{mode, select, shizuku{用 Shizuku 开启} sui{用 Sui 开启} root{用 Root 开启} adb{用自连 ADB 开启} other{启用不打扰模式}}",
+  "@phoneDndEnableWith": {
+    "placeholders": {
+      "mode": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneDndSwitchTo": "{mode, select, shizuku{改用 Shizuku} sui{改用 Sui} root{改用 Root} adb{改用自连 ADB} other{改用这个通道}}",
+  "@phoneDndSwitchTo": {
+    "placeholders": {
+      "mode": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneControlWorkingApp": "正在操作「{app}」",
+  "@phoneControlWorkingApp": {
+    "placeholders": {
+      "app": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneControlPolicySummary": "{denied} 个不碰 · {confirmed} 个每步确认",
+  "@phoneControlPolicySummary": {
+    "placeholders": {
+      "denied": {
+        "type": "int"
+      },
+      "confirmed": {
+        "type": "int"
+      }
+    }
+  },
+  "phoneControlRemoteHint": "「{host}」上的 DSH 操作不了这台手机，切回「本机」后可用",
+  "@phoneControlRemoteHint": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneRestrictedSubtitle": "侧载的 App 要先放行这一项，{place}开关才点得动",
+  "@phoneRestrictedSubtitle": {
+    "placeholders": {
+      "place": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneRestrictedDone": "{place}已开好，可以返回了",
+  "@phoneRestrictedDone": {
+    "placeholders": {
+      "place": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneFailurePlugins": "可能和插件「{plugins}」有关",
+  "@phoneFailurePlugins": {
+    "placeholders": {
+      "plugins": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneFailureRequired": "必需组件 {components} 没通过启动检查",
+  "@phoneFailureRequired": {
+    "placeholders": {
+      "components": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneSafeRestoreAt": "DSH 会回到 {when} 正常运行时的配置：",
+  "@phoneSafeRestoreAt": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneSafeRestoreDisable": "• 停用：{plugins}",
+  "@phoneSafeRestoreDisable": {
+    "placeholders": {
+      "plugins": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneSafeRestoreChanged": "  （{plugins} 之后升级过，只能先停用）",
+  "@phoneSafeRestoreChanged": {
+    "placeholders": {
+      "plugins": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneSafeRestoreEnable": "• 重新启用：{plugins}",
+  "@phoneSafeRestoreEnable": {
+    "placeholders": {
+      "plugins": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneSafeTodayTime": "今天 {time}",
+  "@phoneSafeTodayTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneSafeReasonPlugins": "连续两次启动失败，可疑插件：{plugins}",
+  "@phoneSafeReasonPlugins": {
+    "placeholders": {
+      "plugins": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneListSeparator": "、",
+  "phonePluginQuoteSeparator": "」「",
+  "phoneEngineRunningAt": "运行中 · {address}",
+  "@phoneEngineRunningAt": {
+    "placeholders": {
+      "address": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneEngineSafeAt": "安全模式 · {address}",
+  "@phoneEngineSafeAt": {
+    "placeholders": {
+      "address": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneAppRulesLoosenBody": "银行、支付类 App 会检测自动操作，可能限制登录甚至冻结账号；DSH 默认不输密码、不付款。",
+  "phoneAppRulesSkipStepsBody": "微信这类 App 有风控，曾有手机助手操作后账号被强制下线。改成照常后，只有发消息这类操作还会先问你。",
+  "phoneResetDeletesChatsWorkspaces": "对话和工作区",
+  "phoneResetBodyChatsWorkspaces": "会删除对话和工作区，然后重新安装运行环境。",
+  "phoneResetDeletesWithPlugins": "对话、工作区、插件和设置",
+  "phoneResetBodyWithPlugins": "会删除对话、工作区、插件和设置，然后重新安装运行环境。",
+  "phoneResetDeletesWithUi": "对话、工作区、界面配置和技能",
+  "phoneResetBodyWithUi": "会删除对话、工作区、界面配置和技能，然后重新安装运行环境。",
+  "phoneResetDeletesEverything": "对话、工作区、插件、设置、界面配置和技能",
+  "phoneResetBodyEverything": "会删除对话、工作区、插件、设置、界面配置和技能，然后重新安装运行环境。",
+  "phoneEngineStorageDetails": "存储空间不足：需要约 {needed} MB，当前可用 {free} MB",
+  "@phoneEngineStorageDetails": {
+    "placeholders": {
+      "needed": {
+        "type": "String"
+      },
+      "free": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneControlEnabledRestarting": "已开启，引擎正在重启",
+  "phoneControlDisabledRestarting": "已关闭，引擎正在重启",
+  "phoneControlEnabledPending": "已开启，引擎启动后生效",
+  "phoneReturnAfterDone": "完成后返回 DSH Go",
+  "phoneReturnAfterDoneHint": "收起悬浮条，回到对话看结果",
+  "phoneFloatingBar": "悬浮条",
+  "phoneIdleOpacity": "闲置时不透明度",
+  "phoneAutoCollapse": "闲置时自动收起",
+  "phoneAutoCollapseHint": "收成小球，点按展开",
+  "phoneDeveloperOptions": "开发者选项",
+  "phoneDirectEngine": "直接启动本机引擎",
+  "phoneDirectHint": "实验功能，默认关闭，下次启动生效。部分手机（例如 Android 16）会拦截直接启动，届时自动改用兼容启动，数据不受影响。",
+  "phoneDirectFailedHint": "这台手机上直接启动没有成功，已改用兼容启动。停止引擎后打开可再试一次。",
+  "phoneDirectCompatibleHint": "这次用了兼容启动，原因见上方。已保留此选项，下次启动会再试。",
+  "phoneDirectStopFirst": "请先停止本机引擎，再切换启动方式。",
+  "phoneDirectSafeHint": "安全模式使用兼容启动；恢复正常模式后应用此选项。",
+  "phoneDirectNeedsRuntime": "此选项需要支持直接启动的运行环境。",
+  "phoneDirectChangeFailed": "未能切换启动方式，请停止本机引擎后重试。",
+  "phoneTawcEngine": "tawcroot 加速启动",
+  "phoneTawcHint": "实验功能，默认关闭，下次启动生效，和「直接启动」二选一。用 tawcroot 代替兼容启动运行本机引擎：启动快约三倍，装包、apt 也更快。启动不成功会自动改回兼容启动。关掉后的第一次启动会先把它留下的硬链接整理成普通文件，可能要多等一会。",
+  "phoneTawcFailedHint": "这台手机上 tawcroot 没有启动成功，已改用兼容启动。停止引擎后打开可再试一次。",
+  "phoneTawcUnavailable": "这个安装包不含 tawcroot，或系统低于 Android 10。",
+  "phoneLaunchTawcroot": "tawcroot",
+  "phoneTawcLaunchFailed": "tawcroot 未启动成功",
+  "phoneTawcUnsupported": "这次的启动参数 tawcroot 还不支持，暂用兼容启动",
+  "phoneActualLaunchMode": "当前运行方式",
+  "phoneLaunchNotObserved": "未运行",
+  "phoneLastLaunchSelection": "上次启动方式",
+  "phoneDirectRejectedReason": "兼容启动原因",
+  "phoneLaunchFailureReason": "上次启动失败",
+  "phoneReturnCompatible": "切回兼容启动",
+  "phoneLaunchDirect": "直接启动",
+  "phoneLaunchCompatible": "兼容启动",
+  "phoneDirectIncompatibleFiles": "插件文件待整理，暂用兼容启动",
+  "phoneDirectNotEnoughSpace": "空间不足，暂用兼容启动",
+  "phoneDirectMigrationFailed": "文件整理未完成，暂用兼容启动",
+  "phoneDirectLaunchFailed": "直接启动未成功",
+  "phoneLaunchStartFailed": "未能完成启动",
+  "phoneLaunchExited": "退出码 {code}",
+  "@phoneLaunchExited": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneDndManualConnect": "按端口连接",
+  "phoneDndConnectPortLabel": "连接端口",
+  "phoneDndConnectPortHint": "在系统「无线调试」首页查看「IP 地址和端口」，填写冒号后的端口。请不要使用配对码页面的端口。",
+  "phonePreviewTitle": "实时查看后台屏",
+  "phonePreviewDescription": "仅在预览可见时取帧。画面只留在本机；预览不可点击。",
+  "phonePreviewOpen": "查看后台屏",
+  "phonePreviewTask": "预览任务 {taskId}",
+  "@phonePreviewTask": {
+    "placeholders": {
+      "taskId": {
+        "type": "String"
+      }
+    }
+  },
+  "phonePreviewInUse": "正在预览另一任务",
+  "phonePreviewOff": "任务已结束或预览已关闭",
+  "phonePreviewUnavailable": "画面暂不可预览，或受到保护",
+  "phonePreviewWaiting": "等待后台屏的新画面",
+  "phoneViewportTitle": "后台视口",
+  "phoneViewportDescription": "下次新建后台屏时生效；当前后台屏不变，交还后重建会采用新设置。视口方向不会强制应用旋转。",
+  "phoneViewportPortrait": "竖屏",
+  "phoneViewportLandscape": "横屏",
+  "phoneResumeTask": "重新允许手机操控",
+  "phoneResumeTaskHint": "允许此对话之后的手机操作，不重放已经结束的动作。",
+  "phoneResumeTaskFailed": "暂时没能恢复，上一动作可能仍在收尾。",
+  "phoneStoppedTask": "手机任务 {task} 已停止",
+  "phoneTaskDrainingHint": "正在等待上一动作退出并清理后台屏。",
+  "phoneTaskCleanupFailedHint": "未能确认后台屏已清理，手机操控仍被阻挡。",
+  "@phoneStoppedTask": {
+    "placeholders": {
+      "task": {
+        "type": "int"
+      }
+    }
+  },
+  "phoneFinishingTask": "手机任务 {task} 正在收尾",
+  "@phoneFinishingTask": {
+    "placeholders": {
+      "task": {
+        "type": "int"
+      }
+    }
+  },
+  "phoneCleanupRetry": "重试清理",
+  "phoneCleanupRetryFailed": "仍未能确认上一后台屏已清理，屏幕占用继续保留。",
+  "phoneSelfCheckTitle": "检查手机操控",
+  "phoneSelfCheckTechnicalDetails": "技术详情",
+  "phoneLocalOcrSummary": "本机识别；结果可发给模型，SDK 会收集使用统计。",
+  "phoneLocalOcrPrivacyDetails": "隐私详情",
+  "phoneSelfCheckPartial": "部分自检：仅已观察的项目有结果",
+  "phoneSelfCheckScope": "使用已选择并连接的通道和临时展示屏。应用启动、文字输入、截图、OCR及主屏受扰情况均未测试。清理通过不代表展示屏创建成功。",
+  "phoneSelfCheckStart": "开始检查",
+  "phoneSelfCheckCancel": "请求取消",
+  "phoneSelfCheckRefresh": "刷新状态",
+  "phoneSelfCheckSave": "保存脱敏报告",
+  "phoneSelfCheckSaving": "保存中…",
+  "phoneSelfCheckSaved": "报告已存入下载/DSH-Go。",
+  "phoneSelfCheckSaveFailed": "报告保存失败。",
+  "phoneSelfCheckReportHint": "仅在你点击保存时导出。本机报告只含固定结果，不含截图、识别文字、日志、账户数据或运行标识。",
+  "phoneSelfCheckRunState": "{state, select, idle{尚未开始} running{部分自检进行中} cleaning{正在清理；取消不代表已撤销派发的输入} done{检查已结束，结果见技术详情} cancelled{已取消，已观察到的操作仍保留} other{状态不可用}}",
+  "@phoneSelfCheckRunState": {
+    "placeholders": {
+      "state": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneSelfCheckStepState": "{state, select, not_run{未运行／无观察} running{进行中} pass{已观察通过} fail{失败} skipped{已跳过} unknown{未确认} cancelled{已取消} other{未确认}}",
+  "@phoneSelfCheckStepState": {
+    "placeholders": {
+      "state": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneSelfCheckStage": "{stage, select, device{设备前置条件} channel{已选通道} display{临时后台屏创建} input_probe{触摸接收核验} launch{应用启动} tree{控件树} tap{应用按钮点按} scroll{应用滚动} back{应用返回} text_ascii{固定 ASCII 输入} text_zh{固定中文输入} capture{本地图样截图} continuity{有限受控刷新} main{有限主屏观察} ocr{本机OCR} cleanup{严格清理} other{未知项目}}",
+  "@phoneSelfCheckStage": {
+    "placeholders": {
+      "stage": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneSelfCheckReason": "{reason, select, busy{手机或通道正忙。} unsupported{设备或特权端不支持这项自检。} cancelled{本次请求已取消或退役。} disabled{手机操控尚未开启。} locked{设备已锁定。} identity{原运行或通道身份已改变。} invalid{请求或结果无法验证。} display{临时展示屏未能确认。} input{输入受理或送达未确认，不会重放已派发输入。} cleanup{资源清理未确认，请重新连接通道后再检查。} denied{系统拒绝了操作。} timeout{操作超时，已派发工作仍可能完成。} unavailable{本机状态或已选通道不可用。} target_unavailable{无法核实固定目标，请完成清理后再开始。} target_changed{原目标已变化，请仅继续清理。} target_cleanup{目标清理未确认，请重新连接通道后再检查。} target_main{目标曾出现在主屏，已停止后续步骤，请完成清理。} target_readback{固定目标计数或文本回读不符，不要重复操作，请完成清理。} tree_cleanup{树连接清理未确认，请重新连接通道后再检查。} target_launch{目标启动被拒绝或未确认，请检查设备并完成清理。} frame_unavailable{未取得可用的本地图样帧，请完成清理后再开始新的自检。} frame_mismatch{实际画面与本次目标及阶段不符，请完成清理。} continuity{有限受控刷新序列未确认；这不是帧率结果。} main_changed{主屏采样点发生变化，也可能包含用户操作；请完成清理，不能据此判定原因。} main_unchanged{这些有限采样点未见变化，采样之间是否受扰仍未知。} main_incomplete{主屏样本不完整，不能据此证明没有受扰。} not_installed{本自检未接入 OCR，未执行识别测试。} other{收到无法识别的结果。}}",
+  "@phoneSelfCheckReason": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneSelfCheckTargetScope": "使用普通临时后台屏和固定本地目标，检查启动、控件树及一次按钮点击。文字、滚动、截图和 OCR 未测试；主屏只记录实际观察到的受扰失败，不提供通过结论。仅清理完成不证明曾创建后台屏。",
+  "phoneSelfCheckProfileChoice": "选择下次自检（不会改变下方报告）",
+  "phoneSelfCheckProfile": "{profile, select, probe_b{输入接收探针（B）} target_c1{固定目标自检（C1）} target_c2{固定输入与画面自检（C2）} other{未知模式}}",
+  "@phoneSelfCheckProfile": {
+    "placeholders": {
+      "profile": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneSelfCheckReportProfile": "{profile, select, probe_b{本次报告：输入接收探针（B）} target_c1{本次报告：固定目标（C1）} target_c2{本次报告：固定输入与画面（C2）} other{本次报告模式未确认}}",
+  "@phoneSelfCheckReportProfile": {
+    "placeholders": {
+      "profile": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneSelfCheckTargetC2Scope": "使用固定本机目标核验启动、控件树、单次按钮点按、ASCII／中文 ACTION_SET_TEXT 整框替换与回读、本地图样截图和有限受控刷新；不衡量 FPS 或流畅度。有限主屏样本不能证明采样间全程无扰。OCR、触摸接收探针、滚动和返回不在本次范围。仅清理完成也不证明曾创建展示屏。",
+  "phoneTaskWaiting": "任务 {taskId} · 等待资源",
+  "phoneTaskWaitingApp": "等待应用 {packageName}，已等待 {seconds} 秒。",
+  "phoneTaskWaitingUnknown": "等待界面资源（应用身份未确认），已等待 {seconds} 秒。",
+  "phoneTaskWaitingScreen": "等待{screen}，已等待 {seconds} 秒。",
+  "phoneTaskMainResource": "主屏",
+  "phoneTaskBackgroundResource": "后台屏",
+  "@phoneTaskWaiting": {
+    "placeholders": {
+      "taskId": {
+        "type": "int"
+      }
+    }
+  },
+  "@phoneTaskWaitingApp": {
+    "placeholders": {
+      "packageName": {
+        "type": "String"
+      },
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "@phoneTaskWaitingUnknown": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "@phoneTaskWaitingScreen": {
+    "placeholders": {
+      "screen": {
+        "type": "String"
+      },
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "phoneInterruptionTitle": "上次手机任务未确认结束",
+  "phoneInterruptionLoading": "正在读取任务中断记录…",
+  "phoneInterruptionStorageError": "无法保存或读取任务结束记录。请重试；这不表示后台资源已清理。",
+  "phoneInterruptionHint": "有 {count} 个任务中断或未能保存结束状态，操作结果可能已发生。请先核对；确认仅表示看过提示，不会恢复操作或证明后台资源已清理。",
+  "phoneInterruptionAcknowledge": "已核对中断提示",
+  "phoneInterruptionRetry": "重试保存或读取",
+  "phoneInterruptionActionFailed": "任务记录尚未确认，请重试",
+  "@phoneInterruptionHint": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "phoneLocalOcrTitle": "文字识别",
+  "phoneLocalOcrUnknown": "暂时无法读取本机文字识别设置，请刷新后再试。",
+  "phoneLocalOcrDisclosure": "识别在本机进行，截图和文字不会发给 Google；Google 的 SDK 会收集机型、应用版本、耗时等使用统计。",
+  "phoneLocalOcrDetails": "默认开启。关闭时，文字识别请求不会触发 SDK 加载或初始化；Remote 扫码配对会独立按需初始化共用的 SDK，不会开启文字识别。截图和识别文字可能发送给你配置的模型。关闭后不再开始新的本机文字识别；已经开始的识别可能仍在收尾。关闭不会卸载 SDK，也不承诺清除或停止发送此前积累的 SDK 统计。",
+  "phoneBackgroundParallelTitle": "后台任务上限",
+  "phoneBackgroundParallelStatus": "设置上限：{configured} · 当前可用上限：{effective} · 已占用：{held}",
+  "phoneBackgroundParallelDescription": "调低上限会保留已有任务。新任务仍需等待应用和主屏资源可用。",
+  "phoneBackgroundParallelChoice": "{limit} 个后台任务槽位",
+  "phoneBackgroundParallelOff": "后台通道已关闭。保存此偏好不会开启通道。",
+  "phoneBackgroundParallelUnsupported": "此设备当前无法使用后台操作。",
+  "phoneBackgroundParallelConnection": "建立连接后才能接纳新的后台任务。",
+  "phoneBackgroundParallelBusy": "后台通道正在准备或维护，暂不能接纳新任务。",
+  "phoneGateRetest": "重新检查此通道",
+  "phoneBackgroundParallelSerial": "此连接支持一个后台槽位，设置偏好仍会保留。",
+  "@phoneBackgroundParallelStatus": {
+    "placeholders": {
+      "configured": {
+        "type": "int"
+      },
+      "effective": {
+        "type": "int"
+      },
+      "held": {
+        "type": "int"
+      }
+    }
+  },
+  "@phoneBackgroundParallelChoice": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "phoneSkillBundlePublishedUnverified": "文件已发布，但尚未通过完整核验。不要重复保存。",
+  "phoneSkillBundleUnknown": "保存结果尚未确认，文件可能已经写入。不要重复保存。",
+  "phoneSkillBundleRevision": "路线版本：{revision}",
+  "@phoneSkillBundleRevision": {
+    "placeholders": {
+      "revision": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneSkillReplayReview": "核对手机路线",
+  "phoneSkillReplaySourceChanged": "本机会话或连接已改变，请返回当前本机会话重新选择。",
+  "phoneSkillReplayUnavailable": "此路线尚不能在当前本机安全执行。仍可按普通技能模板使用。",
+  "phoneSkillReplayConfirm": "我已核对这条路线与本次选择的 App。",
+  "phoneSkillReplayToComposer": "放入当前对话",
+  "phoneSkillReplayStartText": "本机已选择并核对手机路线。请仅调用 mcp__phone__replay，参数 {request}。若不可用或被拒绝，交回用户/模型，不要改为普通动作重放。",
+  "@phoneSkillReplayStartText": {
+    "placeholders": {
+      "request": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneSkillReplayQueue": "发送路线（排队）",
+  "phoneSkillReplayQueued": "路线消息已被接收或排队，尚不代表路线执行成功。",
+  "phoneSkillReplaySendUncertain": "路线消息未确认发送成功；没有自动重新准备或重放。请核对原对话结果。",
+  "phoneIosServiceTitle": "iOS 自动化服务",
+  "phoneIosServiceHint": "授权后按需启动。任务结束会停止服务，系统的“Automation Running”提示也会结束。",
+  "phoneIosSetupHint": "保持 LocalDevVPN 已连接，首次使用时允许 30 分钟操控。",
+  "phoneIosReturnHint": "任务完成后回到当前对话，并停止手机操控服务。",
+  "phoneIosNeedsSetup": "运行器尚未就绪，请确认本机引擎和开发者环境已配置。"
+}

@@ -1,0 +1,39 @@
+{
+  "mediaConfigKeySaved": "Saved · not verified",
+  "mediaConfigKeyUnknown": "Status unavailable",
+  "mediaConfigKeyNote": "Key presence is reported by the host. Saving a key does not verify authentication or model access.",
+  "mediaConfigConsumers": "Media services using this key: {services}. Changing or removing it affects all of them; other host integrations may also use it.",
+  "mediaConfigCheck": "Check saved configuration",
+  "mediaConfigCheckNote": "Local snapshot only; no provider request or generation charge. Does not verify the key, connectivity, balance, model access, or region. The host remains the authority on accepted settings.",
+  "mediaConfigCheckReady": "No local configuration issues found",
+  "mediaConfigCheckMissingKey": "The host has not reported a saved key.",
+  "mediaConfigCheckModels": "No selected models, or some selected models are missing or use a different protocol.",
+  "mediaConfigCheckDisabled": "This service is switched off.",
+  "mediaConfigUrlInvalid": "Enter an HTTPS API root with a host, without credentials, query, fragment, or whitespace.",
+  "mediaConfigUrlEndpoint": "This looks like a request endpoint. Enter the API root instead; the host appends the request path.",
+  "mediaConfigUrlRoot": "This protocol needs the origin only (https://host), without an API path.",
+  "mediaConfigUrlHint": "Enter the API root, not a generation endpoint. OpenAI-compatible roots keep their prefix (for example /v1).",
+  "mediaConfigPreview": "Create request preview",
+  "mediaConfigPreviewNote": "Generation/create request only; edits and status requests may use different paths. Preview is not proof of connectivity or host acceptance.",
+  "mediaConfigPreviewUnavailable": "Request path unavailable in this host catalogue.",
+  "mediaConfigTargetTitle": "Reuse key at a different target?",
+  "mediaConfigTargetBody": "Target changes from {before} to {after}. Future requests may send the referenced key to the new target. Only continue if you trust it. The host still validates the change.",
+  "mediaConfigTargetConfirm": "Trust target and continue",
+  "@mediaConfigConsumers": {
+    "placeholders": {
+      "services": {
+        "type": "String"
+      }
+    }
+  },
+  "@mediaConfigTargetBody": {
+    "placeholders": {
+      "before": {
+        "type": "String"
+      },
+      "after": {
+        "type": "String"
+      }
+    }
+  }
+}

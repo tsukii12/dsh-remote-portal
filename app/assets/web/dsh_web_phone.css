@@ -1,0 +1,395 @@
+/*
+ * DSH Web on a touch screen. Injected by dsh-app's WebView page, which also
+ * sets html[data-dsh-app-layout] and the --dsh-app-* insets for the window it
+ * is in (web_view_page.dart, WebPageInsets):
+ *
+ * - "drawer", frames below 1024px — where the official layout folds its
+ *   sidebar into an icon rail. Here the sidebar becomes a drawer behind the
+ *   app's menu button, which sits with the back button in the page's own
+ *   header row. Phones and short landscape screens get the settings dialog
+ *   as a full-screen sheet; phone widths (≤ 760px) also get a tab strip,
+ *   stacked setting rows and larger dialogs. Where DSH has a drawer of its own
+ *   (0.2.2 on, below 768px) that one is used, with its settings sheet: only
+ *   the safe areas and the room for the app's buttons are the app's.
+ * - "desktop", 1024px and up: the official layout, with a band above the
+ *   sidebar for the app's back button and the sidebar's background running
+ *   under the status and gesture bars.
+ *
+ * Rules, because plugins build on the official Web UI and must keep working:
+ * - Layout containers only (shell grid, drawer, settings sheet, dialog size,
+ *   safe areas, touch targets). Never restyle a component's look (colours,
+ *   type, spacing inside cards) and never hide anything but the grid's
+ *   resize handle, which the drawer's own width replaces.
+ * - No DOM changes: nothing official is inserted, moved or removed, so every
+ *   data-slot (where plugins mount) stays where DSH put it. The app's one
+ *   attribute on the frame (data-dsh-app-drawer) is all it adds.
+ * - Nothing that animates lays the page out: the drawer slides on the
+ *   compositor, and the keyboard lifts #root and the layers once per slide
+ *   (a style of the app's own, #dsh-app-keyboard; the WebView keeps its
+ *   size).
+ * - Settings → 网页版手机布局 turns all of it off, to check a plugin against
+ *   the official layout.
+ *
+ * Selectors use DSH's stable hooks where they exist (data-slot, roles, aria
+ * labels) and CSS-module class *suffixes* (`[class*="_sidebarCol"]`), never the
+ * per-build hash prefix, so a different DSH build degrades to "no change"
+ * instead of breaking. Suffix selectors are always anchored to a known parent
+ * (`[data-slot="root"] > …`): a bare `[class*="_frame"]` also matched cards
+ * and once put a full-screen scrim over the page.
+ */
+
+/* ── Both layouts ─────────────────────────────────────────────────────────── */
+
+/* The main slot holds plugin pages and the official conversation. A subtree
+   can keep its own geometry with data-dsh-adapt="off", including on html or
+   main itself. Range/switch controls keep their authored track/thumb sizes. */
+@media (pointer: coarse) {
+  :root[data-dsh-app-layout] [data-slot="main"] :is(button, [role="button"], select, input):not([role="switch"], [role="slider"], [type="range"], [type="hidden"], [hidden], [hidden] *, [data-dsh-adapt="off"], [data-dsh-adapt="off"] *) {
+    min-width: 44px !important;
+    min-height: 44px !important;
+  }
+  /* Inline links/spans also need the low-priority display default installed
+     by dsh_web_phone.js before the page's styles. */
+}
+
+/* Full-screen layers clear the app's controls and the gesture bar. The app
+   pins #root inside the safe area (--dsh-app-inset-*); modal backdrops are
+   fixed to the viewport, so they get the same insets here (the drawer below
+   does too). Menus and popovers are positioned from their anchors, which
+   already moved with #root, so they need nothing. */
+body > [class*="_overlay"] {
+  top: var(--dsh-app-inset-top, 0px) !important;
+  bottom: var(--dsh-app-inset-bottom, 0px) !important;
+  height: auto !important;
+}
+
+/* Touch: row actions (more / archive / pin) only appear on mouse hover;
+   show them on the selected session so they can be reached at all. */
+[class*="_sessionRow"][class*="_selected"] [class*="_rowActions"] {
+  display: flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+[class*="_sessionRow"][class*="_selected"] [class*="_time"],
+[class*="_sessionRow"][class*="_selected"] [class*="_pinIndicator"] {
+  display: none !important;
+}
+
+/* ── Drawer layout: one column, the sidebar a drawer ──────────────────────── */
+
+/* DSH 0.2.2 on, below 768px: the official drawer (data-sidebar-drawer on the
+   frame) in place of the one below. Its opener sits under the app's buttons,
+   which drive it; the header's own room for it is _headerLeading's, below. */
+:root[data-dsh-app-layout="drawer"] [data-sidebar-drawer] {
+  --dsh-frame-leading-clearance: 0px !important;
+}
+:root[data-dsh-app-layout="drawer"] [data-sidebar-drawer] [data-sidebar-opener] {
+  visibility: hidden;
+}
+/* Edge to edge like the app's own: it and its scrim run under the status bar
+   and the gesture bar, its content starts clear of them (below). */
+:root[data-dsh-app-layout="drawer"] [data-slot="root"] > [class*="_frame"][data-sidebar-drawer] > [class*="_sidebarCol"],
+:root[data-dsh-app-layout="drawer"] [data-slot="root"] > [class*="_frame"][data-sidebar-drawer] > [class*="_drawerMask"] {
+  position: fixed !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  height: auto !important;
+}
+
+/* The sidebar leaves the grid; the conversation spans its track and its
+   own, and the right panel keeps the track the official layout gives
+   it (wide landscape screens show files and the terminal beside the
+   conversation). */
+:root[data-dsh-app-layout="drawer"] [data-slot="root"] > [class*="_frame"]:not([data-sidebar-drawer]) > [class*="_centerCol"] {
+  grid-column: 1 / 3 !important;
+}
+:root[data-dsh-app-layout="drawer"] [data-slot="root"] > [class*="_frame"]:not([data-sidebar-drawer]) > [class*="_rightbarCol"] {
+  grid-column: 3 !important;
+}
+
+/* The drawer is the app's (data-dsh-app-drawer on the frame, set by
+   dsh_web_phone.js); the official sidebar stays expanded inside it, so
+   opening and closing only slide it: a transform, on the compositor. The
+   shadow is part of the slid layer and stays clear of the screen while
+   closed, so nothing repaints on the way. */
+:root[data-dsh-app-layout="drawer"] [data-slot="root"] > [class*="_frame"]:not([data-sidebar-drawer]) > [class*="_sidebarCol"] {
+  position: fixed !important;
+  z-index: 60;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: calc(min(86vw, 320px) + var(--dsh-app-inset-left, 0px)) !important;
+  box-shadow: 10px 0 40px rgba(15, 23, 42, 0.16);
+  transform: translateX(calc(-100% - 64px));
+  transition: transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform;
+}
+:root[data-dsh-app-layout="drawer"] [data-slot="root"] > [class*="_frame"][data-dsh-app-drawer] > [class*="_sidebarCol"] {
+  transform: none;
+}
+/* The official sidebar's resize handle sits on its edge in the grid, which
+   in this layout is the middle of the conversation: the drawer has a width
+   of its own. */
+:root[data-dsh-app-layout="drawer"] [data-slot="root"] > [class*="_frame"] > [class*="_handle"] {
+  display: none !important;
+}
+/* Edge to edge like a native drawer: its own background runs under the
+   status bar, the app's buttons, a side cutout and the gesture bar; its
+   content starts clear of them. */
+:root[data-dsh-app-layout="drawer"] [class*="_sidebarCol"] [data-slot="sidebar"] > [class*="_root"] {
+  width: 100% !important;
+  height: 100% !important;
+  box-sizing: border-box !important;
+  padding-top: var(--dsh-app-inset-top, 0px) !important;
+  padding-bottom: var(--dsh-app-inset-bottom, 0px) !important;
+  padding-left: calc(var(--dsh-sidebar-inline-padding, 12px) + var(--dsh-app-inset-left, 0px)) !important;
+}
+/* Scrim beside the open drawer, hung off the drawer itself: a touch on it
+   lands on the drawer's column, which neither scrolls nor restyles the
+   page under it (on the frame, every touch restyled the whole page first).
+   Visual only; dsh_web_phone.js closes the drawer when a touch beside it
+   ends. The column shows it (and the shadow) past its edge. */
+:root[data-dsh-app-layout="drawer"] [data-slot="root"] > [class*="_frame"]:not([data-sidebar-drawer]) > [class*="_sidebarCol"] {
+  overflow: visible !important;
+}
+:root[data-dsh-app-layout="drawer"] [data-slot="root"] > [class*="_frame"][data-dsh-app-drawer] > [class*="_sidebarCol"]::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 100%;
+  width: 100vw;
+  background: rgba(15, 23, 42, 0.28);
+  animation: dshapp-fade-in 0.24s ease-out;
+}
+
+/* A phone on its side: the drawer's header rows scroll away with the list,
+   which keeps room for about six rows (page-design §7). */
+@media (max-height: 480px) {
+  :root[data-dsh-app-layout="drawer"] [class*="_sidebarCol"] [data-slot="sidebar"] > [class*="_root"] {
+    overflow-y: auto !important;
+    /* What scrolls up fades out under the app's buttons and the status
+       bar (the column's own background stays behind it). */
+    -webkit-mask-image: linear-gradient(to bottom, transparent calc(var(--dsh-app-inset-top, 0px) - 24px), #000 var(--dsh-app-inset-top, 0px));
+    mask-image: linear-gradient(to bottom, transparent calc(var(--dsh-app-inset-top, 0px) - 24px), #000 var(--dsh-app-inset-top, 0px));
+  }
+  :root[data-dsh-app-layout="drawer"] [class*="_sidebarCol"] [data-slot="sidebar"] > [class*="_root"] [class*="_regionArea"] {
+    flex: 1 0 auto !important;
+    min-height: 264px !important;
+  }
+}
+
+/* The app's back / drawer buttons sit in the header row: the app overlays
+   them on the page's own title row instead of adding a bar above it
+   (--dsh-app-lead = their width). The header's leading slot is empty by
+   design for exactly this kind of control: widen it, don't fill it. */
+:root[data-dsh-app-layout="drawer"] [data-slot="conversation.header"] [class*="_headerLeading"] {
+  min-width: max(0px, calc(var(--dsh-app-lead, 0px) - 20px)) !important;
+}
+/* Full pages (plugins, automations…) start with a big title instead of a
+   header row: move the whole page below the buttons (--dsh-app-lead-h is
+   their bottom edge; pages keep ≥20px of their own top padding). */
+:root[data-dsh-app-layout="drawer"] [data-slot="main"] > section[class*="_page"] {
+  padding-top: max(0px, calc(var(--dsh-app-lead-h, 0px) - 20px)) !important;
+  box-sizing: border-box !important;
+}
+
+/* The right panel is fullscreen on a phone: its tab strip starts at the
+   panel's left edge, exactly where the app's back / drawer buttons float.
+   Keep the panel's top row where it is (no empty band above the page) and
+   start the strip past the buttons instead (--dsh-app-lead = their right
+   edge plus a gap). The body keeps the official layout: the strip's own
+   height still separates it from the buttons. */
+:root[data-dsh-app-layout="drawer"] [data-sidebar-right-panel="fullscreen"] [data-dockkit-strip] {
+  padding-left: var(--dsh-app-lead, 0px) !important;
+}
+
+/* Typing on a phone on its side (data-dsh-app-compact, set while the keyboard
+   leaves the page too short): the header row steps aside so the composer
+   stays in view; it comes back with the app's buttons when the keyboard
+   goes down. */
+:root[data-dsh-app-layout="drawer"][data-dsh-app-compact] [data-slot="conversation.header"] {
+  display: none !important;
+}
+
+/* Touch targets: 28px icon buttons → 40px hit areas. */
+:root[data-dsh-app-layout="drawer"] [data-slot="conversation.session.header"] button[aria-label],
+:root[data-dsh-app-layout="drawer"] [data-slot="conversation.session.header.corner"] button[aria-label],
+:root[data-dsh-app-layout="drawer"] [class*="_rightbarCol"] button[aria-label] {
+  min-width: 40px !important;
+  min-height: 40px !important;
+}
+
+/* Cordis plugin panel, inside the drawer: it opens above its badge in the
+   drawer's footer, 420px wide by default; the part past the drawer's edge
+   would read as a touch outside the drawer (dsh_web_phone.js closes it).
+   Same left edge, as wide as the drawer. */
+:root[data-dsh-app-layout="drawer"] [data-cordis-panel] {
+  max-width: calc(min(86vw, 320px) - 24px) !important;
+}
+
+/* ── Drawer layout, phones and landscape: settings as a full-screen sheet ── */
+
+/* Not with the official drawer (DSH 0.2.2 on, below 768px): its settings sheet
+   and dialogs are already made for that width. */
+
+@media (max-width: 760px), (max-height: 600px) {
+  /* Edge to edge: the sheet runs under the app's buttons and the system
+     bars and pads its content clear of them instead. */
+  :root[data-dsh-app-layout="drawer"]:not(:has([data-sidebar-drawer])) body > [class*="_overlay"]:has([data-slot="settings.section"]) {
+    top: 0 !important;
+    bottom: 0 !important;
+    padding: 0 !important;
+    align-items: stretch !important;
+    justify-content: stretch !important;
+  }
+  :root[data-dsh-app-layout="drawer"]:not(:has([data-sidebar-drawer])) [class*="_panel"]:has(> nav):has([data-slot="settings.section"]) {
+    width: 100% !important;
+    max-width: none !important;
+    height: 100% !important;
+    max-height: none !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    padding: var(--dsh-app-inset-top, 0px) var(--dsh-app-inset-right, 0px) var(--dsh-app-inset-bottom, 0px)
+      var(--dsh-app-inset-left, 0px) !important;
+    box-sizing: border-box !important;
+  }
+}
+
+/* ── Drawer layout, phone widths: tab strip, stacked rows ────────────────── */
+
+@media (max-width: 760px) {
+  :root[data-dsh-app-layout="drawer"]:not(:has([data-sidebar-drawer])) [class*="_panel"]:has(> nav):has([data-slot="settings.section"]) {
+    flex-direction: column !important;
+  }
+  :root[data-dsh-app-layout="drawer"]:not(:has([data-sidebar-drawer])) [class*="_panel"]:has([data-slot="settings.section"]) > nav {
+    width: auto !important;
+    min-width: 0 !important;
+    flex: none !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 8px;
+    padding: 8px 12px 6px !important;
+    margin-right: 132px !important; /* 打开配置文件 + close sit to the right */
+    border-right: 0 !important;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  :root[data-dsh-app-layout="drawer"]:not(:has([data-sidebar-drawer])) [class*="_panel"]:has([data-slot="settings.section"]) > nav::-webkit-scrollbar,
+  :root[data-dsh-app-layout="drawer"]:not(:has([data-sidebar-drawer])) [class*="_panel"]:has([data-slot="settings.section"]) > nav [class*="_navList"]::-webkit-scrollbar {
+    display: none;
+  }
+  :root[data-dsh-app-layout="drawer"]:not(:has([data-sidebar-drawer])) [class*="_panel"]:has([data-slot="settings.section"]) > nav [class*="_navList"] {
+    scrollbar-width: none;
+  }
+  :root[data-dsh-app-layout="drawer"]:not(:has([data-sidebar-drawer])) [class*="_panel"]:has([data-slot="settings.section"]) > nav [class*="_navTitle"] {
+    display: none !important;
+  }
+  :root[data-dsh-app-layout="drawer"]:not(:has([data-sidebar-drawer])) [class*="_panel"]:has([data-slot="settings.section"]) > nav [class*="_navList"] {
+    flex-direction: row !important;
+    gap: 6px !important;
+    width: auto !important;
+    margin: 0 !important;
+  }
+  :root[data-dsh-app-layout="drawer"]:not(:has([data-sidebar-drawer])) [class*="_panel"]:has([data-slot="settings.section"]) > nav [class*="_navCell"] {
+    width: auto !important;
+    flex: none !important;
+    white-space: nowrap;
+    padding-inline: 12px !important;
+  }
+  :root[data-dsh-app-layout="drawer"]:not(:has([data-sidebar-drawer])) [class*="_panel"]:has([data-slot="settings.section"]) > [class*="_content"] {
+    width: 100% !important;
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+  }
+  :root[data-dsh-app-layout="drawer"]:not(:has([data-sidebar-drawer])) [class*="_panel"]:has([data-slot="settings.section"]) > [class*="_content"] > [class*="_header"] {
+    position: absolute;
+    top: calc(var(--dsh-app-inset-top, 0px) + 8px);
+    right: calc(var(--dsh-app-inset-right, 0px) + 8px);
+    padding: 0 !important;
+    width: auto !important;
+    background: transparent !important;
+  }
+  :root[data-dsh-app-layout="drawer"]:not(:has([data-sidebar-drawer])) [data-slot="settings.section"] > [class*="_section"],
+  :root[data-dsh-app-layout="drawer"]:not(:has([data-sidebar-drawer])) [class*="_options"] > [data-slot="settings.section"] > * {
+    width: auto !important;
+    max-width: none !important;
+    padding-inline: 16px !important;
+  }
+  :root[data-dsh-app-layout="drawer"]:not(:has([data-sidebar-drawer])) [data-slot="settings.section"] [class*="_row"]:has(> [class*="_rowText"]),
+  :root[data-dsh-app-layout="drawer"]:not(:has([data-sidebar-drawer])) [data-slot="settings.section"] [class*="_setting"]:has(> [class*="_settingText"]) {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+  :root[data-dsh-app-layout="drawer"]:not(:has([data-sidebar-drawer])) [data-slot="settings.section"] [class*="_rowText"],
+  :root[data-dsh-app-layout="drawer"]:not(:has([data-sidebar-drawer])) [data-slot="settings.section"] [class*="_settingText"] {
+    width: auto !important;
+    max-width: none !important;
+    flex: none !important;
+  }
+  :root[data-dsh-app-layout="drawer"]:not(:has([data-sidebar-drawer])) [data-slot="settings.section"] [class*="_row"] > span:last-child,
+  :root[data-dsh-app-layout="drawer"]:not(:has([data-sidebar-drawer])) [data-slot="settings.section"] [class*="_row"] > button:last-child,
+  :root[data-dsh-app-layout="drawer"]:not(:has([data-sidebar-drawer])) [data-slot="settings.section"] [class*="_control"] {
+    align-self: flex-start !important;
+  }
+  :root[data-dsh-app-layout="drawer"]:not(:has([data-sidebar-drawer])) [data-slot="settings.section"] [class*="_cubeRow"] {
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+  }
+  :root[data-dsh-app-layout="drawer"]:not(:has([data-sidebar-drawer])) [data-slot="settings.section"] [class*="_cubeRow"] > * {
+    flex: 1 1 0 !important;
+    width: auto !important;
+    min-width: 0 !important;
+  }
+
+  /* Other dialogs: fit the screen, let footers wrap tidily. */
+  :root[data-dsh-app-layout="drawer"]:not(:has([data-sidebar-drawer])) body > [class*="_overlay"] > [class*="_panel"]:not(:has(> nav)),
+  :root[data-dsh-app-layout="drawer"]:not(:has([data-sidebar-drawer])) [role="dialog"] {
+    max-width: calc(100vw - 24px) !important;
+  }
+  :root[data-dsh-app-layout="drawer"]:not(:has([data-sidebar-drawer])) [role="dialog"] [class*="_footer"],
+  :root[data-dsh-app-layout="drawer"]:not(:has([data-sidebar-drawer])) [role="dialog"] [class*="_actions"] {
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+}
+
+/* ── Desktop layout: the official one, around the app's back button ──────── */
+
+/* #root covers the whole screen; the frame pads its columns clear of the
+   status and gesture bars (like the official Windows title bar), and the
+   sidebar reaches back over that padding so its background runs under the
+   bars. While the bottom row is empty (shell.bottom: only the experimental
+   inspector uses it) it runs under the gesture bar too. */
+:root[data-dsh-app-layout="desktop"] [data-slot="root"] > [class*="_frame"] {
+  box-sizing: border-box !important;
+  padding-top: var(--dsh-app-status, 0px) !important;
+  padding-bottom: var(--dsh-app-frame-bottom, 0px) !important;
+}
+:root[data-dsh-app-layout="desktop"] [data-slot="root"] > [class*="_frame"] > [class*="_sidebarCol"] {
+  margin-top: calc(-1 * var(--dsh-app-status, 0px));
+}
+:root[data-dsh-app-layout="desktop"] [data-slot="root"] > [class*="_frame"]:has(> [data-shell-bottom] > [data-slot="shell.bottom"]:empty) > [class*="_sidebarCol"] {
+  margin-bottom: calc(-1 * var(--dsh-app-frame-bottom, 0px));
+}
+/* The band for the back button (--dsh-app-band) sits above the sidebar's
+   own first row, open or folded into the rail, the way the official layout
+   leaves room for window controls on a Mac (a 52px strip the logo row tucks
+   12px under). In the rail, the toggle follows 12px below the button, the
+   rail's own rhythm. */
+:root[data-dsh-app-layout="desktop"] [class*="_sidebarCol"] [data-slot="sidebar"] > [class*="_root"] {
+  padding-top: calc(var(--dsh-app-status, 0px) + var(--dsh-app-band, 0px) - 6px) !important;
+}
+:root[data-dsh-app-layout="desktop"] [class*="_sidebarCol"] [data-slot="sidebar"] > [class*="_root"][class*="_collapsed"] {
+  padding-top: calc(var(--dsh-app-status, 0px) + var(--dsh-app-band, 0px) + 6px) !important;
+}
+:root[data-dsh-app-layout="desktop"] [data-slot="root"] > [class*="_frame"]:has(> [data-shell-bottom] > [data-slot="shell.bottom"]:empty) > [class*="_sidebarCol"] [data-slot="sidebar"] > [class*="_root"] {
+  padding-bottom: calc(6px + var(--dsh-app-frame-bottom, 0px)) !important;
+}
+
+@keyframes dshapp-fade-in {
+  from {
+    opacity: 0;
+  }
+}

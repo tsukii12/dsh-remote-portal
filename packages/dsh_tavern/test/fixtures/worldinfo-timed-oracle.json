@@ -1,0 +1,2797 @@
+[
+  {
+    "name": "start-sticky-and-cooldown",
+    "books": [
+      {
+        "id": "\u539f\u4e66\ud83d\ude00",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "key"
+              ],
+              "content": "entry",
+              "order": 100,
+              "position": 0,
+              "constant": false,
+              "sticky": 3,
+              "cooldown": 4
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "noise"
+      },
+      {
+        "text": "key"
+      }
+    ],
+    "expected": {
+      "activated": [
+        "\u539f\u4e66\ud83d\ude00.0"
+      ],
+      "before": "entry",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "key",
+        "entry"
+      ],
+      "timedWorldInfo": {
+        "sticky": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 2,
+            "end": 5,
+            "protected": false
+          }
+        },
+        "cooldown": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 2,
+            "end": 6,
+            "protected": false
+          }
+        }
+      },
+      "hashes": [
+        {
+          "uid": 0,
+          "world": "\u539f\u4e66\ud83d\ude00",
+          "hash": 7691085559332039
+        }
+      ]
+    }
+  },
+  {
+    "name": "sticky-overrides-cooldown-and-keyword",
+    "books": [
+      {
+        "id": "\u539f\u4e66\ud83d\ude00",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "key"
+              ],
+              "content": "entry",
+              "order": 100,
+              "position": 0,
+              "constant": false,
+              "sticky": 3,
+              "cooldown": 4
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      }
+    ],
+    "metadata": {
+      "timedWorldInfo": {
+        "sticky": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 2,
+            "end": 5,
+            "protected": false
+          }
+        },
+        "cooldown": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 2,
+            "end": 6,
+            "protected": false
+          }
+        }
+      }
+    },
+    "expected": {
+      "activated": [
+        "\u539f\u4e66\ud83d\ude00.0"
+      ],
+      "before": "entry",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "entry"
+      ],
+      "timedWorldInfo": {
+        "sticky": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 2,
+            "end": 5,
+            "protected": false
+          }
+        },
+        "cooldown": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 2,
+            "end": 6,
+            "protected": false
+          }
+        }
+      },
+      "hashes": [
+        {
+          "uid": 0,
+          "world": "\u539f\u4e66\ud83d\ude00",
+          "hash": 7691085559332039
+        }
+      ]
+    }
+  },
+  {
+    "name": "same-count-removes-unprotected",
+    "books": [
+      {
+        "id": "\u539f\u4e66\ud83d\ude00",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "key"
+              ],
+              "content": "entry",
+              "order": 100,
+              "position": 0,
+              "constant": false,
+              "sticky": 3,
+              "cooldown": 4
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      }
+    ],
+    "metadata": {
+      "timedWorldInfo": {
+        "sticky": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 2,
+            "end": 5,
+            "protected": false
+          }
+        },
+        "cooldown": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 2,
+            "end": 6,
+            "protected": false
+          }
+        }
+      }
+    },
+    "expected": {
+      "activated": [],
+      "before": "",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "key"
+      ],
+      "timedWorldInfo": {
+        "sticky": {},
+        "cooldown": {}
+      },
+      "hashes": [
+        {
+          "uid": 0,
+          "world": "\u539f\u4e66\ud83d\ude00",
+          "hash": 7691085559332039
+        }
+      ]
+    }
+  },
+  {
+    "name": "backtrack-removes-unprotected",
+    "books": [
+      {
+        "id": "\u539f\u4e66\ud83d\ude00",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "key"
+              ],
+              "content": "entry",
+              "order": 100,
+              "position": 0,
+              "constant": false,
+              "sticky": 3,
+              "cooldown": 4
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "noise"
+      }
+    ],
+    "metadata": {
+      "timedWorldInfo": {
+        "sticky": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 2,
+            "end": 5,
+            "protected": false
+          }
+        },
+        "cooldown": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 2,
+            "end": 6,
+            "protected": false
+          }
+        }
+      }
+    },
+    "expected": {
+      "activated": [],
+      "before": "",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "key"
+      ],
+      "timedWorldInfo": {
+        "sticky": {},
+        "cooldown": {}
+      },
+      "hashes": [
+        {
+          "uid": 0,
+          "world": "\u539f\u4e66\ud83d\ude00",
+          "hash": 7691085559332039
+        }
+      ]
+    }
+  },
+  {
+    "name": "sticky-end-starts-protected-cooldown",
+    "books": [
+      {
+        "id": "\u539f\u4e66\ud83d\ude00",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "key"
+              ],
+              "content": "entry",
+              "order": 100,
+              "position": 0,
+              "constant": false,
+              "sticky": 3,
+              "cooldown": 4
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      },
+      {
+        "text": "key"
+      }
+    ],
+    "metadata": {
+      "timedWorldInfo": {
+        "sticky": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 2,
+            "end": 5,
+            "protected": false
+          }
+        },
+        "cooldown": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 2,
+            "end": 6,
+            "protected": false
+          }
+        }
+      }
+    },
+    "expected": {
+      "activated": [],
+      "before": "",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [],
+      "timedWorldInfo": {
+        "sticky": {},
+        "cooldown": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 5,
+            "end": 9,
+            "protected": true
+          }
+        }
+      },
+      "hashes": [
+        {
+          "uid": 0,
+          "world": "\u539f\u4e66\ud83d\ude00",
+          "hash": 7691085559332039
+        }
+      ]
+    }
+  },
+  {
+    "name": "protected-cooldown-survives-backtrack",
+    "books": [
+      {
+        "id": "\u539f\u4e66\ud83d\ude00",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "key"
+              ],
+              "content": "entry",
+              "order": 100,
+              "position": 0,
+              "constant": false,
+              "sticky": 3,
+              "cooldown": 4
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      },
+      {
+        "text": "key"
+      }
+    ],
+    "metadata": {
+      "timedWorldInfo": {
+        "sticky": {},
+        "cooldown": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 5,
+            "end": 9,
+            "protected": true
+          }
+        }
+      }
+    },
+    "expected": {
+      "activated": [],
+      "before": "",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [],
+      "timedWorldInfo": {
+        "sticky": {},
+        "cooldown": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 5,
+            "end": 9,
+            "protected": true
+          }
+        }
+      },
+      "hashes": [
+        {
+          "uid": 0,
+          "world": "\u539f\u4e66\ud83d\ude00",
+          "hash": 7691085559332039
+        }
+      ]
+    }
+  },
+  {
+    "name": "protected-cooldown-same-count",
+    "books": [
+      {
+        "id": "\u539f\u4e66\ud83d\ude00",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "key"
+              ],
+              "content": "entry",
+              "order": 100,
+              "position": 0,
+              "constant": false,
+              "sticky": 3,
+              "cooldown": 4
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      },
+      {
+        "text": "key"
+      }
+    ],
+    "metadata": {
+      "timedWorldInfo": {
+        "sticky": {},
+        "cooldown": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 5,
+            "end": 9,
+            "protected": true
+          }
+        }
+      }
+    },
+    "expected": {
+      "activated": [],
+      "before": "",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [],
+      "timedWorldInfo": {
+        "sticky": {},
+        "cooldown": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 5,
+            "end": 9,
+            "protected": true
+          }
+        }
+      },
+      "hashes": [
+        {
+          "uid": 0,
+          "world": "\u539f\u4e66\ud83d\ude00",
+          "hash": 7691085559332039
+        }
+      ]
+    }
+  },
+  {
+    "name": "cooldown-expiry-restarts-both",
+    "books": [
+      {
+        "id": "\u539f\u4e66\ud83d\ude00",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "key"
+              ],
+              "content": "entry",
+              "order": 100,
+              "position": 0,
+              "constant": false,
+              "sticky": 3,
+              "cooldown": 4
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      },
+      {
+        "text": "key"
+      }
+    ],
+    "metadata": {
+      "timedWorldInfo": {
+        "sticky": {},
+        "cooldown": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 5,
+            "end": 9,
+            "protected": true
+          }
+        }
+      }
+    },
+    "expected": {
+      "activated": [
+        "\u539f\u4e66\ud83d\ude00.0"
+      ],
+      "before": "entry",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "key",
+        "entry"
+      ],
+      "timedWorldInfo": {
+        "sticky": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 9,
+            "end": 12,
+            "protected": false
+          }
+        },
+        "cooldown": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 9,
+            "end": 13,
+            "protected": false
+          }
+        }
+      },
+      "hashes": [
+        {
+          "uid": 0,
+          "world": "\u539f\u4e66\ud83d\ude00",
+          "hash": 7691085559332039
+        }
+      ]
+    }
+  },
+  {
+    "name": "dry-run-ignores-active-sticky",
+    "books": [
+      {
+        "id": "\u539f\u4e66\ud83d\ude00",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "key"
+              ],
+              "content": "entry",
+              "order": 100,
+              "position": 0,
+              "constant": false,
+              "sticky": 3,
+              "cooldown": 4
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      }
+    ],
+    "metadata": {
+      "timedWorldInfo": {
+        "sticky": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 2,
+            "end": 5,
+            "protected": false
+          }
+        },
+        "cooldown": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 2,
+            "end": 6,
+            "protected": false
+          }
+        }
+      }
+    },
+    "dryRun": true,
+    "expected": {
+      "activated": [],
+      "before": "",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "key"
+      ],
+      "timedWorldInfo": {
+        "sticky": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 2,
+            "end": 5,
+            "protected": false
+          }
+        },
+        "cooldown": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 2,
+            "end": 6,
+            "protected": false
+          }
+        }
+      },
+      "hashes": [
+        {
+          "uid": 0,
+          "world": "\u539f\u4e66\ud83d\ude00",
+          "hash": 7691085559332039
+        }
+      ]
+    }
+  },
+  {
+    "name": "dry-run-does-not-write-new-timers",
+    "books": [
+      {
+        "id": "\u539f\u4e66\ud83d\ude00",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "key"
+              ],
+              "content": "entry",
+              "order": 100,
+              "position": 0,
+              "constant": false,
+              "sticky": 3,
+              "cooldown": 4
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      },
+      {
+        "text": "key"
+      }
+    ],
+    "metadata": {
+      "timedWorldInfo": {
+        "sticky": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 2,
+            "end": 5,
+            "protected": false
+          }
+        },
+        "cooldown": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 2,
+            "end": 6,
+            "protected": false
+          }
+        }
+      }
+    },
+    "dryRun": true,
+    "expected": {
+      "activated": [
+        "\u539f\u4e66\ud83d\ude00.0"
+      ],
+      "before": "entry",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "key",
+        "entry"
+      ],
+      "timedWorldInfo": {
+        "sticky": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 2,
+            "end": 5,
+            "protected": false
+          }
+        },
+        "cooldown": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 2,
+            "end": 6,
+            "protected": false
+          }
+        }
+      },
+      "hashes": [
+        {
+          "uid": 0,
+          "world": "\u539f\u4e66\ud83d\ude00",
+          "hash": 7691085559332039
+        }
+      ]
+    }
+  },
+  {
+    "name": "delay-before-boundary",
+    "books": [
+      {
+        "id": "\u539f\u4e66\ud83d\ude00",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "key"
+              ],
+              "content": "entry",
+              "order": 100,
+              "position": 0,
+              "constant": true,
+              "sticky": 3,
+              "cooldown": 4,
+              "delay": 3
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      }
+    ],
+    "expected": {
+      "activated": [],
+      "before": "",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [],
+      "timedWorldInfo": {
+        "sticky": {},
+        "cooldown": {}
+      },
+      "hashes": [
+        {
+          "uid": 0,
+          "world": "\u539f\u4e66\ud83d\ude00",
+          "hash": 2616591916415970
+        }
+      ]
+    }
+  },
+  {
+    "name": "delay-at-boundary",
+    "books": [
+      {
+        "id": "\u539f\u4e66\ud83d\ude00",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "key"
+              ],
+              "content": "entry",
+              "order": 100,
+              "position": 0,
+              "constant": true,
+              "sticky": 3,
+              "cooldown": 4,
+              "delay": 3
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      }
+    ],
+    "expected": {
+      "activated": [
+        "\u539f\u4e66\ud83d\ude00.0"
+      ],
+      "before": "entry",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "entry"
+      ],
+      "timedWorldInfo": {
+        "sticky": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 2616591916415970,
+            "start": 3,
+            "end": 6,
+            "protected": false
+          }
+        },
+        "cooldown": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 2616591916415970,
+            "start": 3,
+            "end": 7,
+            "protected": false
+          }
+        }
+      },
+      "hashes": [
+        {
+          "uid": 0,
+          "world": "\u539f\u4e66\ud83d\ude00",
+          "hash": 2616591916415970
+        }
+      ]
+    }
+  },
+  {
+    "name": "delay-remains-in-dry-run",
+    "books": [
+      {
+        "id": "\u539f\u4e66\ud83d\ude00",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "key"
+              ],
+              "content": "entry",
+              "order": 100,
+              "position": 0,
+              "constant": true,
+              "sticky": 3,
+              "cooldown": 4,
+              "delay": 3
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      }
+    ],
+    "dryRun": true,
+    "expected": {
+      "activated": [],
+      "before": "",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [],
+      "timedWorldInfo": {
+        "sticky": {},
+        "cooldown": {}
+      },
+      "hashes": [
+        {
+          "uid": 0,
+          "world": "\u539f\u4e66\ud83d\ude00",
+          "hash": 2616591916415970
+        }
+      ]
+    }
+  },
+  {
+    "name": "edited-entry-does-not-inherit-hash",
+    "books": [
+      {
+        "id": "\u539f\u4e66\ud83d\ude00",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "key"
+              ],
+              "content": "edited",
+              "order": 100,
+              "position": 0,
+              "constant": false,
+              "sticky": 3,
+              "cooldown": 4
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      }
+    ],
+    "metadata": {
+      "timedWorldInfo": {
+        "sticky": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 2,
+            "end": 5,
+            "protected": false
+          }
+        },
+        "cooldown": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 2,
+            "end": 6,
+            "protected": false
+          }
+        }
+      }
+    },
+    "expected": {
+      "activated": [],
+      "before": "",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "key"
+      ],
+      "timedWorldInfo": {
+        "sticky": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 2,
+            "end": 5,
+            "protected": false
+          }
+        },
+        "cooldown": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 2,
+            "end": 6,
+            "protected": false
+          }
+        }
+      },
+      "hashes": [
+        {
+          "uid": 0,
+          "world": "\u539f\u4e66\ud83d\ude00",
+          "hash": 5093379636155051
+        }
+      ]
+    }
+  },
+  {
+    "name": "missing-entry-keeps-unexpired-state",
+    "books": [],
+    "messages": [
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      }
+    ],
+    "metadata": {
+      "timedWorldInfo": {
+        "sticky": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 2,
+            "end": 5,
+            "protected": false
+          }
+        },
+        "cooldown": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 2,
+            "end": 6,
+            "protected": false
+          }
+        }
+      }
+    },
+    "expected": {
+      "activated": [],
+      "before": "",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 0,
+      "randomUsed": 0,
+      "expandCalls": [],
+      "timedWorldInfo": {
+        "sticky": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 2,
+            "end": 5,
+            "protected": false
+          }
+        },
+        "cooldown": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 2,
+            "end": 6,
+            "protected": false
+          }
+        }
+      },
+      "hashes": []
+    }
+  },
+  {
+    "name": "missing-entry-cleans-expired-state",
+    "books": [],
+    "messages": [
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      }
+    ],
+    "metadata": {
+      "timedWorldInfo": {
+        "sticky": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 2,
+            "end": 5,
+            "protected": false
+          }
+        },
+        "cooldown": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 7691085559332039,
+            "start": 2,
+            "end": 6,
+            "protected": false
+          }
+        }
+      }
+    },
+    "expected": {
+      "activated": [],
+      "before": "",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 0,
+      "randomUsed": 0,
+      "expandCalls": [],
+      "timedWorldInfo": {
+        "sticky": {},
+        "cooldown": {}
+      },
+      "hashes": []
+    }
+  },
+  {
+    "name": "invalid-state-and-unknown-fields",
+    "books": [
+      {
+        "id": "\u539f\u4e66\ud83d\ude00",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "key"
+              ],
+              "content": "entry",
+              "order": 100,
+              "position": 0,
+              "constant": false,
+              "sticky": 3,
+              "cooldown": 4
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      }
+    ],
+    "metadata": {
+      "timedWorldInfo": {
+        "sticky": {
+          "bad": null,
+          "bad2": 3
+        },
+        "cooldown": 4,
+        "custom": {
+          "keep": "\u539f\u503c"
+        }
+      }
+    },
+    "expected": {
+      "activated": [],
+      "before": "",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "key"
+      ],
+      "timedWorldInfo": {
+        "sticky": {},
+        "cooldown": {},
+        "custom": {
+          "keep": "\u539f\u503c"
+        }
+      },
+      "hashes": [
+        {
+          "uid": 0,
+          "world": "\u539f\u4e66\ud83d\ude00",
+          "hash": 7691085559332039
+        }
+      ]
+    }
+  },
+  {
+    "name": "group-sticky-setup",
+    "books": [
+      {
+        "id": "\u539f\u4e66\ud83d\ude00",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "key"
+              ],
+              "content": "entry",
+              "order": 100,
+              "position": 0,
+              "constant": false,
+              "sticky": 3,
+              "cooldown": 0,
+              "group": "g"
+            },
+            "1": {
+              "uid": 1,
+              "key": [
+                "other"
+              ],
+              "content": "other",
+              "order": 999,
+              "position": 0,
+              "constant": false,
+              "sticky": 0,
+              "cooldown": 0,
+              "group": "g",
+              "groupOverride": true
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "noise"
+      },
+      {
+        "text": "key"
+      }
+    ],
+    "expected": {
+      "activated": [
+        "\u539f\u4e66\ud83d\ude00.0"
+      ],
+      "before": "entry",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "other",
+        "key",
+        "entry"
+      ],
+      "timedWorldInfo": {
+        "sticky": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 1268124597528924,
+            "start": 2,
+            "end": 5,
+            "protected": false
+          }
+        },
+        "cooldown": {}
+      },
+      "hashes": [
+        {
+          "uid": 1,
+          "world": "\u539f\u4e66\ud83d\ude00",
+          "hash": 6797748730464453
+        },
+        {
+          "uid": 0,
+          "world": "\u539f\u4e66\ud83d\ude00",
+          "hash": 1268124597528924
+        }
+      ]
+    }
+  },
+  {
+    "name": "sticky-wins-group-without-random",
+    "books": [
+      {
+        "id": "\u539f\u4e66\ud83d\ude00",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "key"
+              ],
+              "content": "entry",
+              "order": 100,
+              "position": 0,
+              "constant": false,
+              "sticky": 3,
+              "cooldown": 0,
+              "group": "g"
+            },
+            "1": {
+              "uid": 1,
+              "key": [
+                "other"
+              ],
+              "content": "other",
+              "order": 999,
+              "position": 0,
+              "constant": false,
+              "sticky": 0,
+              "cooldown": 0,
+              "group": "g",
+              "groupOverride": true
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "x"
+      },
+      {
+        "text": "x"
+      },
+      {
+        "text": "other"
+      }
+    ],
+    "metadata": {
+      "timedWorldInfo": {
+        "sticky": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 1268124597528924,
+            "start": 2,
+            "end": 5,
+            "protected": false
+          }
+        },
+        "cooldown": {}
+      }
+    },
+    "expected": {
+      "activated": [
+        "\u539f\u4e66\ud83d\ude00.0"
+      ],
+      "before": "entry",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "other",
+        "entry"
+      ],
+      "timedWorldInfo": {
+        "sticky": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 1268124597528924,
+            "start": 2,
+            "end": 5,
+            "protected": false
+          }
+        },
+        "cooldown": {}
+      },
+      "hashes": [
+        {
+          "uid": 1,
+          "world": "\u539f\u4e66\ud83d\ude00",
+          "hash": 6797748730464453
+        },
+        {
+          "uid": 0,
+          "world": "\u539f\u4e66\ud83d\ude00",
+          "hash": 1268124597528924
+        }
+      ]
+    }
+  },
+  {
+    "name": "group-sticky-cooldown-setup",
+    "books": [
+      {
+        "id": "\u539f\u4e66\ud83d\ude00",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "key"
+              ],
+              "content": "entry",
+              "order": 100,
+              "position": 0,
+              "constant": false,
+              "sticky": 3,
+              "cooldown": 4,
+              "group": "g"
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "noise"
+      },
+      {
+        "text": "key"
+      }
+    ],
+    "expected": {
+      "activated": [
+        "\u539f\u4e66\ud83d\ude00.0"
+      ],
+      "before": "entry",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "key",
+        "entry"
+      ],
+      "timedWorldInfo": {
+        "sticky": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 4151772044570150,
+            "start": 2,
+            "end": 5,
+            "protected": false
+          }
+        },
+        "cooldown": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 4151772044570150,
+            "start": 2,
+            "end": 6,
+            "protected": false
+          }
+        }
+      },
+      "hashes": [
+        {
+          "uid": 0,
+          "world": "\u539f\u4e66\ud83d\ude00",
+          "hash": 4151772044570150
+        }
+      ]
+    }
+  },
+  {
+    "name": "group-filter-removes-sticky-on-cooldown",
+    "books": [
+      {
+        "id": "\u539f\u4e66\ud83d\ude00",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "key"
+              ],
+              "content": "entry",
+              "order": 100,
+              "position": 0,
+              "constant": false,
+              "sticky": 3,
+              "cooldown": 4,
+              "group": "g"
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      }
+    ],
+    "metadata": {
+      "timedWorldInfo": {
+        "sticky": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 4151772044570150,
+            "start": 2,
+            "end": 5,
+            "protected": false
+          }
+        },
+        "cooldown": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 4151772044570150,
+            "start": 2,
+            "end": 6,
+            "protected": false
+          }
+        }
+      }
+    },
+    "expected": {
+      "activated": [],
+      "before": "",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [],
+      "timedWorldInfo": {
+        "sticky": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 4151772044570150,
+            "start": 2,
+            "end": 5,
+            "protected": false
+          }
+        },
+        "cooldown": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 4151772044570150,
+            "start": 2,
+            "end": 6,
+            "protected": false
+          }
+        }
+      },
+      "hashes": [
+        {
+          "uid": 0,
+          "world": "\u539f\u4e66\ud83d\ude00",
+          "hash": 4151772044570150
+        }
+      ]
+    }
+  },
+  {
+    "name": "probability-zero-roll-admits",
+    "books": [
+      {
+        "id": "\u539f\u4e66\ud83d\ude00",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "key"
+              ],
+              "content": "entry",
+              "order": 100,
+              "position": 0,
+              "constant": false,
+              "sticky": 3,
+              "cooldown": 4,
+              "probability": 0,
+              "useProbability": true
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "noise"
+      },
+      {
+        "text": "key"
+      }
+    ],
+    "random": [
+      0
+    ],
+    "expected": {
+      "activated": [
+        "\u539f\u4e66\ud83d\ude00.0"
+      ],
+      "before": "entry",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 1,
+      "expandCalls": [
+        "key",
+        "entry"
+      ],
+      "timedWorldInfo": {
+        "sticky": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 4361613610822998,
+            "start": 2,
+            "end": 5,
+            "protected": false
+          }
+        },
+        "cooldown": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 4361613610822998,
+            "start": 2,
+            "end": 6,
+            "protected": false
+          }
+        }
+      },
+      "hashes": [
+        {
+          "uid": 0,
+          "world": "\u539f\u4e66\ud83d\ude00",
+          "hash": 4361613610822998
+        }
+      ]
+    }
+  },
+  {
+    "name": "sticky-bypasses-probability-without-random",
+    "books": [
+      {
+        "id": "\u539f\u4e66\ud83d\ude00",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "key"
+              ],
+              "content": "entry",
+              "order": 100,
+              "position": 0,
+              "constant": false,
+              "sticky": 3,
+              "cooldown": 4,
+              "probability": 0,
+              "useProbability": true
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      }
+    ],
+    "metadata": {
+      "timedWorldInfo": {
+        "sticky": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 4361613610822998,
+            "start": 2,
+            "end": 5,
+            "protected": false
+          }
+        },
+        "cooldown": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 4361613610822998,
+            "start": 2,
+            "end": 6,
+            "protected": false
+          }
+        }
+      }
+    },
+    "expected": {
+      "activated": [
+        "\u539f\u4e66\ud83d\ude00.0"
+      ],
+      "before": "entry",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "entry"
+      ],
+      "timedWorldInfo": {
+        "sticky": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 4361613610822998,
+            "start": 2,
+            "end": 5,
+            "protected": false
+          }
+        },
+        "cooldown": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 4361613610822998,
+            "start": 2,
+            "end": 6,
+            "protected": false
+          }
+        }
+      },
+      "hashes": [
+        {
+          "uid": 0,
+          "world": "\u539f\u4e66\ud83d\ude00",
+          "hash": 4361613610822998
+        }
+      ]
+    }
+  },
+  {
+    "name": "decorator-hash-with-fallback-and-unicode",
+    "books": [
+      {
+        "id": "\u539f\u4e66\ud83d\ude00",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "key"
+              ],
+              "content": "@@unknown\n@@@activate\n\u9cb8\u9c7c\ud83d\udc33\r\n",
+              "order": 100,
+              "position": 0,
+              "constant": false,
+              "sticky": 3,
+              "cooldown": 4,
+              "misc": {
+                "2": 1e-07,
+                "10": 1,
+                "a": 0,
+                "b": 100000000000000000000,
+                "c": "\u2028"
+              }
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      }
+    ],
+    "expected": {
+      "activated": [
+        "\u539f\u4e66\ud83d\ude00.0"
+      ],
+      "before": "\u9cb8\u9c7c\ud83d\udc33\r\n",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "\u9cb8\u9c7c\ud83d\udc33\r\n"
+      ],
+      "timedWorldInfo": {
+        "sticky": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 5543908989376439,
+            "start": 2,
+            "end": 5,
+            "protected": false
+          }
+        },
+        "cooldown": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 5543908989376439,
+            "start": 2,
+            "end": 6,
+            "protected": false
+          }
+        }
+      },
+      "hashes": [
+        {
+          "uid": 0,
+          "world": "\u539f\u4e66\ud83d\ude00",
+          "hash": 5543908989376439
+        }
+      ]
+    }
+  },
+  {
+    "name": "v3-conversion-hash",
+    "books": [
+      {
+        "id": "\u5d4c\u5165",
+        "source": "character",
+        "json": {
+          "entries": [
+            {
+              "keys": [
+                "key"
+              ],
+              "content": "V3",
+              "enabled": true,
+              "insertion_order": 100,
+              "extensions": {
+                "sticky": 3,
+                "cooldown": 2
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "noise"
+      },
+      {
+        "text": "key"
+      }
+    ],
+    "expected": {
+      "activated": [
+        "\u5d4c\u5165.0"
+      ],
+      "before": "",
+      "after": "V3",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "key",
+        "V3"
+      ],
+      "timedWorldInfo": {
+        "sticky": {
+          "\u5d4c\u5165.0": {
+            "hash": 4585890160609593,
+            "start": 2,
+            "end": 5,
+            "protected": false
+          }
+        },
+        "cooldown": {
+          "\u5d4c\u5165.0": {
+            "hash": 4585890160609593,
+            "start": 2,
+            "end": 4,
+            "protected": false
+          }
+        }
+      },
+      "hashes": [
+        {
+          "uid": 0,
+          "world": "\u5d4c\u5165",
+          "hash": 4585890160609593
+        }
+      ]
+    }
+  },
+  {
+    "name": "hash-number-boundaries",
+    "books": [
+      {
+        "id": "\u539f\u4e66\ud83d\ude00",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "key"
+              ],
+              "content": "entry",
+              "order": 100,
+              "position": 0,
+              "constant": true,
+              "sticky": 3,
+              "cooldown": 4,
+              "misc": [
+                1,
+                1,
+                0,
+                1e-06,
+                1e-07,
+                100000000000000000000,
+                1e+21,
+                12345678901234567000,
+                9007199254740991,
+                9007199254740992,
+                5e-324,
+                -1e-07
+              ]
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      }
+    ],
+    "expected": {
+      "activated": [
+        "\u539f\u4e66\ud83d\ude00.0"
+      ],
+      "before": "entry",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "entry"
+      ],
+      "timedWorldInfo": {
+        "sticky": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 5535970795342570,
+            "start": 2,
+            "end": 5,
+            "protected": false
+          }
+        },
+        "cooldown": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 5535970795342570,
+            "start": 2,
+            "end": 6,
+            "protected": false
+          }
+        }
+      },
+      "hashes": [
+        {
+          "uid": 0,
+          "world": "\u539f\u4e66\ud83d\ude00",
+          "hash": 5535970795342570
+        }
+      ]
+    }
+  },
+  {
+    "name": "hash-utf16-and-control-boundaries",
+    "books": [
+      {
+        "id": "\u539f\u4e66\ud83d\ude00",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "key"
+              ],
+              "content": "entry",
+              "order": 100,
+              "position": 0,
+              "constant": true,
+              "sticky": 3,
+              "cooldown": 4,
+              "misc": [
+                "\ud800",
+                "\udfff",
+                "\ud83d\udc33",
+                "\u2028\u2029",
+                "\u0000\b\t\n\f\r\"\\"
+              ]
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "noise"
+      },
+      {
+        "text": "noise"
+      }
+    ],
+    "expected": {
+      "activated": [
+        "\u539f\u4e66\ud83d\ude00.0"
+      ],
+      "before": "entry",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "entry"
+      ],
+      "timedWorldInfo": {
+        "sticky": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 4032256570538439,
+            "start": 2,
+            "end": 5,
+            "protected": false
+          }
+        },
+        "cooldown": {
+          "\u539f\u4e66\ud83d\ude00.0": {
+            "hash": 4032256570538439,
+            "start": 2,
+            "end": 6,
+            "protected": false
+          }
+        }
+      },
+      "hashes": [
+        {
+          "uid": 0,
+          "world": "\u539f\u4e66\ud83d\ude00",
+          "hash": 4032256570538439
+        }
+      ]
+    }
+  },
+  {
+    "name": "empty-array-containers-active",
+    "books": [
+      {
+        "id": "book",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "key"
+              ],
+              "content": "X",
+              "position": 0,
+              "sticky": 3
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "key"
+      }
+    ],
+    "metadata": {
+      "timedWorldInfo": {
+        "sticky": [],
+        "cooldown": []
+      }
+    },
+    "random": [],
+    "dryRun": false,
+    "expected": {
+      "activated": [
+        "book.0"
+      ],
+      "before": "X",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "key",
+        "X"
+      ],
+      "timedWorldInfo": {
+        "sticky": [],
+        "cooldown": []
+      },
+      "hashes": [
+        {
+          "uid": 0,
+          "world": "book",
+          "hash": 7141023280915367
+        }
+      ]
+    }
+  },
+  {
+    "name": "empty-array-containers-dry",
+    "books": [
+      {
+        "id": "book",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "key"
+              ],
+              "content": "X",
+              "position": 0,
+              "sticky": 3
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "absent"
+      }
+    ],
+    "metadata": {
+      "timedWorldInfo": {
+        "sticky": [],
+        "cooldown": []
+      }
+    },
+    "random": [],
+    "dryRun": true,
+    "expected": {
+      "activated": [],
+      "before": "",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "key"
+      ],
+      "timedWorldInfo": {
+        "sticky": [],
+        "cooldown": []
+      },
+      "hashes": [
+        {
+          "uid": 0,
+          "world": "book",
+          "hash": 7141023280915367
+        }
+      ]
+    }
+  },
+  {
+    "name": "array-container-existing-record",
+    "books": [
+      {
+        "id": "book",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "key"
+              ],
+              "content": "X",
+              "position": 0,
+              "sticky": 3
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "absent"
+      },
+      {
+        "text": "absent"
+      }
+    ],
+    "metadata": {
+      "timedWorldInfo": {
+        "sticky": [
+          {
+            "hash": 7141023280915367,
+            "start": 1,
+            "end": 4,
+            "protected": false
+          }
+        ],
+        "cooldown": []
+      }
+    },
+    "random": [],
+    "dryRun": false,
+    "expected": {
+      "activated": [
+        "book.0"
+      ],
+      "before": "X",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "X"
+      ],
+      "timedWorldInfo": {
+        "sticky": [
+          {
+            "hash": 7141023280915367,
+            "start": 1,
+            "end": 4,
+            "protected": false
+          }
+        ],
+        "cooldown": []
+      },
+      "hashes": [
+        {
+          "uid": 0,
+          "world": "book",
+          "hash": 7141023280915367
+        }
+      ]
+    }
+  },
+  {
+    "name": "array-container-deleted-hole",
+    "books": [
+      {
+        "id": "book",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "key"
+              ],
+              "content": "X",
+              "position": 0,
+              "sticky": 3
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "absent"
+      }
+    ],
+    "metadata": {
+      "timedWorldInfo": {
+        "sticky": [
+          {
+            "hash": 7141023280915367,
+            "start": 1,
+            "end": 4,
+            "protected": false
+          }
+        ],
+        "cooldown": []
+      }
+    },
+    "random": [],
+    "dryRun": false,
+    "expected": {
+      "activated": [],
+      "before": "",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "key"
+      ],
+      "timedWorldInfo": {
+        "sticky": [
+          null
+        ],
+        "cooldown": []
+      },
+      "hashes": [
+        {
+          "uid": 0,
+          "world": "book",
+          "hash": 7141023280915367
+        }
+      ]
+    }
+  },
+  {
+    "name": "array-roundtrip-next-turn",
+    "books": [
+      {
+        "id": "book",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "key"
+              ],
+              "content": "X",
+              "position": 0,
+              "sticky": 3
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "absent"
+      },
+      {
+        "text": "absent"
+      }
+    ],
+    "metadata": {
+      "timedWorldInfo": {
+        "sticky": [],
+        "cooldown": []
+      }
+    },
+    "random": [],
+    "expected": {
+      "activated": [],
+      "before": "",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "key"
+      ],
+      "timedWorldInfo": {
+        "sticky": [],
+        "cooldown": []
+      },
+      "hashes": [
+        {
+          "uid": 0,
+          "world": "book",
+          "hash": 7141023280915367
+        }
+      ]
+    }
+  },
+  {
+    "name": "map-normalization-control-next-turn",
+    "books": [
+      {
+        "id": "book",
+        "source": "global",
+        "json": {
+          "entries": {
+            "0": {
+              "uid": 0,
+              "key": [
+                "key"
+              ],
+              "content": "X",
+              "position": 0,
+              "sticky": 3
+            }
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "text": "absent"
+      },
+      {
+        "text": "absent"
+      }
+    ],
+    "metadata": {
+      "timedWorldInfo": {
+        "sticky": {
+          "book.0": {
+            "hash": 7141023280915367,
+            "start": 1,
+            "end": 4,
+            "protected": false
+          }
+        },
+        "cooldown": {}
+      }
+    },
+    "random": [],
+    "expected": {
+      "activated": [
+        "book.0"
+      ],
+      "before": "X",
+      "after": "",
+      "examplesBefore": [],
+      "examplesAfter": [],
+      "authorNoteBefore": [],
+      "authorNoteAfter": [],
+      "depths": [],
+      "outlets": {},
+      "budget": 2500,
+      "overflowed": false,
+      "scanRounds": 1,
+      "randomUsed": 0,
+      "expandCalls": [
+        "X"
+      ],
+      "timedWorldInfo": {
+        "sticky": {
+          "book.0": {
+            "hash": 7141023280915367,
+            "start": 1,
+            "end": 4,
+            "protected": false
+          }
+        },
+        "cooldown": {}
+      },
+      "hashes": [
+        {
+          "uid": 0,
+          "world": "book",
+          "hash": 7141023280915367
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,66 @@
+{
+  "pluginConfigUnsaved": "Unsaved",
+  "pluginConfigSecretSet": "Set",
+  "pluginConfigAdvanced": "Advanced",
+  "pluginConfigSearchHint": "Search settings",
+  "pluginConfigNoMatch": "No matching settings",
+  "pluginConfigOpenWeb": "Set up on the web",
+  "pluginConfigOpenWebHint": "The plugin's own page",
+  "pluginConfigResetAll": "Reset all to defaults",
+  "pluginConfigResetAllTitle": "Reset all to defaults?",
+  "pluginConfigReset": "Reset",
+  "pluginConfigChanges": "{count, plural, =1{1 change} other{{count} changes}}",
+  "@pluginConfigChanges": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pluginConfigAppliesOnReload": "Saving reloads the plugin",
+  "pluginConfigSaving": "Saving…",
+  "pluginConfigReloading": "Reloading…",
+  "pluginConfigApplied": "Applied",
+  "pluginConfigFailed": "Didn't take effect",
+  "pluginConfigRestored": "Previous settings restored",
+  "pluginConfigStopped": "Didn't take effect, and the previous settings couldn't be restored",
+  "pluginConfigRestore": "Restore",
+  "pluginConfigDiscard": "Discard",
+  "pluginConfigNotStarted": "The plugin didn't start",
+  "pluginConfigNone": "Nothing to set",
+  "pluginConfigInvalidOperation": "This change can't be applied",
+  "pluginConfigGone": "The plugin is no longer running. Refreshed.",
+  "pluginConfigUnknown": "Connection lost. Settings reloaded.",
+  "pluginConfigUnsupported": "Can't be set here yet",
+  "pluginConfigSecretUnbound": "Needs plugin support",
+  "pluginConfigListFailed": "Couldn't read the plugin list. Try again later.",
+  "pluginConfigListUpdating": "The plugin list is updating. Try again in a moment.",
+  "pluginConfigFixed": "Set by configuration file",
+  "pluginConfigFixedNote": "Set by a configuration file. View only here.",
+  "pluginConfigReadOnly": "Read-only",
+  "pluginConfigEntryTitle": "{bundle} · {entry}",
+  "@pluginConfigEntryTitle": {
+    "placeholders": {
+      "bundle": {
+        "type": "String"
+      },
+      "entry": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginConfigNameSpeechToText": "Speech recognition",
+  "pluginConfigNameSenseVoice": "SenseVoice recognition",
+  "pluginConfigNameSpeechApi": "Transcription API",
+  "pluginConfigNameTranslator": "Translation service",
+  "pluginConfigNameSessionIndex": "Session index",
+  "pluginConfigNameSessionSearchTool": "Session search tool",
+  "pluginConfigNameTerminalService": "Terminal service",
+  "pluginConfigNameTerminalBash": "Bash terminal",
+  "pluginConfigNameTerminalPwsh": "PowerShell terminal",
+  "pluginConfigNameTerminalTools": "Terminal tools",
+  "pluginConfigNameWorktree": "Worktree manager",
+  "pluginConfigNameWorktreeTools": "Worktree tools",
+  "pluginConfigNameRalphWorkflow": "Workflow engine",
+  "pluginConfigNameRalphTools": "Ralph tools"
+}

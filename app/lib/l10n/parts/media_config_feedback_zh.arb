@@ -1,0 +1,39 @@
+{
+  "mediaConfigKeySaved": "已保存 · 未验证",
+  "mediaConfigKeyUnknown": "状态未知",
+  "mediaConfigKeyNote": "密钥是否存在以主机返回为准。保存不代表已验证身份或模型权限。",
+  "mediaConfigConsumers": "使用此密钥的媒体服务：{services}。修改或移除会影响这些服务；主机上的其他集成也可能使用它。",
+  "mediaConfigCheck": "检查已保存配置",
+  "mediaConfigCheckNote": "仅检查本地配置快照，不请求供应商，不产生生成费用。不验证密钥、连通性、余额、模型权限或地区；配置是否接受仍以主机为准。",
+  "mediaConfigCheckReady": "未发现本地配置问题",
+  "mediaConfigCheckMissingKey": "主机尚未报告已保存的密钥。",
+  "mediaConfigCheckModels": "未选择模型，或部分已选模型不在目录中、协议不匹配。",
+  "mediaConfigCheckDisabled": "此服务已关闭。",
+  "mediaConfigUrlInvalid": "请输入含主机名的 HTTPS API 根地址，不得包含凭据、查询参数、片段或空白。",
+  "mediaConfigUrlEndpoint": "这看起来是请求端点。请填写 API 根地址，主机会自动追加请求路径。",
+  "mediaConfigUrlRoot": "此协议只需来源地址（https://主机名），不要填写 API 路径。",
+  "mediaConfigUrlHint": "填写 API 根地址，而非生成端点。OpenAI 兼容服务保留其路径前缀（如 /v1）。",
+  "mediaConfigPreview": "创建请求预览",
+  "mediaConfigPreviewNote": "仅预览生成/创建请求；编辑和查询状态可能使用不同路径。预览不代表连通或已获主机接受。",
+  "mediaConfigPreviewUnavailable": "此主机目录未提供请求路径。",
+  "mediaConfigTargetTitle": "将密钥用于不同目标？",
+  "mediaConfigTargetBody": "目标将从 {before} 更改为 {after}。后续请求可能向新目标发送所引用的密钥，仅在信任该目标时继续。主机仍会校验此更改。",
+  "mediaConfigTargetConfirm": "信任目标并继续",
+  "@mediaConfigConsumers": {
+    "placeholders": {
+      "services": {
+        "type": "String"
+      }
+    }
+  },
+  "@mediaConfigTargetBody": {
+    "placeholders": {
+      "before": {
+        "type": "String"
+      },
+      "after": {
+        "type": "String"
+      }
+    }
+  }
+}

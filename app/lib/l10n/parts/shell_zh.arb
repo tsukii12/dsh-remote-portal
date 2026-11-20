@@ -1,0 +1,605 @@
+{
+  "shellApiKeyPrefixWarning": "DeepSeek 的 Key 通常以 sk- 开头，确认没有复制错",
+  "shellApiKeyIncompleteWarning": "Key 似乎不完整，确认复制了整串",
+  "shellBrowserUrlCopied": "没能打开浏览器，网址已复制",
+  "shellSaveTryAgain": "没能保存，再试一次",
+  "shellApiKeyUpdated": "API Key 已更新",
+  "shellReplaceApiKey": "更换 API Key",
+  "shellEnterApiKey": "输入 API Key",
+  "shellApiKeyBilling": "费用由 DeepSeek 开放平台按量结算",
+  "shellSaving": "正在保存",
+  "shellSaveContinue": "保存并继续",
+  "shellSetUpLater": "稍后设置",
+  "shellClearField": "清空",
+  "shellShow": "显示",
+  "shellApiKeyEncrypted": "加密保存在本机",
+  "shellGetApiKey": "获取 API Key",
+  "shellConnectDeepSeek": "连接 DeepSeek",
+  "shellConnectDeepSeekMessage": "登录 DeepSeek 账号即可开始，无需 API Key",
+  "shellAccountSignInUnsupported": "当前引擎不支持账号登录",
+  "shellSignInDeepSeek": "用 DeepSeek 账号登录",
+  "shellUseApiKey": "使用 API Key",
+  "shellOtherProviders": "其他模型渠道",
+  "shellOnboardingStep": "第 {step} 步，共 {steps} 步",
+  "@shellOnboardingStep": {
+    "placeholders": {
+      "step": {
+        "type": "int"
+      },
+      "steps": {
+        "type": "int"
+      }
+    }
+  },
+  "shellRuntimeUpdating": "正在更新运行环境",
+  "shellRuntimePreparing": "正在准备运行环境",
+  "shellRuntimeReady": "准备就绪",
+  "shellRuntimeIncomplete": "安装未完成",
+  "shellRuntimeFilesKept": "对话和文件都会保留",
+  "shellRuntimeFirstSetup": "首次准备约需一两分钟",
+  "shellRuntimeContinuing": "即将继续",
+  "shellRuntimeRestoreFailed": "没能放回保留的内容",
+  "shellRuntimeExtractFailed": "解压时出错",
+  "shellInstallLogs": "安装日志",
+  "shellRuntimeLocalOnly": "全程在本机完成",
+  "shellRuntimeContinueWithoutKept": "不保留，继续安装",
+  "shellRuntimeAlmostDone": "马上就好",
+  "shellRuntimeSecondsRemaining": "约 {count} 秒",
+  "@shellRuntimeSecondsRemaining": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellRuntimeMinutesRemaining": "约 {count} 分钟",
+  "@shellRuntimeMinutesRemaining": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellEngineLogs": "引擎日志",
+  "shellWelcomeMessage": "把 DeepSeek 智能体\n装进口袋",
+  "shellGetStarted": "开始",
+  "shellSearchChats": "搜索对话",
+  "shellCollapseChatList": "收起对话列表",
+  "shellExpandChatList": "展开对话列表",
+  "shellChatList": "对话列表",
+  "shellChatDetails": "对话详情",
+  "shellCollapseDetails": "收起详情",
+  "shellExpand": "展开",
+  "shellUndo": "撤销",
+  "shellFolderDeleted": "已删除「{name}」",
+  "@shellFolderDeleted": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shellMovedToFolder": "已移到「{name}」",
+  "@shellMovedToFolder": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shellMovedOutOfFolder": "已移出文件夹",
+  "shellUnpinFailed": "没能取消置顶，稍后再试",
+  "shellPinFailed": "没能置顶，稍后再试",
+  "shellChatsUnpinned": "已取消置顶 {count} 个对话",
+  "@shellChatsUnpinned": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellChatsPinned": "已置顶 {count} 个对话",
+  "@shellChatsPinned": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellArchiveFailed": "没能归档，稍后再试",
+  "shellChatsStoppedArchived": "已停止并归档 {count} 个对话",
+  "@shellChatsStoppedArchived": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellChatsArchived": "已归档 {count} 个对话",
+  "@shellChatsArchived": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellFilterLabel": "筛选：{label}",
+  "@shellFilterLabel": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "shellFolders": "文件夹",
+  "shellNoRunningChats": "没有运行中的对话",
+  "shellNoPendingChats": "没有待确认的对话",
+  "shellNoUnreadChats": "没有未读对话",
+  "shellNoChatsYet": "还没有对话",
+  "shellFolderLabel": "文件夹「{name}」",
+  "@shellFolderLabel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shellFolderChatCount": "文件夹「{name}」，{count} 个对话",
+  "@shellFolderChatCount": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellSort": "排序",
+  "shellRecentActivity": "最近活动",
+  "shellCreatedTime": "创建时间",
+  "shellNewFolder": "新建文件夹",
+  "shellManageFolders": "管理文件夹",
+  "shellMultiSelect": "多选",
+  "shellFolderNameExists": "已有同名文件夹",
+  "shellEditFolder": "编辑文件夹",
+  "shellFolderMark": "标记",
+  "shellFolderColor": "颜色 {number}",
+  "@shellFolderColor": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "shellMoveToFolder": "移到文件夹",
+  "shellMoveOutOfFolder": "移出文件夹",
+  "shellDeleteFolder": "删除文件夹",
+  "shellDragToReorder": "拖动排序",
+  "shellSelectChats": "选择对话",
+  "shellSelectedCount": "已选 {count} 个",
+  "@shellSelectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDeselectAll": "取消全选",
+  "shellSelectAll": "全选",
+  "shellUnpin": "取消置顶",
+  "shellArchive": "归档",
+  "shellCurrentlyRunning": "正在运行",
+  "shellUnread": "未读",
+  "shellPinned": "已置顶",
+  "shellEngineNotRunning": "引擎未运行",
+  "shellHostNotConnected": "还没连上「{name}」",
+  "@shellHostNotConnected": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shellSearchAfterConnecting": "连接后才能搜索",
+  "shellChatsLoadFailed": "对话列表加载失败",
+  "shellSearchHostChats": "搜索「{name}」上的对话",
+  "@shellSearchHostChats": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shellSearchTitlesHint": "按标题查找，含已归档的对话",
+  "shellSearchContentHint": "按标题和内容查找，含已归档的对话",
+  "shellLoadingChatsEllipsis": "正在加载对话…",
+  "shellNoMatchingChats": "没有相关对话",
+  "shellSearchDifferentKeywords": "换个关键词，或用空格分开多个词",
+  "shellArchived": "已归档",
+  "shellRestoreBeforeOpening": "已归档的对话需先恢复，才能打开",
+  "shellRestoreAndOpen": "恢复并打开",
+  "shellRestoreFailed": "没能恢复，稍后再试",
+  "shellSearchingMessages": "正在搜索消息内容…",
+  "shellHostTitleSearchOnly": "这台主机仅支持按标题搜索",
+  "shellContentSearchFailed": "内容搜索失败，仅显示标题匹配",
+  "shellContentSearchLimit": "内容匹配仅列出最相关的 20 个对话",
+  "shellMoveToOtherFolder": "移到其他文件夹",
+  "shellArchiveStopsTurn": "进行中的一轮会停止",
+  "shellRenameFailed": "没能重命名，稍后再试",
+  "shellChatStoppedArchived": "已停止并归档「{title}」",
+  "@shellChatStoppedArchived": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "shellChatArchived": "已归档「{title}」",
+  "@shellChatArchived": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "shellRenameChat": "重命名对话",
+  "shellChatTitle": "对话标题",
+  "shellUnreadCount": "{count} 条未读",
+  "@shellUnreadCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellLoadingChats": "正在加载对话",
+  "shellWorkspaceNoChats": "这里还没有对话",
+  "shellWorkspaceNewChatsHint": "新对话会放进这个工作区。旧对话不会自动移入，可在「全部对话」中找到。",
+  "shellNewChatsHint": "新对话会出现在这里",
+  "shellEngineStarting": "引擎正在启动",
+  "shellChatsAfterStarting": "启动后显示你的对话",
+  "shellStartEngine": "启动引擎",
+  "shellEngineStatusHint": "在「引擎」中查看状态",
+  "shellHostUnreachable": "连不上「{name}」",
+  "@shellHostUnreachable": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shellHostReconnecting": "正在重新连接「{name}」…",
+  "@shellHostReconnecting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shellRetryNow": "立即重试",
+  "shellHostConnecting": "正在连接「{name}」…",
+  "@shellHostConnecting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shellHostChatsAfterConnecting": "连接后显示这台主机上的对话",
+  "shellCurrentHostLabel": "当前主机：{name}，{view}。切换主机",
+  "@shellCurrentHostLabel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "view": {
+        "type": "String"
+      }
+    }
+  },
+  "shellChatGone": "这个对话已不在了",
+  "shellAccentMist": "雾蓝",
+  "shellAccentDaiqing": "黛青",
+  "shellAccentDusk": "暮紫",
+  "shellAccentTurquoise": "松石",
+  "shellAccentAmber": "琥珀",
+  "shellAccentGraphite": "石墨",
+  "shellHideTurnFooter": "回合脚注",
+  "shellHideTokenCount": "token 数",
+  "shellHideReasoning": "思考过程",
+  "shellHideActivityStrip": "活动条",
+  "shellHideWhaleTail": "鲸尾",
+  "shellHideTodoPill": "待办条",
+  "shellHideGoalBar": "目标条",
+  "shellToday": "今天",
+  "shellThisWeek": "本周",
+  "shellEarlier": "更早",
+  "shellSeatNative": "原生",
+  "shellSeatIsland": "内嵌网页",
+  "shellSeatWeb": "网页版打开",
+  "shellPlugins": "插件",
+  "shellHeaderActions": "顶栏按钮",
+  "shellAllHidden": "全部隐藏",
+  "shellSettingCount": "{count} 个",
+  "@shellSettingCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellQuickActions": "快捷胶囊",
+  "shellSuggestionCards": "建议卡片",
+  "shellSuggestionCardCount": "{count} 张",
+  "@shellSuggestionCardCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDrawerGroups": "抽屉分组",
+  "shellDrawerSort": "抽屉排序",
+  "shellDrawerFilter": "抽屉筛选",
+  "shellPending": "待确认",
+  "shellAll": "全部",
+  "shellDensity": "疏密",
+  "shellCompact": "紧凑",
+  "shellSpacious": "宽松",
+  "shellThemeMode": "外观模式",
+  "shellAccentColor": "强调色",
+  "shellPet": "宠物",
+  "shellConfigured": "已设置",
+  "shellShortcuts": "快捷键",
+  "shellConfigFileTooLarge": "文件超过 64 KiB",
+  "shellConfigRootNotObject": "顶层必须是对象",
+  "shellConfigVersionMissing": "缺少 version",
+  "shellConfigVersionNotInt": "version 必须是整数",
+  "shellConfigVersionTooLow": "version 从 1 开始",
+  "shellConfigVersionTooHigh": "需要更新 App 才能使用版本 {version}",
+  "@shellConfigVersionTooHigh": {
+    "placeholders": {
+      "version": {
+        "type": "int"
+      }
+    }
+  },
+  "shellConfigNotObject": "应该是对象",
+  "shellConfigNotArray": "应该是数组",
+  "shellConfigNotString": "应该是字符串",
+  "shellConfigNotBool": "应该是 true 或 false",
+  "shellConfigEmpty": "不能为空",
+  "shellConfigUnknownKey": "未知的键，已忽略",
+  "shellConfigDuplicateKey": "重复的键，只认最后一个",
+  "shellConfigDuplicateItem": "重复了，已忽略",
+  "shellConfigMissing": "缺少 {key}",
+  "@shellConfigMissing": {
+    "placeholders": {
+      "key": {
+        "type": "String"
+      }
+    }
+  },
+  "shellConfigTruncated": "超过 {count} 个字，已截断",
+  "@shellConfigTruncated": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellConfigTooLong": "超过 {count} 个字",
+  "@shellConfigTooLong": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellConfigTooMany": "最多 {count} 个，多出的已忽略",
+  "@shellConfigTooMany": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellConfigValueNoun": "值",
+  "shellConfigUnsupportedValue": "不支持的{noun}「{value}」",
+  "@shellConfigUnsupportedValue": {
+    "placeholders": {
+      "noun": {
+        "type": "String"
+      },
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "shellConfigHeaderItem": "应该是按钮 id 或对象",
+  "shellConfigHeaderId": "id 只能用字母、数字和 -，以小写字母开头",
+  "shellConfigIdTaken": "id 重复",
+  "shellConfigCommandSlash": "命令名不带 /，已去掉",
+  "shellConfigCommandName": "命令名只能用字母、数字和 : . _ -",
+  "shellConfigNoNewline": "不能换行",
+  "shellConfigHttpsOnly": "只支持 https 链接",
+  "shellConfigBadUrl": "链接格式不对",
+  "shellConfigAccentFormat": "颜色要写成 #RRGGBB",
+  "shellConfigAccentBoth": "和 accentPreset 二选一，已用 accentPreset",
+  "shellConfigPetId": "id 只能用小写字母、数字和 -",
+  "shellConfigKeysFormat": "写法不对，例如 ctrl+k",
+  "shellConfigSystemKey": "不能用系统键",
+  "shellConfigNeedModifier": "要带 ctrl 或 alt",
+  "shellConfigReservedKey": "被系统或输入法占用",
+  "shellConfigDuplicateShortcut": "和 {pointer} 重复",
+  "@shellConfigDuplicateShortcut": {
+    "placeholders": {
+      "pointer": {
+        "type": "String"
+      }
+    }
+  },
+  "shellConfigSlotName": "slot 名格式不对",
+  "shellConfigUnknownSlot": "当前 DSH 没有这个 slot，先保留",
+  "shellConfigUnseatableSlot": "这个位置不放插件",
+  "shellConfigPackageName": "包名格式不对",
+  "shellConfigActionNoun": "动作",
+  "shellConfigPageNoun": "页面",
+  "shellConfigButtonNoun": "按钮",
+  "shellConfigIconNoun": "图标",
+  "shellConfigNotTextFile": "不是文本文件",
+  "shellJsonPosition": "第 {line} 行第 {column} 列：{reason}",
+  "@shellJsonPosition": {
+    "placeholders": {
+      "line": {
+        "type": "int"
+      },
+      "column": {
+        "type": "int"
+      },
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "shellJsonEmptyFile": "文件是空的",
+  "shellJsonExtraContent": "后面还有多余的内容",
+  "shellJsonIncompleteFile": "文件不完整",
+  "shellJsonCommentsUnsupported": "不支持注释",
+  "shellJsonDoubleQuotes": "字符串要用双引号",
+  "shellJsonMissingValue": "这里缺少一个值",
+  "shellJsonUnknownContent": "无法识别的内容「{value}」",
+  "@shellJsonUnknownContent": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "shellJsonTooDeep": "嵌套太深",
+  "shellJsonExtraComma": "多余的逗号",
+  "shellJsonQuotedKey": "键要用双引号括起来",
+  "shellJsonExpectedKey": "这里应该是一个键",
+  "shellJsonMissingColon": "键后面缺少冒号",
+  "shellJsonMissingComma": "这里缺少逗号",
+  "shellJsonUnexpectedContent": "这里不应该出现「{value}」",
+  "@shellJsonUnexpectedContent": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "shellJsonUnterminatedString": "字符串没有结束",
+  "shellJsonBadEscape": "字符串里的转义不对",
+  "shellJsonStringNewline": "字符串里不能直接换行",
+  "shellJsonControlCharacter": "字符串里有控制字符",
+  "shellJsonBadNumber": "数字格式不对",
+  "shellSkillInstallPrompt": "请在这台主机上安装 DSH Go 的界面技能 {skill}：",
+  "@shellSkillInstallPrompt": {
+    "placeholders": {
+      "skill": {
+        "type": "String"
+      }
+    }
+  },
+  "shellSkillInstallDirectory": "1. 目标目录是 `$DSH_HOME/skills/{skill}/`（没有设置 DSH_HOME 时是 `~/.dsh/skills/{skill}/`），不存在就先建。",
+  "@shellSkillInstallDirectory": {
+    "placeholders": {
+      "skill": {
+        "type": "String"
+      }
+    }
+  },
+  "shellSkillInstallFiles": "2. 把下面每个文件按给出的相对路径原样写进去，内容一个字都不要改。",
+  "shellSkillInstallConfirm": "4. 告诉我装好了。",
+  "shellSkillInstallFile": "文件 `{path}`：",
+  "@shellSkillInstallFile": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "shellFromUiJson": "来自 ui.json",
+  "shellViewSource": "查看来源",
+  "shellSourcePosition": "位置",
+  "shellRestoreDefaults": "恢复默认",
+  "shellConfigNotApplied": "没有生效",
+  "shellConfigDroppedCount": "{count} 处没生效",
+  "@shellConfigDroppedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellConfigAppliedCount": "已应用 {count} 项",
+  "@shellConfigAppliedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellInterfaceConfig": "界面配置",
+  "shellSkillNotInstalled": "未安装技能",
+  "shellInstallInterfaceSkill": "安装界面技能",
+  "shellInstallInterfaceSkillMessage": "装好后，可以让 AI 按你的话调整 App 界面",
+  "shellNoUiJson": "没有 ui.json",
+  "shellConfigUsingPrevious": "没有生效，仍在用上一次的配置",
+  "shellConfigDroppedHeading": "没生效",
+  "shellConfigNotesHeading": "提示",
+  "shellConfigAppliedHeading": "已应用",
+  "shellConfigValueOptions": "不支持的{noun}「{value}」，可选：{options}",
+  "@shellConfigValueOptions": {
+    "placeholders": {
+      "noun": {
+        "type": "String"
+      },
+      "value": {
+        "type": "String"
+      },
+      "options": {
+        "type": "String"
+      }
+    }
+  },
+  "shellListSeparator": "、",
+  "shellSkillInstallCheck": "3. 写完运行 {command}，能运行就说明装好了（提示还没有 ui.json 是正常的）。",
+  "@shellSkillInstallCheck": {
+    "placeholders": {
+      "command": {
+        "type": "String"
+      }
+    }
+  },
+  "shellSemanticsSeparator": "，",
+  "shellChatsArchivedPartial": "已归档 {count} 个对话，{failed} 个没能归档",
+  "@shellChatsArchivedPartial": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "failed": {
+        "type": "int"
+      }
+    }
+  },
+  "shellPanelOverview": "信息",
+  "shellPanelWorkspace": "工作区",
+  "shellPanelModel": "模型",
+  "shellPanelHost": "主机",
+  "shellPanelOpenFull": "打开完整页面",
+  "shellPanelNoPlugins": "这段对话还没有插件面板",
+  "shellQuickPanel": "快捷入口",
+  "shellQuickPanelHint": "在「{path}」里调整",
+  "@shellQuickPanelHint": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  }
+}

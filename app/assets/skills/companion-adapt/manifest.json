@@ -1,0 +1,7 @@
+{
+  "name": "companion-adapt",
+  "files": {
+    "SKILL.md": "SKILL.md",
+    "contract.txt": "references/contract.txt"
+  }
+}

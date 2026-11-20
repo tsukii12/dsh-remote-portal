@@ -1,0 +1,3342 @@
+{
+  "source": "SillyTavern 1.19.0 / 7e8663cd9c184a550b37238218bdd32c6efc68e9",
+  "seedrandom": "3.0.5 / 12d7ee1ddd93e8708629953a7ef416f64cc4be75",
+  "moment": "2.30.1 / b2af46df9d126367bf05746af59e2b803b873f34",
+  "coverage": "Actual ST hash, pick handler, variable APIs, Moment format/humanize; AST offsets are specified from source, not a full ST parser execution.",
+  "hashes": [
+    {
+      "text": "",
+      "seed": 0,
+      "expected": 3338908027751811
+    },
+    {
+      "text": "",
+      "seed": 1,
+      "expected": 7956228673112545
+    },
+    {
+      "text": "",
+      "seed": -1,
+      "expected": 4973986077183363
+    },
+    {
+      "text": "",
+      "seed": 2147483647,
+      "expected": 4612813144067459
+    },
+    {
+      "text": "abc",
+      "seed": 0,
+      "expected": 5059922895146125
+    },
+    {
+      "text": "abc",
+      "seed": 1,
+      "expected": 4486759430526946
+    },
+    {
+      "text": "abc",
+      "seed": -1,
+      "expected": 8478400215644285
+    },
+    {
+      "text": "abc",
+      "seed": 2147483647,
+      "expected": 1344166948534397
+    },
+    {
+      "text": "😀",
+      "seed": 0,
+      "expected": 4725715722941614
+    },
+    {
+      "text": "😀",
+      "seed": 1,
+      "expected": 7684638163706932
+    },
+    {
+      "text": "😀",
+      "seed": -1,
+      "expected": 2818622973460506
+    },
+    {
+      "text": "😀",
+      "seed": 2147483647,
+      "expected": 1217717197881370
+    },
+    {
+      "text": "你😀好",
+      "seed": 0,
+      "expected": 3705022385428021
+    },
+    {
+      "text": "你😀好",
+      "seed": 1,
+      "expected": 2948395537989253
+    },
+    {
+      "text": "你😀好",
+      "seed": -1,
+      "expected": 8277125220231053
+    },
+    {
+      "text": "你😀好",
+      "seed": 2147483647,
+      "expected": 6498408755750797
+    },
+    {
+      "text": "\r\n",
+      "seed": 0,
+      "expected": 8368794458367636
+    },
+    {
+      "text": "\r\n",
+      "seed": 1,
+      "expected": 3335689637165237
+    },
+    {
+      "text": "\r\n",
+      "seed": -1,
+      "expected": 6891606968148219
+    },
+    {
+      "text": "\r\n",
+      "seed": 2147483647,
+      "expected": 1336892286181627
+    },
+    {
+      "text": "a\u0000b",
+      "seed": 0,
+      "expected": 3312819133126381
+    },
+    {
+      "text": "a\u0000b",
+      "seed": 1,
+      "expected": 2817416786453661
+    },
+    {
+      "text": "a\u0000b",
+      "seed": -1,
+      "expected": 3360898830636299
+    },
+    {
+      "text": "a\u0000b",
+      "seed": 2147483647,
+      "expected": 578498252477707
+    },
+    {
+      "text": "{{pick::一::二}}",
+      "seed": 0,
+      "expected": 5151864194768949
+    },
+    {
+      "text": "{{pick::一::二}}",
+      "seed": 1,
+      "expected": 4287088997340428
+    },
+    {
+      "text": "{{pick::一::二}}",
+      "seed": -1,
+      "expected": 436540842366192
+    },
+    {
+      "text": "{{pick::一::二}}",
+      "seed": 2147483647,
+      "expected": 7549713739961584
+    },
+    {
+      "text": "😀文0",
+      "seed": 0,
+      "expected": 4330456939955469
+    },
+    {
+      "text": "😀文0",
+      "seed": 1,
+      "expected": 1068147121499964
+    },
+    {
+      "text": "😀文0",
+      "seed": -1,
+      "expected": 8787841691655516
+    },
+    {
+      "text": "😀文0",
+      "seed": 2147483647,
+      "expected": 566361432333660
+    },
+    {
+      "text": "😁文1\r\nx",
+      "seed": 0,
+      "expected": 5063105865617664
+    },
+    {
+      "text": "😁文1\r\nx",
+      "seed": 1,
+      "expected": 4893777522751027
+    },
+    {
+      "text": "😁文1\r\nx",
+      "seed": -1,
+      "expected": 2729455078007860
+    },
+    {
+      "text": "😁文1\r\nx",
+      "seed": 2147483647,
+      "expected": 1461183204844596
+    },
+    {
+      "text": "😂文2\r\nx\r\nx",
+      "seed": 0,
+      "expected": 5119223863371005
+    },
+    {
+      "text": "😂文2\r\nx\r\nx",
+      "seed": 1,
+      "expected": 6075076013116845
+    },
+    {
+      "text": "😂文2\r\nx\r\nx",
+      "seed": -1,
+      "expected": 7106999954467140
+    },
+    {
+      "text": "😂文2\r\nx\r\nx",
+      "seed": 2147483647,
+      "expected": 8725705960122692
+    },
+    {
+      "text": "😃文3\r\nx\r\nx\r\nx",
+      "seed": 0,
+      "expected": 1288870714239648
+    },
+    {
+      "text": "😃文3\r\nx\r\nx\r\nx",
+      "seed": 1,
+      "expected": 4978199986269948
+    },
+    {
+      "text": "😃文3\r\nx\r\nx\r\nx",
+      "seed": -1,
+      "expected": 6485402059609194
+    },
+    {
+      "text": "😃文3\r\nx\r\nx\r\nx",
+      "seed": 2147483647,
+      "expected": 7917121893799018
+    },
+    {
+      "text": "😄文4\r\nx\r\nx\r\nx\r\nx",
+      "seed": 0,
+      "expected": 4846735151986637
+    },
+    {
+      "text": "😄文4\r\nx\r\nx\r\nx\r\nx",
+      "seed": 1,
+      "expected": 6648691612009661
+    },
+    {
+      "text": "😄文4\r\nx\r\nx\r\nx\r\nx",
+      "seed": -1,
+      "expected": 8824933101858106
+    },
+    {
+      "text": "😄文4\r\nx\r\nx\r\nx\r\nx",
+      "seed": 2147483647,
+      "expected": 1477565534268730
+    },
+    {
+      "text": "😅文5",
+      "seed": 0,
+      "expected": 8385561364414958
+    },
+    {
+      "text": "😅文5",
+      "seed": 1,
+      "expected": 654983316741086
+    },
+    {
+      "text": "😅文5",
+      "seed": -1,
+      "expected": 486172136289985
+    },
+    {
+      "text": "😅文5",
+      "seed": 2147483647,
+      "expected": 3332824214877889
+    },
+    {
+      "text": "😆文6\r\nx",
+      "seed": 0,
+      "expected": 7345021029234989
+    },
+    {
+      "text": "😆文6\r\nx",
+      "seed": 1,
+      "expected": 7313606528148706
+    },
+    {
+      "text": "😆文6\r\nx",
+      "seed": -1,
+      "expected": 734465450734759
+    },
+    {
+      "text": "😆文6\r\nx",
+      "seed": 2147483647,
+      "expected": 3844555109102759
+    },
+    {
+      "text": "😇文7\r\nx\r\nx",
+      "seed": 0,
+      "expected": 7941471792593077
+    },
+    {
+      "text": "😇文7\r\nx\r\nx",
+      "seed": 1,
+      "expected": 8923416009683809
+    },
+    {
+      "text": "😇文7\r\nx\r\nx",
+      "seed": -1,
+      "expected": 7851699334396876
+    },
+    {
+      "text": "😇文7\r\nx\r\nx",
+      "seed": 2147483647,
+      "expected": 7468227709647820
+    },
+    {
+      "text": "😈文8\r\nx\r\nx\r\nx",
+      "seed": 0,
+      "expected": 696465667053635
+    },
+    {
+      "text": "😈文8\r\nx\r\nx\r\nx",
+      "seed": 1,
+      "expected": 4341184773047165
+    },
+    {
+      "text": "😈文8\r\nx\r\nx\r\nx",
+      "seed": -1,
+      "expected": 3275024353678674
+    },
+    {
+      "text": "😈文8\r\nx\r\nx\r\nx",
+      "seed": 2147483647,
+      "expected": 2041048382625106
+    },
+    {
+      "text": "😉文9\r\nx\r\nx\r\nx\r\nx",
+      "seed": 0,
+      "expected": 674806630666712
+    },
+    {
+      "text": "😉文9\r\nx\r\nx\r\nx\r\nx",
+      "seed": 1,
+      "expected": 3953206208043128
+    },
+    {
+      "text": "😉文9\r\nx\r\nx\r\nx\r\nx",
+      "seed": -1,
+      "expected": 3221383986687391
+    },
+    {
+      "text": "😉文9\r\nx\r\nx\r\nx\r\nx",
+      "seed": 2147483647,
+      "expected": 1327042548772255
+    },
+    {
+      "text": "😊文10",
+      "seed": 0,
+      "expected": 3444721002007733
+    },
+    {
+      "text": "😊文10",
+      "seed": 1,
+      "expected": 8859939516633595
+    },
+    {
+      "text": "😊文10",
+      "seed": -1,
+      "expected": 4196447880698824
+    },
+    {
+      "text": "😊文10",
+      "seed": 2147483647,
+      "expected": 1164080140573640
+    },
+    {
+      "text": "😋文11\r\nx",
+      "seed": 0,
+      "expected": 2791695604549250
+    },
+    {
+      "text": "😋文11\r\nx",
+      "seed": 1,
+      "expected": 1100722959147696
+    },
+    {
+      "text": "😋文11\r\nx",
+      "seed": -1,
+      "expected": 1347713067410357
+    },
+    {
+      "text": "😋文11\r\nx",
+      "seed": 2147483647,
+      "expected": 4221129606489013
+    },
+    {
+      "text": "😌文12\r\nx\r\nx",
+      "seed": 0,
+      "expected": 3131066987008263
+    },
+    {
+      "text": "😌文12\r\nx\r\nx",
+      "seed": 1,
+      "expected": 672654950260467
+    },
+    {
+      "text": "😌文12\r\nx\r\nx",
+      "seed": -1,
+      "expected": 6871312856853137
+    },
+    {
+      "text": "😌文12\r\nx\r\nx",
+      "seed": 2147483647,
+      "expected": 325630752434833
+    },
+    {
+      "text": "😍文13\r\nx\r\nx\r\nx",
+      "seed": 0,
+      "expected": 5243272453313715
+    },
+    {
+      "text": "😍文13\r\nx\r\nx\r\nx",
+      "seed": 1,
+      "expected": 6084872284047868
+    },
+    {
+      "text": "😍文13\r\nx\r\nx\r\nx",
+      "seed": -1,
+      "expected": 5176749102779075
+    },
+    {
+      "text": "😍文13\r\nx\r\nx\r\nx",
+      "seed": 2147483647,
+      "expected": 6749994576661187
+    },
+    {
+      "text": "😎文14\r\nx\r\nx\r\nx\r\nx",
+      "seed": 0,
+      "expected": 6959643756520454
+    },
+    {
+      "text": "😎文14\r\nx\r\nx\r\nx\r\nx",
+      "seed": 1,
+      "expected": 1576941174918815
+    },
+    {
+      "text": "😎文14\r\nx\r\nx\r\nx\r\nx",
+      "seed": -1,
+      "expected": 6445066625252669
+    },
+    {
+      "text": "😎文14\r\nx\r\nx\r\nx\r\nx",
+      "seed": 2147483647,
+      "expected": 8325491917847869
+    },
+    {
+      "text": "😏文15",
+      "seed": 0,
+      "expected": 5144709026355544
+    },
+    {
+      "text": "😏文15",
+      "seed": 1,
+      "expected": 7629730467123424
+    },
+    {
+      "text": "😏文15",
+      "seed": -1,
+      "expected": 5753983667536398
+    },
+    {
+      "text": "😏文15",
+      "seed": 2147483647,
+      "expected": 815818651042318
+    },
+    {
+      "text": "😐文16\r\nx",
+      "seed": 0,
+      "expected": 6379387468677318
+    },
+    {
+      "text": "😐文16\r\nx",
+      "seed": 1,
+      "expected": 5291299331837969
+    },
+    {
+      "text": "😐文16\r\nx",
+      "seed": -1,
+      "expected": 7139689816673690
+    },
+    {
+      "text": "😐文16\r\nx",
+      "seed": 2147483647,
+      "expected": 871011938454938
+    },
+    {
+      "text": "😑文17\r\nx\r\nx",
+      "seed": 0,
+      "expected": 3065713579094235
+    },
+    {
+      "text": "😑文17\r\nx\r\nx",
+      "seed": 1,
+      "expected": 5983006668785707
+    },
+    {
+      "text": "😑文17\r\nx\r\nx",
+      "seed": -1,
+      "expected": 14587000532825
+    },
+    {
+      "text": "😑文17\r\nx\r\nx",
+      "seed": 2147483647,
+      "expected": 7247706349023065
+    },
+    {
+      "text": "😒文18\r\nx\r\nx\r\nx",
+      "seed": 0,
+      "expected": 5054063365951213
+    },
+    {
+      "text": "😒文18\r\nx\r\nx\r\nx",
+      "seed": 1,
+      "expected": 982814925555031
+    },
+    {
+      "text": "😒文18\r\nx\r\nx\r\nx",
+      "seed": -1,
+      "expected": 6151576207951911
+    },
+    {
+      "text": "😒文18\r\nx\r\nx\r\nx",
+      "seed": 2147483647,
+      "expected": 7035669713291303
+    },
+    {
+      "text": "😓文19\r\nx\r\nx\r\nx\r\nx",
+      "seed": 0,
+      "expected": 942641789059508
+    },
+    {
+      "text": "😓文19\r\nx\r\nx\r\nx\r\nx",
+      "seed": 1,
+      "expected": 8405787492291244
+    },
+    {
+      "text": "😓文19\r\nx\r\nx\r\nx\r\nx",
+      "seed": -1,
+      "expected": 211697928784268
+    },
+    {
+      "text": "😓文19\r\nx\r\nx\r\nx\r\nx",
+      "seed": 2147483647,
+      "expected": 7281986720680332
+    },
+    {
+      "text": "😔文20",
+      "seed": 0,
+      "expected": 6881370336563473
+    },
+    {
+      "text": "😔文20",
+      "seed": 1,
+      "expected": 2979773557291609
+    },
+    {
+      "text": "😔文20",
+      "seed": -1,
+      "expected": 605225961774408
+    },
+    {
+      "text": "😔文20",
+      "seed": 2147483647,
+      "expected": 7109577479052616
+    },
+    {
+      "text": "😕文21\r\nx",
+      "seed": 0,
+      "expected": 7504630689724965
+    },
+    {
+      "text": "😕文21\r\nx",
+      "seed": 1,
+      "expected": 2059927484406703
+    },
+    {
+      "text": "😕文21\r\nx",
+      "seed": -1,
+      "expected": 8431531876400078
+    },
+    {
+      "text": "😕文21\r\nx",
+      "seed": 2147483647,
+      "expected": 2812630225992654
+    },
+    {
+      "text": "😖文22\r\nx\r\nx",
+      "seed": 0,
+      "expected": 8537563501507924
+    },
+    {
+      "text": "😖文22\r\nx\r\nx",
+      "seed": 1,
+      "expected": 5049302695933237
+    },
+    {
+      "text": "😖文22\r\nx\r\nx",
+      "seed": -1,
+      "expected": 3110874851169269
+    },
+    {
+      "text": "😖文22\r\nx\r\nx",
+      "seed": 2147483647,
+      "expected": 7266389384451061
+    },
+    {
+      "text": "😗文23\r\nx\r\nx\r\nx",
+      "seed": 0,
+      "expected": 6841250504969095
+    },
+    {
+      "text": "😗文23\r\nx\r\nx\r\nx",
+      "seed": 1,
+      "expected": 2503973036753849
+    },
+    {
+      "text": "😗文23\r\nx\r\nx\r\nx",
+      "seed": -1,
+      "expected": 4314037321196326
+    },
+    {
+      "text": "😗文23\r\nx\r\nx\r\nx",
+      "seed": 2147483647,
+      "expected": 1637571280266022
+    },
+    {
+      "text": "😘文24\r\nx\r\nx\r\nx\r\nx",
+      "seed": 0,
+      "expected": 4070315947453677
+    },
+    {
+      "text": "😘文24\r\nx\r\nx\r\nx\r\nx",
+      "seed": 1,
+      "expected": 3332699994993071
+    },
+    {
+      "text": "😘文24\r\nx\r\nx\r\nx\r\nx",
+      "seed": -1,
+      "expected": 3436762869966324
+    },
+    {
+      "text": "😘文24\r\nx\r\nx\r\nx\r\nx",
+      "seed": 2147483647,
+      "expected": 4590065253950964
+    },
+    {
+      "text": "😙文25",
+      "seed": 0,
+      "expected": 4175564439250730
+    },
+    {
+      "text": "😙文25",
+      "seed": 1,
+      "expected": 7274812335163248
+    },
+    {
+      "text": "😙文25",
+      "seed": -1,
+      "expected": 2613903486043913
+    },
+    {
+      "text": "😙文25",
+      "seed": 2147483647,
+      "expected": 3329115199555337
+    },
+    {
+      "text": "😚文26\r\nx",
+      "seed": 0,
+      "expected": 4878508095677802
+    },
+    {
+      "text": "😚文26\r\nx",
+      "seed": 1,
+      "expected": 183636333867783
+    },
+    {
+      "text": "😚文26\r\nx",
+      "seed": -1,
+      "expected": 6958901394869928
+    },
+    {
+      "text": "😚文26\r\nx",
+      "seed": 2147483647,
+      "expected": 6795296627658408
+    },
+    {
+      "text": "😛文27\r\nx\r\nx",
+      "seed": 0,
+      "expected": 2402693682866964
+    },
+    {
+      "text": "😛文27\r\nx\r\nx",
+      "seed": 1,
+      "expected": 2068361493296977
+    },
+    {
+      "text": "😛文27\r\nx\r\nx",
+      "seed": -1,
+      "expected": 4308742065166817
+    },
+    {
+      "text": "😛文27\r\nx\r\nx",
+      "seed": 2147483647,
+      "expected": 2010061640997345
+    },
+    {
+      "text": "😜文28\r\nx\r\nx\r\nx",
+      "seed": 0,
+      "expected": 5271597697184170
+    },
+    {
+      "text": "😜文28\r\nx\r\nx\r\nx",
+      "seed": 1,
+      "expected": 903675138889203
+    },
+    {
+      "text": "😜文28\r\nx\r\nx\r\nx",
+      "seed": -1,
+      "expected": 7240401668768846
+    },
+    {
+      "text": "😜文28\r\nx\r\nx\r\nx",
+      "seed": 2147483647,
+      "expected": 8367556235691086
+    },
+    {
+      "text": "😝文29\r\nx\r\nx\r\nx\r\nx",
+      "seed": 0,
+      "expected": 1852021895569965
+    },
+    {
+      "text": "😝文29\r\nx\r\nx\r\nx\r\nx",
+      "seed": 1,
+      "expected": 8419183265959663
+    },
+    {
+      "text": "😝文29\r\nx\r\nx\r\nx\r\nx",
+      "seed": -1,
+      "expected": 145834134453117
+    },
+    {
+      "text": "😝文29\r\nx\r\nx\r\nx\r\nx",
+      "seed": 2147483647,
+      "expected": 6879156871117693
+    },
+    {
+      "text": "😞文30",
+      "seed": 0,
+      "expected": 7070980160809177
+    },
+    {
+      "text": "😞文30",
+      "seed": 1,
+      "expected": 1654268111891439
+    },
+    {
+      "text": "😞文30",
+      "seed": -1,
+      "expected": 7826383242914884
+    },
+    {
+      "text": "😞文30",
+      "seed": 2147483647,
+      "expected": 7229535901740100
+    },
+    {
+      "text": "😟文31\r\nx",
+      "seed": 0,
+      "expected": 4538005930594162
+    },
+    {
+      "text": "😟文31\r\nx",
+      "seed": 1,
+      "expected": 8529440994691131
+    },
+    {
+      "text": "😟文31\r\nx",
+      "seed": -1,
+      "expected": 6344828260219353
+    },
+    {
+      "text": "😟文31\r\nx",
+      "seed": 2147483647,
+      "expected": 1790324129135065
+    },
+    {
+      "text": "😠文32\r\nx\r\nx",
+      "seed": 0,
+      "expected": 6043432259041845
+    },
+    {
+      "text": "😠文32\r\nx\r\nx",
+      "seed": 1,
+      "expected": 8707648326775440
+    },
+    {
+      "text": "😠文32\r\nx\r\nx",
+      "seed": -1,
+      "expected": 33465482474160
+    },
+    {
+      "text": "😠文32\r\nx\r\nx",
+      "seed": 2147483647,
+      "expected": 3947947230720688
+    },
+    {
+      "text": "😡文33\r\nx\r\nx\r\nx",
+      "seed": 0,
+      "expected": 5898032160475356
+    },
+    {
+      "text": "😡文33\r\nx\r\nx\r\nx",
+      "seed": 1,
+      "expected": 5079351072238437
+    },
+    {
+      "text": "😡文33\r\nx\r\nx\r\nx",
+      "seed": -1,
+      "expected": 7582039283894888
+    },
+    {
+      "text": "😡文33\r\nx\r\nx\r\nx",
+      "seed": 2147483647,
+      "expected": 7834431323572840
+    },
+    {
+      "text": "😢文34\r\nx\r\nx\r\nx\r\nx",
+      "seed": 0,
+      "expected": 4738893527591246
+    },
+    {
+      "text": "😢文34\r\nx\r\nx\r\nx\r\nx",
+      "seed": 1,
+      "expected": 6995589324523485
+    },
+    {
+      "text": "😢文34\r\nx\r\nx\r\nx\r\nx",
+      "seed": -1,
+      "expected": 5267021960767542
+    },
+    {
+      "text": "😢文34\r\nx\r\nx\r\nx\r\nx",
+      "seed": 2147483647,
+      "expected": 6497084822218806
+    },
+    {
+      "text": "😣文35",
+      "seed": 0,
+      "expected": 1665703739358744
+    },
+    {
+      "text": "😣文35",
+      "seed": 1,
+      "expected": 7684030051776101
+    },
+    {
+      "text": "😣文35",
+      "seed": -1,
+      "expected": 7677288532098215
+    },
+    {
+      "text": "😣文35",
+      "seed": 2147483647,
+      "expected": 114283639061671
+    },
+    {
+      "text": "😤文36\r\nx",
+      "seed": 0,
+      "expected": 6779943336635581
+    },
+    {
+      "text": "😤文36\r\nx",
+      "seed": 1,
+      "expected": 2319425968630542
+    },
+    {
+      "text": "😤文36\r\nx",
+      "seed": -1,
+      "expected": 908835540833722
+    },
+    {
+      "text": "😤文36\r\nx",
+      "seed": 2147483647,
+      "expected": 1312853826049466
+    },
+    {
+      "text": "😥文37\r\nx\r\nx",
+      "seed": 0,
+      "expected": 5498911551263762
+    },
+    {
+      "text": "😥文37\r\nx\r\nx",
+      "seed": 1,
+      "expected": 819075586947931
+    },
+    {
+      "text": "😥文37\r\nx\r\nx",
+      "seed": -1,
+      "expected": 3252984444729994
+    },
+    {
+      "text": "😥文37\r\nx\r\nx",
+      "seed": 2147483647,
+      "expected": 4695012489443978
+    },
+    {
+      "text": "😦文38\r\nx\r\nx\r\nx",
+      "seed": 0,
+      "expected": 3330630325636050
+    },
+    {
+      "text": "😦文38\r\nx\r\nx\r\nx",
+      "seed": 1,
+      "expected": 7977728279284163
+    },
+    {
+      "text": "😦文38\r\nx\r\nx\r\nx",
+      "seed": -1,
+      "expected": 8686322653625826
+    },
+    {
+      "text": "😦文38\r\nx\r\nx\r\nx",
+      "seed": 2147483647,
+      "expected": 4981538400632290
+    },
+    {
+      "text": "😧文39\r\nx\r\nx\r\nx\r\nx",
+      "seed": 0,
+      "expected": 7924805776349940
+    },
+    {
+      "text": "😧文39\r\nx\r\nx\r\nx\r\nx",
+      "seed": 1,
+      "expected": 6532496613033696
+    },
+    {
+      "text": "😧文39\r\nx\r\nx\r\nx\r\nx",
+      "seed": -1,
+      "expected": 451968277835172
+    },
+    {
+      "text": "😧文39\r\nx\r\nx\r\nx\r\nx",
+      "seed": 2147483647,
+      "expected": 5480810758532516
+    },
+    {
+      "text": "😨文40",
+      "seed": 0,
+      "expected": 718847790813194
+    },
+    {
+      "text": "😨文40",
+      "seed": 1,
+      "expected": 7316772748578922
+    },
+    {
+      "text": "😨文40",
+      "seed": -1,
+      "expected": 1649829961303517
+    },
+    {
+      "text": "😨文40",
+      "seed": 2147483647,
+      "expected": 4075574097151453
+    },
+    {
+      "text": "😩文41\r\nx",
+      "seed": 0,
+      "expected": 675733908367459
+    },
+    {
+      "text": "😩文41\r\nx",
+      "seed": 1,
+      "expected": 306502959057251
+    },
+    {
+      "text": "😩文41\r\nx",
+      "seed": -1,
+      "expected": 1910239260546739
+    },
+    {
+      "text": "😩文41\r\nx",
+      "seed": 2147483647,
+      "expected": 7823536058603187
+    },
+    {
+      "text": "😪文42\r\nx\r\nx",
+      "seed": 0,
+      "expected": 5420505560949405
+    },
+    {
+      "text": "😪文42\r\nx\r\nx",
+      "seed": 1,
+      "expected": 4500113116887969
+    },
+    {
+      "text": "😪文42\r\nx\r\nx",
+      "seed": -1,
+      "expected": 4673179313116078
+    },
+    {
+      "text": "😪文42\r\nx\r\nx",
+      "seed": 2147483647,
+      "expected": 7688506664391598
+    },
+    {
+      "text": "😫文43\r\nx\r\nx\r\nx",
+      "seed": 0,
+      "expected": 7930902067655564
+    },
+    {
+      "text": "😫文43\r\nx\r\nx\r\nx",
+      "seed": 1,
+      "expected": 5507013636678812
+    },
+    {
+      "text": "😫文43\r\nx\r\nx\r\nx",
+      "seed": -1,
+      "expected": 7035716284355635
+    },
+    {
+      "text": "😫文43\r\nx\r\nx\r\nx",
+      "seed": 2147483647,
+      "expected": 6471204202812467
+    },
+    {
+      "text": "😬文44\r\nx\r\nx\r\nx\r\nx",
+      "seed": 0,
+      "expected": 7484245009992431
+    },
+    {
+      "text": "😬文44\r\nx\r\nx\r\nx\r\nx",
+      "seed": 1,
+      "expected": 8914159965999473
+    },
+    {
+      "text": "😬文44\r\nx\r\nx\r\nx\r\nx",
+      "seed": -1,
+      "expected": 5583121625911656
+    },
+    {
+      "text": "😬文44\r\nx\r\nx\r\nx\r\nx",
+      "seed": 2147483647,
+      "expected": 2394656593777000
+    },
+    {
+      "text": "😭文45",
+      "seed": 0,
+      "expected": 3900305687192712
+    },
+    {
+      "text": "😭文45",
+      "seed": 1,
+      "expected": 6121282259536945
+    },
+    {
+      "text": "😭文45",
+      "seed": -1,
+      "expected": 7826312780545725
+    },
+    {
+      "text": "😭文45",
+      "seed": 2147483647,
+      "expected": 3457250556509885
+    },
+    {
+      "text": "😮文46\r\nx",
+      "seed": 0,
+      "expected": 3942326456074200
+    },
+    {
+      "text": "😮文46\r\nx",
+      "seed": 1,
+      "expected": 1891308596305328
+    },
+    {
+      "text": "😮文46\r\nx",
+      "seed": -1,
+      "expected": 5581457710183324
+    },
+    {
+      "text": "😮文46\r\nx",
+      "seed": 2147483647,
+      "expected": 6925696137065372
+    },
+    {
+      "text": "😯文47\r\nx\r\nx",
+      "seed": 0,
+      "expected": 1354423981594441
+    },
+    {
+      "text": "😯文47\r\nx\r\nx",
+      "seed": 1,
+      "expected": 4541867620165747
+    },
+    {
+      "text": "😯文47\r\nx\r\nx",
+      "seed": -1,
+      "expected": 3036425208951874
+    },
+    {
+      "text": "😯文47\r\nx\r\nx",
+      "seed": 2147483647,
+      "expected": 3961989957088322
+    },
+    {
+      "text": "😰文48\r\nx\r\nx\r\nx",
+      "seed": 0,
+      "expected": 7309734391128762
+    },
+    {
+      "text": "😰文48\r\nx\r\nx\r\nx",
+      "seed": 1,
+      "expected": 2640889666485508
+    },
+    {
+      "text": "😰文48\r\nx\r\nx\r\nx",
+      "seed": -1,
+      "expected": 1295975982991457
+    },
+    {
+      "text": "😰文48\r\nx\r\nx\r\nx",
+      "seed": 2147483647,
+      "expected": 6788154076235873
+    },
+    {
+      "text": "😱文49\r\nx\r\nx\r\nx\r\nx",
+      "seed": 0,
+      "expected": 900753700630351
+    },
+    {
+      "text": "😱文49\r\nx\r\nx\r\nx\r\nx",
+      "seed": 1,
+      "expected": 1049924675495427
+    },
+    {
+      "text": "😱文49\r\nx\r\nx\r\nx\r\nx",
+      "seed": -1,
+      "expected": 360985475854750
+    },
+    {
+      "text": "😱文49\r\nx\r\nx\r\nx\r\nx",
+      "seed": 2147483647,
+      "expected": 695048785047966
+    }
+  ],
+  "picks": [
+    {
+      "id": "top",
+      "text": "{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "研究😀",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "b"
+    },
+    {
+      "id": "UTF16 prefix",
+      "text": "你😀{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "研究😀",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "你😀j"
+    },
+    {
+      "id": "two positions",
+      "text": "{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}|{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "研究😀",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "k|m"
+    },
+    {
+      "id": "legacy preprocess",
+      "text": "<USER> {{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "研究😀",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "U f"
+    },
+    {
+      "id": "nested argument",
+      "text": "{{reverse::{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}}}",
+      "chatId": "研究😀",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "j"
+    },
+    {
+      "id": "scoped offset",
+      "text": "{{trim}}\n  {{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}\n{{/trim}}",
+      "chatId": "研究😀",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "i"
+    },
+    {
+      "id": "if inline uses call offset",
+      "text": "Q{{if::true:: {{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}} }}",
+      "chatId": "研究😀",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "Qp"
+    },
+    {
+      "id": "if scope uses call plus branch offset",
+      "text": "Q{{if true}}\n  {{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}\n{{/if}}",
+      "chatId": "研究😀",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "Qc"
+    },
+    {
+      "id": "else uses sliced branch offset",
+      "text": "Q{{if false}}skip{{else}}\n  {{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}\n{{/if}}",
+      "chatId": "研究😀",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "Qf"
+    },
+    {
+      "id": "field uses independent content hash",
+      "text": "{{description}}|{{description}}",
+      "chatId": "研究😀",
+      "reroll": null,
+      "local": {},
+      "card": {
+        "description": "{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}"
+      },
+      "expected": "b|b"
+    },
+    {
+      "id": "reroll 0",
+      "text": "{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "研究😀",
+      "reroll": 0,
+      "local": {},
+      "card": {},
+      "expected": "b"
+    },
+    {
+      "id": "reroll \"\"",
+      "text": "{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "研究😀",
+      "reroll": "",
+      "local": {},
+      "card": {},
+      "expected": "b"
+    },
+    {
+      "id": "reroll false",
+      "text": "{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "研究😀",
+      "reroll": false,
+      "local": {},
+      "card": {},
+      "expected": "b"
+    },
+    {
+      "id": "reroll \"0\"",
+      "text": "{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "研究😀",
+      "reroll": "0",
+      "local": {},
+      "card": {},
+      "expected": "b"
+    },
+    {
+      "id": "reroll 1",
+      "text": "{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "研究😀",
+      "reroll": 1,
+      "local": {},
+      "card": {},
+      "expected": "c"
+    },
+    {
+      "id": "reroll 123456789",
+      "text": "{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "研究😀",
+      "reroll": 123456789,
+      "local": {},
+      "card": {},
+      "expected": "f"
+    },
+    {
+      "id": "reroll \"再次😀\"",
+      "text": "{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "研究😀",
+      "reroll": "再次😀",
+      "local": {},
+      "card": {},
+      "expected": "h"
+    },
+    {
+      "id": "seed sample 0",
+      "text": "{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-0",
+      "reroll": 0,
+      "local": {},
+      "card": {},
+      "expected": "j"
+    },
+    {
+      "id": "seed sample 1",
+      "text": "😀x{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-1",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "😀xg"
+    },
+    {
+      "id": "seed sample 2",
+      "text": "😀😀xx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-2",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "😀😀xxb"
+    },
+    {
+      "id": "seed sample 3",
+      "text": "😀😀😀xxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-3",
+      "reroll": 3,
+      "local": {},
+      "card": {},
+      "expected": "😀😀😀xxxf"
+    },
+    {
+      "id": "seed sample 4",
+      "text": "😀😀😀😀xxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-4",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "😀😀😀😀xxxxm"
+    },
+    {
+      "id": "seed sample 5",
+      "text": "😀😀😀😀😀xxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-5",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "😀😀😀😀😀xxxxxl"
+    },
+    {
+      "id": "seed sample 6",
+      "text": "😀😀😀😀😀😀xxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-6",
+      "reroll": 6,
+      "local": {},
+      "card": {},
+      "expected": "😀😀😀😀😀😀xxxxxxg"
+    },
+    {
+      "id": "seed sample 7",
+      "text": "xxxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-7",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "xxxxxxxl"
+    },
+    {
+      "id": "seed sample 8",
+      "text": "😀xxxxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-8",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "😀xxxxxxxxn"
+    },
+    {
+      "id": "seed sample 9",
+      "text": "😀😀xxxxxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-9",
+      "reroll": 9,
+      "local": {},
+      "card": {},
+      "expected": "😀😀xxxxxxxxxa"
+    },
+    {
+      "id": "seed sample 10",
+      "text": "😀😀😀xxxxxxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-10",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "😀😀😀xxxxxxxxxxn"
+    },
+    {
+      "id": "seed sample 11",
+      "text": "😀😀😀😀xxxxxxxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-11",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "😀😀😀😀xxxxxxxxxxxk"
+    },
+    {
+      "id": "seed sample 12",
+      "text": "😀😀😀😀😀xxxxxxxxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-12",
+      "reroll": 12,
+      "local": {},
+      "card": {},
+      "expected": "😀😀😀😀😀xxxxxxxxxxxxp"
+    },
+    {
+      "id": "seed sample 13",
+      "text": "😀😀😀😀😀😀xxxxxxxxxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-13",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "😀😀😀😀😀😀xxxxxxxxxxxxxc"
+    },
+    {
+      "id": "seed sample 14",
+      "text": "xxxxxxxxxxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-14",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "xxxxxxxxxxxxxxj"
+    },
+    {
+      "id": "seed sample 15",
+      "text": "😀xxxxxxxxxxxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-15",
+      "reroll": 15,
+      "local": {},
+      "card": {},
+      "expected": "😀xxxxxxxxxxxxxxxe"
+    },
+    {
+      "id": "seed sample 16",
+      "text": "😀😀xxxxxxxxxxxxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-16",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "😀😀xxxxxxxxxxxxxxxxo"
+    },
+    {
+      "id": "seed sample 17",
+      "text": "😀😀😀xxxxxxxxxxxxxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-17",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "😀😀😀xxxxxxxxxxxxxxxxxj"
+    },
+    {
+      "id": "seed sample 18",
+      "text": "😀😀😀😀xxxxxxxxxxxxxxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-18",
+      "reroll": 18,
+      "local": {},
+      "card": {},
+      "expected": "😀😀😀😀xxxxxxxxxxxxxxxxxxh"
+    },
+    {
+      "id": "seed sample 19",
+      "text": "😀😀😀😀😀xxxxxxxxxxxxxxxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-19",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "😀😀😀😀😀xxxxxxxxxxxxxxxxxxxb"
+    },
+    {
+      "id": "seed sample 20",
+      "text": "😀😀😀😀😀😀xxxxxxxxxxxxxxxxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-20",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "😀😀😀😀😀😀xxxxxxxxxxxxxxxxxxxxg"
+    },
+    {
+      "id": "seed sample 21",
+      "text": "xxxxxxxxxxxxxxxxxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-21",
+      "reroll": 21,
+      "local": {},
+      "card": {},
+      "expected": "xxxxxxxxxxxxxxxxxxxxxh"
+    },
+    {
+      "id": "seed sample 22",
+      "text": "😀xxxxxxxxxxxxxxxxxxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-22",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "😀xxxxxxxxxxxxxxxxxxxxxxk"
+    },
+    {
+      "id": "seed sample 23",
+      "text": "😀😀xxxxxxxxxxxxxxxxxxxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-23",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "😀😀xxxxxxxxxxxxxxxxxxxxxxxj"
+    },
+    {
+      "id": "seed sample 24",
+      "text": "😀😀😀xxxxxxxxxxxxxxxxxxxxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-24",
+      "reroll": 24,
+      "local": {},
+      "card": {},
+      "expected": "😀😀😀xxxxxxxxxxxxxxxxxxxxxxxxj"
+    },
+    {
+      "id": "seed sample 25",
+      "text": "😀😀😀😀xxxxxxxxxxxxxxxxxxxxxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-25",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "😀😀😀😀xxxxxxxxxxxxxxxxxxxxxxxxxe"
+    },
+    {
+      "id": "seed sample 26",
+      "text": "😀😀😀😀😀xxxxxxxxxxxxxxxxxxxxxxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-26",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "😀😀😀😀😀xxxxxxxxxxxxxxxxxxxxxxxxxxh"
+    },
+    {
+      "id": "seed sample 27",
+      "text": "😀😀😀😀😀😀xxxxxxxxxxxxxxxxxxxxxxxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-27",
+      "reroll": 27,
+      "local": {},
+      "card": {},
+      "expected": "😀😀😀😀😀😀xxxxxxxxxxxxxxxxxxxxxxxxxxxm"
+    },
+    {
+      "id": "seed sample 28",
+      "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-28",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxk"
+    },
+    {
+      "id": "seed sample 29",
+      "text": "😀xxxxxxxxxxxxxxxxxxxxxxxxxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-29",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "😀xxxxxxxxxxxxxxxxxxxxxxxxxxxxxh"
+    },
+    {
+      "id": "seed sample 30",
+      "text": "😀😀xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-30",
+      "reroll": 30,
+      "local": {},
+      "card": {},
+      "expected": "😀😀xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxl"
+    },
+    {
+      "id": "seed sample 31",
+      "text": "😀😀😀xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-31",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "😀😀😀xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxe"
+    },
+    {
+      "id": "seed sample 32",
+      "text": "😀😀😀😀xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-32",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "😀😀😀😀xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxf"
+    },
+    {
+      "id": "seed sample 33",
+      "text": "😀😀😀😀😀xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-33",
+      "reroll": 33,
+      "local": {},
+      "card": {},
+      "expected": "😀😀😀😀😀xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxn"
+    },
+    {
+      "id": "seed sample 34",
+      "text": "😀😀😀😀😀😀xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-34",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "😀😀😀😀😀😀xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxg"
+    },
+    {
+      "id": "seed sample 35",
+      "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-35",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxp"
+    },
+    {
+      "id": "seed sample 36",
+      "text": "😀xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-36",
+      "reroll": 36,
+      "local": {},
+      "card": {},
+      "expected": "😀xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxn"
+    },
+    {
+      "id": "seed sample 37",
+      "text": "😀😀xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-37",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "😀😀xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxi"
+    },
+    {
+      "id": "seed sample 38",
+      "text": "😀😀😀xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-38",
+      "reroll": null,
+      "local": {},
+      "card": {},
+      "expected": "😀😀😀xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxg"
+    },
+    {
+      "id": "seed sample 39",
+      "text": "😀😀😀😀xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx{{pick::a::b::c::d::e::f::g::h::i::j::k::l::m::n::o::p}}",
+      "chatId": "chat-39",
+      "reroll": 39,
+      "local": {},
+      "card": {},
+      "expected": "😀😀😀😀xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxo"
+    }
+  ],
+  "variables": [
+    {
+      "id": "get digits",
+      "text": "{{getvar::v}}",
+      "local": {
+        "v": "003"
+      },
+      "global": {},
+      "expected": "3",
+      "afterLocal": {
+        "v": "003"
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "get whitespace",
+      "text": "{{getvar::v}}",
+      "local": {
+        "v": "  "
+      },
+      "global": {},
+      "expected": "  ",
+      "afterLocal": {
+        "v": "  "
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "get empty",
+      "text": "{{getvar::v}}",
+      "local": {
+        "v": ""
+      },
+      "global": {},
+      "expected": "",
+      "afterLocal": {
+        "v": ""
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "get nil",
+      "text": "{{getvar::v}}",
+      "local": {
+        "v": null
+      },
+      "global": {},
+      "expected": "0",
+      "afterLocal": {
+        "v": null
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "get trueValue",
+      "text": "{{getvar::v}}",
+      "local": {
+        "v": true
+      },
+      "global": {},
+      "expected": "1",
+      "afterLocal": {
+        "v": true
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "get falseValue",
+      "text": "{{getvar::v}}",
+      "local": {
+        "v": false
+      },
+      "global": {},
+      "expected": "0",
+      "afterLocal": {
+        "v": false
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "get hex",
+      "text": "{{getvar::v}}",
+      "local": {
+        "v": "0x10"
+      },
+      "global": {},
+      "expected": "16",
+      "afterLocal": {
+        "v": "0x10"
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "get binary",
+      "text": "{{getvar::v}}",
+      "local": {
+        "v": "0b11"
+      },
+      "global": {},
+      "expected": "3",
+      "afterLocal": {
+        "v": "0b11"
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "get decimal",
+      "text": "{{getvar::v}}",
+      "local": {
+        "v": ".5"
+      },
+      "global": {},
+      "expected": "0.5",
+      "afterLocal": {
+        "v": ".5"
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "get exponent",
+      "text": "{{getvar::v}}",
+      "local": {
+        "v": "1e-6"
+      },
+      "global": {},
+      "expected": "0.000001",
+      "afterLocal": {
+        "v": "1e-6"
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "get largeExponent",
+      "text": "{{getvar::v}}",
+      "local": {
+        "v": "1e21"
+      },
+      "global": {},
+      "expected": "1e+21",
+      "afterLocal": {
+        "v": "1e21"
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "get array",
+      "text": "{{getvar::v}}",
+      "local": {
+        "v": [
+          2
+        ]
+      },
+      "global": {},
+      "expected": "2",
+      "afterLocal": {
+        "v": [
+          2
+        ]
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "get object",
+      "text": "{{getvar::v}}",
+      "local": {
+        "v": {
+          "a": 1
+        }
+      },
+      "global": {},
+      "expected": "{\"a\":1}",
+      "afterLocal": {
+        "v": {
+          "a": 1
+        }
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "missing",
+      "text": "{{getvar::v}}",
+      "local": {},
+      "global": {},
+      "expected": "",
+      "afterLocal": {},
+      "afterGlobal": {}
+    },
+    {
+      "id": "numeric add sequence",
+      "text": "{{addvar::v::2}}{{incvar::v}}|{{decvar::v}}|{{getvar::v}}",
+      "local": {
+        "v": "003"
+      },
+      "global": {},
+      "expected": "6|5|5",
+      "afterLocal": {
+        "v": 5
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "array append retains argument types",
+      "text": "{{addvar::v::2}}{{incvar::v}}|{{decvar::v}}",
+      "local": {
+        "v": "[1]"
+      },
+      "global": {},
+      "expected": "[1,\"2\",1]|[1,\"2\",1,-1]",
+      "afterLocal": {
+        "v": "[1,\"2\",1,-1]"
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "nonnumeric concatenation",
+      "text": "{{addvar::v::word}}{{incvar::v}}",
+      "local": {
+        "v": "3"
+      },
+      "global": {},
+      "expected": "3word1",
+      "afterLocal": {
+        "v": "3word1"
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "global distinct",
+      "text": "{{setglobalvar::v::09}}{{addglobalvar::v::1}}{{incglobalvar::v}}|{{getvar::v}}",
+      "local": {
+        "v": "local"
+      },
+      "global": {},
+      "expected": "11|local",
+      "afterLocal": {
+        "v": "local"
+      },
+      "afterGlobal": {
+        "v": 11
+      }
+    },
+    {
+      "id": "get key JSON bad",
+      "text": "{{getvarkey::v::a}}",
+      "local": {
+        "v": "not JSON"
+      },
+      "global": {},
+      "expected": "not JSON",
+      "afterLocal": {
+        "v": "not JSON"
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "get key JSON null",
+      "text": "{{getvarkey::v::a}}",
+      "local": {
+        "v": "null"
+      },
+      "global": {},
+      "expected": "0",
+      "afterLocal": {
+        "v": "null"
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "get key array numeric string",
+      "text": "{{getvarkey::v::01}}",
+      "local": {
+        "v": "[\"zero\",\"one\"]"
+      },
+      "global": {},
+      "expected": "one",
+      "afterLocal": {
+        "v": "[\"zero\",\"one\"]"
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "get key array missing",
+      "text": "{{getvarkey::v::2}}",
+      "local": {
+        "v": "[\"zero\"]"
+      },
+      "global": {},
+      "expected": "",
+      "afterLocal": {
+        "v": "[\"zero\"]"
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "get key array length",
+      "text": "{{getvarkey::v::length}}",
+      "local": {
+        "v": "[\"zero\",\"one\"]"
+      },
+      "global": {},
+      "expected": "2",
+      "afterLocal": {
+        "v": "[\"zero\",\"one\"]"
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "get key object nested",
+      "text": "{{getvarkey::v::a}}",
+      "local": {
+        "v": "{\"a\":{\"x\":1},\"b\":null}"
+      },
+      "global": {},
+      "expected": "{\"x\":1}",
+      "afterLocal": {
+        "v": "{\"a\":{\"x\":1},\"b\":null}"
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "get key object null",
+      "text": "{{getvarkey::v::a}}",
+      "local": {
+        "v": "{\"a\":null}"
+      },
+      "global": {},
+      "expected": "null",
+      "afterLocal": {
+        "v": "{\"a\":null}"
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "get key string length",
+      "text": "{{getvarkey::v::length}}",
+      "local": {
+        "v": "\"😀\""
+      },
+      "global": {},
+      "expected": "2",
+      "afterLocal": {
+        "v": "\"😀\""
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "get key object numeric key",
+      "text": "{{getvarkey::v::01}}",
+      "local": {
+        "v": "{\"1\":\"found\"}"
+      },
+      "global": {},
+      "expected": "found",
+      "afterLocal": {
+        "v": "{\"1\":\"found\"}"
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "set key array sparse",
+      "text": "{{setvarkey::v::2::x}}{{getvar::v}}",
+      "local": {},
+      "global": {},
+      "expected": "[null,null,\"x\"]",
+      "afterLocal": {
+        "v": "[null,null,\"x\"]"
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "set key object new",
+      "text": "{{setvarkey::v::label::003}}{{getvar::v}}",
+      "local": {},
+      "global": {},
+      "expected": "{\"label\":\"003\"}",
+      "afterLocal": {
+        "v": "{\"label\":\"003\"}"
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "set key null numeric",
+      "text": "{{setvarkey::v::01::x}}{{getvar::v}}",
+      "local": {
+        "v": "null"
+      },
+      "global": {},
+      "expected": "[null,\"x\"]",
+      "afterLocal": {
+        "v": "[null,\"x\"]"
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "set key invalid JSON",
+      "text": "{{setvarkey::v::0::x}}{{getvar::v}}",
+      "local": {
+        "v": "bad"
+      },
+      "global": {},
+      "expected": "bad",
+      "afterLocal": {
+        "v": "bad"
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "set key primitive",
+      "text": "{{setvarkey::v::0::x}}{{getvar::v}}",
+      "local": {
+        "v": "\"old\""
+      },
+      "global": {},
+      "expected": "\"old\"",
+      "afterLocal": {
+        "v": "\"old\""
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "set key array non-index",
+      "text": "{{setvarkey::v::word::x}}{{getvar::v}}",
+      "local": {
+        "v": "[1,2]"
+      },
+      "global": {},
+      "expected": "[1,2]",
+      "afterLocal": {
+        "v": "[1,2]"
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "set key array truncate",
+      "text": "{{setvarkey::v::length::1}}{{getvar::v}}",
+      "local": {
+        "v": "[1,2,3]"
+      },
+      "global": {},
+      "expected": "[1]",
+      "afterLocal": {
+        "v": "[1]"
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "set key array grow",
+      "text": "{{setvarkey::v::length::3}}{{getvar::v}}",
+      "local": {
+        "v": "[1]"
+      },
+      "global": {},
+      "expected": "[1,null,null]",
+      "afterLocal": {
+        "v": "[1,null,null]"
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "set key array bad length",
+      "text": "{{setvarkey::v::length::-1}}{{getvar::v}}",
+      "local": {
+        "v": "[1]"
+      },
+      "global": {},
+      "expected": "[1]",
+      "afterLocal": {
+        "v": "[1]"
+      },
+      "afterGlobal": {}
+    },
+    {
+      "id": "set key numeric sort",
+      "text": "{{setvarkey::v::1::new}}{{getvar::v}}",
+      "local": {
+        "v": "{\"a\":0,\"3\":\"old\"}"
+      },
+      "global": {},
+      "expected": "{\"1\":\"new\",\"3\":\"old\",\"a\":0}",
+      "afterLocal": {
+        "v": "{\"1\":\"new\",\"3\":\"old\",\"a\":0}"
+      },
+      "afterGlobal": {}
+    }
+  ],
+  "timeFormats": [
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "en",
+      "offset": 0,
+      "format": "YYYY-MM-DD HH:mm:ss.SSS Z ZZ",
+      "expected": "2024-02-29 18:07:08.123 +00:00 +0000"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "en",
+      "offset": 0,
+      "format": "LT|LTS|L|LL|LLL|LLLL",
+      "expected": "6:07 PM|6:07:08 PM|02/29/2024|February 29, 2024|February 29, 2024 6:07 PM|Thursday, February 29, 2024 6:07 PM"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "en",
+      "offset": 0,
+      "format": "l|ll|lll|llll",
+      "expected": "2/29/2024|Feb 29, 2024|Feb 29, 2024 6:07 PM|Thu, Feb 29, 2024 6:07 PM"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "en",
+      "offset": 0,
+      "format": "Y YY YYYY YYYYY YYYYYY Q Qo M Mo MM MMM MMMM",
+      "expected": "2024 24 2024 02024 +002024 1 1st 2 2nd 02 Feb February"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "en",
+      "offset": 0,
+      "format": "D DD Do DDD DDDD DDDo d dd ddd dddd do e E",
+      "expected": "29 29 29th 60 060 60th 4 Th Thu Thursday 4th 4 4"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "en",
+      "offset": 0,
+      "format": "w ww wo W WW Wo gg gggg GG GGGG",
+      "expected": "9 09 9th 9 09 9th 24 2024 24 2024"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "en",
+      "offset": 0,
+      "format": "H HH h hh k kk Hmm Hmmss hmm hmmss m mm s ss A a",
+      "expected": "18 18 6 06 18 18 1807 180708 607 60708 7 07 8 08 PM pm"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "en",
+      "offset": 0,
+      "format": "S SS SSS SSSS SSSSSSSSS X x",
+      "expected": "1 12 123 1230 123000000 1709230028 1709230028123"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "en",
+      "offset": 0,
+      "format": "[literal YYYY] YYYY \\Y",
+      "expected": "literal YYYY 2024 Y"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "en",
+      "offset": 480,
+      "format": "YYYY-MM-DD HH:mm:ss.SSS Z ZZ",
+      "expected": "2024-03-01 02:07:08.123 +08:00 +0800"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "en",
+      "offset": 480,
+      "format": "LT|LTS|L|LL|LLL|LLLL",
+      "expected": "2:07 AM|2:07:08 AM|03/01/2024|March 1, 2024|March 1, 2024 2:07 AM|Friday, March 1, 2024 2:07 AM"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "en",
+      "offset": 480,
+      "format": "l|ll|lll|llll",
+      "expected": "3/1/2024|Mar 1, 2024|Mar 1, 2024 2:07 AM|Fri, Mar 1, 2024 2:07 AM"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "en",
+      "offset": 480,
+      "format": "Y YY YYYY YYYYY YYYYYY Q Qo M Mo MM MMM MMMM",
+      "expected": "2024 24 2024 02024 +002024 1 1st 3 3rd 03 Mar March"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "en",
+      "offset": 480,
+      "format": "D DD Do DDD DDDD DDDo d dd ddd dddd do e E",
+      "expected": "1 01 1st 61 061 61st 5 Fr Fri Friday 5th 5 5"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "en",
+      "offset": 480,
+      "format": "w ww wo W WW Wo gg gggg GG GGGG",
+      "expected": "9 09 9th 9 09 9th 24 2024 24 2024"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "en",
+      "offset": 480,
+      "format": "H HH h hh k kk Hmm Hmmss hmm hmmss m mm s ss A a",
+      "expected": "2 02 2 02 2 02 207 20708 207 20708 7 07 8 08 AM am"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "en",
+      "offset": 480,
+      "format": "S SS SSS SSSS SSSSSSSSS X x",
+      "expected": "1 12 123 1230 123000000 1709230028 1709230028123"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "en",
+      "offset": 480,
+      "format": "[literal YYYY] YYYY \\Y",
+      "expected": "literal YYYY 2024 Y"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "en",
+      "offset": -330,
+      "format": "YYYY-MM-DD HH:mm:ss.SSS Z ZZ",
+      "expected": "2024-02-29 12:37:08.123 -05:30 -0530"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "en",
+      "offset": -330,
+      "format": "LT|LTS|L|LL|LLL|LLLL",
+      "expected": "12:37 PM|12:37:08 PM|02/29/2024|February 29, 2024|February 29, 2024 12:37 PM|Thursday, February 29, 2024 12:37 PM"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "en",
+      "offset": -330,
+      "format": "l|ll|lll|llll",
+      "expected": "2/29/2024|Feb 29, 2024|Feb 29, 2024 12:37 PM|Thu, Feb 29, 2024 12:37 PM"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "en",
+      "offset": -330,
+      "format": "Y YY YYYY YYYYY YYYYYY Q Qo M Mo MM MMM MMMM",
+      "expected": "2024 24 2024 02024 +002024 1 1st 2 2nd 02 Feb February"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "en",
+      "offset": -330,
+      "format": "D DD Do DDD DDDD DDDo d dd ddd dddd do e E",
+      "expected": "29 29 29th 60 060 60th 4 Th Thu Thursday 4th 4 4"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "en",
+      "offset": -330,
+      "format": "w ww wo W WW Wo gg gggg GG GGGG",
+      "expected": "9 09 9th 9 09 9th 24 2024 24 2024"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "en",
+      "offset": -330,
+      "format": "H HH h hh k kk Hmm Hmmss hmm hmmss m mm s ss A a",
+      "expected": "12 12 12 12 12 12 1237 123708 1237 123708 37 37 8 08 PM pm"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "en",
+      "offset": -330,
+      "format": "S SS SSS SSSS SSSSSSSSS X x",
+      "expected": "1 12 123 1230 123000000 1709230028 1709230028123"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "en",
+      "offset": -330,
+      "format": "[literal YYYY] YYYY \\Y",
+      "expected": "literal YYYY 2024 Y"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "zh-cn",
+      "offset": 0,
+      "format": "YYYY-MM-DD HH:mm:ss.SSS Z ZZ",
+      "expected": "2024-02-29 18:07:08.123 +00:00 +0000"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "zh-cn",
+      "offset": 0,
+      "format": "LT|LTS|L|LL|LLL|LLLL",
+      "expected": "18:07|18:07:08|2024/02/29|2024年2月29日|2024年2月29日晚上6点07分|2024年2月29日星期四晚上6点07分"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "zh-cn",
+      "offset": 0,
+      "format": "l|ll|lll|llll",
+      "expected": "2024/2/29|2024年2月29日|2024年2月29日 18:07|2024年2月29日星期四 18:07"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "zh-cn",
+      "offset": 0,
+      "format": "Y YY YYYY YYYYY YYYYYY Q Qo M Mo MM MMM MMMM",
+      "expected": "2024 24 2024 02024 +002024 1 1 2 2月 02 2月 二月"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "zh-cn",
+      "offset": 0,
+      "format": "D DD Do DDD DDDD DDDo d dd ddd dddd do e E",
+      "expected": "29 29 29日 60 060 60日 4 四 周四 星期四 4日 3 4"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "zh-cn",
+      "offset": 0,
+      "format": "w ww wo W WW Wo gg gggg GG GGGG",
+      "expected": "9 09 9周 9 09 9周 24 2024 24 2024"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "zh-cn",
+      "offset": 0,
+      "format": "H HH h hh k kk Hmm Hmmss hmm hmmss m mm s ss A a",
+      "expected": "18 18 6 06 18 18 1807 180708 607 60708 7 07 8 08 晚上 晚上"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "zh-cn",
+      "offset": 0,
+      "format": "S SS SSS SSSS SSSSSSSSS X x",
+      "expected": "1 12 123 1230 123000000 1709230028 1709230028123"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "zh-cn",
+      "offset": 0,
+      "format": "[literal YYYY] YYYY \\Y",
+      "expected": "literal YYYY 2024 Y"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "zh-cn",
+      "offset": 480,
+      "format": "YYYY-MM-DD HH:mm:ss.SSS Z ZZ",
+      "expected": "2024-03-01 02:07:08.123 +08:00 +0800"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "zh-cn",
+      "offset": 480,
+      "format": "LT|LTS|L|LL|LLL|LLLL",
+      "expected": "02:07|02:07:08|2024/03/01|2024年3月1日|2024年3月1日凌晨2点07分|2024年3月1日星期五凌晨2点07分"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "zh-cn",
+      "offset": 480,
+      "format": "l|ll|lll|llll",
+      "expected": "2024/3/1|2024年3月1日|2024年3月1日 02:07|2024年3月1日星期五 02:07"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "zh-cn",
+      "offset": 480,
+      "format": "Y YY YYYY YYYYY YYYYYY Q Qo M Mo MM MMM MMMM",
+      "expected": "2024 24 2024 02024 +002024 1 1 3 3月 03 3月 三月"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "zh-cn",
+      "offset": 480,
+      "format": "D DD Do DDD DDDD DDDo d dd ddd dddd do e E",
+      "expected": "1 01 1日 61 061 61日 5 五 周五 星期五 5日 4 5"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "zh-cn",
+      "offset": 480,
+      "format": "w ww wo W WW Wo gg gggg GG GGGG",
+      "expected": "9 09 9周 9 09 9周 24 2024 24 2024"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "zh-cn",
+      "offset": 480,
+      "format": "H HH h hh k kk Hmm Hmmss hmm hmmss m mm s ss A a",
+      "expected": "2 02 2 02 2 02 207 20708 207 20708 7 07 8 08 凌晨 凌晨"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "zh-cn",
+      "offset": 480,
+      "format": "S SS SSS SSSS SSSSSSSSS X x",
+      "expected": "1 12 123 1230 123000000 1709230028 1709230028123"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "zh-cn",
+      "offset": 480,
+      "format": "[literal YYYY] YYYY \\Y",
+      "expected": "literal YYYY 2024 Y"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "zh-cn",
+      "offset": -330,
+      "format": "YYYY-MM-DD HH:mm:ss.SSS Z ZZ",
+      "expected": "2024-02-29 12:37:08.123 -05:30 -0530"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "zh-cn",
+      "offset": -330,
+      "format": "LT|LTS|L|LL|LLL|LLLL",
+      "expected": "12:37|12:37:08|2024/02/29|2024年2月29日|2024年2月29日下午12点37分|2024年2月29日星期四下午12点37分"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "zh-cn",
+      "offset": -330,
+      "format": "l|ll|lll|llll",
+      "expected": "2024/2/29|2024年2月29日|2024年2月29日 12:37|2024年2月29日星期四 12:37"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "zh-cn",
+      "offset": -330,
+      "format": "Y YY YYYY YYYYY YYYYYY Q Qo M Mo MM MMM MMMM",
+      "expected": "2024 24 2024 02024 +002024 1 1 2 2月 02 2月 二月"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "zh-cn",
+      "offset": -330,
+      "format": "D DD Do DDD DDDD DDDo d dd ddd dddd do e E",
+      "expected": "29 29 29日 60 060 60日 4 四 周四 星期四 4日 3 4"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "zh-cn",
+      "offset": -330,
+      "format": "w ww wo W WW Wo gg gggg GG GGGG",
+      "expected": "9 09 9周 9 09 9周 24 2024 24 2024"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "zh-cn",
+      "offset": -330,
+      "format": "H HH h hh k kk Hmm Hmmss hmm hmmss m mm s ss A a",
+      "expected": "12 12 12 12 12 12 1237 123708 1237 123708 37 37 8 08 下午 下午"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "zh-cn",
+      "offset": -330,
+      "format": "S SS SSS SSSS SSSSSSSSS X x",
+      "expected": "1 12 123 1230 123000000 1709230028 1709230028123"
+    },
+    {
+      "now": "2024-02-29T18:07:08.123Z",
+      "locale": "zh-cn",
+      "offset": -330,
+      "format": "[literal YYYY] YYYY \\Y",
+      "expected": "literal YYYY 2024 Y"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "en",
+      "offset": 0,
+      "format": "YYYY-MM-DD HH:mm:ss.SSS Z ZZ",
+      "expected": "2021-01-01 00:05:00.000 +00:00 +0000"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "en",
+      "offset": 0,
+      "format": "LT|LTS|L|LL|LLL|LLLL",
+      "expected": "12:05 AM|12:05:00 AM|01/01/2021|January 1, 2021|January 1, 2021 12:05 AM|Friday, January 1, 2021 12:05 AM"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "en",
+      "offset": 0,
+      "format": "l|ll|lll|llll",
+      "expected": "1/1/2021|Jan 1, 2021|Jan 1, 2021 12:05 AM|Fri, Jan 1, 2021 12:05 AM"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "en",
+      "offset": 0,
+      "format": "Y YY YYYY YYYYY YYYYYY Q Qo M Mo MM MMM MMMM",
+      "expected": "2021 21 2021 02021 +002021 1 1st 1 1st 01 Jan January"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "en",
+      "offset": 0,
+      "format": "D DD Do DDD DDDD DDDo d dd ddd dddd do e E",
+      "expected": "1 01 1st 1 001 1st 5 Fr Fri Friday 5th 5 5"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "en",
+      "offset": 0,
+      "format": "w ww wo W WW Wo gg gggg GG GGGG",
+      "expected": "1 01 1st 53 53 53rd 21 2021 20 2020"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "en",
+      "offset": 0,
+      "format": "H HH h hh k kk Hmm Hmmss hmm hmmss m mm s ss A a",
+      "expected": "0 00 12 12 24 24 005 00500 1205 120500 5 05 0 00 AM am"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "en",
+      "offset": 0,
+      "format": "S SS SSS SSSS SSSSSSSSS X x",
+      "expected": "0 00 000 0000 000000000 1609459500 1609459500000"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "en",
+      "offset": 0,
+      "format": "[literal YYYY] YYYY \\Y",
+      "expected": "literal YYYY 2021 Y"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "en",
+      "offset": 480,
+      "format": "YYYY-MM-DD HH:mm:ss.SSS Z ZZ",
+      "expected": "2021-01-01 08:05:00.000 +08:00 +0800"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "en",
+      "offset": 480,
+      "format": "LT|LTS|L|LL|LLL|LLLL",
+      "expected": "8:05 AM|8:05:00 AM|01/01/2021|January 1, 2021|January 1, 2021 8:05 AM|Friday, January 1, 2021 8:05 AM"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "en",
+      "offset": 480,
+      "format": "l|ll|lll|llll",
+      "expected": "1/1/2021|Jan 1, 2021|Jan 1, 2021 8:05 AM|Fri, Jan 1, 2021 8:05 AM"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "en",
+      "offset": 480,
+      "format": "Y YY YYYY YYYYY YYYYYY Q Qo M Mo MM MMM MMMM",
+      "expected": "2021 21 2021 02021 +002021 1 1st 1 1st 01 Jan January"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "en",
+      "offset": 480,
+      "format": "D DD Do DDD DDDD DDDo d dd ddd dddd do e E",
+      "expected": "1 01 1st 1 001 1st 5 Fr Fri Friday 5th 5 5"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "en",
+      "offset": 480,
+      "format": "w ww wo W WW Wo gg gggg GG GGGG",
+      "expected": "1 01 1st 53 53 53rd 21 2021 20 2020"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "en",
+      "offset": 480,
+      "format": "H HH h hh k kk Hmm Hmmss hmm hmmss m mm s ss A a",
+      "expected": "8 08 8 08 8 08 805 80500 805 80500 5 05 0 00 AM am"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "en",
+      "offset": 480,
+      "format": "S SS SSS SSSS SSSSSSSSS X x",
+      "expected": "0 00 000 0000 000000000 1609459500 1609459500000"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "en",
+      "offset": 480,
+      "format": "[literal YYYY] YYYY \\Y",
+      "expected": "literal YYYY 2021 Y"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "en",
+      "offset": -330,
+      "format": "YYYY-MM-DD HH:mm:ss.SSS Z ZZ",
+      "expected": "2020-12-31 18:35:00.000 -05:30 -0530"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "en",
+      "offset": -330,
+      "format": "LT|LTS|L|LL|LLL|LLLL",
+      "expected": "6:35 PM|6:35:00 PM|12/31/2020|December 31, 2020|December 31, 2020 6:35 PM|Thursday, December 31, 2020 6:35 PM"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "en",
+      "offset": -330,
+      "format": "l|ll|lll|llll",
+      "expected": "12/31/2020|Dec 31, 2020|Dec 31, 2020 6:35 PM|Thu, Dec 31, 2020 6:35 PM"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "en",
+      "offset": -330,
+      "format": "Y YY YYYY YYYYY YYYYYY Q Qo M Mo MM MMM MMMM",
+      "expected": "2020 20 2020 02020 +002020 4 4th 12 12th 12 Dec December"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "en",
+      "offset": -330,
+      "format": "D DD Do DDD DDDD DDDo d dd ddd dddd do e E",
+      "expected": "31 31 31st 366 366 366th 4 Th Thu Thursday 4th 4 4"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "en",
+      "offset": -330,
+      "format": "w ww wo W WW Wo gg gggg GG GGGG",
+      "expected": "1 01 1st 53 53 53rd 21 2021 20 2020"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "en",
+      "offset": -330,
+      "format": "H HH h hh k kk Hmm Hmmss hmm hmmss m mm s ss A a",
+      "expected": "18 18 6 06 18 18 1835 183500 635 63500 35 35 0 00 PM pm"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "en",
+      "offset": -330,
+      "format": "S SS SSS SSSS SSSSSSSSS X x",
+      "expected": "0 00 000 0000 000000000 1609459500 1609459500000"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "en",
+      "offset": -330,
+      "format": "[literal YYYY] YYYY \\Y",
+      "expected": "literal YYYY 2020 Y"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "zh-cn",
+      "offset": 0,
+      "format": "YYYY-MM-DD HH:mm:ss.SSS Z ZZ",
+      "expected": "2021-01-01 00:05:00.000 +00:00 +0000"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "zh-cn",
+      "offset": 0,
+      "format": "LT|LTS|L|LL|LLL|LLLL",
+      "expected": "00:05|00:05:00|2021/01/01|2021年1月1日|2021年1月1日凌晨12点05分|2021年1月1日星期五凌晨12点05分"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "zh-cn",
+      "offset": 0,
+      "format": "l|ll|lll|llll",
+      "expected": "2021/1/1|2021年1月1日|2021年1月1日 00:05|2021年1月1日星期五 00:05"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "zh-cn",
+      "offset": 0,
+      "format": "Y YY YYYY YYYYY YYYYYY Q Qo M Mo MM MMM MMMM",
+      "expected": "2021 21 2021 02021 +002021 1 1 1 1月 01 1月 一月"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "zh-cn",
+      "offset": 0,
+      "format": "D DD Do DDD DDDD DDDo d dd ddd dddd do e E",
+      "expected": "1 01 1日 1 001 1日 5 五 周五 星期五 5日 4 5"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "zh-cn",
+      "offset": 0,
+      "format": "w ww wo W WW Wo gg gggg GG GGGG",
+      "expected": "53 53 53周 53 53 53周 20 2020 20 2020"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "zh-cn",
+      "offset": 0,
+      "format": "H HH h hh k kk Hmm Hmmss hmm hmmss m mm s ss A a",
+      "expected": "0 00 12 12 24 24 005 00500 1205 120500 5 05 0 00 凌晨 凌晨"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "zh-cn",
+      "offset": 0,
+      "format": "S SS SSS SSSS SSSSSSSSS X x",
+      "expected": "0 00 000 0000 000000000 1609459500 1609459500000"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "zh-cn",
+      "offset": 0,
+      "format": "[literal YYYY] YYYY \\Y",
+      "expected": "literal YYYY 2021 Y"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "zh-cn",
+      "offset": 480,
+      "format": "YYYY-MM-DD HH:mm:ss.SSS Z ZZ",
+      "expected": "2021-01-01 08:05:00.000 +08:00 +0800"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "zh-cn",
+      "offset": 480,
+      "format": "LT|LTS|L|LL|LLL|LLLL",
+      "expected": "08:05|08:05:00|2021/01/01|2021年1月1日|2021年1月1日早上8点05分|2021年1月1日星期五早上8点05分"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "zh-cn",
+      "offset": 480,
+      "format": "l|ll|lll|llll",
+      "expected": "2021/1/1|2021年1月1日|2021年1月1日 08:05|2021年1月1日星期五 08:05"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "zh-cn",
+      "offset": 480,
+      "format": "Y YY YYYY YYYYY YYYYYY Q Qo M Mo MM MMM MMMM",
+      "expected": "2021 21 2021 02021 +002021 1 1 1 1月 01 1月 一月"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "zh-cn",
+      "offset": 480,
+      "format": "D DD Do DDD DDDD DDDo d dd ddd dddd do e E",
+      "expected": "1 01 1日 1 001 1日 5 五 周五 星期五 5日 4 5"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "zh-cn",
+      "offset": 480,
+      "format": "w ww wo W WW Wo gg gggg GG GGGG",
+      "expected": "53 53 53周 53 53 53周 20 2020 20 2020"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "zh-cn",
+      "offset": 480,
+      "format": "H HH h hh k kk Hmm Hmmss hmm hmmss m mm s ss A a",
+      "expected": "8 08 8 08 8 08 805 80500 805 80500 5 05 0 00 早上 早上"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "zh-cn",
+      "offset": 480,
+      "format": "S SS SSS SSSS SSSSSSSSS X x",
+      "expected": "0 00 000 0000 000000000 1609459500 1609459500000"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "zh-cn",
+      "offset": 480,
+      "format": "[literal YYYY] YYYY \\Y",
+      "expected": "literal YYYY 2021 Y"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "zh-cn",
+      "offset": -330,
+      "format": "YYYY-MM-DD HH:mm:ss.SSS Z ZZ",
+      "expected": "2020-12-31 18:35:00.000 -05:30 -0530"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "zh-cn",
+      "offset": -330,
+      "format": "LT|LTS|L|LL|LLL|LLLL",
+      "expected": "18:35|18:35:00|2020/12/31|2020年12月31日|2020年12月31日晚上6点35分|2020年12月31日星期四晚上6点35分"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "zh-cn",
+      "offset": -330,
+      "format": "l|ll|lll|llll",
+      "expected": "2020/12/31|2020年12月31日|2020年12月31日 18:35|2020年12月31日星期四 18:35"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "zh-cn",
+      "offset": -330,
+      "format": "Y YY YYYY YYYYY YYYYYY Q Qo M Mo MM MMM MMMM",
+      "expected": "2020 20 2020 02020 +002020 4 4 12 12月 12 12月 十二月"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "zh-cn",
+      "offset": -330,
+      "format": "D DD Do DDD DDDD DDDo d dd ddd dddd do e E",
+      "expected": "31 31 31日 366 366 366日 4 四 周四 星期四 4日 3 4"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "zh-cn",
+      "offset": -330,
+      "format": "w ww wo W WW Wo gg gggg GG GGGG",
+      "expected": "53 53 53周 53 53 53周 20 2020 20 2020"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "zh-cn",
+      "offset": -330,
+      "format": "H HH h hh k kk Hmm Hmmss hmm hmmss m mm s ss A a",
+      "expected": "18 18 6 06 18 18 1835 183500 635 63500 35 35 0 00 晚上 晚上"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "zh-cn",
+      "offset": -330,
+      "format": "S SS SSS SSSS SSSSSSSSS X x",
+      "expected": "0 00 000 0000 000000000 1609459500 1609459500000"
+    },
+    {
+      "now": "2021-01-01T00:05:00Z",
+      "locale": "zh-cn",
+      "offset": -330,
+      "format": "[literal YYYY] YYYY \\Y",
+      "expected": "literal YYYY 2020 Y"
+    }
+  ],
+  "timeDiffs": [
+    {
+      "locale": "en",
+      "left": "2024-01-01T00:00:00.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "a few seconds ago"
+    },
+    {
+      "locale": "en",
+      "left": "2024-01-01T00:00:00.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "a few seconds ago"
+    },
+    {
+      "locale": "en",
+      "left": "2023-12-31T23:59:16.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "a few seconds ago"
+    },
+    {
+      "locale": "en",
+      "left": "2024-01-01T00:00:44.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "in a few seconds"
+    },
+    {
+      "locale": "en",
+      "left": "2023-12-31T23:59:15.500Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "a minute ago"
+    },
+    {
+      "locale": "en",
+      "left": "2024-01-01T00:00:44.500Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "in a minute"
+    },
+    {
+      "locale": "en",
+      "left": "2023-12-31T23:59:15.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "a minute ago"
+    },
+    {
+      "locale": "en",
+      "left": "2024-01-01T00:00:45.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "in a minute"
+    },
+    {
+      "locale": "en",
+      "left": "2023-12-31T23:58:31.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "a minute ago"
+    },
+    {
+      "locale": "en",
+      "left": "2024-01-01T00:01:29.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "in a minute"
+    },
+    {
+      "locale": "en",
+      "left": "2023-12-31T23:58:30.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "2 minutes ago"
+    },
+    {
+      "locale": "en",
+      "left": "2024-01-01T00:01:30.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "in 2 minutes"
+    },
+    {
+      "locale": "en",
+      "left": "2023-12-31T23:15:31.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "44 minutes ago"
+    },
+    {
+      "locale": "en",
+      "left": "2024-01-01T00:44:29.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "in 44 minutes"
+    },
+    {
+      "locale": "en",
+      "left": "2023-12-31T23:15:30.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "an hour ago"
+    },
+    {
+      "locale": "en",
+      "left": "2024-01-01T00:44:30.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "in an hour"
+    },
+    {
+      "locale": "en",
+      "left": "2023-12-31T22:30:01.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "an hour ago"
+    },
+    {
+      "locale": "en",
+      "left": "2024-01-01T01:29:59.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "in an hour"
+    },
+    {
+      "locale": "en",
+      "left": "2023-12-31T22:30:00.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "2 hours ago"
+    },
+    {
+      "locale": "en",
+      "left": "2024-01-01T01:30:00.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "in 2 hours"
+    },
+    {
+      "locale": "en",
+      "left": "2023-12-31T02:30:01.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "21 hours ago"
+    },
+    {
+      "locale": "en",
+      "left": "2024-01-01T21:29:59.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "in 21 hours"
+    },
+    {
+      "locale": "en",
+      "left": "2023-12-31T02:30:00.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "a day ago"
+    },
+    {
+      "locale": "en",
+      "left": "2024-01-01T21:30:00.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "in a day"
+    },
+    {
+      "locale": "en",
+      "left": "2023-12-30T12:00:01.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "a day ago"
+    },
+    {
+      "locale": "en",
+      "left": "2024-01-02T11:59:59.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "in a day"
+    },
+    {
+      "locale": "en",
+      "left": "2023-12-30T12:00:00.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "2 days ago"
+    },
+    {
+      "locale": "en",
+      "left": "2024-01-02T12:00:00.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "in 2 days"
+    },
+    {
+      "locale": "en",
+      "left": "2023-12-07T00:00:00.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "25 days ago"
+    },
+    {
+      "locale": "en",
+      "left": "2024-01-26T00:00:00.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "in 25 days"
+    },
+    {
+      "locale": "en",
+      "left": "2023-12-06T00:00:00.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "a month ago"
+    },
+    {
+      "locale": "en",
+      "left": "2024-01-27T00:00:00.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "in a month"
+    },
+    {
+      "locale": "en",
+      "left": "2023-02-15T00:00:00.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "a year ago"
+    },
+    {
+      "locale": "en",
+      "left": "2024-11-16T00:00:00.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "in a year"
+    },
+    {
+      "locale": "en",
+      "left": "2022-11-27T00:00:00.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "a year ago"
+    },
+    {
+      "locale": "en",
+      "left": "2025-02-04T00:00:00.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "in a year"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2024-01-01T00:00:00.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "几秒前"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2024-01-01T00:00:00.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "几秒前"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2023-12-31T23:59:16.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "几秒前"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2024-01-01T00:00:44.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "几秒后"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2023-12-31T23:59:15.500Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "1 分钟前"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2024-01-01T00:00:44.500Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "1 分钟后"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2023-12-31T23:59:15.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "1 分钟前"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2024-01-01T00:00:45.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "1 分钟后"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2023-12-31T23:58:31.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "1 分钟前"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2024-01-01T00:01:29.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "1 分钟后"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2023-12-31T23:58:30.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "2 分钟前"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2024-01-01T00:01:30.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "2 分钟后"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2023-12-31T23:15:31.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "44 分钟前"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2024-01-01T00:44:29.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "44 分钟后"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2023-12-31T23:15:30.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "1 小时前"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2024-01-01T00:44:30.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "1 小时后"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2023-12-31T22:30:01.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "1 小时前"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2024-01-01T01:29:59.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "1 小时后"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2023-12-31T22:30:00.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "2 小时前"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2024-01-01T01:30:00.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "2 小时后"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2023-12-31T02:30:01.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "21 小时前"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2024-01-01T21:29:59.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "21 小时后"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2023-12-31T02:30:00.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "1 天前"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2024-01-01T21:30:00.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "1 天后"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2023-12-30T12:00:01.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "1 天前"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2024-01-02T11:59:59.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "1 天后"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2023-12-30T12:00:00.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "2 天前"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2024-01-02T12:00:00.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "2 天后"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2023-12-07T00:00:00.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "25 天前"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2024-01-26T00:00:00.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "25 天后"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2023-12-06T00:00:00.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "1 个月前"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2024-01-27T00:00:00.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "1 个月后"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2023-02-15T00:00:00.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "1 年前"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2024-11-16T00:00:00.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "1 年后"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2022-11-27T00:00:00.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "1 年前"
+    },
+    {
+      "locale": "zh-cn",
+      "left": "2025-02-04T00:00:00.000Z",
+      "right": "2024-01-01T00:00:00.000Z",
+      "expected": "1 年后"
+    }
+  ]
+}

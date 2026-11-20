@@ -1,0 +1,59 @@
+{
+  "workshopInstalledEmptyTitle": "还没有从工坊装过东西",
+  "workshopInstalledEmptyMessage": "在「发现」里装上的宠物和伙伴会列在这里。",
+  "workshopInstalledEmptyAction": "去发现",
+  "workshopInstalledLoadFailedTitle": "读不出已安装的内容",
+  "workshopInstalledLoadStale": "没能重新读取，显示的是上一次的。",
+  "workshopInstalledCatalogStale": "更新和撤回的信息可能不是最新的。",
+  "workshopInstalledCatalogUnknown": "暂时查不到更新和撤回的信息。",
+  "workshopInstalledStatusUpdate": "有更新",
+  "workshopInstalledStatusWithdrawn": "这个版本已被撤回",
+  "workshopInstalledStatusOtherOrigin": "来自别的工坊",
+  "workshopInstalledStatusNotListed": "工坊里现在找不到它",
+  "workshopInstalledStatusCompanionOff": "伙伴类作品暂时关闭",
+  "workshopInstalledStatusRewritten": "和工坊里的同一版本不一致",
+  "workshopInstalledStatusRemoving": "正在卸载…",
+  "workshopInstalledStatusRemoveFailed": "没能卸载",
+  "workshopInstalledStatusRemoved": "已卸载",
+  "workshopInstalledIssueBroken": "这个包损坏了",
+  "workshopInstalledIssueUnreadable": "读不出这个包",
+  "workshopInstalledIssueRecord": "安装记录对不上",
+  "workshopInstalledIssueOther": "这一项有问题",
+  "workshopInstalledNoteBroken": "这个包损坏了，可能用不了。",
+  "workshopInstalledNoteUnreadable": "没能读出这个包的文件。",
+  "workshopInstalledNoteRecord": "它的安装记录对不上。",
+  "workshopInstalledNoteOther": "这一项有问题，读不出更多信息。",
+  "workshopInstalledNoteUntrusted": "安装记录不可信，没法从这里卸载它。",
+  "workshopInstalledNoteOtherOrigin": "这是从别的工坊装的，这里查不到它的更新。",
+  "workshopInstalledNoteNotListed": "工坊里现在找不到它，本机的这一份不受影响。",
+  "workshopInstalledNoteRewritten": "工坊里同一版本的内容和本机的不一样，本机的这一份没有改动。",
+  "workshopInstalledNoteMinApp": "工坊里现在的版本需要更新 App 才能安装。",
+  "workshopInstalledNoteUnavailable": "工坊里现在的版本暂时不能安装。",
+  "workshopInstalledNoteGone": "这一项已经不在本机了。",
+  "workshopInstalledNoteUnread": "暂时读不到本机的安装记录，下面是刚才看到的状态。",
+  "workshopInstalledRemoveFailed": "没能卸载。{reason}",
+  "@workshopInstalledRemoveFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "workshopInstalledFactKind": "类型",
+  "workshopInstalledFactId": "作品 ID",
+  "workshopInstalledFactOrigin": "来自",
+  "workshopInstalledFactLocalId": "本机标识",
+  "workshopInstalledRemoveTitle": "卸载「{title}」？",
+  "@workshopInstalledRemoveTitle": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "workshopInstalledRemoveMessage": "会删掉这台手机上的这一份。想再用，要回工坊重新获取。",
+  "workshopInstalledRemoveNoReinstall": "工坊里现在找不到它，卸载后可能装不回来。",
+  "workshopInstalledRemovedRefreshIssue": "已卸载，但列表没能刷新，下拉刷新一下。",
+  "workshopInstalledRemovedLocalIssue": "已卸载，但有些地方没能跟着更新，重新打开 App 就好。",
+  "workshopInstalledDismissFailure": "知道了"
+}

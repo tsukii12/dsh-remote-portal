@@ -1,0 +1,25 @@
+{
+  "voiceScribeReadFailed": "Could not read voice settings. Retry.",
+  "voiceScribeSavedReadFailed": "Saved. Refresh to see the latest settings.",
+  "voiceScribeSaveUnconfirmed": "Couldn’t confirm the save. Refresh or retry.",
+  "voiceScribeTitle": "Voice settings",
+  "voiceScribePolishPrompt": "Polish prompt",
+  "voiceScribeLanguage": "Recognition language",
+  "voiceScribeRefresh": "Refresh",
+  "voiceScribeHostChanged": "The connection changed. Reopen to continue.",
+  "voiceScribeUnsupported": "Voice settings aren’t available on this connection.",
+  "voiceScribePluginDefault": "Default",
+  "voiceScribeBuiltInPrompt": "Built-in prompt",
+  "voiceScribeProviders": "Recognition services",
+  "voiceScribeKeySet": "Key set",
+  "voiceScribeNoKey": "No key",
+  "voiceScribeHotwords": "Hotwords",
+  "voiceScribeHotwordRules": "{count, plural, =1{1 rule} other{{count} rules}}",
+  "@voiceScribeHotwordRules": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
+}

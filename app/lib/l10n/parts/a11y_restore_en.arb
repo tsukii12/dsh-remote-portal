@@ -1,0 +1,18 @@
+{
+  "a11yRestoreTitle": "Restore accessibility automatically",
+  "searchKwA11yRestore": "accessibility,restore,reconnect,automatic recovery,permission,ADB,Shizuku,Sui,root",
+  "a11yRestoreNeedsGrant": "Authorization required",
+  "a11yRestoreNotice": "Once authorized, accessibility will be turned back on if disabled in system settings. To stop phone control, turn it off in DSH Go.",
+  "a11yRestoreForceStop": "After a force stop, reopen DSH Go to restore the service.",
+  "a11yRestoreGrant": "Authorize and enable",
+  "a11yRestoreGrantShizuku": "Grant with Shizuku",
+  "a11yRestoreGrantShizukuPermission": "Authorize Shizuku, then grant",
+  "a11yRestoreGrantAdb": "Grant with Direct ADB",
+  "a11yRestoreRootNote": "Uses the authorized root connection to grant only this permission.",
+  "a11yRestoreSetup": "Set up Shizuku or wireless debugging",
+  "a11yRestoreWaiting": "Allow the request in Shizuku",
+  "a11yRestoreWaitingSui": "Allow the request in Sui",
+  "a11yRestoreComputer": "Or connect to a computer and run once:",
+  "a11yRestoreCopy": "Copy command",
+  "a11yRestoreCopied": "Command copied"
+}

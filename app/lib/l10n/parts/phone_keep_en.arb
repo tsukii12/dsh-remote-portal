@@ -1,0 +1,14 @@
+{
+  "@@locale": "en",
+  "phoneKeepTitle": "{mode, select, shizuku{Keep Shizuku channel} sui{Keep Sui channel} root{Keep root channel} adb{Keep Direct ADB channel} other{Keep this channel}}",
+  "phoneKeepRootDescription": "After a drop, an app restart or a reboot, DSH Go asks your root manager again by itself. The manager still decides.",
+  "phoneKeepSharedDescription": "After a drop, an app restart or a reboot, DSH Go reconnects with the permission it already has. It never asks for permission.",
+  "phoneKeepAdbDescription": "After a drop, an app restart or a reboot, DSH Go reconnects over Wi‑Fi with the existing pairing. With the permission from “Restore accessibility automatically”, it also tries once to turn on wireless debugging.",
+  "phoneKeepRestoring": "Reconnecting",
+  "phoneKeepWaiting": "Waiting for the channel",
+  "phoneKeepWaitingService": "Waiting for the service to run",
+  "phoneKeepWaitingPermission": "Not authorized. Reconnects once you grant it.",
+  "phoneKeepWaitingNetwork": "Waiting for Wi‑Fi",
+  "phoneKeepNotPaired": "Not paired. Pair wireless debugging first.",
+  "phoneKeepFailed": "Couldn’t reconnect. Tries again when you open the app or start a task."
+}

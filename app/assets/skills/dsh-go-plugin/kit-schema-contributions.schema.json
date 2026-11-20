@@ -1,0 +1,743 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://go.dshtui.com/schema/plugin-kit/v1/contributions.schema.json",
+  "title": "GET /dsh-go/v1/contributions response, protocol v1",
+  "description": "docs/design/native-plugins-protocol.md §4.1. $defs.viewResponse is GET /dsh-go/v1/views/<pkg>/<id> (§4.2); $defs.error the JSON error body of every route (§3.2); $defs.issue one problem entry (§3.3). Both sides ignore unknown fields.",
+  "type": "object",
+  "required": [
+    "v",
+    "bridge",
+    "rev",
+    "plugins",
+    "limits"
+  ],
+  "properties": {
+    "v": {
+      "const": 1
+    },
+    "bridge": {
+      "type": "string",
+      "description": "dsh-go-bridge version"
+    },
+    "rev": {
+      "type": "string",
+      "description": "Content hash; also the ETag"
+    },
+    "bootRev": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "limits": {
+      "$ref": "#/$defs/limits"
+    },
+    "plugins": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/plugin"
+      }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,39}$"
+    },
+    "iconName": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{0,31}$"
+    },
+    "plugin": {
+      "type": "object",
+      "required": [
+        "pkg",
+        "version",
+        "title",
+        "state",
+        "native",
+        "wants",
+        "contributes",
+        "issues"
+      ],
+      "properties": {
+        "pkg": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string",
+          "maxLength": 24
+        },
+        "icon": {
+          "$ref": "#/$defs/iconName"
+        },
+        "wants": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "draft",
+              "clipboard",
+              "message"
+            ]
+          }
+        },
+        "state": {
+          "enum": [
+            "ok",
+            "degraded",
+            "unsupported",
+            "needs-app",
+            "invalid"
+          ]
+        },
+        "native": {
+          "type": "boolean",
+          "description": "state == ok"
+        },
+        "contributes": {
+          "type": "object",
+          "required": [
+            "composer.actions",
+            "message.actions",
+            "composer.strip",
+            "panels"
+          ],
+          "properties": {
+            "composer.actions": {
+              "type": "array",
+              "maxItems": 2,
+              "items": {
+                "$ref": "#/$defs/action"
+              }
+            },
+            "message.actions": {
+              "type": "array",
+              "maxItems": 2,
+              "items": {
+                "$ref": "#/$defs/action"
+              }
+            },
+            "composer.strip": {
+              "type": "array",
+              "maxItems": 1,
+              "items": {
+                "$ref": "#/$defs/strip"
+              }
+            },
+            "panels": {
+              "type": "array",
+              "maxItems": 4,
+              "items": {
+                "$ref": "#/$defs/panel"
+              }
+            },
+            "media": {
+              "type": "array",
+              "maxItems": 2,
+              "items": {
+                "type": "object",
+                "required": [
+                  "id"
+                ],
+                "properties": {
+                  "id": {
+                    "$ref": "manifest.schema.json#/$defs/id"
+                  }
+                }
+              }
+            },
+            "micro": {
+              "type": "array",
+              "maxItems": 2,
+              "items": {
+                "type": "object",
+                "required": [
+                  "id"
+                ],
+                "properties": {
+                  "id": {
+                    "$ref": "manifest.schema.json#/$defs/id"
+                  }
+                }
+              }
+            },
+            "overlays": {
+              "type": "array",
+              "maxItems": 2,
+              "items": {
+                "type": "object",
+                "required": [
+                  "id"
+                ],
+                "properties": {
+                  "id": {
+                    "$ref": "manifest.schema.json#/$defs/id"
+                  },
+                  "channel": {
+                    "$ref": "manifest.schema.json#/$defs/id"
+                  },
+                  "text": {
+                    "type": "string",
+                    "maxLength": 240
+                  }
+                }
+              }
+            },
+            "composer.tools": {
+              "type": "array",
+              "maxItems": 2,
+              "items": {
+                "$ref": "#/$defs/action"
+              }
+            },
+            "session.actions": {
+              "type": "array",
+              "maxItems": 2,
+              "items": {
+                "$ref": "#/$defs/action"
+              }
+            },
+            "turn.note": {
+              "type": "array",
+              "maxItems": 1,
+              "items": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "ready"
+                ],
+                "properties": {
+                  "id": {
+                    "$ref": "#/$defs/id"
+                  },
+                  "ready": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/issue"
+          }
+        },
+        "capabilities": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "audio",
+              "voice",
+              "micro",
+              "overlay",
+              "files"
+            ]
+          }
+        }
+      }
+    },
+    "action": {
+      "type": "object",
+      "required": [
+        "id",
+        "label",
+        "ready"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "label": {
+          "type": "string",
+          "maxLength": 12
+        },
+        "icon": {
+          "$ref": "#/$defs/iconName"
+        },
+        "effect": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "items": {
+            "$ref": "invoke.schema.json#/$defs/staticEffect"
+          },
+          "description": "Present: the app executes it locally and never invokes"
+        },
+        "ready": {
+          "type": "boolean"
+        },
+        "requires": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "audio",
+              "voice",
+              "micro",
+              "overlay",
+              "files"
+            ]
+          }
+        }
+      }
+    },
+    "strip": {
+      "type": "object",
+      "required": [
+        "id",
+        "ready"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "icon": {
+          "$ref": "#/$defs/iconName"
+        },
+        "text": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 24
+        },
+        "panel": {
+          "$ref": "#/$defs/id"
+        },
+        "tappable": {
+          "type": "boolean",
+          "description": "Has a panel or an on(id) handler"
+        },
+        "live": {
+          "type": "boolean",
+          "description": "strip(id) registered: subscribe on the stream"
+        },
+        "ready": {
+          "type": "boolean"
+        }
+      }
+    },
+    "panel": {
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "placement",
+        "ready",
+        "live"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "title": {
+          "type": "string",
+          "maxLength": 16
+        },
+        "icon": {
+          "$ref": "#/$defs/iconName"
+        },
+        "placement": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "session.tab",
+              "features",
+              "chat.panel",
+              "plugin"
+            ]
+          }
+        },
+        "ready": {
+          "type": "boolean"
+        },
+        "live": {
+          "type": "boolean"
+        },
+        "micro": {
+          "$ref": "manifest.schema.json#/$defs/id"
+        },
+        "presentation": {
+          "enum": [
+            "page",
+            "sheet"
+          ]
+        }
+      }
+    },
+    "issue": {
+      "type": "object",
+      "required": [
+        "path",
+        "code",
+        "severity"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "JSON Pointer from the package.json root, or /runtime/<id>"
+        },
+        "code": {
+          "enum": [
+            "invalid-manifest",
+            "unsupported-version",
+            "needs-app",
+            "missing-field",
+            "invalid-field",
+            "duplicate-id",
+            "unknown-field",
+            "unknown-surface",
+            "too-many",
+            "too-long",
+            "no-handler",
+            "undeclared",
+            "view-file",
+            "violation",
+            "degraded",
+            "unknown-effect",
+            "bad-effect"
+          ]
+        },
+        "severity": {
+          "enum": [
+            "error",
+            "warn"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "description": "English, for developers"
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "error": {
+      "type": "object",
+      "required": [
+        "v",
+        "error"
+      ],
+      "properties": {
+        "v": {
+          "const": 1
+        },
+        "error": {
+          "type": "object",
+          "required": [
+            "code"
+          ],
+          "properties": {
+            "code": {
+              "enum": [
+                "bad-request",
+                "unsupported-version",
+                "not-found",
+                "method-not-allowed",
+                "no-handler",
+                "degraded",
+                "not-native",
+                "too-large",
+                "unsupported-media-type",
+                "rate-limited",
+                "plugin-error",
+                "invalid-view",
+                "timeout",
+                "no-stream",
+                "too-many-pending"
+              ]
+            },
+            "message": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "viewResponse": {
+      "type": "object",
+      "required": [
+        "v",
+        "pkg",
+        "id",
+        "title",
+        "view",
+        "data",
+        "rev",
+        "live",
+        "stats",
+        "issues"
+      ],
+      "properties": {
+        "v": {
+          "const": 1
+        },
+        "pkg": {
+          "type": "string"
+        },
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "title": {
+          "type": "string",
+          "maxLength": 16
+        },
+        "view": {
+          "$ref": "view.schema.json",
+          "description": "View format: docs/design/native-plugins-views.md; <= 32 KiB enforced by the bridge"
+        },
+        "data": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "rev": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "live": {
+          "type": "boolean"
+        },
+        "stats": {
+          "type": "object",
+          "properties": {
+            "bytes": {
+              "type": "integer"
+            },
+            "nodes": {
+              "type": "integer"
+            },
+            "depth": {
+              "type": "integer"
+            }
+          }
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/issue"
+          }
+        }
+      }
+    },
+    "limits": {
+      "type": "object",
+      "description": "Machine-readable §7 as in effect on this host. Six timing values (handlerTimeoutMs, viewTimeoutMs, firstDataWaitMs, heartbeatSeconds, idleTimeoutSeconds, feedLingerMs) are the host's effective settings; every other entry is a protocol constant. Values in bytes, characters, counts, milliseconds or Hz as named.",
+      "properties": {
+        "manifestBytes": {
+          "const": 16384
+        },
+        "perPlugin": {
+          "type": "object",
+          "properties": {
+            "composer.actions": {
+              "const": 2
+            },
+            "message.actions": {
+              "const": 2
+            },
+            "composer.strip": {
+              "const": 1
+            },
+            "panels": {
+              "const": 4
+            },
+            "composer.tools": {
+              "const": 2
+            },
+            "session.actions": {
+              "const": 2
+            },
+            "turn.note": {
+              "const": 1
+            }
+          }
+        },
+        "textChars": {
+          "type": "object",
+          "properties": {
+            "pluginTitle": {
+              "const": 24
+            },
+            "composerAction": {
+              "const": 10
+            },
+            "messageAction": {
+              "const": 12
+            },
+            "panelTitle": {
+              "const": 16
+            },
+            "stripText": {
+              "const": 24
+            },
+            "toast": {
+              "const": 40
+            },
+            "composerTool": {
+              "const": 8
+            },
+            "sessionAction": {
+              "const": 12
+            },
+            "turnNote": {
+              "const": 16
+            }
+          }
+        },
+        "viewBytes": {
+          "const": 32768
+        },
+        "viewNodes": {
+          "const": 120
+        },
+        "viewDepth": {
+          "const": 8
+        },
+        "toolCardBytes": {
+          "const": 8192
+        },
+        "toolCardNodes": {
+          "const": 40
+        },
+        "dataBytes": {
+          "const": 32768
+        },
+        "patchBytes": {
+          "const": 16384
+        },
+        "dataHz": {
+          "const": 4
+        },
+        "invokeBytes": {
+          "const": 65536
+        },
+        "invokeValueBytes": {
+          "const": 4096
+        },
+        "contextFieldBytes": {
+          "const": 16384
+        },
+        "invokeBurst": {
+          "const": 8
+        },
+        "invokePerSecond": {
+          "const": 4
+        },
+        "invokeConcurrent": {
+          "const": 4
+        },
+        "effectsPerInvoke": {
+          "const": 4
+        },
+        "insertChars": {
+          "const": 2000
+        },
+        "copyChars": {
+          "const": 8000
+        },
+        "commandArgsChars": {
+          "const": 500
+        },
+        "linkChars": {
+          "const": 2048
+        },
+        "handlerTimeoutMs": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "default": 3000,
+          "description": "Effective value on this host (protocol default 3000); the bridge config native.handlerTimeoutMs may change it, e.g. to shorten tests"
+        },
+        "viewTimeoutMs": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "default": 3000,
+          "description": "Effective value on this host (protocol default 3000); the bridge config native.viewTimeoutMs may change it, e.g. to shorten tests"
+        },
+        "firstDataWaitMs": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "default": 1000,
+          "description": "Effective value on this host (protocol default 1000); the bridge config native.firstDataWaitMs may change it, e.g. to shorten tests"
+        },
+        "effectWindowMs": {
+          "const": 3000
+        },
+        "streamConnections": {
+          "const": 8
+        },
+        "streamSubscriptions": {
+          "const": 32
+        },
+        "streamInboundFrameBytes": {
+          "const": 4096
+        },
+        "streamOutboundFrameBytes": {
+          "const": 49152
+        },
+        "streamBacklogBytes": {
+          "const": 1048576
+        },
+        "heartbeatSeconds": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "default": 25,
+          "description": "Effective value on this host (protocol default 25); the bridge config native.heartbeatSeconds may change it, e.g. to shorten tests"
+        },
+        "idleTimeoutSeconds": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "default": 60,
+          "description": "Effective value on this host (protocol default 60); the bridge config native.idleTimeoutSeconds may change it, e.g. to shorten tests"
+        },
+        "feedLingerMs": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "default": 30000,
+          "description": "Effective value on this host (protocol default 30000); the bridge config native.feedLingerMs may change it, e.g. to shorten tests"
+        },
+        "feeds": {
+          "const": 64
+        },
+        "assetBytes": {
+          "const": 1048576
+        },
+        "violationsToDegrade": {
+          "const": 5
+        },
+        "pendingPerPlugin": {
+          "const": 2
+        },
+        "pendingDefaultMs": {
+          "const": 30000
+        },
+        "pendingMinMs": {
+          "const": 1000
+        },
+        "pendingMaxMs": {
+          "const": 60000
+        },
+        "pendingLabelChars": {
+          "const": 16
+        },
+        "pendingEarlyResultMs": {
+          "const": 5000
+        },
+        "turnNotesPerFeed": {
+          "const": 64
+        }
+      }
+    }
+  }
+}
