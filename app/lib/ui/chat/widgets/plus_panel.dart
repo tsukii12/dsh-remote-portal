@@ -407,7 +407,7 @@ class _SessionPermissionPageState extends ConsumerState<SessionPermissionPage> {
     if (client == null || _busy) return;
     if (!await confirmPermission(context, value) || !mounted || ref.read(activeHostProvider) != owner) return;
     setState(() => _busy = true);
-    final problem = await writePermissionDefault(ref, client, value, revision);
+    final problem = await writePermissionDefault(client, value, revision);
     if (!mounted) return;
     ref.invalidate(permissionStateProvider(widget.sessionId));
     setState(() => _busy = false);
