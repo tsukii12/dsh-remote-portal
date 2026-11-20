@@ -1,5 +1,5 @@
 /**
- * dsh-remote-portal — relay + tunnel end-to-end tests.
+ * yuremote — relay + tunnel end-to-end tests.
  *
  * These start a real relay, a real tunnel agent and a dummy "gateway" upstream,
  * then drive HTTP and WebSocket traffic through the whole path:
@@ -39,7 +39,7 @@ const cleanups = [];
 const dirs = [];
 
 function tmpDir() {
-  const dir = mkdtempSync(join(tmpdir(), "drp-relay-"));
+  const dir = mkdtempSync(join(tmpdir(), "yuremote-relay-"));
   dirs.push(dir);
   return dir;
 }
@@ -224,7 +224,7 @@ test("Chrome loads each mobile asset once through the relay, with and without ho
 
   const client = readFileSync(join(HERE, "..", "client.js"));
   const received = [];
-  const assetRoute = "/dsh-remote-portal/assets";
+  const assetRoute = "/yuremote/assets";
   const targetPort = await listen(http.createServer((req, res) => {
     const url = new URL(req.url, "http://localhost");
     if (url.pathname === "/") {
@@ -251,15 +251,15 @@ test("Chrome loads each mobile asset once through the relay, with and without ho
   await connectTunnel({ agentPort, token, targetPort });
 
   for (const host of [true, false]) {
-    const css = host ? "link[data-drp=mobile-css-host]" : "style[data-drp=mobile-css]";
-    const js = host ? "script[data-drp=mobile-js-host]" : "script[data-drp=mobile-js]";
+    const css = host ? "link[data-yuremote=mobile-css-host]" : "style[data-yuremote=mobile-css]";
+    const js = host ? "script[data-yuremote=mobile-js-host]" : "script[data-yuremote=mobile-js]";
     const expr = `(async () => {
       const limit = performance.now() + 3000;
       const ready = () => document.querySelector(${JSON.stringify(css)})?.sheet?.cssRules.length > 0 &&
-        window.__DRP_MOBILE__?.active === true;
+        window.__YUREMOTE_MOBILE__?.active === true;
       while (!ready() && performance.now() < limit) await new Promise(r => setTimeout(r, 25));
       return {
-        active: ready() && document.documentElement.hasAttribute("data-drp-mobile"),
+        active: ready() && document.documentElement.hasAttribute("data-yuremote-mobile"),
         script: !!document.querySelector(${JSON.stringify(js)}),
         assets: performance.getEntriesByType("resource")
           .filter(entry => /\\/assets\\/mobile\\.(?:css|js)$/.test(new URL(entry.name).pathname))
@@ -269,15 +269,15 @@ test("Chrome loads each mobile asset once through the relay, with and without ho
     received.length = 0;
     const { stdout } = await promisify(execFile)(process.execPath, [
       join(HERE, "..", "tools", "cdp.mjs"), "eval",
-      `http://127.0.0.1:${httpPort}${mount}?drp=mobile${host ? "&host=1" : ""}`,
+      `http://127.0.0.1:${httpPort}${mount}?yuremote=mobile${host ? "&host=1" : ""}`,
       expr, "--wait", "100", "--w", "390", "--h", "844", "--mobile",
     ], { env: { ...process.env, CHROME_PATH: chrome }, timeout: 26000 });
     assert.deepEqual(JSON.parse(stdout), {
       active: true,
       script: true,
       assets: [
-        [`${mount}dsh-remote-portal/assets/mobile.css`, host ? "link" : "fetch"],
-        [`${mount}dsh-remote-portal/assets/mobile.js`, host ? "script" : "fetch"],
+        [`${mount}yuremote/assets/mobile.css`, host ? "link" : "fetch"],
+        [`${mount}yuremote/assets/mobile.js`, host ? "script" : "fetch"],
       ],
     });
     assert.deepEqual(received.sort(), ["mobile.css", "mobile.js"]);
@@ -288,7 +288,7 @@ test("the relay shares only versioned public mobile assets and separates encodin
   const token = "test-token-public-mobile-assets";
   const root = `/__t/${tunnelIdFor(token)}`;
   const revision = "a".repeat(43);
-  const asset = `/dsh-remote-portal/assets/mobile.css?v=${revision}`;
+  const asset = `/yuremote/assets/mobile.css?v=${revision}`;
   let requests = 0;
   const targetPort = await listen(http.createServer((req, res) => {
     requests++;
@@ -314,11 +314,11 @@ test("the relay shares only versioned public mobile assets and separates encodin
   const stored = () => relay.stats.cacheStored;
   const identity = await get(asset);
   assert.equal(identity.body.toString(), "identity:1");
-  assert.equal((await get(asset, { cookie: "session=another" })).headers["x-drp-cache"], "hit");
+  assert.equal((await get(asset, { cookie: "session=another" })).headers["x-yuremote-cache"], "hit");
   assert.equal(requests, 1);
   const encoded = await get(asset, { "accept-encoding": "gzip" });
   assert.equal(encoded.body.toString(), "gzip:2");
-  assert.equal((await get(asset, { "accept-encoding": "gzip" })).headers["x-drp-cache"], "hit");
+  assert.equal((await get(asset, { "accept-encoding": "gzip" })).headers["x-yuremote-cache"], "hit");
   const conditional = await get(asset, { "if-none-match": '"asset"' });
   assert.equal(conditional.status, 304);
   assert.equal(requests, 3, "client conditionals must reach the origin");
@@ -328,7 +328,7 @@ test("the relay shares only versioned public mobile assets and separates encodin
   const before = stored();
   const cookieVariant = asset.replace("mobile.css", "mobile.js");
   await get(cookieVariant, { cookie: "session=first" });
-  assert.equal((await get(cookieVariant, { cookie: "session=second" })).headers["x-drp-cache"], undefined);
+  assert.equal((await get(cookieVariant, { cookie: "session=second" })).headers["x-yuremote-cache"], undefined);
   const protectedAsset = "/assets/private-12345678.js";
   assert.equal((await get(protectedAsset, { cookie: "session=first" })).status, 200);
   assert.equal((await get(protectedAsset)).status, 401);
@@ -359,7 +359,7 @@ test("forwards an HTTP request through the tunnel and strips the routing prefix"
 const visitorAuthHeaders = { accept: "application/json", "user-agent": "same phone browser" };
 const forgedVisitorHeaders = {
   "x-forwarded-for": "203.0.113.42",
-  "x-drp-tunnel-visitor": "made-up-key 203.0.113.42",
+  "x-yuremote-tunnel-visitor": "made-up-key 203.0.113.42",
 };
 const testPassword = "correct horse battery";
 
@@ -435,7 +435,7 @@ test("real relay separates same-UA visitor pairing, revocation and lockout by so
   assert.equal(survivor.status, 200);
   const seen = JSON.parse(survivor.body);
   assert.equal(seen["x-forwarded-for"], b.localAddress);
-  assert.equal(seen["x-drp-tunnel-visitor"], undefined);
+  assert.equal(seen["x-yuremote-tunnel-visitor"], undefined);
 
   await new Promise((resolve, reject) => {
     const req = http.request({ host: "127.0.0.1", port: httpPort, path: mount + "/api/ws",
@@ -446,12 +446,12 @@ test("real relay separates same-UA visitor pairing, revocation and lockout by so
     req.end();
   });
   assert.equal(upgradeHeaders()["x-forwarded-for"], b.localAddress);
-  assert.equal(upgradeHeaders()["x-drp-tunnel-visitor"], undefined);
+  assert.equal(upgradeHeaders()["x-yuremote-tunnel-visitor"], undefined);
   assert.equal(gateway.accessLog().find(entry => entry.path === "/api/ws").ip, b.localAddress);
 
   assert.equal((await visitorLogin(httpPort, mount, "wrong", a)).status, 401);
   const spoofed = { ...a, headers: { ...headers, "x-forwarded-for": b.localAddress,
-    "x-drp-tunnel-visitor": `made-up-key ${b.localAddress}` } };
+    "x-yuremote-tunnel-visitor": `made-up-key ${b.localAddress}` } };
   assert.equal((await visitorLogin(httpPort, mount, "wrong", spoofed)).status, 429);
   assert.equal((await visitorLogin(httpPort, mount, testPassword, a)).status, 429);
   assert.equal((await visitorLogin(httpPort, mount, testPassword, b)).status, 303);
@@ -469,7 +469,7 @@ test("direct clients cannot spoof a different visitor or send the internal heade
   assert.equal(proxied.status, 200);
   const seen = JSON.parse(proxied.body);
   assert.equal(seen["x-forwarded-for"], "127.0.0.1");
-  assert.equal(seen["x-drp-tunnel-visitor"], undefined);
+  assert.equal(seen["x-yuremote-tunnel-visitor"], undefined);
   assert.equal((await visitorLogin(port, "", "wrong", { headers })).status, 401);
   assert.equal((await visitorLogin(port, "", "wrong", { headers: { ...headers, "x-forwarded-for": "203.0.113.43" } })).status, 429);
   assert.equal((await visitorLogin(port, "", testPassword)).status, 429);
@@ -527,8 +527,8 @@ test("a tunnel URL without its trailing slash redirects to one", async () => {
 test("the relay home and missing-route pages are localized", async () => {
   const { httpPort } = await startRelay(["test-token-local-pages"]);
   for (const [lang, home, notFound] of [
-    ["en", "dsh remote portal relay", "Not found"],
-    ["zh", "dsh 远程访问中继", "找不到页面"],
+    ["en", "YuRemote relay", "Not found"],
+    ["zh", "鱼鱼远程中继", "找不到页面"],
   ]) {
     const options = { headers: { "accept-language": lang } };
     for (const [path, status, title] of [["/", 200, home], ["/missing", 404, notFound]]) {
@@ -537,8 +537,14 @@ test("the relay home and missing-route pages are localized", async () => {
       assert.equal(res.headers["content-language"], lang);
       assert.equal(res.headers.vary, "Accept-Language");
       assert.ok(res.body.toString().includes(`<h1>${title}</h1>`));
+      assert.match(res.body.toString(), /<img src="\/__relay\/brand\.png"/);
     }
   }
+  const logo = await request(httpPort, "/__relay/brand.png");
+  assert.equal(logo.status, 200);
+  assert.equal(logo.headers["content-type"], "image/png");
+  assert.equal(logo.body.subarray(1, 4).toString(), "PNG");
+  assert.deepEqual([logo.body.readUInt32BE(16), logo.body.readUInt32BE(20)], [48, 48]);
 });
 
 test("an unknown tunnel id gets a page, not a proxy attempt", async () => {

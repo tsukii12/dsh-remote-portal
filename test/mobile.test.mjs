@@ -5,7 +5,7 @@
  * Three layers of checking, cheapest first:
  *
  *  1. **Static lint** (no browser): the stylesheet is one @media block, every
- *     selector is gated on `html[data-drp-mobile]`, `!important` is used only
+ *     selector is gated on `html[data-yuremote-mobile]`, `!important` is used only
  *     where an inline style from the layout solver forces it, no CSS-module
  *     content hashes leak in, and the accessibility/theme invariants that are
  *     easy to regress by accident are pinned.
@@ -90,7 +90,7 @@ async function startInstance() {
   const exe = dshExe();
   if (!exe) throw new Error("the dsh CLI was not found (set DSH_WEB_TEST_URL/DSH_WEB_TEST_TOKEN instead)");
   const port = 19000 + Math.floor(Math.random() * 700);
-  BASE = `http://127.0.0.1:${port}/?drp=mobile`;
+  BASE = `http://127.0.0.1:${port}/?yuremote=mobile`;
   // `dsh.cmd` is a batch shim: Node refuses to spawn it directly on Windows
   // (EINVAL since Node 20.12), so hand the whole command line to the shell.
   const command = `"${exe}" --profile web --port ${port} --no-open`;
@@ -213,10 +213,10 @@ describe("assets/mobile.css — restraint lint", () => {
     assert.ok(blocks.length > 0, "stylesheet is empty");
     for (const block of blocks) {
       // One documented exception: the trailing remote-only block. It is gated
-      // on `html[data-drp-remote]` (set only when the page was served to another
+      // on `html[data-yuremote-remote]` (set only when the page was served to another
       // device), so it must apply at any width — a 1440px laptop on the LAN
       // still cannot open a file on the host.
-      if (!block.prelude.startsWith("@") && /\[data-drp-remote\]/.test(block.prelude)) continue;
+      if (!block.prelude.startsWith("@") && /\[data-yuremote-remote\]/.test(block.prelude)) continue;
       assert.match(
         block.prelude,
         /^@media \(max-width: 900px\)( and \(pointer: coarse\))?$/,
@@ -225,16 +225,16 @@ describe("assets/mobile.css — restraint lint", () => {
     }
   });
 
-  test("every rule is gated on html[data-drp-mobile]", () => {
+  test("every rule is gated on html[data-yuremote-mobile]", () => {
     const offenders = [];
     for (const media of topLevelBlocks(clean)) {
-      if (!media.prelude.startsWith("@") && /\[data-drp-remote\]/.test(media.prelude)) continue;
+      if (!media.prelude.startsWith("@") && /\[data-yuremote-remote\]/.test(media.prelude)) continue;
       // one level deep: selectors and nested @media
       const inner = topLevelBlocks(media.body);
       for (const rule of inner) {
         if (rule.prelude.startsWith("@")) continue; // nested prefers-reduced-motion
         for (const selector of splitSelectors(rule.prelude)) {
-          if (!selector.startsWith("html[data-drp-mobile]")) offenders.push(selector);
+          if (!selector.startsWith("html[data-yuremote-mobile]")) offenders.push(selector);
         }
       }
     }
@@ -301,38 +301,38 @@ describe("assets/mobile.css — restraint lint", () => {
     assert.match(clean, /max-width:\s*calc\(100vw - 24px\)/);
     assert.match(clean, /max-height:\s*calc\(100dvh - 24px\)/);
     // the portal panel is exempt from the modal bounds
-    assert.match(clean, /\[role="dialog"\]\[data-drp="panel"\]/);
+    assert.match(clean, /\[role="dialog"\]\[data-yuremote="panel"\]/);
   });
 
   test("the layer's own classes cannot collide with client.js", () => {
-    // client.js owns .drp-overlay/.drp-scrim/.drp-sheet/…; the layer only adds
-    // .drp-drawer-*. The one exception is that the layer deliberately tightens
-    // .drp-sheet-body inside [data-drp="panel"] — assert it stays scoped there.
-    const re = /\.(drp-[a-z-]+)/g;
+    // client.js owns .yuremote-overlay/.yuremote-scrim/.yuremote-sheet/…; the layer only adds
+    // .yuremote-drawer-*. The one exception is that the layer deliberately tightens
+    // .yuremote-sheet-body inside [data-yuremote="panel"] — assert it stays scoped there.
+    const re = /\.(yuremote-[a-z-]+)/g;
     let match;
     while ((match = re.exec(clean)) !== null) {
       const cls = match[1];
       const selector = ruleSelectorAt(clean, match.index).replace(/\s+/g, " ");
-      if (cls.startsWith("drp-drawer-")) continue;
+      if (cls.startsWith("yuremote-drawer-")) continue;
     // The layer also owns one marker class of its own: menu entries it removes
     // (native-only actions). It is namespaced and asserted here so a future
     // class from client.js cannot silently reuse the name.
-    if (cls === "drp-hidden") continue;
+    if (cls === "yuremote-hidden") continue;
       assert.ok(
-        selector.includes('[data-drp="panel"]'),
-        `layer styles client.js class .${cls} outside [data-drp="panel"] (${selector})`,
+        selector.includes('[data-yuremote="panel"]'),
+        `layer styles client.js class .${cls} outside [data-yuremote="panel"] (${selector})`,
       );
     }
-    assert.match(js, /drp-drawer-scrim/);
-    assert.match(js, /drp-drawer-btn/);
-    assert.equal(/drp-scrim/.test(js.replace(/drp-drawer-scrim/g, "")), false, "mobile.js must not use client.js's .drp-scrim");
+    assert.match(js, /yuremote-drawer-scrim/);
+    assert.match(js, /yuremote-drawer-btn/);
+    assert.equal(/yuremote-scrim/.test(js.replace(/yuremote-drawer-scrim/g, "")), false, "mobile.js must not use client.js's .yuremote-scrim");
   });
 });
 
 describe("assets/mobile.js — source contract", () => {
   test("is an idempotent, dependency-free IIFE", () => {
-    assert.match(js, /window\.__DRP_MOBILE__/, "must expose the test API");
-    assert.match(js, /if \(window\.__DRP_MOBILE__\)/, "must bail out when loaded twice");
+    assert.match(js, /window\.__YUREMOTE_MOBILE__/, "must expose the test API");
+    assert.match(js, /if \(window\.__YUREMOTE_MOBILE__\)/, "must bail out when loaded twice");
     assert.equal(/^\s*import\s/m.test(js), false, "no ESM imports");
     assert.equal(/\brequire\(/.test(js), false, "no require()");
     assert.match(js, /\(function \(\) \{/, "wrapped in an IIFE");
@@ -402,7 +402,7 @@ describe("mobile layer against the live dsh web UI", () => {
     if (!existsSync(CHROME)) { skipReason = `no Chrome/Chromium found (looked for ${CHROME}); set CHROME_PATH to enable these tests`; return; }
     if (!existsSync(CDP)) { skipReason = `driver missing at ${CDP}`; return; }
     if (ENV_BASE && ENV_TOKEN) {
-      BASE = (ENV_BASE.endsWith("/") ? ENV_BASE : ENV_BASE + "/") + "?drp=mobile";
+      BASE = (ENV_BASE.endsWith("/") ? ENV_BASE : ENV_BASE + "/") + "?yuremote=mobile";
       TOKEN_URL = BASE + "&token=" + encodeURIComponent(ENV_TOKEN);
     } else {
       try {
@@ -416,7 +416,7 @@ describe("mobile layer against the live dsh web UI", () => {
       skipReason = `no dsh web instance at ${BASE}`;
       return;
     }
-    tmp = mkdtempSync(join(tmpdir(), "drp-mobile-test-"));
+    tmp = mkdtempSync(join(tmpdir(), "yuremote-mobile-test-"));
     // One pre-file: inject the shipped CSS + JS exactly as client.js does, and
     // expose a light/dark switch for the audit.
     const pre = `(async () => {
@@ -449,22 +449,22 @@ describe("mobile layer against the live dsh web UI", () => {
   }
   await new Promise((r) => setTimeout(r, 300));
   const style = document.createElement('style');
-  style.id = 'drp-mobile-css';
+  style.id = 'yuremote-mobile-css';
   style.textContent = ${JSON.stringify(css)};
   document.head.appendChild(style);
-  try { (0, eval)(${JSON.stringify(js)}); } catch (e) { window.__drpJsError = String(e); }
-  window.__DRP_AUDIT_THEME = (mode) => {
+  try { (0, eval)(${JSON.stringify(js)}); } catch (e) { window.__yuremoteJsError = String(e); }
+  window.__YUREMOTE_AUDIT_THEME = (mode) => {
     const b = document.body;
-    if (!window.__drpOrigTheme) {
-      window.__drpOrigTheme = {
+    if (!window.__yuremoteOrigTheme) {
+      window.__yuremoteOrigTheme = {
         dark: b.hasAttribute('data-ds-dark-theme'),
         skin: b.getAttribute('data-liang-skin'),
         stage: b.getAttribute('data-liang-stage'),
         backdrop: document.querySelector('.liang-skin-backdrop'),
       };
     }
-    const o = window.__drpOrigTheme;
-    let light = document.getElementById('drp-audit-light');
+    const o = window.__yuremoteOrigTheme;
+    let light = document.getElementById('yuremote-audit-light');
     if (mode === 'light') {
       b.removeAttribute('data-ds-dark-theme');
       b.removeAttribute('data-liang-skin');
@@ -473,7 +473,7 @@ describe("mobile layer against the live dsh web UI", () => {
       if (o.backdrop) o.backdrop.style.display = 'none';
       if (!light) {
         light = document.createElement('style');
-        light.id = 'drp-audit-light';
+        light.id = 'yuremote-audit-light';
         light.textContent = ':root{color-scheme:light} body{background:#fff !important}';
         document.head.appendChild(light);
       }
@@ -484,7 +484,7 @@ describe("mobile layer against the live dsh web UI", () => {
       if (o.backdrop) o.backdrop.style.display = '';
       if (light) light.remove();
     }
-    if (window.__DRP_MOBILE__) window.__DRP_MOBILE__.refresh();
+    if (window.__YUREMOTE_MOBILE__) window.__YUREMOTE_MOBILE__.refresh();
     return mode;
   };
   return 'ready';
@@ -502,7 +502,7 @@ describe("mobile layer against the live dsh web UI", () => {
   test("long code, wide tables and big images stay inside the phone column", async (t) => {
     if (skipReason) return t.skip(skipReason);
     // Injected into the real page: the three element classes that break mobile
-    // layouts. The rules are global element rules under `html[data-drp-mobile]`,
+    // layouts. The rules are global element rules under `html[data-yuremote-mobile]`,
     // so a synthetic node exercises exactly what a real message would hit.
     const expr = `(async () => {
       const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -512,23 +512,23 @@ describe("mobile layer against the live dsh web UI", () => {
         || document.querySelector('main')
         || document.body;
       const box = document.createElement('div');
-      box.id = 'drp-overflow-probe';
+      box.id = 'yuremote-overflow-probe';
       box.innerHTML = ''
-        + '<pre id="drp-probe-pre">' + 'curl -s https://example.invalid/' + 'a'.repeat(220) + '</pre>'
-        + '<div class="_tableScroll_x1" id="drp-probe-wrap">'
-        + '  <table id="drp-probe-table"><tbody><tr>'
+        + '<pre id="yuremote-probe-pre">' + 'curl -s https://example.invalid/' + 'a'.repeat(220) + '</pre>'
+        + '<div class="_tableScroll_x1" id="yuremote-probe-wrap">'
+        + '  <table id="yuremote-probe-table"><tbody><tr>'
         + Array.from({ length: 12 }, (_, i) => '<td>cell-' + i + '-padding</td>').join('')
         + '  </tr></tbody></table>'
         + '</div>'
-        + '<img id="drp-probe-img" alt="" src="data:image/svg+xml;utf8,' +
+        + '<img id="yuremote-probe-img" alt="" src="data:image/svg+xml;utf8,' +
         encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900"></svg>') + '">';
       host.appendChild(box);
       await sleep(400);
       const r = (el) => el.getBoundingClientRect();
-      const pre = document.getElementById('drp-probe-pre');
-      const wrap = document.getElementById('drp-probe-wrap');
-      const table = document.getElementById('drp-probe-table');
-      const img = document.getElementById('drp-probe-img');
+      const pre = document.getElementById('yuremote-probe-pre');
+      const wrap = document.getElementById('yuremote-probe-wrap');
+      const table = document.getElementById('yuremote-probe-table');
+      const img = document.getElementById('yuremote-probe-img');
       const page = document.documentElement;
       const offenders = [...document.querySelectorAll("body *")]
         .filter((e) => e.getBoundingClientRect().right > innerWidth + 2)
@@ -542,7 +542,7 @@ describe("mobile layer against the live dsh web UI", () => {
         vw: innerWidth,
         pageOverflow: page.scrollWidth - innerWidth,
         offenders,
-        layer: document.documentElement.hasAttribute("data-drp-mobile"),
+        layer: document.documentElement.hasAttribute("data-yuremote-mobile"),
         host: (host.tagName || "").toLowerCase() + "/" + (host.getAttribute("data-slot") || ""),
         preW: Math.round(r(pre).width),
         preScrolls: pre.scrollWidth > pre.clientWidth + 1,
@@ -584,7 +584,7 @@ describe("mobile layer against the live dsh web UI", () => {
       const frame = document.querySelector('[data-slot="root"] > div');
       if (!frame) return JSON.stringify({ error: "no shell frame found" });
       const cover = document.createElement('div');
-      cover.id = 'drp-cover-probe';
+      cover.id = 'yuremote-cover-probe';
       cover.style.position = 'fixed';
       cover.style.inset = '0';
       cover.style.zIndex = '5';
@@ -616,9 +616,9 @@ describe("mobile layer against the live dsh web UI", () => {
     const m = JSON.parse(line);
     assert.equal(m.error, undefined, m.error || "");
     assert.equal(m.fixed.pointerEvents, "none", "the stacked wrapper must not take pointer events");
-    assert.equal(String(m.fixed.hit).includes("drp-cover-probe"), false, `a touch at the centre hits the wrapper (${m.fixed.hit})`);
+    assert.equal(String(m.fixed.hit).includes("yuremote-cover-probe"), false, `a touch at the centre hits the wrapper (${m.fixed.hit})`);
     assert.equal(m.broken.pointerEvents, "auto");
-    assert.equal(m.broken.hit, "drp-cover-probe", "the probe must be on top when the rule is defeated");
+    assert.equal(m.broken.hit, "yuremote-cover-probe", "the probe must be on top when the rule is defeated");
   });
 
   test("remote-only refinements: gutters, settings column, ledger pan, native items", async (t) => {
@@ -644,12 +644,12 @@ describe("mobile layer against the live dsh web UI", () => {
       const menu = document.createElement('div');
       menu.setAttribute('role', 'menu');
       menu.innerHTML = '<button role="menuitem">在资源管理器…等中打开</button>'
-        + '<button role="menuitem" id="drp-probe-keep">重命名</button>';
+        + '<button role="menuitem" id="yuremote-probe-keep">重命名</button>';
       document.body.appendChild(menu);
       await sleep(260);
       const nativeItem = menu.querySelector('[role="menuitem"]');
-      const keepItem = menu.querySelector('#drp-probe-keep');
-      const nativeHidden = nativeItem.classList.contains('drp-hidden')
+      const keepItem = menu.querySelector('#yuremote-probe-keep');
+      const nativeHidden = nativeItem.classList.contains('yuremote-hidden')
         && getComputedStyle(nativeItem).display === 'none';
       const keepVisible = getComputedStyle(keepItem).display !== 'none';
       menu.remove();
@@ -684,21 +684,21 @@ describe("mobile layer against the live dsh web UI", () => {
     if (skipReason) return t.skip(skipReason);
     const expr = `(async () => {
       const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-      const api = window.__DRP_MOBILE__;
+      const api = window.__YUREMOTE_MOBILE__;
       const html = document.documentElement;
       const out = {
         api: !!api,
         active: !!(api && api.active),
-        htmlAttr: html.hasAttribute('data-drp-mobile'),
-        buttons: document.querySelectorAll('.drp-drawer-btn').length,
-        scrims: document.querySelectorAll('.drp-drawer-scrim').length,
-        controls: (() => { const b = document.querySelector('.drp-drawer-btn'); return b ? { controls: b.getAttribute('aria-controls'), expanded: b.getAttribute('aria-expanded'), w: Math.round(b.getBoundingClientRect().width), h: Math.round(b.getBoundingClientRect().height) } : null; })(),
+        htmlAttr: html.hasAttribute('data-yuremote-mobile'),
+        buttons: document.querySelectorAll('.yuremote-drawer-btn').length,
+        scrims: document.querySelectorAll('.yuremote-drawer-scrim').length,
+        controls: (() => { const b = document.querySelector('.yuremote-drawer-btn'); return b ? { controls: b.getAttribute('aria-controls'), expanded: b.getAttribute('aria-expanded'), w: Math.round(b.getBoundingClientRect().width), h: Math.round(b.getBoundingClientRect().height) } : null; })(),
         viewport: (document.querySelector('meta[name=viewport]') || {}).content,
-        sidebarId: !!document.getElementById('drp-sidebar'),
+        sidebarId: !!document.getElementById('yuremote-sidebar'),
       };
       api.open(); await sleep(500);
-      out.openAttr = html.getAttribute('data-drp-drawer');
-      out.drawerBox = (() => { const col = document.getElementById('drp-sidebar'); if (!col) return null; const r = col.getBoundingClientRect(); return { x: Math.round(r.x), w: Math.round(r.width), right: Math.round(r.right) }; })();
+      out.openAttr = html.getAttribute('data-yuremote-drawer');
+      out.drawerBox = (() => { const col = document.getElementById('yuremote-sidebar'); if (!col) return null; const r = col.getBoundingClientRect(); return { x: Math.round(r.x), w: Math.round(r.width), right: Math.round(r.right) }; })();
 
       // A modal opening on top must retire the drawer.
       const modal = document.createElement('div');
@@ -706,12 +706,12 @@ describe("mobile layer against the live dsh web UI", () => {
       modal.setAttribute('aria-modal', 'true');
       document.body.appendChild(modal);
       await sleep(400);
-      out.drawerWhileModal = html.getAttribute('data-drp-drawer');
+      out.drawerWhileModal = html.getAttribute('data-yuremote-drawer');
       modal.remove();
       await sleep(200);
 
       api.close(); await sleep(400);
-      out.closedAttr = html.getAttribute('data-drp-drawer');
+      out.closedAttr = html.getAttribute('data-yuremote-drawer');
       api.refresh();
       return out;
     })()`;
@@ -721,23 +721,23 @@ describe("mobile layer against the live dsh web UI", () => {
     ]);
     assert.equal(code, 0, "cdp run failed: " + stderr.slice(-800));
     const out = JSON.parse(stdout.trim());
-    assert.equal(out.api, true, "__DRP_MOBILE__ API missing");
+    assert.equal(out.api, true, "__YUREMOTE_MOBILE__ API missing");
     assert.equal(out.active, true, "layer did not activate at 390px");
-    assert.equal(out.htmlAttr, true, "data-drp-mobile not set on <html>");
+    assert.equal(out.htmlAttr, true, "data-yuremote-mobile not set on <html>");
     assert.equal(out.buttons, 1, "expected exactly one drawer button");
     assert.equal(out.scrims, 1, "expected exactly one scrim");
     assert.equal(out.controls.w, 44, "drawer button must be 44px wide");
     assert.equal(out.controls.h, 44, "drawer button must be 44px tall");
     assert.equal(out.controls.expanded, "false");
-    assert.equal(out.controls.controls, "drp-sidebar");
+    assert.equal(out.controls.controls, "yuremote-sidebar");
     assert.equal(out.sidebarId, true, "aria-controls target missing");
     assert.match(out.viewport, /viewport-fit=cover/);
-    assert.equal(out.openAttr, "open", "open() did not set data-drp-drawer");
+    assert.equal(out.openAttr, "open", "open() did not set data-yuremote-drawer");
     assert.ok(out.drawerBox, "sidebar column not found");
     assert.ok(out.drawerBox.right > 0 && out.drawerBox.right <= 390, "drawer is off screen when open");
     assert.ok(out.drawerBox.w <= 320 && out.drawerBox.w >= 250, "drawer width outside min(86vw,320px): " + out.drawerBox.w);
     assert.equal(out.drawerWhileModal, null, "drawer must close when a modal opens above it");
-    assert.equal(out.closedAttr, null, "close() did not clear data-drp-drawer");
+    assert.equal(out.closedAttr, null, "close() did not clear data-yuremote-drawer");
   });
 
   // 800px: dsh has no drawer of its own above 768px, so nothing but the layer
@@ -751,7 +751,7 @@ describe("mobile layer against the live dsh web UI", () => {
     const expr = `(async () => {
       const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
       const html = document.documentElement;
-      document.querySelector('.drp-drawer-btn').click();
+      document.querySelector('.yuremote-drawer-btn').click();
       await sleep(600);
       const entry = [...document.querySelectorAll('[data-slot="sidebar"] button')]
         .find((b) => /^(${label})$/.test((b.getAttribute('aria-label') || b.textContent).trim()));
@@ -762,12 +762,12 @@ describe("mobile layer against the live dsh web UI", () => {
       const hitsEntry = !!top && entry.contains(top);
       (top || entry).click();
       await sleep(1200);
-      const page = document.querySelector('[data-slot="main"] .drp-page');
+      const page = document.querySelector('[data-slot="main"] .yuremote-page');
       const r = page ? page.getBoundingClientRect() : null;
       return JSON.stringify({
         entry: true,
         hitsEntry,
-        drawer: html.getAttribute('data-drp-drawer'),
+        drawer: html.getAttribute('data-yuremote-drawer'),
         page: r ? { x: Math.round(r.x), w: Math.round(r.width) } : null,
         scrollW: document.documentElement.scrollWidth,
       });
@@ -793,7 +793,7 @@ describe("mobile layer against the live dsh web UI", () => {
       if (skipReason) return t.skip(skipReason);
       const expr = `(async () => {
         const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-        document.querySelector('.drp-drawer-btn').click();
+        document.querySelector('.yuremote-drawer-btn').click();
         await sleep(600);
         const entry = [...document.querySelectorAll('[data-slot="sidebar"] button')]
           .find((b) => /^(${label})$/.test(b.getAttribute('aria-label') || ''));
@@ -805,8 +805,8 @@ describe("mobile layer against the live dsh web UI", () => {
           .map((e) => e.getBoundingClientRect())
           .filter((r) => r.width > 0)
           .map((r) => ({ w: Math.round(r.width), h: Math.round(r.height) }));
-        const pw = document.querySelector('[data-slot="main"] .drp-pw input');
-        const eye = document.querySelector('[data-slot="main"] .drp-pw-eye');
+        const pw = document.querySelector('[data-slot="main"] .yuremote-pw input');
+        const eye = document.querySelector('[data-slot="main"] .yuremote-pw-eye');
         const ir = pw && pw.getBoundingClientRect();
         const er = eye && eye.getBoundingClientRect();
         return JSON.stringify({
@@ -844,7 +844,7 @@ describe("mobile layer against the live dsh web UI", () => {
     if (skipReason) return t.skip(skipReason);
     const expr = `(async () => {
       const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-      const btn = document.querySelector('.drp-drawer-btn');
+      const btn = document.querySelector('.yuremote-drawer-btn');
       btn.click();
       await sleep(600);
       const entry = [...document.querySelectorAll('[data-slot="sidebar"] button')]
@@ -886,7 +886,7 @@ describe("mobile layer against the live dsh web UI", () => {
     if (skipReason) return t.skip(skipReason);
     const expr = `(async () => {
       const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-      document.querySelector('.drp-drawer-btn').click();
+      document.querySelector('.yuremote-drawer-btn').click();
       await sleep(600);
       const entry = [...document.querySelectorAll('[data-slot="sidebar"] button')]
         .find((b) => /^(Remote access|远程访问)$/.test((b.getAttribute('aria-label') || b.textContent).trim()));
@@ -921,10 +921,10 @@ describe("mobile layer against the live dsh web UI", () => {
     if (skipReason) return t.skip(skipReason);
     const expr = `(async () => {
       const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-      const cfg = (body) => fetch('/dsh-remote-portal/config', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }).then((r) => r.json());
-      const enabled = async () => (await (await fetch('/dsh-remote-portal/status')).json()).status.enabled;
+      const cfg = (body) => fetch('/yuremote/config', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }).then((r) => r.json());
+      const enabled = async () => (await (await fetch('/yuremote/status')).json()).status.enabled;
       await cfg({ enabled: true });
-      document.querySelector('.drp-drawer-btn').click();
+      document.querySelector('.yuremote-drawer-btn').click();
       await sleep(600);
       [...document.querySelectorAll('[data-slot="sidebar"] button')]
         .find((b) => /^(Remote access|远程访问)$/.test((b.getAttribute('aria-label') || b.textContent).trim())).click();
@@ -963,13 +963,53 @@ describe("mobile layer against the live dsh web UI", () => {
     assert.ok(!out.back.alerts.some((a) => /PC|电脑/.test(a)), "the disconnected notice must clear");
   });
 
+  test("a paired phone at 400px only shows password status after an authenticated poll", async (t) => {
+    if (skipReason) return t.skip(skipReason);
+    const host = await runCdp(["eval", BASE, `(async () => {
+      const r = await fetch('./yuremote/pair', { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
+      return (await r.json()).pairing?.url || '';
+    })()`, "--token", TOKEN_URL, "--wait", "3000"]);
+    assert.equal(host.code, 0, host.stderr.slice(-800));
+    const pair = new URL(host.stdout.trim());
+    const phone = await runCdp(["eval", pair.origin + "/", `(async () => {
+      const wait = (ms) => new Promise(r => setTimeout(r, ms));
+      const real = window.fetch;
+      const polls = [];
+      window.fetch = async (input, init) => {
+        if (!String(input).endsWith('/status')) return real(input, init);
+        const response = await real(input, polls.length ? init : { ...init, credentials: 'omit' });
+        const data = await response.clone().json();
+        polls.push([new URL(response.url).pathname, response.status, data.status?.passwordSet ?? null]);
+        return response;
+      };
+      document.querySelector('.yuremote-drawer-btn').click();
+      await wait(600);
+      [...document.querySelectorAll('[data-slot="sidebar"] button')]
+        .find(b => /^(Remote access|远程访问)$/.test((b.getAttribute('aria-label') || b.textContent).trim())).click();
+      const badge = () => document.querySelector('[data-yuremote="password"] .yuremote-chip')?.textContent ?? null;
+      const alert = () => document.querySelector('[data-slot="main"] [role="alert"]')?.textContent || '';
+      for (let i = 0; i < 20 && !alert(); i++) await wait(100);
+      const refused = { badge: badge(), alert: alert() };
+      for (let i = 0; i < 60 && !badge(); i++) await wait(100);
+      return { polls: polls.slice(0, 2), refused, badge: badge(), alert: alert() };
+    })()`, "--token", pair.href, "--wait", "4000", "--w", "400", "--h", "754", "--mobile",
+      "--pre-file", join(tmp, "pre.js"), "--settle", "1200"]);
+    assert.equal(phone.code, 0, phone.stderr.slice(-800));
+    const result = JSON.parse(phone.stdout.trim());
+    assert.deepEqual(result.polls, [["/yuremote/status", 401, null], ["/yuremote/status", 200, true]]);
+    assert.match(result.refused.alert, /authentication required/);
+    assert.equal(result.refused.badge, null);
+    assert.match(result.badge, /^(Set|已设置)$/);
+    assert.equal(result.alert, "");
+  });
+
   // The panel's note promises that a password change signs devices out; one
   // who lost a phone changes the password expecting exactly that.
   test("changing the password from the panel signs every device out and cancels unused pairing links", async (t) => {
     if (skipReason) return t.skip(skipReason);
     const UA = "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1";
     const open = `const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-      document.querySelector('.drp-drawer-btn').click();
+      document.querySelector('.yuremote-drawer-btn').click();
       await sleep(600);
       [...document.querySelectorAll('[data-slot="sidebar"] button')]
         .find((b) => /^(Remote access|远程访问)$/.test((b.getAttribute('aria-label') || b.textContent).trim())).click();
@@ -977,16 +1017,16 @@ describe("mobile layer against the live dsh web UI", () => {
     const change = (phone, accept, real = false) => `(async () => {
       ${open}
       const tab = async (re) => { const b = [...document.querySelectorAll('[data-slot="main"] [role="tab"], [data-slot="main"] button')].find((x) => re.test(x.textContent.trim())); if (b) b.click(); await sleep(900); };
-      const shown = async () => { await tab(/^(局域网访问|Local network)$/); const src = document.querySelector('[data-drp="qr"] img')?.getAttribute('src') || ''; await tab(/^(基本设置|General)$/); return (decodeURIComponent(src).match(/https?:[^\\s"'&]*pair[^\\s"'&]*/) || [''])[0]; };
+      const shown = async () => { await tab(/^(局域网访问|Local network)$/); const src = document.querySelector('[data-yuremote="qr"] img')?.getAttribute('src') || ''; await tab(/^(基本设置|General)$/); return (decodeURIComponent(src).match(/https?:[^\\s"'&]*pair[^\\s"'&]*/) || [''])[0]; };
       const before = ${real} ? '' : await shown();
       if (${phone}) document.cookie = 'dsh_portal_client=1; path=/';
       let asked = '';
       window.confirm = (m) => { asked = m; return ${accept}; };
-      const input = document.querySelector('input[name="drp-portal-password"]');
+      const input = document.querySelector('input[name="yuremote-portal-password"]');
       Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, 'pw-test-' + Date.now());
       input.dispatchEvent(new Event('input', { bubbles: true }));
       await sleep(300);
-      [...document.querySelectorAll('[data-drp="password"] button')].find((b) => /^(更新密码|Update password)$/.test(b.textContent.trim())).click();
+      [...document.querySelectorAll('[data-yuremote="password"] button')].find((b) => /^(更新密码|Update password)$/.test(b.textContent.trim())).click();
       await sleep(900);
       const text = document.querySelector('[data-slot="main"]').textContent;
       if (${real}) {
@@ -1006,8 +1046,8 @@ describe("mobile layer against the live dsh web UI", () => {
       return JSON.parse(stdout.trim().split("\n").filter((l) => l.trim().startsWith("{")).pop());
     };
     const links = await run(`(async () => {
-      const post = (p, b) => fetch('/dsh-remote-portal/' + p, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(b) }).then((r) => r.json());
-      const st = (await (await fetch('/dsh-remote-portal/status')).json()).status;
+      const post = (p, b) => fetch('/yuremote/' + p, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(b) }).then((r) => r.json());
+      const st = (await (await fetch('/yuremote/status')).json()).status;
       return JSON.stringify({ port: st.port, a: (await post('pair', { ttlSeconds: 300 })).pairing.url, b: (await post('pair', { ttlSeconds: 300 })).pairing.url });
     })()`);
     const local = (link) => { const u = new URL(link); return `http://127.0.0.1:${links.port}${u.pathname}${u.search}`; };
@@ -1037,7 +1077,7 @@ describe("mobile layer against the live dsh web UI", () => {
 
     // A real phone, signed in through the portal (not the marker cookie on the PC).
     const fresh = await run(`(async () => {
-      const r = await fetch('/dsh-remote-portal/pair', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ttlSeconds: 300 }) });
+      const r = await fetch('/yuremote/pair', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ttlSeconds: 300 }) });
       return JSON.stringify({ c: (await r.json()).pairing.url });
     })()`);
     const self = await run(change(false, true, true), `http://127.0.0.1:${links.port}/`, local(fresh.c));
@@ -1052,10 +1092,10 @@ describe("mobile layer against the live dsh web UI", () => {
     // interval used to keep two (at 9 s, three) of them open at the same time.
     const slow = `(() => {
       const real = window.fetch.bind(window);
-      const poll = window.__drpPoll = { started: 0, ok: 0, open: 0, maxOpen: 0 };
+      const poll = window.__yuremotePoll = { started: 0, ok: 0, open: 0, maxOpen: 0 };
       window.fetch = (input, init) => {
         const url = String(input && input.url ? input.url : input);
-        if (!/\\/dsh-remote-portal\\/status(\\?|$)/.test(url)) return real(input, init);
+        if (!/\\/yuremote\\/status(\\?|$)/.test(url)) return real(input, init);
         poll.started++; poll.open++; poll.maxOpen = Math.max(poll.maxOpen, poll.open);
         return new Promise((r) => setTimeout(r, 5000)).then(() => real(input, init))
           .then((res) => { if (res.ok) poll.ok++; return res; })
@@ -1065,17 +1105,17 @@ describe("mobile layer against the live dsh web UI", () => {
     writeFileSync(join(tmp, "slow-status.js"), slow);
     const expr = `(async () => {
       const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-      document.querySelector('.drp-drawer-btn').click();
+      document.querySelector('.yuremote-drawer-btn').click();
       await sleep(600);
       const entry = [...document.querySelectorAll('[data-slot="sidebar"] button')]
         .find((b) => /^(Remote access|远程访问)$/.test(b.getAttribute('aria-label') || ''));
       if (!entry) return JSON.stringify({ entry: false });
-      window.__drpPoll.maxOpen = window.__drpPoll.open;
-      const before = window.__drpPoll.started;
-      const okBefore = window.__drpPoll.ok;
+      window.__yuremotePoll.maxOpen = window.__yuremotePoll.open;
+      const before = window.__yuremotePoll.started;
+      const okBefore = window.__yuremotePoll.ok;
       entry.click();
       await sleep(14000);
-      return JSON.stringify({ entry: true, started: window.__drpPoll.started - before, ok: window.__drpPoll.ok - okBefore, maxOpen: window.__drpPoll.maxOpen });
+      return JSON.stringify({ entry: true, started: window.__yuremotePoll.started - before, ok: window.__yuremotePoll.ok - okBefore, maxOpen: window.__yuremotePoll.maxOpen });
     })()`;
     const { code, stdout, stderr } = await runCdp([
       "eval", BASE, expr, "--token", TOKEN_URL, "--wait", "4000",
@@ -1097,7 +1137,7 @@ describe("mobile layer against the live dsh web UI", () => {
     // taps land on a mask (dsh's own drawer mask did exactly that).
     const expr = `(async () => {
       const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-      document.querySelector('.drp-drawer-btn').click();
+      document.querySelector('.yuremote-drawer-btn').click();
       await sleep(700);
       const sidebar = document.querySelector('[data-slot="sidebar"]');
       const buttons = sidebar ? [...sidebar.querySelectorAll('button')].filter((b) => {
@@ -1115,7 +1155,7 @@ describe("mobile layer against the live dsh web UI", () => {
         return (b.getAttribute('aria-label') || b.textContent.trim()).slice(0, 30) + ' -> ' +
           (hit ? hit.tagName + '.' + String(hit.className).slice(0, 40) : 'nothing');
       });
-      return JSON.stringify({ drawer: document.documentElement.getAttribute('data-drp-drawer'), candidates: buttons.length, missed });
+      return JSON.stringify({ drawer: document.documentElement.getAttribute('data-yuremote-drawer'), candidates: buttons.length, missed });
     })()`;
     const { code, stdout, stderr } = await runCdp([
       "eval", BASE, expr, "--token", TOKEN_URL, "--wait", "4000",

@@ -1,5 +1,5 @@
 /**
- * dsh-remote-portal — test/qr.test.mjs
+ * yuremote — test/qr.test.mjs
  *
  * The encoder in lib/qr.mjs is only useful if a real scanner can read what it
  * draws, so this test does not compare the SVG to itself. It reads the emitted SVG

@@ -286,7 +286,7 @@ try {
     // Horizontal-overflow audit across a width × theme matrix in ONE browser.
     // Re-launching Chrome per configuration takes ~8 s each; re-driving
     // Emulation.setDeviceMetricsOverride takes ~0.5 s.
-    // The page must expose an optional `window.__DRP_AUDIT_THEME(mode)` hook
+    // The page must expose an optional `window.__YUREMOTE_AUDIT_THEME(mode)` hook
     // (the --pre-file payload usually defines it) to switch light/dark.
     const widths = String(args.widths || "320,360,390,430,768,900").split(",").map(Number);
     const heights = String(args.heights || "844").split(",").map(Number);
@@ -301,7 +301,7 @@ try {
       }, sessionId);
       await sleep(Number(args["resize-settle"] || 450));
       for (const theme of themes) {
-        await evaluate(`(() => { const f = window.__DRP_AUDIT_THEME; if (typeof f === "function") f(${JSON.stringify(theme)}); return true; })()`);
+        await evaluate(`(() => { const f = window.__YUREMOTE_AUDIT_THEME; if (typeof f === "function") f(${JSON.stringify(theme)}); return true; })()`);
         await sleep(Number(args.settle || 350));
         const measured = await evaluate(AUDIT_EXPRESSION);
         rows.push({ requested: { w, h, theme }, ...measured });

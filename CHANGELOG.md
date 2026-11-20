@@ -5,6 +5,9 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+- YuRemote (鱼鱼远程): rebranded the plugin and relay. The installers migrate
+  existing state and keep the old relay installation available for rollback.
+  Native app login, pairing, tunnel URLs and the wire protocol are unchanged.
 - Remote access password: changing it from the panel now signs out every
   device and cancels unused pairing links, as the note under the field always
   said. Before, signed-in phones stayed signed in. A phone that makes the change
@@ -102,14 +105,14 @@ versions are the plugin's own, not dsh's.
 
 ## 0.6.2 — 2026-10-24
 
-- `drp status` lists every public URL when the relay serves several dsh machines.
+- `yuremote status` lists every public URL when the relay serves several dsh machines.
   Single-tunnel status still shows one URL.
 
 ## 0.6.1 — 2026-10-24
 
-- Manage several dsh machines from one relay: `drp token add` creates another
-  tunnel token, `drp tokens` lists tunnels and their state, `drp urls` lists
-  public addresses, and `drp token remove <id>` removes a tunnel.
+- Manage several dsh machines from one relay: `yuremote token add` creates another
+  tunnel token, `yuremote tokens` lists tunnels and their state, `yuremote urls` lists
+  public addresses, and `yuremote token remove <id>` removes a tunnel.
 
 ## 0.6.0 — 2026-10-23
 
@@ -120,7 +123,7 @@ already points here, the installer can now issue a real one:
 - option `1` in the certificate menu obtains a Let's Encrypt certificate with
   acme.sh (HTTP-01 on port 80) and installs it for the relay
 - acme.sh comes from `get.acme.sh`, then the GitHub mirrors; renewal is handled by
-  acme.sh itself, with `systemctl restart dsh-relay` as the reload hook
+  acme.sh itself, with `systemctl restart yuremote-relay` as the reload hook
 - port 80 is checked first and the run stops with an explanation instead of failing
   halfway
 
@@ -132,10 +135,10 @@ already points here, the installer can now issue a real one:
   the relay's own uptime
 - **reconnects and the last drop are shown**, with the reason and how long ago:
   that is the data needed to explain a flapping tunnel
-- `drp config KEY=VALUE …` now works: it updates the saved answers and reinstalls
+- `yuremote config KEY=VALUE …` now works: it updates the saved answers and reinstalls
   the unit (ports and certificates live in the command line, so editing the file
   alone did nothing). The installer keeps a copy of itself and of `relay.mjs` in
-  `/var/lib/dsh-relay` so this needs no network
+  `/var/lib/yuremote-relay` so this needs no network
 
 ### Fixed
 - a saved port is the default on the next run; before, a re-run quietly moved the
@@ -151,7 +154,7 @@ already points here, the installer can now issue a real one:
 [relay] failed to start: listen EACCES: permission denied 0.0.0.0:443
 ```
 
-The unit runs as `dsh-relay`, and ports below 1024 need a capability to bind. The
+The unit runs as `yuremote-relay`, and ports below 1024 need a capability to bind. The
 unit now carries `AmbientCapabilities=CAP_NET_BIND_SERVICE` (plus a bounding set of
 just that) whenever the public, agent or local port is below 1024. The relay still
 does not run as root.
@@ -161,7 +164,7 @@ The failure path also names the cause now: `EACCES` explains the privileged port
 
 ### Verified on a real host
 Public port `444` (below 1024), HTTPS with a self-signed certificate: the unit
-starts as `dsh-relay`, the listener binds `0.0.0.0:444`, and the process keeps the
+starts as `yuremote-relay`, the listener binds `0.0.0.0:444`, and the process keeps the
 capability it was granted.
 
 ### Tests
@@ -224,7 +227,7 @@ alone for `relay.mjs`. It now tries four sources in order and reports which one
 answered:
 
 1. `raw.githubusercontent.com`
-2. `cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@master`
+2. `cdn.jsdelivr.net/gh/tsukii12/dsh-YuRemote@master`
 3. `ghfast.top` proxy
 4. `gh-proxy.com` proxy
 
@@ -293,14 +296,14 @@ question that actually matters: **HTTP or HTTPS**, and for HTTPS, domain or IP.
   never bind wider than loopback — "public HTTPS on the relay itself" served a
   certificate to 127.0.0.1 only. It now takes its own address
   (`--tls-port host:port`, `--tls-host`, else the plain host)
-- `drp status` reported `direct`/plain for an HTTPS setup; it now reads
+- `yuremote status` reported `direct`/plain for an HTTPS setup; it now reads
   `SCHEME`/`VISITOR_TLS`/`AGENT_TLS` and prints the real public URL, plus a warning
   when visitors are on plain HTTP
 
 ### Verified on a real host
 `HTTPS + IP` end to end: certificate generated with `IP Address:…`, service up,
 `https://<ip>:<port>/__t/<id>/` answers 503 while no tunnel is connected (correct),
-plain HTTP to that port is refused, `drp status` shows `TLS, self-signed`.
+plain HTTP to that port is refused, `yuremote status` shows `TLS, self-signed`.
 
 ### Tests
 - 79 tests green.
@@ -310,7 +313,7 @@ plain HTTP to that port is refused, `drp status` shows `TLS, self-signed`.
 ### Changed — deploying the relay is one command, no checkout
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master/tools/deploy-relay.sh | sudo bash
+curl -fsSL https://raw.githubusercontent.com/tsukii12/dsh-YuRemote/master/tools/deploy-relay.sh | sudo bash
 ```
 
 The installer required `relay.mjs` next to itself, which ruled out piping it into
@@ -319,7 +322,7 @@ already present, validates it with `node --check`, and reports which path it use
 Re-running the same command upgrades in place: the token and certificate are
 reused and the ports do not move.
 
-Verified on a real host: `relay.mjs downloaded` → service running → `drp` installed
+Verified on a real host: `relay.mjs downloaded` → service running → `yuremote` installed
 → health check passed. A bad source URL fails with a clear message instead of
 half-installing.
 
@@ -367,8 +370,8 @@ each fix only moved the failure. Taking working controls away from the person us
 dsh locally is worse than a phone showing an entry that does nothing, so the whole
 mechanism is removed:
 
-- `markNativeActions()` returns immediately; nothing gets the `drp-hidden` class
-- the `.drp-hidden` rules are deleted from the stylesheet, so even a cached older
+- `markNativeActions()` returns immediately; nothing gets the `yuremote-hidden` class
+- the `.yuremote-hidden` rules are deleted from the stylesheet, so even a cached older
   script cannot hide a node
 - the mobile layer keeps only what cannot hurt: layout, the drawer, and the panel
 - the test that asserted "a native-only entry must be hidden" now asserts the
@@ -415,14 +418,14 @@ and 0.4.5 treated every non-loopback host as remote. So opening dsh at
 The decision now uses facts instead of guesses:
 
 - the host publishes its own IPv4 addresses into the page
-  (`window.__DRP_HOST__.addresses`), and any of them counts as **local** at every
+  (`window.__YUREMOTE_HOST__.addresses`), and any of them counts as **local** at every
   window size — so the machine's own LAN address never trims anything
 - the gateway writes a readable companion cookie `dsh_portal_client=1` on login
   (the session cookie is HttpOnly, so the page could not see it) and clears it on
   logout; a portal visitor is a remote visitor by definition
 - `file://`, loopback and the host's own addresses are never trimmed; a narrow
   window on any other address is a phone and is trimmed
-- `data-drp-decision` / `window.__DRP_DECISION__` records why the layer did or did
+- `data-yuremote-decision` / `window.__YUREMOTE_DECISION__` records why the layer did or did
   not engage, so a report like this can be diagnosed instead of guessed at
 
 Verified decision matrix: `file://` → off, `127.0.0.1` → off, host LAN IP → off,
@@ -445,7 +448,7 @@ for a remote origin.** `activate()` bails out for the desktop shell, and also wh
 non-loopback address (LAN IP, relay host, domain), while the hosting machine does
 not.
 
-- `?drp=mobile` (persisted in sessionStorage, because the login redirect drops the
+- `?yuremote=mobile` (persisted in sessionStorage, because the login redirect drops the
   query) forces the layer on, for tests and for previewing it locally
 - the suite opts in with that flag; 79 tests green
 
@@ -507,7 +510,7 @@ English equivalent), and translates "the local listener is not running" as well.
 ### Fixed — the bare IP started showing the panel's default site
 After switching from proxy mode to direct mode, `http://<ip>/` displayed the
 1Panel welcome page instead of being refused. The cause was a **stale nginx
-config**: the generated `dsh-relay.conf` had been deleted but nginx was never
+config**: the generated `yuremote-relay.conf` had been deleted but nginx was never
 reloaded, so it kept serving the old block — which handled only `/__t/` and let
 every other path fall through to the default site.
 
@@ -537,16 +540,16 @@ a row (code, explanation, buttons). Nothing is left floating:
   both columns so it never sits alone in a half-empty row
 - settings-page type scale kept (15 px titles, 13.5 px labels, 36 px inputs)
 
-### Added — `drp`, a management command
-The installer now writes `/usr/local/bin/drp`:
+### Added — `yuremote`, a management command
+The installer now writes `/usr/local/bin/yuremote`:
 
 ```console
-$ drp            # service, ports, tunnel state, traffic, public URL
-$ drp url        # just the public URL
-$ drp token      # just the tunnel token
-$ drp start|stop|restart
-$ drp log -f
-$ drp config     # the saved answers
+$ yuremote            # service, ports, tunnel state, traffic, public URL
+$ yuremote url        # just the public URL
+$ yuremote token      # just the tunnel token
+$ yuremote start|stop|restart
+$ yuremote log -f
+$ yuremote config     # the saved answers
 ```
 
 It reads the saved configuration, so it keeps working regardless of where the
@@ -601,7 +604,7 @@ page 200 (29,666 B), pairing 303 → `/__t/<id>/`, app 200 with `__DSH_BOOT__`.
 `deploy-relay.sh` is now an interactive installer: run it with **no arguments** and
 it detects the environment, asks six questions (every one has a default, so Enter
 Enter Enter works), and finishes the whole setup. Answers are written to
-`/var/lib/dsh-relay/deploy.conf`, so a re-run offers what is already installed.
+`/var/lib/yuremote-relay/deploy.conf`, so a re-run offers what is already installed.
 
 ### nginx is optional now
 The entry point is chosen from what the machine already has:
@@ -643,7 +646,7 @@ health on 8080, nginx reloaded from inside the container, tunnel `online`, and
   without `--tls-cert/--tls-key` rewrote the unit as plain TCP, so a relay that was
   serving `tls://` came back as `tcp://` and every client that had been told to use
   `tls://` started getting `ECONNRESET`. The script now reuses the certificate pair
-  already installed in `/var/lib/dsh-relay/tls` when no flags are given, and says so.
+  already installed in `/var/lib/yuremote-relay/tls` when no flags are given, and says so.
 
 Verified: `status.public.insecure = true`, tunnel `online`, `http://<ip>/__t/<id>/`
 serving the login page (200), and the checkbox rendering checked on reload.
@@ -665,7 +668,7 @@ serving the login page (200), and the checkbox rendering checked on reload.
    own `$http_upgrade` was expanded by the shell (`unbound variable`).
 
 ### Added
-- **`--nginx`**: writes a scoped `dsh-relay.conf` (one `server` block for this
+- **`--nginx`**: writes a scoped `yuremote-relay.conf` (one `server` block for this
   host, `/__t/` only), validates it **with the running server** — inside the
   1Panel/openresty container when that is how nginx runs — and only then reloads.
   A config that fails validation is removed instead of reloaded.
@@ -738,11 +741,11 @@ a setting**.
   Their loaders and fetches are gone too, so no request is made for a card that
   does not exist.
 - **Typography tightened** to settings-page scale: 15 px section titles, 13.5 px
-  labels, 13 px hints, 36 px inputs, 34 px buttons (`drp-btn-sm` at 28 px), 7 px
+  labels, 13 px hints, 36 px inputs, 34 px buttons (`yuremote-btn-sm` at 28 px), 7 px
   radii. The page header keeps the host's 20/500 title.
 - **The empty pairing slot is a dashed well**, not a white QR plate — a blank
   white square reads as a broken image. The white plate now appears only around
-  an actual code (`:has(.drp-qr-img)`).
+  an actual code (`:has(.yuremote-qr-img)`).
 
 ### Tests
 - 76 tests green (~66 s).
@@ -751,7 +754,7 @@ a setting**.
 
 ### Added
 - **`tools/deploy-relay.sh` — one command to put the relay on a server.** It
-  checks Node, installs to `/opt/dsh-relay`, generates the tunnel token, writes
+  checks Node, installs to `/opt/yuremote-relay`, generates the tunnel token, writes
   and starts a systemd unit, optionally adds a Caddy site with `--caddy` (no
   buffering), then prints the two values to paste into the panel and the public
   address. `--no-systemd` installs beside the script for a rootless trial;
@@ -844,7 +847,7 @@ section header) is gone.
 
 ### Changed
 - **The panel is a page of the main area, not a full-screen cover.** It is
-  measured against the centre column (`--drp-main-*` published from the live
+  measured against the centre column (`--yuremote-main-*` published from the live
   geometry) so it occupies exactly the region that 插件 / 自动化任务 use, and the
   sidebar stays visible and clickable. The entry reads as the active row while it
   is open, like the host's own panel rows.
@@ -864,7 +867,7 @@ section header) is gone.
 ## 0.2.7 — 2026-10-21
 
 ### Added
-- **New folder while picking a workspace.** `POST /dsh-remote-portal/fs/mkdir`
+- **New folder while picking a workspace.** `POST /yuremote/fs/mkdir`
   creates one directory inside a parent: the name has to be a single path
   segment (no separators, no `..`, resolved target must stay inside the parent),
   and an existing name is a 409 rather than a silent success. The picker grows a
@@ -898,7 +901,7 @@ section header) is gone.
   separate bugs: the error path passed the whole response object into a formatter
   that expects a string, and the layer's generic `[role="dialog"]` sizing rule
   (a 24 px inset meant for the app's own dialogs) also matched our page surface,
-  pinning it to `calc(100% - 24px)`. Our surfaces now carry `data-drp` and opt
+  pinning it to `calc(100% - 24px)`. Our surfaces now carry `data-yuremote` and opt
   out of that rule; the error text falls back to a real message.
 - **A host that had not been restarted looked like a broken picker.** If `/fs` is
   missing (older host half), the picker now says "宿主未加载该接口：请重启 dsh
@@ -920,7 +923,7 @@ section header) is gone.
 nothing (Safari has no `showDirectoryPicker`) or a directory on the phone — which
 the host cannot open. The plugin now takes the pick over:
 
-- `GET /dsh-remote-portal/fs?path=…` lists one directory level on the host:
+- `GET /yuremote/fs?path=…` lists one directory level on the host:
   directories only, entry cap, 4 s timeout, no file contents. Unknown path → 404
   `not-found`, a file → 400 `not-a-directory`.
 - The picker is registered through `globalThis.__DSH_DIRECTORY_PICKER__`, the
@@ -955,7 +958,7 @@ preview, the right panel) came back untouched.
   rescans (200 ms debounce) on every DOM change and covers the whole shell —
   verified with the right sidebar open: triggers `hidden`, menu items `hidden`.
 - **Remote pages at any width.** Layout is width-gated, this is not: a 1440 px
-  laptop on the LAN still cannot open a file on the host. `html[data-drp-remote]`
+  laptop on the LAN still cannot open a file on the host. `html[data-yuremote-remote]`
   is set when the page is served to another device (never for the desktop shell
   or loopback), and the hidden markers apply there too.
 - **`?v=` on the injected assets.** The layer URL was stable across upgrades, so
@@ -1016,7 +1019,7 @@ Fixes from a real phone session on the public link.
 
 Remote-only UI pass. The layer stops being "the desktop UI at phone width" and
 adapts the surfaces that assume a native shell, a mouse, or a 1400 px window.
-Everything is scoped to `html[data-drp-mobile]`, so the desktop window is
+Everything is scoped to `html[data-yuremote-mobile]`, so the desktop window is
 untouched.
 
 ### Adapted for remote use
@@ -1092,7 +1095,7 @@ real sockets.
   a **公网访问** card with state, public URL, copy button, QR code and the
   endpoint/token form. The token is write-only — the host never sends it back.
 - Mount-relative URLs: the login form posts to `__portal/login` and the panel
-  calls `./dsh-remote-portal/…`, so the same build works at the root
+  calls `./yuremote/…`, so the same build works at the root
   (`http://lan:3081/`) and under a relay prefix (`https://host/__t/<id>/`).
 - `?panel=1` opens the panel from a URL (a hash would stop the shell from
   booting — it routes on `location.hash`).
@@ -1184,7 +1187,7 @@ real sockets.
   authenticates).
 - The relay never answered `PING`, so every tunnel reconnected every ~35 s and
   in-flight requests failed with 502.
-- `/dsh-remote-portal/config` dropped `tls`, and a partial patch carrying
+- `/yuremote/config` dropped `tls`, and a partial patch carrying
   `enabled: undefined` switched the portal off.
 
 ### Verified on real infrastructure
@@ -1199,7 +1202,6 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
-
 
 
 

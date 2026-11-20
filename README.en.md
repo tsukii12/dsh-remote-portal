@@ -2,7 +2,9 @@
 
 [简体中文](README.md) · **English**
 
-# dsh-remote-portal
+<img src="assets/brand/yuremote-wordmark.png" alt="YuRemote" width="96" height="96">
+
+# YuRemote
 
 **Remote access for DeepSeek Harness — over your LAN or through your own server.**
 
@@ -58,14 +60,14 @@ See also the [portal sign-in screen on mobile](docs/screenshots/mobile-login.png
 **From inside dsh (recommended)**: Plugins → Add plugin → paste
 
 ```
-https://github.com/tsukii12/dsh-remote-portal
+https://github.com/tsukii12/dsh-YuRemote
 ```
 
 **From a shell**:
 
 ```bash
-git clone https://github.com/tsukii12/dsh-remote-portal
-cd dsh-remote-portal
+git clone https://github.com/tsukii12/dsh-YuRemote
+cd dsh-YuRemote
 sh ./install.sh         # macOS / Linux, desktop + web profiles
 .\install.ps1           # Windows
 ```
@@ -74,7 +76,7 @@ sh ./install.sh         # macOS / Linux, desktop + web profiles
 
 ```bash
 dsh plugin --profile web add \
-  https://ghfast.top/https://github.com/tsukii12/dsh-remote-portal/archive/refs/heads/master.tar.gz
+  https://ghfast.top/https://github.com/tsukii12/dsh-YuRemote/archive/refs/heads/master.tar.gz
 ```
 
 Then **restart dsh** (quit and reopen the desktop app, or `Ctrl+C` and `dsh web`).
@@ -85,10 +87,16 @@ QR code](docs/GETTING-STARTED.md).
 
 ## Update
 
+**Migrating from `dsh-remote-portal`?** Quit dsh first, then run the new
+`./install.sh` or `./install.ps1` from a YuRemote checkout (Node.js 20+
+required). Do this even if you first installed with `dsh plugin add`. The
+installer replaces the old bundle and keeps the password, devices and tunnel
+settings. Restart dsh afterwards.
+
 **Installed with `install.sh` / `install.ps1`** (the plugin points at your checkout):
 
 ```bash
-cd dsh-remote-portal && git pull
+cd dsh-YuRemote && git pull
 ```
 
 then restart dsh. No reinstall needed.
@@ -97,8 +105,8 @@ then restart dsh. No reinstall needed.
 code (pnpm answers `Already up to date` when the spec is unchanged):
 
 ```bash
-dsh plugin --profile web remove dsh-remote-portal
-dsh plugin --profile web add    https://github.com/tsukii12/dsh-remote-portal
+dsh plugin --profile web remove yuremote
+dsh plugin --profile web add    https://github.com/tsukii12/dsh-YuRemote
 ```
 
 Use `--profile desktop` for the desktop app; run it once per profile you installed into.
@@ -113,7 +121,7 @@ reloading the page swaps just the client half.
 **Pin a version**:
 
 ```bash
-dsh plugin --profile web add https://github.com/tsukii12/dsh-remote-portal#v0.6.0
+dsh plugin --profile web add https://github.com/tsukii12/dsh-YuRemote#v0.6.0
 ```
 
 See [CHANGELOG.md](CHANGELOG.md) for what changed.
@@ -127,21 +135,21 @@ No Node? The installer installs a self-contained runtime itself (official tarbal
 nothing added to apt/yum, kept in `/usr/local/lib/nodejs`) and carries on.
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master/tools/deploy-relay.sh | sudo bash
+curl -fsSL https://raw.githubusercontent.com/tsukii12/dsh-YuRemote/master/tools/deploy-relay.sh | sudo bash
 ```
 
 **Behind a restrictive network** (any one of these):
 
 ```bash
 # recommended: the ghfast proxy (tracks master, always the newest release)
-curl -fsSL https://ghfast.top/https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master/tools/deploy-relay.sh | sudo bash
+curl -fsSL https://ghfast.top/https://raw.githubusercontent.com/tsukii12/dsh-YuRemote/master/tools/deploy-relay.sh | sudo bash
 
 # fallback: jsDelivr (also tracks master, but it caches and can lag by hours)
-curl -fsSL https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@master/tools/deploy-relay.sh | sudo bash
+curl -fsSL https://cdn.jsdelivr.net/gh/tsukii12/dsh-YuRemote@master/tools/deploy-relay.sh | sudo bash
 ```
 
 It downloads `relay.mjs` itself, inspects the host, asks a few questions (Enter accepts
-every default), installs, and registers a `drp` command.
+every default), installs, and registers a `yuremote` command.
 
 **It asks how visitors connect**:
 
@@ -159,14 +167,14 @@ travel in the clear. Only acceptable on a fully trusted LAN.
 Prefer to read before running? Download it, then run it — same result.
 
 ```bash
-curl -fsSLO https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master/tools/deploy-relay.sh
+curl -fsSLO https://raw.githubusercontent.com/tsukii12/dsh-YuRemote/master/tools/deploy-relay.sh
 sudo bash deploy-relay.sh
 ```
 
 When it finishes:
 
 ```console
-$ drp
+$ yuremote
 service     running · autostart on
 uptime      2h 14m
 agent port  relay.example.com:9443 (TLS)
@@ -179,8 +187,8 @@ public      https://relay.example.com/__t/EXAMPLE_ID/
 ```
 
 **Updating the relay**: run the same command again — the token and certificate are
-reused and the ports do not move. One relay can serve several machines: `drp token add` mints another token, `drp tokens` lists them and `drp urls` lists their addresses. `drp config K=V …` changes a saved answer and
-reinstalls the unit; `drp uninstall` removes everything.
+reused and the ports do not move. One relay can serve several machines: `yuremote token add` mints another token, `yuremote tokens` lists them and `yuremote urls` lists their addresses. `yuremote config K=V …` changes a saved answer and
+reinstalls the unit; `yuremote uninstall` removes everything.
 
 In the panel, enter the relay endpoint printed by the installer, for example
 `tls://relay.example.com:9443`. With just a host and port, the client tries TLS
@@ -217,7 +225,7 @@ allow the port? ④ Is the bind address `0.0.0.0` or `auto`?
 
 <details>
 <summary><strong>The public URL does not open?</strong></summary>
-`drp status` shows the tunnel: `offline` means the home machine never attached (check
+`yuremote status` shows the tunnel: `offline` means the home machine never attached (check
 that 9443 is open and the token matches); `connected` with a 503 means a proxy is
 buffering (see the troubleshooting table in the deployment guide).
 </details>

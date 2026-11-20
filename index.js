@@ -1,11 +1,11 @@
 /**
- * dsh-remote-portal — host entry (the node half of the plugin).
+ * yuremote — host entry (the node half of the plugin).
  *
  * Two responsibilities, and nothing else:
  *
  *  1. own the lifetime of the portal gateway (a second, authenticated HTTP/WS
  *     listener in front of this process's dsh Web UI), and
- *  2. expose a small same-origin control API under `/dsh-remote-portal/*`
+ *  2. expose a small same-origin control API under `/yuremote/*`
  *     that the Settings panel calls.
  *
  * Why a second listener instead of widening the dsh web server: dsh rejects
@@ -33,10 +33,10 @@ import { assetCacheControl, assetRevision, MOBILE_ASSETS } from "./lib/public-as
 /** dsh waits for the Web carrier before this row can bind its own listener. */
 export const inject = ["webServer"];
 
-const PLUGIN_NAME = "dsh-remote-portal";
+const PLUGIN_NAME = "yuremote";
 // Bumped with package.json.
 const PLUGIN_VERSION = "0.6.2";
-const PREFIX = "/dsh-remote-portal";
+const PREFIX = "/yuremote";
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ASSET_DIR = join(HERE, "assets");
 const ASSET_TYPES = new Map([
@@ -76,12 +76,12 @@ function expandHome(value) {
   return raw;
 }
 
-/** `<DSH_HOME>/dsh-remote-portal` unless the row overrides it. */
+/** `<DSH_HOME>/yuremote` unless the row overrides it. */
 function resolveStateDir(config) {
   const explicit = expandHome(config?.stateDir);
   if (explicit !== "") return explicit;
   const home = String(process.env.DSH_HOME || "").trim() || join(homedir(), ".dsh");
-  return join(home, "dsh-remote-portal");
+  return join(home, "yuremote");
 }
 
 function sendJson(res, status, body) {
@@ -560,7 +560,7 @@ function routeTable(portal, log) {
  * Register every control route on the dsh web server.
  *
  * `ctx.webServer.register` matches an exact path across the whole table first,
- * then the longest prefix, so an exact `/dsh-remote-portal/status` can never be
+ * then the longest prefix, so an exact `/yuremote/status` can never be
  * shadowed by the `/assets` prefix route.
  *
  * @returns {() => void} one disposer that removes all routes
@@ -705,11 +705,11 @@ export function apply(ctx, config = {}) {
           kind: "html",
           placement: "head",
           html:
-            `<link rel="stylesheet" href="${asset("mobile.css")}" data-plugin="${PLUGIN_NAME}" data-drp="mobile-css-host">` +
+            `<link rel="stylesheet" href="${asset("mobile.css")}" data-plugin="${PLUGIN_NAME}" data-yuremote="mobile-css-host">` +
             // Inline and before the layer: it must be readable by the time the
             // layer decides whether to engage.
-            `<script data-plugin="${PLUGIN_NAME}" data-drp="host-addresses">window.__DRP_HOST__=${addresses};</script>` +
-            `<script defer src="${asset("mobile.js")}" data-plugin="${PLUGIN_NAME}" data-drp="mobile-js-host"></script>`,
+            `<script data-plugin="${PLUGIN_NAME}" data-yuremote="host-addresses">window.__YUREMOTE_HOST__=${addresses};</script>` +
+            `<script defer src="${asset("mobile.js")}" data-plugin="${PLUGIN_NAME}" data-yuremote="mobile-js-host"></script>`,
         });
       };
       const off = ctx.on?.("webserver/index-inject", listener);

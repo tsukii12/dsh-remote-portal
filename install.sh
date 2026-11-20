@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 #
-# dsh-remote-portal — install into one or more dsh profiles (Linux / macOS).
+# yuremote — install into one or more dsh profiles (Linux / macOS).
 #
 # The plugin has no dependencies, so installing it is three steps: point the
 # profile's package.json at this directory, add the bundle row, and make the
@@ -16,7 +16,7 @@
 #
 set -eu
 
-NAME="dsh-remote-portal"
+NAME="yuremote"
 PLUGIN_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 DSH_HOME=${DSH_HOME:-"$HOME/.dsh"}
 PROFILES="desktop web"
@@ -54,42 +54,9 @@ for profile in $PROFILES; do
     exit 1
   fi
 
-  if [ "$UNINSTALL" = "1" ]; then
-    node - "$pkg" "$NAME" "$dir" <<'NODE'
-const fs = require("fs");
-const [pkgPath, name, dir] = process.argv.slice(2);
-const j = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
-if (j.dependencies) delete j.dependencies[name];
-if (j.dsh?.profile?.bundles) j.dsh.profile.bundles = j.dsh.profile.bundles.filter((b) => b !== name);
-fs.writeFileSync(pkgPath, JSON.stringify(j, null, 2));
-try { fs.unlinkSync(`${dir}/node_modules/${name}`); } catch { /* not linked */ }
-console.log(`[${dir.split("/").pop()}] removed (restart dsh to unload)`);
-NODE
-    continue
-  fi
-
-  cp "$pkg" "$pkg.bak-portal"
-  node - "$pkg" "$NAME" "$PLUGIN_DIR" "$dir" <<'NODE'
-const fs = require("fs");
-const [pkgPath, name, pluginDir, profileDir] = process.argv.slice(2);
-const j = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
-j.dependencies = j.dependencies || {};
-j.dependencies[name] = `link:${pluginDir}`;
-j.dsh = j.dsh || {};
-j.dsh.profile = j.dsh.profile || {};
-const bundles = Array.isArray(j.dsh.profile.bundles) ? j.dsh.profile.bundles : [];
-if (!bundles.includes(name)) bundles.push(name);
-j.dsh.profile.bundles = bundles;
-fs.writeFileSync(pkgPath, JSON.stringify(j, null, 2));
-
-const nm = `${profileDir}/node_modules`;
-fs.mkdirSync(nm, { recursive: true });
-const link = `${nm}/${name}`;
-try { fs.unlinkSync(link); } catch { /* nothing there */ }
-fs.symlinkSync(pluginDir, link, "dir");
-console.log(`[${profileDir.split("/").pop()}] linked ${name} → ${pluginDir}`);
-console.log(`[${profileDir.split("/").pop()}] bundles: ${bundles.join(", ")}`);
-NODE
+  mode=install
+  [ "$UNINSTALL" = "0" ] || mode=uninstall
+  node "$PLUGIN_DIR/tools/install-profile.mjs" "$mode" "$PLUGIN_DIR" "$dir" "$DSH_HOME"
   INSTALLED=$((INSTALLED + 1))
 done
 
