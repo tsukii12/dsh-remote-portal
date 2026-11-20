@@ -1,0 +1,201 @@
+{
+  "applied": 6,
+  "fatal": false,
+  "issues": [
+    {
+      "pointer": "/header/color",
+      "kind": "ignored",
+      "message": "未知的键，已忽略"
+    },
+    {
+      "pointer": "/header/actions/1",
+      "kind": "ignored",
+      "message": "重复了，已忽略"
+    },
+    {
+      "pointer": "/header/actions/2",
+      "kind": "invalid",
+      "message": "不支持的按钮「menu」，可选：newChat、detail、schedule、agents、model"
+    },
+    {
+      "pointer": "/header/actions/3",
+      "kind": "invalid",
+      "message": "应该是按钮 id 或对象"
+    },
+    {
+      "pointer": "/header/actions/4/icon",
+      "kind": "invalid",
+      "message": "不支持的图标「rocket」"
+    },
+    {
+      "pointer": "/header/actions/5/id",
+      "kind": "invalid",
+      "message": "id 只能用字母、数字和 -，以小写字母开头"
+    },
+    {
+      "pointer": "/header/actions/9",
+      "kind": "ignored",
+      "message": "最多 3 个，多出的已忽略"
+    },
+    {
+      "pointer": "/header/actions/10/id",
+      "kind": "invalid",
+      "message": "id 重复"
+    },
+    {
+      "pointer": "/composer/quickActions/1/action/url",
+      "kind": "invalid",
+      "message": "只支持 https 链接"
+    },
+    {
+      "pointer": "/composer/quickActions/2/action/url",
+      "kind": "invalid",
+      "message": "链接格式不对"
+    },
+    {
+      "pointer": "/composer/quickActions/3/label",
+      "kind": "invalid",
+      "message": "不能为空"
+    },
+    {
+      "pointer": "/composer/quickActions/4/label",
+      "kind": "invalid",
+      "message": "缺少 label"
+    },
+    {
+      "pointer": "/composer/quickActions/5/action/type",
+      "kind": "invalid",
+      "message": "不支持的动作「exec」，可选：send、open、command、link"
+    },
+    {
+      "pointer": "/composer/quickActions/6/action/page",
+      "kind": "invalid",
+      "message": "不支持的页面「nowhere」"
+    },
+    {
+      "pointer": "/composer/quickActions/7/action/name",
+      "kind": "adjusted",
+      "message": "命令名不带 /，已去掉"
+    },
+    {
+      "pointer": "/composer/quickActions/8/action/name",
+      "kind": "invalid",
+      "message": "命令名只能用字母、数字和 : . _ -"
+    },
+    {
+      "pointer": "/composer/quickActions/9/action/args",
+      "kind": "invalid",
+      "message": "不能换行"
+    },
+    {
+      "pointer": "/composer/quickActions/10/action/text",
+      "kind": "invalid",
+      "message": "不能为空"
+    },
+    {
+      "pointer": "/composer/quickActions/11/action/type",
+      "kind": "invalid",
+      "message": "缺少 type"
+    },
+    {
+      "pointer": "/composer/quickActions/12/icon",
+      "kind": "ignored",
+      "message": "未知的键，已忽略"
+    },
+    {
+      "pointer": "/composer/quickActions/12/action/auto",
+      "kind": "ignored",
+      "message": "未知的键，已忽略"
+    },
+    {
+      "pointer": "/emptyState/suggestions",
+      "kind": "invalid",
+      "message": "应该是数组"
+    },
+    {
+      "pointer": "/drawer/groups/1",
+      "kind": "invalid",
+      "message": "不支持的值「tomorrow」，可选：pinned、folders、today、yesterday、thisWeek、earlier"
+    },
+    {
+      "pointer": "/drawer/groups/2",
+      "kind": "ignored",
+      "message": "重复了，已忽略"
+    },
+    {
+      "pointer": "/drawer/sort",
+      "kind": "invalid",
+      "message": "不支持的值「name」，可选：activity、created"
+    },
+    {
+      "pointer": "/drawer/pinnedFirst",
+      "kind": "ignored",
+      "message": "未知的键，已忽略"
+    },
+    {
+      "pointer": "/density",
+      "kind": "invalid",
+      "message": "不支持的值「cozy」，可选：compact、comfortable"
+    },
+    {
+      "pointer": "/hide/1",
+      "kind": "invalid",
+      "message": "不支持的值「everything」，可选：turnFooter、tokenCount、reasoningDetails、activityStrip、whaleTail、todoPill、goalBar、pluginCapsule"
+    },
+    {
+      "pointer": "/hide/2",
+      "kind": "invalid",
+      "message": "应该是字符串"
+    },
+    {
+      "pointer": "/hide/3",
+      "kind": "ignored",
+      "message": "重复了，已忽略"
+    },
+    {
+      "pointer": "/theme/mode",
+      "kind": "invalid",
+      "message": "不支持的值「auto」，可选：system、light、dark"
+    },
+    {
+      "pointer": "/theme/accent",
+      "kind": "invalid",
+      "message": "颜色要写成 #RRGGBB"
+    },
+    {
+      "pointer": "/pet/id",
+      "kind": "invalid",
+      "message": "id 只能用小写字母、数字和 -"
+    },
+    {
+      "pointer": "/pet/position",
+      "kind": "invalid",
+      "message": "不支持的值「middle」，可选：top-left、top-right、bottom-left、bottom-right"
+    },
+    {
+      "pointer": "/pet/quiet",
+      "kind": "invalid",
+      "message": "应该是 true 或 false"
+    },
+    {
+      "pointer": "/plugins/seats/Bad Slot",
+      "kind": "invalid",
+      "message": "slot 名格式不对"
+    },
+    {
+      "pointer": "/plugins/seats/conversation.input.dock/Bad Pkg",
+      "kind": "invalid",
+      "message": "包名格式不对"
+    },
+    {
+      "pointer": "/plugins/seats/conversation.input.dock/@scope~1pkg",
+      "kind": "invalid",
+      "message": "不支持的值「floating」，可选：native、island、web、hidden"
+    },
+    {
+      "pointer": "/extras",
+      "kind": "ignored",
+      "message": "未知的键，已忽略"
+    }
+  ]
+}

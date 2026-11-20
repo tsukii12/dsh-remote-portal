@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "header": {
+    "actions": [
+      "schedule",
+      "detail",
+      "newChat",
+      { "id": "daily", "icon": "bolt", "label": "日报", "action": { "type": "send", "text": "按模板写今天的日报" } }
+    ]
+  },
+  "composer": {
+    "quickActions": [
+      { "label": "总结", "action": { "type": "send", "text": "总结上面的对话，列三条要点" } },
+      { "label": "压缩", "action": { "type": "command", "name": "compact" } }
+    ]
+  },
+  "emptyState": {
+    "suggestions": [
+      {
+        "title": "看看今天的待办",
+        "subtitle": "读工作区里的 TODO.md",
+        "action": { "type": "send", "text": "读一下 TODO.md，告诉我今天先做什么" }
+      }
+    ]
+  },
+  "drawer": { "groups": ["pinned", "folders", "today", "yesterday", "thisWeek", "earlier"], "sort": "activity", "filter": "all" },
+  "density": "compact",
+  "hide": ["turnFooter", "tokenCount", "reasoningDetails"],
+  "theme": { "mode": "system", "accentPreset": "daiqing" },
+  "pet": { "id": "deepy-whale", "position": "bottom-right", "quiet": true },
+  "shortcuts": [{ "keys": "ctrl+k", "action": { "type": "open", "page": "search" } }],
+  "plugins": { "seats": { "conversation.input.dock": { "dsh-cost-meter": "hidden" } } }
+}

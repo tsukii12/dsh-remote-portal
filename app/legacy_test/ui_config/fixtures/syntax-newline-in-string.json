@@ -1,0 +1,2 @@
+{ "version": 1, "composer": { "quickActions": [ { "label": "两
+行", "action": { "type": "send", "text": "x" } } ] } }

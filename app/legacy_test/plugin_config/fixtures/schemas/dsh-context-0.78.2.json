@@ -1,0 +1,486 @@
+{
+ "package": "dsh-context",
+ "version": "0.78.2",
+ "file": "lib/index.js",
+ "note": "Config as published (minified names kept).",
+ "schema": {
+  "uid": 333,
+  "refs": {
+   "188": {
+    "type": "number",
+    "meta": {
+     "min": 1,
+     "step": 1,
+     "default": 1500
+    }
+   },
+   "192": {
+    "type": "number",
+    "meta": {
+     "min": 1,
+     "step": 1,
+     "default": 300
+    }
+   },
+   "196": {
+    "type": "number",
+    "meta": {
+     "min": 1,
+     "step": 1,
+     "default": 400
+    }
+   },
+   "200": {
+    "type": "number",
+    "meta": {
+     "min": 1,
+     "step": 1,
+     "default": 2000
+    }
+   },
+   "204": {
+    "type": "number",
+    "meta": {
+     "min": 1,
+     "step": 1,
+     "default": 400
+    }
+   },
+   "208": {
+    "type": "number",
+    "meta": {
+     "min": 1,
+     "step": 1,
+     "default": 400
+    }
+   },
+   "212": {
+    "type": "number",
+    "meta": {
+     "min": 1,
+     "step": 1,
+     "default": 400
+    }
+   },
+   "216": {
+    "type": "number",
+    "meta": {
+     "min": 1,
+     "step": 1,
+     "default": 4096
+    }
+   },
+   "219": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "all"
+   },
+   "221": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "tab"
+   },
+   "223": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "sidebar"
+   },
+   "225": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "hide"
+   },
+   "228": {
+    "type": "union",
+    "meta": {
+     "default": "all",
+     "loose": true,
+     "volatile": true
+    },
+    "list": [
+     219,
+     221,
+     223,
+     225
+    ]
+   },
+   "231": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "step"
+   },
+   "233": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "turn"
+   },
+   "236": {
+    "type": "union",
+    "meta": {
+     "default": "step",
+     "loose": true,
+     "volatile": true
+    },
+    "list": [
+     231,
+     233
+    ]
+   },
+   "239": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "total"
+   },
+   "241": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "delta"
+   },
+   "244": {
+    "type": "union",
+    "meta": {
+     "default": "total",
+     "loose": true,
+     "volatile": true
+    },
+    "list": [
+     239,
+     241
+    ]
+   },
+   "247": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "step"
+   },
+   "249": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "turn"
+   },
+   "252": {
+    "type": "union",
+    "meta": {
+     "default": "step",
+     "loose": true,
+     "volatile": true
+    },
+    "list": [
+     247,
+     249
+    ]
+   },
+   "255": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "size"
+   },
+   "257": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "count"
+   },
+   "259": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "name"
+   },
+   "262": {
+    "type": "union",
+    "meta": {
+     "default": "count",
+     "loose": true,
+     "volatile": true
+    },
+    "list": [
+     255,
+     257,
+     259
+    ]
+   },
+   "265": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "count"
+   },
+   "267": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "lines"
+   },
+   "269": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "latest"
+   },
+   "271": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "path"
+   },
+   "273": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "name"
+   },
+   "276": {
+    "type": "union",
+    "meta": {
+     "default": "lines",
+     "loose": true,
+     "volatile": true
+    },
+    "list": [
+     265,
+     267,
+     269,
+     271,
+     273
+    ]
+   },
+   "279": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "show"
+   },
+   "281": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "hide"
+   },
+   "284": {
+    "type": "union",
+    "meta": {
+     "default": "show",
+     "loose": true,
+     "volatile": true
+    },
+    "list": [
+     279,
+     281
+    ]
+   },
+   "287": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "show"
+   },
+   "289": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "hide"
+   },
+   "292": {
+    "type": "union",
+    "meta": {
+     "default": "show",
+     "loose": true,
+     "volatile": true
+    },
+    "list": [
+     287,
+     289
+    ]
+   },
+   "295": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "100"
+   },
+   "297": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "200"
+   },
+   "299": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "300"
+   },
+   "301": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "off"
+   },
+   "304": {
+    "type": "union",
+    "meta": {
+     "default": "100",
+     "loose": true,
+     "volatile": true
+    },
+    "list": [
+     295,
+     297,
+     299,
+     301
+    ]
+   },
+   "307": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "today"
+   },
+   "309": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "7d"
+   },
+   "311": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "30d"
+   },
+   "313": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "all"
+   },
+   "316": {
+    "type": "union",
+    "meta": {
+     "default": "30d",
+     "loose": true,
+     "volatile": true
+    },
+    "list": [
+     307,
+     309,
+     311,
+     313
+    ]
+   },
+   "319": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "show"
+   },
+   "321": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "hide"
+   },
+   "324": {
+    "type": "union",
+    "meta": {
+     "default": "show",
+     "loose": true,
+     "volatile": true
+    },
+    "list": [
+     319,
+     321
+    ]
+   },
+   "328": {
+    "type": "string",
+    "meta": {
+     "default": "",
+     "loose": true,
+     "volatile": true
+    }
+   },
+   "332": {
+    "type": "string",
+    "meta": {
+     "default": "",
+     "loose": true,
+     "volatile": true
+    }
+   },
+   "333": {
+    "type": "object",
+    "meta": {
+     "default": {}
+    },
+    "dict": {
+     "maxRequestSteps": 188,
+     "maxKeptTurns": 192,
+     "maxEvents": 196,
+     "maxNodes": 200,
+     "maxArchiveNodes": 204,
+     "maxFileOps": 208,
+     "maxCommands": 212,
+     "maxCommandChars": 216,
+     "defaultPlacement": 228,
+     "defaultGranularity": 236,
+     "defaultTrendMode": 244,
+     "defaultDeltaBase": 252,
+     "defaultToolSort": 262,
+     "defaultFileSort": 276,
+     "insightsEntry": 284,
+     "defaultDurationCurve": 292,
+     "overviewAutoSteps": 304,
+     "defaultOverviewRange": 316,
+     "fleetTab": 324,
+     "promptPrefix": 328,
+     "promptSuffix": 332
+    }
+   }
+  }
+ }
+}

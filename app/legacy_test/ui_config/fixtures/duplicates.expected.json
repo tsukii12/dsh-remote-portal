@@ -1,0 +1,21 @@
+{
+  "applied": 3,
+  "fatal": false,
+  "issues": [
+    {
+      "pointer": "/theme/mode",
+      "kind": "ignored",
+      "message": "重复的键，只认最后一个"
+    },
+    {
+      "pointer": "/density",
+      "kind": "ignored",
+      "message": "重复的键，只认最后一个"
+    },
+    {
+      "pointer": "/theme/accent",
+      "kind": "ignored",
+      "message": "和 accentPreset 二选一，已用 accentPreset"
+    }
+  ]
+}

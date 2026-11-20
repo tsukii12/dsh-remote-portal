@@ -1,0 +1,56 @@
+{
+  "applied": 1,
+  "fatal": false,
+  "issues": [
+    {
+      "pointer": "/shortcuts/2/keys",
+      "kind": "invalid",
+      "message": "和 /shortcuts/0 重复"
+    },
+    {
+      "pointer": "/shortcuts/3/keys",
+      "kind": "invalid",
+      "message": "要带 ctrl 或 alt"
+    },
+    {
+      "pointer": "/shortcuts/5/keys",
+      "kind": "invalid",
+      "message": "不能用系统键"
+    },
+    {
+      "pointer": "/shortcuts/6/keys",
+      "kind": "invalid",
+      "message": "被系统或输入法占用"
+    },
+    {
+      "pointer": "/shortcuts/7/keys",
+      "kind": "invalid",
+      "message": "写法不对，例如 ctrl+k"
+    },
+    {
+      "pointer": "/shortcuts/8/keys",
+      "kind": "invalid",
+      "message": "写法不对，例如 ctrl+k"
+    },
+    {
+      "pointer": "/shortcuts/9/keys",
+      "kind": "invalid",
+      "message": "写法不对，例如 ctrl+k"
+    },
+    {
+      "pointer": "/shortcuts/11/keys",
+      "kind": "invalid",
+      "message": "被系统或输入法占用"
+    },
+    {
+      "pointer": "/shortcuts/12/action",
+      "kind": "invalid",
+      "message": "缺少 action"
+    },
+    {
+      "pointer": "/shortcuts/13/keys",
+      "kind": "invalid",
+      "message": "应该是字符串"
+    }
+  ]
+}

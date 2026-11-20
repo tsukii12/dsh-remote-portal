@@ -1,0 +1,80 @@
+import 'package:dsh_app/state/models_state.dart';
+import 'package:dsh_app/ui/chat/model_sheet.dart';
+import 'package:dsh_client/dsh_client.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+import 'support/harness.dart';
+
+const official = ModelSelection(provider: 'deepseek-official', model: 'deepseek-flash');
+const custom = ModelInfo(provider: 'custom-gateway', id: 'deepseek-flash', name: 'Gateway Flash');
+final customOnly = ModelCatalog(
+  defaultSelection: official,
+  routableProviders: const ['custom-gateway'],
+  groups: const [
+    ProviderGroup('custom-gateway', 'Gateway', [custom]),
+  ],
+  failures: const [],
+);
+
+void main() {
+  test('a missing official route does not resolve to a same-named custom model', () {
+    expect(findModel(customOnly, official), isNull);
+    expect(modelShortName(official, customOnly), 'Flash');
+    expect(
+      findModel(customOnly, const ModelSelection(provider: 'custom-gateway', model: 'deepseek-flash')),
+      same(custom),
+    );
+    expect(findModel(customOnly, null), isNull);
+    expect(findModel(null, official), isNull);
+  });
+
+  test('same model ids retain their distinct providers', () {
+    const builtin = ModelInfo(provider: 'deepseek-official', id: 'deepseek-flash', name: 'Official Flash');
+    final both = ModelCatalog(
+      defaultSelection: official,
+      routableProviders: const ['custom-gateway', 'deepseek-official'],
+      groups: const [
+        ProviderGroup('custom-gateway', 'Gateway', [custom]),
+        ProviderGroup('deepseek-official', 'DeepSeek', [builtin]),
+      ],
+      failures: const [],
+    );
+    expect(findModel(both, official), same(builtin));
+    expect(findModel(both, const ModelSelection(provider: 'custom-gateway', model: 'deepseek-flash')), same(custom));
+  });
+
+  testWidgets('unavailable official route leaves custom card unselected until explicitly picked', (tester) async {
+    ModelSelection? picked;
+    await tester.pumpWidget(
+      testApp(
+        Builder(
+          builder: (context) => Scaffold(
+            body: TextButton(
+              onPressed: () =>
+                  showModelSheet(context, current: official, onSelected: (selection) => picked = selection),
+              child: const Text('Open'),
+            ),
+          ),
+        ),
+        overrides: [
+          modelCatalogProvider.overrideWith((ref) async => customOnly),
+          // This route-only component fixture has no live host lifecycle.
+          modelSelectionScopeProvider.overrideWithValue(Object()),
+        ],
+      ),
+    );
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+    Semantics card() => tester.widget<Semantics>(
+      find.byWidgetPredicate((widget) => widget is Semantics && widget.properties.label == 'Gateway Flash'),
+    );
+    expect(card().properties.selected, isFalse);
+    expect(picked, isNull);
+    await tester.tap(find.text('Gateway Flash'));
+    await tester.pumpAndSettle();
+    expect(picked?.provider, 'custom-gateway');
+    expect(picked?.model, 'deepseek-flash');
+    expect(card().properties.selected, isTrue);
+  });
+}

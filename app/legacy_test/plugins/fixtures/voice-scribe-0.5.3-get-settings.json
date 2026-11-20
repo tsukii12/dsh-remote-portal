@@ -1,0 +1,22 @@
+{
+  "ok": true,
+  "value": {
+    "asrUrl": "https://api.groq.com/openai/v1/audio/transcriptions",
+    "asrModel": "whisper-large-v3",
+    "language": "",
+    "hasKey": false,
+    "providers": [
+      {
+        "url": "https://api.groq.com/openai/v1/audio/transcriptions",
+        "model": "whisper-large-v3",
+        "hasKey": false
+      }
+    ],
+    "polishPrompt": "",
+    "hotwords": {
+      "path": "/workspace/scratch/f143fbc8e6ac/evidence/w3/voice-feasibility/empty-test-home/voice/hot.txt",
+      "rules": 0,
+      "error": ""
+    }
+  }
+}

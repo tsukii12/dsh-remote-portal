@@ -1,0 +1,11 @@
+{
+  "applied": 0,
+  "fatal": true,
+  "issues": [
+    {
+      "pointer": "",
+      "kind": "fatal",
+      "message": "第 1 行第 1 列：文件是空的"
+    }
+  ]
+}

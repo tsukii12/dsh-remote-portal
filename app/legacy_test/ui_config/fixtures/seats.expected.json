@@ -1,0 +1,21 @@
+{
+  "applied": 2,
+  "fatal": false,
+  "issues": [
+    {
+      "pointer": "/plugins/other",
+      "kind": "ignored",
+      "message": "未知的键，已忽略"
+    },
+    {
+      "pointer": "/plugins/seats/settings.section/@acme~1a~1b",
+      "kind": "invalid",
+      "message": "包名格式不对"
+    },
+    {
+      "pointer": "/plugins/seats/sidebar.right.pane.tab",
+      "kind": "invalid",
+      "message": "应该是对象"
+    }
+  ]
+}

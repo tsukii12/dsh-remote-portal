@@ -1,0 +1,431 @@
+{
+ "package": "@dickpy/dsh-imagegen",
+ "version": "1.10.0",
+ "file": "lib/index.js",
+ "note": "Config as published.",
+ "schema": {
+  "uid": 842,
+  "refs": {
+   "714": {
+    "type": "boolean",
+    "meta": {
+     "default": true,
+     "volatile": true
+    }
+   },
+   "717": {
+    "type": "boolean",
+    "meta": {
+     "default": true,
+     "volatile": true
+    }
+   },
+   "720": {
+    "type": "boolean",
+    "meta": {
+     "default": true,
+     "volatile": true
+    }
+   },
+   "721": {
+    "type": "string",
+    "meta": {}
+   },
+   "723": {
+    "type": "string",
+    "meta": {
+     "default": ""
+    }
+   },
+   "725": {
+    "type": "string",
+    "meta": {
+     "default": ""
+    }
+   },
+   "727": {
+    "type": "string",
+    "meta": {
+     "default": ""
+    }
+   },
+   "729": {
+    "type": "boolean",
+    "meta": {
+     "default": false
+    }
+   },
+   "731": {
+    "type": "boolean",
+    "meta": {
+     "default": true
+    }
+   },
+   "732": {
+    "type": "const",
+    "meta": {},
+    "value": "auto"
+   },
+   "733": {
+    "type": "const",
+    "meta": {},
+    "value": "images"
+   },
+   "734": {
+    "type": "const",
+    "meta": {},
+    "value": "chat-completions"
+   },
+   "736": {
+    "type": "union",
+    "meta": {
+     "default": "auto"
+    },
+    "list": [
+     732,
+     733,
+     734
+    ]
+   },
+   "737": {
+    "type": "const",
+    "meta": {},
+    "value": "api-key"
+   },
+   "738": {
+    "type": "const",
+    "meta": {},
+    "value": "subscription"
+   },
+   "740": {
+    "type": "union",
+    "meta": {
+     "default": "api-key"
+    },
+    "list": [
+     737,
+     738
+    ]
+   },
+   "742": {
+    "type": "string",
+    "meta": {
+     "default": ""
+    }
+   },
+   "743": {
+    "type": "string",
+    "meta": {}
+   },
+   "744": {
+    "type": "string",
+    "meta": {}
+   },
+   "745": {
+    "type": "object",
+    "meta": {
+     "default": {}
+    },
+    "dict": {
+     "alias": 743,
+     "id": 744
+    }
+   },
+   "747": {
+    "type": "array",
+    "meta": {
+     "default": []
+    },
+    "inner": 745
+   },
+   "748": {
+    "type": "object",
+    "meta": {
+     "default": {}
+    },
+    "dict": {
+     "id": 721,
+     "preset": 723,
+     "name": 725,
+     "apiUrl": 727,
+     "apiUrlFull": 729,
+     "watermark": 731,
+     "protocol": 736,
+     "auth": 740,
+     "subscription": 742,
+     "models": 747
+    }
+   },
+   "751": {
+    "type": "array",
+    "meta": {
+     "default": [],
+     "volatile": true
+    },
+    "inner": 748
+   },
+   "753": {
+    "type": "string",
+    "meta": {
+     "role": "secret"
+    }
+   },
+   "755": {
+    "type": "string",
+    "meta": {}
+   },
+   "757": {
+    "type": "dict",
+    "meta": {
+     "default": {},
+     "volatile": true
+    },
+    "inner": 753,
+    "sKey": 755
+   },
+   "760": {
+    "type": "string",
+    "meta": {
+     "default": "",
+     "volatile": true
+    }
+   },
+   "763": {
+    "type": "string",
+    "meta": {
+     "default": "",
+     "volatile": true
+    }
+   },
+   "766": {
+    "type": "string",
+    "meta": {
+     "default": "",
+     "volatile": true
+    }
+   },
+   "770": {
+    "type": "string",
+    "meta": {
+     "role": "secret",
+     "default": "",
+     "volatile": true
+    }
+   },
+   "773": {
+    "type": "string",
+    "meta": {
+     "default": "",
+     "volatile": true
+    }
+   },
+   "776": {
+    "type": "string",
+    "meta": {
+     "default": "",
+     "volatile": true
+    }
+   },
+   "779": {
+    "type": "boolean",
+    "meta": {
+     "default": false,
+     "volatile": true
+    }
+   },
+   "782": {
+    "type": "string",
+    "meta": {
+     "default": "",
+     "volatile": true
+    }
+   },
+   "785": {
+    "type": "string",
+    "meta": {
+     "default": "",
+     "volatile": true
+    }
+   },
+   "788": {
+    "type": "string",
+    "meta": {
+     "default": "dsh-imagegen",
+     "volatile": true
+    }
+   },
+   "791": {
+    "type": "string",
+    "meta": {
+     "default": "",
+     "volatile": true
+    }
+   },
+   "795": {
+    "type": "string",
+    "meta": {
+     "role": "secret",
+     "default": "",
+     "volatile": true
+    }
+   },
+   "798": {
+    "type": "boolean",
+    "meta": {
+     "default": true,
+     "volatile": true
+    }
+   },
+   "801": {
+    "type": "boolean",
+    "meta": {
+     "default": false,
+     "volatile": true
+    }
+   },
+   "804": {
+    "type": "boolean",
+    "meta": {
+     "default": true,
+     "volatile": true
+    }
+   },
+   "807": {
+    "type": "boolean",
+    "meta": {
+     "default": true,
+     "volatile": true
+    }
+   },
+   "810": {
+    "type": "string",
+    "meta": {
+     "default": "",
+     "volatile": true
+    }
+   },
+   "813": {
+    "type": "string",
+    "meta": {
+     "default": "",
+     "volatile": true
+    }
+   },
+   "816": {
+    "type": "number",
+    "meta": {
+     "default": 20,
+     "volatile": true
+    }
+   },
+   "819": {
+    "type": "string",
+    "meta": {
+     "default": "",
+     "volatile": true
+    }
+   },
+   "820": {
+    "type": "string",
+    "meta": {}
+   },
+   "822": {
+    "type": "string",
+    "meta": {}
+   },
+   "824": {
+    "type": "dict",
+    "meta": {
+     "default": {},
+     "volatile": true
+    },
+    "inner": 820,
+    "sKey": 822
+   },
+   "826": {
+    "type": "string",
+    "meta": {
+     "role": "secret"
+    }
+   },
+   "828": {
+    "type": "string",
+    "meta": {}
+   },
+   "830": {
+    "type": "dict",
+    "meta": {
+     "default": {},
+     "volatile": true
+    },
+    "inner": 826,
+    "sKey": 828
+   },
+   "833": {
+    "type": "string",
+    "meta": {
+     "default": "",
+     "volatile": true
+    }
+   },
+   "837": {
+    "type": "string",
+    "meta": {
+     "role": "secret",
+     "default": "",
+     "volatile": true
+    }
+   },
+   "838": {
+    "type": "string",
+    "meta": {}
+   },
+   "841": {
+    "type": "array",
+    "meta": {
+     "default": [],
+     "volatile": true
+    },
+    "inner": 838
+   },
+   "842": {
+    "type": "object",
+    "meta": {
+     "default": {}
+    },
+    "dict": {
+     "enabled": 714,
+     "announceToAgent": 717,
+     "allowAgentImageGeneration": 720,
+     "channels": 751,
+     "channelSecrets": 757,
+     "defaultChannelId": 760,
+     "defaultModel": 763,
+     "promptApiUrl": 766,
+     "promptApiKey": 770,
+     "promptModel": 773,
+     "localStoragePath": 776,
+     "storageEnabled": 779,
+     "storageEndpoint": 782,
+     "storageRegion": 785,
+     "storagePrefix": 788,
+     "storageAccessKey": 791,
+     "storageSecretKey": 795,
+     "storageSyncGallery": 798,
+     "storageSyncHistory": 801,
+     "skillsEnabled": 804,
+     "allowHeavySkills": 807,
+     "skillAllowlist": 810,
+     "skillOutputDir": 813,
+     "skillHeavyTimeoutMinutes": 816,
+     "skillAgentPreset": 819,
+     "skillConfig": 824,
+     "skillConfigSecrets": 830,
+     "apiUrl": 833,
+     "apiKey": 837,
+     "imageModels": 841
+    }
+   }
+  }
+ }
+}

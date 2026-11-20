@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "composer": { "quickActions": [
+    { "label": "大写协议", "action": { "type": "link", "url": "HTTPS://Example.com/a?b=1#c" } },
+    { "label": "端口", "action": { "type": "link", "url": "https://example.com:8443/x" } },
+    { "label": "用户信息", "action": { "type": "link", "url": "https://user@example.com/" } },
+    { "label": "坏百分号", "action": { "type": "link", "url": "https://example.com/%zz" } },
+    { "label": "JS", "action": { "type": "link", "url": "javascript:alert(1)" } },
+    { "label": "带参", "action": { "type": "command", "name": "plan", "args": "  写一个计划  " } },
+    { "label": "空参", "action": { "type": "command", "name": "compact", "args": "" } },
+    { "label": "数字", "action": { "type": "send", "text": 42 } },
+    { "label": "缺字段", "action": { "type": "open" } }
+  ] },
+  "theme": { "accent": "#5f7a55", "accentPreset": "mist" }
+}

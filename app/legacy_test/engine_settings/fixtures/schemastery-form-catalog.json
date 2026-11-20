@@ -1,0 +1,485 @@
+{
+  "uid": 99,
+  "refs": {
+    "1": {
+      "type": "boolean",
+      "meta": {
+        "default": true
+      }
+    },
+    "5": {
+      "type": "number",
+      "meta": {
+        "step": 1,
+        "min": 0,
+        "default": 2
+      }
+    },
+    "7": {
+      "type": "string",
+      "meta": {
+        "default": "Voice input"
+      }
+    },
+    "8": {
+      "type": "const",
+      "meta": {},
+      "value": "fixed"
+    },
+    "11": {
+      "type": "const",
+      "meta": {
+        "required": true
+      },
+      "value": "auto"
+    },
+    "13": {
+      "type": "const",
+      "meta": {
+        "required": true
+      },
+      "value": "manual"
+    },
+    "14": {
+      "type": "union",
+      "meta": {
+        "default": "auto"
+      },
+      "list": [
+        11,
+        13
+      ]
+    },
+    "16": {
+      "type": "boolean",
+      "meta": {
+        "default": true
+      }
+    },
+    "17": {
+      "type": "object",
+      "meta": {
+        "default": {}
+      },
+      "dict": {
+        "enabled": 16
+      }
+    },
+    "18": {
+      "type": "boolean",
+      "meta": {}
+    },
+    "19": {
+      "type": "object",
+      "meta": {
+        "default": {}
+      },
+      "dict": {
+        "enabled": 18
+      }
+    },
+    "21": {
+      "type": "string",
+      "meta": {
+        "default": "local"
+      }
+    },
+    "22": {
+      "type": "object",
+      "meta": {
+        "default": {}
+      },
+      "dict": {
+        "mode": 21
+      }
+    },
+    "23": {
+      "type": "intersect",
+      "meta": {},
+      "list": [
+        19,
+        22
+      ]
+    },
+    "24": {
+      "type": "string",
+      "meta": {}
+    },
+    "25": {
+      "type": "array",
+      "meta": {
+        "default": []
+      },
+      "inner": 24
+    },
+    "26": {
+      "type": "number",
+      "meta": {}
+    },
+    "27": {
+      "type": "array",
+      "meta": {
+        "default": []
+      },
+      "inner": 26
+    },
+    "28": {
+      "type": "string",
+      "meta": {}
+    },
+    "29": {
+      "type": "dict",
+      "meta": {
+        "default": {}
+      },
+      "inner": 28,
+      "sKey": 30
+    },
+    "30": {
+      "type": "string",
+      "meta": {}
+    },
+    "31": {
+      "type": "string",
+      "meta": {}
+    },
+    "32": {
+      "type": "boolean",
+      "meta": {}
+    },
+    "33": {
+      "type": "object",
+      "meta": {
+        "default": {}
+      },
+      "dict": {
+        "name": 31,
+        "enabled": 32
+      }
+    },
+    "35": {
+      "type": "array",
+      "meta": {
+        "default": [],
+        "role": "table"
+      },
+      "inner": 33
+    },
+    "37": {
+      "type": "string",
+      "meta": {
+        "description": "Name"
+      }
+    },
+    "41": {
+      "type": "number",
+      "meta": {
+        "step": 1,
+        "min": 0,
+        "description": "Count"
+      }
+    },
+    "43": {
+      "type": "boolean",
+      "meta": {
+        "description": "Enabled"
+      }
+    },
+    "44": {
+      "type": "tuple",
+      "meta": {
+        "default": []
+      },
+      "list": [
+        37,
+        41,
+        43
+      ]
+    },
+    "45": {
+      "type": "boolean",
+      "meta": {}
+    },
+    "46": {
+      "type": "array",
+      "meta": {
+        "default": []
+      },
+      "inner": 45
+    },
+    "47": {
+      "type": "bitset",
+      "meta": {
+        "default": 0
+      },
+      "bits": {
+        "Read": 1,
+        "Write": 2,
+        "Execute": 4
+      }
+    },
+    "48": {
+      "type": "any",
+      "meta": {}
+    },
+    "50": {
+      "type": "string",
+      "meta": {
+        "role": "textarea"
+      }
+    },
+    "51": {
+      "type": "transform",
+      "meta": {},
+      "inner": 50,
+      "callback": "v=>v",
+      "preserve": true
+    },
+    "52": {
+      "type": "lazy",
+      "inner": 101,
+      "meta": {}
+    },
+    "54": {
+      "type": "string",
+      "meta": {
+        "role": "textarea"
+      }
+    },
+    "56": {
+      "type": "string",
+      "meta": {
+        "role": "secret"
+      }
+    },
+    "58": {
+      "type": "string",
+      "meta": {
+        "role": "link"
+      }
+    },
+    "60": {
+      "type": "string",
+      "meta": {
+        "role": "color"
+      }
+    },
+    "65": {
+      "type": "number",
+      "meta": {
+        "step": 0.01,
+        "min": 0,
+        "max": 1,
+        "role": "slider"
+      }
+    },
+    "68": {
+      "type": "const",
+      "meta": {
+        "required": true
+      },
+      "value": "auto"
+    },
+    "70": {
+      "type": "const",
+      "meta": {
+        "required": true
+      },
+      "value": "manual"
+    },
+    "71": {
+      "type": "union",
+      "meta": {
+        "role": "radio"
+      },
+      "list": [
+        68,
+        70
+      ]
+    },
+    "72": {
+      "type": "is",
+      "meta": {},
+      "constructor": "Date"
+    },
+    "74": {
+      "type": "string",
+      "meta": {
+        "role": "datetime"
+      }
+    },
+    "75": {
+      "type": "transform",
+      "meta": {},
+      "inner": 74,
+      "callback": "(value, options) => {\n\t\tconst date = new Date(value);\n\t\tif (isNaN(+date)) throw new ValidationError(`invalid date \"${value}\"`, options);\n\t\treturn date;\n\t}",
+      "preserve": true
+    },
+    "76": {
+      "type": "union",
+      "meta": {},
+      "list": [
+        72,
+        75
+      ]
+    },
+    "77": {
+      "type": "is",
+      "meta": {},
+      "constructor": "RegExp"
+    },
+    "79": {
+      "type": "string",
+      "meta": {
+        "role": "regexp",
+        "extra": {
+          "flag": ""
+        }
+      }
+    },
+    "80": {
+      "type": "transform",
+      "meta": {},
+      "inner": 79,
+      "callback": "(value, options) => {\n\t\ttry {\n\t\t\treturn new RegExp(value, flag);\n\t\t} catch (e) {\n\t\t\tthrow new ValidationError(e.message, options);\n\t\t}\n\t}",
+      "preserve": true
+    },
+    "81": {
+      "type": "union",
+      "meta": {},
+      "list": [
+        77,
+        80
+      ]
+    },
+    "83": {
+      "type": "boolean",
+      "meta": {
+        "disabled": true
+      }
+    },
+    "85": {
+      "type": "string",
+      "meta": {
+        "hidden": true
+      }
+    },
+    "87": {
+      "type": "string",
+      "meta": {
+        "role": "credential-ref"
+      }
+    },
+    "88": {
+      "type": "boolean",
+      "meta": {}
+    },
+    "90": {
+      "type": "object",
+      "meta": {
+        "default": {},
+        "collapse": true
+      },
+      "dict": {
+        "active": 88
+      }
+    },
+    "91": {
+      "type": "function",
+      "meta": {}
+    },
+    "92": {
+      "type": "is",
+      "meta": {},
+      "constructor": "Date"
+    },
+    "93": {
+      "type": "never",
+      "meta": {}
+    },
+    "94": {
+      "type": "is",
+      "meta": {},
+      "constructor": "ArrayBuffer"
+    },
+    "95": {
+      "type": "is",
+      "meta": {},
+      "constructor": "SharedArrayBuffer"
+    },
+    "96": {
+      "type": "any",
+      "meta": {}
+    },
+    "97": {
+      "type": "transform",
+      "meta": {},
+      "inner": 96,
+      "callback": "(value, options) => {\n\t\t\tif (_deepseek_ai_cosmokit.Binary.isSource(value)) return _deepseek_ai_cosmokit.Binary.fromSource(value);\n\t\t\tthrow new ValidationError(`expected ArrayBufferSource but got ${value}`, options);\n\t\t}",
+      "preserve": true
+    },
+    "98": {
+      "type": "union",
+      "meta": {},
+      "list": [
+        94,
+        95,
+        97
+      ]
+    },
+    "99": {
+      "type": "object",
+      "meta": {
+        "default": {}
+      },
+      "dict": {
+        "visible": 1,
+        "natural": 5,
+        "text": 7,
+        "fixed": 8,
+        "choice": 14,
+        "object": 17,
+        "intersection": 23,
+        "strings": 25,
+        "numbers": 27,
+        "mapping": 29,
+        "table": 35,
+        "tuple": 44,
+        "toggles": 46,
+        "bits": 47,
+        "data": 48,
+        "transformed": 51,
+        "lazy": 52,
+        "paragraph": 54,
+        "password": 56,
+        "homepage": 58,
+        "tint": 60,
+        "opacity": 65,
+        "radio": 71,
+        "timestamp": 76,
+        "matcher": 81,
+        "disabled": 83,
+        "hidden": 85,
+        "credential": 87,
+        "collapsed": 90,
+        "callable": 91,
+        "instance": 92,
+        "impossible": 93,
+        "binary": 98
+      }
+    },
+    "100": {
+      "type": "boolean",
+      "meta": {}
+    },
+    "101": {
+      "type": "object",
+      "meta": {
+        "default": {}
+      },
+      "dict": {
+        "active": 100
+      }
+    }
+  }
+}

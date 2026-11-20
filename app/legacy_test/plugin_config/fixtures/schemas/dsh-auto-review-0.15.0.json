@@ -1,0 +1,541 @@
+{
+ "package": "dsh-auto-review",
+ "version": "0.15.0",
+ "file": "lib/types/config.js",
+ "note": "Config as published.",
+ "schema": {
+  "uid": 961,
+  "refs": {
+   "843": {
+    "type": "union",
+    "meta": {},
+    "list": [
+     845,
+     847,
+     849
+    ]
+   },
+   "845": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "ai"
+   },
+   "847": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "human"
+   },
+   "849": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "never"
+   },
+   "852": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "rejected"
+   },
+   "854": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "delegate"
+   },
+   "856": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "allow-once"
+   },
+   "859": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "low"
+   },
+   "861": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "medium"
+   },
+   "863": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "high"
+   },
+   "866": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "reason"
+   },
+   "868": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "toolName"
+   },
+   "870": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "arguments"
+   },
+   "873": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "delegate"
+   },
+   "875": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "reject"
+   },
+   "877": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "abort-turn"
+   },
+   "878": {
+    "type": "union",
+    "meta": {},
+    "list": [
+     880,
+     882
+    ]
+   },
+   "880": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "agent"
+   },
+   "882": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "phocinae"
+   },
+   "884": {
+    "type": "boolean",
+    "meta": {
+     "default": true
+    }
+   },
+   "885": {
+    "type": "union",
+    "meta": {
+     "default": "human"
+    },
+    "list": [
+     845,
+     847,
+     849
+    ]
+   },
+   "887": {
+    "type": "string",
+    "meta": {}
+   },
+   "888": {
+    "type": "dict",
+    "meta": {
+     "default": {}
+    },
+    "inner": 843,
+    "sKey": 887
+   },
+   "890": {
+    "type": "object",
+    "meta": {
+     "default": {
+      "default": "human",
+      "overrides": {}
+     }
+    },
+    "dict": {
+     "default": 885,
+     "overrides": 888
+    }
+   },
+   "891": {
+    "type": "string",
+    "meta": {}
+   },
+   "892": {
+    "type": "union",
+    "meta": {
+     "default": "reason"
+    },
+    "list": [
+     866,
+     868,
+     870
+    ]
+   },
+   "893": {
+    "type": "object",
+    "meta": {
+     "default": {}
+    },
+    "dict": {
+     "pattern": 891,
+     "policy": 843,
+     "field": 892
+    }
+   },
+   "895": {
+    "type": "array",
+    "meta": {
+     "default": []
+    },
+    "inner": 893
+   },
+   "897": {
+    "type": "string",
+    "meta": {
+     "default": "fork"
+    }
+   },
+   "898": {
+    "type": "string",
+    "meta": {}
+   },
+   "899": {
+    "type": "string",
+    "meta": {}
+   },
+   "900": {
+    "type": "string",
+    "meta": {}
+   },
+   "901": {
+    "type": "string",
+    "meta": {}
+   },
+   "902": {
+    "type": "string",
+    "meta": {}
+   },
+   "903": {
+    "type": "number",
+    "meta": {}
+   },
+   "904": {
+    "type": "number",
+    "meta": {}
+   },
+   "905": {
+    "type": "number",
+    "meta": {}
+   },
+   "906": {
+    "type": "boolean",
+    "meta": {}
+   },
+   "907": {
+    "type": "object",
+    "meta": {
+     "default": {}
+    },
+    "dict": {
+     "endpoint": 901,
+     "model": 902,
+     "timeoutMs": 903,
+     "minConfidence": 904,
+     "maxStateChars": 905,
+     "allowRemoteEndpoint": 906
+    }
+   },
+   "909": {
+    "type": "number",
+    "meta": {
+     "default": 60000
+    }
+   },
+   "910": {
+    "type": "string",
+    "meta": {}
+   },
+   "912": {
+    "type": "array",
+    "meta": {
+     "default": [
+      "read",
+      "glob",
+      "grep"
+     ]
+    },
+    "inner": 910
+   },
+   "913": {
+    "type": "union",
+    "meta": {
+     "default": "rejected"
+    },
+    "list": [
+     852,
+     854,
+     856
+    ]
+   },
+   "915": {
+    "type": "number",
+    "meta": {
+     "default": 10
+    }
+   },
+   "916": {
+    "type": "number",
+    "meta": {}
+   },
+   "918": {
+    "type": "number",
+    "meta": {
+     "default": 2000
+    }
+   },
+   "919": {
+    "type": "string",
+    "meta": {}
+   },
+   "920": {
+    "type": "string",
+    "meta": {}
+   },
+   "922": {
+    "type": "string",
+    "meta": {
+     "default": "Do not attempt to work around this denial. Choose a materially safer alternative that stays inside your permissions, or ask the user before retrying this action."
+    }
+   },
+   "924": {
+    "type": "number",
+    "meta": {
+     "default": 2
+    }
+   },
+   "926": {
+    "type": "number",
+    "meta": {
+     "default": 4000
+    }
+   },
+   "928": {
+    "type": "object",
+    "meta": {
+     "default": {
+      "turns": 2,
+      "maxChars": 4000
+     }
+    },
+    "dict": {
+     "turns": 924,
+     "maxChars": 926
+    }
+   },
+   "929": {
+    "type": "union",
+    "meta": {
+     "default": "high"
+    },
+    "list": [
+     859,
+     861,
+     863
+    ]
+   },
+   "932": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "delegate"
+   },
+   "934": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "deny"
+   },
+   "935": {
+    "type": "union",
+    "meta": {
+     "default": "delegate"
+    },
+    "list": [
+     932,
+     934
+    ]
+   },
+   "937": {
+    "type": "object",
+    "meta": {
+     "default": {
+      "maxAutoAllow": "high",
+      "onHighRisk": "delegate"
+     }
+    },
+    "dict": {
+     "maxAutoAllow": 929,
+     "onHighRisk": 935
+    }
+   },
+   "939": {
+    "type": "number",
+    "meta": {
+     "default": 3
+    }
+   },
+   "941": {
+    "type": "number",
+    "meta": {
+     "default": 6
+    }
+   },
+   "943": {
+    "type": "number",
+    "meta": {
+     "default": 10
+    }
+   },
+   "944": {
+    "type": "union",
+    "meta": {
+     "default": "delegate"
+    },
+    "list": [
+     873,
+     875,
+     877
+    ]
+   },
+   "946": {
+    "type": "object",
+    "meta": {
+     "default": {
+      "consecutiveDenies": 3,
+      "windowDenies": 6,
+      "windowSize": 10,
+      "action": "delegate"
+     }
+    },
+    "dict": {
+     "consecutiveDenies": 939,
+     "windowDenies": 941,
+     "windowSize": 943,
+     "action": 944
+    }
+   },
+   "948": {
+    "type": "number",
+    "meta": {
+     "default": 300000
+    }
+   },
+   "950": {
+    "type": "number",
+    "meta": {
+     "default": 60000
+    }
+   },
+   "952": {
+    "type": "number",
+    "meta": {
+     "default": 256
+    }
+   },
+   "955": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "en"
+   },
+   "957": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "zh"
+   },
+   "958": {
+    "type": "union",
+    "meta": {
+     "default": "en"
+    },
+    "list": [
+     955,
+     957
+    ]
+   },
+   "960": {
+    "type": "boolean",
+    "meta": {
+     "default": false
+    }
+   },
+   "961": {
+    "type": "object",
+    "meta": {
+     "default": {}
+    },
+    "dict": {
+     "enableByDefault": 884,
+     "toolsPolicy": 890,
+     "riskRules": 895,
+     "reviewerProvider": 897,
+     "reviewerPreset": 898,
+     "reviewerModel": 899,
+     "reviewerModelProvider": 900,
+     "reviewerBackend": 878,
+     "phocinae": 907,
+     "reviewerTimeoutMs": 909,
+     "reviewerTools": 912,
+     "fallbackPolicy": 913,
+     "maxReviewsPerTurn": 915,
+     "maxFailuresPerTurn": 916,
+     "reasonMaxChars": 918,
+     "reviewerGuidance": 919,
+     "reviewerPolicyText": 920,
+     "denyGuidance": 922,
+     "contextBudget": 928,
+     "riskPolicy": 937,
+     "circuitBreaker": 946,
+     "overrideTtlMs": 948,
+     "verdictCacheTtlMs": 950,
+     "verdictCacheMaxEntries": 952,
+     "language": 958,
+     "allowUnmarkedAudit": 960
+    }
+   }
+  }
+ }
+}

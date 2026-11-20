@@ -1,0 +1,21 @@
+{
+  "applied": 0,
+  "fatal": false,
+  "issues": [
+    {
+      "pointer": "/header/actions/0",
+      "kind": "invalid",
+      "message": "不支持的按钮「newchat」，可选：newChat、detail、schedule、agents、model"
+    },
+    {
+      "pointer": "/header/actions/1",
+      "kind": "invalid",
+      "message": "不支持的按钮「Detail」，可选：newChat、detail、schedule、agents、model"
+    },
+    {
+      "pointer": "/drawer/groups/0",
+      "kind": "invalid",
+      "message": "不支持的值「Today」，可选：pinned、folders、today、yesterday、thisWeek、earlier"
+    }
+  ]
+}

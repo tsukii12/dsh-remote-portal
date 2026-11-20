@@ -1,0 +1,1191 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "dsh-go plugin view v1 and v2",
+  "description": "A native view a DSH plugin hands to the dsh-go phone app: a tree of components from a fixed catalog (the dsh-ui superset), values optionally bound to the view's data model with {\"$\": \"data.path\"}. Used by tool cards (meta[\"dsh-go/view\"]), panels and the composer strip. Strict JSON. Limits JSON Schema cannot express (bytes, node count, depth, children per budget) are listed under x-dsh-go and enforced by the app, which truncates instead of rejecting except for bytes and nesting. Anything the app draws without an issue passes this schema (empty arrays are a legal 'no data yet', long labels are clipped), with three deliberate exceptions where the schema is the stricter author spec: unknown properties (the app ignores them), malformed binding paths (the app shows an em dash) and the alias spellings the app also accepts (success, warning, column, completed, a keyValue 'name'…). Spec: docs/design/native-plugins-views.md.",
+  "$ref": "#/$defs/root",
+  "$defs": {
+    "root": {
+      "$ref": "#/$defs/node",
+      "description": "The root component. Its title is the tool card's collapsed summary."
+    },
+    "binding": {
+      "description": "A value read from the view's data model. Missing values show as an em dash; arrays that are missing or empty show as 'no data yet'.",
+      "type": "object",
+      "required": ["$"],
+      "properties": {
+        "$": {
+          "type": "string",
+          "pattern": "^data((\\.[^.\\[\\]]+)|(\\[[0-9]+\\])){0,16}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "text": {
+      "description": "Display text; numbers and booleans are shown as text.",
+      "anyOf": [
+        { "type": "string" },
+        { "type": "number" },
+        { "type": "boolean" },
+        { "$ref": "#/$defs/binding" },
+        { "$ref": "#/$defs/formula" }
+      ]
+    },
+    "label": {
+      "anyOf": [
+        { "type": "string" },
+        { "type": "number" },
+        { "type": "boolean" },
+        { "$ref": "#/$defs/binding" },
+        { "$ref": "#/$defs/formula" }
+      ]
+    },
+    "number": {
+      "anyOf": [
+        { "type": "number" },
+        { "type": "string", "pattern": "^\\s*[-+]?(\\d[\\d,_]*\\.?\\d*|\\.\\d+)([eE][-+]?\\d+)?\\s*%?\\s*$" },
+        { "type": "null" },
+        { "$ref": "#/$defs/binding" },
+        { "$ref": "#/$defs/formula" }
+      ]
+    },
+    "flag": {
+      "anyOf": [{ "type": "boolean" }, { "$ref": "#/$defs/binding" }]
+    },
+    "tone": {
+      "anyOf": [
+        { "enum": ["good", "warn", "bad", "info", "muted"] },
+        { "$ref": "#/$defs/binding" }
+      ]
+    },
+    "icon": {
+      "description": "A plugin icon name: ui.json's whitelist (app/assets/skills/dsh-go-ui/schema.json) plus the native plugin names (app/lib/plugins/native/native_icons.dart). Unknown names draw a default glyph.",
+      "anyOf": [
+        {
+          "enum": [
+            "bolt", "star", "sparkle", "heart", "flag", "bookmark", "pin", "bell", "clock", "alarm",
+            "calendar", "todo", "note", "document", "folder", "search", "code", "terminal", "globe", "chart",
+            "lightbulb", "book", "puzzle", "robot", "chat", "mail", "translate", "image", "camera", "mic",
+            "link", "summary", "wrench", "bug", "travel", "school", "home", "play", "refresh", "archive",
+            "team", "wallet", "palette", "coin", "money", "speaker", "read", "copy", "quote", "share",
+            "edit", "write", "save", "paste", "add", "remove", "delete", "clear", "fork", "regenerate",
+            "reply", "select-text", "qr", "download", "downloads", "external", "info", "warning", "check",
+            "done", "success", "error", "question", "pending", "running", "tip", "list", "table", "panel",
+            "sidebar", "menu", "more", "expand", "collapse", "file", "folder-open", "workspace", "storage",
+            "pdf", "zip", "slides", "article", "text", "diff", "gallery", "audio", "music", "video",
+            "video-file", "play-video", "pause", "stop", "replay", "generate-image", "generate-video",
+            "diagram", "plugin", "bot", "agent", "skill", "model", "tool", "workflow", "goal", "plan", "job",
+            "automation", "command", "trajectory", "web", "web-search", "browser", "history", "time",
+            "today", "timezone", "schedule", "repeat", "reminder", "user", "account", "group", "chats",
+            "mention", "invite", "announcement", "reaction", "poll", "notification", "send", "community",
+            "forum", "feedback", "wechat", "qq", "telegram", "discord", "phone", "computer", "cloud",
+            "server", "power", "restart", "retry", "theme", "color", "text-size", "pet", "featured", "badge",
+            "favorite", "settings"
+          ]
+        },
+        { "$ref": "#/$defs/binding" }
+      ]
+    },
+    "actionId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}$"
+    },
+    "action": {
+      "description": "Tapping sends an invoke back to the plugin that owns the view. args must stay within 1 KiB after bindings are resolved.",
+      "anyOf": [
+        { "$ref": "#/$defs/actionId" },
+        {
+          "type": "object",
+          "required": ["id"],
+          "properties": {
+            "id": { "$ref": "#/$defs/actionId" },
+            "args": { "anyOf": [{ "type": "object" }, { "$ref": "#/$defs/binding" }] }
+          },
+          "additionalProperties": false
+        },
+        { "$ref": "#/$defs/binding" }
+      ]
+    },
+    "child": {
+      "anyOf": [{ "$ref": "#/$defs/node" }, { "$ref": "#/$defs/binding" }]
+    },
+    "children": {
+      "anyOf": [
+        { "type": "array", "items": { "$ref": "#/$defs/child" } },
+        { "$ref": "#/$defs/binding" }
+      ]
+    },
+    "list": {
+      "description": "An array, or a binding to one.",
+      "anyOf": [{ "type": "array" }, { "$ref": "#/$defs/binding" }]
+    },
+    "node": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "enum": [
+            "stack", "row", "text", "metric", "chart", "compare", "steps", "callout", "options", "confirm",
+            "list", "keyValue", "progress", "table", "actions", "image",
+            "textField", "number", "stepper", "toggle", "slider", "select", "segmented", "chips", "date", "time", "rating", "form", "tabs", "collapsible", "accordion", "carousel", "timeline", "grid", "badge", "tag", "avatar", "codeBlock", "divider", "spacer", "emptyState", "gallery"
+          ]
+        },
+        "title": { "anyOf": [{ "type": "string" }, { "$ref": "#/$defs/binding" }], "description": "Read on the root only; clipped to 80 characters." },
+        "v": {"enum": [1, 2], "description": "Read on the root only. Omitted or 1 preserves the v1 rendering path; 2 enables bounded styles and controls."},
+        "accent": {"$ref": "#/$defs/accent", "description": "V2 only; root only. Named or #RRGGBB accent, or \"app\" for the person's own palette; corrected separately against each painted background."}
+      },
+      "allOf": [
+        { "if": { "properties": { "type": { "const": "stack" } } }, "then": { "$ref": "#/$defs/layout" } },
+        { "if": { "properties": { "type": { "const": "row" } } }, "then": { "$ref": "#/$defs/layout" } },
+        { "if": { "properties": { "type": { "const": "text" } } }, "then": { "$ref": "#/$defs/textNode" } },
+        { "if": { "properties": { "type": { "const": "metric" } } }, "then": { "$ref": "#/$defs/metric" } },
+        { "if": { "properties": { "type": { "const": "chart" } } }, "then": { "$ref": "#/$defs/chart" } },
+        { "if": { "properties": { "type": { "const": "compare" } } }, "then": { "$ref": "#/$defs/compare" } },
+        { "if": { "properties": { "type": { "const": "steps" } } }, "then": { "$ref": "#/$defs/steps" } },
+        { "if": { "properties": { "type": { "const": "callout" } } }, "then": { "$ref": "#/$defs/callout" } },
+        { "if": { "properties": { "type": { "const": "options" } } }, "then": { "$ref": "#/$defs/options" } },
+        { "if": { "properties": { "type": { "const": "confirm" } } }, "then": { "$ref": "#/$defs/confirm" } },
+        { "if": { "properties": { "type": { "const": "list" } } }, "then": { "$ref": "#/$defs/listNode" } },
+        { "if": { "properties": { "type": { "const": "keyValue" } } }, "then": { "$ref": "#/$defs/keyValue" } },
+        { "if": { "properties": { "type": { "const": "progress" } } }, "then": { "$ref": "#/$defs/progress" } },
+        { "if": { "properties": { "type": { "const": "table" } } }, "then": { "$ref": "#/$defs/table" } },
+        { "if": { "properties": { "type": { "const": "actions" } } }, "then": { "$ref": "#/$defs/actions" } },
+        { "if": { "properties": { "type": { "const": "image" } } }, "then": { "$ref": "#/$defs/image" } },
+        { "if": { "properties": { "type": { "const": "textField" } } }, "then": { "$ref": "#/$defs/inputV2" } },
+        { "if": { "properties": { "type": { "const": "number" } } }, "then": { "$ref": "#/$defs/inputV2" } },
+        { "if": { "properties": { "type": { "const": "stepper" } } }, "then": { "$ref": "#/$defs/inputV2" } },
+        { "if": { "properties": { "type": { "const": "toggle" } } }, "then": { "$ref": "#/$defs/inputV2" } },
+        { "if": { "properties": { "type": { "const": "slider" } } }, "then": { "$ref": "#/$defs/inputV2" } },
+        { "if": { "properties": { "type": { "const": "select" } } }, "then": { "$ref": "#/$defs/inputV2" } },
+        { "if": { "properties": { "type": { "const": "segmented" } } }, "then": { "$ref": "#/$defs/inputV2" } },
+        { "if": { "properties": { "type": { "const": "chips" } } }, "then": { "$ref": "#/$defs/inputV2" } },
+        { "if": { "properties": { "type": { "const": "date" } } }, "then": { "$ref": "#/$defs/inputV2" } },
+        { "if": { "properties": { "type": { "const": "time" } } }, "then": { "$ref": "#/$defs/inputV2" } },
+        { "if": { "properties": { "type": { "const": "rating" } } }, "then": { "$ref": "#/$defs/inputV2" } },
+        { "if": { "properties": { "type": { "const": "form" } } }, "then": { "$ref": "#/$defs/formV2" } },
+        { "if": { "properties": { "type": { "const": "tabs" } } }, "then": { "$ref": "#/$defs/sectionsV2" } },
+        { "if": { "properties": { "type": { "const": "collapsible" } } }, "then": { "$ref": "#/$defs/containerV2" } },
+        { "if": { "properties": { "type": { "const": "accordion" } } }, "then": { "$ref": "#/$defs/sectionsV2" } },
+        { "if": { "properties": { "type": { "const": "carousel" } } }, "then": { "$ref": "#/$defs/sectionsV2" } },
+        { "if": { "properties": { "type": { "const": "timeline" } } }, "then": { "$ref": "#/$defs/sectionsV2" } },
+        { "if": { "properties": { "type": { "const": "grid" } } }, "then": { "$ref": "#/$defs/containerV2" } },
+        { "if": { "properties": { "type": { "const": "badge" } } }, "then": { "$ref": "#/$defs/badgeV2" } },
+        { "if": { "properties": { "type": { "const": "tag" } } }, "then": { "$ref": "#/$defs/badgeV2" } },
+        { "if": { "properties": { "type": { "const": "avatar" } } }, "then": { "$ref": "#/$defs/image" } },
+        { "if": { "properties": { "type": { "const": "codeBlock" } } }, "then": { "$ref": "#/$defs/codeV2" } },
+        { "if": { "properties": { "type": { "const": "divider" } } }, "then": { "$ref": "#/$defs/spaceV2" } },
+        { "if": { "properties": { "type": { "const": "spacer" } } }, "then": { "$ref": "#/$defs/spaceV2" } },
+        { "if": { "properties": { "type": { "const": "emptyState" } } }, "then": { "$ref": "#/$defs/emptyStateV2" } },
+        { "if": { "properties": { "type": { "const": "gallery" } } }, "then": { "$ref": "#/$defs/galleryV2" } }
+      ],
+      "unevaluatedProperties": false
+    },
+    "layout": {
+      "required": ["children"],
+      "properties": {"children": {"$ref": "#/$defs/children"}, "style": {"anyOf": [{"$ref": "#/$defs/layoutStyle"}, {"$ref": "#/$defs/binding"}]}}
+    },
+    "textNode": {
+      "required": ["text"],
+      "properties": {
+        "text": {"$ref": "#/$defs/text"},
+        "tone": {"anyOf": [{"const": "muted"}, {"$ref": "#/$defs/binding"}]},
+        "style": {"anyOf": [{"$ref": "#/$defs/textStyle"}, {"$ref": "#/$defs/binding"}]},
+        "spans": {
+          "$ref": "#/$defs/richSpans",
+          "description": "V2 inline runs. Keep text as the plain v1 fallback; links remain invoke effects."
+        }
+      }
+    },
+    "metric": {
+      "required": ["label", "value"],
+      "properties": {
+        "label": {"$ref": "#/$defs/label"},
+        "value": {"$ref": "#/$defs/label"},
+        "tone": {"$ref": "#/$defs/tone"},
+        "caption": {"$ref": "#/$defs/label"},
+        "style": {"anyOf": [{"$ref": "#/$defs/textStyle"}, {"$ref": "#/$defs/binding"}]},
+        "trend": {
+          "description": "V2 only. A small line under the value: 2–30 numbers, at least two of them finite; null breaks the line. No axes, no numbers; an older app ignores it.",
+          "anyOf": [
+            { "type": "array", "minItems": 2, "maxItems": 30, "items": { "anyOf": [{ "type": "number" }, { "type": "null" }, { "$ref": "#/$defs/binding" }] } },
+            { "$ref": "#/$defs/binding" }
+          ]
+        }
+      }
+    },
+    "chart": {
+      "required": ["categories", "series"],
+      "properties": {
+        "kind": { "anyOf": [{ "enum": ["bar", "hbar", "line", "donut"] }, { "$ref": "#/$defs/binding" }] },
+        "categories": {
+          "anyOf": [
+            { "type": "array", "items": { "$ref": "#/$defs/text" } },
+            { "$ref": "#/$defs/binding" }
+          ]
+        },
+        "series": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "required": ["values"],
+                    "properties": {
+                      "name": { "$ref": "#/$defs/text" },
+                      "values": {
+                        "anyOf": [
+                          { "type": "array", "items": { "$ref": "#/$defs/number" } },
+                          { "$ref": "#/$defs/binding" }
+                        ]
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  { "$ref": "#/$defs/binding" }
+                ]
+              }
+            },
+            { "$ref": "#/$defs/binding" }
+          ]
+        },
+        "unit": { "$ref": "#/$defs/text" },
+        "caption": { "$ref": "#/$defs/label" }
+      }
+    },
+    "compare": {
+      "required": ["items"],
+      "properties": {
+        "items": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "required": ["title"],
+                    "properties": {
+                      "title": { "$ref": "#/$defs/text" },
+                      "badge": { "$ref": "#/$defs/text" },
+                      "rows": {
+                        "anyOf": [
+                          { "type": "array", "items": { "anyOf": [{ "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/text" } }, { "$ref": "#/$defs/binding" }] } },
+                          { "type": "object", "additionalProperties": { "$ref": "#/$defs/text" } },
+                          { "$ref": "#/$defs/binding" }
+                        ]
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  { "$ref": "#/$defs/binding" }
+                ]
+              }
+            },
+            { "$ref": "#/$defs/binding" }
+          ]
+        }
+      }
+    },
+    "steps": {
+      "required": ["items"],
+      "properties": {
+        "items": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  { "type": "string" },
+                  {
+                    "type": "object",
+                    "required": ["label"],
+                    "properties": {
+                      "label": { "$ref": "#/$defs/label" },
+                      "status": { "anyOf": [{ "enum": ["done", "current", "todo", "failed"] }, { "$ref": "#/$defs/binding" }] },
+                      "detail": { "$ref": "#/$defs/label" }
+                    },
+                    "additionalProperties": false
+                  },
+                  { "$ref": "#/$defs/binding" }
+                ]
+              }
+            },
+            { "$ref": "#/$defs/binding" }
+          ]
+        }
+      }
+    },
+    "callout": {
+      "required": ["text"],
+      "properties": {
+        "text": {"$ref": "#/$defs/text"},
+        "tone": {"anyOf": [{"enum": ["info", "good", "warn", "bad"]}, {"$ref": "#/$defs/binding"}]},
+        "style": {"anyOf": [{"$ref": "#/$defs/textStyle"}, {"$ref": "#/$defs/binding"}]}
+      }
+    },
+    "options": {
+      "required": ["id", "options"],
+      "properties": {
+        "id": { "$ref": "#/$defs/actionId" },
+        "multi": { "$ref": "#/$defs/flag" },
+        "selected": {
+          "anyOf": [
+            { "type": "string" },
+            { "type": "array", "items": { "type": "string" } },
+            { "type": "null" },
+            { "$ref": "#/$defs/binding" }
+          ]
+        },
+        "options": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  { "type": "string" },
+                  {
+                    "type": "object",
+                    "required": ["label"],
+                    "properties": {
+                      "label": { "$ref": "#/$defs/text" },
+                      "description": { "$ref": "#/$defs/label" },
+                      "value": { "type": "string" }
+                    },
+                    "additionalProperties": false
+                  },
+                  { "$ref": "#/$defs/binding" }
+                ]
+              }
+            },
+            { "$ref": "#/$defs/binding" }
+          ]
+        }
+      }
+    },
+    "confirm": {
+      "required": ["id"],
+      "properties": {
+        "id": { "$ref": "#/$defs/actionId" },
+        "confirmLabel": { "anyOf": [{ "type": "string" }, { "$ref": "#/$defs/binding" }], "description": "Clipped to 12 characters." },
+        "cancelLabel": { "anyOf": [{ "type": "string" }, { "$ref": "#/$defs/binding" }], "description": "Clipped to 12 characters." }
+      }
+    },
+    "listNode": {
+      "required": ["items"],
+      "properties": {
+        "items": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "required": ["title"],
+                    "properties": {
+                      "title": { "$ref": "#/$defs/label" },
+                      "subtitle": { "$ref": "#/$defs/label" },
+                      "trailing": { "$ref": "#/$defs/label" },
+                      "icon": { "$ref": "#/$defs/icon" },
+                      "tone": { "$ref": "#/$defs/tone" },
+                      "action": { "$ref": "#/$defs/action" }
+                    },
+                    "additionalProperties": false
+                  },
+                  { "$ref": "#/$defs/binding" }
+                ]
+              }
+            },
+            { "$ref": "#/$defs/binding" }
+          ]
+        }
+      }
+    },
+    "keyValue": {
+      "required": ["items"],
+      "properties": {
+        "items": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/label" } },
+                  {
+                    "type": "object",
+                    "required": ["label"],
+                    "properties": {
+                      "label": { "$ref": "#/$defs/label" },
+                      "value": { "$ref": "#/$defs/label" },
+                      "tone": { "$ref": "#/$defs/tone" }
+                    },
+                    "additionalProperties": false
+                  },
+                  { "$ref": "#/$defs/binding" }
+                ]
+              }
+            },
+            { "type": "object", "additionalProperties": { "$ref": "#/$defs/label" } },
+            { "$ref": "#/$defs/binding" }
+          ]
+        }
+      }
+    },
+    "progress": {
+      "required": ["value"],
+      "properties": {
+        "value": { "$ref": "#/$defs/number" },
+        "max": { "$ref": "#/$defs/number" },
+        "label": { "$ref": "#/$defs/label" },
+        "caption": { "$ref": "#/$defs/label" },
+        "tone": { "$ref": "#/$defs/tone" },
+        "shape": {
+          "description": "V2 only. \"ring\": 64 across with the figure in the middle and the label under it. An older app draws the bar.",
+          "anyOf": [{ "enum": ["bar", "ring"] }, { "$ref": "#/$defs/binding" }]
+        }
+      }
+    },
+    "table": {
+      "required": ["columns", "rows"],
+      "properties": {
+        "columns": {
+          "anyOf": [
+            {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "anyOf": [
+                  { "$ref": "#/$defs/label" },
+                  {
+                    "type": "object",
+                    "required": ["label"],
+                    "properties": {
+                      "label": { "$ref": "#/$defs/label" },
+                      "align": { "enum": ["start", "end"] }
+                    },
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            },
+            { "$ref": "#/$defs/binding" }
+          ]
+        },
+        "rows": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  { "type": "array", "items": { "anyOf": [{ "$ref": "#/$defs/label" }, { "type": "null" }] } },
+                  { "$ref": "#/$defs/binding" }
+                ]
+              }
+            },
+            { "$ref": "#/$defs/binding" }
+          ]
+        }
+      }
+    },
+    "actions": {
+      "required": ["items"],
+      "properties": {
+        "items": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "required": ["label", "action"],
+                    "properties": {
+                      "label": { "anyOf": [{ "type": "string" }, { "$ref": "#/$defs/binding" }], "description": "Clipped to 24 characters." },
+                      "icon": { "$ref": "#/$defs/icon" },
+                      "style": { "enum": ["primary", "plain"] },
+                      "action": { "$ref": "#/$defs/action" }
+                    },
+                    "additionalProperties": false
+                  },
+                  { "$ref": "#/$defs/binding" }
+                ]
+              }
+            },
+            { "$ref": "#/$defs/binding" }
+          ]
+        }
+      }
+    },
+    "imageSource": {
+      "description": "A file in the manifest's assets directory (asset:…) or a data: URL of at most 64 KiB. Web addresses draw a placeholder.",
+      "anyOf": [
+        { "type": "string", "maxLength": 65536, "pattern": "^data:image/(png|jpeg|webp|gif);base64,[A-Za-z0-9+/=\\s]+$" },
+        { "type": "string", "maxLength": 512, "pattern": "^asset:[A-Za-z0-9_~-][A-Za-z0-9._~-]*(/[A-Za-z0-9_~-][A-Za-z0-9._~-]*)*\\.([Pp][Nn][Gg]|[Jj][Pp][Ee]?[Gg]|[Ww][Ee][Bb][Pp]|[Gg][Ii][Ff])$" },
+        { "$ref": "#/$defs/binding" }
+      ]
+    },
+    "image": {
+      "required": ["src"],
+      "properties": {
+        "src": { "$ref": "#/$defs/imageSource" },
+        "alt": { "$ref": "#/$defs/label" },
+        "aspect": { "anyOf": [{ "type": "number", "minimum": 0.25, "maximum": 4 }, { "$ref": "#/$defs/binding" }] },
+        "caption": { "$ref": "#/$defs/label" }
+      }
+    },
+    "color": {
+      "anyOf": [
+        {"enum": ["accent", "red", "orange", "amber", "green", "teal", "blue", "indigo", "violet", "pink", "gray"]},
+        {"type": "string", "pattern": "^#[0-9a-fA-F]{6}$"},
+        {"$ref": "#/$defs/binding"}
+      ],
+      "description": "Opaque sRGB only. The app derives light/dark colours and corrects text contrast."
+    },
+    "textSize": {"anyOf": [{"enum": ["display", "title", "subtitle", "body", "caption", "mono"]}, {"$ref": "#/$defs/binding"}]},
+    "textWeight": {"anyOf": [{"enum": ["regular", "medium", "semibold", "bold"]}, {"$ref": "#/$defs/binding"}]},
+    "styleAlign": {"anyOf": [{"enum": ["start", "center", "end"]}, {"$ref": "#/$defs/binding"}]},
+    "spacing": {"anyOf": [{"enum": ["S", "M", "L"]}, {"$ref": "#/$defs/binding"}]},
+    "textStyle": {
+      "type": "object",
+      "properties": {
+        "size": {"$ref": "#/$defs/textSize"},
+        "weight": {"$ref": "#/$defs/textWeight"},
+        "italic": {"$ref": "#/$defs/flag"},
+        "underline": {"$ref": "#/$defs/flag"},
+        "strike": {"$ref": "#/$defs/flag"},
+        "align": {"$ref": "#/$defs/styleAlign"},
+        "maxLines": {"anyOf": [{"type": "integer", "minimum": 1, "maximum": 20}, {"$ref": "#/$defs/binding"}]},
+        "color": {"$ref": "#/$defs/color"}
+      },
+      "additionalProperties": false
+    },
+    "layoutStyle": {
+      "type": "object",
+      "properties": {
+        "card": {"anyOf": [{"enum": ["plain", "surface", "tinted", "outlined"]}, {"$ref": "#/$defs/binding"}]},
+        "gap": {"$ref": "#/$defs/spacing"},
+        "padding": {"$ref": "#/$defs/spacing", "description": "Requested equal padding on all sides. The renderer reduces all four sides together when the available width cannot preserve the preferred content width."},
+        "align": {"$ref": "#/$defs/styleAlign"},
+        "background": {"$ref": "#/$defs/color"},
+        "columns": {
+          "anyOf": [
+            {"const": "equal"},
+            {"type": "array", "minItems": 1, "maxItems": 8, "items": {"type": "integer", "minimum": 1, "maximum": 12}},
+            {"$ref": "#/$defs/binding"}
+          ]
+        },
+        "dividers": {"$ref": "#/$defs/flag"}
+      },
+      "additionalProperties": false
+    },
+    "richSpan": {
+      "type": "object",
+      "required": ["text"],
+      "properties": {
+        "text": {"$ref": "#/$defs/text"},
+        "color": {"$ref": "#/$defs/color"},
+        "weight": {"$ref": "#/$defs/textWeight"},
+        "mono": {"$ref": "#/$defs/flag"},
+        "background": {"$ref": "#/$defs/color"}
+      },
+      "additionalProperties": false
+    },
+    "richSpans": {"anyOf": [{"type": "array", "maxItems": 32, "items": {"$ref": "#/$defs/richSpan"}}, {"$ref": "#/$defs/binding"}]},
+    "accent": {
+      "anyOf": [
+        {"const": "app", "description": "The person's accent from the app's palette (设置 › 主题); checkers assume appAccent."},
+        {"enum": ["red", "orange", "amber", "green", "teal", "blue", "indigo", "violet", "pink", "gray"]},
+        {"type": "string", "pattern": "^#[0-9a-fA-F]{6}$"},
+        {"$ref": "#/$defs/binding"}
+      ]
+    },
+    "formula": {
+      "type": "object",
+      "required": [
+        "="
+      ],
+      "properties": {
+        "=": {
+          "type": "string",
+          "maxLength": 256,
+          "description": "Bounded arithmetic: numbers, data paths, + - * / %, parentheses, abs/min/max/clamp. At most 128 tokens and depth 16. No code."
+        }
+      },
+      "additionalProperties": false
+    },
+    "inputV2": {
+      "description": "View-v2 input. Panel: editable when bind is present. Tool card: read-only. Strip: unavailable. At most 32 inputs. No password mode.",
+      "required": [
+        "label"
+      ],
+      "properties": {
+        "label": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            {
+              "$ref": "#/$defs/binding"
+            }
+          ]
+        },
+        "bind": {
+          "type": "string",
+          "maxLength": 256,
+          "pattern": "^data(?:\\.[A-Za-z_][A-Za-z0-9_-]{0,63}){1,16}$",
+          "description": "Writable map field path. Reserved prototype names are refused. Duplicate bindings in one view are refused. The bound value wins over value."
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "null"
+              ]
+            },
+            {
+              "type": "array",
+              "maxItems": 24,
+              "items": {
+                "type": [
+                  "string",
+                  "number"
+                ]
+              }
+            },
+            {
+              "$ref": "#/$defs/binding"
+            }
+          ]
+        },
+        "readOnly": {
+          "$ref": "#/$defs/flag"
+        },
+        "placeholder": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 200
+            },
+            {
+              "$ref": "#/$defs/binding"
+            }
+          ]
+        },
+        "required": {
+          "$ref": "#/$defs/flag"
+        },
+        "minLength": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2000
+            },
+            {
+              "$ref": "#/$defs/binding"
+            }
+          ]
+        },
+        "maxLength": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2000
+            },
+            {
+              "$ref": "#/$defs/binding"
+            }
+          ]
+        },
+        "multiline": {
+          "$ref": "#/$defs/flag"
+        },
+        "maxLines": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 8
+            },
+            {
+              "$ref": "#/$defs/binding"
+            }
+          ]
+        },
+        "min": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": -1000000000000.0,
+              "maximum": 1000000000000.0
+            },
+            {
+              "$ref": "#/$defs/binding"
+            }
+          ]
+        },
+        "max": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": -1000000000000.0,
+              "maximum": 1000000000000.0
+            },
+            {
+              "$ref": "#/$defs/binding"
+            }
+          ]
+        },
+        "step": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 1e-09,
+              "maximum": 1000000000000.0
+            },
+            {
+              "$ref": "#/$defs/binding"
+            }
+          ]
+        },
+        "range": {
+          "$ref": "#/$defs/flag"
+        },
+        "multi": {
+          "$ref": "#/$defs/flag"
+        },
+        "options": {
+          "anyOf": [
+            {
+              "type": "array",
+              "maxItems": 24,
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "label"
+                    ],
+                    "properties": {
+                      "label": {
+                        "type": "string",
+                        "maxLength": 200
+                      },
+                      "value": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 200
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  {
+                    "$ref": "#/$defs/binding"
+                  }
+                ]
+              }
+            },
+            {
+              "$ref": "#/$defs/binding"
+            }
+          ]
+        },
+        "pattern": {
+          "anyOf": [
+            {
+              "enum": [
+                "email",
+                "integer",
+                "decimal",
+                "alphanumeric",
+                "slug"
+              ]
+            },
+            {
+              "$ref": "#/$defs/binding"
+            }
+          ]
+        },
+        "onChange": {
+          "$ref": "#/$defs/action"
+        },
+        "minDate": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            {
+              "$ref": "#/$defs/binding"
+            }
+          ]
+        },
+        "maxDate": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            {
+              "$ref": "#/$defs/binding"
+            }
+          ]
+        }
+      }
+    },
+    "formV2": {
+      "required": [
+        "children",
+        "submit"
+      ],
+      "properties": {
+        "children": {
+          "$ref": "#/$defs/children"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 200
+            },
+            {
+              "$ref": "#/$defs/binding"
+            }
+          ]
+        },
+        "submit": {
+          "$ref": "#/$defs/action"
+        },
+        "submitLabel": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 80
+            },
+            {
+              "$ref": "#/$defs/binding"
+            }
+          ]
+        }
+      }
+    },
+    "containerV2": {
+      "required": [
+        "children"
+      ],
+      "properties": {
+        "children": {
+          "$ref": "#/$defs/children"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 200
+            },
+            {
+              "$ref": "#/$defs/binding"
+            }
+          ]
+        },
+        "expanded": {
+          "$ref": "#/$defs/flag"
+        },
+        "columns": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4
+            },
+            {
+              "$ref": "#/$defs/binding"
+            }
+          ]
+        }
+      }
+    },
+    "sectionsV2": {
+      "required": [
+        "items"
+      ],
+      "properties": {
+        "items": {
+          "anyOf": [
+            {
+              "type": "array",
+              "maxItems": 24,
+              "items": {
+                "type": "object",
+                "required": [
+                  "label"
+                ],
+                "properties": {
+                  "label": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 200
+                      },
+                      {
+                        "$ref": "#/$defs/binding"
+                      }
+                    ]
+                  },
+                  "children": {
+                    "$ref": "#/$defs/children"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            {
+              "$ref": "#/$defs/binding"
+            }
+          ]
+        },
+        "expanded": {
+          "$ref": "#/$defs/flag"
+        }
+      }
+    },
+    "badgeV2": {
+      "required": [
+        "text"
+      ],
+      "properties": {
+        "text": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 200
+            },
+            {
+              "$ref": "#/$defs/binding"
+            }
+          ]
+        },
+        "tone": {
+          "$ref": "#/$defs/tone"
+        }
+      }
+    },
+    "codeV2": {
+      "required": [
+        "code"
+      ],
+      "properties": {
+        "code": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 8000
+            },
+            {
+              "$ref": "#/$defs/binding"
+            }
+          ]
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 32
+            },
+            {
+              "$ref": "#/$defs/binding"
+            }
+          ]
+        }
+      }
+    },
+    "spaceV2": {
+      "properties": {
+        "size": {
+          "anyOf": [
+            {
+              "enum": [
+                "S",
+                "M",
+                "L"
+              ]
+            },
+            {
+              "$ref": "#/$defs/binding"
+            }
+          ]
+        }
+      }
+    },
+    "emptyStateV2": {
+      "description": "V2. The app's own empty look: a round badge in the view's accent, the title, one line, at most one button as wide as its words. In a tool card the button is left out.",
+      "required": ["title"],
+      "properties": {
+        "title": { "anyOf": [{ "type": "string", "minLength": 1, "maxLength": 40 }, { "$ref": "#/$defs/binding" }] },
+        "message": { "anyOf": [{ "type": "string", "maxLength": 120 }, { "$ref": "#/$defs/binding" }] },
+        "icon": { "$ref": "#/$defs/icon" },
+        "action": {
+          "type": "object",
+          "required": ["label", "action"],
+          "properties": {
+            "label": { "anyOf": [{ "type": "string", "minLength": 1 }, { "$ref": "#/$defs/binding" }], "description": "Clipped to 12 characters." },
+            "icon": { "$ref": "#/$defs/icon" },
+            "action": { "$ref": "#/$defs/action" }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+    "galleryV2": {
+      "description": "V2. Pictures in equal cells (2–4 columns; by default 3 from 320 wide, else 2), 8 apart. A cell with an action invokes it; any other tap, and a long press on any cell, opens the app's full-screen viewer on the set, where saving is the app's own action. At most 24 in a panel and 8 in a tool card.",
+      "required": ["items"],
+      "properties": {
+        "items": {
+          "anyOf": [
+            {
+              "type": "array",
+              "maxItems": 24,
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "required": ["src"],
+                    "properties": {
+                      "src": { "$ref": "#/$defs/imageSource" },
+                      "alt": { "$ref": "#/$defs/label" },
+                      "caption": { "$ref": "#/$defs/label", "description": "One line, clipped to 40 characters." },
+                      "action": { "$ref": "#/$defs/action" }
+                    },
+                    "additionalProperties": false
+                  },
+                  { "$ref": "#/$defs/binding" }
+                ]
+              }
+            },
+            { "$ref": "#/$defs/binding" }
+          ]
+        },
+        "columns": { "anyOf": [{ "type": "integer", "minimum": 2, "maximum": 4 }, { "$ref": "#/$defs/binding" }] },
+        "aspect": { "anyOf": [{ "type": "number", "minimum": 0.5, "maximum": 2 }, { "$ref": "#/$defs/binding" }], "description": "Width / height of every cell; 1 by default." }
+      }
+    }
+  },
+  "x-dsh-go": {
+    "version": 2,
+    "supportedVersions": [1, 2],
+    "v2Styles": {
+      "fontPixels": {"display": 28, "title": 24, "subtitle": 20, "body": 16, "caption": 13, "mono": 14},
+      "spacingPixels": {"S": 8, "M": 12, "L": 16},
+      "layout": {
+        "preferredContentWidth": 136,
+        "textScaleClamp": [1, 2],
+        "actionGap": 12,
+        "paddingPolicy": "min(requested, max(0, (availableWidth - preferredContentWidth * clampedTextScale) / 2)) on all four sides",
+        "narrowPolicy": "Reduce columns and place action buttons vertically when their preferred widths do not fit; never use overflow or clipping to claim larger targets."
+      },
+      "maxLines": 20,
+      "spansPerText": 32,
+      "spansPerView": {"toolCard": 64, "panel": 256, "strip": 16},
+      "contrast": {
+        "normal": 4.5,
+        "large": 3,
+        "enforcedText": 4.5,
+        "description": "All text uses 4.5, including large text, so reducing the system font scale cannot invalidate the bound."
+      },
+      "backgrounds": {"surface": ["#F8FAFE", "#272A33"], "elevated": ["#F0F3F9", "#30343F"]},
+      "chartPalette": [
+        ["#3D6FD6", "#5B8EE6"], ["#DC6530", "#D9692F"], ["#169470", "#1F9E76"],
+        ["#B88000", "#B88510"], ["#D0628F", "#D6649A"], ["#6B58D0", "#8A7DE0"]
+      ],
+      "chartOther": ["#9AA0AA", "#6B707A"],
+      "reservedStyleKeys": [
+        "position",
+        "left",
+        "right",
+        "top",
+        "bottom",
+        "width",
+        "height",
+        "radius",
+        "borderRadius",
+        "elevation",
+        "shadow",
+        "fontFamily",
+        "fontSize",
+        "lineHeight",
+        "opacity",
+        "gradient",
+        "transform",
+        "zIndex"
+      ],
+      "reservedRoles": ["system", "approval", "authorization", "dialog", "permission"],
+      "ink": ["#20242B", "#F1F4F9"],
+      "muted": ["#586372", "#B5BDCA"],
+      "defaultAccent": "#3D6FD6",
+      "appAccent": "#4B67B4",
+      "namedColors": {
+        "red": "#D04545",
+        "orange": "#CA6328",
+        "amber": "#AA7900",
+        "green": "#258051",
+        "teal": "#167F84",
+        "blue": "#3D6FD6",
+        "indigo": "#5B5CC7",
+        "violet": "#8554BB",
+        "pink": "#B94F83",
+        "gray": "#697382"
+      },
+      "tintAmounts": [0.1, 0.16],
+      "weights": ["regular", "medium", "semibold", "bold"]
+    },
+    "version2Only": ["textField", "number", "stepper", "toggle", "slider", "select", "segmented", "chips", "date", "time", "rating", "form", "tabs", "collapsible", "accordion", "carousel", "timeline", "grid", "badge", "tag", "avatar", "codeBlock", "divider", "spacer", "emptyState", "gallery"],
+    "controlBuilders": ["textField", "number", "stepper", "toggle", "slider", "select", "segmented", "chips", "date", "time", "rating", "form", "tabs", "collapsible", "accordion", "carousel", "timeline", "grid", "badge", "tag", "avatar", "codeBlock", "divider", "spacer", "emptyState", "gallery"],
+    "version2Properties": { "metric": ["trend"], "progress": ["shape"] },
+    "figureLimits": { "gallery": 24, "galleryCard": 8, "trendPoints": 30 },
+    "inputLimits": { "fields": 32, "options": 24, "sections": 8, "timeline": 24, "textLength": 2000, "textLines": 8, "columns": 4, "codeLength": 8000, "valueBytes": 4096,
+      "sliderDivisions": 1000, "changeIntervalMs": 250, "queuedRequests": 120 },
+    "formulaLimits": { "length": 256, "tokens": 128, "depth": 16 },
+    "metaKey": "dsh-go/view",
+    "maxJsonNesting": 64,
+    "budgets": {
+      "toolCard": { "maxBytes": 8192, "maxNodes": 40, "maxDepth": 6, "maxChildren": 16 },
+      "panel": { "maxBytes": 32768, "maxNodes": 120, "maxDepth": 8, "maxChildren": 32 },
+      "strip": { "maxBytes": 2048, "maxNodes": 8, "maxDepth": 3, "maxChildren": 4 }
+    },
+    "limits": {
+      "textMax": 2000,
+      "labelMax": 200,
+      "titleMax": 80,
+      "chartPointsMax": 60,
+      "chartSeriesMax": 6,
+      "compareItemsMax": 4,
+      "compareRowsMax": 8,
+      "stepsMax": 12,
+      "optionsMax": 8,
+      "confirmLabelMax": 12,
+      "listItemsMax": 50,
+      "keyValueItemsMax": 24,
+      "tableColumnsMax": 8,
+      "tableRowsMax": 50,
+      "actionsMax": 4,
+      "primaryActionsMax": 1,
+      "actionArgsBytesMax": 1024,
+      "bindingSegmentsMax": 16,
+      "imageDataBytesMax": 65536,
+      "imageSideMax": 4096,
+      "imagePixelsMax": 4000000
+    }
+  }
+}

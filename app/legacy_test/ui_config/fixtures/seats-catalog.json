@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "plugins": {
+    "seats": {
+      "conversation.composer.bar": { "dsh-skin": "island" },
+      "future.slot.name": { "dsh-cost-meter": "hidden" },
+      "settings.section": { "dsh-pet": "native" }
+    }
+  }
+}

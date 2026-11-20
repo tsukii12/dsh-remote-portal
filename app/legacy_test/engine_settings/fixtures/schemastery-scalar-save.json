@@ -1,0 +1,28 @@
+{
+  "uid": 5,
+  "refs": {
+    "1": {
+      "type": "string",
+      "meta": {
+        "default": "inherited"
+      }
+    },
+    "4": {
+      "type": "number",
+      "meta": {
+        "min": 0,
+        "default": 2
+      }
+    },
+    "5": {
+      "type": "object",
+      "meta": {
+        "default": {}
+      },
+      "dict": {
+        "name": 1,
+        "count": 4
+      }
+    }
+  }
+}

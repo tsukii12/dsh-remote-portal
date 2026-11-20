@@ -1,0 +1,586 @@
+{
+ "package": "dsh-mobile",
+ "version": "0.7.0",
+ "file": "lib/index.mjs",
+ "note": "Config as published.",
+ "schema": {
+  "uid": 615,
+  "refs": {
+   "440": {
+    "type": "const",
+    "meta": {},
+    "value": "in-process"
+   },
+   "441": {
+    "type": "const",
+    "meta": {},
+    "value": "worker"
+   },
+   "442": {
+    "type": "union",
+    "meta": {},
+    "list": [
+     440,
+     441
+    ]
+   },
+   "443": {
+    "type": "const",
+    "meta": {}
+   },
+   "444": {
+    "type": "array",
+    "meta": {
+     "default": []
+    },
+    "inner": 446
+   },
+   "446": {
+    "type": "string",
+    "meta": {
+     "required": true
+    }
+   },
+   "447": {
+    "type": "union",
+    "meta": {},
+    "list": [
+     443,
+     444
+    ]
+   },
+   "450": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "453": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "456": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "459": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "462": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "465": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "468": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "471": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "474": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "477": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "480": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "483": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "486": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "489": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "492": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "495": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "498": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "499": {
+    "type": "object",
+    "meta": {
+     "default": {}
+    },
+    "dict": {
+     "mode": 442,
+     "extensions": 447,
+     "maxWorkers": 450,
+     "maxRegistrations": 453,
+     "maxOldGenerationSizeMb": 456,
+     "maxYoungGenerationSizeMb": 459,
+     "stackSizeMb": 462,
+     "activationTimeoutMs": 465,
+     "operationTimeoutMs": 468,
+     "cancelGraceMs": 471,
+     "streamCancelGraceMs": 474,
+     "disposeGraceMs": 477,
+     "resultMaxBytes": 480,
+     "streamWindowBytes": 483,
+     "streamChunkBytes": 486,
+     "streamAggregateBytes": 489,
+     "logWindowMs": 492,
+     "logMessagesPerWindow": 495,
+     "logMessageBytes": 498
+    }
+   },
+   "501": {
+    "type": "string",
+    "meta": {
+     "hidden": true
+    }
+   },
+   "502": {
+    "type": "string",
+    "meta": {}
+   },
+   "503": {
+    "type": "string",
+    "meta": {}
+   },
+   "507": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0,
+     "max": 65535
+    }
+   },
+   "508": {
+    "type": "string",
+    "meta": {}
+   },
+   "511": {
+    "type": "string",
+    "meta": {
+     "required": true
+    }
+   },
+   "512": {
+    "type": "array",
+    "meta": {},
+    "inner": 511
+   },
+   "515": {
+    "type": "string",
+    "meta": {
+     "required": true
+    }
+   },
+   "516": {
+    "type": "array",
+    "meta": {},
+    "inner": 515
+   },
+   "519": {
+    "type": "string",
+    "meta": {
+     "required": true
+    }
+   },
+   "520": {
+    "type": "array",
+    "meta": {
+     "default": []
+    },
+    "inner": 519
+   },
+   "523": {
+    "type": "string",
+    "meta": {
+     "hidden": true,
+     "required": true
+    }
+   },
+   "525": {
+    "type": "string",
+    "meta": {
+     "hidden": true
+    }
+   },
+   "527": {
+    "type": "string",
+    "meta": {
+     "hidden": true
+    }
+   },
+   "529": {
+    "type": "string",
+    "meta": {
+     "hidden": true
+    }
+   },
+   "531": {
+    "type": "string",
+    "meta": {
+     "hidden": true
+    }
+   },
+   "534": {
+    "type": "string",
+    "meta": {
+     "required": true
+    }
+   },
+   "535": {
+    "type": "array",
+    "meta": {
+     "default": []
+    },
+    "inner": 534
+   },
+   "538": {
+    "type": "string",
+    "meta": {
+     "required": true
+    }
+   },
+   "539": {
+    "type": "array",
+    "meta": {
+     "default": []
+    },
+    "inner": 538
+   },
+   "542": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "545": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "548": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "551": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "555": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0,
+     "max": 9
+    }
+   },
+   "556": {
+    "type": "object",
+    "meta": {
+     "default": {}
+    },
+    "dict": {
+     "paths": 539,
+     "maxMessageBytes": 542,
+     "maxQueuedBytes": 545,
+     "thresholdBytes": 548,
+     "concurrencyLimit": 551,
+     "level": 555
+    }
+   },
+   "558": {
+    "type": "string",
+    "meta": {
+     "hidden": true
+    }
+   },
+   "560": {
+    "type": "string",
+    "meta": {
+     "hidden": true
+    }
+   },
+   "563": {
+    "type": "boolean",
+    "meta": {
+     "hidden": true,
+     "required": true
+    }
+   },
+   "564": {
+    "type": "const",
+    "meta": {},
+    "value": "provided"
+   },
+   "565": {
+    "type": "const",
+    "meta": {},
+    "value": "disabled"
+   },
+   "566": {
+    "type": "union",
+    "meta": {},
+    "list": [
+     564,
+     565
+    ]
+   },
+   "567": {
+    "type": "string",
+    "meta": {}
+   },
+   "568": {
+    "type": "string",
+    "meta": {}
+   },
+   "569": {
+    "type": "string",
+    "meta": {}
+   },
+   "570": {
+    "type": "object",
+    "meta": {
+     "default": {}
+    },
+    "dict": {
+     "mode": 566,
+     "certFile": 567,
+     "keyFile": 568,
+     "caFile": 569
+    }
+   },
+   "571": {
+    "type": "string",
+    "meta": {}
+   },
+   "572": {
+    "type": "string",
+    "meta": {}
+   },
+   "575": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "578": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "581": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "584": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "587": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "590": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "593": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "596": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "599": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "602": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "605": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "608": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "611": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "614": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0
+    }
+   },
+   "615": {
+    "type": "object",
+    "meta": {
+     "default": {}
+    },
+    "dict": {
+     "hostExecution": 499,
+     "setupFile": 501,
+     "publicOrigin": 502,
+     "listenHost": 503,
+     "listenPort": 507,
+     "upstreamOrigin": 508,
+     "publicAuthorities": 512,
+     "allowedCidrs": 516,
+     "adminAllowedCidrs": 520,
+     "stateFile": 617,
+     "controlFile": 523,
+     "customCssFile": 525,
+     "customScriptFile": 527,
+     "mobileLayoutFile": 529,
+     "mobileCompatibilityFile": 531,
+     "excludedClientModules": 535,
+     "websocketCompression": 556,
+     "instanceId": 558,
+     "pairingCaFile": 560,
+     "initiallyEnabled": 563,
+     "tls": 570,
+     "cpolarSubdomain": 571,
+     "cpolarRegion": 572,
+     "pairingTtlMs": 575,
+     "deviceTtlMs": 578,
+     "sessionTtlMs": 581,
+     "maxDevices": 584,
+     "maxSessions": 587,
+     "maxConnections": 590,
+     "maxActiveRequests": 593,
+     "maxWebSockets": 596,
+     "maxBodyBytes": 599,
+     "upstreamTimeoutMs": 602,
+     "upstreamApiTimeoutMs": 605,
+     "rateLimitWindowMs": 608,
+     "maxPairingAttempts": 611,
+     "maxRateLimitKeys": 614
+    }
+   },
+   "617": {
+    "type": "string",
+    "meta": {
+     "required": true
+    }
+   }
+  }
+ }
+}

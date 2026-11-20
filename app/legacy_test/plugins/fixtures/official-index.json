@@ -1,0 +1,68 @@
+{
+  "format": 1,
+  "title": { "en": "DSH Go plugin market", "zh": "DSH Go 插件市场" },
+  "description": { "en": "Plugins checked for DSH Go", "zh": "为 DSH Go 检查过的插件" },
+  "metadata": {
+    "categories": {
+      "media": { "title": { "en": "Media", "zh": "媒体" } },
+      "tools": { "title": { "en": "Tools & Integrations", "zh": "工具集成" } }
+    }
+  },
+  "plugins": [
+    {
+      "name": "@dsh-go/media",
+      "title": { "en": "Images & video", "zh": "生图生视频" },
+      "description": { "en": "Generate images and video in chat", "zh": "在对话里生成图片和视频" },
+      "author": "DSH Go",
+      "homepage": "https://go.dshtui.com/p/%40dsh-go%2Fmedia",
+      "repository": { "url": "https://github.com/ccch1mneyyy/dsh-media" },
+      "metadata": { "category": "media", "keywords": ["生图", "视频", "image", "video"] },
+      "versions": [
+        { "version": "0.2.0", "publishTimestamp": 1793350000, "source": { "type": "npm" }, "engines": { "dsh": ">=0.2.1" } }
+      ]
+    },
+    {
+      "name": "@dsh-go/translate",
+      "title": { "en": "Live translate", "zh": "同声翻译" },
+      "description": { "en": "Translate replies as they stream", "zh": "回复一边生成一边翻译" },
+      "author": "DSH Go",
+      "metadata": { "category": "tools" },
+      "versions": [
+        { "version": "1.0.0", "publishTimestamp": 1793350000, "source": { "type": "npm" } }
+      ]
+    },
+    {
+      "name": "@someone/dsh-weather",
+      "title": { "en": "Weather", "zh": "天气" },
+      "description": { "en": "Weather cards in chat", "zh": "对话里的天气卡片" },
+      "author": "someone",
+      "homepage": "https://github.com/someone/dsh-weather",
+      "repository": { "url": "https://github.com/someone/dsh-weather" },
+      "metadata": { "category": "tools" },
+      "versions": [
+        { "version": "1.2.0", "publishTimestamp": 1793263600, "source": { "type": "npm" } }
+      ]
+    },
+    {
+      "name": "@acme/dsh-native-helper",
+      "title": { "en": "Native helper", "zh": "原生助手" },
+      "description": { "en": "Speeds up file search with a native module", "zh": "用原生模块加速文件搜索" },
+      "author": "acme",
+      "repository": { "url": "https://github.com/acme/dsh-native-helper" },
+      "metadata": { "category": "tools" },
+      "versions": [
+        { "version": "0.9.0", "publishTimestamp": 1793263600, "source": { "type": "npm" } }
+      ]
+    },
+    {
+      "name": "dsh-approval-gate",
+      "title": "Approval Gate",
+      "description": "Ask before dangerous commands",
+      "author": "gatekeeper",
+      "metadata": { "category": "tools", "keywords": ["审批", "safety"] },
+      "versions": [
+        { "version": "0.4.0", "publishTimestamp": 1793177200, "source": { "type": "npm" } }
+      ]
+    }
+  ]
+}

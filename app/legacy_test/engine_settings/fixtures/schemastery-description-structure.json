@@ -1,0 +1,191 @@
+{
+  "nested": {
+    "uid": 8,
+    "refs": {
+      "1": {
+        "type": "string",
+        "meta": {
+          "description": "alpha field"
+        }
+      },
+      "2": {
+        "type": "object",
+        "meta": {
+          "default": {}
+        },
+        "dict": {
+          "alpha": 1
+        }
+      },
+      "4": {
+        "type": "string",
+        "meta": {
+          "description": "beta field"
+        }
+      },
+      "6": {
+        "type": "object",
+        "meta": {
+          "default": {},
+          "description": "NESTED GROUP EXPLANATION"
+        },
+        "dict": {
+          "beta": 4
+        }
+      },
+      "7": {
+        "type": "intersect",
+        "meta": {},
+        "list": [
+          6
+        ]
+      },
+      "8": {
+        "type": "intersect",
+        "meta": {},
+        "list": [
+          2,
+          7
+        ]
+      }
+    }
+  },
+  "hidden": {
+    "uid": 17,
+    "refs": {
+      "10": {
+        "type": "string",
+        "meta": {
+          "description": "HIDDEN CHILD"
+        }
+      },
+      "11": {
+        "type": "object",
+        "meta": {
+          "default": {}
+        },
+        "dict": {
+          "hiddenChild": 10
+        }
+      },
+      "13": {
+        "type": "transform",
+        "meta": {
+          "hidden": true
+        },
+        "inner": 11,
+        "callback": "x=>x"
+      },
+      "15": {
+        "type": "string",
+        "meta": {
+          "description": "visible"
+        }
+      },
+      "16": {
+        "type": "object",
+        "meta": {
+          "default": {}
+        },
+        "dict": {
+          "visible": 15
+        }
+      },
+      "17": {
+        "type": "intersect",
+        "meta": {},
+        "list": [
+          13,
+          16
+        ]
+      }
+    }
+  },
+  "wrappers": {
+    "uid": 24,
+    "refs": {
+      "19": {
+        "type": "string",
+        "meta": {
+          "description": "inner explanation"
+        }
+      },
+      "21": {
+        "type": "transform",
+        "meta": {
+          "description": "MIDDLE EXPLANATION"
+        },
+        "inner": 19,
+        "callback": "x=>x"
+      },
+      "23": {
+        "type": "transform",
+        "meta": {
+          "description": "outer explanation"
+        },
+        "inner": 21,
+        "callback": "x=>x"
+      },
+      "24": {
+        "type": "object",
+        "meta": {
+          "default": {}
+        },
+        "dict": {
+          "wrapped": 23
+        }
+      }
+    }
+  },
+  "overwritten": {
+    "uid": 33,
+    "refs": {
+      "26": {
+        "type": "string",
+        "meta": {
+          "description": "OBSOLETE"
+        }
+      },
+      "27": {
+        "type": "object",
+        "meta": {
+          "default": {}
+        },
+        "dict": {
+          "field": 26
+        }
+      },
+      "29": {
+        "type": "string",
+        "meta": {
+          "description": "HIDDEN FINAL"
+        }
+      },
+      "30": {
+        "type": "object",
+        "meta": {
+          "default": {}
+        },
+        "dict": {
+          "field": 29
+        }
+      },
+      "32": {
+        "type": "transform",
+        "meta": {
+          "hidden": true
+        },
+        "inner": 30,
+        "callback": "x=>x"
+      },
+      "33": {
+        "type": "intersect",
+        "meta": {},
+        "list": [
+          27,
+          32
+        ]
+      }
+    }
+  }
+}

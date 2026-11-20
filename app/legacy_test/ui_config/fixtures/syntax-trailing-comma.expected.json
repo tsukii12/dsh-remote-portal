@@ -1,0 +1,11 @@
+{
+  "applied": 0,
+  "fatal": true,
+  "issues": [
+    {
+      "pointer": "",
+      "kind": "fatal",
+      "message": "第 3 行第 23 列：多余的逗号"
+    }
+  ]
+}

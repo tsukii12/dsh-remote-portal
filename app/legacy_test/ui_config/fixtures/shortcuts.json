@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "shortcuts": [
+    { "keys": "Ctrl + K", "action": { "type": "open", "page": "search" } },
+    { "keys": "shift+ctrl+n", "action": { "type": "open", "page": "new-chat" } },
+    { "keys": "ctrl+k", "action": { "type": "open", "page": "files" } },
+    { "keys": "k", "action": { "type": "open", "page": "files" } },
+    { "keys": "f5", "action": { "type": "command", "name": "compact" } },
+    { "keys": "meta+k", "action": { "type": "open", "page": "files" } },
+    { "keys": "ctrl+c", "action": { "type": "open", "page": "files" } },
+    { "keys": "ctrl+ctrl+j", "action": { "type": "open", "page": "files" } },
+    { "keys": "ctrl+space", "action": { "type": "open", "page": "files" } },
+    { "keys": "ctrl+", "action": { "type": "open", "page": "files" } },
+    { "keys": "alt+/", "action": { "type": "send", "text": "帮助" } },
+    { "keys": "ctrl+shift+z", "action": { "type": "open", "page": "files" } },
+    { "keys": "ctrl+j" },
+    { "keys": ["ctrl", "j"], "action": { "type": "open", "page": "files" } }
+  ]
+}

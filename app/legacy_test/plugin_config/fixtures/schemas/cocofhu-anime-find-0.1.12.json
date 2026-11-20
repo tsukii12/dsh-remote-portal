@@ -1,0 +1,132 @@
+{
+ "package": "@cocofhu/anime-find",
+ "version": "0.1.12",
+ "file": "lib/host.js",
+ "note": "DEFAULT_STREAM_RULES (lib/config-store.js) replaced by [].",
+ "schema": {
+  "uid": 184,
+  "refs": {
+   "151": {
+    "type": "string",
+    "meta": {
+     "default": "https://mikanani.me",
+     "description": "Mikan 站点"
+    }
+   },
+   "154": {
+    "type": "string",
+    "meta": {
+     "default": "https://anibt.net",
+     "description": "AniBT 站点"
+    }
+   },
+   "157": {
+    "type": "string",
+    "meta": {
+     "default": "https://api.animes.garden",
+     "description": "AnimeGarden API"
+    }
+   },
+   "160": {
+    "type": "number",
+    "meta": {
+     "default": 20000,
+     "description": "上游请求超时（毫秒）"
+    }
+   },
+   "163": {
+    "type": "string",
+    "meta": {
+     "default": "Mozilla/5.0 (compatible; anime-find/0.1)",
+     "description": "请求 UA"
+    }
+   },
+   "166": {
+    "type": "number",
+    "meta": {
+     "default": 12,
+     "description": "搜索结果上限"
+    }
+   },
+   "167": {
+    "type": "union",
+    "meta": {},
+    "list": [
+     169,
+     171,
+     173
+    ]
+   },
+   "169": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "mikan"
+   },
+   "171": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "anibt"
+   },
+   "173": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "garden"
+   },
+   "176": {
+    "type": "array",
+    "meta": {
+     "default": [
+      "mikan"
+     ],
+     "description": "启用的搜索源，默认仅 Mikan"
+    },
+    "inner": 167
+   },
+   "179": {
+    "type": "boolean",
+    "meta": {
+     "default": true,
+     "description": "启用流媒体在线播放（内置试点规则，可关闭或替换）"
+    }
+   },
+   "180": {
+    "type": "object",
+    "meta": {
+     "default": {}
+    },
+    "dict": {}
+   },
+   "183": {
+    "type": "array",
+    "meta": {
+     "default": [],
+     "description": "流媒体规则（静态 CSS / 受限 XPath / script: 取址；默认含一条试点源）"
+    },
+    "inner": 180
+   },
+   "184": {
+    "type": "object",
+    "meta": {
+     "default": {}
+    },
+    "dict": {
+     "mikanHost": 151,
+     "anibtHost": 154,
+     "gardenHost": 157,
+     "timeoutMs": 160,
+     "userAgent": 163,
+     "maxResults": 166,
+     "sources": 176,
+     "streamEnabled": 179,
+     "streamRules": 183
+    }
+   }
+  }
+ }
+}

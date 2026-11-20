@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "version": "1.2.0+7",
+  "tag": "v1.2.0",
+  "title": "DSH 1.2.0",
+  "publishedAt": "2026-10-23T16:32:00Z",
+  "notes": "## 新功能\n\n- 应用内更新：设置 → 关于 → 检查更新\n- 聊天里的代码块可以横向滚动\n\n## 修复\n\n- 修复了切换对话时偶尔丢失草稿的问题",
+  "page": "https://github.com/ccch1mneyyy/dsh-go/releases/tag/v1.2.0",
+  "assets": {
+    "arm64": {
+      "name": "dsh-go-1.2.0-arm64.apk",
+      "size": 14,
+      "sha256": "3a8498bcf7d895bac5c9f2f02829c9ec7064cd8bc7ef9f1792f28277d44839f2"
+    },
+    "x64": {
+      "name": "dsh-go-1.2.0-x64.apk",
+      "size": 14,
+      "sha256": "43747402efc76747d342bd126acc8ccce669f91c7503fbd659baf4583dae4395"
+    }
+  }
+}

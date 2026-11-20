@@ -1,0 +1,138 @@
+{
+  "interleaved": {
+    "uid": 7,
+    "refs": {
+      "0": {
+        "type": "boolean",
+        "meta": {}
+      },
+      "1": {
+        "type": "boolean",
+        "meta": {}
+      },
+      "2": {
+        "type": "boolean",
+        "meta": {}
+      },
+      "4": {
+        "type": "object",
+        "meta": {
+          "default": {},
+          "collapse": true
+        },
+        "dict": {
+          "alpha": 0,
+          "beta": 1,
+          "gamma": 2
+        }
+      },
+      "5": {
+        "type": "boolean",
+        "meta": {}
+      },
+      "6": {
+        "type": "object",
+        "meta": {
+          "default": {}
+        },
+        "dict": {
+          "beta": 5
+        }
+      },
+      "7": {
+        "type": "intersect",
+        "meta": {},
+        "list": [
+          4,
+          6
+        ]
+      }
+    }
+  },
+  "member": {
+    "uid": 14,
+    "refs": {
+      "8": {
+        "type": "boolean",
+        "meta": {}
+      },
+      "11": {
+        "type": "object",
+        "meta": {
+          "default": {},
+          "description": "Collapsed member",
+          "collapse": true
+        },
+        "dict": {
+          "alpha": 8
+        }
+      },
+      "12": {
+        "type": "boolean",
+        "meta": {}
+      },
+      "13": {
+        "type": "object",
+        "meta": {
+          "default": {}
+        },
+        "dict": {
+          "beta": 12
+        }
+      },
+      "14": {
+        "type": "intersect",
+        "meta": {},
+        "list": [
+          11,
+          13
+        ]
+      }
+    }
+  },
+  "overridden": {
+    "uid": 21,
+    "refs": {
+      "15": {
+        "type": "boolean",
+        "meta": {}
+      },
+      "17": {
+        "type": "object",
+        "meta": {
+          "default": {},
+          "collapse": true
+        },
+        "dict": {
+          "shared": 15
+        }
+      },
+      "18": {
+        "type": "boolean",
+        "meta": {}
+      },
+      "19": {
+        "type": "boolean",
+        "meta": {}
+      },
+      "20": {
+        "type": "object",
+        "meta": {
+          "default": {}
+        },
+        "dict": {
+          "shared": 18,
+          "free": 19
+        }
+      },
+      "21": {
+        "type": "intersect",
+        "meta": {},
+        "list": [
+          17,
+          20
+        ]
+      }
+    }
+  }
+}

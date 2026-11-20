@@ -1,0 +1,11 @@
+{
+  "applied": 0,
+  "fatal": true,
+  "issues": [
+    {
+      "pointer": "",
+      "kind": "fatal",
+      "message": "第 1 行第 62 列：字符串里不能直接换行"
+    }
+  ]
+}

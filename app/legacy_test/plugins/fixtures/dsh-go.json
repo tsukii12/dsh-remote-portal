@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "generatedAt": "2026-10-30T12:00:00Z",
+  "plugins": {
+    "@dsh-go/media": {
+      "version": "0.2.0",
+      "tier": "official",
+      "title": { "zh": "生图生视频", "en": "Images & video" },
+      "summary": { "zh": "在对话里用即梦、通义万相等服务生成图片和视频。", "en": "Generate images and video in chat with Seedream, Wan and more." },
+      "screenshots": ["https://go.dshtui.com/market/shots/media-1.png", "https://go.dshtui.com/market/shots/media-2.png"],
+      "dshGo": { "adapted": true, "minApp": "1.0.2", "features": ["native-cards", "settings-page", "media"] },
+      "risk": { "level": "low", "flags": ["network"] },
+      "integrity": "sha512-PSuDPoFvKviy7uSw5my2V+01pE+xnYQz5H5I8lH99R71O3QI0GHTTeKddEZS+/GK7HqhQkEjbvhlsxKoui2/KQ==",
+      "checkedAt": "2026-10-30T11:58:00Z",
+      "blockedVersions": []
+    },
+    "@dsh-go/translate": {
+      "version": "1.0.0",
+      "tier": "official",
+      "title": { "zh": "同声翻译", "en": "Live translate" },
+      "summary": { "zh": "回复一边生成一边翻译。", "en": "Translates replies as they stream." },
+      "screenshots": [],
+      "dshGo": { "adapted": true, "minApp": "9.0.0", "features": ["native-cards"] },
+      "risk": { "level": "low", "flags": [] },
+      "integrity": "sha512-0c+Zm0ruDspQu8mRhEk7mE0jWsJDh5nphrSN3egTJ1GgNH3ao3SJxQQ8OV9n/11YvfEiC985w+1B3UoPMYJe0g==",
+      "checkedAt": "2026-10-30T11:58:00Z",
+      "blockedVersions": []
+    },
+    "@someone/dsh-weather": {
+      "version": "1.2.0",
+      "tier": "community",
+      "title": { "zh": "天气", "en": "Weather" },
+      "summary": { "zh": "问天气时回一张原生天气卡片，支持逐小时预报。", "en": "Answers weather questions with a native card and hourly forecast." },
+      "screenshots": ["https://example.com/weather-1.png", "http://example.com/insecure.png", "https://example.com/weather-2.png"],
+      "dshGo": { "adapted": true, "minApp": "1.0.0", "features": ["native-cards"] },
+      "risk": { "level": "medium", "flags": ["network", "shell"] },
+      "integrity": "sha512-C3s377XCnZXdGpMNISsXz2zIrcBcycnPWatHc23iDuwYfznZV0nc8XJ3zyA2B1ctiJvgXoo6b+YBlZm0mqasJQ==",
+      "checkedAt": "2026-10-29T08:00:00Z",
+      "blockedVersions": []
+    },
+    "@acme/dsh-native-helper": {
+      "version": "0.9.0",
+      "tier": "community",
+      "title": { "zh": "原生助手", "en": "Native helper" },
+      "summary": { "zh": "用原生模块加速文件搜索。", "en": "Speeds up file search with a native module." },
+      "screenshots": [],
+      "dshGo": { "adapted": true, "features": ["settings-page"] },
+      "risk": { "level": "high", "flags": ["install-scripts", "native-code", "network"] },
+      "integrity": "sha512-xzJjsFJrYcjBqM9o3cGn7g0xg9qZEVsqKvzi15Mj+sEp6rlEfI8AYgOo2BGMEAnkQEspCBag8r+2mO7nSlYTlw==",
+      "checkedAt": "2026-10-29T08:00:00Z",
+      "blockedVersions": []
+    },
+    "dsh-approval-gate": {
+      "version": "0.4.0",
+      "tier": "community",
+      "title": { "zh": "危险命令审批", "en": "Approval Gate" },
+      "summary": { "zh": "危险命令执行前先问一句。", "en": "Asks before dangerous commands." },
+      "screenshots": [],
+      "dshGo": { "adapted": false, "features": [] },
+      "risk": { "level": "low", "flags": ["not-adapted"] },
+      "integrity": "sha512-hZHJXP5h861xGT2zHngAMvPrqf2aGnF1qzGX9v8B+zpYC46+Fgkn6ZLkIaXpX95aXXiGZ9rqSrTO0Dcd7cj4TA==",
+      "checkedAt": "2026-10-28T08:00:00Z",
+      "blockedVersions": ["0.3.0"]
+    }
+  }
+}

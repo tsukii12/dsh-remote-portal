@@ -1,0 +1,16 @@
+{
+  "applied": 2,
+  "fatal": false,
+  "issues": [
+    {
+      "pointer": "/plugins/seats/conversation.composer.bar",
+      "kind": "ignored",
+      "message": "这个位置不放插件"
+    },
+    {
+      "pointer": "/plugins/seats/future.slot.name",
+      "kind": "adjusted",
+      "message": "当前 DSH 没有这个 slot，先保留"
+    }
+  ]
+}

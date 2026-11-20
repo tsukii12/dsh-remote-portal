@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "plugins": {
+    "seats": {
+      "conversation.input.dock": { "@acme/cost~meter": "island", "dsh-cost-meter": "hidden" },
+      "settings.section": { "@acme/a/b": "native" },
+      "sidebar.right.pane.tab": "hidden"
+    },
+    "other": 1
+  }
+}

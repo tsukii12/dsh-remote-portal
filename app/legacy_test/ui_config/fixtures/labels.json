@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "header": { "actions": [ { "id": "long-one", "icon": "note", "label": "这是一个很长很长的按钮名字", "action": { "type": "send", "text": "x" } } ] },
+  "composer": { "quickActions": [
+    { "label": "  两\n行\t标签\u0007  ", "action": { "type": "send", "text": "  第一行\r\n第二行\u0000  " } },
+    { "label": "十个字以内的标签啊啊", "action": { "type": "send", "text": "y" } },
+    { "label": "超过十个字的标签啊啊啊", "action": { "type": "send", "text": "z" } }
+  ] },
+  "emptyState": { "suggestions": [
+    { "title": "标题", "subtitle": "", "action": { "type": "send", "text": "x" } },
+    { "title": "一二三四五六七八九十一二三四五六七八九十一", "subtitle": "一二三四五六七八九十一二三四五六七八九十一二三四五六七八九十一二三四五六七八九十一", "action": { "type": "open", "page": "new-chat" } },
+    { "title": "😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀", "action": { "type": "send", "text": "emoji" } }
+  ] }
+}

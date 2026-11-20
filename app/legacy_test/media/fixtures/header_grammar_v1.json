@@ -1,0 +1,875 @@
+{
+  "grammar": "dsh-go/media generation header v1",
+  "spec": "docs/design/media-generation.md §4.6",
+  "base": "dsh-media M0 candidate R1 (runtime/media/dsh-media/test/fixtures/header-v1.json); every candidate case is here with the same result",
+  "shape": "valid[].expected and format[].value use the candidate parser's shape: kind, prompt, aspect, n, seconds, quality (a video's resolution too), model {label, serviceId, id}; an absent key is an absent field",
+  "groups": {
+    "valid": "parse(text) == expected; parse(format(expected)) == expected; canonical (default true): format(expected) == text byte for byte",
+    "plain": "parse(text) is null: an ordinary message",
+    "invalid": "parse(text) fails with code",
+    "format": "format(value) == text; parse(text) == value",
+    "formatRejects": "format(value) fails with code",
+    "titles": "app only: a DSH fallback title split into kind and what follows the header; kind null = shown as it is"
+  },
+  "valid": [
+    {
+      "id": "candidate-image",
+      "text": "〔生成图像 · 3:4 · 2 张 · Seedream 5.0〕\n画一只猫",
+      "expected": {
+        "kind": "image",
+        "prompt": "画一只猫",
+        "aspect": "3:4",
+        "n": 2,
+        "model": {
+          "label": "Seedream 5.0"
+        }
+      }
+    },
+    {
+      "id": "candidate-video",
+      "text": "〔生成视频 · 5 秒 · 720p · Seedance〕\n海边",
+      "expected": {
+        "kind": "video",
+        "prompt": "海边",
+        "seconds": 5,
+        "quality": "720p",
+        "model": {
+          "label": "Seedance"
+        }
+      }
+    },
+    {
+      "id": "candidate-bare-verbatim",
+      "text": "〔生成图像〕\n猫\n  保留这些空格  \n",
+      "expected": {
+        "kind": "image",
+        "prompt": "猫\n  保留这些空格  \n"
+      }
+    },
+    {
+      "id": "candidate-crlf-quality-marker",
+      "canonical": false,
+      "text": "〔生成图像 · 质量=high · GPT Image 2〈office/gpt-image-2〉〕\r\n猫",
+      "expected": {
+        "kind": "image",
+        "prompt": "猫",
+        "quality": "high",
+        "model": {
+          "label": "GPT Image 2",
+          "serviceId": "office",
+          "id": "gpt-image-2"
+        }
+      }
+    },
+    {
+      "id": "candidate-video-full-marker",
+      "text": "〔生成视频 · 16:9 · 60 秒 · 1080p · Model〈work/a/b:1〉〕\n雪",
+      "expected": {
+        "kind": "video",
+        "prompt": "雪",
+        "aspect": "16:9",
+        "seconds": 60,
+        "quality": "1080p",
+        "model": {
+          "label": "Model",
+          "serviceId": "work",
+          "id": "a/b:1"
+        }
+      }
+    },
+    {
+      "id": "app-image",
+      "text": "〔生成图像 · 1:1 · 1 张 · 质量=2k · Seedream 5.0〈ark/doubao-seedream-5-0-pro〉〕\n画一只在窗台上打盹的橘猫",
+      "expected": {
+        "kind": "image",
+        "prompt": "画一只在窗台上打盹的橘猫",
+        "aspect": "1:1",
+        "n": 1,
+        "quality": "2k",
+        "model": {
+          "label": "Seedream 5.0",
+          "serviceId": "ark",
+          "id": "doubao-seedream-5-0-pro"
+        }
+      }
+    },
+    {
+      "id": "app-video",
+      "text": "〔生成视频 · 16:9 · 5 秒 · 720p · Seedance 2.0〈ark/doubao-seedance-2-0〉〕\n镜头缓慢推近，猫抬头看向窗外",
+      "expected": {
+        "kind": "video",
+        "prompt": "镜头缓慢推近，猫抬头看向窗外",
+        "aspect": "16:9",
+        "seconds": 5,
+        "quality": "720p",
+        "model": {
+          "label": "Seedance 2.0",
+          "serviceId": "ark",
+          "id": "doubao-seedance-2-0"
+        }
+      }
+    },
+    {
+      "id": "app-empty-option-sets",
+      "text": "〔生成图像 · 1 张 · Gemini 2.5 Flash Image〈google/gemini-2.5-flash-image〉〕\n猫",
+      "expected": {
+        "kind": "image",
+        "prompt": "猫",
+        "n": 1,
+        "model": {
+          "label": "Gemini 2.5 Flash Image",
+          "serviceId": "google",
+          "id": "gemini-2.5-flash-image"
+        }
+      }
+    },
+    {
+      "id": "quality-only",
+      "text": "〔生成图像 · 质量=low〕\n猫",
+      "expected": {
+        "kind": "image",
+        "prompt": "猫",
+        "quality": "low"
+      }
+    },
+    {
+      "id": "video-bare",
+      "text": "〔生成视频〕\n海浪",
+      "expected": {
+        "kind": "video",
+        "prompt": "海浪"
+      }
+    },
+    {
+      "id": "prompt-kept-verbatim",
+      "text": "〔生成图像 · 4:3〕\n  前导空格和末尾的空行都保留\n\n",
+      "expected": {
+        "kind": "image",
+        "prompt": "  前导空格和末尾的空行都保留\n\n",
+        "aspect": "4:3"
+      }
+    },
+    {
+      "id": "prompt-may-look-like-a-header",
+      "text": "〔生成图像〕\n〔生成视频 · 5 秒〕\n第二行像参数头也只是描述",
+      "expected": {
+        "kind": "image",
+        "prompt": "〔生成视频 · 5 秒〕\n第二行像参数头也只是描述"
+      }
+    },
+    {
+      "id": "label-cjk",
+      "text": "〔生成图像 · 2 张 · 通义千问图像 3.0〕\n猫",
+      "expected": {
+        "kind": "image",
+        "prompt": "猫",
+        "n": 2,
+        "model": {
+          "label": "通义千问图像 3.0"
+        }
+      }
+    },
+    {
+      "id": "label-160-bytes",
+      "text": "〔生成图像 · AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA〕\n猫",
+      "expected": {
+        "kind": "image",
+        "prompt": "猫",
+        "model": {
+          "label": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        }
+      }
+    },
+    {
+      "id": "aspect-99-count-4",
+      "text": "〔生成图像 · 99:1 · 4 张〕\n长条",
+      "expected": {
+        "kind": "image",
+        "prompt": "长条",
+        "aspect": "99:1",
+        "n": 4
+      }
+    },
+    {
+      "id": "video-1s-2160p",
+      "text": "〔生成视频 · 9:16 · 1 秒 · 2160p〕\n短",
+      "expected": {
+        "kind": "video",
+        "prompt": "短",
+        "aspect": "9:16",
+        "seconds": 1,
+        "quality": "2160p"
+      }
+    },
+    {
+      "id": "old-word-is-just-a-label",
+      "text": "〔生成图像 · 1:1 · 高清〕\n猫",
+      "expected": {
+        "kind": "image",
+        "prompt": "猫",
+        "aspect": "1:1",
+        "model": {
+          "label": "高清"
+        }
+      }
+    }
+  ],
+  "plain": [
+    {
+      "id": "candidate-ordinary",
+      "text": "请画猫"
+    },
+    {
+      "id": "candidate-leading-space",
+      "text": " 〔生成图像〕\n猫"
+    },
+    {
+      "id": "candidate-quoted",
+      "text": "> 〔生成图像〕\n猫"
+    },
+    {
+      "id": "candidate-later-paragraph",
+      "text": "网页说：\n〔生成图像〕\n猫"
+    },
+    {
+      "id": "kind-word-prefix",
+      "text": "〔生成图像的方法〕示例"
+    },
+    {
+      "id": "kind-word-prefix-newline",
+      "text": "〔生成图像的方法〕\n示例"
+    },
+    {
+      "id": "kind-word-fullwidth-colon",
+      "text": "〔生成视频：教程〕\n内容"
+    },
+    {
+      "id": "kind-word-latin",
+      "text": "〔生成图像X〕\n猫"
+    },
+    {
+      "id": "bom",
+      "text": "\ufeff〔生成图像〕\n猫"
+    },
+    {
+      "id": "other-kind",
+      "text": "〔生成音乐 · 3 分钟〕\n一首歌"
+    },
+    {
+      "id": "other-bracket",
+      "text": "〔注意〕这是一句话"
+    },
+    {
+      "id": "empty",
+      "text": ""
+    }
+  ],
+  "invalid": [
+    {
+      "id": "candidate-no-newline",
+      "text": "〔生成图像〕",
+      "code": "missing_prompt"
+    },
+    {
+      "id": "candidate-blank-prompt",
+      "text": "〔生成图像〕\n \n",
+      "code": "missing_prompt"
+    },
+    {
+      "id": "candidate-no-separator-spaces",
+      "text": "〔生成图像·1:1〕\n猫",
+      "code": "invalid_header"
+    },
+    {
+      "id": "candidate-count-before-aspect",
+      "text": "〔生成图像 · 2 张 · 1:1〕\n猫",
+      "code": "invalid_order"
+    },
+    {
+      "id": "candidate-duplicate-aspect",
+      "text": "〔生成图像 · 1:1 · 1:1〕\n猫",
+      "code": "invalid_order"
+    },
+    {
+      "id": "candidate-zero-aspect",
+      "text": "〔生成图像 · 0:1〕\n猫",
+      "code": "invalid_aspect"
+    },
+    {
+      "id": "candidate-leading-zero-aspect",
+      "text": "〔生成图像 · 01:1〕\n猫",
+      "code": "invalid_aspect"
+    },
+    {
+      "id": "candidate-aspect-100",
+      "text": "〔生成图像 · 100:1〕\n猫",
+      "code": "invalid_aspect"
+    },
+    {
+      "id": "candidate-fractional-aspect",
+      "text": "〔生成图像 · 1.5:1〕\n猫",
+      "code": "invalid_aspect"
+    },
+    {
+      "id": "candidate-zero-count",
+      "text": "〔生成图像 · 0 张〕\n猫",
+      "code": "invalid_count"
+    },
+    {
+      "id": "candidate-count-5",
+      "text": "〔生成图像 · 5 张〕\n猫",
+      "code": "invalid_count"
+    },
+    {
+      "id": "candidate-count-no-space",
+      "text": "〔生成图像 · 2张〕\n猫",
+      "code": "invalid_count"
+    },
+    {
+      "id": "candidate-count-leading-zero",
+      "text": "〔生成图像 · 02 张〕\n猫",
+      "code": "invalid_count"
+    },
+    {
+      "id": "candidate-negative-count",
+      "text": "〔生成图像 · -1 张〕\n猫",
+      "code": "invalid_count"
+    },
+    {
+      "id": "candidate-fractional-count",
+      "text": "〔生成图像 · 1.5 张〕\n猫",
+      "code": "invalid_count"
+    },
+    {
+      "id": "candidate-seconds-61",
+      "text": "〔生成视频 · 61 秒〕\n猫",
+      "code": "invalid_seconds"
+    },
+    {
+      "id": "candidate-seconds-leading-zero",
+      "text": "〔生成视频 · 05 秒〕\n猫",
+      "code": "invalid_seconds"
+    },
+    {
+      "id": "candidate-fractional-seconds",
+      "text": "〔生成视频 · 1.5 秒〕\n猫",
+      "code": "invalid_seconds"
+    },
+    {
+      "id": "candidate-video-count",
+      "text": "〔生成视频 · 2 张〕\n猫",
+      "code": "invalid_count"
+    },
+    {
+      "id": "candidate-image-seconds",
+      "text": "〔生成图像 · 5 秒〕\n猫",
+      "code": "invalid_seconds"
+    },
+    {
+      "id": "candidate-image-resolution",
+      "text": "〔生成图像 · 720p〕\n猫",
+      "code": "invalid_quality"
+    },
+    {
+      "id": "candidate-uppercase-p",
+      "text": "〔生成视频 · 720P〕\n猫",
+      "code": "invalid_quality"
+    },
+    {
+      "id": "candidate-video-quality",
+      "text": "〔生成视频 · 质量=high〕\n猫",
+      "code": "invalid_quality"
+    },
+    {
+      "id": "candidate-empty-quality",
+      "text": "〔生成图像 · 质量=〕\n猫",
+      "code": "invalid_quality"
+    },
+    {
+      "id": "candidate-model-before-count",
+      "text": "〔生成图像 · 模型 · 2 张〕\n猫",
+      "code": "invalid_order"
+    },
+    {
+      "id": "candidate-uppercase-service",
+      "text": "〔生成图像 · M〈Work/id〉〕\n猫",
+      "code": "invalid_model"
+    },
+    {
+      "id": "candidate-empty-model-id",
+      "text": "〔生成图像 · M〈work/〉〕\n猫",
+      "code": "invalid_model"
+    },
+    {
+      "id": "candidate-text-after-marker",
+      "text": "〔生成图像 · M〈work/id〉尾巴〕\n猫",
+      "code": "invalid_model"
+    },
+    {
+      "id": "candidate-two-models",
+      "text": "〔生成图像 · M〈work/id〉 · Other〕\n猫",
+      "code": "invalid_order"
+    },
+    {
+      "id": "candidate-text-after-header",
+      "text": "〔生成图像〕extra\n猫",
+      "code": "invalid_header"
+    },
+    {
+      "id": "candidate-prompt-too-long",
+      "text": "〔生成图像〕\n猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫",
+      "code": "too_long"
+    },
+    {
+      "id": "candidate-label-del",
+      "text": "〔生成图像 · Demo\u007f〕\n猫",
+      "code": "invalid_model"
+    },
+    {
+      "id": "candidate-label-c1",
+      "text": "〔生成图像 · Demo\u0085〕\n猫",
+      "code": "invalid_model"
+    },
+    {
+      "id": "candidate-lone-surrogate",
+      "text": "〔生成图像〕\n\ud800",
+      "code": "invalid_message"
+    },
+    {
+      "id": "old-app-image",
+      "text": "〔生成图像 · 1:1 · 1 张 · 高清 · Seedream 5.0〕\ncat",
+      "code": "invalid_order"
+    },
+    {
+      "id": "old-app-video",
+      "text": "〔生成视频 · 5 秒 · 720p · 16:9 · Seedance 2.0〕\ncat",
+      "code": "invalid_order"
+    },
+    {
+      "id": "old-app-video-audio",
+      "text": "〔生成视频 · 5 秒 · 720p · 有声 · Seedance 2.0〕\n猫",
+      "code": "invalid_order"
+    },
+    {
+      "id": "old-app-4k-word",
+      "text": "〔生成图像 · 4K〕\n猫",
+      "code": "invalid_quality"
+    },
+    {
+      "id": "no-newline-before-description",
+      "text": "〔生成图像 · 1:1〕 猫",
+      "code": "missing_prompt"
+    },
+    {
+      "id": "unclosed",
+      "text": "〔生成图像 · 1:1\n猫",
+      "code": "invalid_header"
+    },
+    {
+      "id": "double-space",
+      "text": "〔生成图像 ·  1:1〕\n猫",
+      "code": "invalid_header"
+    },
+    {
+      "id": "trailing-separator",
+      "text": "〔生成图像 · 3:4 · 〕\n猫",
+      "code": "invalid_header"
+    },
+    {
+      "id": "ideographic-space",
+      "text": "〔生成图像　1:1〕\n猫",
+      "code": "invalid_header"
+    },
+    {
+      "id": "too-many-fields",
+      "text": "〔生成图像 · 1:1 · 1 张 · 质量=2k · A · B〕\n猫",
+      "code": "invalid_header"
+    },
+    {
+      "id": "quality-before-count",
+      "text": "〔生成图像 · 3:4 · 质量=2k · 2 张〕\n猫",
+      "code": "invalid_order"
+    },
+    {
+      "id": "resolution-before-seconds",
+      "text": "〔生成视频 · 720p · 5 秒〕\n猫",
+      "code": "invalid_order"
+    },
+    {
+      "id": "duplicate-quality",
+      "text": "〔生成图像 · 质量=2k · 质量=4k〕\n猫",
+      "code": "invalid_order"
+    },
+    {
+      "id": "label-161-bytes",
+      "text": "〔生成图像 · AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA〕\n猫",
+      "code": "invalid_model"
+    },
+    {
+      "id": "header-too-long",
+      "text": "〔生成图像 · AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA〕\n猫",
+      "code": "too_long"
+    },
+    {
+      "id": "model-id-with-space",
+      "text": "〔生成图像 · GPT〈office/gpt image〉〕\n猫",
+      "code": "invalid_model"
+    },
+    {
+      "id": "label-like-resolution",
+      "text": "〔生成图像 · 1.5p〕\n猫",
+      "code": "invalid_quality"
+    },
+    {
+      "id": "cr-inside-header",
+      "text": "〔生成图像\r〕\n猫",
+      "code": "invalid_header"
+    }
+  ],
+  "format": [
+    {
+      "id": "app-image",
+      "value": {
+        "kind": "image",
+        "prompt": "画一只在窗台上打盹的橘猫",
+        "aspect": "1:1",
+        "n": 1,
+        "quality": "2k",
+        "model": {
+          "label": "Seedream 5.0",
+          "serviceId": "ark",
+          "id": "doubao-seedream-5-0-pro"
+        }
+      },
+      "text": "〔生成图像 · 1:1 · 1 张 · 质量=2k · Seedream 5.0〈ark/doubao-seedream-5-0-pro〉〕\n画一只在窗台上打盹的橘猫"
+    },
+    {
+      "id": "app-video",
+      "value": {
+        "kind": "video",
+        "prompt": "镜头缓慢推近",
+        "aspect": "16:9",
+        "seconds": 5,
+        "quality": "720p",
+        "model": {
+          "label": "Seedance 2.0",
+          "serviceId": "ark",
+          "id": "doubao-seedance-2-0"
+        }
+      },
+      "text": "〔生成视频 · 16:9 · 5 秒 · 720p · Seedance 2.0〈ark/doubao-seedance-2-0〉〕\n镜头缓慢推近"
+    },
+    {
+      "id": "app-empty-option-sets",
+      "value": {
+        "kind": "image",
+        "prompt": "猫",
+        "n": 1,
+        "model": {
+          "label": "Gemini 2.5 Flash Image",
+          "serviceId": "google",
+          "id": "gemini-2.5-flash-image"
+        }
+      },
+      "text": "〔生成图像 · 1 张 · Gemini 2.5 Flash Image〈google/gemini-2.5-flash-image〉〕\n猫"
+    },
+    {
+      "id": "gpt-high",
+      "value": {
+        "kind": "image",
+        "prompt": "猫",
+        "aspect": "3:2",
+        "n": 4,
+        "quality": "high",
+        "model": {
+          "label": "GPT Image 2",
+          "serviceId": "office",
+          "id": "gpt-image-2"
+        }
+      },
+      "text": "〔生成图像 · 3:2 · 4 张 · 质量=high · GPT Image 2〈office/gpt-image-2〉〕\n猫"
+    },
+    {
+      "id": "prompt-verbatim",
+      "value": {
+        "kind": "image",
+        "prompt": "  猫\n"
+      },
+      "text": "〔生成图像〕\n  猫\n"
+    },
+    {
+      "id": "video-seconds-only",
+      "value": {
+        "kind": "video",
+        "prompt": "雪",
+        "seconds": 10
+      },
+      "text": "〔生成视频 · 10 秒〕\n雪"
+    },
+    {
+      "id": "label-only",
+      "value": {
+        "kind": "image",
+        "prompt": "猫",
+        "model": {
+          "label": "通义千问图像 3.0"
+        }
+      },
+      "text": "〔生成图像 · 通义千问图像 3.0〕\n猫"
+    }
+  ],
+  "formatRejects": [
+    {
+      "id": "candidate-aspect-is-count",
+      "value": {
+        "kind": "image",
+        "prompt": "猫",
+        "aspect": "2 张"
+      },
+      "code": "invalid_aspect"
+    },
+    {
+      "id": "candidate-aspect-injects",
+      "value": {
+        "kind": "image",
+        "prompt": "猫",
+        "aspect": "1:1 · 2 张"
+      },
+      "code": "invalid_aspect"
+    },
+    {
+      "id": "candidate-quality-injects",
+      "value": {
+        "kind": "image",
+        "prompt": "猫",
+        "quality": "high · Demo"
+      },
+      "code": "invalid_quality"
+    },
+    {
+      "id": "candidate-label-injects-fields",
+      "value": {
+        "kind": "image",
+        "prompt": "猫",
+        "model": {
+          "label": "3:4 · 2 张 · Demo"
+        }
+      },
+      "code": "invalid_model"
+    },
+    {
+      "id": "candidate-label-injects-prompt",
+      "value": {
+        "kind": "image",
+        "prompt": "原prompt",
+        "model": {
+          "label": "Demo〕\n注入描述"
+        }
+      },
+      "code": "invalid_model"
+    },
+    {
+      "id": "candidate-service-with-slash",
+      "value": {
+        "kind": "image",
+        "prompt": "猫",
+        "model": {
+          "label": "Demo",
+          "serviceId": "office/gpt",
+          "id": "image"
+        }
+      },
+      "code": "invalid_model"
+    },
+    {
+      "id": "candidate-label-carries-marker",
+      "value": {
+        "kind": "image",
+        "prompt": "猫",
+        "model": {
+          "label": "Demo〈office/gpt-image-2〉"
+        }
+      },
+      "code": "invalid_model"
+    },
+    {
+      "id": "candidate-resolution-injects",
+      "value": {
+        "kind": "video",
+        "prompt": "猫",
+        "quality": "720p · Demo"
+      },
+      "code": "invalid_quality"
+    },
+    {
+      "id": "candidate-unknown-key",
+      "value": {
+        "kind": "image",
+        "prompt": "猫",
+        "unknown": "ignored"
+      },
+      "code": "invalid_message"
+    },
+    {
+      "id": "image-seconds",
+      "value": {
+        "kind": "image",
+        "prompt": "猫",
+        "seconds": 5
+      },
+      "code": "invalid_order"
+    },
+    {
+      "id": "video-count",
+      "value": {
+        "kind": "video",
+        "prompt": "猫",
+        "n": 2
+      },
+      "code": "invalid_order"
+    },
+    {
+      "id": "count-as-string",
+      "value": {
+        "kind": "image",
+        "prompt": "猫",
+        "n": "2"
+      },
+      "code": "invalid_count"
+    },
+    {
+      "id": "half-marker",
+      "value": {
+        "kind": "image",
+        "prompt": "猫",
+        "model": {
+          "label": "Model",
+          "serviceId": "office"
+        }
+      },
+      "code": "invalid_model"
+    },
+    {
+      "id": "old-quality-word",
+      "value": {
+        "kind": "image",
+        "prompt": "猫",
+        "quality": "高清"
+      },
+      "code": "invalid_quality"
+    },
+    {
+      "id": "zero-aspect",
+      "value": {
+        "kind": "image",
+        "prompt": "猫",
+        "aspect": "0:1"
+      },
+      "code": "invalid_aspect"
+    },
+    {
+      "id": "audio-not-in-v1",
+      "value": {
+        "kind": "video",
+        "prompt": "猫",
+        "audio": true
+      },
+      "code": "invalid_message"
+    },
+    {
+      "id": "blank-prompt",
+      "value": {
+        "kind": "image",
+        "prompt": "  \n"
+      },
+      "code": "missing_prompt"
+    },
+    {
+      "id": "prompt-too-long",
+      "value": {
+        "kind": "image",
+        "prompt": "猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫猫"
+      },
+      "code": "too_long"
+    },
+    {
+      "id": "label-reads-as-resolution",
+      "value": {
+        "kind": "image",
+        "prompt": "猫",
+        "model": {
+          "label": "1.5p"
+        }
+      },
+      "code": "invalid_quality"
+    }
+  ],
+  "titles": [
+    {
+      "id": "header-then-description",
+      "title": "〔生成图像 · 3:4 · 2 张 · Seedream 5.0〕 画一只橘猫",
+      "kind": "image",
+      "rest": "画一只橘猫"
+    },
+    {
+      "id": "app-header-then-description",
+      "title": "〔生成图像 · 1:1 · 1 张 · 质量=2k · GPT Image 2〈office/gpt-image-2〉〕 画一只猫",
+      "kind": "image",
+      "rest": "画一只猫"
+    },
+    {
+      "id": "cut-inside-header",
+      "title": "〔生成图像 · 3:4 · 2 张 · Seedream",
+      "kind": "image",
+      "rest": ""
+    },
+    {
+      "id": "cut-after-dot",
+      "title": "〔生成视频 · 16:9 ·",
+      "kind": "video",
+      "rest": ""
+    },
+    {
+      "id": "cut-after-kind",
+      "title": "〔生成图像",
+      "kind": "image",
+      "rest": ""
+    },
+    {
+      "id": "header-only",
+      "title": "〔生成视频 · 5 秒 · 720p〕",
+      "kind": "video",
+      "rest": ""
+    },
+    {
+      "id": "ordinary",
+      "title": "窗台上的橘猫",
+      "kind": null
+    },
+    {
+      "id": "other-bracket",
+      "title": "〔草稿〕周报",
+      "kind": null
+    },
+    {
+      "id": "kind-word-prefix",
+      "title": "〔生成图像的方法〕示例",
+      "kind": null
+    },
+    {
+      "id": "no-space-after-bracket",
+      "title": "〔生成图像〕这个词是什么意思",
+      "kind": null
+    },
+    {
+      "id": "invalid-header-line",
+      "title": "〔生成图像 · 1:1 · 高清 · Seedream 5.0〕 猫",
+      "kind": null
+    },
+    {
+      "id": "fullwidth-colon",
+      "title": "〔生成视频：教程〕 内容",
+      "kind": null
+    }
+  ]
+}

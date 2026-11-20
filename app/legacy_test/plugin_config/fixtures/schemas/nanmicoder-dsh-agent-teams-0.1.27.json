@@ -1,0 +1,446 @@
+{
+ "package": "@nanmicoder/dsh-agent-teams",
+ "version": "0.1.27",
+ "file": "lib/index.js",
+ "note": "Config as published.",
+ "schema": {
+  "uid": 439,
+  "refs": {
+   "335": {
+    "type": "string",
+    "meta": {
+     "required": true
+    }
+   },
+   "337": {
+    "type": "string",
+    "meta": {
+     "required": true
+    }
+   },
+   "338": {
+    "type": "object",
+    "meta": {
+     "default": {}
+    },
+    "dict": {
+     "provider": 335,
+     "model": 337
+    }
+   },
+   "339": {
+    "type": "const",
+    "meta": {}
+   },
+   "340": {
+    "type": "union",
+    "meta": {},
+    "list": [
+     338,
+     339
+    ]
+   },
+   "341": {
+    "type": "string",
+    "meta": {}
+   },
+   "344": {
+    "type": "array",
+    "meta": {
+     "default": [],
+     "min": 1,
+     "required": true
+    },
+    "inner": 341
+   },
+   "345": {
+    "type": "const",
+    "meta": {}
+   },
+   "346": {
+    "type": "object",
+    "meta": {
+     "default": {}
+    },
+    "dict": {
+     "allow": 344,
+     "deny": 345
+    }
+   },
+   "347": {
+    "type": "const",
+    "meta": {}
+   },
+   "348": {
+    "type": "string",
+    "meta": {}
+   },
+   "351": {
+    "type": "array",
+    "meta": {
+     "default": [],
+     "min": 1,
+     "required": true
+    },
+    "inner": 348
+   },
+   "352": {
+    "type": "object",
+    "meta": {
+     "default": {}
+    },
+    "dict": {
+     "allow": 347,
+     "deny": 351
+    }
+   },
+   "353": {
+    "type": "string",
+    "meta": {}
+   },
+   "356": {
+    "type": "array",
+    "meta": {
+     "default": [],
+     "min": 1,
+     "required": true
+    },
+    "inner": 353
+   },
+   "357": {
+    "type": "string",
+    "meta": {}
+   },
+   "360": {
+    "type": "array",
+    "meta": {
+     "default": [],
+     "min": 1,
+     "required": true
+    },
+    "inner": 357
+   },
+   "361": {
+    "type": "object",
+    "meta": {
+     "default": {}
+    },
+    "dict": {
+     "allow": 356,
+     "deny": 360
+    }
+   },
+   "362": {
+    "type": "union",
+    "meta": {},
+    "list": [
+     346,
+     352,
+     361
+    ]
+   },
+   "364": {
+    "type": "string",
+    "meta": {
+     "default": ".agent-teams"
+    }
+   },
+   "366": {
+    "type": "string",
+    "meta": {
+     "default": "spawn"
+    }
+   },
+   "367": {
+    "type": "string",
+    "meta": {}
+   },
+   "368": {
+    "type": "string",
+    "meta": {}
+   },
+   "369": {
+    "type": "string",
+    "meta": {}
+   },
+   "370": {
+    "type": "string",
+    "meta": {}
+   },
+   "371": {
+    "type": "string",
+    "meta": {}
+   },
+   "372": {
+    "type": "string",
+    "meta": {}
+   },
+   "374": {
+    "type": "string",
+    "meta": {
+     "required": true
+    }
+   },
+   "375": {
+    "type": "string",
+    "meta": {}
+   },
+   "376": {
+    "type": "string",
+    "meta": {}
+   },
+   "377": {
+    "type": "string",
+    "meta": {}
+   },
+   "378": {
+    "type": "string",
+    "meta": {}
+   },
+   "379": {
+    "type": "string",
+    "meta": {}
+   },
+   "380": {
+    "type": "string",
+    "meta": {}
+   },
+   "381": {
+    "type": "object",
+    "meta": {
+     "default": {}
+    },
+    "dict": {
+     "name": 374,
+     "role": 375,
+     "provider": 376,
+     "model": 377,
+     "reasoning_effort": 378,
+     "executionPrompt": 379,
+     "fallback": 340,
+     "tool_policy": 380
+    }
+   },
+   "384": {
+    "type": "array",
+    "meta": {
+     "default": [],
+     "min": 1,
+     "required": true
+    },
+    "inner": 381
+   },
+   "385": {
+    "type": "const",
+    "meta": {},
+    "value": "captain"
+   },
+   "386": {
+    "type": "const",
+    "meta": {},
+    "value": "seed"
+   },
+   "387": {
+    "type": "union",
+    "meta": {},
+    "list": [
+     385,
+     386
+    ]
+   },
+   "391": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 1
+    }
+   },
+   "395": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 1
+    }
+   },
+   "399": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 1
+    }
+   },
+   "403": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 1
+    }
+   },
+   "404": {
+    "type": "string",
+    "meta": {}
+   },
+   "405": {
+    "type": "array",
+    "meta": {
+     "default": []
+    },
+    "inner": 404
+   },
+   "406": {
+    "type": "object",
+    "meta": {
+     "default": {}
+    },
+    "dict": {
+     "requirementsMinRounds": 391,
+     "requirementsMaxRounds": 395,
+     "codeMaxRounds": 399,
+     "maxRepairAttempts": 403,
+     "requiredReviewers": 405
+    }
+   },
+   "408": {
+    "type": "string",
+    "meta": {
+     "required": true
+    }
+   },
+   "410": {
+    "type": "string",
+    "meta": {
+     "required": true
+    }
+   },
+   "411": {
+    "type": "string",
+    "meta": {}
+   },
+   "412": {
+    "type": "string",
+    "meta": {}
+   },
+   "413": {
+    "type": "string",
+    "meta": {}
+   },
+   "414": {
+    "type": "array",
+    "meta": {
+     "default": []
+    },
+    "inner": 413
+   },
+   "415": {
+    "type": "object",
+    "meta": {
+     "default": {}
+    },
+    "dict": {
+     "id": 408,
+     "subject": 410,
+     "description": 411,
+     "assignee": 412,
+     "dependencies": 414
+    }
+   },
+   "416": {
+    "type": "array",
+    "meta": {
+     "default": []
+    },
+    "inner": 415
+   },
+   "417": {
+    "type": "object",
+    "meta": {
+     "default": {}
+    },
+    "dict": {
+     "description": 370,
+     "protocol": 371,
+     "executionPrompt": 372,
+     "fallback": 340,
+     "members": 384,
+     "taskPlanning": 387,
+     "reviewPolicy": 406,
+     "tasks": 416
+    }
+   },
+   "419": {
+    "type": "string",
+    "meta": {}
+   },
+   "420": {
+    "type": "dict",
+    "meta": {
+     "default": {}
+    },
+    "inner": 417,
+    "sKey": 419
+   },
+   "422": {
+    "type": "string",
+    "meta": {}
+   },
+   "423": {
+    "type": "dict",
+    "meta": {
+     "default": {}
+    },
+    "inner": 362,
+    "sKey": 422
+   },
+   "427": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0,
+     "default": 0
+    }
+   },
+   "432": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 1,
+     "default": 8
+    }
+   },
+   "436": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0,
+     "default": 117
+    }
+   },
+   "438": {
+    "type": "boolean",
+    "meta": {
+     "default": true
+    }
+   },
+   "439": {
+    "type": "object",
+    "meta": {
+     "default": {}
+    },
+    "dict": {
+     "stateDir": 364,
+     "memberProvider": 366,
+     "memberModel": 367,
+     "memberLlmProvider": 368,
+     "executionPrompt": 369,
+     "fallback": 340,
+     "profiles": 420,
+     "toolPolicies": 423,
+     "memberMaxDepth": 427,
+     "maxMembers": 432,
+     "promptSectionOrder": 436,
+     "slashCommand": 438
+    }
+   }
+  }
+ }
+}

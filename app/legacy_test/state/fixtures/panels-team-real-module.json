@@ -1,0 +1,86 @@
+{
+  "scope": "real modules only; controlled Session events, no LLM/team spawn/persistence Host",
+  "before": {
+    "projections": {
+      "panels-team-probe": {
+        "asOfSeq": -1,
+        "values": {
+          "plan": {
+            "active": false,
+            "pending": false
+          },
+          "agentTeam": {
+            "members": [
+              {
+                "id": "panels-team-probe",
+                "name": "lead",
+                "role": "lead",
+                "phase": "active"
+              }
+            ],
+            "tasks": []
+          }
+        }
+      }
+    }
+  },
+  "latestResident": {
+    "projections": {
+      "panels-team-probe": {
+        "asOfSeq": 1,
+        "values": {
+          "plan": {
+            "active": true,
+            "pending": false
+          },
+          "agentTeam": {
+            "members": [
+              {
+                "id": "panels-team-probe",
+                "name": "lead",
+                "role": "lead",
+                "phase": "active"
+              },
+              {
+                "id": "teammate-1",
+                "name": "worker",
+                "role": "teammate",
+                "phase": "provisioning"
+              }
+            ],
+            "tasks": []
+          }
+        }
+      }
+    }
+  },
+  "coldBaseline": {
+    "projections": {}
+  },
+  "querySnapshot": {
+    "asOfSeq": 1,
+    "values": {
+      "plan": {
+        "active": true,
+        "pending": false
+      },
+      "agentTeam": {
+        "members": [
+          {
+            "id": "panels-team-probe",
+            "name": "lead",
+            "role": "lead",
+            "phase": "active"
+          },
+          {
+            "id": "teammate-1",
+            "name": "worker",
+            "role": "teammate",
+            "phase": "provisioning"
+          }
+        ],
+        "tasks": []
+      }
+    }
+  }
+}

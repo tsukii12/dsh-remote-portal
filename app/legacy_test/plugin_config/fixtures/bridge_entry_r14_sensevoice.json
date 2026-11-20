@@ -1,0 +1,323 @@
+{
+  "v": 1,
+  "entryId": "speech-to-text-sensevoice",
+  "kind": "plugin",
+  "owner": "optional",
+  "bundle": "@deepseek-ai/dsh-experimental-voice-input-bundle",
+  "source": "official-optional-bundle",
+  "revision": "wm2tejHq2bRzhlk8DOsFBPtpFDnHrrprGRWSRGIr2-w",
+  "schema": {
+    "uid": 1633,
+    "refs": {
+      "1528": {
+        "type": "string",
+        "meta": {
+          "min": 1,
+          "default": "sensevoice-local"
+        }
+      },
+      "1531": {
+        "type": "string",
+        "meta": {
+          "min": 1,
+          "required": true
+        }
+      },
+      "1533": {
+        "type": "string",
+        "meta": {
+          "min": 1
+        }
+      },
+      "1534": {
+        "type": "const",
+        "meta": {}
+      },
+      "1535": {
+        "type": "union",
+        "meta": {},
+        "list": [
+          1533,
+          1534
+        ]
+      },
+      "1537": {
+        "type": "string",
+        "meta": {
+          "min": 1
+        }
+      },
+      "1538": {
+        "type": "const",
+        "meta": {}
+      },
+      "1539": {
+        "type": "union",
+        "meta": {},
+        "list": [
+          1537,
+          1538
+        ]
+      },
+      "1542": {
+        "type": "const",
+        "meta": {
+          "required": true
+        },
+        "value": "int8"
+      },
+      "1544": {
+        "type": "const",
+        "meta": {
+          "required": true
+        },
+        "value": "fp32"
+      },
+      "1545": {
+        "type": "union",
+        "meta": {
+          "default": "int8"
+        },
+        "list": [
+          1542,
+          1544
+        ]
+      },
+      "1547": {
+        "type": "string",
+        "meta": {
+          "pattern": {
+            "source": "^https?:\\/\\/[^/\\s?#@]+\\/?$",
+            "flags": ""
+          }
+        }
+      },
+      "1548": {
+        "type": "const",
+        "meta": {}
+      },
+      "1549": {
+        "type": "union",
+        "meta": {},
+        "list": [
+          1547,
+          1548
+        ]
+      },
+      "1551": {
+        "type": "string",
+        "meta": {
+          "pattern": {
+            "source": "^https?:\\/\\/[^/\\s?#@]+\\/?$",
+            "flags": ""
+          }
+        }
+      },
+      "1554": {
+        "type": "array",
+        "meta": {
+          "default": [
+            "https://huggingface.co",
+            "https://hf-mirror.com"
+          ],
+          "min": 1
+        },
+        "inner": 1551
+      },
+      "1560": {
+        "type": "number",
+        "meta": {
+          "step": 1,
+          "min": 1,
+          "max": 2147483647,
+          "default": 3000
+        }
+      },
+      "1565": {
+        "type": "number",
+        "meta": {
+          "step": 1,
+          "min": 1,
+          "default": 2
+        }
+      },
+      "1569": {
+        "type": "number",
+        "meta": {
+          "min": 1,
+          "max": 120,
+          "default": 30
+        }
+      },
+      "1573": {
+        "type": "number",
+        "meta": {
+          "min": 0,
+          "max": 1,
+          "default": 0.5
+        }
+      },
+      "1576": {
+        "type": "number",
+        "meta": {
+          "min": 0,
+          "default": 0.25
+        }
+      },
+      "1579": {
+        "type": "number",
+        "meta": {
+          "min": 0.01,
+          "default": 0.5
+        }
+      },
+      "1583": {
+        "type": "number",
+        "meta": {
+          "min": 0,
+          "max": 1,
+          "default": 0.3
+        }
+      },
+      "1588": {
+        "type": "number",
+        "meta": {
+          "step": 1,
+          "min": 46,
+          "default": 4194304
+        }
+      },
+      "1594": {
+        "type": "number",
+        "meta": {
+          "step": 1,
+          "min": 1,
+          "max": 2147483647,
+          "default": 3600000
+        }
+      },
+      "1600": {
+        "type": "number",
+        "meta": {
+          "step": 1,
+          "min": 1,
+          "max": 2147483647,
+          "default": 120000
+        }
+      },
+      "1605": {
+        "type": "number",
+        "meta": {
+          "step": 1,
+          "min": 0,
+          "max": 2147483647,
+          "default": 300000
+        }
+      },
+      "1610": {
+        "type": "number",
+        "meta": {
+          "step": 1,
+          "min": 1,
+          "default": 4
+        }
+      },
+      "1616": {
+        "type": "number",
+        "meta": {
+          "step": 1,
+          "min": 1,
+          "max": 2147483647,
+          "default": 1000
+        }
+      },
+      "1621": {
+        "type": "number",
+        "meta": {
+          "step": 1,
+          "min": 1,
+          "default": 65536
+        }
+      },
+      "1626": {
+        "type": "number",
+        "meta": {
+          "step": 1,
+          "min": 1,
+          "default": 131072
+        }
+      },
+      "1632": {
+        "type": "number",
+        "meta": {
+          "step": 1,
+          "min": 1,
+          "max": 2147483647,
+          "default": 100
+        }
+      },
+      "1633": {
+        "type": "object",
+        "meta": {
+          "default": {}
+        },
+        "dict": {
+          "providerId": 1528,
+          "dataRoot": 1531,
+          "modelDirectory": 1535,
+          "vadModelPath": 1539,
+          "precision": 1545,
+          "modelOrigin": 1549,
+          "modelOrigins": 1554,
+          "modelProbeTimeoutMs": 1560,
+          "threads": 1565,
+          "segmentSeconds": 1569,
+          "vadThreshold": 1573,
+          "minSpeechSeconds": 1576,
+          "minSilenceSeconds": 1579,
+          "vadOnsetPaddingSeconds": 1583,
+          "maxAudioBytes": 1588,
+          "prepareTimeoutMs": 1594,
+          "inferenceTimeoutMs": 1600,
+          "idleTimeoutMs": 1605,
+          "maxPending": 1610,
+          "graceMs": 1616,
+          "maxLogBytes": 1621,
+          "maxResponseBytes": 1626,
+          "progressIntervalMs": 1632
+        }
+      }
+    }
+  },
+  "value": {
+    "providerId": "sensevoice-local",
+    "dataRoot": "/root/sensevoice",
+    "modelDirectory": "/root/offline-models",
+    "vadModelPath": "/root/offline-vad.onnx",
+    "precision": "int8",
+    "modelOrigins": [
+      "https://huggingface.co",
+      "https://hf-mirror.com"
+    ],
+    "modelProbeTimeoutMs": 3000,
+    "threads": 2,
+    "segmentSeconds": 30,
+    "vadThreshold": 0.5,
+    "minSpeechSeconds": 0.25,
+    "minSilenceSeconds": 0.5,
+    "vadOnsetPaddingSeconds": 0.3,
+    "maxAudioBytes": 4194304,
+    "prepareTimeoutMs": 3600000,
+    "inferenceTimeoutMs": 120000,
+    "idleTimeoutMs": 300000,
+    "maxPending": 4,
+    "graceMs": 1000,
+    "maxLogBytes": 65536,
+    "maxResponseBytes": 131072,
+    "progressIntervalMs": 100
+  },
+  "base": {},
+  "user": {},
+  "secrets": [],
+  "writable": false
+}

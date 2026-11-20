@@ -1,0 +1,407 @@
+{
+ "package": "@furongjun1999/dsh-memory",
+ "version": "0.9.17",
+ "file": "lib/index.js",
+ "note": "defaultPython() resolved to 'python3' (non-Windows).",
+ "schema": {
+  "uid": 711,
+  "refs": {
+   "619": {
+    "type": "string",
+    "meta": {
+     "default": "lingshu"
+    }
+   },
+   "621": {
+    "type": "boolean",
+    "meta": {
+     "default": true
+    }
+   },
+   "623": {
+    "type": "string",
+    "meta": {
+     "default": "python3"
+    }
+   },
+   "626": {
+    "type": "string",
+    "meta": {
+     "required": true
+    }
+   },
+   "627": {
+    "type": "array",
+    "meta": {
+     "default": [
+      "-m",
+      "md_cg.mcp_server"
+     ]
+    },
+    "inner": 626
+   },
+   "629": {
+    "type": "string",
+    "meta": {
+     "default": "data/lingshu.db"
+    }
+   },
+   "631": {
+    "type": "string",
+    "meta": {
+     "default": "灵枢"
+    }
+   },
+   "634": {
+    "type": "string",
+    "meta": {
+     "required": true
+    }
+   },
+   "635": {
+    "type": "string",
+    "meta": {}
+   },
+   "636": {
+    "type": "dict",
+    "meta": {
+     "default": {}
+    },
+    "inner": 634,
+    "sKey": 635
+   },
+   "637": {
+    "type": "const",
+    "meta": {},
+    "value": "core"
+   },
+   "638": {
+    "type": "const",
+    "meta": {},
+    "value": "brain"
+   },
+   "639": {
+    "type": "const",
+    "meta": {},
+    "value": "all"
+   },
+   "640": {
+    "type": "array",
+    "meta": {
+     "default": []
+    },
+    "inner": 642
+   },
+   "642": {
+    "type": "string",
+    "meta": {
+     "required": true
+    }
+   },
+   "644": {
+    "type": "union",
+    "meta": {
+     "default": "core"
+    },
+    "list": [
+     637,
+     638,
+     639,
+     640
+    ]
+   },
+   "646": {
+    "type": "string",
+    "meta": {
+     "default": "v2.0-published"
+    }
+   },
+   "648": {
+    "type": "boolean",
+    "meta": {
+     "default": true
+    }
+   },
+   "650": {
+    "type": "boolean",
+    "meta": {
+     "default": false
+    }
+   },
+   "652": {
+    "type": "boolean",
+    "meta": {
+     "default": false
+    }
+   },
+   "654": {
+    "type": "number",
+    "meta": {
+     "default": 0.6
+    }
+   },
+   "656": {
+    "type": "boolean",
+    "meta": {
+     "default": true
+    }
+   },
+   "658": {
+    "type": "number",
+    "meta": {
+     "default": 4
+    }
+   },
+   "660": {
+    "type": "boolean",
+    "meta": {
+     "default": false
+    }
+   },
+   "661": {
+    "type": "boolean",
+    "meta": {}
+   },
+   "662": {
+    "type": "number",
+    "meta": {}
+   },
+   "664": {
+    "type": "union",
+    "meta": {
+     "default": 10
+    },
+    "list": [
+     661,
+     662
+    ]
+   },
+   "666": {
+    "type": "boolean",
+    "meta": {
+     "default": true
+    }
+   },
+   "668": {
+    "type": "boolean",
+    "meta": {
+     "default": true
+    }
+   },
+   "670": {
+    "type": "number",
+    "meta": {
+     "default": 10
+    }
+   },
+   "672": {
+    "type": "object",
+    "meta": {
+     "default": {
+      "enabled": true,
+      "turns": 10
+     }
+    },
+    "dict": {
+     "enabled": 668,
+     "turns": 670
+    }
+   },
+   "674": {
+    "type": "object",
+    "meta": {
+     "default": {
+      "userMessage": true,
+      "assistantMessage": false,
+      "toolResult": false,
+      "importance": 0.6,
+      "autoRecall": true,
+      "autoRecallLimit": 4,
+      "autoRecallIdentity": false,
+      "turnReminder": 10,
+      "desensitize": true,
+      "contextWindow": {
+       "enabled": true,
+       "turns": 10
+      }
+     }
+    },
+    "dict": {
+     "userMessage": 648,
+     "assistantMessage": 650,
+     "toolResult": 652,
+     "importance": 654,
+     "autoRecall": 656,
+     "autoRecallLimit": 658,
+     "autoRecallIdentity": 660,
+     "turnReminder": 664,
+     "desensitize": 666,
+     "contextWindow": 672
+    }
+   },
+   "676": {
+    "type": "number",
+    "meta": {
+     "default": 60000
+    }
+   },
+   "678": {
+    "type": "number",
+    "meta": {
+     "default": 30000
+    }
+   },
+   "680": {
+    "type": "boolean",
+    "meta": {
+     "default": false
+    }
+   },
+   "682": {
+    "type": "boolean",
+    "meta": {
+     "default": false
+    }
+   },
+   "684": {
+    "type": "boolean",
+    "meta": {
+     "default": false
+    }
+   },
+   "686": {
+    "type": "number",
+    "meta": {
+     "default": 600000
+    }
+   },
+   "688": {
+    "type": "object",
+    "meta": {
+     "default": {
+      "enabled": false,
+      "heartbeatMs": 600000
+     }
+    },
+    "dict": {
+     "enabled": 684,
+     "heartbeatMs": 686
+    }
+   },
+   "690": {
+    "type": "boolean",
+    "meta": {
+     "default": true
+    }
+   },
+   "692": {
+    "type": "string",
+    "meta": {
+     "default": ""
+    }
+   },
+   "694": {
+    "type": "string",
+    "meta": {
+     "default": "dsh-memory"
+    }
+   },
+   "696": {
+    "type": "string",
+    "meta": {
+     "default": "default"
+    }
+   },
+   "698": {
+    "type": "string",
+    "meta": {
+     "default": "private"
+    }
+   },
+   "700": {
+    "type": "object",
+    "meta": {
+     "default": {
+      "enabled": true,
+      "root": "",
+      "actor": "dsh-memory",
+      "tenant": "default",
+      "clearance": "private"
+     }
+    },
+    "dict": {
+     "enabled": 690,
+     "root": 692,
+     "actor": 694,
+     "tenant": 696,
+     "clearance": 698
+    }
+   },
+   "702": {
+    "type": "boolean",
+    "meta": {
+     "default": false
+    }
+   },
+   "704": {
+    "type": "string",
+    "meta": {
+     "default": ""
+    }
+   },
+   "707": {
+    "type": "string",
+    "meta": {
+     "required": true
+    }
+   },
+   "708": {
+    "type": "array",
+    "meta": {
+     "default": []
+    },
+    "inner": 707
+   },
+   "710": {
+    "type": "object",
+    "meta": {
+     "default": {
+      "enabled": false,
+      "python": "",
+      "args": []
+     }
+    },
+    "dict": {
+     "enabled": 702,
+     "python": 704,
+     "args": 708
+    }
+   },
+   "711": {
+    "type": "object",
+    "meta": {
+     "default": {}
+    },
+    "dict": {
+     "serverName": 619,
+     "toolAliases": 621,
+     "python": 623,
+     "moduleArgs": 627,
+     "dbPath": 629,
+     "identity": 631,
+     "env": 636,
+     "tools": 644,
+     "charter": 646,
+     "memory": 674,
+     "toolCallTimeoutMs": 676,
+     "maxRetryDelayMs": 678,
+     "failOnStartupError": 680,
+     "roleplayEntryButton": 682,
+     "mutual": 688,
+     "mdcg": 700,
+     "capability": 710
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,4239 @@
+[
+  {
+    "name": "@deepseek-ai/dsh-base",
+    "official": false,
+    "availability": "installation",
+    "version": "0.2.1-rc.4",
+    "description": "The shared dsh core as a profile bundle: the first patch layer of base-backed profiles, inserting core rows over the empty profile root",
+    "meta": {
+      "title": "@deepseek-ai/dsh-base",
+      "description": "The shared dsh core as a profile bundle: the first patch layer of base-backed profiles, inserting core rows over the empty profile root"
+    },
+    "enabled": true,
+    "installed": false,
+    "optional": false,
+    "removable": false,
+    "readOnlyReason": "management-required",
+    "rows": [
+      {
+        "rowId": "tool-plugin-manager",
+        "moduleName": "@deepseek-ai/dsh-plugin-manager/tools",
+        "entryId": "include:tool-plugin-manager",
+        "meta": {
+          "title": {
+            "en": "plugin-manager/tools",
+            "zh": "插件管理工具"
+          }
+        }
+      },
+      {
+        "rowId": "plugin-manager",
+        "moduleName": "@deepseek-ai/dsh-plugin-manager",
+        "entryId": "include:plugin-manager",
+        "meta": {
+          "title": {
+            "en": "plugin-manager",
+            "zh": "插件管理服务"
+          },
+          "description": {
+            "en": "Current-profile plugin and bundle management shared by dsh CLI, Web and agent tools",
+            "zh": "管理当前运行配置中的插件与插件包，支持安装、移除和启停。"
+          }
+        }
+      },
+      {
+        "rowId": "timer",
+        "moduleName": "@deepseek-ai/cordis-plugin-timer",
+        "entryId": "include:timer",
+        "meta": {
+          "title": {
+            "en": "timer",
+            "zh": "计时服务"
+          },
+          "description": {
+            "en": "Timer service for cordis",
+            "zh": "为其他插件提供延时和周期执行能力。"
+          }
+        }
+      },
+      {
+        "rowId": "hmr",
+        "moduleName": "@deepseek-ai/dsh-hmr",
+        "entryId": "include:hmr",
+        "meta": {
+          "title": {
+            "en": "hmr",
+            "zh": "插件热重载"
+          },
+          "description": {
+            "en": "Coordinated module and profile configuration hot reload",
+            "zh": "在应用运行期间重新加载插件代码和配置。"
+          }
+        }
+      },
+      {
+        "rowId": "llm",
+        "moduleName": "@deepseek-ai/dsh-llm",
+        "entryId": "include:llm",
+        "meta": {
+          "title": {
+            "en": "llm",
+            "zh": "模型调用服务"
+          },
+          "description": {
+            "en": "Provider-neutral LLM service interface for the DeepSeek Harness",
+            "zh": "为不同模型提供统一的调用接口。"
+          }
+        }
+      },
+      {
+        "rowId": "deepseek-llm-api-extensions",
+        "moduleName": "@deepseek-ai/dsh-deepseek-llm-api-extensions",
+        "entryId": "include:deepseek-llm-api-extensions",
+        "meta": {
+          "title": {
+            "en": "deepseek-llm-api-extensions",
+            "zh": "DeepSeek API 扩展"
+          },
+          "description": {
+            "en": "Additive request-field registry for the official DeepSeek LLM API adapter",
+            "zh": "允许其他插件向 DeepSeek 模型请求添加扩展字段。"
+          }
+        }
+      },
+      {
+        "rowId": "session",
+        "moduleName": "@deepseek-ai/dsh-session",
+        "entryId": "include:session",
+        "meta": {
+          "title": {
+            "en": "session",
+            "zh": "会话记录"
+          },
+          "description": {
+            "en": "Event-sourced session store for the DeepSeek Harness",
+            "zh": "记录会话中的消息、工具调用和运行事件。"
+          }
+        }
+      },
+      {
+        "rowId": "session-log-deepseek",
+        "moduleName": "@deepseek-ai/dsh-session-log-deepseek",
+        "entryId": "include:session-log-deepseek",
+        "meta": {
+          "title": {
+            "en": "session-log-deepseek",
+            "zh": "DeepSeek 会话日志上传"
+          },
+          "description": {
+            "en": "Incremental lossless session-log request extension for the official DeepSeek LLM API",
+            "zh": "启用后，随官方模型 API 请求向 DeepSeek 上传会话日志。"
+          }
+        }
+      },
+      {
+        "rowId": "typert",
+        "moduleName": "@deepseek-ai/dsh-typert-registry",
+        "entryId": "include:typert",
+        "meta": {
+          "title": {
+            "en": "typert-registry",
+            "zh": "Typert 类型注册表"
+          },
+          "description": {
+            "en": "Runtime registry for generated package reflection and Zod schemas",
+            "zh": "为插件提供运行时类型信息和远程调用定义。"
+          }
+        }
+      },
+      {
+        "rowId": "typert-loader",
+        "moduleName": "@deepseek-ai/dsh-typert-loader",
+        "entryId": "include:typert-loader",
+        "meta": {
+          "title": {
+            "en": "typert-loader",
+            "zh": "Typert 类型加载"
+          },
+          "description": {
+            "en": "Loader integration for generated Typert package contributions",
+            "zh": "加载插件生成的类型信息，供运行时查询和调用。"
+          }
+        }
+      },
+      {
+        "rowId": "typert-gateway",
+        "moduleName": "@deepseek-ai/dsh-api-gateway",
+        "entryId": "include:typert-gateway",
+        "meta": {
+          "title": {
+            "en": "api-gateway",
+            "zh": "远程调用网关"
+          },
+          "description": {
+            "en": "Typert Remote Host dispatcher and Client API endpoint",
+            "zh": "接收客户端的接口调用，并分发给对应的服务。"
+          }
+        }
+      },
+      {
+        "rowId": "remote-access",
+        "moduleName": "@deepseek-ai/dsh-api-remote-access",
+        "entryId": "include:remote-access",
+        "meta": {
+          "title": "@deepseek-ai/dsh-api-remote-access",
+          "description": "Method-level Remote access control for non-owner Peers and the per-Peer access snapshot"
+        }
+      },
+      {
+        "rowId": "session-title",
+        "moduleName": "@deepseek-ai/dsh-session-title",
+        "entryId": "include:session-title",
+        "meta": {
+          "title": {
+            "en": "session-title",
+            "zh": "会话标题服务"
+          },
+          "description": {
+            "en": "Log-backed session title service and provider registry for the DeepSeek Harness",
+            "zh": "保存和读取会话标题，并管理标题生成方式。"
+          }
+        }
+      },
+      {
+        "rowId": "session-title-llm",
+        "moduleName": "@deepseek-ai/dsh-session-title-first-prompt-llm",
+        "entryId": "include:session-title-llm",
+        "meta": {
+          "title": {
+            "en": "session-title-first-prompt-llm",
+            "zh": "首条消息生成标题"
+          },
+          "description": {
+            "en": "First-message LLM provider plugin for DeepSeek Harness session titles",
+            "zh": "根据会话中的首条消息，使用模型生成标题。"
+          }
+        }
+      },
+      {
+        "rowId": "user-questions",
+        "moduleName": "@deepseek-ai/dsh-user-questions",
+        "entryId": "include:user-questions",
+        "meta": {
+          "title": {
+            "en": "user-questions",
+            "zh": "用户提问服务"
+          },
+          "description": {
+            "en": "Abstract user-questions seam (ctx.userQuestions) for asking the human during agent runs",
+            "zh": "让运行中的 AI 向用户提问并等待回答。"
+          }
+        }
+      },
+      {
+        "rowId": "agent",
+        "moduleName": "@deepseek-ai/dsh-agent",
+        "entryId": "include:agent",
+        "meta": {
+          "title": {
+            "en": "agent",
+            "zh": "智能体管理"
+          },
+          "description": {
+            "en": "Agent interface, registry, initiator scope, and event vocabulary for the DeepSeek Harness",
+            "zh": "管理智能体实例及其运行上下文和事件。"
+          }
+        }
+      },
+      {
+        "rowId": "plugin-package-inventory-deepseek",
+        "moduleName": "@deepseek-ai/dsh-plugin-package-inventory-deepseek",
+        "entryId": "include:plugin-package-inventory-deepseek",
+        "meta": {
+          "title": {
+            "en": "plugin-package-inventory-deepseek",
+            "zh": "DeepSeek 插件清单上报"
+          },
+          "description": {
+            "en": "Active Loader-backed plugin package inventory for official DeepSeek LLM API requests",
+            "zh": "随官方模型 API 请求发送当前活跃插件包的清单。"
+          }
+        }
+      },
+      {
+        "rowId": "agent-default-model",
+        "moduleName": "@deepseek-ai/dsh-agent-default-model",
+        "entryId": "include:agent-default-model",
+        "meta": {
+          "title": {
+            "en": "agent-default-model",
+            "zh": "默认模型"
+          },
+          "description": {
+            "en": "Default model selection shared by Agent entry points",
+            "zh": "为新建智能体提供默认模型选择。"
+          }
+        }
+      },
+      {
+        "rowId": "jobs",
+        "moduleName": "@deepseek-ai/dsh-jobs-local",
+        "entryId": "include:jobs",
+        "meta": {
+          "title": {
+            "en": "jobs-local",
+            "zh": "本地后台任务"
+          },
+          "description": {
+            "en": "Process-local implementation of the DeepSeek Harness background job registry seam",
+            "zh": "管理当前进程中的后台任务及其运行状态。"
+          }
+        }
+      },
+      {
+        "rowId": "llm-retry",
+        "moduleName": "@deepseek-ai/dsh-llm-retry",
+        "entryId": "include:llm-retry",
+        "meta": {
+          "title": {
+            "en": "llm-retry",
+            "zh": "模型请求重试"
+          },
+          "description": {
+            "en": "Provider-routed LLM request retry policy for the DeepSeek Harness",
+            "zh": "按模型提供方的策略重试失败的请求。"
+          }
+        }
+      },
+      {
+        "rowId": "config-editor",
+        "moduleName": "@deepseek-ai/dsh-config-editor",
+        "entryId": "include:config-editor",
+        "meta": {
+          "title": {
+            "en": "config-editor",
+            "zh": "插件配置编辑"
+          },
+          "description": {
+            "en": "Persist plugin configuration through profile patches and Loader reconciliation",
+            "zh": "保存插件配置，并将变更应用到当前运行配置。"
+          }
+        }
+      },
+      {
+        "rowId": "settings",
+        "moduleName": "@deepseek-ai/dsh-settings",
+        "entryId": "include:settings",
+        "meta": {
+          "title": {
+            "en": "settings",
+            "zh": "设置服务"
+          },
+          "description": {
+            "en": "Abstract user-settings seam (ctx.settings) for the DeepSeek Harness",
+            "zh": "为其他插件提供统一的用户设置接口。"
+          }
+        }
+      },
+      {
+        "rowId": "authorization",
+        "moduleName": "@deepseek-ai/dsh-authorization",
+        "entryId": "include:authorization",
+        "meta": {
+          "title": {
+            "en": "authorization",
+            "zh": "授权流程服务"
+          },
+          "description": {
+            "en": "Authorization seam (ctx.authorization): plugin-owned flows that obtain a credential through a conversation with the human",
+            "zh": "组织需要用户参与的登录和凭据授权流程。"
+          }
+        }
+      },
+      {
+        "rowId": "deepseek-account",
+        "moduleName": "@deepseek-ai/dsh-deepseek-account-platform",
+        "entryId": "include:deepseek-account",
+        "meta": {
+          "title": {
+            "en": "deepseek-account-platform",
+            "zh": "DeepSeek 账号登录"
+          },
+          "description": {
+            "en": "Authorize DeepSeek accounts through browser PKCE",
+            "zh": "通过浏览器完成 DeepSeek 账号登录授权。"
+          }
+        }
+      },
+      {
+        "rowId": "credentials",
+        "moduleName": "@deepseek-ai/dsh-credentials-local",
+        "entryId": "include:credentials",
+        "meta": {
+          "title": {
+            "en": "credentials-local",
+            "zh": "本地凭据存储"
+          },
+          "description": {
+            "en": "File-backed credentials provider ($DSH_HOME/.env under the live process environment) for the DeepSeek Harness",
+            "zh": "保存 API 密钥等凭据，并按优先级读取环境变量和本地凭据文件。"
+          }
+        }
+      },
+      {
+        "rowId": "llm-pi-ai",
+        "moduleName": "@deepseek-ai/dsh-llm-pi-ai",
+        "entryId": "include:llm-pi-ai",
+        "meta": {
+          "title": {
+            "en": "llm-pi-ai",
+            "zh": "pi-ai 模型适配"
+          },
+          "description": {
+            "en": "pi-ai-backed DeepSeek adapter for the DeepSeek Harness LLM seam (design-verification twin of dsh-llm-deepseek)",
+            "zh": "通过 pi-ai 为 DeepSeek Harness 提供 DeepSeek 模型适配，作为 dsh-llm-deepseek 的设计验证实现。"
+          }
+        }
+      },
+      {
+        "rowId": "session-persistence-jsonl",
+        "moduleName": "@deepseek-ai/dsh-session-persistence-jsonl",
+        "entryId": "include:session-persistence-jsonl",
+        "meta": {
+          "title": {
+            "en": "session-persistence-jsonl",
+            "zh": "会话日志持久保存"
+          },
+          "description": {
+            "en": "JSONL durable session persistence backend for the DeepSeek Harness",
+            "zh": "将会话日志保存为本地 JSONL 文件，供后续恢复和读取。"
+          }
+        }
+      },
+      {
+        "rowId": "attachment-local",
+        "moduleName": "@deepseek-ai/dsh-attachment-local",
+        "entryId": "include:attachment-local",
+        "meta": {
+          "title": {
+            "en": "attachment-local",
+            "zh": "本地附件存储"
+          },
+          "description": {
+            "en": "Private content-addressed DSH_HOME attachment storage",
+            "zh": "保存会话中的图片等附件，并按内容标识读取。"
+          }
+        }
+      },
+      {
+        "rowId": "session-query-sqlite",
+        "moduleName": "@deepseek-ai/dsh-session-query-sqlite",
+        "entryId": "include:session-query-sqlite",
+        "meta": {
+          "title": {
+            "en": "session-query-sqlite",
+            "zh": "会话查询与搜索"
+          },
+          "description": {
+            "en": "Concrete ctx.sessionQuery backend with SQLite FTS5 search",
+            "zh": "查询会话记录，并在配置启用时提供 SQLite 全文搜索。"
+          }
+        }
+      },
+      {
+        "rowId": "working-directory",
+        "moduleName": "@deepseek-ai/dsh-working-directory",
+        "entryId": "include:working-directory",
+        "meta": {
+          "title": "@deepseek-ai/dsh-working-directory",
+          "description": "Session working directories with durable changes and model context"
+        }
+      },
+      {
+        "rowId": "tool-working-directory",
+        "moduleName": "@deepseek-ai/dsh-tool-working-directory",
+        "entryId": "include:tool-working-directory",
+        "meta": {
+          "title": "@deepseek-ai/dsh-tool-working-directory",
+          "description": "Read and change the active Session working directory"
+        }
+      },
+      {
+        "rowId": "session-projection",
+        "moduleName": "@deepseek-ai/dsh-session-projection",
+        "entryId": "include:session-projection",
+        "meta": {
+          "title": {
+            "en": "session-projection",
+            "zh": "会话状态汇总"
+          },
+          "description": {
+            "en": "Session-projection seam: the merge-extensible projection type table, the provider contract, and the ctx.sessionProjections registry serving whole current values of log-derived per-session state",
+            "zh": "从会话日志生成标题、状态等信息，供其他功能读取。"
+          }
+        }
+      },
+      {
+        "rowId": "storage",
+        "moduleName": "@deepseek-ai/dsh-storage",
+        "entryId": "include:storage",
+        "meta": {
+          "title": {
+            "en": "storage",
+            "zh": "数据存储服务"
+          },
+          "description": {
+            "en": "Storage hub (ctx.storage): named backend registry plus mounted data-form facilities for the DeepSeek Harness",
+            "zh": "统一管理插件使用的存储后端和数据访问方式。"
+          }
+        }
+      },
+      {
+        "rowId": "storage-json",
+        "moduleName": "@deepseek-ai/dsh-storage-json",
+        "entryId": "include:storage-json",
+        "meta": {
+          "title": {
+            "en": "storage-json",
+            "zh": "JSON 文件存储"
+          },
+          "description": {
+            "en": "JSON file KV storage backend for the DeepSeek Harness storage hub",
+            "zh": "将键值数据保存为本地 JSON 文件。"
+          }
+        }
+      },
+      {
+        "rowId": "storage-domain",
+        "moduleName": "@deepseek-ai/dsh-storage-domain",
+        "entryId": "include:storage-domain",
+        "meta": {
+          "title": {
+            "en": "storage-domain",
+            "zh": "结构化数据存储"
+          },
+          "description": {
+            "en": "Domain data form (ctx.storage.domain): schema-validated, event-emitting KV domains over storage backends for the DeepSeek Harness",
+            "zh": "按数据结构校验和保存键值数据，并通知其他插件发生了变更。"
+          }
+        }
+      },
+      {
+        "rowId": "session-projection-cache",
+        "moduleName": "@deepseek-ai/dsh-session-projection-cache",
+        "entryId": "include:session-projection-cache",
+        "meta": {
+          "title": {
+            "en": "session-projection-cache",
+            "zh": "会话状态缓存"
+          },
+          "description": {
+            "en": "Persisted projection cache (ctx.sessionProjectionCache): durable per-session checkpoint records on the session_projcache storage domain (per-record layout), throttled write-behind, and the cached listing read",
+            "zh": "缓存从会话日志生成的状态，供会话列表等功能快速读取。"
+          }
+        }
+      },
+      {
+        "rowId": "otel",
+        "moduleName": "@deepseek-ai/dsh-otel",
+        "entryId": "include:otel",
+        "meta": {
+          "title": {
+            "en": "otel",
+            "zh": "OpenTelemetry 上报服务"
+          },
+          "description": {
+            "en": "Cordis service for independent ordinary-event and byte-bounded Session-log OTLP channels",
+            "zh": "为产品事件和会话日志提供独立的数据上报通道。"
+          }
+        }
+      },
+      {
+        "rowId": "session-telemetry-otel",
+        "moduleName": "@deepseek-ai/dsh-session-telemetry-otel",
+        "entryId": "include:session-telemetry-otel",
+        "meta": {
+          "title": {
+            "en": "session-telemetry-otel",
+            "zh": "反馈会话日志上传"
+          },
+          "description": {
+            "en": "Feedback-authorized Session logs over byte-bounded OpenTelemetry HTTP requests",
+            "zh": "按反馈授权策略，通过 OpenTelemetry 上传相关会话日志。"
+          }
+        }
+      },
+      {
+        "rowId": "subprocess",
+        "moduleName": "@deepseek-ai/dsh-subprocess-local",
+        "entryId": "include:subprocess",
+        "meta": {
+          "title": {
+            "en": "subprocess-local",
+            "zh": "本地子进程"
+          },
+          "description": {
+            "en": "Local-subprocess implementation of the DeepSeek Harness subprocess seam",
+            "zh": "为其他插件提供本地进程的启动和管理能力。"
+          }
+        }
+      },
+      {
+        "rowId": "sandbox",
+        "moduleName": "@deepseek-ai/dsh-sandbox-local",
+        "entryId": "include:sandbox",
+        "meta": {
+          "title": {
+            "en": "sandbox-local",
+            "zh": "本地进程沙箱"
+          },
+          "description": {
+            "en": "Local process-sandbox backends for the DeepSeek Harness sandbox seam: bwrap, the npm-distributed landlock-run launcher, macOS Seatbelt, or the Windows ACL restricted-token runner — functionally probed, fail-closed",
+            "zh": "按操作系统提供进程隔离，限制命令的访问范围。"
+          }
+        }
+      },
+      {
+        "rowId": "sandbox-policy",
+        "moduleName": "@deepseek-ai/dsh-sandbox-policy",
+        "entryId": "include:sandbox-policy",
+        "meta": {
+          "title": {
+            "en": "sandbox-policy",
+            "zh": "沙箱权限策略"
+          },
+          "description": {
+            "en": "Per-call sandbox policy resolver and current model context: deployment fallbacks plus each session's mode and workspace root, shared by every enforcing capability family",
+            "zh": "根据当前会话的权限模式和工作区，确定每次操作的限制。"
+          }
+        }
+      },
+      {
+        "rowId": "bash-sandbox",
+        "moduleName": "@deepseek-ai/dsh-bash-sandbox",
+        "entryId": "include:bash-sandbox",
+        "meta": {
+          "title": {
+            "en": "bash-sandbox",
+            "zh": "Bash 沙箱执行"
+          },
+          "description": {
+            "en": "Sandbox-consuming implementation of the DeepSeek Harness bash executor seam (confines every command via ctx.sandbox, reports denial/enforcement result facts)",
+            "zh": "在当前沙箱权限范围内执行 Bash 命令。"
+          }
+        }
+      },
+      {
+        "rowId": "pwsh-sandbox",
+        "moduleName": "@deepseek-ai/dsh-pwsh-sandbox",
+        "entryId": "include:pwsh-sandbox",
+        "meta": {
+          "title": {
+            "en": "pwsh-sandbox",
+            "zh": "PowerShell 沙箱执行"
+          },
+          "description": {
+            "en": "Sandbox-consuming implementation of the DeepSeek Harness PowerShell executor seam (confines every command via ctx.sandbox, reports denial/enforcement result facts)",
+            "zh": "在当前沙箱权限范围内执行 PowerShell 命令。"
+          }
+        }
+      },
+      {
+        "rowId": "approval",
+        "moduleName": "@deepseek-ai/dsh-user-approval",
+        "entryId": "include:approval",
+        "meta": {
+          "title": {
+            "en": "user-approval",
+            "zh": "用户审批服务"
+          },
+          "description": {
+            "en": "User-approval seam (ctx.approval) for the DeepSeek Harness: one-shot permission decisions dispatched to composed answerers over the approval/request waterfall, fail-closed by default",
+            "zh": "向用户请求操作授权，并返回本次审批结果。"
+          }
+        }
+      },
+      {
+        "rowId": "permission",
+        "moduleName": "@deepseek-ai/dsh-permission-presets",
+        "entryId": "include:permission",
+        "meta": {
+          "title": {
+            "en": "permission-presets",
+            "zh": "权限模式服务"
+          },
+          "description": {
+            "en": "User-facing permission presets (ctx.permissionPresets) for the DeepSeek Harness: one product-level Permissions select bundling the sandbox-mode and approval-policy knobs, written through to their own session events",
+            "zh": "管理用户选择的权限模式，统一对应的沙箱和审批策略。"
+          }
+        }
+      },
+      {
+        "rowId": "shell-env",
+        "moduleName": "@deepseek-ai/dsh-shell-env",
+        "entryId": "include:shell-env",
+        "meta": {
+          "title": {
+            "en": "shell-env",
+            "zh": "命令环境变量"
+          },
+          "description": {
+            "en": "Tool-independent managed DSH_* shell environment registry",
+            "zh": "为命令执行工具统一提供 DSH 环境变量。"
+          }
+        }
+      },
+      {
+        "rowId": "tool-bash",
+        "moduleName": "@deepseek-ai/dsh-tool-bash",
+        "entryId": "include:tool-bash",
+        "meta": {
+          "title": {
+            "en": "tool-bash",
+            "zh": "Bash 命令工具"
+          },
+          "description": {
+            "en": "Model-facing bash tool with optional generic background-job and sandbox-escalation support",
+            "zh": "让 AI 执行 Bash 命令，并按配置管理后台运行和权限申请。"
+          }
+        }
+      },
+      {
+        "rowId": "tool-pwsh",
+        "moduleName": "@deepseek-ai/dsh-tool-pwsh",
+        "entryId": "include:tool-pwsh",
+        "meta": {
+          "title": {
+            "en": "tool-pwsh",
+            "zh": "PowerShell 命令工具"
+          },
+          "description": {
+            "en": "Model-facing pwsh tool over the bash executor seam",
+            "zh": "让 AI 执行 PowerShell 命令。"
+          }
+        }
+      },
+      {
+        "rowId": "tool-jobs",
+        "moduleName": "@deepseek-ai/dsh-tool-jobs",
+        "entryId": "include:tool-jobs",
+        "meta": {
+          "title": {
+            "en": "tool-jobs",
+            "zh": "后台任务工具"
+          },
+          "description": {
+            "en": "Model-facing background job control tools (job_output, job_list, job_kill) over the ctx.jobs registry",
+            "zh": "让 AI 查看后台任务、读取输出或停止任务。"
+          }
+        }
+      },
+      {
+        "rowId": "fs-observation-policy",
+        "moduleName": "@deepseek-ai/dsh-fs-observation-policy",
+        "entryId": "include:fs-observation-policy",
+        "meta": {
+          "title": {
+            "en": "fs-observation-policy",
+            "zh": "文件编辑保护"
+          },
+          "description": {
+            "en": "File-context policy plugin for the DeepSeek Harness — observed-state, read-before-edit, and version-guarded write/edit added over the ctx.fs provider seam through the fs/* event gate (no service API)",
+            "zh": "要求 AI 编辑前先读取文件，并在文件发生变化时重新确认内容。"
+          }
+        }
+      },
+      {
+        "rowId": "tool-fs",
+        "moduleName": "@deepseek-ai/dsh-tool-fs",
+        "entryId": "include:tool-fs",
+        "meta": {
+          "title": {
+            "en": "tool-fs",
+            "zh": "文件读写工具"
+          },
+          "description": {
+            "en": "Model-facing filesystem tools (read, write, edit) over the DeepSeek Harness filesystem seam (ctx.fs)",
+            "zh": "让 AI 读取、创建和编辑工作文件。"
+          }
+        }
+      },
+      {
+        "rowId": "tool-fs-search",
+        "moduleName": "@deepseek-ai/dsh-tool-fs-search",
+        "entryId": "include:tool-fs-search",
+        "meta": {
+          "title": {
+            "en": "tool-fs-search",
+            "zh": "文件搜索工具"
+          },
+          "description": {
+            "en": "Model-facing filesystem discovery tools (glob, grep) backed by the packaged ripgrep binary (@vscode/ripgrep)",
+            "zh": "让 AI 按文件名或文本内容搜索本地文件。"
+          }
+        }
+      },
+      {
+        "rowId": "agent-instructions",
+        "moduleName": "@deepseek-ai/dsh-agent-instructions",
+        "entryId": "include:agent-instructions",
+        "meta": {
+          "title": {
+            "en": "agent-instructions",
+            "zh": "工作区指令加载"
+          },
+          "description": {
+            "en": "Workspace context loader for AGENTS.md/CLAUDE.md instruction files",
+            "zh": "读取 AGENTS.md、CLAUDE.md 等文件，为 AI 提供工作区规则。"
+          }
+        }
+      },
+      {
+        "rowId": "skill",
+        "moduleName": "@deepseek-ai/dsh-skill",
+        "entryId": "include:skill",
+        "meta": {
+          "title": {
+            "en": "skill",
+            "zh": "技能注册服务"
+          },
+          "description": {
+            "en": "Agent skill provider registry for the DeepSeek Harness",
+            "zh": "汇总不同来源的技能，供 AI 查询和使用。"
+          }
+        }
+      },
+      {
+        "rowId": "skill-filesystem",
+        "moduleName": "@deepseek-ai/dsh-skill-filesystem",
+        "entryId": "include:skill-filesystem",
+        "meta": {
+          "title": {
+            "en": "skill-filesystem",
+            "zh": "本地技能加载"
+          },
+          "description": {
+            "en": "Local filesystem skill provider for the DeepSeek Harness",
+            "zh": "从本地目录发现和读取技能。"
+          }
+        }
+      },
+      {
+        "rowId": "tool-skill",
+        "moduleName": "@deepseek-ai/dsh-tool-skill",
+        "entryId": "include:tool-skill",
+        "meta": {
+          "title": {
+            "en": "tool-skill",
+            "zh": "技能加载工具"
+          },
+          "description": {
+            "en": "Model-facing skill loading tool for the DeepSeek Harness",
+            "zh": "让 AI 按需加载技能说明。"
+          }
+        }
+      },
+      {
+        "rowId": "commands",
+        "moduleName": "@deepseek-ai/dsh-commands",
+        "entryId": "include:commands",
+        "meta": {
+          "title": {
+            "en": "commands",
+            "zh": "用户命令服务"
+          },
+          "description": {
+            "en": "Plugin-owned human command registry for DeepSeek Harness UIs",
+            "zh": "注册和管理插件提供的用户命令。"
+          }
+        }
+      },
+      {
+        "rowId": "command-feedback",
+        "moduleName": "@deepseek-ai/dsh-command-feedback",
+        "entryId": "include:command-feedback",
+        "meta": {
+          "title": {
+            "en": "command-feedback",
+            "zh": "会话反馈命令"
+          },
+          "description": {
+            "en": "Log-only session feedback: the record event, the sessionFeedback Host Remote, and the human-facing slash command",
+            "zh": "通过 /feedback 等入口记录用户对会话的评价。"
+          }
+        }
+      },
+      {
+        "rowId": "goal",
+        "moduleName": "@deepseek-ai/dsh-goal",
+        "entryId": "include:goal",
+        "meta": {
+          "title": {
+            "en": "goal",
+            "zh": "会话目标服务"
+          },
+          "description": {
+            "en": "Event-sourced same-session goal state and lifecycle service for the DeepSeek Harness",
+            "zh": "记录会话目标，并管理目标的状态和生命周期。"
+          }
+        }
+      },
+      {
+        "rowId": "goal-round-driver",
+        "moduleName": "@deepseek-ai/dsh-goal-round-driver",
+        "entryId": "include:goal-round-driver",
+        "meta": {
+          "title": {
+            "en": "goal-round-driver",
+            "zh": "目标自动续行"
+          },
+          "description": {
+            "en": "Race-fenced same-session goal-round driver",
+            "zh": "在条件和额度允许时，让 AI 继续推进当前会话的目标。"
+          }
+        }
+      },
+      {
+        "rowId": "command-goal",
+        "moduleName": "@deepseek-ai/dsh-command-goal",
+        "entryId": "include:command-goal",
+        "meta": {
+          "title": {
+            "en": "command-goal",
+            "zh": "目标管理命令"
+          },
+          "description": {
+            "en": "Human-facing slash command for persisted same-session goals",
+            "zh": "通过用户命令设置和管理当前会话目标。"
+          }
+        }
+      },
+      {
+        "rowId": "plan-mode",
+        "moduleName": "@deepseek-ai/dsh-plan-mode",
+        "entryId": "include:plan-mode",
+        "meta": {
+          "title": {
+            "en": "plan-mode",
+            "zh": "计划模式"
+          },
+          "description": {
+            "en": "Logged per-agent plan mode with deployment guidance, a direct slash command, and a user-reviewed exit",
+            "zh": "让 AI 先制定计划，并在用户审阅后切换到执行。"
+          }
+        }
+      },
+      {
+        "rowId": "token-meter",
+        "moduleName": "@deepseek-ai/dsh-token-meter",
+        "entryId": "include:token-meter",
+        "meta": {
+          "title": {
+            "en": "token-meter",
+            "zh": "Token 计量"
+          },
+          "description": {
+            "en": "Replay-aware token measurement service (ctx.tokenMeter) for the DeepSeek Harness",
+            "zh": "估算模型上下文的 Token 用量，供压缩等功能判断预算。"
+          }
+        }
+      },
+      {
+        "rowId": "compaction-basic",
+        "moduleName": "@deepseek-ai/dsh-compaction-basic",
+        "entryId": "include:compaction-basic",
+        "meta": {
+          "title": {
+            "en": "compaction-basic",
+            "zh": "上下文压缩"
+          },
+          "description": {
+            "en": "Token-meter-driven compaction policy and LLM summarization backend for the DeepSeek Harness",
+            "zh": "在上下文达到阈值时，使用模型总结历史内容。"
+          }
+        }
+      },
+      {
+        "rowId": "command-compact",
+        "moduleName": "@deepseek-ai/dsh-command-compact",
+        "entryId": "include:command-compact",
+        "meta": {
+          "title": {
+            "en": "command-compact",
+            "zh": "上下文压缩命令"
+          },
+          "description": {
+            "en": "Human-facing slash command for explicit session compaction",
+            "zh": "让用户通过命令主动压缩当前会话上下文。"
+          }
+        }
+      },
+      {
+        "rowId": "subagent",
+        "moduleName": "@deepseek-ai/dsh-subagent",
+        "entryId": "include:subagent",
+        "meta": {
+          "title": {
+            "en": "subagent",
+            "zh": "子智能体服务"
+          },
+          "description": {
+            "en": "Abstract subagent seam (ctx.subagents): named-provider registry for delegating to child agents",
+            "zh": "管理子智能体后端，为任务委派提供统一接口。"
+          }
+        }
+      },
+      {
+        "rowId": "subagent-spawn-in-process",
+        "moduleName": "@deepseek-ai/dsh-subagent-spawn-in-process",
+        "entryId": "include:subagent-spawn-in-process",
+        "meta": {
+          "title": {
+            "en": "subagent-spawn-in-process",
+            "zh": "新建子智能体后端"
+          },
+          "description": {
+            "en": "In-process spawn subagent backend: runs a fresh child agent on ctx.agents",
+            "zh": "在当前进程中新建子智能体，执行独立任务。"
+          }
+        }
+      },
+      {
+        "rowId": "subagent-fork-in-process",
+        "moduleName": "@deepseek-ai/dsh-subagent-fork-in-process",
+        "entryId": "include:subagent-fork-in-process",
+        "meta": {
+          "title": {
+            "en": "subagent-fork-in-process",
+            "zh": "继承上下文子智能体后端"
+          },
+          "description": {
+            "en": "In-process fork subagent backend: runs a child agent seeded with a prefix of the parent's log",
+            "zh": "使用父会话的一段历史创建子智能体。"
+          }
+        }
+      },
+      {
+        "rowId": "tool-subagent-control",
+        "moduleName": "@deepseek-ai/dsh-tool-subagent-control",
+        "entryId": "include:tool-subagent-control",
+        "meta": {
+          "title": {
+            "en": "tool-subagent-control",
+            "zh": "子智能体控制工具"
+          },
+          "description": {
+            "en": "Globally named send_message, interrupt_agent, and list_agents tools over ctx.subagents continuations",
+            "zh": "让 AI 向子智能体发送消息或中断其运行。"
+          }
+        }
+      },
+      {
+        "rowId": "tool-subagent-list-agents",
+        "moduleName": "@deepseek-ai/dsh-tool-subagent-control/list-agents",
+        "entryId": "include:tool-subagent-list-agents",
+        "meta": {
+          "title": {
+            "en": "tool-subagent-control/list-agents",
+            "zh": "子智能体列表工具"
+          }
+        }
+      },
+      {
+        "rowId": "tool-subagent",
+        "moduleName": "@deepseek-ai/dsh-tool-subagent",
+        "entryId": "include:tool-subagent",
+        "meta": {
+          "title": {
+            "en": "tool-subagent",
+            "zh": "子智能体委派工具"
+          },
+          "description": {
+            "en": "Model-facing subagent delegation tool over the ctx.subagents seam",
+            "zh": "让 AI 将任务交给子智能体，并获取运行结果。"
+          }
+        }
+      },
+      {
+        "rowId": "tool-subagent-fork",
+        "moduleName": "@deepseek-ai/dsh-tool-subagent",
+        "entryId": "include:tool-subagent-fork",
+        "meta": {
+          "title": {
+            "en": "tool-subagent",
+            "zh": "子智能体委派工具"
+          },
+          "description": {
+            "en": "Model-facing subagent delegation tool over the ctx.subagents seam",
+            "zh": "让 AI 将任务交给子智能体，并获取运行结果。"
+          }
+        }
+      },
+      {
+        "rowId": "ptc-runtime",
+        "moduleName": "@deepseek-ai/dsh-ptc-runtime-node",
+        "entryId": "include:ptc-runtime",
+        "meta": {
+          "title": {
+            "en": "ptc-runtime-node",
+            "zh": "Node PTC 运行时"
+          },
+          "description": {
+            "en": "Node PTC execution with per-call sandboxed processes or in-memory REPL state",
+            "zh": "在沙箱中的 Node 进程里执行用于调用工具的代码。"
+          }
+        }
+      },
+      {
+        "rowId": "workflow-ptc",
+        "moduleName": "@deepseek-ai/dsh-workflow-ptc",
+        "entryId": "include:workflow-ptc",
+        "meta": {
+          "title": {
+            "en": "workflow-ptc",
+            "zh": "工作流执行引擎"
+          },
+          "description": {
+            "en": "Workflow orchestration in the shared sandboxed Node PTC runtime",
+            "zh": "使用共享的 PTC 运行时执行工作流编排代码。"
+          }
+        }
+      },
+      {
+        "rowId": "tool-workflow",
+        "moduleName": "@deepseek-ai/dsh-tool-workflow",
+        "entryId": "include:tool-workflow",
+        "meta": {
+          "title": {
+            "en": "tool-workflow",
+            "zh": "工作流工具"
+          },
+          "description": {
+            "en": "Model-facing workflow tool: run a JavaScript orchestration script over ctx.workflowEngine",
+            "zh": "让 AI 编写并运行 JavaScript 脚本，编排多项工具操作。"
+          }
+        }
+      },
+      {
+        "rowId": "timeout-policy",
+        "moduleName": "@deepseek-ai/dsh-tool-call-timeout-policy",
+        "entryId": "include:timeout-policy",
+        "meta": {
+          "title": {
+            "en": "tool-call-timeout-policy",
+            "zh": "工具调用超时控制"
+          },
+          "description": {
+            "en": "Tool-call timeout policy: a tools/execute wrapper that arms a per-tool deadline on exec.signal and returns TOOL_TIMEOUT when it wins",
+            "zh": "按各工具的时限发出取消信号，并返回超时结果。"
+          }
+        }
+      },
+      {
+        "rowId": "spill-local",
+        "moduleName": "@deepseek-ai/dsh-spill-local",
+        "entryId": "include:spill-local",
+        "meta": {
+          "title": {
+            "en": "spill-local",
+            "zh": "本地长结果存储"
+          },
+          "description": {
+            "en": "Local-filesystem implementation of the DeepSeek Harness spill storage seam (private session-scoped files)",
+            "zh": "将过长的工具结果保存到会话专用的本地文件。"
+          }
+        }
+      },
+      {
+        "rowId": "spill-policy",
+        "moduleName": "@deepseek-ai/dsh-spill-policy",
+        "entryId": "include:spill-policy",
+        "meta": {
+          "title": {
+            "en": "spill-policy",
+            "zh": "工具结果长度控制"
+          },
+          "description": {
+            "en": "Token-budgeted tool-result retention with recoverable text and image paths",
+            "zh": "限制直接放入上下文的工具结果长度，并保留完整结果的读取路径。"
+          }
+        }
+      },
+      {
+        "rowId": "session-checkpoint-policy",
+        "moduleName": "@deepseek-ai/dsh-session-checkpoint-policy",
+        "entryId": "include:session-checkpoint-policy",
+        "meta": {
+          "title": {
+            "en": "session-checkpoint-policy",
+            "zh": "会话检查点"
+          },
+          "description": {
+            "en": "Semantic session durability checkpoints before model requests and tool side effects",
+            "zh": "在模型请求和可能产生外部影响的工具操作前保存会话记录。"
+          }
+        }
+      },
+      {
+        "rowId": "tool-result-pruner",
+        "moduleName": "@deepseek-ai/dsh-compaction-tool-result-pruner",
+        "entryId": "include:tool-result-pruner",
+        "meta": {
+          "title": {
+            "en": "compaction-tool-result-pruner",
+            "zh": "工具结果精简"
+          },
+          "description": {
+            "en": "Replay-safe model-free head/middle/tail pruning for tool-result surface nodes",
+            "zh": "在上下文压力较大时，精简过长的工具输出并保留首尾内容。"
+          }
+        }
+      },
+      {
+        "rowId": "image-offload",
+        "moduleName": "@deepseek-ai/dsh-compaction-image-offload",
+        "entryId": "include:image-offload",
+        "meta": {
+          "title": {
+            "en": "compaction-image-offload",
+            "zh": "历史图片卸载"
+          },
+          "description": {
+            "en": "Durable image offload for image-capable routes: replace over-budget request images with placeholders and retry",
+            "zh": "将超出模型图片预算的历史图片替换为附件引用，再重试请求。"
+          }
+        }
+      },
+      {
+        "rowId": "tool-todo",
+        "moduleName": "@deepseek-ai/dsh-tool-todo",
+        "entryId": "include:tool-todo",
+        "meta": {
+          "title": {
+            "en": "tool-todo",
+            "zh": "待办清单工具"
+          },
+          "description": {
+            "en": "Model-facing todo_write tool over the DeepSeek Harness event-sourced session log",
+            "zh": "让 AI 创建和更新任务待办清单。"
+          }
+        }
+      },
+      {
+        "rowId": "tool-goal",
+        "moduleName": "@deepseek-ai/dsh-tool-goal",
+        "entryId": "include:tool-goal",
+        "meta": {
+          "title": {
+            "en": "tool-goal",
+            "zh": "目标管理工具"
+          },
+          "description": {
+            "en": "Model-facing same-session goal tools with execution-time authority checks",
+            "zh": "让 AI 设置、查看和更新当前会话目标。"
+          }
+        }
+      },
+      {
+        "rowId": "repeat-tool-reminder",
+        "moduleName": "@deepseek-ai/dsh-repeat-tool-reminder",
+        "entryId": "include:repeat-tool-reminder",
+        "meta": {
+          "title": {
+            "en": "repeat-tool-reminder",
+            "zh": "重复工具调用提醒"
+          },
+          "description": {
+            "en": "Repeat-tool-call guard plugin: advisory reminders when an agent loops on identical tool calls",
+            "zh": "在 AI 重复执行相同工具调用时，提示它调整做法。"
+          }
+        }
+      },
+      {
+        "rowId": "web",
+        "moduleName": "@deepseek-ai/dsh-web",
+        "entryId": "include:web",
+        "meta": {
+          "title": {
+            "en": "web",
+            "zh": "网页访问服务"
+          },
+          "description": {
+            "en": "Abstract web access capability seam (ctx.web) for the DeepSeek Harness — search/fetch provider registry, registration-order-independent selection, request/result vocabulary, and the WebError taxonomy",
+            "zh": "统一管理网页搜索和内容获取的服务提供方。"
+          }
+        }
+      },
+      {
+        "rowId": "web-search-deepseek",
+        "moduleName": "@deepseek-ai/dsh-web-search-deepseek",
+        "entryId": "include:web-search-deepseek",
+        "meta": {
+          "title": {
+            "en": "web-search-deepseek",
+            "zh": "DeepSeek 网页搜索"
+          },
+          "description": {
+            "en": "DeepSeek-backed search provider (native web_search via the Anthropic-compatible API) for the DeepSeek Harness web capability seam (ctx.web)",
+            "zh": "通过 DeepSeek 提供网页搜索结果。"
+          }
+        }
+      },
+      {
+        "rowId": "web-deepseek-api",
+        "moduleName": "@deepseek-ai/dsh-web-deepseek-api",
+        "entryId": "include:web-deepseek-api",
+        "meta": {
+          "title": {
+            "en": "web-deepseek-api",
+            "zh": "DeepSeek 网页搜索与抓取 API"
+          },
+          "description": {
+            "en": "DeepSeek Search and Fetch API providers for the DeepSeek Harness web capability seam (ctx.web)",
+            "zh": "通过 DeepSeek Search API 搜索网页、Fetch API 抓取网页正文。"
+          }
+        }
+      },
+      {
+        "rowId": "web-fetch-http",
+        "moduleName": "@deepseek-ai/dsh-web-fetch-http",
+        "entryId": "include:web-fetch-http",
+        "meta": {
+          "title": {
+            "en": "web-fetch-http",
+            "zh": "公开网页获取"
+          },
+          "description": {
+            "en": "Anonymous public HTTP(S) fetch provider for the DeepSeek Harness web capability seam (ctx.web)",
+            "zh": "读取无需登录的 HTTP 或 HTTPS 网页内容。"
+          }
+        }
+      },
+      {
+        "rowId": "tool-web",
+        "moduleName": "@deepseek-ai/dsh-tool-web",
+        "entryId": "include:tool-web",
+        "meta": {
+          "title": {
+            "en": "tool-web",
+            "zh": "网页搜索与读取工具"
+          },
+          "description": {
+            "en": "Model-facing web tools (web_search, web_fetch) over the DeepSeek Harness web capability seam (ctx.web)",
+            "zh": "让 AI 搜索网页并读取页面内容。"
+          }
+        }
+      },
+      {
+        "rowId": "mcp-resources",
+        "moduleName": "@deepseek-ai/dsh-mcp-resources",
+        "entryId": "include:mcp-resources",
+        "meta": {
+          "title": {
+            "en": "mcp-resources",
+            "zh": "MCP 资源访问"
+          },
+          "description": {
+            "en": "Scoped MCP resource discovery and reading through shared model tools",
+            "zh": "让 AI 发现并读取已接入 MCP 服务提供的资源。"
+          }
+        }
+      },
+      {
+        "rowId": "tools",
+        "moduleName": "@deepseek-ai/dsh-tools",
+        "entryId": "include:tools",
+        "meta": {
+          "title": {
+            "en": "tools",
+            "zh": "工具注册与执行"
+          },
+          "description": {
+            "en": "Tool registry and execution pipeline for the DeepSeek Harness",
+            "zh": "管理可用工具及其调用执行流程。"
+          }
+        }
+      },
+      {
+        "rowId": "system-prompt",
+        "moduleName": "@deepseek-ai/dsh-system-prompt",
+        "entryId": "include:system-prompt",
+        "meta": {
+          "title": {
+            "en": "system-prompt",
+            "zh": "系统提示词组装"
+          },
+          "description": {
+            "en": "System prompt assembly registry for the DeepSeek Harness",
+            "zh": "汇总各插件提供的系统提示词内容。"
+          }
+        }
+      },
+      {
+        "rowId": "agent-loop",
+        "moduleName": "@deepseek-ai/dsh-agent-loop",
+        "entryId": "include:agent-loop",
+        "meta": {
+          "title": {
+            "en": "agent-loop",
+            "zh": "智能体运行循环"
+          },
+          "description": {
+            "en": "The concrete agent loop plugin for the DeepSeek Harness",
+            "zh": "协调模型请求、工具调用和后续步骤，推进智能体任务。"
+          }
+        }
+      },
+      {
+        "rowId": "fs-sandbox",
+        "moduleName": "@deepseek-ai/dsh-fs-sandbox",
+        "entryId": "include:fs-sandbox",
+        "meta": {
+          "title": {
+            "en": "fs-sandbox",
+            "zh": "文件沙箱访问"
+          },
+          "description": {
+            "en": "Sandbox-enforcing implementation of the DeepSeek Harness filesystem seam: fences write/edit by the per-call sandbox mode (read-only denies mutation, workspace-write contains it to the workspace + temp roots) while reads pass through",
+            "zh": "按当前权限模式限制文件写入和编辑范围。"
+          }
+        }
+      },
+      {
+        "rowId": "llm-deepseek",
+        "moduleName": "@deepseek-ai/dsh-llm-deepseek-api-key",
+        "entryId": "include:llm-deepseek",
+        "meta": {
+          "title": {
+            "en": "llm-deepseek-api-key",
+            "zh": "DeepSeek API 密钥接入"
+          },
+          "description": {
+            "en": "DeepSeek api-key provider authentication and discovery",
+            "zh": "使用 API 密钥连接 DeepSeek 模型服务。"
+          }
+        }
+      },
+      {
+        "rowId": "llm-deepseek-account",
+        "moduleName": "@deepseek-ai/dsh-llm-deepseek-account",
+        "entryId": "include:llm-deepseek-account",
+        "meta": {
+          "title": {
+            "en": "llm-deepseek-account",
+            "zh": "DeepSeek 账号模型接入"
+          },
+          "description": {
+            "en": "DeepSeek account provider authentication and discovery",
+            "zh": "使用已登录的 DeepSeek 账号连接模型服务。"
+          }
+        }
+      }
+    ],
+    "overrides": []
+  },
+  {
+    "name": "@deepseek-ai/dsh-web-app",
+    "official": false,
+    "availability": "installation",
+    "version": "0.2.1-rc.4",
+    "description": "The dsh browser-surface bundle: the web patch layer over dsh-base plus the runtime glue plugin (frontend dist serving, bash runtime variables, URL line)",
+    "meta": {
+      "title": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "description": {
+        "en": "The dsh browser-surface bundle: the web patch layer over dsh-base plus the runtime glue plugin (frontend dist serving, bash runtime variables, URL line)",
+        "zh": "提供前端页面资源，并连接 Web 应用所需的运行配置。"
+      }
+    },
+    "enabled": true,
+    "installed": false,
+    "optional": false,
+    "removable": false,
+    "readOnlyReason": "management-required",
+    "rows": [
+      {
+        "rowId": "desktop-product-telemetry",
+        "moduleName": "@deepseek-ai/dsh-host-product-telemetry-otel",
+        "entryId": "include:desktop-product-telemetry",
+        "meta": {
+          "title": {
+            "en": "product-telemetry-otel",
+            "zh": "产品使用事件上报"
+          },
+          "description": {
+            "en": "Explicit product usage events exported through OpenTelemetry HTTP logs",
+            "zh": "通过 OpenTelemetry 向配置的服务上报指定产品使用事件。"
+          }
+        }
+      },
+      {
+        "rowId": "product-analytics",
+        "moduleName": "@deepseek-ai/dsh-client-product-analytics",
+        "entryId": "include:product-analytics",
+        "meta": {
+          "title": {
+            "en": "product-analytics",
+            "zh": "桌面端使用统计"
+          },
+          "description": {
+            "en": "Desktop product event collection and authenticated Host reporting",
+            "zh": "采集桌面端指定交互事件，并提交给产品统计服务。"
+          }
+        }
+      },
+      {
+        "rowId": "subagent-model-selection-settings",
+        "moduleName": "@deepseek-ai/dsh-tool-subagent/model-selection-settings",
+        "entryId": "include:subagent-model-selection-settings",
+        "meta": {
+          "title": {
+            "en": "tool-subagent/model-selection-settings",
+            "zh": "子智能体模型选择设置"
+          }
+        }
+      },
+      {
+        "rowId": "message-feedback",
+        "moduleName": "@deepseek-ai/dsh-message-feedback",
+        "entryId": "include:message-feedback",
+        "meta": {
+          "title": {
+            "en": "message-feedback",
+            "zh": "消息反馈记录"
+          },
+          "description": {
+            "en": "Canonical Session-log ratings and notes for finalized assistant messages",
+            "zh": "记录用户对助手回复的赞、踩和补充意见。"
+          }
+        }
+      },
+      {
+        "rowId": "session-log-download",
+        "moduleName": "@deepseek-ai/dsh-session-log-export",
+        "entryId": "include:session-log-download",
+        "meta": {
+          "title": {
+            "en": "session-log-export",
+            "zh": "会话日志导出"
+          },
+          "description": {
+            "en": "Web Session-log export command and shared download dialog",
+            "zh": "提供会话日志导出命令和下载功能。"
+          }
+        }
+      },
+      {
+        "rowId": "open-in-app",
+        "moduleName": "@deepseek-ai/dsh-host-open-in-app",
+        "entryId": "include:open-in-app",
+        "meta": {
+          "title": {
+            "en": "open-in-app",
+            "zh": "外部应用打开服务"
+          },
+          "description": {
+            "en": "Host half of open-in-app: resolved application catalog, icons, and the launch endpoint as three webServer routes",
+            "zh": "查找可用的本地应用，并用所选应用打开文件或工作区。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-open-in-app",
+        "moduleName": "@deepseek-ai/dsh-client-ui-open-in-app",
+        "entryId": "include:ui-open-in-app",
+        "meta": {
+          "title": {
+            "en": "ui-open-in-app",
+            "zh": "外部应用打开界面"
+          },
+          "description": {
+            "en": "Web \"Open In...\" controls: the Session-header split button opening the workspace directory in an installed application, and the document preview's default-application controls for one file",
+            "zh": "在会话和文档预览中提供「打开方式」入口。"
+          }
+        }
+      },
+      {
+        "rowId": "workspace",
+        "moduleName": "@deepseek-ai/dsh-workspace",
+        "entryId": "include:workspace",
+        "meta": {
+          "title": {
+            "en": "workspace",
+            "zh": "工作区管理"
+          },
+          "description": {
+            "en": "Workspace entity registry (ctx.workspaceRegistry): durable workspace records with validated session attachment over the domain data form for the DeepSeek Harness",
+            "zh": "保存工作区信息，并管理工作区与会话的关联。"
+          }
+        }
+      },
+      {
+        "rowId": "session-reference",
+        "moduleName": "@deepseek-ai/dsh-session-reference",
+        "entryId": "include:session-reference",
+        "meta": {
+          "title": {
+            "en": "session-reference",
+            "zh": "跨会话引用"
+          },
+          "description": {
+            "en": "Cross-session snapshot references and durable untrusted model context (ctx.sessionReferenceResolver)",
+            "zh": "为 AI 提供其他会话的只读内容快照。"
+          }
+        }
+      },
+      {
+        "rowId": "file-reference-local",
+        "moduleName": "@deepseek-ai/dsh-file-reference-local",
+        "entryId": "include:file-reference-local",
+        "meta": {
+          "title": {
+            "en": "file-reference-local",
+            "zh": "本地文件引用"
+          },
+          "description": {
+            "en": "Local-filesystem ctx.fileReferences provider with bounded fuzzy indexes",
+            "zh": "提供本地文件的搜索和引用能力。"
+          }
+        }
+      },
+      {
+        "rowId": "session-stats",
+        "moduleName": "@deepseek-ai/dsh-session-stats",
+        "entryId": "include:session-stats",
+        "meta": {
+          "title": {
+            "en": "session-stats",
+            "zh": "会话统计"
+          },
+          "description": {
+            "en": "Whole-log conversation counts and wall times projection (sessionStats) for the DeepSeek Harness",
+            "zh": "汇总会话的交互次数和耗时等统计信息。"
+          }
+        }
+      },
+      {
+        "rowId": "session-turn-outline",
+        "moduleName": "@deepseek-ai/dsh-session-turn-outline",
+        "entryId": "include:session-turn-outline",
+        "meta": {
+          "title": {
+            "en": "session-turn-outline",
+            "zh": "会话轮次目录"
+          },
+          "description": {
+            "en": "Whole-log turn outline projection (turnOutline) for the DeepSeek Harness",
+            "zh": "生成会话轮次目录，支持定位和跳转历史交互。"
+          }
+        }
+      },
+      {
+        "rowId": "directory-picker",
+        "moduleName": "@deepseek-ai/dsh-host-directory-picker-auto",
+        "entryId": "include:directory-picker",
+        "meta": {
+          "title": {
+            "en": "directory-picker-auto",
+            "zh": "目录选择方式适配"
+          },
+          "description": {
+            "en": "Adaptive chooser of the directory-picker seam: resolves the host situation at boot and mounts the native or browse backend for the DeepSeek Harness web GUI host",
+            "zh": "根据运行环境选择系统目录对话框或应用内目录浏览。"
+          }
+        }
+      },
+      {
+        "rowId": "plugin-inventory",
+        "moduleName": "@deepseek-ai/dsh-host-plugin-inventory",
+        "entryId": "include:plugin-inventory",
+        "meta": {
+          "title": {
+            "en": "plugin-inventory",
+            "zh": "插件清单服务"
+          },
+          "description": {
+            "en": "Read-only Remote projection of current Cordis Loader plugin state",
+            "zh": "提供当前插件条目、配置启用状态和运行状态的只读清单。"
+          }
+        }
+      },
+      {
+        "rowId": "session-controller",
+        "moduleName": "@deepseek-ai/dsh-api-session-controller",
+        "entryId": "include:session-controller",
+        "meta": {
+          "title": {
+            "en": "api-session-controller",
+            "zh": "会话控制接口"
+          },
+          "description": {
+            "en": "Session Remote commands, cold reads, and live control transport",
+            "zh": "向客户端提供会话读取、运行控制和状态更新能力。"
+          }
+        }
+      },
+      {
+        "rowId": "job-controller",
+        "moduleName": "@deepseek-ai/dsh-api-job-controller",
+        "entryId": "include:job-controller",
+        "meta": {
+          "title": {
+            "en": "api-job-controller",
+            "zh": "后台任务观察接口"
+          },
+          "description": {
+            "en": "Job Remote observation stream and the reference-counted client job-output service",
+            "zh": "向客户端持续提供后台任务的状态和输出。"
+          }
+        }
+      },
+      {
+        "rowId": "terminal-controller",
+        "moduleName": "@deepseek-ai/dsh-api-terminal-controller",
+        "entryId": "include:terminal-controller",
+        "meta": {
+          "title": {
+            "en": "api-terminal-controller",
+            "zh": "终端控制接口"
+          },
+          "description": {
+            "en": "Session-owned interactive terminals with shell discovery, screen recovery and typed Remote control",
+            "zh": "向客户端提供会话终端的创建、输入、读取和恢复能力。"
+          }
+        }
+      },
+      {
+        "rowId": "workspace-files",
+        "moduleName": "@deepseek-ai/dsh-api-workspace-files",
+        "entryId": "include:workspace-files",
+        "meta": {
+          "title": {
+            "en": "api-workspace-files",
+            "zh": "工作区文件接口"
+          },
+          "description": {
+            "en": "Workspace file service and Client resource provider: bounded reads, directory listing, and live metadata over the workspaceFiles Remote namespace",
+            "zh": "提供工作区文件读取、目录列表和文件信息更新。"
+          }
+        }
+      },
+      {
+        "rowId": "schedule",
+        "moduleName": "@deepseek-ai/dsh-schedule",
+        "entryId": "include:schedule",
+        "meta": {
+          "title": {
+            "en": "Task scheduling",
+            "zh": "任务调度"
+          },
+          "description": {
+            "en": "Stores automation tasks, runs each in its original session when it is due, and gives the agent tools to manage them.",
+            "zh": "保存自动化任务，到点后在原会话中执行，并为智能体提供管理任务的工具。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-settings-account",
+        "moduleName": "@deepseek-ai/dsh-client-ui-settings-account",
+        "entryId": "include:ui-settings-account",
+        "meta": {
+          "title": {
+            "en": "ui-settings-account",
+            "zh": "账号设置界面"
+          },
+          "description": {
+            "en": "Manage DeepSeek login and open Platform billing pages",
+            "zh": "管理 DeepSeek 登录，并打开平台账单页面。"
+          }
+        }
+      },
+      {
+        "rowId": "account-controller",
+        "moduleName": "@deepseek-ai/dsh-api-account-controller",
+        "entryId": "include:account-controller",
+        "meta": {
+          "title": {
+            "en": "api-account-controller",
+            "zh": "账号操作接口"
+          },
+          "description": {
+            "en": "Expose safe account operations over authenticated Remote",
+            "zh": "向已认证的客户端提供账号操作能力。"
+          }
+        }
+      },
+      {
+        "rowId": "settings-controller",
+        "moduleName": "@deepseek-ai/dsh-api-settings-controller",
+        "entryId": "include:settings-controller",
+        "meta": {
+          "title": {
+            "en": "api-settings-controller",
+            "zh": "设置读写接口"
+          },
+          "description": {
+            "en": "Remote owner for the configuration surfaces over the settings-domain seams",
+            "zh": "向客户端提供各项设置的读取与修改能力。"
+          }
+        }
+      },
+      {
+        "rowId": "workspace-controller",
+        "moduleName": "@deepseek-ai/dsh-api-workspace-controller",
+        "entryId": "include:workspace-controller",
+        "meta": {
+          "title": {
+            "en": "api-workspace-controller",
+            "zh": "工作区控制接口"
+          },
+          "description": {
+            "en": "Workspace Remote commands and reconnect-safe state transport",
+            "zh": "向客户端提供工作区操作和可在重连后恢复的状态。"
+          }
+        }
+      },
+      {
+        "rowId": "cordis-host-runner",
+        "moduleName": "@deepseek-ai/dsh-cordis-host-runner",
+        "entryId": "include:cordis-host-runner",
+        "meta": {
+          "title": {
+            "en": "cordis-host-runner",
+            "zh": "动态插件服务端运行器"
+          },
+          "description": {
+            "en": "Dynamic package definition registry, host-half sandbox lifecycle, and invoke handler table for model-mounted dual-half packages",
+            "zh": "管理临时动态插件定义，并运行其服务端部分。"
+          }
+        }
+      },
+      {
+        "rowId": "cordis-inspect-providers",
+        "moduleName": "@deepseek-ai/dsh-tool-cordis/host",
+        "entryId": "include:cordis-inspect-providers",
+        "meta": {
+          "title": {
+            "en": "tool-cordis/host",
+            "zh": "插件 API 检查服务"
+          }
+        }
+      },
+      {
+        "rowId": "web-startup",
+        "moduleName": "@deepseek-ai/dsh-web-app/startup",
+        "entryId": "include:web-startup",
+        "meta": {
+          "title": {
+            "en": "web-app/startup",
+            "zh": "Web 启动配置"
+          }
+        }
+      },
+      {
+        "rowId": "webserver",
+        "moduleName": "@deepseek-ai/dsh-host-webserver",
+        "entryId": "include:webserver",
+        "meta": {
+          "title": {
+            "en": "webserver",
+            "zh": "Web 服务"
+          },
+          "description": {
+            "en": "Web route-registration plugin: HTTP and upgrade routes, index transform taps, and static dist fallback; knows no harness concepts",
+            "zh": "注册网页和接口路由，提供 HTTP 服务。"
+          }
+        }
+      },
+      {
+        "rowId": "web-runtime",
+        "moduleName": "@deepseek-ai/dsh-web-app",
+        "entryId": "include:web-runtime",
+        "meta": {
+          "title": {
+            "en": "web-app",
+            "zh": "Web 应用运行支持"
+          },
+          "description": {
+            "en": "The dsh browser-surface bundle: the web patch layer over dsh-base plus the runtime glue plugin (frontend dist serving, bash runtime variables, URL line)",
+            "zh": "提供前端页面资源，并连接 Web 应用所需的运行配置。"
+          }
+        }
+      },
+      {
+        "rowId": "harness-dev-context",
+        "moduleName": "@deepseek-ai/dsh-harness-dev-context",
+        "entryId": "include:harness-dev-context",
+        "meta": {
+          "title": "@deepseek-ai/dsh-harness-dev-context",
+          "description": "Model context naming the DeepSeek Harness checkout and Web GUI URL without letting either change the system prompt"
+        }
+      },
+      {
+        "rowId": "client-hmr",
+        "moduleName": "@deepseek-ai/dsh-client-hmr",
+        "entryId": "include:client-hmr",
+        "meta": {
+          "title": {
+            "en": "hmr",
+            "zh": "Web 客户端热更新"
+          },
+          "description": {
+            "en": "Web client graph synchronization and rebuilt-bundle reload transport",
+            "zh": "同步浏览器中的插件，并在代码重建后更新相关界面。"
+          }
+        }
+      },
+      {
+        "rowId": "modules",
+        "moduleName": "@deepseek-ai/dsh-client-modules",
+        "entryId": "include:modules",
+        "meta": {
+          "title": {
+            "en": "modules",
+            "zh": "客户端模块加载"
+          },
+          "description": {
+            "en": "Client module system, dual-face: node half composes the __DSH_BOOT__ entry graph (incremental dsh.client scan, bundle route, index tap, webPlugins service); browser half is the lazy-CJS module table the vendored cordis Loader consumes as its internal seam",
+            "zh": "管理浏览器插件模块及其加载依赖。"
+          }
+        }
+      },
+      {
+        "rowId": "connection",
+        "moduleName": "@deepseek-ai/dsh-client-connection",
+        "entryId": "include:connection",
+        "meta": {
+          "title": {
+            "en": "connection",
+            "zh": "客户端连接"
+          },
+          "description": {
+            "en": "Authenticated RPC transport and generation lifecycle",
+            "zh": "建立已认证的客户端通信，并管理连接生命周期。"
+          }
+        }
+      },
+      {
+        "rowId": "file-upload",
+        "moduleName": "@deepseek-ai/dsh-client-file-upload",
+        "entryId": "include:file-upload",
+        "meta": {
+          "title": {
+            "en": "file-upload",
+            "zh": "文件上传"
+          },
+          "description": {
+            "en": "Agent-scoped browser file upload, streaming intake, and staged receipt service",
+            "zh": "将浏览器中的文件上传到当前会话，供消息和工具使用。"
+          }
+        }
+      },
+      {
+        "rowId": "api-remotes",
+        "moduleName": "@deepseek-ai/dsh-api-remotes",
+        "entryId": "include:api-remotes",
+        "meta": {
+          "title": {
+            "en": "api-remotes",
+            "zh": "客户端 API 汇总"
+          },
+          "description": {
+            "en": "Remote BFF assembly for application-selected Host capabilities",
+            "zh": "汇总应用向客户端开放的服务端能力。"
+          }
+        }
+      },
+      {
+        "rowId": "cordis-client-runner",
+        "moduleName": "@deepseek-ai/dsh-cordis-client-runner",
+        "entryId": "include:cordis-client-runner",
+        "meta": {
+          "title": {
+            "en": "cordis-client-runner",
+            "zh": "动态插件浏览器运行器"
+          },
+          "description": {
+            "en": "Browser half of dynamic dual-half plugin packages: event subscription, closure evaluation, guard facade, and loader entries",
+            "zh": "加载并运行临时动态插件的浏览器部分。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-theme",
+        "moduleName": "@deepseek-ai/dsh-client-ui-theme",
+        "entryId": "include:ui-theme",
+        "meta": {
+          "title": {
+            "en": "ui-theme",
+            "zh": "界面主题"
+          },
+          "description": {
+            "en": "Theme plugin: Host bootstrap for the pre-plugin palette; DOM-free ThemeRuntime for light/dark/system state; --dsw-* token styles and Appearance settings row",
+            "zh": "提供浅色、深色和跟随系统的主题设置。"
+          }
+        }
+      },
+      {
+        "rowId": "locale",
+        "moduleName": "@deepseek-ai/dsh-client-locale",
+        "entryId": "include:locale",
+        "meta": {
+          "title": {
+            "en": "locale",
+            "zh": "界面语言"
+          },
+          "description": {
+            "en": "Locale plugin: Host-backed preference, extensible language catalog, browser fallback, and typed built-in dictionaries",
+            "zh": "管理界面语言偏好和各插件的翻译文案。"
+          }
+        }
+      },
+      {
+        "rowId": "shortcuts",
+        "moduleName": "@deepseek-ai/dsh-client-shortcuts",
+        "entryId": "include:shortcuts",
+        "meta": {
+          "title": {
+            "en": "shortcuts",
+            "zh": "快捷键服务"
+          },
+          "description": {
+            "en": "Application keyboard command registry and physical-key routing",
+            "zh": "注册应用快捷键，并将按键操作分发到对应功能。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-shortcuts",
+        "moduleName": "@deepseek-ai/dsh-client-ui-shortcuts",
+        "entryId": "include:ui-shortcuts",
+        "meta": {
+          "title": {
+            "en": "ui-shortcuts",
+            "zh": "快捷键设置界面"
+          },
+          "description": {
+            "en": "Keyboard shortcut reference, recording, and local preference editing",
+            "zh": "查看、录入和修改键盘快捷键。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-layout",
+        "moduleName": "@deepseek-ai/dsh-client-ui-layout",
+        "entryId": "include:ui-layout",
+        "meta": {
+          "title": {
+            "en": "ui-layout",
+            "zh": "应用布局"
+          },
+          "description": {
+            "en": "Shell plugin: three-column AppFrame with drag handles, ctx.layout viewing-state service (navigation + panels)",
+            "zh": "组织导航、会话和侧边面板，并支持拖动调整布局。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-renderer",
+        "moduleName": "@deepseek-ai/dsh-client-ui-renderer",
+        "entryId": "include:ui-renderer",
+        "meta": {
+          "title": {
+            "en": "ui-renderer",
+            "zh": "界面渲染"
+          },
+          "description": {
+            "en": "Browser UI renderer: React slot bindings, ctx.uiRenderer, and the assembled application root",
+            "zh": "将各插件提供的界面组件组装到应用中。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-session",
+        "moduleName": "@deepseek-ai/dsh-client-ui-session",
+        "entryId": "include:ui-session",
+        "meta": {
+          "title": {
+            "en": "ui-session",
+            "zh": "会话界面连接"
+          },
+          "description": {
+            "en": "Session Controller adapter for React and session-scoped slots",
+            "zh": "将会话控制和状态连接到 React 界面组件。"
+          }
+        }
+      },
+      {
+        "rowId": "resources",
+        "moduleName": "@deepseek-ai/dsh-client-resources",
+        "entryId": "include:resources",
+        "meta": {
+          "title": {
+            "en": "resources",
+            "zh": "客户端资源服务"
+          },
+          "description": {
+            "en": "Unified client resource model: protocol-registered providers turn URL addresses into live values, consumed through the useResource global standard hook",
+            "zh": "将文件等资源地址解析为可供界面读取的内容。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-sidebar",
+        "moduleName": "@deepseek-ai/dsh-client-ui-sidebar",
+        "entryId": "include:ui-sidebar",
+        "meta": {
+          "title": {
+            "en": "ui-sidebar",
+            "zh": "会话侧栏"
+          },
+          "description": {
+            "en": "Sidebar plugin: session multi-level tree, search, grouping, state dots",
+            "zh": "展示会话列表，提供搜索、分组和状态提示。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-sidebar-right",
+        "moduleName": "@deepseek-ai/dsh-client-ui-sidebar-right",
+        "entryId": "include:ui-sidebar-right",
+        "meta": {
+          "title": {
+            "en": "ui-sidebar-right",
+            "zh": "右侧面板"
+          },
+          "description": {
+            "en": "Right Sidebar: the docking surface's session-bound state, its panel and header expand control, and the navigation service over it",
+            "zh": "管理右侧面板的展开状态、内容和导航。"
+          }
+        }
+      },
+      {
+        "rowId": "office-to-pdf",
+        "moduleName": "@deepseek-ai/dsh-office-to-pdf",
+        "entryId": "include:office-to-pdf",
+        "meta": {
+          "title": {
+            "en": "office-to-pdf",
+            "zh": "Office 转 PDF"
+          },
+          "description": {
+            "en": "Shared Office-to-PDF conversion with bounded queues and caching",
+            "zh": "将 Word、Excel 和 PowerPoint 等文档转换为 PDF，供预览使用。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-sidebar-documentpreview",
+        "moduleName": "@deepseek-ai/dsh-client-ui-sidebar-documentpreview",
+        "entryId": "include:ui-sidebar-documentpreview",
+        "meta": {
+          "title": {
+            "en": "ui-sidebar-documentpreview",
+            "zh": "文档预览面板"
+          },
+          "description": {
+            "en": "Extensible Sidebar previews for Office documents, spreadsheets, Markdown, code, images, PDF, HTML, and plain text",
+            "zh": "在右侧面板预览文档、表格、代码、图片和网页等文件。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-sidebar-browser",
+        "moduleName": "@deepseek-ai/dsh-client-ui-sidebar-browser",
+        "entryId": "include:ui-sidebar-browser",
+        "meta": {
+          "title": {
+            "en": "ui-sidebar-browser",
+            "zh": "浏览器面板"
+          },
+          "description": {
+            "en": "Sandboxed Web browser tabs for the right Sidebar",
+            "zh": "在右侧面板中打开和浏览网页。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-sidebar-terminal",
+        "moduleName": "@deepseek-ai/dsh-client-ui-sidebar-terminal",
+        "entryId": "include:ui-sidebar-terminal",
+        "meta": {
+          "title": {
+            "en": "ui-sidebar-terminal",
+            "zh": "终端面板"
+          },
+          "description": {
+            "en": "Interactive shell tabs for the right Sidebar",
+            "zh": "在右侧面板中使用交互式命令终端。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-sidebar-files",
+        "moduleName": "@deepseek-ai/dsh-client-ui-sidebar-files",
+        "entryId": "include:ui-sidebar-files",
+        "meta": {
+          "title": {
+            "en": "ui-sidebar-files",
+            "zh": "文件浏览面板"
+          },
+          "description": {
+            "en": "Workspace file tree tab type for the right Sidebar: lazy directory listing over the workspaceFiles Remote namespace, opening files into the Sidebar",
+            "zh": "浏览工作区目录，并在右侧面板中打开文件。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-settings",
+        "moduleName": "@deepseek-ai/dsh-client-ui-settings",
+        "entryId": "include:ui-settings",
+        "meta": {
+          "title": {
+            "en": "ui-settings",
+            "zh": "设置界面框架"
+          },
+          "description": {
+            "en": "Settings domain base plugin: shared configuration forms and the canonical settings slot-type contract",
+            "zh": "提供设置页面的基础表单和插件扩展位置。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-settings-general",
+        "moduleName": "@deepseek-ai/dsh-client-ui-settings-general",
+        "entryId": "include:ui-settings-general",
+        "meta": {
+          "title": {
+            "en": "ui-settings-general",
+            "zh": "通用设置与欢迎提示"
+          },
+          "description": {
+            "en": "Settings ownerless-copy and product onboarding plugin: the General section, shell trigger/header chrome content, settings dictionaries, and the versioned welcome notice",
+            "zh": "提供通用设置、设置窗口文案和首次使用提示。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-settings-models",
+        "moduleName": "@deepseek-ai/dsh-client-ui-settings-models",
+        "entryId": "include:ui-settings-models",
+        "meta": {
+          "title": {
+            "en": "ui-settings-models",
+            "zh": "模型设置界面"
+          },
+          "description": {
+            "en": "Models settings and shared product-onboarding dialogs over existing settings and credential joins",
+            "zh": "管理模型服务及其接入配置，并提供相关引导。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-plugin-manager",
+        "moduleName": "@deepseek-ai/dsh-client-ui-plugin-manager",
+        "entryId": "include:ui-plugin-manager",
+        "meta": {
+          "title": {
+            "en": "ui-plugin-manager",
+            "zh": "插件管理界面"
+          },
+          "description": {
+            "en": "Plugin management for the dsh web client: the sidebar Plugins panel installs, enables, disables, retries, and composes installed plugin packages",
+            "zh": "查看和安装插件包，并进行启用、停用和重试等操作。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-settings-plugin-inventory",
+        "moduleName": "@deepseek-ai/dsh-client-ui-settings-plugin-inventory",
+        "entryId": "include:ui-settings-plugin-inventory",
+        "meta": {
+          "title": {
+            "en": "ui-settings-plugin-inventory",
+            "zh": "内置插件列表界面"
+          },
+          "description": {
+            "en": "Read-only Cordis Loader inventory tab in Web Plugins settings",
+            "zh": "在设置中查看全局插件和各 Agent 预设使用的插件。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-conversation",
+        "moduleName": "@deepseek-ai/dsh-client-ui-conversation",
+        "entryId": "include:ui-conversation",
+        "meta": {
+          "title": {
+            "en": "ui-conversation",
+            "zh": "会话界面框架"
+          },
+          "description": {
+            "en": "Target-neutral Conversation assembly, shell, composer, queue, and view navigation",
+            "zh": "组织对话内容、输入框、消息队列和视图导航。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-approval",
+        "moduleName": "@deepseek-ai/dsh-client-ui-approval",
+        "entryId": "include:ui-approval",
+        "meta": {
+          "title": {
+            "en": "ui-approval",
+            "zh": "操作审批界面"
+          },
+          "description": {
+            "en": "Approval composer takeover over the scoped Remote Event waterfall",
+            "zh": "展示待审批的操作，并将用户选择返回给运行中的任务。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-chat",
+        "moduleName": "@deepseek-ai/dsh-client-ui-chat",
+        "entryId": "include:ui-chat",
+        "meta": {
+          "title": {
+            "en": "ui-chat",
+            "zh": "聊天内容展示"
+          },
+          "description": {
+            "en": "Chat Conversation target, node definitions, renderers, and details surface",
+            "zh": "渲染聊天消息、工具内容和相关详情。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-brand-official",
+        "moduleName": "@deepseek-ai/dsh-client-ui-brand-official",
+        "entryId": "include:ui-brand-official",
+        "meta": {
+          "title": {
+            "en": "ui-brand-official",
+            "zh": "DeepSeek 品牌展示"
+          },
+          "description": {
+            "en": "Official DeepSeek Harness brand occupants for the Web client's sidebar slots",
+            "zh": "在应用侧栏等位置展示官方品牌元素。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-attachment",
+        "moduleName": "@deepseek-ai/dsh-client-ui-attachment",
+        "entryId": "include:ui-attachment",
+        "meta": {
+          "title": {
+            "en": "ui-attachment",
+            "zh": "附件展示"
+          },
+          "description": {
+            "en": "Dynamic attachment presentation plugin for conversation input, message-image, and trajectory image slots",
+            "zh": "在消息输入、对话和运行记录中展示附件与图片。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-tool",
+        "moduleName": "@deepseek-ai/dsh-client-ui-tool",
+        "entryId": "include:ui-tool",
+        "meta": {
+          "title": {
+            "en": "ui-tool",
+            "zh": "工具调用展示"
+          },
+          "description": {
+            "en": "Client Tool call-tree renderer and keyed per-tool presentation slot",
+            "zh": "展示工具调用过程、嵌套关系和各工具的结果界面。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-cordis",
+        "moduleName": "@deepseek-ai/dsh-client-ui-cordis",
+        "entryId": "include:ui-cordis",
+        "meta": {
+          "title": {
+            "en": "ui-cordis",
+            "zh": "动态插件运行卡片"
+          },
+          "description": {
+            "en": "Cordis dynamic-plugin definition card: the keyed cordis_define tool row with its run/stop switch",
+            "zh": "展示动态插件定义，并提供运行和停止控件。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-deliverables",
+        "moduleName": "@deepseek-ai/dsh-client-ui-deliverables",
+        "entryId": "include:ui-deliverables",
+        "meta": {
+          "title": {
+            "en": "ui-deliverables",
+            "zh": "文件变更与交付展示"
+          },
+          "description": {
+            "en": "Changed-files card with per-file comparison tabs, delivery cards, and clickable final-response file references for Web",
+            "zh": "展示修改过的文件、内容对比和交付文件入口。"
+          }
+        }
+      },
+      {
+        "rowId": "workspace-changes",
+        "moduleName": "@deepseek-ai/dsh-workspace-changes",
+        "entryId": "include:workspace-changes",
+        "meta": {
+          "title": {
+            "en": "workspace-changes",
+            "zh": "工作区变更记录"
+          },
+          "description": {
+            "en": "Per-turn workspace file changes recorded from git working-tree snapshots and whole-file captures, with per-file comparisons, for the DeepSeek Harness",
+            "zh": "记录每轮任务的文件变化，供逐文件比较。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-workspace",
+        "moduleName": "@deepseek-ai/dsh-client-ui-workspace",
+        "entryId": "include:ui-workspace",
+        "meta": {
+          "title": {
+            "en": "ui-workspace",
+            "zh": "工作区选择界面"
+          },
+          "description": {
+            "en": "Workspace picker plugin: one WorkspacePicker registered into the sidebar and empty-state workspace slots",
+            "zh": "在侧栏和新会话页面中选择工作区。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-workflow-run",
+        "moduleName": "@deepseek-ai/dsh-client-ui-workflow-run",
+        "entryId": "include:ui-workflow-run",
+        "meta": {
+          "title": {
+            "en": "ui-workflow-run",
+            "zh": "工作流运行展示"
+          },
+          "description": {
+            "en": "Durable workflow-run Conversation Node and nested member disclosure for dsh web",
+            "zh": "在会话中展示工作流运行记录及其成员详情。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-input-trigger",
+        "moduleName": "@deepseek-ai/dsh-client-ui-input-trigger",
+        "entryId": "include:ui-input-trigger",
+        "meta": {
+          "title": {
+            "en": "ui-input-trigger",
+            "zh": "输入联想服务"
+          },
+          "description": {
+            "en": "Input trigger pipeline: '/' and '@' detection, candidate menu, pick routing to registered sources",
+            "zh": "识别输入中的 / 和 @，展示并选择对应候选项。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-commands",
+        "moduleName": "@deepseek-ai/dsh-client-ui-commands",
+        "entryId": "include:ui-commands",
+        "meta": {
+          "title": {
+            "en": "ui-commands",
+            "zh": "命令选择界面"
+          },
+          "description": {
+            "en": "Client command surface: global directory cache, '/' source, three command UI kinds, popupSelect registry",
+            "zh": "在输入框中提供斜杠命令菜单和相关操作界面。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-skill",
+        "moduleName": "@deepseek-ai/dsh-client-ui-skill",
+        "entryId": "include:ui-skill",
+        "meta": {
+          "title": {
+            "en": "ui-skill",
+            "zh": "技能引用与展示"
+          },
+          "description": {
+            "en": "Web skill references and the dedicated skill tool row",
+            "zh": "在会话中提供技能引用和技能调用展示。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-subagent",
+        "moduleName": "@deepseek-ai/dsh-client-ui-subagent",
+        "entryId": "include:ui-subagent",
+        "meta": {
+          "title": {
+            "en": "ui-subagent",
+            "zh": "子智能体会话界面"
+          },
+          "description": {
+            "en": "Subagent conversation catalog, continuation routing UI, and '@' reference source",
+            "zh": "查看和跳转子智能体会话，并支持继续对话和 @ 引用。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-reference",
+        "moduleName": "@deepseek-ai/dsh-client-ui-reference",
+        "entryId": "include:ui-reference",
+        "meta": {
+          "title": {
+            "en": "ui-reference",
+            "zh": "文件与会话引用界面"
+          },
+          "description": {
+            "en": "Unified Web @file and @session reference source",
+            "zh": "通过 @ 在输入框中引用文件或其他会话。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-secret-mask",
+        "moduleName": "@deepseek-ai/dsh-client-ui-secret-mask",
+        "entryId": "include:ui-secret-mask",
+        "meta": {
+          "title": {
+            "en": "ui-secret-mask",
+            "zh": "凭据遮挡"
+          },
+          "description": {
+            "en": "Masks recognized keys, tokens, and passwords in sent messages.",
+            "zh": "遮挡已发送消息中可识别的密钥、令牌与密码。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-jobs",
+        "moduleName": "@deepseek-ai/dsh-client-ui-jobs",
+        "entryId": "include:ui-jobs",
+        "meta": {
+          "title": {
+            "en": "ui-jobs",
+            "zh": "后台任务界面"
+          },
+          "description": {
+            "en": "Session-header background-job list with on-demand streaming record panels",
+            "zh": "在会话中查看后台任务列表、状态和实时输出。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-schedule",
+        "moduleName": "@deepseek-ai/dsh-client-ui-schedule",
+        "entryId": "include:ui-schedule",
+        "meta": {
+          "title": {
+            "en": "Task interface",
+            "zh": "任务界面"
+          },
+          "description": {
+            "en": "The Automation tasks page in the sidebar, plus task cards and reminder marks in sessions.",
+            "zh": "侧栏的自动化任务页面，以及会话里的任务卡片和提醒标记。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-goal",
+        "moduleName": "@deepseek-ai/dsh-client-ui-goal",
+        "entryId": "include:ui-goal",
+        "meta": {
+          "title": {
+            "en": "ui-goal",
+            "zh": "会话目标栏"
+          },
+          "description": {
+            "en": "Session goal surface: GoalBar docked above the composer, read from the goal session projection",
+            "zh": "在输入框上方展示当前会话的目标和状态。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-message-feedback",
+        "moduleName": "@deepseek-ai/dsh-client-ui-message-feedback",
+        "entryId": "include:ui-message-feedback",
+        "meta": {
+          "title": {
+            "en": "ui-message-feedback",
+            "zh": "消息反馈界面"
+          },
+          "description": {
+            "en": "The Web feedback surface: per-message Like/Dislike in the assistant-message action strip and the feedback dialog behind both ratings and /feedback, backed by the messageFeedback and sessionFeedback Host Remotes",
+            "zh": "提供回复的赞踩按钮及会话反馈弹窗。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-model-selection",
+        "moduleName": "@deepseek-ai/dsh-client-ui-model-selection",
+        "entryId": "include:ui-model-selection",
+        "meta": {
+          "title": {
+            "en": "ui-model-selection",
+            "zh": "模型选择界面"
+          },
+          "description": {
+            "en": "Model selection over the shared model catalog, Session projection, and session.selectModel",
+            "zh": "查看可用模型，并切换当前会话使用的模型。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-deepseek-model-label-1017",
+        "moduleName": "@deepseek-ai/dsh-client-ui-deepseek-model-label-1017",
+        "entryId": "include:ui-deepseek-model-label-1017",
+        "meta": {
+          "title": "@deepseek-ai/dsh-client-ui-deepseek-model-label-1017",
+          "description": "Temporary 1017 release badge for official DeepSeek Flash model labels"
+        }
+      },
+      {
+        "rowId": "ui-permission",
+        "moduleName": "@deepseek-ai/dsh-client-ui-permission-presets",
+        "entryId": "include:ui-permission",
+        "meta": {
+          "title": {
+            "en": "ui-permission-presets",
+            "zh": "权限模式界面"
+          },
+          "description": {
+            "en": "Permission surfaces: a new-session default in General settings and a current-session /permission popup over the permissions projection",
+            "zh": "设置新会话的默认权限，并切换当前会话的权限模式。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-agent-preset",
+        "moduleName": "@deepseek-ai/dsh-client-ui-agent-preset",
+        "entryId": "include:ui-agent-preset",
+        "meta": {
+          "title": {
+            "en": "ui-agent-preset",
+            "zh": "Agent 预设界面"
+          },
+          "description": {
+            "en": "Agent-preset surfaces: the default for later sessions, this session's seat, and the composition editor",
+            "zh": "选择当前及新会话的 Agent 预设，并编辑预设使用的插件。"
+          }
+        }
+      },
+      {
+        "rowId": "entry-customization",
+        "moduleName": "@deepseek-ai/dsh-client-ui-entry-customization",
+        "entryId": "include:entry-customization",
+        "meta": {
+          "title": {
+            "en": "Interface customization",
+            "zh": "界面自定义"
+          },
+          "description": {
+            "en": "Customize plugin entries in the left sidebar, conversation views, and right sidebar, and quickly create new plugins.",
+            "zh": "自定义左侧栏、会话视图和右侧栏显示的插件入口，并快捷创建新插件。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-settings-session-log",
+        "moduleName": "@deepseek-ai/dsh-client-ui-settings-session-log",
+        "entryId": "include:ui-settings-session-log",
+        "meta": {
+          "title": {
+            "en": "ui-settings-session-log",
+            "zh": "会话日志上传设置"
+          },
+          "description": {
+            "en": "General settings control for Session-log upload with DeepSeek API requests",
+            "zh": "设置是否随 DeepSeek 官方模型 API 请求上传会话日志。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-settings-plugins",
+        "moduleName": "@deepseek-ai/dsh-client-ui-settings-plugins",
+        "entryId": "include:ui-settings-plugins",
+        "meta": {
+          "title": {
+            "en": "ui-settings-plugins",
+            "zh": "内置插件设置入口"
+          },
+          "description": {
+            "en": "Built-in plugins settings section for the dsh web client: the Settings navigation entry and the tab chrome feature-owned tabs register into",
+            "zh": "提供设置中的内置插件入口及其功能标签页。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-settings-shell",
+        "moduleName": "@deepseek-ai/dsh-client-ui-settings-shell",
+        "entryId": "include:ui-settings-shell",
+        "meta": {
+          "title": {
+            "en": "ui-settings-shell",
+            "zh": "命令执行设置"
+          },
+          "description": {
+            "en": "Settings page of the shell executor on the dsh web client's Plugins page: the command timeout and the per-stream output cap of the shell namespace",
+            "zh": "配置命令执行超时和输出长度上限。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-settings-agent-loop",
+        "moduleName": "@deepseek-ai/dsh-client-ui-settings-agent-loop",
+        "entryId": "include:ui-settings-agent-loop",
+        "meta": {
+          "title": {
+            "en": "ui-settings-agent-loop",
+            "zh": "智能体运行设置"
+          },
+          "description": {
+            "en": "Settings page of the agent loop on the dsh web client's Plugins page: the parallel tool-call cap of the agent-loop namespace",
+            "zh": "配置同时执行的工具调用数量上限。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-settings-subagent",
+        "moduleName": "@deepseek-ai/dsh-client-ui-settings-subagent",
+        "entryId": "include:ui-settings-subagent",
+        "meta": {
+          "title": {
+            "en": "ui-settings-subagent",
+            "zh": "子智能体设置"
+          },
+          "description": {
+            "en": "Settings page of Subagent delegation on the dsh web client's Plugins page: recursion depth, parallel capacity, and the models agents may choose for subagents",
+            "zh": "配置委派深度、并发数量和可选模型。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-settings-web-search",
+        "moduleName": "@deepseek-ai/dsh-client-ui-settings-web-search",
+        "entryId": "include:ui-settings-web-search",
+        "meta": {
+          "title": {
+            "en": "ui-settings-web-search",
+            "zh": "网页搜索设置"
+          },
+          "description": {
+            "en": "Settings page of the DeepSeek web-search provider on the dsh web client's Plugins page: its API key, endpoint, and per-request search budget",
+            "zh": "配置 DeepSeek 网页搜索的密钥、服务地址和请求预算。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-plan",
+        "moduleName": "@deepseek-ai/dsh-client-ui-plan",
+        "entryId": "include:ui-plan",
+        "meta": {
+          "title": {
+            "en": "ui-plan",
+            "zh": "计划审阅界面"
+          },
+          "description": {
+            "en": "Plan mode controls, persistent transcript plan cards, and sidebar Markdown previews",
+            "zh": "展示计划模式控件、计划卡片和 Markdown 预览。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-user-questions",
+        "moduleName": "@deepseek-ai/dsh-client-ui-user-questions",
+        "entryId": "include:ui-user-questions",
+        "meta": {
+          "title": {
+            "en": "ui-user-questions",
+            "zh": "用户问答界面"
+          },
+          "description": {
+            "en": "Web ask_user_question composer takeover and plan-review presentation UI",
+            "zh": "在会话中展示 AI 的提问和计划审阅请求，并收集用户回答。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-trajectory",
+        "moduleName": "@deepseek-ai/dsh-client-ui-trajectory",
+        "entryId": "include:ui-trajectory",
+        "meta": {
+          "title": {
+            "en": "ui-trajectory",
+            "zh": "运行轨迹"
+          },
+          "description": {
+            "en": "Trajectory event ledger with an interactive timing overview: pure-consumer plugin registering into the conversation ViewMap (no service)",
+            "zh": "按轮次查看消息、工具调用、耗时和 Token 等运行记录。"
+          }
+        }
+      },
+      {
+        "rowId": "agent-preset-registry",
+        "moduleName": "@deepseek-ai/dsh-agent-preset-registry",
+        "entryId": "include:agent-preset-registry",
+        "meta": {
+          "title": {
+            "en": "agent-preset-registry",
+            "zh": "Agent 预设管理"
+          },
+          "description": {
+            "en": "Declarative Agent preset registry and profile-backed editing",
+            "zh": "注册 Agent 预设，并保存对预设组成的修改。"
+          }
+        }
+      },
+      {
+        "rowId": "preset-standard",
+        "moduleName": "@deepseek-ai/dsh-agent-preset",
+        "entryId": "include:preset-standard",
+        "meta": {
+          "title": {
+            "en": "agent-preset",
+            "zh": "Agent 预设定义"
+          },
+          "description": {
+            "en": "Declare an Agent capability composition in Cordis YAML",
+            "zh": "声明一个 Agent 预设及其使用的插件组合。"
+          }
+        }
+      },
+      {
+        "rowId": "preset-ptc",
+        "moduleName": "@deepseek-ai/dsh-agent-preset",
+        "entryId": "include:preset-ptc",
+        "meta": {
+          "title": {
+            "en": "agent-preset",
+            "zh": "Agent 预设定义"
+          },
+          "description": {
+            "en": "Declare an Agent capability composition in Cordis YAML",
+            "zh": "声明一个 Agent 预设及其使用的插件组合。"
+          }
+        }
+      },
+      {
+        "rowId": "preset-minimal",
+        "moduleName": "@deepseek-ai/dsh-agent-preset",
+        "entryId": "include:preset-minimal",
+        "meta": {
+          "title": {
+            "en": "agent-preset",
+            "zh": "Agent 预设定义"
+          },
+          "description": {
+            "en": "Declare an Agent capability composition in Cordis YAML",
+            "zh": "声明一个 Agent 预设及其使用的插件组合。"
+          }
+        }
+      },
+      {
+        "rowId": "preset-cordis",
+        "moduleName": "@deepseek-ai/dsh-agent-preset",
+        "entryId": "include:preset-cordis",
+        "meta": {
+          "title": {
+            "en": "agent-preset",
+            "zh": "Agent 预设定义"
+          },
+          "description": {
+            "en": "Declare an Agent capability composition in Cordis YAML",
+            "zh": "声明一个 Agent 预设及其使用的插件组合。"
+          }
+        }
+      }
+    ],
+    "overrides": [
+      "system-prompt",
+      "session-query-sqlite",
+      "tools",
+      "tool-plugin-manager",
+      "tool-bash",
+      "tool-pwsh",
+      "tool-jobs",
+      "tool-fs",
+      "tool-fs-search",
+      "skill-filesystem",
+      "tool-skill",
+      "command-goal",
+      "tool-goal",
+      "plan-mode",
+      "compaction-basic",
+      "command-compact",
+      "tool-result-pruner",
+      "tool-subagent-control",
+      "tool-subagent-list-agents",
+      "tool-subagent",
+      "tool-subagent-fork",
+      "workflow-ptc",
+      "tool-workflow",
+      "agent-instructions",
+      "tool-todo",
+      "tool-web"
+    ]
+  },
+  {
+    "name": "@deepseek-ai/dsh-experimental-voice-input-bundle",
+    "official": true,
+    "availability": "installation",
+    "version": "0.2.1-rc.4",
+    "description": "Experimental voice input with local SenseVoice; downloads its runtime on first use",
+    "meta": {
+      "title": {
+        "en": "Voice input",
+        "zh": "语音输入"
+      },
+      "description": {
+        "en": "Transcribe recordings locally with SenseVoice; first use requires installing dependencies",
+        "zh": "在本机使用 SenseVoice 转写录音，首次使用需安装依赖。"
+      },
+      "icon": "<icon>"
+    },
+    "enabled": true,
+    "installed": false,
+    "optional": true,
+    "removable": false,
+    "rows": [
+      {
+        "rowId": "speech-to-text",
+        "moduleName": "@deepseek-ai/dsh-experimental-speech-to-text",
+        "entryId": "include:speech-to-text",
+        "meta": {
+          "title": {
+            "en": "Speech recognition",
+            "zh": "语音识别"
+          },
+          "description": {
+            "en": "Manage speech transcription and select a recognition service.",
+            "zh": "管理语音转写服务，并选择识别服务。"
+          }
+        }
+      },
+      {
+        "rowId": "speech-to-text-sensevoice",
+        "moduleName": "@deepseek-ai/dsh-experimental-speech-to-text-sensevoice",
+        "entryId": "include:speech-to-text-sensevoice",
+        "meta": {
+          "title": {
+            "en": "Local SenseVoice recognition",
+            "zh": "SenseVoice 本地识别"
+          },
+          "description": {
+            "en": "Transcribe recordings into text locally with SenseVoice.",
+            "zh": "使用本机 SenseVoice 将录音转写为文字。"
+          }
+        }
+      },
+      {
+        "rowId": "api-speech-to-text",
+        "moduleName": "@deepseek-ai/dsh-experimental-api-speech-to-text",
+        "entryId": "include:api-speech-to-text",
+        "meta": {
+          "title": {
+            "en": "Speech transcription API",
+            "zh": "语音转写接口"
+          },
+          "description": {
+            "en": "Provide speech transcription for browser clients.",
+            "zh": "为浏览器提供录音转写接口。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-voice-input",
+        "moduleName": "@deepseek-ai/dsh-experimental-client-ui-voice-input",
+        "entryId": "include:ui-voice-input",
+        "meta": {
+          "title": {
+            "en": "Voice recording",
+            "zh": "录音输入"
+          },
+          "description": {
+            "en": "Record speech and insert editable text into the conversation draft.",
+            "zh": "录制语音，将识别结果填入会话草稿，支持编辑后发送。"
+          }
+        }
+      }
+    ],
+    "overrides": []
+  },
+  {
+    "name": "dsh-go-fixture-local-notes",
+    "official": false,
+    "availability": "profile",
+    "version": "1.0.0",
+    "description": "A local third-party plugin for the DSH Go plugin-config catalog fixture",
+    "meta": {
+      "title": "dsh-go-fixture-local-notes",
+      "description": "A local third-party plugin for the DSH Go plugin-config catalog fixture"
+    },
+    "source": "link:/root/plugins/local-notes",
+    "enabled": true,
+    "installed": true,
+    "optional": false,
+    "removable": true,
+    "rows": [
+      {
+        "rowId": "local-notes",
+        "moduleName": "dsh-go-fixture-local-notes",
+        "entryId": "include:local-notes",
+        "meta": {
+          "title": "dsh-go-fixture-local-notes",
+          "description": "A local third-party plugin for the DSH Go plugin-config catalog fixture"
+        }
+      }
+    ],
+    "overrides": []
+  },
+  {
+    "name": "@deepseek-ai/dsh-acp-app",
+    "official": false,
+    "availability": "installation",
+    "version": "0.2.1-rc.4",
+    "description": "The dsh ACP profile bundle: automation-only JSON-RPC stdio and process lifecycle over dsh-base",
+    "meta": {
+      "title": "@deepseek-ai/dsh-acp-app",
+      "description": "The dsh ACP profile bundle: automation-only JSON-RPC stdio and process lifecycle over dsh-base"
+    },
+    "enabled": false,
+    "installed": false,
+    "optional": false,
+    "removable": false,
+    "rows": [
+      {
+        "rowId": "acp-app-startup",
+        "moduleName": "@deepseek-ai/dsh-acp-app",
+        "meta": {
+          "title": "@deepseek-ai/dsh-acp-app",
+          "description": "The dsh ACP profile bundle: automation-only JSON-RPC stdio and process lifecycle over dsh-base"
+        }
+      },
+      {
+        "rowId": "acp",
+        "moduleName": "@deepseek-ai/dsh-acp",
+        "meta": {
+          "title": "@deepseek-ai/dsh-acp",
+          "description": "Automation-only Agent Client Protocol server for driving DeepSeek Harness agents over JSON-RPC stdio"
+        }
+      }
+    ],
+    "overrides": [
+      "system-prompt",
+      "session-title-llm",
+      "hmr"
+    ]
+  },
+  {
+    "name": "@deepseek-ai/dsh-experimental-agent-team-profile",
+    "official": true,
+    "availability": "installation",
+    "version": "0.2.1-rc.4",
+    "description": "Agent Teams collaboration, tools, and Web UI in one experimental bundle",
+    "meta": {
+      "title": {
+        "en": "Agent Teams",
+        "zh": "智能体团队"
+      },
+      "description": {
+        "en": "Enable team collaboration, team tools, the member roster, and the shared task board.",
+        "zh": "启用团队协作、团队工具、成员列表和共享任务看板。"
+      },
+      "icon": "<icon>"
+    },
+    "enabled": false,
+    "installed": false,
+    "optional": true,
+    "removable": false,
+    "rows": [
+      {
+        "rowId": "agent-team",
+        "moduleName": "@deepseek-ai/dsh-experimental-agent-team",
+        "meta": {
+          "title": {
+            "en": "Team Collaboration",
+            "zh": "团队协作"
+          },
+          "description": {
+            "en": "Manage team members, member messages, and shared tasks.",
+            "zh": "管理团队成员、成员消息和共享任务。"
+          }
+        }
+      },
+      {
+        "rowId": "tool-agent-team",
+        "moduleName": "@deepseek-ai/dsh-experimental-tool-agent-team",
+        "meta": {
+          "title": {
+            "en": "Team Tools",
+            "zh": "团队工具"
+          },
+          "description": {
+            "en": "Give agents tools to coordinate members, exchange messages, and manage shared tasks.",
+            "zh": "为智能体提供成员协调、消息通信和共享任务管理工具。"
+          }
+        }
+      },
+      {
+        "rowId": "ui-agent-team",
+        "moduleName": "@deepseek-ai/dsh-experimental-client-ui-agent-team",
+        "meta": {
+          "title": {
+            "en": "Team Panel",
+            "zh": "团队面板"
+          },
+          "description": {
+            "en": "View team members and shared tasks, and navigate to member conversations.",
+            "zh": "查看团队成员和共享任务，并切换到成员会话。"
+          }
+        }
+      }
+    ],
+    "overrides": [
+      "tool-subagent-control",
+      "tool-subagent-list-agents",
+      "tool-subagent",
+      "tool-subagent-fork"
+    ]
+  },
+  {
+    "name": "@deepseek-ai/dsh-experimental-inspector-profile",
+    "official": true,
+    "availability": "installation",
+    "version": "0.2.1-rc.4",
+    "description": "Optional Web bundle for raw Session logs and Chat node inspection",
+    "meta": {
+      "title": {
+        "en": "Developer Tools",
+        "zh": "开发者工具"
+      },
+      "description": {
+        "en": "Inspect and debug raw session data, grouped chat messages, and the NodeJS backend.",
+        "zh": "查看调试会话原始数据、聊天消息分组数据，以及调试 NodeJS 后端"
+      },
+      "icon": "<icon>"
+    },
+    "enabled": false,
+    "installed": false,
+    "optional": true,
+    "removable": false,
+    "rows": [
+      {
+        "rowId": "experimental-inspector",
+        "moduleName": "@deepseek-ai/dsh-experimental-inspector",
+        "meta": {
+          "title": {
+            "en": "NodeJS Inspector",
+            "zh": "NodeJS 诊断"
+          },
+          "description": {
+            "en": "Press Ctrl/Cmd+Shift+. to open Chrome DevTools in the bottom panel for development and debugging.",
+            "zh": "按 Ctrl/Cmd+Shift+. 在底部面板打开 Chrome DevTools 进行开发调试"
+          },
+          "icon": "<icon>"
+        }
+      },
+      {
+        "rowId": "session-inspector",
+        "moduleName": "@deepseek-ai/dsh-experimental-session-inspector",
+        "meta": {
+          "title": {
+            "en": "Session Log",
+            "zh": "会话数据诊断"
+          },
+          "description": {
+            "en": "Enable analysis of the current session's raw data and grouped chat messages in the session sidebar.",
+            "zh": "在会话侧边栏启用当前会话的原始数据和聊天分组数据分析功能"
+          }
+        }
+      }
+    ],
+    "overrides": []
+  },
+  {
+    "name": "@deepseek-ai/dsh-headless",
+    "official": false,
+    "availability": "installation",
+    "version": "0.2.1-rc.4",
+    "description": "The dsh one-shot bundle: a direct core Agent/Session runner over dsh-base with no Host, HTTP, or browser layer",
+    "meta": {
+      "title": "@deepseek-ai/dsh-headless",
+      "description": "The dsh one-shot bundle: a direct core Agent/Session runner over dsh-base with no Host, HTTP, or browser layer"
+    },
+    "enabled": false,
+    "installed": false,
+    "optional": false,
+    "removable": false,
+    "rows": [
+      {
+        "rowId": "headless-startup",
+        "moduleName": "@deepseek-ai/dsh-headless/startup"
+      },
+      {
+        "rowId": "headless-runner",
+        "moduleName": "@deepseek-ai/dsh-headless",
+        "meta": {
+          "title": "@deepseek-ai/dsh-headless",
+          "description": "The dsh one-shot bundle: a direct core Agent/Session runner over dsh-base with no Host, HTTP, or browser layer"
+        }
+      }
+    ],
+    "overrides": [
+      "system-prompt",
+      "tools",
+      "hmr",
+      "credentials",
+      "authorization",
+      "deepseek-account"
+    ]
+  },
+  {
+    "name": "@deepseek-ai/dsh-sdk-app",
+    "official": false,
+    "availability": "installation",
+    "version": "0.2.1-rc.4",
+    "description": "The dsh SDK profile bundle: stdio JSON-RPC serving and process lifecycle over dsh-base",
+    "meta": {
+      "title": "@deepseek-ai/dsh-sdk-app",
+      "description": "The dsh SDK profile bundle: stdio JSON-RPC serving and process lifecycle over dsh-base"
+    },
+    "enabled": false,
+    "installed": false,
+    "optional": false,
+    "removable": false,
+    "rows": [
+      {
+        "rowId": "sdk-app-startup",
+        "moduleName": "@deepseek-ai/dsh-sdk-app",
+        "meta": {
+          "title": "@deepseek-ai/dsh-sdk-app",
+          "description": "The dsh SDK profile bundle: stdio JSON-RPC serving and process lifecycle over dsh-base"
+        }
+      },
+      {
+        "rowId": "sdk-jsonrpc-server",
+        "moduleName": "@deepseek-ai/dsh-sdk-jsonrpc-server",
+        "meta": {
+          "title": "@deepseek-ai/dsh-sdk-jsonrpc-server",
+          "description": "Stdio JSON-RPC server plugin for out-of-process DeepSeek Harness SDK clients"
+        }
+      },
+      {
+        "rowId": "workspace-dependencies",
+        "moduleName": "@deepseek-ai/dsh-tool-workspace-dependencies",
+        "meta": {
+          "title": "@deepseek-ai/dsh-tool-workspace-dependencies",
+          "description": "The load_workspace_dependencies tool: absolute paths into a bundled Python, Node.js, and pnpm payload"
+        }
+      },
+      {
+        "rowId": "skill-office",
+        "moduleName": "@deepseek-ai/dsh-skill-office",
+        "meta": {
+          "title": "@deepseek-ai/dsh-skill-office",
+          "description": "Bundled Word, PowerPoint, and Excel workflows and LibreOffice Kit operations"
+        }
+      }
+    ],
+    "overrides": [
+      "system-prompt",
+      "session-title-llm",
+      "hmr"
+    ]
+  },
+  {
+    "name": "@deepseek-ai/dsh-sdk-minimal",
+    "official": false,
+    "availability": "installation",
+    "version": "0.2.1-rc.4",
+    "description": "The standalone minimal SDK profile bundle: JSON-RPC, one DeepSeek adapter, persistent shell, and JSONL sessions",
+    "meta": {
+      "title": "@deepseek-ai/dsh-sdk-minimal",
+      "description": "The standalone minimal SDK profile bundle: JSON-RPC, one DeepSeek adapter, persistent shell, and JSONL sessions"
+    },
+    "enabled": false,
+    "installed": false,
+    "optional": false,
+    "removable": false,
+    "readOnlyReason": "management-required",
+    "rows": [
+      {
+        "rowId": "sdk-app-startup",
+        "moduleName": "@deepseek-ai/dsh-sdk-app",
+        "meta": {
+          "title": "@deepseek-ai/dsh-sdk-app",
+          "description": "The dsh SDK profile bundle: stdio JSON-RPC serving and process lifecycle over dsh-base"
+        }
+      },
+      {
+        "rowId": "sdk-jsonrpc-server",
+        "moduleName": "@deepseek-ai/dsh-sdk-jsonrpc-server",
+        "meta": {
+          "title": "@deepseek-ai/dsh-sdk-jsonrpc-server",
+          "description": "Stdio JSON-RPC server plugin for out-of-process DeepSeek Harness SDK clients"
+        }
+      },
+      {
+        "rowId": "deepseek-llm-api-extensions",
+        "moduleName": "@deepseek-ai/dsh-deepseek-llm-api-extensions",
+        "entryId": "include:deepseek-llm-api-extensions",
+        "meta": {
+          "title": {
+            "en": "deepseek-llm-api-extensions",
+            "zh": "DeepSeek API 扩展"
+          },
+          "description": {
+            "en": "Additive request-field registry for the official DeepSeek LLM API adapter",
+            "zh": "允许其他插件向 DeepSeek 模型请求添加扩展字段。"
+          }
+        }
+      },
+      {
+        "rowId": "session-log-deepseek",
+        "moduleName": "@deepseek-ai/dsh-session-log-deepseek",
+        "entryId": "include:session-log-deepseek",
+        "meta": {
+          "title": {
+            "en": "session-log-deepseek",
+            "zh": "DeepSeek 会话日志上传"
+          },
+          "description": {
+            "en": "Incremental lossless session-log request extension for the official DeepSeek LLM API",
+            "zh": "启用后，随官方模型 API 请求向 DeepSeek 上传会话日志。"
+          }
+        }
+      },
+      {
+        "rowId": "plugin-package-inventory-deepseek",
+        "moduleName": "@deepseek-ai/dsh-plugin-package-inventory-deepseek",
+        "entryId": "include:plugin-package-inventory-deepseek",
+        "meta": {
+          "title": {
+            "en": "plugin-package-inventory-deepseek",
+            "zh": "DeepSeek 插件清单上报"
+          },
+          "description": {
+            "en": "Active Loader-backed plugin package inventory for official DeepSeek LLM API requests",
+            "zh": "随官方模型 API 请求发送当前活跃插件包的清单。"
+          }
+        }
+      },
+      {
+        "rowId": "llm-deepseek",
+        "moduleName": "@deepseek-ai/dsh-llm-deepseek-api-key",
+        "entryId": "include:llm-deepseek",
+        "meta": {
+          "title": {
+            "en": "llm-deepseek-api-key",
+            "zh": "DeepSeek API 密钥接入"
+          },
+          "description": {
+            "en": "DeepSeek api-key provider authentication and discovery",
+            "zh": "使用 API 密钥连接 DeepSeek 模型服务。"
+          }
+        }
+      },
+      {
+        "rowId": "sandbox",
+        "moduleName": "@deepseek-ai/dsh-sandbox-local",
+        "entryId": "include:sandbox",
+        "meta": {
+          "title": {
+            "en": "sandbox-local",
+            "zh": "本地进程沙箱"
+          },
+          "description": {
+            "en": "Local process-sandbox backends for the DeepSeek Harness sandbox seam: bwrap, the npm-distributed landlock-run launcher, macOS Seatbelt, or the Windows ACL restricted-token runner — functionally probed, fail-closed",
+            "zh": "按操作系统提供进程隔离，限制命令的访问范围。"
+          }
+        }
+      },
+      {
+        "rowId": "filesystem",
+        "moduleName": "@deepseek-ai/dsh-fs-local",
+        "meta": {
+          "title": "@deepseek-ai/dsh-fs-local",
+          "description": "Local-filesystem implementation of the DeepSeek Harness filesystem seam (ctx.fs)"
+        }
+      },
+      {
+        "rowId": "attachment-local",
+        "moduleName": "@deepseek-ai/dsh-attachment-local",
+        "entryId": "include:attachment-local",
+        "meta": {
+          "title": {
+            "en": "attachment-local",
+            "zh": "本地附件存储"
+          },
+          "description": {
+            "en": "Private content-addressed DSH_HOME attachment storage",
+            "zh": "保存会话中的图片等附件，并按内容标识读取。"
+          }
+        }
+      },
+      {
+        "rowId": "tool-fs",
+        "moduleName": "@deepseek-ai/dsh-tool-fs",
+        "entryId": "include:tool-fs",
+        "meta": {
+          "title": {
+            "en": "tool-fs",
+            "zh": "文件读写工具"
+          },
+          "description": {
+            "en": "Model-facing filesystem tools (read, write, edit) over the DeepSeek Harness filesystem seam (ctx.fs)",
+            "zh": "让 AI 读取、创建和编辑工作文件。"
+          }
+        }
+      },
+      {
+        "rowId": "working-directory",
+        "moduleName": "@deepseek-ai/dsh-working-directory",
+        "entryId": "include:working-directory",
+        "meta": {
+          "title": "@deepseek-ai/dsh-working-directory",
+          "description": "Session working directories with durable changes and model context"
+        }
+      },
+      {
+        "rowId": "tool-working-directory",
+        "moduleName": "@deepseek-ai/dsh-tool-working-directory",
+        "entryId": "include:tool-working-directory",
+        "meta": {
+          "title": "@deepseek-ai/dsh-tool-working-directory",
+          "description": "Read and change the active Session working directory"
+        }
+      },
+      {
+        "rowId": "session-projection",
+        "moduleName": "@deepseek-ai/dsh-session-projection",
+        "entryId": "include:session-projection",
+        "meta": {
+          "title": {
+            "en": "session-projection",
+            "zh": "会话状态汇总"
+          },
+          "description": {
+            "en": "Session-projection seam: the merge-extensible projection type table, the provider contract, and the ctx.sessionProjections registry serving whole current values of log-derived per-session state",
+            "zh": "从会话日志生成标题、状态等信息，供其他功能读取。"
+          }
+        }
+      },
+      {
+        "rowId": "token-meter",
+        "moduleName": "@deepseek-ai/dsh-token-meter",
+        "entryId": "include:token-meter",
+        "meta": {
+          "title": {
+            "en": "token-meter",
+            "zh": "Token 计量"
+          },
+          "description": {
+            "en": "Replay-aware token measurement service (ctx.tokenMeter) for the DeepSeek Harness",
+            "zh": "估算模型上下文的 Token 用量，供压缩等功能判断预算。"
+          }
+        }
+      },
+      {
+        "rowId": "compaction-basic",
+        "moduleName": "@deepseek-ai/dsh-compaction-basic",
+        "entryId": "include:compaction-basic",
+        "meta": {
+          "title": {
+            "en": "compaction-basic",
+            "zh": "上下文压缩"
+          },
+          "description": {
+            "en": "Token-meter-driven compaction policy and LLM summarization backend for the DeepSeek Harness",
+            "zh": "在上下文达到阈值时，使用模型总结历史内容。"
+          }
+        }
+      },
+      {
+        "rowId": "image-offload",
+        "moduleName": "@deepseek-ai/dsh-compaction-image-offload",
+        "entryId": "include:image-offload",
+        "meta": {
+          "title": {
+            "en": "compaction-image-offload",
+            "zh": "历史图片卸载"
+          },
+          "description": {
+            "en": "Durable image offload for image-capable routes: replace over-budget request images with placeholders and retry",
+            "zh": "将超出模型图片预算的历史图片替换为附件引用，再重试请求。"
+          }
+        }
+      },
+      {
+        "rowId": "sandbox-policy",
+        "moduleName": "@deepseek-ai/dsh-sandbox-policy",
+        "entryId": "include:sandbox-policy",
+        "meta": {
+          "title": {
+            "en": "sandbox-policy",
+            "zh": "沙箱权限策略"
+          },
+          "description": {
+            "en": "Per-call sandbox policy resolver and current model context: deployment fallbacks plus each session's mode and workspace root, shared by every enforcing capability family",
+            "zh": "根据当前会话的权限模式和工作区，确定每次操作的限制。"
+          }
+        }
+      },
+      {
+        "rowId": "subprocess",
+        "moduleName": "@deepseek-ai/dsh-subprocess-local",
+        "entryId": "include:subprocess",
+        "meta": {
+          "title": {
+            "en": "subprocess-local",
+            "zh": "本地子进程"
+          },
+          "description": {
+            "en": "Local-subprocess implementation of the DeepSeek Harness subprocess seam",
+            "zh": "为其他插件提供本地进程的启动和管理能力。"
+          }
+        }
+      },
+      {
+        "rowId": "pty",
+        "moduleName": "@deepseek-ai/dsh-terminal",
+        "meta": {
+          "title": {
+            "en": "terminal",
+            "zh": "持久终端服务"
+          },
+          "description": {
+            "en": "Persistent PTY session seam for the DeepSeek Harness — owner-scoped ids, backend registry, interactive sends, reads, signals, and awaited cleanup",
+            "zh": "管理可持续交互的终端会话及其输入、输出和清理。"
+          }
+        }
+      },
+      {
+        "rowId": "terminal-bash",
+        "moduleName": "@deepseek-ai/dsh-terminal-bash",
+        "meta": {
+          "title": {
+            "en": "terminal-bash",
+            "zh": "持久 Shell 后端"
+          },
+          "description": {
+            "en": "Persistent shell PTY backend over the DeepSeek Harness subprocess terminal primitive",
+            "zh": "提供可跨多次调用保留状态的 Shell 终端。"
+          }
+        }
+      },
+      {
+        "rowId": "terminal-pwsh",
+        "moduleName": "@deepseek-ai/dsh-terminal-bash",
+        "meta": {
+          "title": {
+            "en": "terminal-bash",
+            "zh": "持久 Shell 后端"
+          },
+          "description": {
+            "en": "Persistent shell PTY backend over the DeepSeek Harness subprocess terminal primitive",
+            "zh": "提供可跨多次调用保留状态的 Shell 终端。"
+          }
+        }
+      },
+      {
+        "rowId": "timer",
+        "moduleName": "@deepseek-ai/cordis-plugin-timer",
+        "entryId": "include:timer",
+        "meta": {
+          "title": {
+            "en": "timer",
+            "zh": "计时服务"
+          },
+          "description": {
+            "en": "Timer service for cordis",
+            "zh": "为其他插件提供延时和周期执行能力。"
+          }
+        }
+      },
+      {
+        "rowId": "llm",
+        "moduleName": "@deepseek-ai/dsh-llm",
+        "entryId": "include:llm",
+        "meta": {
+          "title": {
+            "en": "llm",
+            "zh": "模型调用服务"
+          },
+          "description": {
+            "en": "Provider-neutral LLM service interface for the DeepSeek Harness",
+            "zh": "为不同模型提供统一的调用接口。"
+          }
+        }
+      },
+      {
+        "rowId": "session",
+        "moduleName": "@deepseek-ai/dsh-session",
+        "entryId": "include:session",
+        "meta": {
+          "title": {
+            "en": "session",
+            "zh": "会话记录"
+          },
+          "description": {
+            "en": "Event-sourced session store for the DeepSeek Harness",
+            "zh": "记录会话中的消息、工具调用和运行事件。"
+          }
+        }
+      },
+      {
+        "rowId": "session-title",
+        "moduleName": "@deepseek-ai/dsh-session-title",
+        "entryId": "include:session-title",
+        "meta": {
+          "title": {
+            "en": "session-title",
+            "zh": "会话标题服务"
+          },
+          "description": {
+            "en": "Log-backed session title service and provider registry for the DeepSeek Harness",
+            "zh": "保存和读取会话标题，并管理标题生成方式。"
+          }
+        }
+      },
+      {
+        "rowId": "system-prompt",
+        "moduleName": "@deepseek-ai/dsh-system-prompt",
+        "entryId": "include:system-prompt",
+        "meta": {
+          "title": {
+            "en": "system-prompt",
+            "zh": "系统提示词组装"
+          },
+          "description": {
+            "en": "System prompt assembly registry for the DeepSeek Harness",
+            "zh": "汇总各插件提供的系统提示词内容。"
+          }
+        }
+      },
+      {
+        "rowId": "tools",
+        "moduleName": "@deepseek-ai/dsh-tools",
+        "entryId": "include:tools",
+        "meta": {
+          "title": {
+            "en": "tools",
+            "zh": "工具注册与执行"
+          },
+          "description": {
+            "en": "Tool registry and execution pipeline for the DeepSeek Harness",
+            "zh": "管理可用工具及其调用执行流程。"
+          }
+        }
+      },
+      {
+        "rowId": "mcp-resources",
+        "moduleName": "@deepseek-ai/dsh-mcp-resources",
+        "entryId": "include:mcp-resources",
+        "meta": {
+          "title": {
+            "en": "mcp-resources",
+            "zh": "MCP 资源访问"
+          },
+          "description": {
+            "en": "Scoped MCP resource discovery and reading through shared model tools",
+            "zh": "让 AI 发现并读取已接入 MCP 服务提供的资源。"
+          }
+        }
+      },
+      {
+        "rowId": "agent",
+        "moduleName": "@deepseek-ai/dsh-agent",
+        "entryId": "include:agent",
+        "meta": {
+          "title": {
+            "en": "agent",
+            "zh": "智能体管理"
+          },
+          "description": {
+            "en": "Agent interface, registry, initiator scope, and event vocabulary for the DeepSeek Harness",
+            "zh": "管理智能体实例及其运行上下文和事件。"
+          }
+        }
+      },
+      {
+        "rowId": "llm-retry",
+        "moduleName": "@deepseek-ai/dsh-llm-retry",
+        "entryId": "include:llm-retry",
+        "meta": {
+          "title": {
+            "en": "llm-retry",
+            "zh": "模型请求重试"
+          },
+          "description": {
+            "en": "Provider-routed LLM request retry policy for the DeepSeek Harness",
+            "zh": "按模型提供方的策略重试失败的请求。"
+          }
+        }
+      },
+      {
+        "rowId": "jobs",
+        "moduleName": "@deepseek-ai/dsh-jobs-local",
+        "entryId": "include:jobs",
+        "meta": {
+          "title": {
+            "en": "jobs-local",
+            "zh": "本地后台任务"
+          },
+          "description": {
+            "en": "Process-local implementation of the DeepSeek Harness background job registry seam",
+            "zh": "管理当前进程中的后台任务及其运行状态。"
+          }
+        }
+      },
+      {
+        "rowId": "agent-loop",
+        "moduleName": "@deepseek-ai/dsh-agent-loop",
+        "entryId": "include:agent-loop",
+        "meta": {
+          "title": {
+            "en": "agent-loop",
+            "zh": "智能体运行循环"
+          },
+          "description": {
+            "en": "The concrete agent loop plugin for the DeepSeek Harness",
+            "zh": "协调模型请求、工具调用和后续步骤，推进智能体任务。"
+          }
+        }
+      },
+      {
+        "rowId": "persistent-bash",
+        "moduleName": "@deepseek-ai/dsh-tool-bash-persistent",
+        "meta": {
+          "title": {
+            "en": "tool-bash-persistent",
+            "zh": "持久 Bash 工具"
+          },
+          "description": {
+            "en": "Model-facing owner-scoped persistent Bash tool backed by the Harness PTY service",
+            "zh": "让 AI 在保留状态的 Bash 会话中连续执行命令。"
+          }
+        }
+      },
+      {
+        "rowId": "persistent-pwsh",
+        "moduleName": "@deepseek-ai/dsh-tool-pwsh-persistent",
+        "meta": {
+          "title": {
+            "en": "tool-pwsh-persistent",
+            "zh": "持久 PowerShell 工具"
+          },
+          "description": {
+            "en": "Model-facing owner-scoped persistent PowerShell tool backed by the Harness PTY service",
+            "zh": "让 AI 在保留状态的 PowerShell 会话中连续执行命令。"
+          }
+        }
+      },
+      {
+        "rowId": "sessions",
+        "moduleName": "@deepseek-ai/dsh-session-persistence-jsonl",
+        "meta": {
+          "title": {
+            "en": "session-persistence-jsonl",
+            "zh": "会话日志持久保存"
+          },
+          "description": {
+            "en": "JSONL durable session persistence backend for the DeepSeek Harness",
+            "zh": "将会话日志保存为本地 JSONL 文件，供后续恢复和读取。"
+          }
+        }
+      }
+    ],
+    "overrides": []
+  },
+  {
+    "name": "@deepseek-ai/dsh-experimental-auto-review",
+    "official": true,
+    "availability": "installation",
+    "version": "0.2.1-rc.4",
+    "description": "Per-tool LLM authorization review for the DeepSeek Harness Auto permission preset",
+    "meta": {
+      "title": {
+        "en": "Auto Authorization Review",
+        "zh": "自动授权审查"
+      },
+      "description": {
+        "en": "Add an Auto review permission mode that uses the model to assess authorization before each tool call.",
+        "zh": "提供自动审查权限模式，由模型在每次工具调用前判断是否授权。"
+      },
+      "icon": "<icon>"
+    },
+    "enabled": false,
+    "installed": false,
+    "optional": true,
+    "removable": false,
+    "rows": [
+      {
+        "rowId": "auto-review",
+        "moduleName": "@deepseek-ai/dsh-experimental-auto-review",
+        "meta": {
+          "title": {
+            "en": "Auto Authorization Review",
+            "zh": "自动授权审查"
+          },
+          "description": {
+            "en": "Add an Auto review permission mode that uses the model to assess authorization before each tool call.",
+            "zh": "提供自动审查权限模式，由模型在每次工具调用前判断是否授权。"
+          },
+          "icon": "<icon>"
+        }
+      }
+    ],
+    "overrides": []
+  },
+  {
+    "name": "@deepseek-ai/dsh-experimental-cot-translation-bundle",
+    "official": true,
+    "availability": "installation",
+    "version": "0.2.1-rc.4",
+    "description": "Experimental machine translation of expanded reasoning",
+    "meta": {
+      "title": {
+        "en": "Machine translation of reasoning",
+        "zh": "思考过程机器翻译"
+      },
+      "description": {
+        "en": "Machine translation of expanded reasoning; source text is sent to the selected service",
+        "zh": "机器翻译展开的思考内容；原文会发送给所选服务"
+      },
+      "icon": "<icon>"
+    },
+    "enabled": false,
+    "installed": false,
+    "optional": true,
+    "removable": false,
+    "rows": [
+      {
+        "rowId": "translator",
+        "moduleName": "@deepseek-ai/dsh-experimental-translator",
+        "meta": {
+          "title": "@deepseek-ai/dsh-experimental-translator",
+          "description": "Machine translation with reusable Session results"
+        }
+      },
+      {
+        "rowId": "cot-translation",
+        "moduleName": "@deepseek-ai/dsh-experimental-client-ui-cot-translation",
+        "meta": {
+          "title": {
+            "en": "Machine translation of reasoning",
+            "zh": "思考过程机器翻译"
+          },
+          "description": {
+            "en": "Display expanded reasoning in another language using machine translation.",
+            "zh": "将展开的思考内容机器翻译为其他语言。"
+          }
+        }
+      }
+    ],
+    "overrides": []
+  },
+  {
+    "name": "@deepseek-ai/dsh-experimental-badge-skill-bundle",
+    "official": true,
+    "availability": "installation",
+    "version": "0.2.1-rc.4",
+    "description": "Let agents add a “powered by dsh” badge to documents, pull requests, and other outputs.",
+    "meta": {
+      "title": {
+        "en": "DSH badge skill",
+        "zh": "DSH 徽章技能"
+      },
+      "description": {
+        "en": "Let agents add a “powered by dsh” badge to documents, pull requests, and other outputs.",
+        "zh": "让 Agent 为文档、PR 等产出添加「powered by dsh」徽章。"
+      },
+      "icon": "<icon>"
+    },
+    "enabled": false,
+    "installed": false,
+    "optional": true,
+    "removable": false,
+    "rows": [
+      {
+        "rowId": "skill-badge",
+        "moduleName": "@deepseek-ai/dsh-skill-badge",
+        "meta": {
+          "title": {
+            "en": "DSH",
+            "zh": "DSH"
+          },
+          "description": {
+            "en": "Provide the official powered-by-DSH badge skill.",
+            "zh": "提供官方 powered-by-DSH 徽章技能。"
+          },
+          "icon": "<icon>"
+        }
+      }
+    ],
+    "overrides": []
+  },
+  {
+    "name": "@deepseek-ai/dsh-experimental-ralph-bundle",
+    "official": true,
+    "availability": "installation",
+    "version": "0.2.1-rc.4",
+    "description": "Run explicitly requested repeated work with fresh agents.",
+    "meta": {
+      "title": {
+        "en": "Ralph loops",
+        "zh": "Ralph 循环"
+      },
+      "description": {
+        "en": "Run explicitly requested repeated work with fresh agents.",
+        "zh": "使用新智能体执行用户明确要求的循环工作。"
+      },
+      "icon": "<icon>"
+    },
+    "enabled": false,
+    "installed": false,
+    "optional": true,
+    "removable": false,
+    "rows": [
+      {
+        "rowId": "optional-ralph-workflow",
+        "moduleName": "@deepseek-ai/dsh-workflow-ptc",
+        "meta": {
+          "title": {
+            "en": "workflow-ptc",
+            "zh": "工作流执行引擎"
+          },
+          "description": {
+            "en": "Workflow orchestration in the shared sandboxed Node PTC runtime",
+            "zh": "使用共享的 PTC 运行时执行工作流编排代码。"
+          }
+        }
+      },
+      {
+        "rowId": "tool-ralph",
+        "moduleName": "@deepseek-ai/dsh-tool-ralph",
+        "meta": {
+          "title": {
+            "en": "tool-ralph",
+            "zh": "Ralph 迭代工具"
+          },
+          "description": {
+            "en": "Model-facing fresh-agent Ralph loop over the workflow and subagent seams",
+            "zh": "围绕同一目标逐轮运行新的子智能体，并传递上一轮的简要报告。"
+          }
+        }
+      }
+    ],
+    "overrides": []
+  },
+  {
+    "name": "@deepseek-ai/dsh-experimental-session-titles-bundle",
+    "official": true,
+    "availability": "installation",
+    "version": "0.2.1-rc.4",
+    "description": "Refresh session titles as new human prompts arrive.",
+    "meta": {
+      "title": {
+        "en": "Conversation-following titles",
+        "zh": "随对话更新的标题"
+      },
+      "description": {
+        "en": "Refresh session titles as new human prompts arrive.",
+        "zh": "在收到新的用户提示时更新会话标题。"
+      },
+      "icon": "<icon>"
+    },
+    "enabled": false,
+    "installed": false,
+    "optional": true,
+    "removable": false,
+    "rows": [
+      {
+        "rowId": "optional-session-title-all-prompts",
+        "moduleName": "@deepseek-ai/dsh-session-title-all-prompts-llm",
+        "meta": {
+          "title": "@deepseek-ai/dsh-session-title-all-prompts-llm",
+          "description": "All-user-messages LLM provider plugin for DeepSeek Harness session titles"
+        }
+      }
+    ],
+    "overrides": [
+      "session-title-llm"
+    ]
+  },
+  {
+    "name": "@deepseek-ai/dsh-experimental-terminal-bundle",
+    "official": true,
+    "availability": "installation",
+    "version": "0.2.1-rc.4",
+    "description": "Keep shell processes alive across tool calls.",
+    "meta": {
+      "title": {
+        "en": "Persistent terminals",
+        "zh": "持久终端"
+      },
+      "description": {
+        "en": "Keep shell processes alive across tool calls.",
+        "zh": "让 shell 进程在多次工具调用之间保持运行。"
+      },
+      "icon": "<icon>"
+    },
+    "enabled": false,
+    "installed": false,
+    "optional": true,
+    "removable": false,
+    "rows": [
+      {
+        "rowId": "optional-terminal-registry",
+        "moduleName": "@deepseek-ai/dsh-terminal",
+        "meta": {
+          "title": {
+            "en": "terminal",
+            "zh": "持久终端服务"
+          },
+          "description": {
+            "en": "Persistent PTY session seam for the DeepSeek Harness — owner-scoped ids, backend registry, interactive sends, reads, signals, and awaited cleanup",
+            "zh": "管理可持续交互的终端会话及其输入、输出和清理。"
+          }
+        }
+      },
+      {
+        "rowId": "optional-terminal-bash",
+        "moduleName": "@deepseek-ai/dsh-terminal-bash",
+        "meta": {
+          "title": {
+            "en": "terminal-bash",
+            "zh": "持久 Shell 后端"
+          },
+          "description": {
+            "en": "Persistent shell PTY backend over the DeepSeek Harness subprocess terminal primitive",
+            "zh": "提供可跨多次调用保留状态的 Shell 终端。"
+          }
+        }
+      },
+      {
+        "rowId": "optional-terminal-pwsh",
+        "moduleName": "@deepseek-ai/dsh-terminal-bash",
+        "meta": {
+          "title": {
+            "en": "terminal-bash",
+            "zh": "持久 Shell 后端"
+          },
+          "description": {
+            "en": "Persistent shell PTY backend over the DeepSeek Harness subprocess terminal primitive",
+            "zh": "提供可跨多次调用保留状态的 Shell 终端。"
+          }
+        }
+      },
+      {
+        "rowId": "optional-tool-terminal",
+        "moduleName": "@deepseek-ai/dsh-tool-terminal",
+        "meta": {
+          "title": "@deepseek-ai/dsh-tool-terminal",
+          "description": "Six model-facing persistent PTY tools with owner isolation and generic background-job integration"
+        }
+      }
+    ],
+    "overrides": []
+  },
+  {
+    "name": "@deepseek-ai/dsh-experimental-session-search",
+    "official": true,
+    "availability": "installation",
+    "version": "0.2.1-rc.4",
+    "description": "Give Agents tools to search and read earlier sessions from the current workspace.",
+    "meta": {
+      "title": {
+        "en": "Session search",
+        "zh": "会话搜索"
+      },
+      "description": {
+        "en": "Give Agents tools to search and read earlier sessions from the current workspace.",
+        "zh": "为智能体提供搜索和读取当前工作区历史会话的工具。"
+      },
+      "icon": "<icon>"
+    },
+    "enabled": false,
+    "installed": false,
+    "optional": true,
+    "removable": false,
+    "rows": [
+      {
+        "rowId": "optional-session-query-sqlite",
+        "moduleName": "@deepseek-ai/dsh-session-query-sqlite",
+        "meta": {
+          "title": {
+            "en": "session-query-sqlite",
+            "zh": "会话查询与搜索"
+          },
+          "description": {
+            "en": "Concrete ctx.sessionQuery backend with SQLite FTS5 search",
+            "zh": "查询会话记录，并在配置启用时提供 SQLite 全文搜索。"
+          }
+        }
+      },
+      {
+        "rowId": "optional-tool-session-query",
+        "moduleName": "@deepseek-ai/dsh-tool-session-query",
+        "meta": {
+          "title": "@deepseek-ai/dsh-tool-session-query",
+          "description": "Workspace-authorized model-facing session history search, trace, and event read tools"
+        }
+      }
+    ],
+    "overrides": []
+  },
+  {
+    "name": "@deepseek-ai/dsh-experimental-tool-worktree",
+    "official": true,
+    "availability": "installation",
+    "version": "0.2.1-rc.4",
+    "description": "Model tool that creates and enters a new Git worktree",
+    "meta": {
+      "title": {
+        "en": "Git Worktrees",
+        "zh": "Git 工作树"
+      },
+      "description": {
+        "en": "Let the agent create a new Git branch and worktree, then continue there.",
+        "zh": "让智能体创建新的 Git 分支与工作树，并在其中继续工作。"
+      },
+      "icon": "<icon>"
+    },
+    "enabled": false,
+    "installed": false,
+    "optional": true,
+    "removable": false,
+    "rows": [
+      {
+        "rowId": "worktree",
+        "moduleName": "@deepseek-ai/dsh-experimental-worktree",
+        "meta": {
+          "title": "@deepseek-ai/dsh-experimental-worktree",
+          "description": "Creates a named Git worktree and changes the calling Session working directory"
+        }
+      },
+      {
+        "rowId": "tool-worktree",
+        "moduleName": "@deepseek-ai/dsh-experimental-tool-worktree",
+        "meta": {
+          "title": {
+            "en": "Git Worktrees",
+            "zh": "Git 工作树"
+          },
+          "description": {
+            "en": "Let the agent create a new Git branch and worktree, then continue there.",
+            "zh": "让智能体创建新的 Git 分支与工作树，并在其中继续工作。"
+          },
+          "icon": "<icon>"
+        }
+      }
+    ],
+    "overrides": []
+  },
+  {
+    "name": "@deepseek-ai/dsh-experimental-plugin-market-bundle",
+    "official": true,
+    "availability": "installation",
+    "version": "0.2.1-rc.4",
+    "description": "Experimental custom plugin markets: a Discover tab that browses and installs bundles from plugin market indexes",
+    "meta": {
+      "title": {
+        "en": "Custom plugin markets",
+        "zh": "自定义插件市场"
+      },
+      "description": {
+        "en": "Adds a Discover tab to Plugins for browsing and installing bundles from plugin market indexes you add",
+        "zh": "在插件页添加「发现」标签页，从你添加的插件市场索引浏览和安装插件。"
+      },
+      "icon": "<icon>"
+    },
+    "enabled": false,
+    "installed": false,
+    "optional": true,
+    "removable": false,
+    "rows": [
+      {
+        "rowId": "plugin-market",
+        "moduleName": "@deepseek-ai/dsh-plugin-market",
+        "meta": {
+          "title": "@deepseek-ai/dsh-plugin-market",
+          "description": "Configured plugin market indexes for the Web Discover page and the plugin_market agent tool"
+        }
+      },
+      {
+        "rowId": "ui-plugin-market",
+        "moduleName": "@deepseek-ai/dsh-client-ui-plugin-market",
+        "meta": {
+          "title": "@deepseek-ai/dsh-client-ui-plugin-market",
+          "description": "Discover tab of the dsh web Plugins page: browse configured plugin market indexes and install their bundles"
+        }
+      }
+    ],
+    "overrides": []
+  },
+  {
+    "name": "@deepseek-ai/dsh-subagent-claude-code",
+    "official": true,
+    "availability": "missing",
+    "meta": {
+      "title": {
+        "en": "Claude Code subagent",
+        "zh": "Claude Code 子智能体"
+      },
+      "description": {
+        "en": "Delegate one task to Claude Code using its native authentication and settings.",
+        "zh": "使用 Claude Code 原生认证和设置委派单个任务。"
+      },
+      "icon": "<icon>"
+    },
+    "installTarget": {
+      "spec": "@deepseek-ai/dsh-subagent-claude-code@0.2.1-rc.4",
+      "version": "0.2.1-rc.4"
+    },
+    "enabled": false,
+    "installed": false,
+    "optional": false,
+    "removable": false,
+    "rows": [],
+    "overrides": []
+  },
+  {
+    "name": "@deepseek-ai/dsh-subagent-codex",
+    "official": true,
+    "availability": "missing",
+    "meta": {
+      "title": {
+        "en": "Codex subagent",
+        "zh": "Codex 子智能体"
+      },
+      "description": {
+        "en": "Delegate one task to Codex using its native authentication and settings.",
+        "zh": "使用 Codex 原生认证和设置委派单个任务。"
+      },
+      "icon": "<icon>"
+    },
+    "installTarget": {
+      "spec": "@deepseek-ai/dsh-subagent-codex@0.2.1-rc.4",
+      "version": "0.2.1-rc.4"
+    },
+    "enabled": false,
+    "installed": false,
+    "optional": false,
+    "removable": false,
+    "rows": [],
+    "overrides": []
+  }
+]

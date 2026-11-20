@@ -1,0 +1,171 @@
+{
+  "percent": {
+    "schema": {
+      "uid": 4,
+      "refs": {
+        "4": {
+          "type": "number",
+          "meta": {
+            "step": 0.01,
+            "min": 0,
+            "max": 1,
+            "role": "slider"
+          }
+        }
+      }
+    },
+    "cases": [
+      {
+        "value": 0.25,
+        "valid": true
+      },
+      {
+        "value": 0.255,
+        "valid": false
+      }
+    ]
+  },
+  "offset": {
+    "schema": {
+      "uid": 7,
+      "refs": {
+        "7": {
+          "type": "number",
+          "meta": {
+            "min": 0.5,
+            "step": 1
+          }
+        }
+      }
+    },
+    "cases": [
+      {
+        "value": 0.5,
+        "valid": true
+      },
+      {
+        "value": 1.5,
+        "valid": true
+      },
+      {
+        "value": 1,
+        "valid": false
+      }
+    ]
+  },
+  "negativeStep": {
+    "schema": {
+      "uid": 9,
+      "refs": {
+        "9": {
+          "type": "number",
+          "meta": {
+            "step": -0.25
+          }
+        }
+      }
+    },
+    "cases": [
+      {
+        "value": 0.5,
+        "valid": true
+      },
+      {
+        "value": 0.3,
+        "valid": false
+      }
+    ]
+  },
+  "milliseconds": {
+    "schema": {
+      "uid": 12,
+      "refs": {
+        "12": {
+          "type": "number",
+          "meta": {
+            "min": 0,
+            "step": 250
+          }
+        }
+      }
+    },
+    "cases": [
+      {
+        "value": 1250,
+        "valid": true
+      },
+      {
+        "value": 1100,
+        "valid": false
+      }
+    ]
+  },
+  "utf16": {
+    "schema": {
+      "uid": 14,
+      "refs": {
+        "14": {
+          "type": "string",
+          "meta": {
+            "max": 2
+          }
+        }
+      }
+    },
+    "cases": [
+      {
+        "value": "😀",
+        "valid": true
+      },
+      {
+        "value": "😀a",
+        "valid": false
+      }
+    ]
+  },
+  "tinyPercent": {
+    "schema": {
+      "uid": 19,
+      "refs": {
+        "19": {
+          "type": "number",
+          "meta": {
+            "min": 0,
+            "max": 1,
+            "step": 1e-320,
+            "role": "slider"
+          }
+        }
+      }
+    },
+    "cases": [
+      {
+        "value": 0.25,
+        "valid": false
+      }
+    ]
+  },
+  "exponent": {
+    "schema": {
+      "uid": 21,
+      "refs": {
+        "21": {
+          "type": "number",
+          "meta": {
+            "step": 1e-7
+          }
+        }
+      }
+    },
+    "cases": [
+      {
+        "value": 0.3,
+        "valid": false
+      },
+      {
+        "value": 1e-7,
+        "valid": true
+      }
+    ]
+  }
+}

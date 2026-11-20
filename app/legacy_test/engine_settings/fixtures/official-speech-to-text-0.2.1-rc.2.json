@@ -1,0 +1,31 @@
+{
+  "uid": 573,
+  "refs": {
+    "568": {
+      "type": "string",
+      "meta": {
+        "min": 1,
+        "required": true,
+        "volatile": true
+      }
+    },
+    "572": {
+      "type": "string",
+      "meta": {
+        "min": 1,
+        "default": "auto",
+        "volatile": true
+      }
+    },
+    "573": {
+      "type": "object",
+      "meta": {
+        "default": {}
+      },
+      "dict": {
+        "defaultProvider": 568,
+        "language": 572
+      }
+    }
+  }
+}

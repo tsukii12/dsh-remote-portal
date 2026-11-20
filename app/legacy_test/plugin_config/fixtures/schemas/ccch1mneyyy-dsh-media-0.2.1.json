@@ -1,0 +1,491 @@
+{
+ "package": "@ccch1mneyyy/dsh-media",
+ "version": "0.2.1",
+ "file": "src/config.js",
+ "note": "Config as published; the services catalog extra (data/models.json) is left out.",
+ "schema": {
+  "uid": 148,
+  "refs": {
+   "3": {
+    "type": "string",
+    "meta": {
+     "pattern": {
+      "source": "^[a-z][a-z0-9_]{0,31}$",
+      "flags": ""
+     },
+     "required": true,
+     "description": "服务 ID（唯一小写标识）"
+    }
+   },
+   "7": {
+    "type": "string",
+    "meta": {
+     "max": 80,
+     "default": "",
+     "description": "显示名称"
+    }
+   },
+   "10": {
+    "type": "boolean",
+    "meta": {
+     "default": false,
+     "description": "启用"
+    }
+   },
+   "14": {
+    "type": "string",
+    "meta": {
+     "max": 80,
+     "default": "openai",
+     "description": "服务商标识"
+    }
+   },
+   "18": {
+    "type": "string",
+    "meta": {
+     "max": 2048,
+     "default": "https://api.openai.com/v1",
+     "description": "服务地址（HTTPS API 根路径）"
+    }
+   },
+   "21": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "openai-compatible"
+   },
+   "23": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "openai-gpt-image"
+   },
+   "25": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "ark-image"
+   },
+   "27": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "ark-video"
+   },
+   "29": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "ali-wan-image"
+   },
+   "31": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "ali-video"
+   },
+   "33": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "silicon-image"
+   },
+   "35": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "silicon-video"
+   },
+   "37": {
+    "type": "union",
+    "meta": {
+     "default": "openai-gpt-image",
+     "description": "请求协议"
+    },
+    "list": [
+     21,
+     23,
+     25,
+     27,
+     29,
+     31,
+     33,
+     35
+    ]
+   },
+   "40": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": ""
+   },
+   "42": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "url"
+   },
+   "44": {
+    "type": "const",
+    "meta": {
+     "required": true
+    },
+    "value": "b64_json"
+   },
+   "46": {
+    "type": "union",
+    "meta": {
+     "default": "",
+     "description": "兼容接口返回格式（按模型目录；GPT Image 留空）"
+    },
+    "list": [
+     40,
+     42,
+     44
+    ]
+   },
+   "50": {
+    "type": "string",
+    "meta": {
+     "max": 2048,
+     "default": "gpt-image-2.5-flare",
+     "description": "允许的模型 ID（英文逗号分隔，来自已安装目录）"
+    }
+   },
+   "54": {
+    "type": "string",
+    "meta": {
+     "pattern": {
+      "source": "^[A-Za-z_][A-Za-z0-9_]{0,127}$",
+      "flags": ""
+     },
+     "required": true,
+     "description": "凭据引用（必填；选择固定槽或已知引用）"
+    }
+   },
+   "55": {
+    "type": "object",
+    "meta": {
+     "default": {}
+    },
+    "dict": {
+     "id": 3,
+     "label": 7,
+     "enabled": 10,
+     "provider": 14,
+     "baseUrl": 18,
+     "profile": 37,
+     "responseFormat": 46,
+     "models": 50,
+     "keyRef": 54
+    }
+   },
+   "56": {
+    "type": "any",
+    "meta": {}
+   },
+   "62": {
+    "type": "const",
+    "meta": {
+     "default": "DSH_MEDIA_SLOT_1_API_KEY",
+     "role": "credential-ref"
+    },
+    "value": "DSH_MEDIA_SLOT_1_API_KEY"
+   },
+   "63": {
+    "type": "transform",
+    "meta": {
+     "default": "",
+     "role": "secret",
+     "description": "写入密钥：DSH_MEDIA_SLOT_1_API_KEY"
+    },
+    "inner": 56,
+    "callback": "value => {\n    if (value !== '') throw new Error('密钥只能通过凭据服务写入。');\n    return '';\n  }",
+    "preserve": true
+   },
+   "65": {
+    "type": "object",
+    "meta": {
+     "default": {},
+     "description": "凭据槽 1：DSH_MEDIA_SLOT_1_API_KEY"
+    },
+    "dict": {
+     "credentialRef": 62,
+     "apiKey": 63
+    }
+   },
+   "68": {
+    "type": "const",
+    "meta": {
+     "default": "DSH_MEDIA_SLOT_2_API_KEY",
+     "role": "credential-ref"
+    },
+    "value": "DSH_MEDIA_SLOT_2_API_KEY"
+   },
+   "69": {
+    "type": "transform",
+    "meta": {
+     "default": "",
+     "role": "secret",
+     "description": "写入密钥：DSH_MEDIA_SLOT_2_API_KEY"
+    },
+    "inner": 56,
+    "callback": "value => {\n    if (value !== '') throw new Error('密钥只能通过凭据服务写入。');\n    return '';\n  }",
+    "preserve": true
+   },
+   "71": {
+    "type": "object",
+    "meta": {
+     "default": {},
+     "description": "凭据槽 2：DSH_MEDIA_SLOT_2_API_KEY"
+    },
+    "dict": {
+     "credentialRef": 68,
+     "apiKey": 69
+    }
+   },
+   "74": {
+    "type": "const",
+    "meta": {
+     "default": "DSH_MEDIA_SLOT_3_API_KEY",
+     "role": "credential-ref"
+    },
+    "value": "DSH_MEDIA_SLOT_3_API_KEY"
+   },
+   "75": {
+    "type": "transform",
+    "meta": {
+     "default": "",
+     "role": "secret",
+     "description": "写入密钥：DSH_MEDIA_SLOT_3_API_KEY"
+    },
+    "inner": 56,
+    "callback": "value => {\n    if (value !== '') throw new Error('密钥只能通过凭据服务写入。');\n    return '';\n  }",
+    "preserve": true
+   },
+   "77": {
+    "type": "object",
+    "meta": {
+     "default": {},
+     "description": "凭据槽 3：DSH_MEDIA_SLOT_3_API_KEY"
+    },
+    "dict": {
+     "credentialRef": 74,
+     "apiKey": 75
+    }
+   },
+   "80": {
+    "type": "const",
+    "meta": {
+     "default": "DSH_MEDIA_SLOT_4_API_KEY",
+     "role": "credential-ref"
+    },
+    "value": "DSH_MEDIA_SLOT_4_API_KEY"
+   },
+   "81": {
+    "type": "transform",
+    "meta": {
+     "default": "",
+     "role": "secret",
+     "description": "写入密钥：DSH_MEDIA_SLOT_4_API_KEY"
+    },
+    "inner": 56,
+    "callback": "value => {\n    if (value !== '') throw new Error('密钥只能通过凭据服务写入。');\n    return '';\n  }",
+    "preserve": true
+   },
+   "83": {
+    "type": "object",
+    "meta": {
+     "default": {},
+     "description": "凭据槽 4：DSH_MEDIA_SLOT_4_API_KEY"
+    },
+    "dict": {
+     "credentialRef": 80,
+     "apiKey": 81
+    }
+   },
+   "86": {
+    "type": "string",
+    "meta": {
+     "description": "DSH 数据根（仅主机部署配置）"
+    }
+   },
+   "88": {
+    "type": "array",
+    "meta": {
+     "default": [],
+     "max": 8
+    },
+    "inner": 55
+   },
+   "92": {
+    "type": "transform",
+    "meta": {
+     "default": [],
+     "volatile": true,
+     "description": "媒体服务"
+    },
+    "inner": 88,
+    "callback": "(services) => services",
+    "preserve": true
+   },
+   "94": {
+    "type": "object",
+    "meta": {
+     "default": {},
+     "volatile": true,
+     "description": "密钥（固定目标，只写）"
+    },
+    "dict": {
+     "slot1": 65,
+     "slot2": 71,
+     "slot3": 77,
+     "slot4": 83
+    }
+   },
+   "98": {
+    "type": "string",
+    "meta": {
+     "max": 32,
+     "default": "",
+     "description": "默认服务 ID（留空使用首个已配置服务）"
+    }
+   },
+   "102": {
+    "type": "string",
+    "meta": {
+     "max": 160,
+     "default": "",
+     "description": "默认模型 ID（留空使用所选服务首项）"
+    }
+   },
+   "105": {
+    "type": "object",
+    "meta": {
+     "default": {},
+     "volatile": true,
+     "description": "默认值"
+    },
+    "dict": {
+     "serviceId": 98,
+     "modelId": 102
+    }
+   },
+   "108": {
+    "type": "string",
+    "meta": {
+     "default": "20",
+     "description": "每日本地预算（人民币，上海日期）"
+    }
+   },
+   "111": {
+    "type": "string",
+    "meta": {
+     "default": "20",
+     "description": "无可靠价格时每次预留金额；逐次确认，非供应商收费上限"
+    }
+   },
+   "114": {
+    "type": "object",
+    "meta": {
+     "default": {},
+     "volatile": true,
+     "description": "费用保护"
+    },
+    "dict": {
+     "dailyCny": 108,
+     "unknownPriceHoldCny": 111
+    }
+   },
+   "120": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 1,
+     "max": 314572800,
+     "default": 314572800,
+     "description": "视频原件字节上限"
+    }
+   },
+   "126": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 1,
+     "max": 4,
+     "default": 4,
+     "description": "单次图片张数上限"
+    }
+   },
+   "132": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 1,
+     "max": 20971520,
+     "default": 20971520,
+     "description": "单张原件字节上限"
+    }
+   },
+   "138": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 1,
+     "max": 33554432,
+     "default": 33554432,
+     "description": "服务响应字节上限"
+    }
+   },
+   "144": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 1,
+     "max": 67108864,
+     "default": 67108864,
+     "description": "单次原件总字节上限"
+    }
+   },
+   "147": {
+    "type": "object",
+    "meta": {
+     "default": {},
+     "volatile": true,
+     "description": "请求与存储上限（不含每日费用预算）"
+    },
+    "dict": {
+     "maxVideoBytes": 120,
+     "maxImages": 126,
+     "maxImageBytes": 132,
+     "maxResponseBytes": 138,
+     "maxTotalImageBytes": 144
+    }
+   },
+   "148": {
+    "type": "object",
+    "meta": {
+     "default": {}
+    },
+    "dict": {
+     "dshHome": 86,
+     "services": 92,
+     "credentials": 94,
+     "defaults": 105,
+     "budget": 114,
+     "limits": 147
+    }
+   }
+  }
+ }
+}

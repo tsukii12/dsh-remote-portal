@@ -1,0 +1,92 @@
+{
+  "uid": 23,
+  "refs": {
+    "3": {
+      "type": "string",
+      "meta": {
+        "min": 1,
+        "required": true,
+        "description": "Name"
+      }
+    },
+    "7": {
+      "type": "number",
+      "meta": {
+        "step": 1,
+        "min": 0,
+        "description": "Count"
+      }
+    },
+    "9": {
+      "type": "boolean",
+      "meta": {
+        "description": "Enabled"
+      }
+    },
+    "12": {
+      "type": "const",
+      "meta": {
+        "required": true
+      },
+      "value": "fast"
+    },
+    "14": {
+      "type": "const",
+      "meta": {
+        "required": true
+      },
+      "value": "slow"
+    },
+    "16": {
+      "type": "union",
+      "meta": {
+        "default": "fast",
+        "description": "Mode"
+      },
+      "list": [
+        12,
+        14
+      ]
+    },
+    "17": {
+      "type": "tuple",
+      "meta": {
+        "default": []
+      },
+      "list": [
+        3,
+        7,
+        9,
+        16
+      ]
+    },
+    "18": {
+      "type": "boolean",
+      "meta": {}
+    },
+    "21": {
+      "type": "array",
+      "meta": {
+        "default": [],
+        "min": 1,
+        "max": 3
+      },
+      "inner": 18
+    },
+    "22": {
+      "type": "any",
+      "meta": {}
+    },
+    "23": {
+      "type": "object",
+      "meta": {
+        "default": {}
+      },
+      "dict": {
+        "tuple": 17,
+        "toggles": 21,
+        "data": 22
+      }
+    }
+  }
+}

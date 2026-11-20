@@ -1,0 +1,74 @@
+{
+  "emptyColdSnapshot": {
+    "asOfSeq": -1,
+    "values": {
+      "sessionStats": {
+        "turns": 0,
+        "steps": 0,
+        "llmMs": 0,
+        "toolMs": 0,
+        "ttftMs": 0,
+        "ttftSteps": 0,
+        "decodeMs": 0,
+        "decodeTokens": 0
+      }
+    }
+  },
+  "scope": "real Cordis services + SessionStore + SessionProjectionRegistry + SessionControlController + published sessionStats definition; no full Host/persistence/client reconnect",
+  "before": {
+    "projections": {
+      "cold-projection-probe": {
+        "asOfSeq": -1,
+        "values": {
+          "sessionStats": {
+            "turns": 0,
+            "steps": 0,
+            "llmMs": 0,
+            "toolMs": 0,
+            "ttftMs": 0,
+            "ttftSteps": 0,
+            "decodeMs": 0,
+            "decodeTokens": 0
+          }
+        }
+      }
+    }
+  },
+  "latestResident": {
+    "projections": {
+      "cold-projection-probe": {
+        "asOfSeq": 0,
+        "values": {
+          "sessionStats": {
+            "turns": 1,
+            "steps": 1,
+            "llmMs": 0,
+            "toolMs": 0,
+            "ttftMs": 0,
+            "ttftSteps": 0,
+            "decodeMs": 0,
+            "decodeTokens": 0
+          }
+        }
+      }
+    }
+  },
+  "coldBaseline": {
+    "projections": {}
+  },
+  "detachedQuerySnapshot": {
+    "asOfSeq": 0,
+    "values": {
+      "sessionStats": {
+        "turns": 1,
+        "steps": 1,
+        "llmMs": 0,
+        "toolMs": 0,
+        "ttftMs": 0,
+        "ttftSteps": 0,
+        "decodeMs": 0,
+        "decodeTokens": 0
+      }
+    }
+  }
+}

@@ -1,0 +1,1 @@
+{ "version": 1, "header": { "actions": ["newchat", "Detail"] }, "drawer": { "groups": ["Today"] } }

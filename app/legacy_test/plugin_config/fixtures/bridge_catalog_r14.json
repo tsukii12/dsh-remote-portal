@@ -1,0 +1,3160 @@
+{
+  "v": 1,
+  "entries": [
+    {
+      "entryId": "include",
+      "package": null,
+      "owner": "overlay",
+      "bundle": null,
+      "kind": "overlay",
+      "source": "unverified",
+      "label": "include",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "tool-plugin-manager",
+      "package": "@deepseek-ai/dsh-plugin-manager",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "plugin-manager",
+      "package": "@deepseek-ai/dsh-plugin-manager",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "timer",
+      "package": "@deepseek-ai/cordis-plugin-timer",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "hmr",
+      "package": "@deepseek-ai/dsh-hmr",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "llm",
+      "package": "@deepseek-ai/dsh-llm",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "deepseek-llm-api-extensions",
+      "package": "@deepseek-ai/dsh-deepseek-llm-api-extensions",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "session",
+      "package": "@deepseek-ai/dsh-session",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "session-log-deepseek",
+      "package": "@deepseek-ai/dsh-session-log-deepseek",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "typert",
+      "package": "@deepseek-ai/dsh-typert-registry",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "typert-loader",
+      "package": "@deepseek-ai/dsh-typert-loader",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "typert-gateway",
+      "package": "@deepseek-ai/dsh-api-gateway",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "remote-access",
+      "package": "@deepseek-ai/dsh-api-remote-access",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "session-title",
+      "package": "@deepseek-ai/dsh-session-title",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "session-title-llm",
+      "package": "@deepseek-ai/dsh-session-title-first-prompt-llm",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "user-questions",
+      "package": "@deepseek-ai/dsh-user-questions",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "agent",
+      "package": "@deepseek-ai/dsh-agent",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "plugin-package-inventory-deepseek",
+      "package": "@deepseek-ai/dsh-plugin-package-inventory-deepseek",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "agent-default-model",
+      "package": "@deepseek-ai/dsh-agent-default-model",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "jobs",
+      "package": "@deepseek-ai/dsh-jobs-local",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "llm-retry",
+      "package": "@deepseek-ai/dsh-llm-retry",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "config-editor",
+      "package": "@deepseek-ai/dsh-config-editor",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "settings",
+      "package": "@deepseek-ai/dsh-settings",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "authorization",
+      "package": "@deepseek-ai/dsh-authorization",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "deepseek-account",
+      "package": "@deepseek-ai/dsh-deepseek-account-platform",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "credentials",
+      "package": "@deepseek-ai/dsh-credentials-local",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "llm-pi-ai",
+      "package": "@deepseek-ai/dsh-llm-pi-ai",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "session-persistence-jsonl",
+      "package": "@deepseek-ai/dsh-session-persistence-jsonl",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "attachment-local",
+      "package": "@deepseek-ai/dsh-attachment-local",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "session-query-sqlite",
+      "package": "@deepseek-ai/dsh-session-query-sqlite",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "working-directory",
+      "package": "@deepseek-ai/dsh-working-directory",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "tool-working-directory",
+      "package": "@deepseek-ai/dsh-tool-working-directory",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "session-projection",
+      "package": "@deepseek-ai/dsh-session-projection",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "storage",
+      "package": "@deepseek-ai/dsh-storage",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "storage-json",
+      "package": "@deepseek-ai/dsh-storage-json",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "storage-domain",
+      "package": "@deepseek-ai/dsh-storage-domain",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "session-projection-cache",
+      "package": "@deepseek-ai/dsh-session-projection-cache",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "otel",
+      "package": "@deepseek-ai/dsh-otel",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "session-telemetry-otel",
+      "package": "@deepseek-ai/dsh-session-telemetry-otel",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "subprocess",
+      "package": "@deepseek-ai/dsh-subprocess-local",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "sandbox",
+      "package": "@deepseek-ai/dsh-sandbox-local",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "sandbox-policy",
+      "package": "@deepseek-ai/dsh-sandbox-policy",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "bash-sandbox",
+      "package": "@deepseek-ai/dsh-bash-sandbox",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "pwsh-sandbox",
+      "package": "@deepseek-ai/dsh-pwsh-sandbox",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "approval",
+      "package": "@deepseek-ai/dsh-user-approval",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "permission",
+      "package": "@deepseek-ai/dsh-permission-presets",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "shell-env",
+      "package": "@deepseek-ai/dsh-shell-env",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "tool-bash",
+      "package": "@deepseek-ai/dsh-tool-bash",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "tool-pwsh",
+      "package": "@deepseek-ai/dsh-tool-pwsh",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "tool-jobs",
+      "package": "@deepseek-ai/dsh-tool-jobs",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "fs-observation-policy",
+      "package": "@deepseek-ai/dsh-fs-observation-policy",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "tool-fs",
+      "package": "@deepseek-ai/dsh-tool-fs",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "tool-fs-search",
+      "package": "@deepseek-ai/dsh-tool-fs-search",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "agent-instructions",
+      "package": "@deepseek-ai/dsh-agent-instructions",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "skill",
+      "package": "@deepseek-ai/dsh-skill",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "skill-filesystem",
+      "package": "@deepseek-ai/dsh-skill-filesystem",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "tool-skill",
+      "package": "@deepseek-ai/dsh-tool-skill",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "commands",
+      "package": "@deepseek-ai/dsh-commands",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "command-feedback",
+      "package": "@deepseek-ai/dsh-command-feedback",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "goal",
+      "package": "@deepseek-ai/dsh-goal",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "goal-round-driver",
+      "package": "@deepseek-ai/dsh-goal-round-driver",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "command-goal",
+      "package": "@deepseek-ai/dsh-command-goal",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "plan-mode",
+      "package": "@deepseek-ai/dsh-plan-mode",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "token-meter",
+      "package": "@deepseek-ai/dsh-token-meter",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "compaction-basic",
+      "package": "@deepseek-ai/dsh-compaction-basic",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "command-compact",
+      "package": "@deepseek-ai/dsh-command-compact",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "subagent",
+      "package": "@deepseek-ai/dsh-subagent",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "subagent-spawn-in-process",
+      "package": "@deepseek-ai/dsh-subagent-spawn-in-process",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "subagent-fork-in-process",
+      "package": "@deepseek-ai/dsh-subagent-fork-in-process",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "tool-subagent-control",
+      "package": "@deepseek-ai/dsh-tool-subagent-control",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "tool-subagent-list-agents",
+      "package": "@deepseek-ai/dsh-tool-subagent-control",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "tool-subagent",
+      "package": "@deepseek-ai/dsh-tool-subagent",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "tool-subagent-fork",
+      "package": "@deepseek-ai/dsh-tool-subagent",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ptc-runtime",
+      "package": "@deepseek-ai/dsh-ptc-runtime-node",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "workflow-ptc",
+      "package": "@deepseek-ai/dsh-workflow-ptc",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "tool-workflow",
+      "package": "@deepseek-ai/dsh-tool-workflow",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "timeout-policy",
+      "package": "@deepseek-ai/dsh-tool-call-timeout-policy",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "spill-local",
+      "package": "@deepseek-ai/dsh-spill-local",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "spill-policy",
+      "package": "@deepseek-ai/dsh-spill-policy",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "session-checkpoint-policy",
+      "package": "@deepseek-ai/dsh-session-checkpoint-policy",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "tool-result-pruner",
+      "package": "@deepseek-ai/dsh-compaction-tool-result-pruner",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "image-offload",
+      "package": "@deepseek-ai/dsh-compaction-image-offload",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "tool-todo",
+      "package": "@deepseek-ai/dsh-tool-todo",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "tool-goal",
+      "package": "@deepseek-ai/dsh-tool-goal",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "repeat-tool-reminder",
+      "package": "@deepseek-ai/dsh-repeat-tool-reminder",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "web",
+      "package": "@deepseek-ai/dsh-web",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "web-search-deepseek",
+      "package": "@deepseek-ai/dsh-web-search-deepseek",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "web-deepseek-api",
+      "package": "@deepseek-ai/dsh-web-deepseek-api",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "web-fetch-http",
+      "package": "@deepseek-ai/dsh-web-fetch-http",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "tool-web",
+      "package": "@deepseek-ai/dsh-tool-web",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "mcp-resources",
+      "package": "@deepseek-ai/dsh-mcp-resources",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "tools",
+      "package": "@deepseek-ai/dsh-tools",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "system-prompt",
+      "package": "@deepseek-ai/dsh-system-prompt",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "agent-loop",
+      "package": "@deepseek-ai/dsh-agent-loop",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "fs-sandbox",
+      "package": "@deepseek-ai/dsh-fs-sandbox",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "llm-deepseek",
+      "package": "@deepseek-ai/dsh-llm-deepseek-api-key",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "llm-deepseek-account",
+      "package": "@deepseek-ai/dsh-llm-deepseek-account",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-base",
+      "kind": "core",
+      "source": "unverified",
+      "label": "@deepseek-ai/dsh-base",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "desktop-product-telemetry",
+      "package": "@deepseek-ai/dsh-host-product-telemetry-otel",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "product-analytics",
+      "package": "@deepseek-ai/dsh-client-product-analytics",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "subagent-model-selection-settings",
+      "package": "@deepseek-ai/dsh-tool-subagent",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "message-feedback",
+      "package": "@deepseek-ai/dsh-message-feedback",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "session-log-download",
+      "package": "@deepseek-ai/dsh-session-log-export",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "open-in-app",
+      "package": "@deepseek-ai/dsh-host-open-in-app",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-open-in-app",
+      "package": "@deepseek-ai/dsh-client-ui-open-in-app",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "workspace",
+      "package": "@deepseek-ai/dsh-workspace",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "session-reference",
+      "package": "@deepseek-ai/dsh-session-reference",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "file-reference-local",
+      "package": "@deepseek-ai/dsh-file-reference-local",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "session-stats",
+      "package": "@deepseek-ai/dsh-session-stats",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "session-turn-outline",
+      "package": "@deepseek-ai/dsh-session-turn-outline",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "directory-picker",
+      "package": "@deepseek-ai/dsh-host-directory-picker-auto",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "plugin-inventory",
+      "package": "@deepseek-ai/dsh-host-plugin-inventory",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "session-controller",
+      "package": "@deepseek-ai/dsh-api-session-controller",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "job-controller",
+      "package": "@deepseek-ai/dsh-api-job-controller",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "terminal-controller",
+      "package": "@deepseek-ai/dsh-api-terminal-controller",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "workspace-files",
+      "package": "@deepseek-ai/dsh-api-workspace-files",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "schedule",
+      "package": "@deepseek-ai/dsh-schedule",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-settings-account",
+      "package": "@deepseek-ai/dsh-client-ui-settings-account",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "account-controller",
+      "package": "@deepseek-ai/dsh-api-account-controller",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "settings-controller",
+      "package": "@deepseek-ai/dsh-api-settings-controller",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "workspace-controller",
+      "package": "@deepseek-ai/dsh-api-workspace-controller",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "cordis-host-runner",
+      "package": "@deepseek-ai/dsh-cordis-host-runner",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "cordis-inspect-providers",
+      "package": "@deepseek-ai/dsh-tool-cordis",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "web-startup",
+      "package": "@deepseek-ai/dsh-web-app",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "webserver",
+      "package": "@deepseek-ai/dsh-host-webserver",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "web-runtime",
+      "package": "@deepseek-ai/dsh-web-app",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "harness-dev-context",
+      "package": "@deepseek-ai/dsh-harness-dev-context",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "client-hmr",
+      "package": "@deepseek-ai/dsh-client-hmr",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "modules",
+      "package": "@deepseek-ai/dsh-client-modules",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "connection",
+      "package": "@deepseek-ai/dsh-client-connection",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "file-upload",
+      "package": "@deepseek-ai/dsh-client-file-upload",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "api-remotes",
+      "package": "@deepseek-ai/dsh-api-remotes",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "cordis-client-runner",
+      "package": "@deepseek-ai/dsh-cordis-client-runner",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-theme",
+      "package": "@deepseek-ai/dsh-client-ui-theme",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "locale",
+      "package": "@deepseek-ai/dsh-client-locale",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "shortcuts",
+      "package": "@deepseek-ai/dsh-client-shortcuts",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-shortcuts",
+      "package": "@deepseek-ai/dsh-client-ui-shortcuts",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-layout",
+      "package": "@deepseek-ai/dsh-client-ui-layout",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-renderer",
+      "package": "@deepseek-ai/dsh-client-ui-renderer",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-session",
+      "package": "@deepseek-ai/dsh-client-ui-session",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "resources",
+      "package": "@deepseek-ai/dsh-client-resources",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-sidebar",
+      "package": "@deepseek-ai/dsh-client-ui-sidebar",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-sidebar-right",
+      "package": "@deepseek-ai/dsh-client-ui-sidebar-right",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "office-to-pdf",
+      "package": "@deepseek-ai/dsh-office-to-pdf",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-sidebar-documentpreview",
+      "package": "@deepseek-ai/dsh-client-ui-sidebar-documentpreview",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-sidebar-browser",
+      "package": "@deepseek-ai/dsh-client-ui-sidebar-browser",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-sidebar-terminal",
+      "package": "@deepseek-ai/dsh-client-ui-sidebar-terminal",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-sidebar-files",
+      "package": "@deepseek-ai/dsh-client-ui-sidebar-files",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-settings",
+      "package": "@deepseek-ai/dsh-client-ui-settings",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-settings-general",
+      "package": "@deepseek-ai/dsh-client-ui-settings-general",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-settings-models",
+      "package": "@deepseek-ai/dsh-client-ui-settings-models",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-plugin-manager",
+      "package": "@deepseek-ai/dsh-client-ui-plugin-manager",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-settings-plugin-inventory",
+      "package": "@deepseek-ai/dsh-client-ui-settings-plugin-inventory",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-conversation",
+      "package": "@deepseek-ai/dsh-client-ui-conversation",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-approval",
+      "package": "@deepseek-ai/dsh-client-ui-approval",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-chat",
+      "package": "@deepseek-ai/dsh-client-ui-chat",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-brand-official",
+      "package": "@deepseek-ai/dsh-client-ui-brand-official",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-attachment",
+      "package": "@deepseek-ai/dsh-client-ui-attachment",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-tool",
+      "package": "@deepseek-ai/dsh-client-ui-tool",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-cordis",
+      "package": "@deepseek-ai/dsh-client-ui-cordis",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-deliverables",
+      "package": "@deepseek-ai/dsh-client-ui-deliverables",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "workspace-changes",
+      "package": "@deepseek-ai/dsh-workspace-changes",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-workspace",
+      "package": "@deepseek-ai/dsh-client-ui-workspace",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-workflow-run",
+      "package": "@deepseek-ai/dsh-client-ui-workflow-run",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-input-trigger",
+      "package": "@deepseek-ai/dsh-client-ui-input-trigger",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-commands",
+      "package": "@deepseek-ai/dsh-client-ui-commands",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-skill",
+      "package": "@deepseek-ai/dsh-client-ui-skill",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-subagent",
+      "package": "@deepseek-ai/dsh-client-ui-subagent",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-reference",
+      "package": "@deepseek-ai/dsh-client-ui-reference",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-secret-mask",
+      "package": "@deepseek-ai/dsh-client-ui-secret-mask",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-jobs",
+      "package": "@deepseek-ai/dsh-client-ui-jobs",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-schedule",
+      "package": "@deepseek-ai/dsh-client-ui-schedule",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-goal",
+      "package": "@deepseek-ai/dsh-client-ui-goal",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-message-feedback",
+      "package": "@deepseek-ai/dsh-client-ui-message-feedback",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-model-selection",
+      "package": "@deepseek-ai/dsh-client-ui-model-selection",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-deepseek-model-label-1017",
+      "package": "@deepseek-ai/dsh-client-ui-deepseek-model-label-1017",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-permission",
+      "package": "@deepseek-ai/dsh-client-ui-permission-presets",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-agent-preset",
+      "package": "@deepseek-ai/dsh-client-ui-agent-preset",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "entry-customization",
+      "package": "@deepseek-ai/dsh-client-ui-entry-customization",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-settings-session-log",
+      "package": "@deepseek-ai/dsh-client-ui-settings-session-log",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-settings-plugins",
+      "package": "@deepseek-ai/dsh-client-ui-settings-plugins",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-settings-shell",
+      "package": "@deepseek-ai/dsh-client-ui-settings-shell",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-settings-agent-loop",
+      "package": "@deepseek-ai/dsh-client-ui-settings-agent-loop",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-settings-subagent",
+      "package": "@deepseek-ai/dsh-client-ui-settings-subagent",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-settings-web-search",
+      "package": "@deepseek-ai/dsh-client-ui-settings-web-search",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-plan",
+      "package": "@deepseek-ai/dsh-client-ui-plan",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-user-questions",
+      "package": "@deepseek-ai/dsh-client-ui-user-questions",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "ui-trajectory",
+      "package": "@deepseek-ai/dsh-client-ui-trajectory",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "agent-preset-registry",
+      "package": "@deepseek-ai/dsh-agent-preset-registry",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "preset-standard",
+      "package": "@deepseek-ai/dsh-agent-preset",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "preset-ptc",
+      "package": "@deepseek-ai/dsh-agent-preset",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "preset-minimal",
+      "package": "@deepseek-ai/dsh-agent-preset",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "preset-cordis",
+      "package": "@deepseek-ai/dsh-agent-preset",
+      "owner": "core",
+      "bundle": "@deepseek-ai/dsh-web-app",
+      "kind": "core",
+      "source": "unverified",
+      "label": {
+        "en": "web-app",
+        "zh": "Web 应用运行支持"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "speech-to-text",
+      "package": "@deepseek-ai/dsh-experimental-speech-to-text",
+      "owner": "optional",
+      "bundle": "@deepseek-ai/dsh-experimental-voice-input-bundle",
+      "kind": "plugin",
+      "source": "official-optional-bundle",
+      "label": {
+        "en": "Voice input",
+        "zh": "语音输入"
+      },
+      "state": "active",
+      "configurable": true,
+      "writable": true
+    },
+    {
+      "entryId": "speech-to-text-sensevoice",
+      "package": "@deepseek-ai/dsh-experimental-speech-to-text-sensevoice",
+      "owner": "optional",
+      "bundle": "@deepseek-ai/dsh-experimental-voice-input-bundle",
+      "kind": "plugin",
+      "source": "official-optional-bundle",
+      "label": {
+        "en": "Voice input",
+        "zh": "语音输入"
+      },
+      "state": "active",
+      "configurable": true,
+      "writable": false,
+      "reason": "overridden"
+    },
+    {
+      "entryId": "api-speech-to-text",
+      "package": "@deepseek-ai/dsh-experimental-api-speech-to-text",
+      "owner": "optional",
+      "bundle": "@deepseek-ai/dsh-experimental-voice-input-bundle",
+      "kind": "plugin",
+      "source": "official-optional-bundle",
+      "label": {
+        "en": "Voice input",
+        "zh": "语音输入"
+      },
+      "state": "active",
+      "configurable": true,
+      "writable": true
+    },
+    {
+      "entryId": "ui-voice-input",
+      "package": "@deepseek-ai/dsh-experimental-client-ui-voice-input",
+      "owner": "optional",
+      "bundle": "@deepseek-ai/dsh-experimental-voice-input-bundle",
+      "kind": "plugin",
+      "source": "official-optional-bundle",
+      "label": {
+        "en": "Voice input",
+        "zh": "语音输入"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "optional-session-search",
+      "package": null,
+      "owner": "overlay",
+      "bundle": null,
+      "kind": "overlay",
+      "source": "unverified",
+      "label": "optional-session-search",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "normal",
+      "package": "wave10-r7-fixture",
+      "owner": "installed",
+      "bundle": "wave10-r7-bundle",
+      "kind": "plugin",
+      "source": "installed-bundle",
+      "label": {
+        "en": "R7 installed bundle",
+        "zh": "R7 自装套件"
+      },
+      "state": "active",
+      "configurable": true,
+      "writable": true
+    },
+    {
+      "entryId": "home-covered",
+      "package": "wave10-r7-fixture",
+      "owner": "installed",
+      "bundle": "wave10-r7-bundle",
+      "kind": "plugin",
+      "source": "installed-bundle",
+      "label": {
+        "en": "R7 installed bundle",
+        "zh": "R7 自装套件"
+      },
+      "state": "active",
+      "configurable": true,
+      "writable": false,
+      "reason": "overridden"
+    },
+    {
+      "entryId": "home-same",
+      "package": "wave10-r7-fixture",
+      "owner": "installed",
+      "bundle": "wave10-r7-bundle",
+      "kind": "plugin",
+      "source": "installed-bundle",
+      "label": {
+        "en": "R7 installed bundle",
+        "zh": "R7 自装套件"
+      },
+      "state": "active",
+      "configurable": true,
+      "writable": false,
+      "reason": "overridden"
+    },
+    {
+      "entryId": "cli-covered",
+      "package": "wave10-r7-fixture",
+      "owner": "installed",
+      "bundle": "wave10-r7-bundle",
+      "kind": "plugin",
+      "source": "installed-bundle",
+      "label": {
+        "en": "R7 installed bundle",
+        "zh": "R7 自装套件"
+      },
+      "state": "active",
+      "configurable": true,
+      "writable": false,
+      "reason": "overridden"
+    },
+    {
+      "entryId": "flag-only",
+      "package": "wave10-r7-fixture",
+      "owner": "installed",
+      "bundle": "wave10-r7-bundle",
+      "kind": "plugin",
+      "source": "installed-bundle",
+      "label": {
+        "en": "R7 installed bundle",
+        "zh": "R7 自装套件"
+      },
+      "state": "active",
+      "configurable": true,
+      "writable": true
+    },
+    {
+      "entryId": "ambiguous",
+      "package": "wave10-r7-fixture",
+      "owner": "installed",
+      "bundle": "wave10-r7-bundle",
+      "kind": "plugin",
+      "source": "installed-bundle",
+      "label": {
+        "en": "R7 installed bundle",
+        "zh": "R7 自装套件"
+      },
+      "state": "active",
+      "configurable": true,
+      "writable": true
+    },
+    {
+      "entryId": "race",
+      "package": "wave10-r7-fixture",
+      "owner": "installed",
+      "bundle": "wave10-r7-bundle",
+      "kind": "plugin",
+      "source": "installed-bundle",
+      "label": {
+        "en": "R7 installed bundle",
+        "zh": "R7 自装套件"
+      },
+      "state": "active",
+      "configurable": true,
+      "writable": true
+    },
+    {
+      "entryId": "dsh-media",
+      "package": "dsh-media",
+      "owner": "installed",
+      "bundle": "wave10-r7-bundle",
+      "kind": "plugin",
+      "source": "installed-bundle",
+      "label": {
+        "en": "R7 installed bundle",
+        "zh": "R7 自装套件"
+      },
+      "state": "active",
+      "configurable": true,
+      "writable": true
+    },
+    {
+      "entryId": "core-alias",
+      "package": "@deepseek-ai/dsh-sandbox-policy",
+      "owner": "installed",
+      "bundle": "wave10-r7-bundle",
+      "kind": "plugin",
+      "source": "unverified",
+      "label": {
+        "en": "R7 installed bundle",
+        "zh": "R7 自装套件"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "error-entry",
+      "package": "wave10-r7-fixture",
+      "owner": "installed",
+      "bundle": "wave10-r7-error",
+      "kind": "plugin",
+      "source": "installed-bundle",
+      "label": "wave10-r7-error",
+      "state": "active",
+      "configurable": true,
+      "writable": true
+    },
+    {
+      "entryId": "dsh-app-phone",
+      "package": "@deepseek-ai/dsh-mcp-client",
+      "owner": "overlay",
+      "bundle": null,
+      "kind": "overlay",
+      "source": "unverified",
+      "label": "dsh-app-phone",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "bare-overlay",
+      "package": "wave10-r7-fixture",
+      "owner": "overlay",
+      "bundle": null,
+      "kind": "overlay",
+      "source": "unverified",
+      "label": "bare-overlay",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "disabled-owner",
+      "package": "wave10-r7-fixture",
+      "owner": "installed",
+      "bundle": "wave10-r7-disabled",
+      "kind": "plugin",
+      "source": "unverified",
+      "label": "wave10-r7-disabled",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "r7-observer",
+      "package": null,
+      "owner": "overlay",
+      "bundle": null,
+      "kind": "overlay",
+      "source": "unverified",
+      "label": "r7-observer",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "dsh-go-bridge",
+      "package": null,
+      "owner": "overlay",
+      "bundle": null,
+      "kind": "overlay",
+      "source": "unverified",
+      "label": "dsh-go-bridge",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "home-insert",
+      "package": "wave10-r7-fixture",
+      "owner": "overlay",
+      "bundle": null,
+      "kind": "overlay",
+      "source": "unverified",
+      "label": "home-insert",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "cli-insert",
+      "package": "wave10-r7-fixture",
+      "owner": "overlay",
+      "bundle": null,
+      "kind": "overlay",
+      "source": "unverified",
+      "label": "cli-insert",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "optional-session-query-sqlite",
+      "package": "@deepseek-ai/dsh-session-query-sqlite",
+      "owner": "optional",
+      "bundle": "@deepseek-ai/dsh-experimental-session-search",
+      "kind": "plugin",
+      "source": "unverified",
+      "label": {
+        "en": "Session search",
+        "zh": "会话搜索"
+      },
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "optional-tool-session-query",
+      "package": "@deepseek-ai/dsh-tool-session-query",
+      "owner": "optional",
+      "bundle": "@deepseek-ai/dsh-experimental-session-search",
+      "kind": "plugin",
+      "source": "official-optional-bundle",
+      "label": {
+        "en": "Session search",
+        "zh": "会话搜索"
+      },
+      "state": "active",
+      "configurable": true,
+      "writable": true
+    },
+    {
+      "entryId": "350ba167",
+      "package": "@deepseek-ai/dsh-host-directory-picker-browse",
+      "owner": "overlay",
+      "bundle": null,
+      "kind": "overlay",
+      "source": "unverified",
+      "label": "350ba167",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    },
+    {
+      "entryId": "9e61e23a",
+      "package": "@deepseek-ai/dsh-client-ui-directory-picker-browse",
+      "owner": "overlay",
+      "bundle": null,
+      "kind": "overlay",
+      "source": "unverified",
+      "label": "9e61e23a",
+      "state": "unsupported",
+      "configurable": false,
+      "writable": false,
+      "reason": "entry-unavailable"
+    }
+  ]
+}

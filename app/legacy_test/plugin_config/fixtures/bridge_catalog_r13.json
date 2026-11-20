@@ -1,0 +1,1537 @@
+{
+  "v": 1,
+  "entries": [
+    {
+      "entryId": "include",
+      "package": null,
+      "label": "include",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "nested-include"
+    },
+    {
+      "entryId": "tool-plugin-manager",
+      "package": "@deepseek-ai/dsh-plugin-manager",
+      "label": "tool-plugin-manager",
+      "state": "inactive",
+      "configurable": false,
+      "reason": "not-active"
+    },
+    {
+      "entryId": "plugin-manager",
+      "package": "@deepseek-ai/dsh-plugin-manager",
+      "label": "plugin-manager",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "timer",
+      "package": "@deepseek-ai/cordis-plugin-timer",
+      "label": "timer",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "hmr",
+      "package": "@deepseek-ai/dsh-hmr",
+      "label": "hmr",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "llm",
+      "package": "@deepseek-ai/dsh-llm",
+      "label": "llm",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "deepseek-llm-api-extensions",
+      "package": "@deepseek-ai/dsh-deepseek-llm-api-extensions",
+      "label": "deepseek-llm-api-extensions",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "session",
+      "package": "@deepseek-ai/dsh-session",
+      "label": "session",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "session-log-deepseek",
+      "package": "@deepseek-ai/dsh-session-log-deepseek",
+      "label": "session-log-deepseek",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "typert",
+      "package": "@deepseek-ai/dsh-typert-registry",
+      "label": "typert",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "typert-loader",
+      "package": "@deepseek-ai/dsh-typert-loader",
+      "label": "typert-loader",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "typert-gateway",
+      "package": "@deepseek-ai/dsh-api-gateway",
+      "label": "typert-gateway",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "remote-access",
+      "package": "@deepseek-ai/dsh-api-remote-access",
+      "label": "remote-access",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "session-title",
+      "package": "@deepseek-ai/dsh-session-title",
+      "label": "session-title",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "session-title-llm",
+      "package": "@deepseek-ai/dsh-session-title-first-prompt-llm",
+      "label": "session-title-llm",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "user-questions",
+      "package": "@deepseek-ai/dsh-user-questions",
+      "label": "user-questions",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "agent",
+      "package": "@deepseek-ai/dsh-agent",
+      "label": "agent",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "plugin-package-inventory-deepseek",
+      "package": "@deepseek-ai/dsh-plugin-package-inventory-deepseek",
+      "label": "plugin-package-inventory-deepseek",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "agent-default-model",
+      "package": "@deepseek-ai/dsh-agent-default-model",
+      "label": "agent-default-model",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "jobs",
+      "package": "@deepseek-ai/dsh-jobs-local",
+      "label": "jobs",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "llm-retry",
+      "package": "@deepseek-ai/dsh-llm-retry",
+      "label": "llm-retry",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "config-editor",
+      "package": "@deepseek-ai/dsh-config-editor",
+      "label": "config-editor",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "settings",
+      "package": "@deepseek-ai/dsh-settings",
+      "label": "settings",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "authorization",
+      "package": "@deepseek-ai/dsh-authorization",
+      "label": "authorization",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "deepseek-account",
+      "package": "@deepseek-ai/dsh-deepseek-account-platform",
+      "label": "deepseek-account",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "credentials",
+      "package": "@deepseek-ai/dsh-credentials-local",
+      "label": "credentials",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "llm-pi-ai",
+      "package": "@deepseek-ai/dsh-llm-pi-ai",
+      "label": "llm-pi-ai",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "session-persistence-jsonl",
+      "package": "@deepseek-ai/dsh-session-persistence-jsonl",
+      "label": "session-persistence-jsonl",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "attachment-local",
+      "package": "@deepseek-ai/dsh-attachment-local",
+      "label": "attachment-local",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "session-query-sqlite",
+      "package": "@deepseek-ai/dsh-session-query-sqlite",
+      "label": "session-query-sqlite",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "working-directory",
+      "package": "@deepseek-ai/dsh-working-directory",
+      "label": "working-directory",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "tool-working-directory",
+      "package": "@deepseek-ai/dsh-tool-working-directory",
+      "label": "tool-working-directory",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "session-projection",
+      "package": "@deepseek-ai/dsh-session-projection",
+      "label": "session-projection",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "storage",
+      "package": "@deepseek-ai/dsh-storage",
+      "label": "storage",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "storage-json",
+      "package": "@deepseek-ai/dsh-storage-json",
+      "label": "storage-json",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "storage-domain",
+      "package": "@deepseek-ai/dsh-storage-domain",
+      "label": "storage-domain",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "session-projection-cache",
+      "package": "@deepseek-ai/dsh-session-projection-cache",
+      "label": "session-projection-cache",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "otel",
+      "package": "@deepseek-ai/dsh-otel",
+      "label": "otel",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "session-telemetry-otel",
+      "package": "@deepseek-ai/dsh-session-telemetry-otel",
+      "label": "session-telemetry-otel",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "unsupported-schema"
+    },
+    {
+      "entryId": "subprocess",
+      "package": "@deepseek-ai/dsh-subprocess-local",
+      "label": "subprocess",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "sandbox",
+      "package": "@deepseek-ai/dsh-sandbox-local",
+      "label": "sandbox",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "sandbox-policy",
+      "package": "@deepseek-ai/dsh-sandbox-policy",
+      "label": "sandbox-policy",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "bash-sandbox",
+      "package": "@deepseek-ai/dsh-bash-sandbox",
+      "label": "bash-sandbox",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "pwsh-sandbox",
+      "package": "@deepseek-ai/dsh-pwsh-sandbox",
+      "label": "pwsh-sandbox",
+      "state": "inactive",
+      "configurable": false,
+      "reason": "not-active"
+    },
+    {
+      "entryId": "approval",
+      "package": "@deepseek-ai/dsh-user-approval",
+      "label": "approval",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "permission",
+      "package": "@deepseek-ai/dsh-permission-presets",
+      "label": "permission",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "shell-env",
+      "package": "@deepseek-ai/dsh-shell-env",
+      "label": "shell-env",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "tool-bash",
+      "package": "@deepseek-ai/dsh-tool-bash",
+      "label": "tool-bash",
+      "state": "inactive",
+      "configurable": false,
+      "reason": "not-active"
+    },
+    {
+      "entryId": "tool-pwsh",
+      "package": "@deepseek-ai/dsh-tool-pwsh",
+      "label": "tool-pwsh",
+      "state": "inactive",
+      "configurable": false,
+      "reason": "not-active"
+    },
+    {
+      "entryId": "tool-jobs",
+      "package": "@deepseek-ai/dsh-tool-jobs",
+      "label": "tool-jobs",
+      "state": "inactive",
+      "configurable": false,
+      "reason": "not-active"
+    },
+    {
+      "entryId": "fs-observation-policy",
+      "package": "@deepseek-ai/dsh-fs-observation-policy",
+      "label": "fs-observation-policy",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "tool-fs",
+      "package": "@deepseek-ai/dsh-tool-fs",
+      "label": "tool-fs",
+      "state": "inactive",
+      "configurable": false,
+      "reason": "not-active"
+    },
+    {
+      "entryId": "tool-fs-search",
+      "package": "@deepseek-ai/dsh-tool-fs-search",
+      "label": "tool-fs-search",
+      "state": "inactive",
+      "configurable": false,
+      "reason": "not-active"
+    },
+    {
+      "entryId": "agent-instructions",
+      "package": "@deepseek-ai/dsh-agent-instructions",
+      "label": "agent-instructions",
+      "state": "inactive",
+      "configurable": false,
+      "reason": "not-active"
+    },
+    {
+      "entryId": "skill",
+      "package": "@deepseek-ai/dsh-skill",
+      "label": "skill",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "skill-filesystem",
+      "package": "@deepseek-ai/dsh-skill-filesystem",
+      "label": "skill-filesystem",
+      "state": "inactive",
+      "configurable": false,
+      "reason": "not-active"
+    },
+    {
+      "entryId": "tool-skill",
+      "package": "@deepseek-ai/dsh-tool-skill",
+      "label": "tool-skill",
+      "state": "inactive",
+      "configurable": false,
+      "reason": "not-active"
+    },
+    {
+      "entryId": "commands",
+      "package": "@deepseek-ai/dsh-commands",
+      "label": "commands",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "command-feedback",
+      "package": "@deepseek-ai/dsh-command-feedback",
+      "label": "command-feedback",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "goal",
+      "package": "@deepseek-ai/dsh-goal",
+      "label": "goal",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "goal-round-driver",
+      "package": "@deepseek-ai/dsh-goal-round-driver",
+      "label": "goal-round-driver",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "command-goal",
+      "package": "@deepseek-ai/dsh-command-goal",
+      "label": "command-goal",
+      "state": "inactive",
+      "configurable": false,
+      "reason": "not-active"
+    },
+    {
+      "entryId": "plan-mode",
+      "package": "@deepseek-ai/dsh-plan-mode",
+      "label": "plan-mode",
+      "state": "inactive",
+      "configurable": false,
+      "reason": "not-active"
+    },
+    {
+      "entryId": "token-meter",
+      "package": "@deepseek-ai/dsh-token-meter",
+      "label": "token-meter",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "compaction-basic",
+      "package": "@deepseek-ai/dsh-compaction-basic",
+      "label": "compaction-basic",
+      "state": "inactive",
+      "configurable": false,
+      "reason": "not-active"
+    },
+    {
+      "entryId": "command-compact",
+      "package": "@deepseek-ai/dsh-command-compact",
+      "label": "command-compact",
+      "state": "inactive",
+      "configurable": false,
+      "reason": "not-active"
+    },
+    {
+      "entryId": "subagent",
+      "package": "@deepseek-ai/dsh-subagent",
+      "label": "subagent",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "subagent-spawn-in-process",
+      "package": "@deepseek-ai/dsh-subagent-spawn-in-process",
+      "label": "subagent-spawn-in-process",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "subagent-fork-in-process",
+      "package": "@deepseek-ai/dsh-subagent-fork-in-process",
+      "label": "subagent-fork-in-process",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "tool-subagent-control",
+      "package": "@deepseek-ai/dsh-tool-subagent-control",
+      "label": "tool-subagent-control",
+      "state": "inactive",
+      "configurable": false,
+      "reason": "not-active"
+    },
+    {
+      "entryId": "tool-subagent-list-agents",
+      "package": "@deepseek-ai/dsh-tool-subagent-control",
+      "label": "tool-subagent-list-agents",
+      "state": "inactive",
+      "configurable": false,
+      "reason": "not-active"
+    },
+    {
+      "entryId": "tool-subagent",
+      "package": "@deepseek-ai/dsh-tool-subagent",
+      "label": "tool-subagent",
+      "state": "inactive",
+      "configurable": false,
+      "reason": "not-active"
+    },
+    {
+      "entryId": "tool-subagent-fork",
+      "package": "@deepseek-ai/dsh-tool-subagent",
+      "label": "tool-subagent-fork",
+      "state": "inactive",
+      "configurable": false,
+      "reason": "not-active"
+    },
+    {
+      "entryId": "ptc-runtime",
+      "package": "@deepseek-ai/dsh-ptc-runtime-node",
+      "label": "ptc-runtime",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "workflow-ptc",
+      "package": "@deepseek-ai/dsh-workflow-ptc",
+      "label": "workflow-ptc",
+      "state": "inactive",
+      "configurable": false,
+      "reason": "not-active"
+    },
+    {
+      "entryId": "tool-workflow",
+      "package": "@deepseek-ai/dsh-tool-workflow",
+      "label": "tool-workflow",
+      "state": "inactive",
+      "configurable": false,
+      "reason": "not-active"
+    },
+    {
+      "entryId": "timeout-policy",
+      "package": "@deepseek-ai/dsh-tool-call-timeout-policy",
+      "label": "timeout-policy",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "spill-local",
+      "package": "@deepseek-ai/dsh-spill-local",
+      "label": "spill-local",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "spill-policy",
+      "package": "@deepseek-ai/dsh-spill-policy",
+      "label": "spill-policy",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "session-checkpoint-policy",
+      "package": "@deepseek-ai/dsh-session-checkpoint-policy",
+      "label": "session-checkpoint-policy",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "tool-result-pruner",
+      "package": "@deepseek-ai/dsh-compaction-tool-result-pruner",
+      "label": "tool-result-pruner",
+      "state": "inactive",
+      "configurable": false,
+      "reason": "not-active"
+    },
+    {
+      "entryId": "image-offload",
+      "package": "@deepseek-ai/dsh-compaction-image-offload",
+      "label": "image-offload",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "tool-todo",
+      "package": "@deepseek-ai/dsh-tool-todo",
+      "label": "tool-todo",
+      "state": "inactive",
+      "configurable": false,
+      "reason": "not-active"
+    },
+    {
+      "entryId": "tool-goal",
+      "package": "@deepseek-ai/dsh-tool-goal",
+      "label": "tool-goal",
+      "state": "inactive",
+      "configurable": false,
+      "reason": "not-active"
+    },
+    {
+      "entryId": "repeat-tool-reminder",
+      "package": "@deepseek-ai/dsh-repeat-tool-reminder",
+      "label": "repeat-tool-reminder",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "web",
+      "package": "@deepseek-ai/dsh-web",
+      "label": "web",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "web-search-deepseek",
+      "package": "@deepseek-ai/dsh-web-search-deepseek",
+      "label": "web-search-deepseek",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "web-deepseek-api",
+      "package": "@deepseek-ai/dsh-web-deepseek-api",
+      "label": "web-deepseek-api",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "web-fetch-http",
+      "package": "@deepseek-ai/dsh-web-fetch-http",
+      "label": "web-fetch-http",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "tool-web",
+      "package": "@deepseek-ai/dsh-tool-web",
+      "label": "tool-web",
+      "state": "inactive",
+      "configurable": false,
+      "reason": "not-active"
+    },
+    {
+      "entryId": "mcp-resources",
+      "package": "@deepseek-ai/dsh-mcp-resources",
+      "label": "mcp-resources",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "tools",
+      "package": "@deepseek-ai/dsh-tools",
+      "label": "tools",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "system-prompt",
+      "package": "@deepseek-ai/dsh-system-prompt",
+      "label": "system-prompt",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "agent-loop",
+      "package": "@deepseek-ai/dsh-agent-loop",
+      "label": "agent-loop",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "fs-sandbox",
+      "package": "@deepseek-ai/dsh-fs-sandbox",
+      "label": "fs-sandbox",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "llm-deepseek",
+      "package": "@deepseek-ai/dsh-llm-deepseek-api-key",
+      "label": "llm-deepseek",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "llm-deepseek-account",
+      "package": "@deepseek-ai/dsh-llm-deepseek-account",
+      "label": "llm-deepseek-account",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "desktop-product-telemetry",
+      "package": "@deepseek-ai/dsh-host-product-telemetry-otel",
+      "label": "desktop-product-telemetry",
+      "state": "inactive",
+      "configurable": false,
+      "reason": "not-active"
+    },
+    {
+      "entryId": "product-analytics",
+      "package": "@deepseek-ai/dsh-client-product-analytics",
+      "label": "product-analytics",
+      "state": "inactive",
+      "configurable": false,
+      "reason": "not-active"
+    },
+    {
+      "entryId": "subagent-model-selection-settings",
+      "package": "@deepseek-ai/dsh-tool-subagent",
+      "label": "subagent-model-selection-settings",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "message-feedback",
+      "package": "@deepseek-ai/dsh-message-feedback",
+      "label": "message-feedback",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "session-log-download",
+      "package": "@deepseek-ai/dsh-session-log-export",
+      "label": "session-log-download",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "open-in-app",
+      "package": "@deepseek-ai/dsh-host-open-in-app",
+      "label": "open-in-app",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "ui-open-in-app",
+      "package": "@deepseek-ai/dsh-client-ui-open-in-app",
+      "label": "ui-open-in-app",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "workspace",
+      "package": "@deepseek-ai/dsh-workspace",
+      "label": "workspace",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "session-reference",
+      "package": "@deepseek-ai/dsh-session-reference",
+      "label": "session-reference",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "file-reference-local",
+      "package": "@deepseek-ai/dsh-file-reference-local",
+      "label": "file-reference-local",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "session-stats",
+      "package": "@deepseek-ai/dsh-session-stats",
+      "label": "session-stats",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "session-turn-outline",
+      "package": "@deepseek-ai/dsh-session-turn-outline",
+      "label": "session-turn-outline",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "directory-picker",
+      "package": "@deepseek-ai/dsh-host-directory-picker-auto",
+      "label": "directory-picker",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "plugin-inventory",
+      "package": "@deepseek-ai/dsh-host-plugin-inventory",
+      "label": "plugin-inventory",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "session-controller",
+      "package": "@deepseek-ai/dsh-api-session-controller",
+      "label": "session-controller",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "job-controller",
+      "package": "@deepseek-ai/dsh-api-job-controller",
+      "label": "job-controller",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "terminal-controller",
+      "package": "@deepseek-ai/dsh-api-terminal-controller",
+      "label": "terminal-controller",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "workspace-files",
+      "package": "@deepseek-ai/dsh-api-workspace-files",
+      "label": "workspace-files",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "schedule",
+      "package": "@deepseek-ai/dsh-schedule",
+      "label": "schedule",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "ui-settings-account",
+      "package": "@deepseek-ai/dsh-client-ui-settings-account",
+      "label": "ui-settings-account",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "account-controller",
+      "package": "@deepseek-ai/dsh-api-account-controller",
+      "label": "account-controller",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "settings-controller",
+      "package": "@deepseek-ai/dsh-api-settings-controller",
+      "label": "settings-controller",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "workspace-controller",
+      "package": "@deepseek-ai/dsh-api-workspace-controller",
+      "label": "workspace-controller",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "cordis-host-runner",
+      "package": "@deepseek-ai/dsh-cordis-host-runner",
+      "label": "cordis-host-runner",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "cordis-inspect-providers",
+      "package": "@deepseek-ai/dsh-tool-cordis",
+      "label": "cordis-inspect-providers",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "web-startup",
+      "package": "@deepseek-ai/dsh-web-app",
+      "label": "web-startup",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "webserver",
+      "package": "@deepseek-ai/dsh-host-webserver",
+      "label": "webserver",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "web-runtime",
+      "package": "@deepseek-ai/dsh-web-app",
+      "label": "web-runtime",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "harness-dev-context",
+      "package": "@deepseek-ai/dsh-harness-dev-context",
+      "label": "harness-dev-context",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "client-hmr",
+      "package": "@deepseek-ai/dsh-client-hmr",
+      "label": "client-hmr",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "modules",
+      "package": "@deepseek-ai/dsh-client-modules",
+      "label": "modules",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "connection",
+      "package": "@deepseek-ai/dsh-client-connection",
+      "label": "connection",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "file-upload",
+      "package": "@deepseek-ai/dsh-client-file-upload",
+      "label": "file-upload",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "api-remotes",
+      "package": "@deepseek-ai/dsh-api-remotes",
+      "label": "api-remotes",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "cordis-client-runner",
+      "package": "@deepseek-ai/dsh-cordis-client-runner",
+      "label": "cordis-client-runner",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-theme",
+      "package": "@deepseek-ai/dsh-client-ui-theme",
+      "label": "ui-theme",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "locale",
+      "package": "@deepseek-ai/dsh-client-locale",
+      "label": "locale",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "shortcuts",
+      "package": "@deepseek-ai/dsh-client-shortcuts",
+      "label": "shortcuts",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "ui-shortcuts",
+      "package": "@deepseek-ai/dsh-client-ui-shortcuts",
+      "label": "ui-shortcuts",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-layout",
+      "package": "@deepseek-ai/dsh-client-ui-layout",
+      "label": "ui-layout",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-renderer",
+      "package": "@deepseek-ai/dsh-client-ui-renderer",
+      "label": "ui-renderer",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-session",
+      "package": "@deepseek-ai/dsh-client-ui-session",
+      "label": "ui-session",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "resources",
+      "package": "@deepseek-ai/dsh-client-resources",
+      "label": "resources",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-sidebar",
+      "package": "@deepseek-ai/dsh-client-ui-sidebar",
+      "label": "ui-sidebar",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-sidebar-right",
+      "package": "@deepseek-ai/dsh-client-ui-sidebar-right",
+      "label": "ui-sidebar-right",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "office-to-pdf",
+      "package": "@deepseek-ai/dsh-office-to-pdf",
+      "label": "office-to-pdf",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "ui-sidebar-documentpreview",
+      "package": "@deepseek-ai/dsh-client-ui-sidebar-documentpreview",
+      "label": "ui-sidebar-documentpreview",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "ui-sidebar-browser",
+      "package": "@deepseek-ai/dsh-client-ui-sidebar-browser",
+      "label": "ui-sidebar-browser",
+      "state": "inactive",
+      "configurable": false,
+      "reason": "not-active"
+    },
+    {
+      "entryId": "ui-sidebar-terminal",
+      "package": "@deepseek-ai/dsh-client-ui-sidebar-terminal",
+      "label": "ui-sidebar-terminal",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-sidebar-files",
+      "package": "@deepseek-ai/dsh-client-ui-sidebar-files",
+      "label": "ui-sidebar-files",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-settings",
+      "package": "@deepseek-ai/dsh-client-ui-settings",
+      "label": "ui-settings",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "ui-settings-general",
+      "package": "@deepseek-ai/dsh-client-ui-settings-general",
+      "label": "ui-settings-general",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "ui-settings-models",
+      "package": "@deepseek-ai/dsh-client-ui-settings-models",
+      "label": "ui-settings-models",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "ui-plugin-manager",
+      "package": "@deepseek-ai/dsh-client-ui-plugin-manager",
+      "label": "ui-plugin-manager",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "ui-settings-plugin-inventory",
+      "package": "@deepseek-ai/dsh-client-ui-settings-plugin-inventory",
+      "label": "ui-settings-plugin-inventory",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-conversation",
+      "package": "@deepseek-ai/dsh-client-ui-conversation",
+      "label": "ui-conversation",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "ui-approval",
+      "package": "@deepseek-ai/dsh-client-ui-approval",
+      "label": "ui-approval",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-chat",
+      "package": "@deepseek-ai/dsh-client-ui-chat",
+      "label": "ui-chat",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "ui-brand-official",
+      "package": "@deepseek-ai/dsh-client-ui-brand-official",
+      "label": "ui-brand-official",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-attachment",
+      "package": "@deepseek-ai/dsh-client-ui-attachment",
+      "label": "ui-attachment",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-tool",
+      "package": "@deepseek-ai/dsh-client-ui-tool",
+      "label": "ui-tool",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-cordis",
+      "package": "@deepseek-ai/dsh-client-ui-cordis",
+      "label": "ui-cordis",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-deliverables",
+      "package": "@deepseek-ai/dsh-client-ui-deliverables",
+      "label": "ui-deliverables",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "workspace-changes",
+      "package": "@deepseek-ai/dsh-workspace-changes",
+      "label": "workspace-changes",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "ui-workspace",
+      "package": "@deepseek-ai/dsh-client-ui-workspace",
+      "label": "ui-workspace",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-workflow-run",
+      "package": "@deepseek-ai/dsh-client-ui-workflow-run",
+      "label": "ui-workflow-run",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-input-trigger",
+      "package": "@deepseek-ai/dsh-client-ui-input-trigger",
+      "label": "ui-input-trigger",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-commands",
+      "package": "@deepseek-ai/dsh-client-ui-commands",
+      "label": "ui-commands",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-skill",
+      "package": "@deepseek-ai/dsh-client-ui-skill",
+      "label": "ui-skill",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-subagent",
+      "package": "@deepseek-ai/dsh-client-ui-subagent",
+      "label": "ui-subagent",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-reference",
+      "package": "@deepseek-ai/dsh-client-ui-reference",
+      "label": "ui-reference",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-secret-mask",
+      "package": "@deepseek-ai/dsh-client-ui-secret-mask",
+      "label": "ui-secret-mask",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-jobs",
+      "package": "@deepseek-ai/dsh-client-ui-jobs",
+      "label": "ui-jobs",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-schedule",
+      "package": "@deepseek-ai/dsh-client-ui-schedule",
+      "label": "ui-schedule",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-goal",
+      "package": "@deepseek-ai/dsh-client-ui-goal",
+      "label": "ui-goal",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-message-feedback",
+      "package": "@deepseek-ai/dsh-client-ui-message-feedback",
+      "label": "ui-message-feedback",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-model-selection",
+      "package": "@deepseek-ai/dsh-client-ui-model-selection",
+      "label": "ui-model-selection",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-deepseek-model-label-1017",
+      "package": "@deepseek-ai/dsh-client-ui-deepseek-model-label-1017",
+      "label": "ui-deepseek-model-label-1017",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-permission",
+      "package": "@deepseek-ai/dsh-client-ui-permission-presets",
+      "label": "ui-permission",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-agent-preset",
+      "package": "@deepseek-ai/dsh-client-ui-agent-preset",
+      "label": "ui-agent-preset",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "entry-customization",
+      "package": "@deepseek-ai/dsh-client-ui-entry-customization",
+      "label": "entry-customization",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-settings-session-log",
+      "package": "@deepseek-ai/dsh-client-ui-settings-session-log",
+      "label": "ui-settings-session-log",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-settings-plugins",
+      "package": "@deepseek-ai/dsh-client-ui-settings-plugins",
+      "label": "ui-settings-plugins",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-settings-shell",
+      "package": "@deepseek-ai/dsh-client-ui-settings-shell",
+      "label": "ui-settings-shell",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-settings-agent-loop",
+      "package": "@deepseek-ai/dsh-client-ui-settings-agent-loop",
+      "label": "ui-settings-agent-loop",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-settings-subagent",
+      "package": "@deepseek-ai/dsh-client-ui-settings-subagent",
+      "label": "ui-settings-subagent",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-settings-web-search",
+      "package": "@deepseek-ai/dsh-client-ui-settings-web-search",
+      "label": "ui-settings-web-search",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-plan",
+      "package": "@deepseek-ai/dsh-client-ui-plan",
+      "label": "ui-plan",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-user-questions",
+      "package": "@deepseek-ai/dsh-client-ui-user-questions",
+      "label": "ui-user-questions",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "ui-trajectory",
+      "package": "@deepseek-ai/dsh-client-ui-trajectory",
+      "label": "ui-trajectory",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "agent-preset-registry",
+      "package": "@deepseek-ai/dsh-agent-preset-registry",
+      "label": "agent-preset-registry",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "preset-standard",
+      "package": "@deepseek-ai/dsh-agent-preset",
+      "label": "preset-standard",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "unsupported-schema"
+    },
+    {
+      "entryId": "preset-ptc",
+      "package": "@deepseek-ai/dsh-agent-preset",
+      "label": "preset-ptc",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "unsupported-schema"
+    },
+    {
+      "entryId": "preset-minimal",
+      "package": "@deepseek-ai/dsh-agent-preset",
+      "label": "preset-minimal",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "unsupported-schema"
+    },
+    {
+      "entryId": "preset-cordis",
+      "package": "@deepseek-ai/dsh-agent-preset",
+      "label": "preset-cordis",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "unsupported-schema"
+    },
+    {
+      "entryId": "dsh-go-bridge",
+      "package": null,
+      "label": "dsh-go-bridge",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "dsh-app-auth",
+      "package": null,
+      "label": "dsh-app-auth",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "dsh-app-phone",
+      "package": "@deepseek-ai/dsh-mcp-client",
+      "label": "dsh-app-phone",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "speech-to-text",
+      "package": "@deepseek-ai/dsh-experimental-speech-to-text",
+      "label": "speech-to-text",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "speech-to-text-sensevoice",
+      "package": "@deepseek-ai/dsh-experimental-speech-to-text-sensevoice",
+      "label": "speech-to-text-sensevoice",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "api-speech-to-text",
+      "package": "@deepseek-ai/dsh-experimental-api-speech-to-text",
+      "label": "api-speech-to-text",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "ui-voice-input",
+      "package": "@deepseek-ai/dsh-experimental-client-ui-voice-input",
+      "label": "ui-voice-input",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "no-schema"
+    },
+    {
+      "entryId": "local-notes",
+      "package": "dsh-go-fixture-local-notes",
+      "label": "local-notes",
+      "state": "active",
+      "configurable": true
+    },
+    {
+      "entryId": "679db2e1",
+      "package": "@deepseek-ai/dsh-host-directory-picker-native",
+      "label": "679db2e1",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "nested-include"
+    },
+    {
+      "entryId": "38544a6f",
+      "package": "@deepseek-ai/dsh-client-ui-directory-picker-native",
+      "label": "38544a6f",
+      "state": "unsupported",
+      "configurable": false,
+      "reason": "nested-include"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "purpose": "schedule-authorization",
+  "questions": [
+    {
+      "id": "dsh-go-schedule-authorization-synthetic",
+      "header": "定时任务授权 / Schedule authorization",
+      "question": "是否授权以下完整任务？到点会唤醒助手并按会话权限执行，不只是通知。仅本次创建或修改有效。\nAuthorize this complete task? It will wake an agent and run with the session's permissions, not just display a notification. This confirmation covers only this creation or edit.\n\n{\n  \"operation\": \"update\",\n  \"sessionId\": \"s1\",\n  \"task\": {\n    \"target\": {\n      \"kind\": \"session\",\n      \"sessionId\": \"s1\"\n    },\n    \"involvedSessionIds\": [\n      \"s1\"\n    ],\n    \"record\": {\n      \"id\": \"synthetic-task\",\n      \"kind\": \"daily\",\n      \"title\": \"合成每日检查\",\n      \"prompt\": \"1. 检查合成项目，保留完整结果与换行。\\n2. 检查合成项目，保留完整结果与换行。\\n3. 检查合成项目，保留完整结果与换行。\\n4. 检查合成项目，保留完整结果与换行。\\n5. 检查合成项目，保留完整结果与换行。\\n6. 检查合成项目，保留完整结果与换行。\\n7. 检查合成项目，保留完整结果与换行。\\n8. 检查合成项目，保留完整结果与换行。\\n9. 检查合成项目，保留完整结果与换行。\\n10. 检查合成项目，保留完整结果与换行。\\n11. 检查合成项目，保留完整结果与换行。\\n12. 检查合成项目，保留完整结果与换行。\\n13. 检查合成项目，保留完整结果与换行。\\n14. 检查合成项目，保留完整结果与换行。\\n15. 检查合成项目，保留完整结果与换行。\\n16. 检查合成项目，保留完整结果与换行。\\n17. 检查合成项目，保留完整结果与换行。\\n18. 检查合成项目，保留完整结果与换行。\\n19. 检查合成项目，保留完整结果与换行。\\n20. 检查合成项目，保留完整结果与换行。\\n21. 检查合成项目，保留完整结果与换行。\\n22. 检查合成项目，保留完整结果与换行。\\n23. 检查合成项目，保留完整结果与换行。\\n24. 检查合成项目，保留完整结果与换行。\\n25. 检查合成项目，保留完整结果与换行。\\n26. 检查合成项目，保留完整结果与换行。\\n27. 检查合成项目，保留完整结果与换行。\\n28. 检查合成项目，保留完整结果与换行。\\n29. 检查合成项目，保留完整结果与换行。\\n30. 检查合成项目，保留完整结果与换行。\\n31. 检查合成项目，保留完整结果与换行。\\n32. 检查合成项目，保留完整结果与换行。\\n33. 检查合成项目，保留完整结果与换行。\\n34. 检查合成项目，保留完整结果与换行。\\n35. 检查合成项目，保留完整结果与换行。\\n36. 检查合成项目，保留完整结果与换行。\\n37. 检查合成项目，保留完整结果与换行。\\n38. 检查合成项目，保留完整结果与换行。\\n39. 检查合成项目，保留完整结果与换行。\\n40. 检查合成项目，保留完整结果与换行。\\n41. 检查合成项目，保留完整结果与换行。\\n42. 检查合成项目，保留完整结果与换行。\\n43. 检查合成项目，保留完整结果与换行。\\n44. 检查合成项目，保留完整结果与换行。\\n45. 检查合成项目，保留完整结果与换行。\\n最后一行：只报告测试结果。\",\n      \"time\": \"23:00:00.000\",\n      \"timeZone\": \"Asia/Shanghai\",\n      \"scheduledAt\": \"2099-12-30T15:00:00.000Z\"\n    },\n    \"status\": \"active\",\n    \"deliveryHistory\": {\n      \"records\": [],\n      \"earlierRecordsUnavailable\": false,\n      \"earlierRecordsPruned\": false\n    },\n    \"extraContext\": {\n      \"visible\\u202ekey\": \"visible\\u2066value\",\n      \"count\": 2,\n      \"empty\": {},\n      \"optional\": null\n    }\n  }\n}",
+      "options": [
+        {
+          "label": "授权 / Authorize"
+        },
+        {
+          "label": "拒绝 / Reject"
+        }
+      ],
+      "multiSelect": false
+    }
+  ]
+}

@@ -1,0 +1,122 @@
+{
+ "package": "@deepseek-ai/schemastery",
+ "version": "3.18.5",
+ "file": "src/index.ts (i18n, mergeDesc)",
+ "note": "Synthetic: the description forms schemastery serializes, produced by the real library.",
+ "schema": {
+  "uid": 981,
+  "refs": {
+   "981": {
+    "type": "object",
+    "meta": {
+     "default": {},
+     "description": {
+      "zh-CN": "基础设置"
+     }
+    },
+    "dict": {
+     "mode": 982,
+     "endpoint": 986,
+     "retries": 987,
+     "proxy": 988,
+     "region": 991
+    }
+   },
+   "982": {
+    "type": "union",
+    "meta": {
+     "default": "fast"
+    },
+    "list": [
+     983,
+     984,
+     985
+    ]
+   },
+   "983": {
+    "type": "const",
+    "meta": {
+     "description": {
+      "zh-CN": "快速",
+      "en-US": "Fast"
+     }
+    },
+    "value": "fast"
+   },
+   "984": {
+    "type": "const",
+    "meta": {
+     "description": {
+      "": "稳妥"
+     }
+    },
+    "value": "safe"
+   },
+   "985": {
+    "type": "const",
+    "meta": {},
+    "value": "custom"
+   },
+   "986": {
+    "type": "string",
+    "meta": {
+     "description": {
+      "": "Upstream endpoint",
+      "zh-CN": "上游地址",
+      "en": "Upstream endpoint"
+     }
+    }
+   },
+   "987": {
+    "type": "number",
+    "meta": {
+     "step": 1,
+     "min": 0,
+     "description": {
+      "": "最大重试次数",
+      "en": "Maximum retries"
+     }
+    }
+   },
+   "988": {
+    "type": "object",
+    "meta": {
+     "default": {},
+     "description": {
+      "zh-CN": "代理",
+      "en": "Proxy"
+     }
+    },
+    "dict": {
+     "enabled": 989,
+     "url": 990
+    }
+   },
+   "989": {
+    "type": "boolean",
+    "meta": {
+     "description": {
+      "zh-CN": "启用代理"
+     }
+    }
+   },
+   "990": {
+    "type": "string",
+    "meta": {
+     "description": {
+      "en": "Proxy URL"
+     }
+    }
+   },
+   "991": {
+    "type": "string",
+    "meta": {
+     "description": {
+      "zh_CN": "区域",
+      "en_US": "Region"
+     }
+    }
+   }
+  }
+ }
+}

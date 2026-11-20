@@ -1,0 +1,8 @@
+The dsh_client and dsh_tavern packages are imported from dsh-Go v1.2.0:
+https://github.com/ccch1mneyyy/dsh-Go
+Source commit: c1a84e3f833ad59ff07a5027994dae3935907a2d
+
+These packages and the new dsh_portal adapter are licensed under AGPL-3.0.
+Per-file SPDX exceptions and copyright notices are preserved. See each
+package's LICENSE and ../app/THIRD_PARTY_NOTICES.md for third-party exceptions.
+The separate repository-root portal gateway remains MIT licensed.

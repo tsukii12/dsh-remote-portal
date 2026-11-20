@@ -1,0 +1,109 @@
+{
+  "uid": 24,
+  "refs": {
+    "24": {
+      "type": "object",
+      "meta": {
+        "default": {}
+      },
+      "dict": {
+        "hotkey": 25,
+        "group": 26,
+        "hidden": 33,
+        "secret": 34
+      }
+    },
+    "25": {
+      "type": "string",
+      "meta": {
+        "description": {
+          "": "Fallback plain description",
+          "zh-CN": "**按住快捷键**开始录音。\n\n- 松开后发送。\n- 空字符串会禁用快捷键。\n\n[帮助](https://example.test/help)",
+          "en": "**Hold the shortcut** to record.\n\n- Release to send.\n- An empty string disables the shortcut.\n\n[Help](https://example.test/help)"
+        },
+        "comment": "Use `Control` or `Alt`.",
+        "link": "https://example.test/docs#keys"
+      }
+    },
+    "26": {
+      "type": "intersect",
+      "meta": {},
+      "list": [
+        27,
+        30
+      ]
+    },
+    "27": {
+      "type": "object",
+      "meta": {
+        "default": {},
+        "hidden": true
+      },
+      "dict": {
+        "hiddenChild": 28,
+        "override": 29
+      }
+    },
+    "28": {
+      "type": "string",
+      "meta": {
+        "description": {
+          "": "Hidden ancestor child"
+        }
+      }
+    },
+    "29": {
+      "type": "string",
+      "meta": {
+        "description": {
+          "": "Old hidden override"
+        }
+      }
+    },
+    "30": {
+      "type": "object",
+      "meta": {
+        "default": {}
+      },
+      "dict": {
+        "shown": 31,
+        "override": 32
+      }
+    },
+    "31": {
+      "type": "string",
+      "meta": {
+        "description": {
+          "": "Visible sibling"
+        }
+      }
+    },
+    "32": {
+      "type": "string",
+      "meta": {
+        "description": {
+          "": "Visible override"
+        }
+      }
+    },
+    "33": {
+      "type": "string",
+      "meta": {
+        "hidden": true,
+        "description": {
+          "": "Hidden implementation details"
+        }
+      }
+    },
+    "34": {
+      "type": "string",
+      "meta": {
+        "role": "secret",
+        "default": "MUST_NOT_APPEAR",
+        "description": {
+          "": "Credential documentation only"
+        }
+      }
+    }
+  }
+}

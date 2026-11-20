@@ -1,0 +1,11 @@
+{
+  "applied": 0,
+  "fatal": true,
+  "issues": [
+    {
+      "pointer": "/version",
+      "kind": "fatal",
+      "message": "需要更新 App 才能使用版本 2"
+    }
+  ]
+}

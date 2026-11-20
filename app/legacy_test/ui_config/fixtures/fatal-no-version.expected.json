@@ -1,0 +1,11 @@
+{
+  "applied": 0,
+  "fatal": true,
+  "issues": [
+    {
+      "pointer": "/version",
+      "kind": "fatal",
+      "message": "缺少 version"
+    }
+  ]
+}

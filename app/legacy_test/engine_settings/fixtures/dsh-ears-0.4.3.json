@@ -1,0 +1,686 @@
+{
+  "uid": 303,
+  "refs": {
+    "4": {
+      "type": "number",
+      "meta": {
+        "default": 4,
+        "description": "Settings schema version",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "9": {
+      "type": "string",
+      "meta": {
+        "default": "dsh-ears",
+        "description": "Settings page display name: dsh-ears or voice",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "14": {
+      "type": "boolean",
+      "meta": {
+        "default": true,
+        "description": "Enable the in-page voice shortcut",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "19": {
+      "type": "string",
+      "meta": {
+        "default": "ctrl+shift+space",
+        "description": "In-page voice shortcut",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "22": {
+      "type": "object",
+      "meta": {
+        "default": {},
+        "description": "Voice shortcut",
+        "collapse": true
+      },
+      "dict": {
+        "enabled": 14,
+        "value": 19
+      }
+    },
+    "27": {
+      "type": "boolean",
+      "meta": {
+        "default": true,
+        "description": "Play a synthesized click for voice input",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "30": {
+      "type": "object",
+      "meta": {
+        "default": {},
+        "description": "General dsh-ears presentation and input settings",
+        "collapse": true
+      },
+      "dict": {
+        "displayName": 9,
+        "shortcut": 22,
+        "soundsEnabled": 27
+      }
+    },
+    "35": {
+      "type": "string",
+      "meta": {
+        "default": "web-speech",
+        "description": "Recognition backend; Web Speech is the default: web-speech, local-whisper, or cloud-openai",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "40": {
+      "type": "string",
+      "meta": {
+        "default": "",
+        "description": "Web Speech recognition language; leave empty to follow the dsh interface locale",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "43": {
+      "type": "object",
+      "meta": {
+        "default": {},
+        "description": "Web Speech live recognition",
+        "collapse": true
+      },
+      "dict": {
+        "language": 40
+      }
+    },
+    "48": {
+      "type": "string",
+      "meta": {
+        "default": "tiny",
+        "description": "Local Whisper model id",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "53": {
+      "type": "string",
+      "meta": {
+        "default": "default",
+        "description": "Local Whisper native acceleration; default selects an available variant automatically",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "58": {
+      "type": "string",
+      "meta": {
+        "default": "",
+        "description": "Transcription language; leave empty for automatic detection",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "61": {
+      "type": "object",
+      "meta": {
+        "default": {},
+        "description": "Local Whisper model and native acceleration",
+        "collapse": true
+      },
+      "dict": {
+        "model": 48,
+        "acceleration": 53,
+        "language": 58
+      }
+    },
+    "66": {
+      "type": "string",
+      "meta": {
+        "default": "groq",
+        "description": "Active cloud ASR provider: groq, deepgram, bailian, tencent, mimo, siliconflow, volcengine, custom",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "71": {
+      "type": "number",
+      "meta": {
+        "default": 120,
+        "description": "Recording limit in seconds",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "74": {
+      "type": "object",
+      "meta": {
+        "default": {},
+        "description": "Audio recognition routing and limits",
+        "collapse": true
+      },
+      "dict": {
+        "backend": 35,
+        "webSpeech": 43,
+        "localWhisper": 61,
+        "cloudProvider": 66,
+        "maxRecordingSeconds": 71
+      }
+    },
+    "80": {
+      "type": "string",
+      "meta": {
+        "role": "secret",
+        "default": "",
+        "description": "Groq API key (Whisper)",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "85": {
+      "type": "string",
+      "meta": {
+        "default": "",
+        "description": "Groq Whisper model id",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "90": {
+      "type": "string",
+      "meta": {
+        "default": "",
+        "description": "Transcription language; leave empty for automatic detection",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "93": {
+      "type": "object",
+      "meta": {
+        "default": {},
+        "description": "Groq cloud ASR",
+        "collapse": true
+      },
+      "dict": {
+        "apiKey": 80,
+        "model": 85,
+        "language": 90
+      }
+    },
+    "99": {
+      "type": "string",
+      "meta": {
+        "role": "secret",
+        "default": "",
+        "description": "Deepgram API key",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "104": {
+      "type": "string",
+      "meta": {
+        "default": "nova-3",
+        "description": "Deepgram ASR model, for example nova-3",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "109": {
+      "type": "string",
+      "meta": {
+        "default": "",
+        "description": "Transcription language; leave empty for automatic detection",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "114": {
+      "type": "string",
+      "meta": {
+        "default": "recording-file",
+        "description": "Deepgram ASR service: recording-file, realtime",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "117": {
+      "type": "object",
+      "meta": {
+        "default": {},
+        "description": "Deepgram cloud ASR",
+        "collapse": true
+      },
+      "dict": {
+        "apiKey": 99,
+        "model": 104,
+        "language": 109,
+        "service": 114
+      }
+    },
+    "123": {
+      "type": "string",
+      "meta": {
+        "role": "secret",
+        "default": "",
+        "description": "OpenAI-compatible ASR API key",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "128": {
+      "type": "string",
+      "meta": {
+        "default": "",
+        "description": "Transcription endpoint URL",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "133": {
+      "type": "string",
+      "meta": {
+        "default": "",
+        "description": "Transcription model, for example whisper-1",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "138": {
+      "type": "string",
+      "meta": {
+        "default": "",
+        "description": "Transcription language; leave empty for automatic detection",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "141": {
+      "type": "object",
+      "meta": {
+        "default": {},
+        "description": "Custom OpenAI-compatible ASR",
+        "collapse": true
+      },
+      "dict": {
+        "apiKey": 123,
+        "endpoint": 128,
+        "model": 133,
+        "language": 138
+      }
+    },
+    "147": {
+      "type": "string",
+      "meta": {
+        "role": "secret",
+        "default": "",
+        "description": "Alibaba Cloud Model Studio API key",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "152": {
+      "type": "string",
+      "meta": {
+        "default": "",
+        "description": "HTTPS DashScope origin",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "157": {
+      "type": "string",
+      "meta": {
+        "default": "",
+        "description": "Synchronous transcription model id",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "162": {
+      "type": "string",
+      "meta": {
+        "default": "",
+        "description": "Transcription language; leave empty for automatic detection",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "165": {
+      "type": "object",
+      "meta": {
+        "default": {},
+        "description": "Alibaba Cloud Model Studio (Bailian) ASR",
+        "collapse": true
+      },
+      "dict": {
+        "apiKey": 147,
+        "host": 152,
+        "model": 157,
+        "language": 162
+      }
+    },
+    "170": {
+      "type": "string",
+      "meta": {
+        "default": "",
+        "description": "Tencent Cloud AppID",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "175": {
+      "type": "string",
+      "meta": {
+        "default": "",
+        "description": "Tencent Cloud SecretID",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "181": {
+      "type": "string",
+      "meta": {
+        "role": "secret",
+        "default": "",
+        "description": "Tencent Cloud SecretKey",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "186": {
+      "type": "string",
+      "meta": {
+        "default": "16k_zh",
+        "description": "Tencent Cloud ASR engine type",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "191": {
+      "type": "string",
+      "meta": {
+        "default": "recording-file",
+        "description": "Tencent Cloud ASR service: recording-file, realtime",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "194": {
+      "type": "object",
+      "meta": {
+        "default": {},
+        "description": "Tencent Cloud ASR services",
+        "collapse": true
+      },
+      "dict": {
+        "appId": 170,
+        "secretId": 175,
+        "secretKey": 181,
+        "engineType": 186,
+        "service": 191
+      }
+    },
+    "200": {
+      "type": "string",
+      "meta": {
+        "role": "secret",
+        "default": "",
+        "description": "Xiaomi MiMo API key (API: sk-..., Token Plan: tp-...)",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "205": {
+      "type": "string",
+      "meta": {
+        "default": "api",
+        "description": "MiMo ASR access method: api, token-plan",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "210": {
+      "type": "string",
+      "meta": {
+        "default": "cn",
+        "description": "MiMo Token Plan cluster: cn, sgp, ams",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "215": {
+      "type": "string",
+      "meta": {
+        "default": "mimo-v2.5-asr",
+        "description": "MiMo ASR model, for example mimo-v2.5-asr",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "220": {
+      "type": "string",
+      "meta": {
+        "default": "",
+        "description": "Transcription language; leave empty for automatic detection",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "223": {
+      "type": "object",
+      "meta": {
+        "default": {},
+        "description": "Xiaomi MiMo cloud ASR",
+        "collapse": true
+      },
+      "dict": {
+        "apiKey": 200,
+        "service": 205,
+        "cluster": 210,
+        "model": 215,
+        "language": 220
+      }
+    },
+    "229": {
+      "type": "string",
+      "meta": {
+        "role": "secret",
+        "default": "",
+        "description": "SiliconFlow API key",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "234": {
+      "type": "string",
+      "meta": {
+        "default": "FunAudioLLM/SenseVoiceSmall",
+        "description": "SiliconFlow ASR model, for example FunAudioLLM/SenseVoiceSmall",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "239": {
+      "type": "string",
+      "meta": {
+        "default": "",
+        "description": "Transcription language; leave empty for automatic detection",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "242": {
+      "type": "object",
+      "meta": {
+        "default": {},
+        "description": "SiliconFlow cloud ASR",
+        "collapse": true
+      },
+      "dict": {
+        "apiKey": 229,
+        "model": 234,
+        "language": 239
+      }
+    },
+    "248": {
+      "type": "string",
+      "meta": {
+        "role": "secret",
+        "default": "",
+        "description": "Volcengine speech API key (X-Api-Key)",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "253": {
+      "type": "string",
+      "meta": {
+        "default": "recording-file",
+        "description": "Volcengine ASR service: recording-file, realtime",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "258": {
+      "type": "string",
+      "meta": {
+        "default": "volc.seedasr.sauc.duration",
+        "description": "One-way streaming resource id, for example volc.seedasr.sauc.duration",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "263": {
+      "type": "string",
+      "meta": {
+        "default": "volc.seedasr.auc",
+        "description": "Recording file recognition resource id, for example volc.seedasr.auc",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "268": {
+      "type": "string",
+      "meta": {
+        "default": "",
+        "description": "Recognition language; leave empty for the default Chinese/English recognition",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "271": {
+      "type": "object",
+      "meta": {
+        "default": {},
+        "description": "Volcengine cloud ASR",
+        "collapse": true
+      },
+      "dict": {
+        "apiKey": 248,
+        "service": 253,
+        "realtimeModel": 258,
+        "recordingModel": 263,
+        "language": 268
+      }
+    },
+    "274": {
+      "type": "object",
+      "meta": {
+        "default": {},
+        "description": "Cloud ASR provider credentials and models",
+        "collapse": true
+      },
+      "dict": {
+        "groq": 93,
+        "deepgram": 117,
+        "customOpenAi": 141,
+        "bailian": 165,
+        "tencent": 194,
+        "mimo": 223,
+        "siliconflow": 242,
+        "volcengine": 271
+      }
+    },
+    "279": {
+      "type": "boolean",
+      "meta": {
+        "default": true,
+        "description": "Enable LLM polishing by default",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "284": {
+      "type": "string",
+      "meta": {
+        "default": "",
+        "description": "dsh polish provider id; leave empty to use the dsh Agent default",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "289": {
+      "type": "string",
+      "meta": {
+        "default": "",
+        "description": "dsh polish model id; leave empty to use the dsh Agent default",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "294": {
+      "type": "string",
+      "meta": {
+        "default": "",
+        "description": "Polish reasoning effort; empty uses the selected route default",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "299": {
+      "type": "string",
+      "meta": {
+        "default": "",
+        "description": "Custom polish system prompt, empty for built-in",
+        "loose": true,
+        "volatile": true
+      }
+    },
+    "302": {
+      "type": "object",
+      "meta": {
+        "default": {},
+        "description": "LLM polishing route and prompt",
+        "collapse": true
+      },
+      "dict": {
+        "enabled": 279,
+        "provider": 284,
+        "model": 289,
+        "reasoningEffort": 294,
+        "prompt": 299
+      }
+    },
+    "303": {
+      "type": "object",
+      "meta": {
+        "default": {}
+      },
+      "dict": {
+        "schemaVersion": 4,
+        "general": 30,
+        "recognition": 74,
+        "cloudAsr": 274,
+        "polishing": 302
+      }
+    }
+  }
+}

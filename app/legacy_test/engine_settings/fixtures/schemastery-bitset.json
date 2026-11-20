@@ -1,0 +1,26 @@
+{
+  "uid": 2,
+  "refs": {
+    "1": {
+      "type": "bitset",
+      "meta": {
+        "default": 1
+      },
+      "bits": {
+        "Read": 1,
+        "Write": 2,
+        "Execute": 4,
+        "High": 2147483648
+      }
+    },
+    "2": {
+      "type": "object",
+      "meta": {
+        "default": {}
+      },
+      "dict": {
+        "permissions": 1
+      }
+    }
+  }
+}

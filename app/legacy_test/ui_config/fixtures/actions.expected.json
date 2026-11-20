@@ -1,0 +1,36 @@
+{
+  "applied": 2,
+  "fatal": false,
+  "issues": [
+    {
+      "pointer": "/composer/quickActions/2/action/url",
+      "kind": "invalid",
+      "message": "链接格式不对"
+    },
+    {
+      "pointer": "/composer/quickActions/3/action/url",
+      "kind": "invalid",
+      "message": "链接格式不对"
+    },
+    {
+      "pointer": "/composer/quickActions/4/action/url",
+      "kind": "invalid",
+      "message": "只支持 https 链接"
+    },
+    {
+      "pointer": "/composer/quickActions/7/action/text",
+      "kind": "invalid",
+      "message": "应该是字符串"
+    },
+    {
+      "pointer": "/composer/quickActions/8/action/page",
+      "kind": "invalid",
+      "message": "缺少 page"
+    },
+    {
+      "pointer": "/theme/accent",
+      "kind": "ignored",
+      "message": "和 accentPreset 二选一，已用 accentPreset"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "header": {
+    "actions": [
+      "newChat",
+      "newChat",
+      "menu",
+      42,
+      { "id": "daily", "icon": "rocket", "label": "日报", "action": { "type": "send", "text": "写日报" } },
+      { "id": "Bad", "icon": "bolt", "label": "x", "action": { "type": "open", "page": "files" } },
+      { "id": "a", "icon": "bolt", "label": "一", "action": { "type": "open", "page": "files" } },
+      { "id": "b", "icon": "star", "label": "二", "action": { "type": "open", "page": "search" } },
+      { "id": "c", "icon": "flag", "label": "三", "action": { "type": "open", "page": "jobs" } },
+      { "id": "d", "icon": "pin", "label": "四", "action": { "type": "open", "page": "skills" } },
+      { "id": "a", "icon": "pin", "label": "重复", "action": { "type": "open", "page": "skills" } }
+    ],
+    "color": "red"
+  },
+  "composer": {
+    "quickActions": [
+      { "label": "总结", "action": { "type": "send", "text": "总结一下" } },
+      { "label": "链接", "action": { "type": "link", "url": "http://example.com" } },
+      { "label": "坏链接", "action": { "type": "link", "url": "https://exa mple.com" } },
+      { "label": "", "action": { "type": "send", "text": "x" } },
+      { "action": { "type": "send", "text": "x" } },
+      { "label": "执行", "action": { "type": "exec", "cmd": "rm -rf /" } },
+      { "label": "页面", "action": { "type": "open", "page": "nowhere" } },
+      { "label": "命令", "action": { "type": "command", "name": "/compact" } },
+      { "label": "坏命令", "action": { "type": "command", "name": "com pact" } },
+      { "label": "参数", "action": { "type": "command", "name": "plan", "args": "a\nb" } },
+      { "label": "空发", "action": { "type": "send", "text": "   " } },
+      { "label": "无类型", "action": { "text": "hi" } },
+      { "label": "多余", "action": { "type": "send", "text": "ok", "auto": true }, "icon": "bolt" }
+    ]
+  },
+  "emptyState": { "suggestions": "nope" },
+  "drawer": { "groups": ["today", "tomorrow", "today"], "sort": "name", "filter": "unread", "pinnedFirst": true },
+  "density": "cozy",
+  "hide": ["turnFooter", "everything", 3, "turnFooter"],
+  "theme": { "mode": "auto", "accent": "blue" },
+  "pet": { "id": "Deepy Whale", "position": "middle", "quiet": "yes" },
+  "plugins": { "seats": { "Bad Slot": { "x": "hidden" }, "conversation.input.dock": { "Bad Pkg": "hidden", "@scope/pkg": "floating", "ok-pkg": "web" } } },
+  "extras": {}
+}

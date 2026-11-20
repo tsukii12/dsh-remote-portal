@@ -1,0 +1,185 @@
+{
+  "uid": 42,
+  "refs": {
+    "1": {
+      "type": "string",
+      "meta": {
+        "role": "textarea"
+      }
+    },
+    "3": {
+      "type": "string",
+      "meta": {
+        "role": "secret"
+      }
+    },
+    "5": {
+      "type": "string",
+      "meta": {
+        "role": "link"
+      }
+    },
+    "8": {
+      "type": "string",
+      "meta": {
+        "role": "color",
+        "default": "#336699"
+      }
+    },
+    "13": {
+      "type": "number",
+      "meta": {
+        "step": 0.01,
+        "min": 0,
+        "max": 1,
+        "role": "slider"
+      }
+    },
+    "16": {
+      "type": "const",
+      "meta": {
+        "required": true
+      },
+      "value": "auto"
+    },
+    "18": {
+      "type": "const",
+      "meta": {
+        "required": true
+      },
+      "value": "manual"
+    },
+    "20": {
+      "type": "union",
+      "meta": {
+        "role": "radio",
+        "default": "auto"
+      },
+      "list": [
+        16,
+        18
+      ]
+    },
+    "21": {
+      "type": "string",
+      "meta": {}
+    },
+    "22": {
+      "type": "object",
+      "meta": {
+        "default": {}
+      },
+      "dict": {
+        "name": 21
+      }
+    },
+    "24": {
+      "type": "array",
+      "meta": {
+        "default": [],
+        "role": "table"
+      },
+      "inner": 22
+    },
+    "25": {
+      "type": "is",
+      "meta": {},
+      "constructor": "Date"
+    },
+    "27": {
+      "type": "string",
+      "meta": {
+        "role": "datetime"
+      }
+    },
+    "28": {
+      "type": "transform",
+      "meta": {},
+      "inner": 27,
+      "callback": "(value, options) => {\n\t\tconst date = new Date(value);\n\t\tif (isNaN(+date)) throw new ValidationError(`invalid date \"${value}\"`, options);\n\t\treturn date;\n\t}",
+      "preserve": true
+    },
+    "29": {
+      "type": "union",
+      "meta": {},
+      "list": [
+        25,
+        28
+      ]
+    },
+    "30": {
+      "type": "is",
+      "meta": {},
+      "constructor": "RegExp"
+    },
+    "32": {
+      "type": "string",
+      "meta": {
+        "role": "regexp",
+        "extra": {
+          "flag": "i"
+        }
+      }
+    },
+    "33": {
+      "type": "transform",
+      "meta": {},
+      "inner": 32,
+      "callback": "(value, options) => {\n\t\ttry {\n\t\t\treturn new RegExp(value, flag);\n\t\t} catch (e) {\n\t\t\tthrow new ValidationError(e.message, options);\n\t\t}\n\t}",
+      "preserve": true
+    },
+    "34": {
+      "type": "union",
+      "meta": {},
+      "list": [
+        30,
+        33
+      ]
+    },
+    "36": {
+      "type": "string",
+      "meta": {
+        "role": "textarea"
+      }
+    },
+    "37": {
+      "type": "transform",
+      "meta": {},
+      "inner": 36,
+      "callback": "value=>value",
+      "preserve": true
+    },
+    "39": {
+      "type": "string",
+      "meta": {
+        "hidden": true
+      }
+    },
+    "41": {
+      "type": "boolean",
+      "meta": {
+        "disabled": true
+      }
+    },
+    "42": {
+      "type": "object",
+      "meta": {
+        "default": {}
+      },
+      "dict": {
+        "paragraph": 1,
+        "password": 3,
+        "homepage": 5,
+        "tint": 8,
+        "opacity": 13,
+        "mode": 20,
+        "rows": 24,
+        "timestamp": 29,
+        "matcher": 34,
+        "transformed": 37,
+        "hidden": 39,
+        "disabled": 41
+      }
+    }
+  }
+}

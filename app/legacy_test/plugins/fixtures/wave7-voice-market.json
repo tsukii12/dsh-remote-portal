@@ -1,0 +1,30 @@
+[
+  {
+    "name": "dsh-ears",
+    "title": "dsh-ears",
+    "description": "Voice input plugin for DeepSeek Harness (DSH) with text polishing. Supports local GPU Whisper and STT(ASR) API | 一款支持润色整理的 DeepSeek Harness 语音输入插件，为 DSH 提供语音输入能力，支持本地 GPU Whisper 和主流语音识别转写 API",
+    "versions": [
+      {
+        "version": "0.4.3",
+        "publishTimestamp": 1792714484,
+        "source": {
+          "type": "npm"
+        }
+      }
+    ]
+  },
+  {
+    "name": "dsh-xiaomi-tts",
+    "title": "dsh-plugin-xiaomi-mimo-tts",
+    "description": "给DSH接入免费的 Xiaomi MiMo TTS API，支持使用预置/自定义/浏览器内置声音朗读正文",
+    "versions": [
+      {
+        "version": "4.2.2",
+        "publishTimestamp": 1792752644,
+        "source": {
+          "type": "npm"
+        }
+      }
+    ]
+  }
+]
