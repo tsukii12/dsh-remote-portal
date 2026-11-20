@@ -236,7 +236,10 @@ final class NativeStateTests: XCTestCase {
         XCTAssertEqual(started.first?.0.transcript.first?.text, "Existing message")
         XCTAssertEqual(started.first?.0.modelName, "One")
         XCTAssertEqual(started.first?.1.ended, [])
-        XCTAssertEqual(started.first?.1.calls, ["session/state", "session/modelCatalog", "permissionPresets/catalog", "agentPresets/list", "commands/list", "session/projections"])
+        let calls = try XCTUnwrap(started.first?.1.calls)
+        XCTAssertEqual(Array(calls.prefix(2)), ["session/state", "session/modelCatalog"])
+        XCTAssertEqual(calls.count, 6)
+        XCTAssertEqual(Set(calls.dropFirst(2)), Set(["permissionPresets/catalog", "agentPresets/list", "commands/list", "session/projections"]))
     }
     func testChatSelectionStartsOutsideCancelledNavigationAndKeepsOneStore() async throws {
         let api = ChatStartupProbe(); api.records = []

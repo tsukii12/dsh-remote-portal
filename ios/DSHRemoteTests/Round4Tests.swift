@@ -4,6 +4,17 @@ import SwiftUI
 @testable import DSHRemote
 
 @MainActor
+private final class SidebarLifetime: ObservableObject {
+    let id = UUID()
+}
+
+private struct SidebarLifetimeView: View {
+    @StateObject private var lifetime = SidebarLifetime()
+    let record: (UUID) -> Void
+    var body: some View { Text("Sidebar").onAppear { record(lifetime.id) } }
+}
+
+@MainActor
 private final class RecoveryAPI: RPCServing {
     var follow: AsyncThrowingStream<JSON, Error>.Continuation?
     var openings = 0
@@ -31,6 +42,33 @@ private final class RecoveryAPI: RPCServing {
 
 @MainActor
 final class Round4Tests: XCTestCase {
+    func testScannedServerAcceptsVisitorAndLANAddressesWithoutLosingPrefixes() throws {
+        for address in ["https://relay.example:8443/__t/fixture/", "http://192.168.1.20:3081/"] {
+            let target = try PortalURL.scannedServer(address)
+            XCTAssertEqual(target.base.absoluteString, address); XCTAssertEqual(target.token, "")
+        }
+        let target = try PortalURL.scannedServer(" https://relay.example/__t/fixture/__portal/pair?t=fixture%2Btoken ")
+        XCTAssertEqual(target.base.absoluteString, "https://relay.example/__t/fixture/")
+        XCTAssertEqual(target.token, "fixture+token")
+        XCTAssertEqual(try PortalURL.scannedServer("http://host.local:3081").base.absoluteString, "http://host.local:3081/")
+    }
+    func testScannedServerRejectsEmptyMalformedAndNonHTTPValues() {
+        for value in ["", "   ", "hello", "http://", "https://", "file:///tmp/qr", "ftp://example.com/", "javascript:alert(1)", "https://user:secret@example.com/", "https://relay.example/__portal/pair"] {
+            XCTAssertThrowsError(try PortalURL.scannedServer(value))
+        }
+    }
+    func testScannedServerRegistrationUsesHostNameAndReusesSavedServer() throws {
+        let store = ServerStore(), saved = store.servers
+        defer { store.servers = saved }
+        store.servers = []
+        let base = try PortalURL.scannedServer("https://fixture.example:8443/__t/fixture/").base
+        let server = store.server(for: base)
+        XCTAssertEqual(server.name, "fixture.example"); XCTAssertEqual(server.addresses, [base])
+        store.servers[0].name = "Personal server"
+        let reused = store.server(for: base)
+        XCTAssertEqual(reused.id, server.id); XCTAssertEqual(reused.name, "Personal server")
+        XCTAssertEqual(store.servers.count, 1)
+    }
     func testControlAcknowledgementsUseLocalizedNamesWithoutChangingUnknownText() {
         XCTAssertEqual(ChatLabels.notice("preset danger-full-access"), L("Full access", "完全权限"))
         XCTAssertEqual(ChatLabels.notice("permission read-only"), L("Read Only", "只读"))
@@ -81,11 +119,11 @@ final class Round4Tests: XCTestCase {
         XCTAssertEqual(ToolPresentation.previewHeight("large type", lineHeight: 36, limit: 180), 46)
         XCTAssertEqual(ToolPresentation.previewHeight(ToolPresentation.result(["error": ["message": "Denied"]]), lineHeight: 18, limit: 220), 28)
     }
-    func testCompactDrawerRetainsItsMountedStateWhenClosed() async throws {
-        var appearances = 0
+    func testNativeSplitNavigationRetainsSidebarState() async throws {
+        var lifetimes = Set<UUID>()
         func root(_ column: NavigationSplitViewColumn) -> some View {
             AdaptiveWorkspace(visibility: .constant(.all), column: .constant(column)) {
-                Text("Sidebar").onAppear { appearances += 1 }
+                SidebarLifetimeView { lifetimes.insert($0) }
             } detail: { Text("Detail") }.environment(\.horizontalSizeClass, .compact)
         }
         let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.first as? UIWindowScene)
@@ -94,12 +132,12 @@ final class Round4Tests: XCTestCase {
         window.rootViewController = host; window.makeKeyAndVisible()
         defer { window.isHidden = true; window.rootViewController = nil }
         try await Task.sleep(nanoseconds: 100_000_000)
-        XCTAssertEqual(appearances, 1)
+        XCTAssertEqual(lifetimes.count, 1)
         host.rootView = root(.detail)
         try await Task.sleep(nanoseconds: 300_000_000)
         host.rootView = root(.sidebar)
         try await Task.sleep(nanoseconds: 300_000_000)
-        XCTAssertEqual(appearances, 1)
+        XCTAssertEqual(lifetimes.count, 1)
     }
     func testSidebarDateGroupsAndUnread() throws {
         var calendar = Calendar(identifier: .gregorian); calendar.timeZone = TimeZone(secondsFromGMT: 0)!

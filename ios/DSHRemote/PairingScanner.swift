@@ -20,7 +20,7 @@ struct PairingScanner: View {
                     Text(error).padding().background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12)).padding()
                 }
             }
-            .navigationTitle(L("Scan pairing QR", "扫描配对二维码")).navigationBarTitleDisplayMode(.inline)
+            .navigationTitle(L("Scan server QR", "扫描服务器二维码")).navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button(L("Cancel", "取消")) { dismiss() } } }
         }
     }
@@ -54,9 +54,9 @@ private final class PairingCamera: UIViewController, AVCaptureMetadataOutputObje
         Task { [weak self] in
             let allowed = await AVCaptureDevice.requestAccess(for: .video)
             guard let self, self.viewIfLoaded?.window != nil else { return }
-            guard allowed else { receive(.failure(PortalError.message(L("Allow camera access in Settings, or paste a pairing link instead.", "请在设置中允许相机访问，或粘贴配对链接。")))); return }
+            guard allowed else { receive(.failure(PortalError.message(L("Allow camera access in Settings, or paste a server or pairing link instead.", "请在设置中允许相机访问，或粘贴服务器或配对链接。")))); return }
             do {
-                guard let camera = AVCaptureDevice.default(for: .video) else { throw PortalError.message(L("Camera unavailable. Paste a pairing link instead.", "相机不可用，请粘贴配对链接。")) }
+                guard let camera = AVCaptureDevice.default(for: .video) else { throw PortalError.message(L("Camera unavailable. Paste a server or pairing link instead.", "相机不可用，请粘贴服务器或配对链接。")) }
                 let input = try AVCaptureDeviceInput(device: camera)
                 let output = AVCaptureMetadataOutput()
                 guard capture.canAddInput(input), capture.canAddOutput(output) else { throw APIError.invalidResponse }

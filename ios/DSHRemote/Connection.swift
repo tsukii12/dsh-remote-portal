@@ -9,6 +9,10 @@ struct Server: Identifiable, Codable {
 }
 
 enum PortalURL {
+    static func scannedServer(_ input: String) throws -> (base: URL, token: String) {
+        if let pair = try pairing(input) { return (pair.0, pair.1) }
+        return (try normalize(input), "")
+    }
     static func scannedPairing(_ input: String, matching base: URL? = nil) throws -> (URL, String) {
         guard let pair = try pairing(input) else { throw PortalError.message(L("Scan a portal pairing QR code.", "请扫描门户配对二维码。")) }
         if let base, pair.0 != base { throw PortalError.message(L("This QR belongs to another server. Add it from Servers instead.", "此二维码属于其他服务器，请从服务器列表添加。")) }
@@ -17,7 +21,7 @@ enum PortalURL {
     static func normalize(_ input: String) throws -> URL {
         guard var c = URLComponents(string: input.trimmingCharacters(in: .whitespacesAndNewlines)),
               ["http", "https"].contains(c.scheme?.lowercased() ?? ""),
-              c.host != nil, c.user == nil, c.password == nil else { throw PortalError.message(L("Enter a valid HTTP(S) address.", "请输入有效的 HTTP(S) 地址。")) }
+              !(c.host?.isEmpty ?? true), c.user == nil, c.password == nil else { throw PortalError.message(L("Enter a valid HTTP(S) address.", "请输入有效的 HTTP(S) 地址。")) }
         c.query = nil
         c.fragment = nil
         if !c.path.hasSuffix("/") { c.path += "/" }

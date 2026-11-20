@@ -14,6 +14,12 @@ final class ServerStore: ObservableObject {
     private func save() {
         if let data = try? JSONEncoder().encode(servers) { UserDefaults.standard.set(data, forKey: "servers") }
     }
+    func server(for base: URL) -> Server {
+        if let server = servers.first(where: { $0.addresses.contains(base) }) { return server }
+        let server = Server(name: base.host ?? "dsh", addresses: [base])
+        servers.append(server)
+        return server
+    }
 }
 
 struct ServersView: View {
@@ -22,6 +28,8 @@ struct ServersView: View {
     @State private var adding = false
     @State private var selected: Server?
     @State private var pairToken = ""
+    @State private var pendingConnection: Server?
+    @State private var connectionRevision = UUID()
     var body: some View {
         NavigationStack {
             List {
@@ -41,25 +49,37 @@ struct ServersView: View {
             }
             .navigationTitle("DeepSeek Remote")
             .toolbar { Button { adding = true } label: { Image(systemName: "plus") }.accessibilityLabel(L("Add server", "添加服务器")) }
-            .sheet(isPresented: $adding) { ServerEditor(server: nil) { server, token in
+            .sheet(isPresented: $adding, onDismiss: connectPendingScan) { ServerEditor(server: nil, save: { server, token in
                 store.servers.append(server)
                 if !token.isEmpty { pairToken = token; selected = server }
-            } }
-            .sheet(item: $editing) { server in ServerEditor(server: server) { updated, _ in
+            }, onScannedServer: connectScannedServer) }
+            .sheet(item: $editing, onDismiss: connectPendingScan) { server in ServerEditor(server: server, save: { updated, _ in
                 if let i = store.servers.firstIndex(where: { $0.id == updated.id }) { store.servers[i] = updated }
-            } }
-            .fullScreenCover(item: $selected) { server in ConnectionView(server: server, initialToken: pairToken) }
+            }, onScannedServer: connectScannedServer) }
+            .fullScreenCover(item: $selected) { server in ConnectionView(server: server, initialToken: pairToken, onScannedServer: connectScannedServer).id(connectionRevision) }
         }
+    }
+    private func connectScannedServer(_ base: URL, _ token: String) {
+        let server = store.server(for: base)
+        pairToken = token; connectionRevision = UUID()
+        if adding || editing != nil {
+            pendingConnection = server; adding = false; editing = nil
+        } else { selected = server }
+    }
+    private func connectPendingScan() {
+        if let pendingConnection { selected = pendingConnection; self.pendingConnection = nil }
     }
 }
 
 struct ServerEditor: View {
     let server: Server?
     let save: (Server, String) -> Void
+    let onScannedServer: (URL, String) -> Void
     @Environment(\.dismiss) private var dismiss
     @State private var name = ""
     @State private var addresses = ""
     @State private var scanning = false
+    @State private var scannedTarget: (base: URL, token: String)?
     @State private var error = ""
     var body: some View {
         NavigationStack {
@@ -67,15 +87,18 @@ struct ServerEditor: View {
                 TextField(L("Name", "名称"), text: $name)
                 Section(L("Addresses (one per line) or pairing link", "地址（每行一个）或配对链接")) {
                     TextEditor(text: $addresses).frame(minHeight: 140).textInputAutocapitalization(.never).autocorrectionDisabled().keyboardType(.URL)
-                    Button { scanning = true } label: { Label(L("Scan pairing QR", "扫描配对二维码"), systemImage: "qrcode.viewfinder") }
+                    Button { scanning = true } label: { Label(L("Scan server QR", "扫描服务器二维码"), systemImage: "qrcode.viewfinder") }
                     Text(L("Keep relay path prefixes, e.g. https://relay.example/__t/id/", "保留中继路径前缀，例如 https://relay.example/__t/id/")).font(.caption)
                 }
                 if !error.isEmpty { Text(error).foregroundStyle(.red) }
             }
             .navigationTitle(L("Server", "服务器"))
-            .sheet(isPresented: $scanning) { PairingScanner { value in
-                _ = try PortalURL.scannedPairing(value)
-                addresses = value
+            .sheet(isPresented: $scanning, onDismiss: {
+                if let scannedTarget { onScannedServer(scannedTarget.base, scannedTarget.token); self.scannedTarget = nil }
+            }) { PairingScanner { value in
+                let target = try PortalURL.scannedServer(value)
+                if target.token.isEmpty { scannedTarget = target }
+                else { addresses = value }
             } }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button(L("Cancel", "取消")) { dismiss() } }
@@ -101,6 +124,7 @@ struct ServerEditor: View {
 struct ConnectionView: View {
     let server: Server
     let initialToken: String
+    let onScannedServer: (URL, String) -> Void
     @Environment(\.dismiss) private var dismiss
     @Environment(\.scenePhase) private var scenePhase
     @StateObject private var network = PortalPathMonitor()
@@ -112,7 +136,7 @@ struct ConnectionView: View {
     @State private var error = ""
     var body: some View {
         Group {
-            if let api { NativeConnectionGate(api: api, initialToken: gateToken ?? "", serverName: server.name, addressLabel: result?.label ?? "", onSwitch: { dismiss() }).id(api.base.absoluteString) }
+            if let api { NativeConnectionGate(api: api, initialToken: gateToken ?? "", serverName: server.name, addressLabel: result?.label ?? "", onSwitch: { dismiss() }, onScannedServer: onScannedServer).id(api.base.absoluteString) }
             else {
                 NavigationStack {
                     VStack(spacing: 20) {
@@ -153,14 +177,16 @@ struct NativeConnectionGate: View {
     @State private var secret: String
     @State private var pairing: Bool
     @State private var scanning = false
+    @State private var scannedTarget: (base: URL, token: String)?
     @State private var error = ""
     @State private var busy = false
     let serverName: String
     let addressLabel: String
     let onSwitch: () -> Void
-    init(api: PortalAPI, initialToken: String, serverName: String, addressLabel: String, onSwitch: @escaping () -> Void) {
+    let onScannedServer: (URL, String) -> Void
+    init(api: PortalAPI, initialToken: String, serverName: String, addressLabel: String, onSwitch: @escaping () -> Void, onScannedServer: @escaping (URL, String) -> Void) {
         self.api = api
-        self.serverName = serverName; self.onSwitch = onSwitch
+        self.serverName = serverName; self.onSwitch = onSwitch; self.onScannedServer = onScannedServer
         self.addressLabel = addressLabel
         _connection = StateObject(wrappedValue: NativeConnection(api: api))
         _secret = State(initialValue: initialToken); _pairing = State(initialValue: !initialToken.isEmpty)
@@ -186,7 +212,7 @@ struct NativeConnectionGate: View {
                             Text(L("Pairing code", "配对码")).tag(true)
                         }.pickerStyle(.segmented)
                         SecureField(pairing ? L("Pairing code", "配对码") : L("Access password", "访问密码"), text: $secret).textContentType(.password).textInputAutocapitalization(.never).autocorrectionDisabled().padding().background(.quaternary, in: RoundedRectangle(cornerRadius: 12))
-                        Button { scanning = true } label: { Label(L("Scan pairing QR", "扫描配对二维码"), systemImage: "qrcode.viewfinder") }.disabled(busy)
+                        Button { scanning = true } label: { Label(L("Scan server QR", "扫描服务器二维码"), systemImage: "qrcode.viewfinder") }.disabled(busy)
                         if !error.isEmpty { Text(error).foregroundStyle(.red).font(.callout) }
                         Button { Task { await login() } } label: {
                             HStack { Spacer(); if busy { ProgressView() }; Text(L("Continue", "继续")); Spacer() }.padding(10)
@@ -199,9 +225,14 @@ struct NativeConnectionGate: View {
             }
         }
         .task { if secret.isEmpty { await resume() } }
-        .sheet(isPresented: $scanning) { PairingScanner { value in
-            let pair = try PortalURL.scannedPairing(value, matching: api.base)
-            secret = pair.1; pairing = true
+        .sheet(isPresented: $scanning, onDismiss: {
+            if let scannedTarget {
+                if scannedTarget.base != api.base { onScannedServer(scannedTarget.base, scannedTarget.token) }
+                else { secret = scannedTarget.token; pairing = !scannedTarget.token.isEmpty }
+                self.scannedTarget = nil
+            }
+        }) { PairingScanner { value in
+            scannedTarget = try PortalURL.scannedServer(value)
         } }
         .onChange(of: api.sessionExpired) { _, expired in if expired { signedIn = false; connection.stop() } }
         .onDisappear { connection.stop() }

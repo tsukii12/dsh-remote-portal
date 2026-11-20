@@ -1,66 +1,13 @@
 import SwiftUI
 
-struct ChatBackdrop: View {
-    @Environment(\.colorScheme) private var scheme
-    var body: some View {
-        LinearGradient(colors: scheme == .dark ? [Color(red: 0.08, green: 0.13, blue: 0.24), Color(red: 0.07, green: 0.08, blue: 0.13)] : [Color(red: 0.84, green: 0.89, blue: 1), Color(red: 0.95, green: 0.95, blue: 0.98)], startPoint: .topTrailing, endPoint: .bottomLeading).ignoresSafeArea()
-    }
-}
-
-struct GlassCircle: View {
-    let symbol: String
-    let label: String
-    let action: () -> Void
-    var body: some View {
-        Button(action: action) { Image(systemName: symbol).font(.title3).frame(width: 44, height: 44).background(.regularMaterial, in: Circle()).overlay(Circle().stroke(.white.opacity(0.25), lineWidth: 1)).shadow(color: .black.opacity(0.06), radius: 10, y: 5) }
-            .buttonStyle(.plain).accessibilityLabel(label)
-    }
-}
-
-struct ChatTitlePill: View {
+struct ChatNavigationTitle: View {
     let title: String
     let subtitle: String
     var body: some View {
-        VStack(alignment: .leading, spacing: 3) {
-            Text(title).font(.subheadline.bold()).lineLimit(1)
-            HStack(spacing: 4) {
-                Circle().fill(.green).frame(width: 6, height: 6).accessibilityHidden(true)
-                Text(subtitle).font(.caption2).foregroundStyle(.secondary).lineLimit(1)
-            }
-        }.padding(.horizontal, 15).frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
-            .background(.regularMaterial, in: Capsule()).overlay(Capsule().stroke(.white.opacity(0.25), lineWidth: 1))
-    }
-}
-
-struct PixelWhale: View {
-    private let pixels = ["                    bb  ", "                   bB b ", "    bbbbbbbb       bBbb ", "  bbBBBBBBBBbb     bBb  ", " bBBBBBBBBBBBBb   bBb   ", "bBBBBBBBBBBBBBBbbbBb    ", "bBBbBBBBBBBBbBBBBBb     ", "bBBbBBBBBBBBbBBBBBb     ", " bBBBBBWWWWBBBBBBb      ", " bBBWWWWWWWWBBBBb       ", "  bWWWWWWWWWWWbb        ", "   bbbbbbbbbbb          "]
-    var body: some View {
-        Canvas { context, size in
-            let scale = min(size.width / 24, size.height / 12)
-            for (y, row) in pixels.enumerated() {
-                for (x, pixel) in row.enumerated() where pixel != " " {
-                    let color: Color = pixel == "W" ? .white : pixel == "B" ? Color(red: 0.3, green: 0.45, blue: 0.95) : Color(red: 0.12, green: 0.2, blue: 0.48)
-                    context.fill(Path(CGRect(x: Double(x) * scale, y: Double(y) * scale, width: scale, height: scale)), with: .color(color))
-                }
-            }
-        }.frame(width: 64, height: 32).accessibilityHidden(true)
-    }
-}
-
-struct ContextUsageRing: View {
-    let pressure: JSON
-    let action: () -> Void
-    var body: some View {
-        let percent = UsagePresentation.context(pressure)?.percent
-        Button(action: action) {
-            HStack(spacing: 5) {
-                ZStack {
-                    Circle().stroke(.secondary.opacity(0.18), lineWidth: 3)
-                    Circle().trim(from: 0, to: Double(percent ?? 0) / 100).stroke(DRPStyle.accent, style: StrokeStyle(lineWidth: 3, lineCap: .round)).rotationEffect(.degrees(-90))
-                }.frame(width: 17, height: 17)
-                Text(percent.map { "\($0)%" } ?? "—").font(.caption).monospacedDigit()
-            }.frame(minWidth: 44, minHeight: 44)
-        }.buttonStyle(.plain).accessibilityLabel(L("Context usage", "上下文用量")).accessibilityValue(percent.map { "\($0)%" } ?? L("Unavailable", "暂无数据"))
+        VStack(spacing: 2) {
+            Text(title).font(.headline).lineLimit(1)
+            Text(subtitle).font(.caption2).foregroundStyle(.secondary).lineLimit(1)
+        }.accessibilityElement(children: .combine)
     }
 }
 

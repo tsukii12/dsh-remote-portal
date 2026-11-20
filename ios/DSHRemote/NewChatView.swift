@@ -76,13 +76,12 @@ struct NewChatView: View {
     @ObservedObject var sidebar: SidebarStore
     let serverName: String
     let base: URL
-    let onMenu: () -> Void
     let onOpen: (ChatStore) -> Void
-    init(api: RPCServing, sidebar: SidebarStore, workspaceID: String?, serverName: String, base: URL, events: RemoteEvents? = nil, onMenu: @escaping () -> Void, onOpen: @escaping (ChatStore) -> Void) {
+    init(api: RPCServing, sidebar: SidebarStore, workspaceID: String?, serverName: String, base: URL, events: RemoteEvents? = nil, onOpen: @escaping (ChatStore) -> Void) {
         _draft = StateObject(wrappedValue: NewChatDraft(api: api, sidebar: sidebar, workspaceID: workspaceID, events: events))
-        self.sidebar = sidebar; self.serverName = serverName; self.base = base; self.onMenu = onMenu; self.onOpen = onOpen
+        self.sidebar = sidebar; self.serverName = serverName; self.base = base; self.onOpen = onOpen
     }
-    var body: some View { NewChatDraftView(draft: draft, sidebar: sidebar, serverName: serverName, base: base, onMenu: onMenu, onOpen: onOpen) }
+    var body: some View { NewChatDraftView(draft: draft, sidebar: sidebar, serverName: serverName, base: base, onOpen: onOpen) }
 }
 
 private struct NewChatDraftView: View {
@@ -92,54 +91,56 @@ private struct NewChatDraftView: View {
     @ObservedObject private var sidebar: SidebarStore
     let serverName: String
     let base: URL
-    let onMenu: () -> Void
     let onOpen: (ChatStore) -> Void
     @State private var text = ""
     @State private var options: ChatOptionsPage?
     @State private var usage = false
     @FocusState private var focused: Bool
-    init(draft: NewChatDraft, sidebar: SidebarStore, serverName: String, base: URL, onMenu: @escaping () -> Void, onOpen: @escaping (ChatStore) -> Void) {
+    init(draft: NewChatDraft, sidebar: SidebarStore, serverName: String, base: URL, onOpen: @escaping (ChatStore) -> Void) {
         self.draft = draft; _chat = ObservedObject(wrappedValue: draft.chat); _attachments = ObservedObject(wrappedValue: draft.attachments); self.sidebar = sidebar
-        self.serverName = serverName; self.base = base; self.onMenu = onMenu; self.onOpen = onOpen
+        self.serverName = serverName; self.base = base; self.onOpen = onOpen
     }
-    private var workspace: String { sidebar.workspaces.first { $0.id == draft.workspaceID }?.title ?? L("Default workspace", "默认工作区") }
     var body: some View {
-        ScrollView {
-            VStack(spacing: 20) {
-                if draft.sending {
-                    HStack { Spacer(minLength: 40); Text(draft.pendingText).padding(16).background(DRPStyle.accent.opacity(0.09), in: RoundedRectangle(cornerRadius: 18)) }
-                    ProgressView(L("Running…", "运行中…")).frame(maxWidth: .infinity, alignment: .leading)
-                } else {
-                Text(ChatGreeting.text(hour: Calendar.current.component(.hour, from: Date()))).font(.largeTitle.weight(.light))
-                Text(L("What would you like to do today?", "今天想做点什么？")).font(.title3).foregroundStyle(.secondary)
-                Menu {
-                    ForEach(sidebar.workspaces) { row in Button(row.title) { draft.workspaceID = row.id } }
-                } label: { Label(L("In “\(workspace)”", "在「\(workspace)」中") + " ⌄", systemImage: "folder").padding(.horizontal, 16).frame(minHeight: 44).background(.secondary.opacity(0.06), in: Capsule()) }.disabled(draft.sessionID != nil)
-                HStack(spacing: 20) {
-                    Button { options = .mode } label: { Label((chat.projections["agentPreset"].string.map(ChatLabels.preset) ?? L("Default mode", "默认模式")) + " ⌄", systemImage: "wrench") }
-                    Button { options = .access } label: { Label((chat.projections["permissions"]["currentValue"].string.map(ChatLabels.permission) ?? L("Access", "权限")) + " ⌄", systemImage: "shield") }
-                }.font(.subheadline).frame(minHeight: 44)
+        Form {
+            if draft.sending {
+                Section { Text(draft.pendingText).textSelection(.enabled) }
+                Section { ProgressView(L("Running…", "运行中…")) }
+            } else {
+                Section {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(ChatGreeting.text(hour: Calendar.current.component(.hour, from: Date()))).font(.title2.bold())
+                        Text(L("What would you like to do today?", "今天想做点什么？")).foregroundStyle(.secondary)
+                    }.padding(.vertical, 12)
                 }
-                if let error = draft.error { StatusBanner(message: error, dismiss: { draft.error = nil }); Button(L("Reload options", "重新加载选项")) { Task { await draft.load() } }.frame(minHeight: 44) }
-            }.frame(maxWidth: .infinity).padding(.horizontal, 20).containerRelativeFrame(.vertical) { height, _ in max(220, height * 0.8) }
-        }.background { ChatBackdrop() }.toolbar(.hidden, for: .navigationBar)
-            .safeAreaInset(edge: .top) {
-                HStack(spacing: 8) {
-                    GlassCircle(symbol: "line.3.horizontal", label: L("Conversations", "对话列表"), action: onMenu)
-                    ChatTitlePill(title: L("New chat", "新对话"), subtitle: serverName + " · " + PortalRoute.label(base))
-                    Button { options = .model } label: { Text(chat.modelName + " · " + ChatLabels.preset(chat.projections["agentPreset"].text) + " ⌄").font(.caption).lineLimit(1).padding(.horizontal, 12).frame(maxWidth: 145, minHeight: 44).background(.regularMaterial, in: Capsule()) }.disabled(draft.sending).accessibilityLabel(L("Choose model", "选择模型")).accessibilityValue(chat.modelName + " · " + ChatLabels.preset(chat.projections["agentPreset"].text))
-                }.buttonStyle(.plain).padding(.horizontal, 12).padding(.vertical, 8)
+                Section(L("Conversation options", "对话选项")) {
+                    Picker(L("Workspace", "工作区"), selection: $draft.workspaceID) {
+                        Text(L("Default workspace", "默认工作区")).tag(Optional<String>.none)
+                        ForEach(sidebar.workspaces) { row in Text(row.title).tag(Optional(row.id)) }
+                    }.disabled(draft.sessionID != nil)
+                    Button { options = .model } label: { LabeledContent(L("Model", "模型"), value: chat.modelName) }
+                    Button { options = .mode } label: { LabeledContent(L("Mode", "模式"), value: ChatLabels.preset(chat.projections["agentPreset"].text)) }
+                    Button { options = .access } label: { LabeledContent(L("Access", "权限"), value: ChatLabels.permission(chat.projections["permissions"]["currentValue"].text)) }
+                }
             }
-            .safeAreaInset(edge: .bottom) {
-                VStack(alignment: .leading, spacing: 0) {
-                    PixelWhale().padding(.leading, 50)
-                    GlassComposer(chat: chat, attachments: attachments, text: $text, focused: $focused, sending: draft.sending, canSend: !draft.sending && (!text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !attachments.items.isEmpty), onSend: send, onError: { draft.error = $0 }, onModel: { options = .model }, onMode: { options = .mode }, onUsage: { usage = true })
-                }.padding(.horizontal, 12).padding(.bottom, 12).frame(maxWidth: 800).frame(maxWidth: .infinity)
+            if let error = draft.error {
+                Section {
+                    StatusBanner(message: error, dismiss: { draft.error = nil })
+                    Button(L("Reload options", "重新加载选项")) { Task { await draft.load() } }
+                }
             }
-            .sheet(item: $options) { ChatOptionsView(chat: chat, page: $0) }
-            .sheet(isPresented: $usage) { NavigationStack { Form { UsageView(usage: [:], pressure: [:]); Text(L("Usage appears after the first request.", "首次请求后显示用量。")) }.navigationTitle(L("Usage", "用量")) } }
-            .task { await draft.load() }
-            .onDisappear { Task { await draft.abandon() } }
+        }
+        .navigationTitle(L("New chat", "新对话")).navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) { ChatNavigationTitle(title: L("New chat", "新对话"), subtitle: serverName + " · " + PortalRoute.label(base)) }
+        }
+        .safeAreaInset(edge: .bottom) {
+            ChatComposer(chat: chat, attachments: attachments, text: $text, focused: $focused, sending: draft.sending, canSend: !draft.sending && (!text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !attachments.items.isEmpty), onSend: send, onError: { draft.error = $0 }, onModel: { options = .model }, onMode: { options = .mode }, onUsage: { usage = true })
+                .frame(maxWidth: 800).frame(maxWidth: .infinity).background(Color(uiColor: .systemBackground)).overlay(alignment: .top) { Divider() }
+        }
+        .sheet(item: $options) { ChatOptionsView(chat: chat, page: $0) }
+        .sheet(isPresented: $usage) { NavigationStack { Form { UsageView(usage: [:], pressure: [:]); Text(L("Usage appears after the first request.", "首次请求后显示用量。")) }.navigationTitle(L("Usage", "用量")) } }
+        .task { await draft.load() }
+        .onDisappear { Task { await draft.abandon() } }
     }
     private func send() {
         if text.trimmingCharacters(in: .whitespacesAndNewlines) == "/model" { text = ""; options = .model; return }

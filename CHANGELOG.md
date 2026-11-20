@@ -5,6 +5,9 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+- Restore standard native iOS navigation, sectioned searchable sidebar, system forms, menus and bottom composer. Remove custom glass panels, gradients, floating circles and the whale while retaining lazy chats, controls, turn summaries and relay fixes. QR scanning also accepts plain HTTP(S) LAN/visitor URLs and opens login without losing relay prefixes.
+- 恢复标准 iOS 导航栏、分组可搜索侧栏、系统表单、菜单与底部输入框，移除自绘玻璃面板、渐变、悬浮圆钮和鲸鱼，同时保留延迟创建聊天、控制项、轮次摘要与中继修复。二维码扫描也支持普通 HTTP(S) 局域网或访客链接，保留中继路径前缀并进入登录页。
+
 - Native first send immediately shows the pending message and running indicator, loads independent controls concurrently, skips settings already matching the session, and waits for its transcript stream before prompting. Stricter access remains a mandatory pre-prompt barrier on retries. Access/preset acknowledgements use localized names; UTF-8 prompt/queue/steer and relay-framing regressions cover Chinese and emoji.
 - 原生首次发送立即显示待发消息与运行状态，并行加载独立控制项，跳过与会话一致的设置，先连接对话流再提交提示。重试时仍须先成功应用更严格的权限；权限与预设回执显示本地化名称，并增加中文、表情、排队、转向及中继分帧的 UTF-8 回归测试。
 

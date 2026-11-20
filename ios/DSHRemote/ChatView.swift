@@ -23,7 +23,6 @@ struct ChatView: View {
     let serverName: String
     let workspaceName: String
     let agents: [SessionRow]
-    let onMenu: () -> Void
     let onNew: () -> Void
     let onAgent: (String) -> Void
     let focusOnOpen: Bool
@@ -43,9 +42,9 @@ struct ChatView: View {
     @State private var steer = false
     @State private var sendFeedback = 0
     @FocusState private var composerFocused: Bool
-    init(chat: ChatStore, title: String, serverName: String = "DRP", workspaceName: String = "", agents: [SessionRow] = [], focusOnOpen: Bool = false, onMenu: @escaping () -> Void = {}, onNew: @escaping () -> Void = {}, onAgent: @escaping (String) -> Void = { _ in }) {
+    init(chat: ChatStore, title: String, serverName: String = "", workspaceName: String = "", agents: [SessionRow] = [], focusOnOpen: Bool = false, onNew: @escaping () -> Void = {}, onAgent: @escaping (String) -> Void = { _ in }) {
         self.chat = chat; self.title = title; self.serverName = serverName
-        self.workspaceName = workspaceName; self.agents = agents; self.focusOnOpen = focusOnOpen; self.onMenu = onMenu; self.onNew = onNew; self.onAgent = onAgent
+        self.workspaceName = workspaceName; self.agents = agents; self.focusOnOpen = focusOnOpen; self.onNew = onNew; self.onAgent = onAgent
         _attachments = StateObject(wrappedValue: AttachmentsStore(api: chat.api, sessionID: chat.sessionID))
         _mentions = StateObject(wrappedValue: FileMentions(api: chat.api, sessionID: chat.sessionID))
     }
@@ -54,11 +53,11 @@ struct ChatView: View {
             if let error = actionError ?? chat.error, error != dismissedError { StatusBanner(message: error, dismiss: { dismissedError = error; actionError = nil }) }
             transcript
         }
-        .background { ChatBackdrop() }
+        .background(Color(uiColor: .systemBackground))
         .sensoryFeedback(.impact(weight: .light), trigger: sendFeedback)
         .safeAreaInset(edge: .bottom, spacing: 0) { composer }
-        .toolbar(.hidden, for: .navigationBar)
-        .safeAreaInset(edge: .top) { header }
+        .navigationTitle(title).navigationBarTitleDisplayMode(.inline)
+        .toolbar { header }
         .sheet(item: $optionsPage) { page in ChatOptionsView(chat: chat, page: page) }
         .sheet(isPresented: $showingFiles) {
             WorkspaceFilesView(api: chat.api, sessionID: chat.sessionID) { path in
@@ -79,10 +78,11 @@ struct ChatView: View {
             }.disabled(queuedText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
         }
     }
-    private var header: some View {
-        HStack(spacing: 8) {
-            GlassCircle(symbol: "line.3.horizontal", label: L("Conversations", "对话列表"), action: onMenu)
-            ChatTitlePill(title: title, subtitle: [serverName, (chat.api as? PortalAPI).map { PortalRoute.label($0.base) }, workspaceName.isEmpty ? nil : workspaceName].compactMap { $0 }.joined(separator: " · "))
+    @ToolbarContentBuilder private var header: some ToolbarContent {
+        ToolbarItem(placement: .principal) {
+            ChatNavigationTitle(title: title, subtitle: [serverName.isEmpty ? nil : serverName, (chat.api as? PortalAPI).map { PortalRoute.label($0.base) }, workspaceName.isEmpty ? nil : workspaceName].compactMap { $0 }.joined(separator: " · "))
+        }
+        ToolbarItemGroup(placement: .topBarTrailing) {
             Menu {
                 Section(L("Agents", "代理")) {
                     if agents.isEmpty { Text(L("No subagents", "暂无子代理")) }
@@ -94,10 +94,11 @@ struct ChatView: View {
                     Button(L("Model & thinking", "模型与思考")) { optionsPage = .model }
                     Button(L("Access mode", "访问模式")) { optionsPage = .access }
                     Button(L("Mode & preset", "模式与预设")) { optionsPage = .mode }
+                    Button(L("Usage", "用量")) { showingUsage = true }
                 }
-            } label: { Image(systemName: "person.2").font(.title3).frame(width: 44, height: 44).background(.regularMaterial, in: Circle()) }.accessibilityLabel(L("Agents & tools", "代理与工具"))
-            GlassCircle(symbol: "square.and.pencil", label: L("New chat", "新对话"), action: onNew)
-        }.buttonStyle(.plain).padding(.horizontal, 12).padding(.vertical, 8).background { ChatBackdrop().ignoresSafeArea(edges: .top) }
+            } label: { Label(L("Agents & tools", "代理与工具"), systemImage: "ellipsis") }
+            Button(action: onNew) { Label(L("New chat", "新对话"), systemImage: "square.and.pencil") }
+        }
     }
     private var transcript: some View {
         GeometryReader { viewport in
@@ -144,10 +145,10 @@ struct ChatView: View {
                 .onChange(of: chat.transcript) { _, _ in if followingBottom && !loadingOlder { proxy.scrollTo("bottom", anchor: .bottom) } }
                 .onChange(of: chat.inProgress) { _, _ in if followingBottom { proxy.scrollTo("bottom", anchor: .bottom) } }
                 .onChange(of: composerFocused) { _, focused in if focused && followingBottom { proxy.scrollTo("bottom", anchor: .bottom) } }
-                .overlay(alignment: .bottomTrailing) {
+                .safeAreaInset(edge: .bottom) {
                     if !followingBottom {
-                        Button { followingBottom = true; withAnimation { proxy.scrollTo("bottom", anchor: .bottom) } } label: { Image(systemName: "arrow.down").frame(width: 44, height: 44).background(.regularMaterial, in: Circle()).shadow(radius: 2) }
-                            .accessibilityLabel(L("Jump to latest", "回到最新消息")).padding()
+                        Button { followingBottom = true; withAnimation { proxy.scrollTo("bottom", anchor: .bottom) } } label: { Label(L("Jump to latest", "回到最新消息"), systemImage: "arrow.down").frame(minHeight: 44) }
+                            .frame(maxWidth: .infinity).background(Color(uiColor: .systemBackground))
                     }
                 }
             }
@@ -160,17 +161,13 @@ struct ChatView: View {
             if let file = chat.exportedFile { ShareLink(item: file) { Label(L("Share session log", "分享会话日志"), systemImage: "square.and.arrow.up") }.font(.caption) }
             if draft.hasPrefix("/") { commandSuggestions }
             if FileMentionToken.active(in: draft) != nil { mentionSuggestions }
-            VStack(alignment: .leading, spacing: 0) {
-                PixelWhale().padding(.leading, 16)
-                Button { optionsPage = .access } label: {
-                    Label(ChatLabels.permission(chat.projections["permissions"]["currentValue"].text) + " ›", systemImage: "exclamationmark.shield")
-                        .font(.subheadline).padding(.horizontal, 14).frame(minHeight: 44).background(.yellow.opacity(0.16), in: Capsule()).overlay(Capsule().stroke(.orange.opacity(0.25), lineWidth: 1))
-                }.buttonStyle(.plain)
-            }
-            GlassComposer(chat: chat, attachments: attachments, text: $draft, focused: $composerFocused, sending: sending, canSend: canSend, onSend: send, onError: { actionError = $0; dismissedError = nil }, onModel: { optionsPage = .model }, onMode: { optionsPage = .mode }, onUsage: { showingUsage = true }, onCancel: { perform { try await chat.cancel() } })
+            Button { optionsPage = .access } label: {
+                Label(ChatLabels.permission(chat.projections["permissions"]["currentValue"].text), systemImage: "checkmark.shield").font(.caption).frame(minHeight: 44)
+            }.padding(.horizontal, 12)
+            ChatComposer(chat: chat, attachments: attachments, text: $draft, focused: $composerFocused, sending: sending, canSend: canSend, onSend: send, onError: { actionError = $0; dismissedError = nil }, onModel: { optionsPage = .model }, onMode: { optionsPage = .mode }, onUsage: { showingUsage = true }, onCancel: { perform { try await chat.cancel() } })
             if chat.running { Toggle(L("Steer immediately instead of queue", "立即引导而不是排队"), isOn: $steer).font(.caption).frame(minHeight: 44) }
         }
-        .padding(.horizontal, 12).padding(.bottom, 12).frame(maxWidth: 800).frame(maxWidth: .infinity)
+        .padding(.top, 6).frame(maxWidth: 800).frame(maxWidth: .infinity).background(Color(uiColor: .systemBackground)).overlay(alignment: .top) { Divider() }
     }
     private var canSend: Bool { !sending && attachments.ready && (!draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !attachments.items.isEmpty) }
     private var mentionSuggestions: some View {

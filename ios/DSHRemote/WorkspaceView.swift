@@ -1,7 +1,7 @@
 import SwiftUI
 
 enum DRPStyle {
-    static let accent = Color(red: 65 / 255, green: 118 / 255, blue: 230 / 255)
+    static let accent = Color(uiColor: .systemBlue)
     static let sidebar = Color(uiColor: .secondarySystemBackground)
 }
 
@@ -59,10 +59,10 @@ struct WorkspaceView: View {
         } detail: {
             Group {
                 if let chat = chatSelection.chat {
-                    ChatView(chat: chat, title: sidebar.sessions[chat.sessionID]?.title ?? L("New chat", "新对话"), serverName: serverName, workspaceName: sidebar.workspaces.first { $0.sessionIDs.contains(chat.sessionID) }?.title ?? "", agents: sidebar.sessions.values.filter { $0.parentID == chat.sessionID }.sorted { $0.title < $1.title }, focusOnOpen: focusChatID == chat.sessionID, onMenu: { visibility = .all; compactColumn = .sidebar }, onNew: { create(sidebar.workspaces.first { $0.sessionIDs.contains(chat.sessionID) }?.id) }, onAgent: openChat)
+                    ChatView(chat: chat, title: sidebar.sessions[chat.sessionID]?.title ?? L("New chat", "新对话"), serverName: serverName, workspaceName: sidebar.workspaces.first { $0.sessionIDs.contains(chat.sessionID) }?.title ?? "", agents: sidebar.sessions.values.filter { $0.parentID == chat.sessionID }.sorted { $0.title < $1.title }, focusOnOpen: focusChatID == chat.sessionID, onNew: { create(sidebar.workspaces.first { $0.sessionIDs.contains(chat.sessionID) }?.id) }, onAgent: openChat)
                         .id(chat.sessionID)
                 } else {
-                    NewChatView(api: connection.api, sidebar: sidebar, workspaceID: draftWorkspaceID ?? sidebar.workspaces.first?.id, serverName: serverName, base: connection.api.base, events: events, onMenu: { visibility = .all; compactColumn = .sidebar }, onOpen: { chat in focusChatID = chat.sessionID; chatSelection.adopt(chat); openChat(chat.sessionID) }).id(draftID)
+                    NewChatView(api: connection.api, sidebar: sidebar, workspaceID: draftWorkspaceID ?? sidebar.workspaces.first?.id, serverName: serverName, base: connection.api.base, events: events, onOpen: { chat in focusChatID = chat.sessionID; chatSelection.adopt(chat); openChat(chat.sessionID) }).id(draftID)
                 }
             }.safeAreaInset(edge: .top, spacing: 0) { pendingBanner }
         }
@@ -162,13 +162,18 @@ private struct SidebarView: View {
         return SessionTimeline.groups(rows, pinned: store.pinnedIDs)
     }
     var body: some View {
-        VStack(spacing: 0) {
-            sidebarHeader
         List {
-            if let actionError { StatusBanner(message: actionError, dismiss: { self.actionError = nil }).listRowInsets(EdgeInsets()) }
-            if !store.loaded {
-                HStack { Spacer(); ProgressView(L("Loading conversations…", "正在加载对话…")); Spacer() }
+            Section {
+                workspacePicker
+                Picker(L("Filter conversations", "筛选对话"), selection: $filter) {
+                    Text(L("All", "全部")).tag(0)
+                    Text(L("Running", "运行中")).tag(1)
+                    Text(L("Pending", "待确认")).tag(2)
+                    Text(L("Unread", "未读")).tag(3)
+                }.pickerStyle(.segmented).labelsHidden()
             }
+            if let actionError { StatusBanner(message: actionError, dismiss: { self.actionError = nil }).listRowInsets(EdgeInsets()) }
+            if !store.loaded { ProgressView(L("Loading conversations…", "正在加载对话…")) }
             ForEach(timeline) { group in
                 if !group.sessions.isEmpty || !["pinned", "ungrouped"].contains(group.id) {
                     Section {
@@ -207,9 +212,34 @@ private struct SidebarView: View {
             }
             if timeline.isEmpty && store.loaded { Text(L("No matching conversations", "没有匹配的对话")).foregroundStyle(.secondary).listRowBackground(Color.clear) }
         }
-        .listStyle(.plain).scrollContentBackground(.hidden)
-        sidebarFooter
-        }.background(.ultraThinMaterial).toolbar(.hidden, for: .navigationBar)
+        .listStyle(.sidebar)
+        .searchable(text: $store.searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: L("Search conversations", "搜索对话"))
+        .navigationTitle(serverName).navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                ChatNavigationTitle(title: serverName, subtitle: addressLabel.components(separatedBy: " · ").first ?? "")
+            }
+            ToolbarItem(placement: .topBarLeading) { Button(action: onSwitch) { Label(L("Switch server", "切换服务器"), systemImage: "arrow.left.arrow.right") } }
+            ToolbarItemGroup(placement: .topBarTrailing) {
+                Button { onCreate(activeWorkspace?.id) } label: { Label(L("New chat", "新对话"), systemImage: "square.and.pencil") }
+                Menu {
+                    if let workspace = activeWorkspace {
+                        Button(L("Rename workspace", "重命名工作区")) { renameID = workspace.id; renameText = workspace.title; renamingWorkspace = true; renaming = true }
+                        Button(L("Remove workspace", "移除工作区"), role: .destructive) { deletingWorkspace = workspace }
+                    }
+                    Toggle(L("Archived sessions", "已归档会话"), isOn: $store.archivedOnly)
+                    Toggle(L("Search message content", "搜索消息内容"), isOn: $contentSearch)
+                    Button(L("Add workspace", "添加工作区")) { showingFolders = true }
+                    Button(L("Archive empty conversations…", "归档空对话…")) { cleaningEmpty = true }
+                    if let id = selection ?? allRows.first?.id {
+                        Button { onFiles(id) } label: { Label(L("Workspace files", "工作区文件"), systemImage: "folder") }
+                        Button { onTerminals(id) } label: { Label(L("Terminals", "终端"), systemImage: "terminal") }
+                    }
+                    Button(action: onSettings) { Label(L("Settings", "设置"), systemImage: "gearshape") }.accessibilityIdentifier("hostSettings")
+                    Button(L("Log out", "退出")) { perform { try await onLogout() } }
+                } label: { Label(L("Workspace & view options", "工作区与视图选项"), systemImage: "ellipsis") }
+            }
+        }
         .onAppear { if store.loaded { read.baseline(allRows, server: serverName) } }
         .onChange(of: store.loaded) { _, loaded in if loaded { read.baseline(allRows, server: serverName) } }
         .onChange(of: selection) { _, id in if let id, let row = store.sessions[id] { read.mark(row) } }
@@ -239,75 +269,14 @@ private struct SidebarView: View {
             }.disabled(renameText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
         }
     }
-    private var sidebarHeader: some View {
-        VStack(spacing: 12) {
-            HStack(spacing: 6) {
-                PixelWhale().scaleEffect(0.5).frame(width: 32, height: 28)
-                ViewThatFits(in: .horizontal) { Text(serverName).font(.headline); Text("DSH").font(.headline) }.lineLimit(1)
-                Spacer(minLength: 0)
-                workspacePicker(symbolOnly: true)
-                GlassCircle(symbol: "arrow.left.arrow.right", label: L("Switch server", "切换服务器"), action: onSwitch)
-                Button { onCreate(activeWorkspace?.id) } label: {
-                    Label(L("New chat", "新对话"), systemImage: "square.and.pencil").font(.caption.bold()).fixedSize().padding(.horizontal, 12).frame(minHeight: 44).foregroundStyle(.white).background(DRPStyle.accent, in: Capsule())
-                }.buttonStyle(.plain)
-            }
-            HStack(spacing: 8) {
-                Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
-                TextField(L("Search conversations", "搜索对话"), text: $store.searchText).textInputAutocapitalization(.never).autocorrectionDisabled().frame(minHeight: 44)
-                if !store.searchText.isEmpty { Button { store.searchText = "" } label: { Image(systemName: "xmark.circle.fill").frame(width: 44, height: 44) }.accessibilityLabel(L("Clear search", "清空搜索")) }
-            }.padding(.leading, 14).padding(.trailing, 4).background(.regularMaterial, in: Capsule())
-            HStack {
-                workspacePicker(symbolOnly: false)
-                Spacer(minLength: 0)
-                Menu {
-                    if let workspace = activeWorkspace {
-                        Button(L("Rename workspace", "重命名工作区")) { renameID = workspace.id; renameText = workspace.title; renamingWorkspace = true; renaming = true }
-                        Button(L("Remove workspace", "移除工作区"), role: .destructive) { deletingWorkspace = workspace }
-                    }
-                    Toggle(L("Archived sessions", "已归档会话"), isOn: $store.archivedOnly)
-                    Toggle(L("Search message content", "搜索消息内容"), isOn: $contentSearch)
-                    Button(L("Add workspace", "添加工作区")) { showingFolders = true }
-                    Button(L("Archive empty conversations…", "归档空对话…")) { cleaningEmpty = true }
-                    Button(L("Log out", "退出")) { perform { try await onLogout() } }
-                } label: { Image(systemName: "ellipsis").frame(width: 44, height: 44) }.accessibilityLabel(L("Workspace & view options", "工作区与视图选项"))
-            }
-            HStack(spacing: 6) {
-                ForEach(Array([L("All", "全部"), L("Running", "运行中"), L("Pending", "待确认"), L("Unread", "未读")].enumerated()), id: \.offset) { index, title in
-                    Button { filter = index } label: { Text(title).font(.caption.weight(.semibold)).lineLimit(1).minimumScaleFactor(0.8).frame(maxWidth: .infinity, minHeight: 44).background(filter == index ? Color.primary : Color.secondary.opacity(0.07), in: Capsule()).foregroundStyle(filter == index ? Color(uiColor: .systemBackground) : .primary) }.accessibilityAddTraits(filter == index ? .isSelected : [])
-                }
-            }
-        }.buttonStyle(.plain).padding(12)
-    }
-    private func workspacePicker(symbolOnly: Bool) -> some View {
+    private var workspacePicker: some View {
         Menu {
             Button(L("All workspaces", "全部工作区")) { chosenWorkspace = true; workspaceFilter = nil }
             ForEach(store.workspaces) { row in Button(row.title) { chosenWorkspace = true; workspaceFilter = row.id } }
             Button(L("Add workspace", "添加工作区")) { showingFolders = true }
         } label: {
-            if symbolOnly { Image(systemName: "square.3.layers.3d").font(.title3).frame(width: 44, height: 44).background(.regularMaterial, in: Circle()) }
-            else { Label((activeWorkspace?.title ?? L("All workspaces", "全部工作区")) + " ⌄", systemImage: "folder").font(.subheadline.weight(.semibold)).lineLimit(1).frame(minHeight: 44) }
+            Label(activeWorkspace?.title ?? L("All workspaces", "全部工作区"), systemImage: "folder").frame(minHeight: 44)
         }.accessibilityLabel(L("Choose workspace", "选择工作区"))
-    }
-    private var sidebarFooter: some View {
-        HStack(spacing: 8) {
-            Button(action: onSwitch) {
-                HStack(spacing: 10) {
-                    Image(systemName: "laptopcomputer").font(.title3).frame(width: 44, height: 44).background(DRPStyle.accent.opacity(0.08), in: Circle())
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(serverName).font(.subheadline.bold()).lineLimit(1)
-                        HStack(spacing: 5) { Circle().fill(.green).frame(width: 6, height: 6); Text(addressLabel.components(separatedBy: " · ").first ?? "").font(.caption).foregroundStyle(.secondary) }
-                    }
-                    Image(systemName: "chevron.up.chevron.down").font(.caption)
-                }.frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
-            }.accessibilityLabel(L("Switch server: ", "切换服务器：") + serverName)
-            Menu {
-                if let id = selection ?? allRows.first?.id {
-                    Button { onFiles(id) } label: { Label(L("Workspace files", "工作区文件"), systemImage: "folder") }
-                    Button { onTerminals(id) } label: { Label(L("Terminals", "终端"), systemImage: "terminal") }
-                } else { Text(L("Send a message to open workspace tools.", "发送消息后可打开工作区工具。")) }
-            } label: { Image(systemName: "square.grid.3x3").font(.title3).frame(width: 44, height: 44).background(.regularMaterial, in: Circle()) }.accessibilityLabel(L("Files & terminals", "文件与终端"))
-            GlassCircle(symbol: "gearshape", label: L("Settings", "设置"), action: onSettings).accessibilityIdentifier("hostSettings")
-        }.buttonStyle(.plain).padding(12)
     }
     @ViewBuilder private func actions(_ row: SessionRow) -> some View {
         Button { onTerminals(row.id) } label: { Label(L("Terminals", "终端"), systemImage: "terminal") }

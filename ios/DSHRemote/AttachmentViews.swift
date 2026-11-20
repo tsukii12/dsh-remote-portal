@@ -44,7 +44,7 @@ struct ComposerAttachmentsView: View {
                 Button { showingCamera = true } label: { Label(L("Camera", "相机"), systemImage: "camera") }.disabled(imageInputError != nil || !UIImagePickerController.isSourceTypeAvailable(.camera))
                 Button { showingFiles = true } label: { Label(L("Files", "文件"), systemImage: "folder") }
             } label: {
-                if compact { Image(systemName: "plus").font(.title2).frame(width: 44, height: 44).background(.secondary.opacity(0.08), in: Circle()) }
+                if compact { Image(systemName: "plus").font(.title2).frame(width: 44, height: 44) }
                 else { Label(L("Attach", "添加附件"), systemImage: "paperclip").font(.subheadline.weight(.medium)).frame(minHeight: 44) }
             }.disabled(disabled).accessibilityIdentifier("attachFiles").accessibilityLabel(L("Add attachment", "添加附件"))
             if let imageInputError, !compact { Text(imageInputError).font(.caption2).foregroundStyle(.secondary) }

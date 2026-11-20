@@ -42,32 +42,11 @@ final class SidebarReadState: ObservableObject {
 }
 
 struct AdaptiveWorkspace<Sidebar: View, Detail: View>: View {
-    @Environment(\.horizontalSizeClass) private var sizeClass
     @Binding var visibility: NavigationSplitViewVisibility
     @Binding var column: NavigationSplitViewColumn
     @ViewBuilder let sidebar: () -> Sidebar
     @ViewBuilder let detail: () -> Detail
     var body: some View {
-        if sizeClass == .compact {
-            GeometryReader { geometry in
-                ZStack(alignment: .leading) {
-                    NavigationStack { detail() }
-                    if column == .sidebar {
-                        Button { column = .detail } label: { Color.black.opacity(0.25).ignoresSafeArea() }
-                            .buttonStyle(.plain).accessibilityLabel(L("Close sidebar", "关闭侧栏"))
-                    }
-                    sidebar().frame(width: min(geometry.size.width * 0.87, 430)).background(.regularMaterial)
-                        .clipShape(UnevenRoundedRectangle(bottomTrailingRadius: 28, topTrailingRadius: 28)).shadow(color: .black.opacity(0.15), radius: 20, x: 10)
-                        .offset(x: column == .sidebar ? 0 : -geometry.size.width)
-                        .opacity(column == .sidebar ? 1 : 0)
-                        .allowsHitTesting(column == .sidebar)
-                        .accessibilityHidden(column != .sidebar)
-                }.animation(.easeOut(duration: 0.2), value: column)
-                    .simultaneousGesture(DragGesture().onEnded { value in
-                        if value.startLocation.x < 24 && value.translation.width > 70 { column = .sidebar }
-                        if column == .sidebar && value.translation.width < -80 { column = .detail }
-                    })
-            }
-        } else { NavigationSplitView(columnVisibility: $visibility, preferredCompactColumn: $column, sidebar: sidebar, detail: detail).navigationSplitViewStyle(.balanced) }
+        NavigationSplitView(columnVisibility: $visibility, preferredCompactColumn: $column, sidebar: sidebar, detail: detail).navigationSplitViewStyle(.balanced)
     }
 }
