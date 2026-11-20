@@ -323,7 +323,7 @@ private struct MessageView: View {
                     } label: {
                         VStack(alignment: .leading, spacing: 3) {
                             Text(block.name.isEmpty ? L("Command", "命令") : block.name)
-                            Text(block.text.isEmpty ? (block.raw["outcome"] == .null ? L("Running…", "运行中…") : block.raw["outcome"] == "error" ? L("Failed", "失败") : L("Done", "完成")) : block.text).lineLimit(1)
+                            Text(block.text.isEmpty ? (block.raw["outcome"] == .null ? L("Running…", "运行中…") : block.raw["outcome"] == "error" ? L("Failed", "失败") : L("Done", "完成")) : block.text).lineLimit(1).foregroundStyle(block.raw["outcome"] == "error" ? Color.red : Color.secondary)
                         }.font(.caption).foregroundStyle(.secondary)
                     }.tint(.secondary)
                 }
@@ -331,7 +331,7 @@ private struct MessageView: View {
                 ForEach(Array(item.blocks.enumerated()), id: \.offset) { _, block in
                     if block.kind == "compaction" {
                         DisclosureGroup {
-                            MarkdownView(text: block.text).textSelection(.enabled)
+                            MarkdownView(text: block.text).font(.body).foregroundStyle(.primary).textSelection(.enabled)
                         } label: {
                             VStack(alignment: .leading, spacing: 3) {
                                 Text(L("Conversation compacted", "对话已压缩"))
