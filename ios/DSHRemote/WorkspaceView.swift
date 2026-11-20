@@ -62,7 +62,7 @@ struct WorkspaceView: View {
                     ChatView(chat: chat, title: sidebar.sessions[chat.sessionID]?.title ?? L("New chat", "新对话"), serverName: serverName, workspaceName: sidebar.workspaces.first { $0.sessionIDs.contains(chat.sessionID) }?.title ?? "", agents: sidebar.sessions.values.filter { $0.parentID == chat.sessionID }.sorted { $0.title < $1.title }, focusOnOpen: focusChatID == chat.sessionID, onMenu: { visibility = .all; compactColumn = .sidebar }, onNew: { create(sidebar.workspaces.first { $0.sessionIDs.contains(chat.sessionID) }?.id) }, onAgent: openChat)
                         .id(chat.sessionID)
                 } else {
-                    NewChatView(api: connection.api, sidebar: sidebar, workspaceID: draftWorkspaceID ?? sidebar.workspaces.first?.id, serverName: serverName, base: connection.api.base, onMenu: { visibility = .all; compactColumn = .sidebar }, onOpen: { id in focusChatID = id; openChat(id) }).id(draftID)
+                    NewChatView(api: connection.api, sidebar: sidebar, workspaceID: draftWorkspaceID ?? sidebar.workspaces.first?.id, serverName: serverName, base: connection.api.base, events: events, onMenu: { visibility = .all; compactColumn = .sidebar }, onOpen: { chat in focusChatID = chat.sessionID; chatSelection.adopt(chat); openChat(chat.sessionID) }).id(draftID)
                 }
             }.safeAreaInset(edge: .top, spacing: 0) { pendingBanner }
         }

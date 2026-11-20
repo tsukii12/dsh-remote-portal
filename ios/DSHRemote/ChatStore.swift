@@ -479,5 +479,9 @@ final class ChatSelection: ObservableObject {
         chat?.activate()
     }
     func resume() { chat?.activate() }
+    func adopt(_ store: ChatStore) {
+        if chat !== store { chat?.stop(); chat = store }
+        chat?.activate()
+    }
     func stop() { chat?.stop() }
 }

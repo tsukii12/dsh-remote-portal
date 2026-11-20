@@ -87,6 +87,119 @@ private final class HTTPListener {
 
 @MainActor
 final class ListenerTests: XCTestCase {
+    func testDraftRetryReappliesCurrentSettingsAfterUploadOrPromptFailure() async throws {
+        for failure in ["upload", "prompt"] {
+            var failingSend = true; var rejectPermission = false
+            var access = "full-access"; var model = "one"; var preset = "standard"; var plan = false
+            var uploads = 0; var prompts = 0; var creations = 0
+            let server = try HTTPListener { request in
+                if request.path.hasPrefix("/api/session/uploadFileBinary") {
+                    uploads += 1
+                    if failingSend && failure == "upload" { return .init(status: 503) }
+                    return .init(body: "{\"ok\":true,\"value\":{\"receiptId\":\"receipt\",\"file\":{\"attachmentId\":\"file\"}}}")
+                }
+                let body = try! JSONDecoder().decode(JSON.self, from: request.body)
+                let args = body["payload"]["args"]
+                switch body["method"].text {
+                case "session/create": creations += 1; return self.reply(["sessionId": "retry"])
+                case "session/list": return self.reply(["items": [["sessionId": "retry", "blank": true]]])
+                case "session/modelCatalog": return self.reply(["default": ["provider": "p", "model": "one"], "groups": []])
+                case "permissionPresets/catalog": return self.reply(["defaultPreset": "full-access"])
+                case "agentPresets/list": return self.reply([:])
+                case "agentPresets/select": preset = args["agentPreset"].text; return self.reply([:])
+                case "commands/list": return self.reply([["name": "plan"]])
+                case "session/projections":
+                    return self.reply(["asOfSeq": 1, "values": ["agentPreset": .string(preset), "modelSelection": ["selected": ["provider": "p", "model": .string(model)]], "permissions": ["currentValue": .string(access)], "plan": ["active": .bool(plan)], "sessionListMetadata": ["blank": true]]])
+                case "session/selectModel": model = args["request"]["model"].text; return self.reply(["selected": args["request"]])
+                case "commands/execute":
+                    let line = args["line"].text
+                    if line.hasPrefix("/permission ") {
+                        if rejectPermission { return .init(status: 503) }
+                        access = String(line.dropFirst("/permission ".count))
+                    } else if line == "/plan" { plan = true }
+                    else if line == "/plan off" { plan = false }
+                    else { XCTFail("Unexpected command " + line) }
+                    return self.reply(["result": ["kind": "text", "text": "Changed"]])
+                case "session/prompt":
+                    prompts += 1
+                    if failingSend { return .init(status: 503) }
+                    XCTAssertEqual(access, "read-only"); XCTAssertEqual(model, "two")
+                    XCTAssertEqual(preset, "minimal"); XCTAssertFalse(plan)
+                    return self.reply(["requestId": args["request"]["requestId"]])
+                default: XCTFail("Unexpected RPC " + body["method"].text); return .init(status: 404)
+                }
+            }
+            let base = try await server.start(); let directory = root(); let client = client(directory)
+            try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+            let api = PortalAPI(base: base, client: client)
+            let draft = NewChatDraft(api: api, sidebar: SidebarStore(api: api), workspaceID: nil)
+            defer { draft.attachments.clear(); server.stop(); client.session.invalidateAndCancel(); try? FileManager.default.removeItem(at: directory) }
+            await draft.load()
+            try await draft.chat.selectModel(provider: "p", model: "one")
+            try await draft.chat.selectPermission("full-access")
+            try await draft.chat.executeCommand("/plan")
+            let file = directory.appendingPathComponent("file.txt"); try Data("file".utf8).write(to: file)
+            try draft.attachments.add(file: file, limits: [:])
+            do { _ = try await draft.submit("Retry"); XCTFail("Send failure swallowed") } catch {}
+            XCTAssertEqual(access, "full-access"); XCTAssertTrue(plan)
+            try await draft.chat.selectPermission("read-only")
+            try await draft.chat.selectModel(provider: "p", model: "two")
+            try await draft.chat.selectPreset("minimal")
+            try await draft.chat.executeCommand("/plan off")
+            let previousUploads = uploads; let previousPrompts = prompts
+            failingSend = false; rejectPermission = true
+            do { _ = try await draft.submit("Retry"); XCTFail("Unsafe retry accepted") } catch {}
+            XCTAssertEqual(uploads, previousUploads); XCTAssertEqual(prompts, previousPrompts)
+            rejectPermission = false
+            let result = try await draft.submit("Retry")
+            XCTAssertEqual(result.sessionID, "retry"); XCTAssertEqual(creations, 1)
+            XCTAssertEqual(result.projections["permissions"]["currentValue"], "read-only")
+            XCTAssertEqual(result.currentModel["model"], "two"); XCTAssertFalse(result.planEnabled)
+        }
+    }
+    func testFirstDraftSlashCommandKeepsItsExecutingStoreAndResults() async throws {
+        for (line, success) in [("/help", true), ("/export", true), ("/export", false), ("", false)] {
+            var creations = 0; var madeReplacement = false
+            let server = try HTTPListener { request in
+                if request.path == "/api/session.export?sessionId=command" {
+                    return .init(status: success ? 200 : 503, headers: ["Content-Type": "application/zip"], body: "PKfixture")
+                }
+                let body = try! JSONDecoder().decode(JSON.self, from: request.body)
+                switch body["method"].text {
+                case "session/create": creations += 1; return self.reply(["sessionId": "command"])
+                case "session/list": return self.reply(["items": [["sessionId": "command", "blank": true]]])
+                case "session/modelCatalog": return self.reply(["groups": []])
+                case "permissionPresets/catalog", "agentPresets/list", "agentPresets/select": return self.reply([:])
+                case "commands/list": return self.reply([])
+                case "session/projections": return self.reply(["asOfSeq": 1, "values": [:]])
+                case "commands/execute":
+                    XCTAssertEqual(body["payload"]["args"]["line"], .string(line))
+                    return self.reply(["result": ["kind": "text", "text": "Command result"]])
+                default: XCTFail("Unexpected RPC " + body["method"].text); return .init(status: 404)
+                }
+            }
+            let base = try await server.start(); let directory = root(); let client = client(directory)
+            let api = PortalAPI(base: base, client: client)
+            let draft = NewChatDraft(api: api, sidebar: SidebarStore(api: api), workspaceID: nil)
+            let selection = ChatSelection { madeReplacement = true; return ChatStore(sessionID: $0, api: api) }
+            defer {
+                if let file = selection.chat?.exportedFile { try? FileManager.default.removeItem(at: file) }
+                selection.stop(); server.stop(); client.session.invalidateAndCancel(); try? FileManager.default.removeItem(at: directory)
+            }
+            do {
+                let executing = try await draft.submit(line)
+                XCTAssertTrue(success)
+                selection.adopt(executing); selection.select(executing.sessionID)
+                XCTAssertTrue(selection.chat === executing); XCTAssertFalse(madeReplacement)
+                XCTAssertEqual(selection.chat?.commandNotice, "Command result")
+                if line == "/export" {
+                    let file = try XCTUnwrap(selection.chat?.exportedFile)
+                    XCTAssertEqual(try Data(contentsOf: file), Data("PKfixture".utf8))
+                } else { XCTAssertNil(selection.chat?.exportedFile) }
+            } catch { XCTAssertFalse(success); XCTAssertNil(selection.chat) }
+            XCTAssertEqual(creations, line.isEmpty ? 0 : 1)
+        }
+    }
     func testLazyDraftCreatesOnlyOnSendAndDefersUploadsOverHTTP() async throws {
         var calls: [String] = []; var failPrompt = true; var promptIDs: [String] = []
         let server = try HTTPListener { request in
@@ -134,7 +247,7 @@ final class ListenerTests: XCTestCase {
         do { _ = try await draft.submit("Keep my text"); XCTFail("Prompt failure swallowed") } catch {}
         XCTAssertEqual(draft.sessionID, "lazy"); XCTAssertFalse(draft.sending)
         failPrompt = false
-        let id = try await draft.submit("Keep my text")
+        let id = try await draft.submit("Keep my text").sessionID
         XCTAssertEqual(id, "lazy"); XCTAssertEqual(calls.filter { $0 == "session/create" }.count, 1)
         XCTAssertEqual(calls.filter { $0 == "upload" }.count, 1); XCTAssertEqual(Set(promptIDs).count, 1)
         await draft.abandon(); XCTAssertFalse(calls.contains("workspace/archiveSession"))

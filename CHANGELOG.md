@@ -34,6 +34,8 @@ versions are the plugin's own, not dsh's.
 - 新 RPC/HTTP 路由由真实监听器测试覆盖；可选在线冒烟测试验证两个本地模拟模型的切换与明确思考强度、会话权限命令及门户文件夹浏览。
 
 ### Fixed
+- Native iOS draft retries reapply the current model/access settings and reconcile preset/Plan mode before uploading or sending, failing closed if configuration fails. First-command results/exports survive opening the chat, and Markdown tables preserve literal backslashes and Windows paths.
+- 原生 iOS 草稿重试会在上传或发送前重新应用当前模型与权限，并核对预设和计划模式；配置失败时禁止继续发送。首次执行命令后打开聊天会保留结果与导出文件，Markdown 表格保留反斜杠和 Windows 路径。
 - Native chat history remains subscribed when optional startup reads fail; ended subscriptions reopen and idle/running state reconciles with the host, including assistant end frames and admitted-but-not-completed prompts. History loading stays visible. Transcript notices, compact attempts, standalone tool calls/results and unknown event/content types have expandable native fallbacks instead of disappearing.
 - 原生聊天在可选启动读取失败时保留历史订阅，订阅结束后自动重开，并结合助手结束帧及仅代表接收的提示词确认与主机核对运行状态；历史加载有明确提示。对话中的通知、紧凑尝试、独立工具调用/结果及未知事件/内容类型均以可展开的原生形式保留，不再丢失。
 - Keep native chat startup and stream lifetime bound to the selected session, not transient search/navigation detail appearances, so first-open chats load their transcript, model and attachment controls.

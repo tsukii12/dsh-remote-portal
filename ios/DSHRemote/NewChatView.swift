@@ -5,24 +5,24 @@ final class NewChatDraft: ObservableObject {
     let chat: ChatStore
     let attachments: AttachmentsStore
     private let sidebar: SidebarStore
+    private let events: RemoteEvents?
     @Published var workspaceID: String?
     @Published private(set) var sending = false
     @Published var error: String?
     private(set) var sessionID: String?
     private var submitted = false
-    private var configured = false
     private var requestID = UUID().uuidString
     private var signature: String?
-    init(api: RPCServing, sidebar: SidebarStore, workspaceID: String?) {
+    init(api: RPCServing, sidebar: SidebarStore, workspaceID: String?, events: RemoteEvents? = nil) {
         chat = ChatStore(sessionID: "", api: api, isDraft: true)
         attachments = AttachmentsStore(api: api, sessionID: "", deferred: true)
-        self.sidebar = sidebar; self.workspaceID = workspaceID
+        self.sidebar = sidebar; self.workspaceID = workspaceID; self.events = events
     }
     func load() async {
         do { try await chat.loadModels(); try await chat.loadControls() }
         catch { self.error = error.localizedDescription }
     }
-    func submit(_ text: String) async throws -> String {
+    func submit(_ text: String) async throws -> ChatStore {
         guard !sending else { throw PortalError.message(L("A message is already being sent.", "消息正在发送中。")) }
         guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !attachments.items.isEmpty else { throw PortalError.message(L("Enter a message.", "请输入消息。")) }
         try chat.validateImageInput(attachments.items)
@@ -32,20 +32,19 @@ final class NewChatDraft: ObservableObject {
         defer { sending = false }
         if sessionID == nil { sessionID = try await sidebar.createSession(workspaceID: workspaceID) }
         guard let id = sessionID else { throw APIError.invalidResponse }
-        let target = ChatStore(sessionID: id, api: chat.api)
-        if !configured, let preset = chat.projections["agentPreset"].string { try await target.selectPreset(preset) }
-        else { try await target.loadControls() }
+        let target = ChatStore(sessionID: id, api: chat.api, events: events)
+        try await target.loadControls()
+        if let preset = chat.projections["agentPreset"].string, target.projections["agentPreset"].string != preset { try await target.selectPreset(preset) }
         try await target.loadModels()
         let model = chat.currentModel
-        if !configured, let provider = model["provider"].string, let modelID = model["model"].string {
+        if let provider = model["provider"].string, let modelID = model["model"].string {
             try await target.selectModel(provider: provider, model: modelID, reasoningEffort: model["reasoningEffort"].string)
         }
-        if !configured, let access = chat.projections["permissions"]["currentValue"].string { try await target.selectPermission(access) }
-        if !configured, chat.planEnabled {
+        if let access = chat.projections["permissions"]["currentValue"].string { try await target.selectPermission(access) }
+        if chat.planEnabled != target.planEnabled {
             guard target.supportsPlan else { throw PortalError.message(L("This preset does not provide Plan mode. Choose another preset or turn Plan mode off.", "当前预设不支持计划模式，请选择其他预设或关闭计划模式。")) }
-            _ = try await target.executeCommand("/plan")
+            _ = try await target.executeCommand(chat.planEnabled ? "/plan" : "/plan off")
         }
-        configured = true
         try target.validateImageInput(attachments.items)
         try await attachments.prepare(sessionID: id, limits: target.projections["imageLimits"])
         if text.hasPrefix("/") {
@@ -55,7 +54,7 @@ final class NewChatDraft: ObservableObject {
             _ = try await target.executeCommand(text, attachments: parts)
         } else { try await target.send(text, attachments: attachments.items, requestID: requestID) }
         submitted = true
-        return id
+        return target
     }
     func abandon() async { if !sending && !submitted, let sessionID { try? await sidebar.abandonEmptyCreated(sessionID) } }
 }
@@ -66,9 +65,9 @@ struct NewChatView: View {
     let serverName: String
     let base: URL
     let onMenu: () -> Void
-    let onOpen: (String) -> Void
-    init(api: RPCServing, sidebar: SidebarStore, workspaceID: String?, serverName: String, base: URL, onMenu: @escaping () -> Void, onOpen: @escaping (String) -> Void) {
-        _draft = StateObject(wrappedValue: NewChatDraft(api: api, sidebar: sidebar, workspaceID: workspaceID))
+    let onOpen: (ChatStore) -> Void
+    init(api: RPCServing, sidebar: SidebarStore, workspaceID: String?, serverName: String, base: URL, events: RemoteEvents? = nil, onMenu: @escaping () -> Void, onOpen: @escaping (ChatStore) -> Void) {
+        _draft = StateObject(wrappedValue: NewChatDraft(api: api, sidebar: sidebar, workspaceID: workspaceID, events: events))
         self.sidebar = sidebar; self.serverName = serverName; self.base = base; self.onMenu = onMenu; self.onOpen = onOpen
     }
     var body: some View { NewChatDraftView(draft: draft, sidebar: sidebar, serverName: serverName, base: base, onMenu: onMenu, onOpen: onOpen) }
@@ -82,12 +81,12 @@ private struct NewChatDraftView: View {
     let serverName: String
     let base: URL
     let onMenu: () -> Void
-    let onOpen: (String) -> Void
+    let onOpen: (ChatStore) -> Void
     @State private var text = ""
     @State private var options: ChatOptionsPage?
     @State private var usage = false
     @FocusState private var focused: Bool
-    init(draft: NewChatDraft, sidebar: SidebarStore, serverName: String, base: URL, onMenu: @escaping () -> Void, onOpen: @escaping (String) -> Void) {
+    init(draft: NewChatDraft, sidebar: SidebarStore, serverName: String, base: URL, onMenu: @escaping () -> Void, onOpen: @escaping (ChatStore) -> Void) {
         self.draft = draft; _chat = ObservedObject(wrappedValue: draft.chat); _attachments = ObservedObject(wrappedValue: draft.attachments); self.sidebar = sidebar
         self.serverName = serverName; self.base = base; self.onMenu = onMenu; self.onOpen = onOpen
     }

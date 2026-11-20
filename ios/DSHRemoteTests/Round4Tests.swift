@@ -30,6 +30,10 @@ private final class RecoveryAPI: RPCServing {
 
 @MainActor
 final class Round4Tests: XCTestCase {
+    func testTableCellsPreserveWindowsPathsAndLiteralBackslashes() {
+        XCTAssertEqual(MarkdownParser.cells(#"| C:\Users\alice | \\server\share | a\|b | `C:\Users\alice\\` |"#), [#"C:\Users\alice"#, #"\\server\share"#, "a|b", #"`C:\Users\alice\\`"#])
+        XCTAssertEqual(MarkdownParser.cells(#"| \ | \\ | `a\|b` |"#), [#"\"#, #"\\"#, "`a|b`"])
+    }
     func testMarkdownTablesPreserveEscapedAndCodePipes() {
         XCTAssertEqual(MarkdownParser.blocks("| Key | Value |\n| :--- | ---: |\n| a\\|b | `x|y` |"), [.table(["Key", "Value"], [["a|b", "`x|y`"]], [.leading, .trailing])])
         XCTAssertEqual(MarkdownParser.blocks("| One |\n| :---: |"), [.table(["One"], [], [.center])])

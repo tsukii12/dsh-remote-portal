@@ -12,7 +12,10 @@ enum MarkdownParser {
     static func cells(_ line: String) -> [String] {
         var cells: [String] = []; var cell = ""; var escaped = false; var code = false
         for character in line.trimmingCharacters(in: .whitespaces) {
-            if escaped { cell.append(character); escaped = false; continue }
+            if escaped {
+                if character == "|" { cell.append(character); escaped = false; continue }
+                cell.append("\\"); escaped = false
+            }
             if character == "\\" { escaped = true; continue }
             if character == "`" { code.toggle() }
             if character == "|" && !code { cells.append(cell.trimmingCharacters(in: .whitespaces)); cell = "" }

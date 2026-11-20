@@ -18,8 +18,8 @@ final class LiveSmokeTests: XCTestCase {
         await draft.abandon()
         let after = try await api.rpc("session/list", args: ["_request": [:]])["items"].array.compactMap { $0["sessionId"].string }
         XCTAssertEqual(Set(before), Set(after))
-        let id = try await draft.submit("hello")
-        let chat = connection.chat(id)
+        let chat = try await draft.submit("hello")
+        let id = chat.sessionID
         defer { chat.stop() }
         do {
             try await chat.start()
