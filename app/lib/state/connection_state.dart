@@ -5,6 +5,7 @@ import 'package:dsh_client/dsh_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../remote/link_status.dart';
+import '../remote/current_stream.dart';
 import '../remote/network_watch.dart';
 import '../remote/portal_link.dart';
 import 'hosts_state.dart';
@@ -30,11 +31,10 @@ final hostLinkProvider = Provider.autoDispose.family<HostLink?, HostRef>((ref, h
   ref.onDispose(() => unawaited(link.close()));
   return link;
 });
-final hostLinkStatusProvider = StreamProvider.autoDispose.family<HostLinkStatus, HostRef>((ref, host) async* {
+final hostLinkStatusProvider = StreamProvider.autoDispose.family<HostLinkStatus, HostRef>((ref, host) {
   final link = ref.watch(hostLinkProvider(host));
-  if (link == null) { yield HostLinkStatus.idle; return; }
-  yield link.status;
-  yield* link.statuses;
+  if (link == null) return Stream.value(HostLinkStatus.idle);
+  return currentStream(() => link.status, link.statuses);
 });
 final hostNameProvider = Provider.autoDispose.family<String?, HostRef>(
   (ref, host) => ref.watch(hostsProvider).portalById(host.id)?.name ?? host.name);

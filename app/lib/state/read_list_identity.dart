@@ -5,6 +5,8 @@ import 'package:crypto/crypto.dart';
 import 'package:dsh_client/dsh_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../remote/current_stream.dart';
+
 import 'connection_state.dart';
 import 'hosts_state.dart';
 import 'read_list_epoch.dart';
@@ -26,10 +28,9 @@ HostConnection? readListConnection(AsyncValue<HostConnection?> value, HostRef se
   return connection?.hostId == selected.id ? connection : null;
 }
 
-final _muxStateProvider = StreamProvider.autoDispose.family<DshConnectionState, DshClient>((ref, client) async* {
-  yield client.mux.state;
-  yield* client.mux.states;
-});
+final _muxStateProvider = StreamProvider.autoDispose.family<DshConnectionState, DshClient>(
+  (ref, client) => currentStream(() => client.mux.state, client.mux.states),
+);
 
 final readListLiveConnectionProvider = Provider<HostConnection?>((ref) {
   final connection = readListConnection(ref.watch(activeConnectionProvider), ref.watch(activeHostProvider));
