@@ -1565,6 +1565,17 @@ test("the login page links the home-screen manifest, and the manifest follows th
   assert.equal(viaRelay.icons.length, 1);
   for (const icon of viaRelay.icons) assert.ok(icon.src.startsWith("/__t/abc123/"), icon.src);
 
+  // The proxied dsh page links this path, which browsers fetch without cookies.
+  const webManifest = await request(port, "/manifest.webmanifest", { headers: mounted });
+  assert.equal(webManifest.status, 200);
+  assert.match(webManifest.headers["content-type"], /^application\/manifest\+json/);
+  assert.deepEqual(JSON.parse(webManifest.body), viaRelay);
+  const head = await request(port, "/manifest.webmanifest", { method: "HEAD", headers: mounted });
+  assert.equal(head.status, 200);
+  assert.equal(head.body, "");
+  const post = await request(port, "/manifest.webmanifest", { method: "POST", headers: mounted });
+  assert.equal(post.status, 405);
+
   const direct = JSON.parse((await request(port, "/__portal/manifest.webmanifest")).body);
   assert.equal(direct.start_url, "/");
   const chinese = JSON.parse((await request(port, "/__portal/manifest.webmanifest", { headers: { "accept-language": "zh-CN" } })).body);

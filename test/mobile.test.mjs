@@ -963,6 +963,46 @@ describe("mobile layer against the live dsh web UI", () => {
     assert.ok(!out.back.alerts.some((a) => /PC|电脑/.test(a)), "the disconnected notice must clear");
   });
 
+  test("a paired phone at 400px only shows password status after an authenticated poll", async (t) => {
+    if (skipReason) return t.skip(skipReason);
+    const host = await runCdp(["eval", BASE, `(async () => {
+      const r = await fetch('./yuremote/pair', { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
+      return (await r.json()).pairing?.url || '';
+    })()`, "--token", TOKEN_URL, "--wait", "3000"]);
+    assert.equal(host.code, 0, host.stderr.slice(-800));
+    const pair = new URL(host.stdout.trim());
+    const phone = await runCdp(["eval", pair.origin + "/", `(async () => {
+      const wait = (ms) => new Promise(r => setTimeout(r, ms));
+      const real = window.fetch;
+      const polls = [];
+      window.fetch = async (input, init) => {
+        if (!String(input).endsWith('/status')) return real(input, init);
+        const response = await real(input, polls.length ? init : { ...init, credentials: 'omit' });
+        const data = await response.clone().json();
+        polls.push([new URL(response.url).pathname, response.status, data.status?.passwordSet ?? null]);
+        return response;
+      };
+      document.querySelector('.yuremote-drawer-btn').click();
+      await wait(600);
+      [...document.querySelectorAll('[data-slot="sidebar"] button')]
+        .find(b => /^(Remote access|远程访问)$/.test((b.getAttribute('aria-label') || b.textContent).trim())).click();
+      const badge = () => document.querySelector('[data-yuremote="password"] .yuremote-chip')?.textContent ?? null;
+      const alert = () => document.querySelector('[data-slot="main"] [role="alert"]')?.textContent || '';
+      for (let i = 0; i < 20 && !alert(); i++) await wait(100);
+      const refused = { badge: badge(), alert: alert() };
+      for (let i = 0; i < 60 && !badge(); i++) await wait(100);
+      return { polls: polls.slice(0, 2), refused, badge: badge(), alert: alert() };
+    })()`, "--token", pair.href, "--wait", "4000", "--w", "400", "--h", "754", "--mobile",
+      "--pre-file", join(tmp, "pre.js"), "--settle", "1200"]);
+    assert.equal(phone.code, 0, phone.stderr.slice(-800));
+    const result = JSON.parse(phone.stdout.trim());
+    assert.deepEqual(result.polls, [["/yuremote/status", 401, null], ["/yuremote/status", 200, true]]);
+    assert.match(result.refused.alert, /authentication required/);
+    assert.equal(result.refused.badge, null);
+    assert.match(result.badge, /^(Set|已设置)$/);
+    assert.equal(result.alert, "");
+  });
+
   // The panel's note promises that a password change signs devices out; one
   // who lost a phone changes the password expecting exactly that.
   test("changing the password from the panel signs every device out and cancels unused pairing links", async (t) => {

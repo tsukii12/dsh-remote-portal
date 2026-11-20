@@ -1793,10 +1793,10 @@ window.__ModuleLoader__.load({
       var passwordCard = h("section", { className: "yuremote-card", "data-yuremote": "password", key: "password" },
         h("div", { className: "yuremote-card-head" },
           h("h3", { className: "yuremote-card-title" }, t("pwTitle")),
-          h("span", { className: "yuremote-chip" + (passwordSet ? "" : " yuremote-chip-warn") },
-            passwordSet ? t("pwStateSet") : t("pwStateUnset"))),
+          status ? h("span", { className: "yuremote-chip" + (passwordSet ? "" : " yuremote-chip-warn") },
+            passwordSet ? t("pwStateSet") : t("pwStateUnset")) : null),
         h("p", { className: "yuremote-card-note" }, t("pwNote", { n: MIN_PW })),
-        passwordSet ? null : h("p", { className: "yuremote-hint yuremote-hint-warn" }, t("pwWarn")),
+        status && !passwordSet ? h("p", { className: "yuremote-hint yuremote-hint-warn" }, t("pwWarn")) : null,
         h("div", { className: "yuremote-form yuremote-form-row" },
           h("div", { className: "yuremote-pw" },
             h("input", {
