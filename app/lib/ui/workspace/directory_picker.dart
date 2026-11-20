@@ -213,6 +213,7 @@ Future<String?> askFolderPath(BuildContext context) async {
 Future<String?> askFolderName(BuildContext context, {required String parentName}) => showTextPrompt(
   context,
   title: context.l10n.remoteDirectoryNewFolder,
+  mono: true,
   caption: context.l10n.remoteDirectoryParentCaption(parentName),
   hint: context.l10n.remoteDirectoryFolderName,
   confirm: context.l10n.commonCreate,
