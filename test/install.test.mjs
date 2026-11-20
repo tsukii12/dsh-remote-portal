@@ -11,7 +11,8 @@ const skip = process.platform === "win32" ? "install.sh is for Linux / macOS" : 
 const deploy = readFileSync(join(ROOT, "tools", "deploy-relay.sh"), "utf8");
 
 function shellFunction(name) {
-  const body = new RegExp(`^${name}\\(\\) \\{[\\s\\S]*?^\\}`, "m").exec(deploy)?.[0];
+  const end = name === "install_yuremote" ? "^YUREMOTE_EOF\\n[\\s\\S]*?^\\}" : "^\\}";
+  const body = new RegExp(`^${name}\\(\\) \\{[\\s\\S]*?${end}`, "m").exec(deploy)?.[0];
   assert.ok(body, `missing installer function ${name}`);
   return body;
 }
@@ -200,6 +201,8 @@ say() { :; }
 ok() { :; }
 warn() { :; }
 install_brand() { :; }
+prepare_installer() { :; }
+save_migrated_installer() { :; }
 install_yuremote() { touch "$BIN"; }
 install_legacy_command() { :; }
 systemctl() { printf '%s\\n' "$*"; }
@@ -252,7 +255,8 @@ LEGACY_RELAY_DIR=$1 LEGACY_STATE_DIR=$2 RELAY_DIR=$3 STATE_DIR=$4 LEGACY_UNIT=$5
 PORTAL_DIR=$7 HEALTHY=$8 LEGACY_BACKUP=$5.bak-yuremote
 LANG_MODE=$9
 SELF_VERSION=fixture-version
-RAW_BASES=https://fixture.invalid
+INSTALLER_REVISION=1
+RAW_BASES="https://stale.invalid https://fixture.invalid"
 TMP_RELAY_DIR=$3.download
 mkdir "$TMP_RELAY_DIR"
 CONF_FILE=$STATE_DIR/deploy.conf
@@ -263,7 +267,8 @@ install_legacy_command() { :; }
 systemctl() { [ "$1" = show ] || printf '%s\\n' "$*" >&2; }
 curl() {
   case "$*" in
-    *https://fixture.invalid/tools/deploy-relay.sh*) printf '#!/bin/bash\nSELF_VERSION="fixture-version"\nSERVICE=yuremote-relay\nexit 0\n' > "${!#}" ;;
+    *https://stale.invalid/tools/deploy-relay.sh*) printf '#!/bin/bash\nSELF_VERSION="fixture-version"\nSERVICE=yuremote-relay\nexit 99\n' > "\${!#}" ;;
+    *https://fixture.invalid/tools/deploy-relay.sh*) printf '#!/bin/bash\nSELF_VERSION="fixture-version"\nINSTALLER_REVISION=1\nSERVICE=yuremote-relay\nexit 0\n' > "\${!#}" ;;
     *) [ "$HEALTHY" = yes ] ;;
   esac
 }
@@ -275,14 +280,14 @@ die() { printf '%s\\n' "$*" >&2; exit 1; }
     const translate = /^t\(\) \{.*\}$/m.exec(deploy)?.[0];
     assert.ok(translate);
     const result = spawnSync("bash", ["-s", "--", oldDir, oldState, newDir, newState, oldUnit, newUnit, join(ROOT, "tools"), healthy, language], {
-      input: [setup, translate, shellFunction("prepare_installer"), shellFunction("write_migrated_unit"), migrate, "migrate_relay\n"].join("\n"),
+      input: [setup, translate, ...["prepare_installer", "save_migrated_installer", "write_migrated_unit"].map(shellFunction), migrate, "migrate_relay\n"].join("\n"),
       encoding: "utf8",
     });
     assert.equal(readFileSync(join(oldDir, "relay.mjs"), "utf8"), "legacy code");
     assert.equal(readFileSync(join(oldState, "token"), "utf8"), token);
     assert.equal(readFileSync(join(newState, "token"), "utf8"), token);
     const savedInstaller = join(newState, "deploy-relay.sh");
-    assert.equal(readFileSync(savedInstaller, "utf8"), '#!/bin/bash\nSELF_VERSION="fixture-version"\nSERVICE=yuremote-relay\nexit 0\n');
+    assert.equal(readFileSync(savedInstaller, "utf8"), '#!/bin/bash\nSELF_VERSION="fixture-version"\nINSTALLER_REVISION=1\nSERVICE=yuremote-relay\nexit 0\n');
     assert.equal(readFileSync(join(newState, "deploy.conf"), "utf8"), `HTTP_PORT=8080\nSCRIPT=${savedInstaller}\n`);
     assert.equal(spawnSync(savedInstaller).status, 0);
     if (healthy === "yes") {

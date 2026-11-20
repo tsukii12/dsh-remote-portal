@@ -20,6 +20,7 @@ set -euo pipefail
 if [ ! -x "$0" ] && [ -f "$0" ]; then chmod +x "$0" 2>/dev/null || true; fi
 
 SELF_VERSION="0.6.2"
+INSTALLER_REVISION=1
 
 RELAY_DIR=/opt/yuremote-relay
 STATE_DIR=/var/lib/yuremote-relay
@@ -756,9 +757,19 @@ prepare_installer() {
     fi
     grep -Fxq "SELF_VERSION=\"$SELF_VERSION\"" "$INSTALLER_SOURCE" &&
       grep -Fxq 'SERVICE=yuremote-relay' "$INSTALLER_SOURCE" &&
+      grep -Fxq "INSTALLER_REVISION=$INSTALLER_REVISION" "$INSTALLER_SOURCE" &&
       bash -n "$INSTALLER_SOURCE" && return 0
   done
   die "$(t "Could not save the matching installer; download deploy-relay.sh and run it as a file." "无法保存配套安装脚本；请下载 deploy-relay.sh 后以文件方式运行。")"
+}
+
+save_migrated_installer() {
+  local saved="$STATE_DIR/deploy-relay.sh"
+  if [ ! "$INSTALLER_SOURCE" -ef "$saved" ]; then install -m 0755 "$INSTALLER_SOURCE" "$saved"; fi
+  if [ -f "$CONF_FILE" ]; then
+    sed -i '/^SCRIPT=/d' "$CONF_FILE"
+  fi
+  printf 'SCRIPT=%s\n' "$saved" >> "$CONF_FILE"
 }
 
 install_brand() {
@@ -853,11 +864,7 @@ migrate_relay() {
   install -m 0644 "$PORTAL_DIR/relay.mjs" "$RELAY_DIR/relay.mjs"
   install -m 0644 "$PORTAL_DIR/relay.mjs" "$STATE_DIR/relay.mjs"
   install_brand
-  install -m 0755 "$INSTALLER_SOURCE" "$STATE_DIR/deploy-relay.sh"
-  if [ -f "$CONF_FILE" ]; then
-    sed -i '/^SCRIPT=/d' "$CONF_FILE"
-  fi
-  printf 'SCRIPT=%s/deploy-relay.sh\n' "$STATE_DIR" >> "$CONF_FILE"
+  save_migrated_installer
   write_migrated_unit "$LEGACY_UNIT"
   systemctl is-active --quiet "$LEGACY_SERVICE.service" && was_active=1
   systemctl is-enabled --quiet "$LEGACY_SERVICE.service" && was_enabled=1
@@ -913,6 +920,7 @@ if is_migrated_relay && [ "$CONFIG_HTTP_ONLY" = 1 ]; then
   exit 0
 fi
 if is_migrated_relay && [ "$APPLY_CONFIG" = 0 ]; then
+  prepare_installer
   install -d -m 0755 "$RELAY_DIR"
   install_brand
   if ! cmp -s "$PORTAL_DIR/relay.mjs" "$RELAY_DIR/relay.mjs"; then
@@ -931,6 +939,7 @@ if is_migrated_relay && [ "$APPLY_CONFIG" = 0 ]; then
     systemctl enable --now "$SERVICE.service"
     rm -f -- "$UNIT.uninstalled"
   fi
+  save_migrated_installer
   install_yuremote
   install_legacy_command
   ok "$(t "$SERVICE is already migrated." "$SERVICE 已迁移。")"
