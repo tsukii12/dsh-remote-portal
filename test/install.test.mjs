@@ -155,31 +155,46 @@ for (const healthy of ["yes", "no"]) {
     mkdirSync(oldState);
     writeFileSync(join(oldDir, "relay.mjs"), "legacy code");
     writeFileSync(join(oldState, "token"), token, { mode: 0o600 });
+    writeFileSync(join(oldState, "deploy-relay.sh"), "#!/bin/bash\nexit 99\n");
+    writeFileSync(join(oldState, "deploy.conf"), `HTTP_PORT=8080\nSCRIPT=${oldState}/deploy-relay.sh\n`);
     writeFileSync(oldUnit, legacy);
     const migrate = shellFunction("migrate_relay");
     const setup = `
 set -euo pipefail
 LEGACY_RELAY_DIR=$1 LEGACY_STATE_DIR=$2 RELAY_DIR=$3 STATE_DIR=$4 LEGACY_UNIT=$5 UNIT=$6
 PORTAL_DIR=$7 HEALTHY=$8 LEGACY_BACKUP=$5.bak-yuremote
+SELF_VERSION=fixture-version
+RAW_BASES=https://fixture.invalid
+TMP_RELAY_DIR=$3.download
+mkdir "$TMP_RELAY_DIR"
 CONF_FILE=$STATE_DIR/deploy.conf
 LEGACY_SERVICE=dsh-relay SERVICE=yuremote-relay
 install_brand() { :; }
 install_yuremote() { :; }
 install_legacy_command() { :; }
 systemctl() { [ "$1" = show ] || printf '%s\\n' "$*" >&2; }
-curl() { [ "$HEALTHY" = yes ]; }
+curl() {
+  case "$*" in
+    *https://fixture.invalid/tools/deploy-relay.sh*) printf '#!/bin/bash\nSELF_VERSION="fixture-version"\nSERVICE=yuremote-relay\nexit 0\n' > "${!#}" ;;
+    *) [ "$HEALTHY" = yes ] ;;
+  esac
+}
 sleep() { :; }
 ok() { printf '%s\\n' "$*"; }
 info() { printf '%s\\n' "$*"; }
 die() { printf '%s\\n' "$*" >&2; exit 1; }
 `;
     const result = spawnSync("bash", ["-s", "--", oldDir, oldState, newDir, newState, oldUnit, newUnit, join(ROOT, "tools"), healthy], {
-      input: setup + migrate + "\nmigrate_relay\n",
+      input: setup + shellFunction("prepare_installer") + "\n" + migrate + "\nmigrate_relay\n",
       encoding: "utf8",
     });
     assert.equal(readFileSync(join(oldDir, "relay.mjs"), "utf8"), "legacy code");
     assert.equal(readFileSync(join(oldState, "token"), "utf8"), token);
     assert.equal(readFileSync(join(newState, "token"), "utf8"), token);
+    const savedInstaller = join(newState, "deploy-relay.sh");
+    assert.equal(readFileSync(savedInstaller, "utf8"), '#!/bin/bash\nSELF_VERSION="fixture-version"\nSERVICE=yuremote-relay\nexit 0\n');
+    assert.equal(readFileSync(join(newState, "deploy.conf"), "utf8"), `HTTP_PORT=8080\nSCRIPT=${savedInstaller}\n`);
+    assert.equal(spawnSync(savedInstaller).status, 0);
     if (healthy === "yes") {
       assert.equal(result.status, 0, result.stdout + result.stderr);
       assert.equal(readFileSync(backup, "utf8"), legacy);

@@ -723,6 +723,25 @@ fetch_relay() { # fetch_relay <dest>: prints the matching base; fails when none 
 cleanup_download() { [ -z "${TMP_RELAY_DIR:-}" ] || rm -rf -- "$TMP_RELAY_DIR"; }
 trap cleanup_download EXIT
 
+prepare_installer() {
+  INSTALLER_SOURCE=${BASH_SOURCE[0]:-}
+  if [ -n "$INSTALLER_SOURCE" ] && [ -f "$INSTALLER_SOURCE" ]; then return 0; fi
+  local base
+  TMP_RELAY_DIR=${TMP_RELAY_DIR:-$(mktemp -d)}
+  INSTALLER_SOURCE="$TMP_RELAY_DIR/deploy-relay.sh"
+  for base in $RAW_BASES; do
+    if command -v curl >/dev/null 2>&1; then
+      curl -fsSL --max-time 25 "$base/tools/deploy-relay.sh" -o "$INSTALLER_SOURCE" 2>/dev/null || continue
+    else
+      wget -qT 25 -O "$INSTALLER_SOURCE" "$base/tools/deploy-relay.sh" || continue
+    fi
+    grep -Fxq "SELF_VERSION=\"$SELF_VERSION\"" "$INSTALLER_SOURCE" &&
+      grep -Fxq 'SERVICE=yuremote-relay' "$INSTALLER_SOURCE" &&
+      bash -n "$INSTALLER_SOURCE" && return 0
+  done
+  die "$(t "Could not save the matching installer; download deploy-relay.sh and run it as a file." "无法保存配套安装脚本；请下载 deploy-relay.sh 后以文件方式运行。")"
+}
+
 install_brand() {
   local logo="$PORTAL_DIR/../assets/brand/yuremote-favicon.png"
   local target="$RELAY_DIR/yuremote-transparent.png"
@@ -795,16 +814,18 @@ migrate_relay() {
   health_addr="127.0.0.1:${health_addr##*:}"
   command -v curl >/dev/null 2>&1 || die "curl is required to check the migrated relay."
   node --check "$PORTAL_DIR/relay.mjs"
+  prepare_installer
   cp -a -- "$LEGACY_STATE_DIR" "$STATE_DIR"
   rm -f -- "$STATE_DIR/relay.mjs" "$STATE_DIR/deploy-relay.sh"
   install -d -m 0755 "$RELAY_DIR"
   install -m 0644 "$PORTAL_DIR/relay.mjs" "$RELAY_DIR/relay.mjs"
   install -m 0644 "$PORTAL_DIR/relay.mjs" "$STATE_DIR/relay.mjs"
   install_brand
-  if [ -f "$0" ]; then install -m 0755 "$0" "$STATE_DIR/deploy-relay.sh"; fi
+  install -m 0755 "$INSTALLER_SOURCE" "$STATE_DIR/deploy-relay.sh"
   if [ -f "$CONF_FILE" ]; then
-    sed -i "s#^SCRIPT=.*#SCRIPT=$STATE_DIR/deploy-relay.sh#" "$CONF_FILE"
+    sed -i '/^SCRIPT=/d' "$CONF_FILE"
   fi
+  printf 'SCRIPT=%s/deploy-relay.sh\n' "$STATE_DIR" >> "$CONF_FILE"
   unit_stage=$(mktemp)
   sed -e "s#$LEGACY_RELAY_DIR/relay.mjs#$RELAY_DIR/relay.mjs#g" \
       -e "s#--token-file $LEGACY_STATE_DIR/token#--token-file $STATE_DIR/token#g" \
