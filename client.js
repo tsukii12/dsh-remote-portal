@@ -1,4 +1,4 @@
-// dsh-remote-portal — browser half.
+// yuremote — browser half.
 //
 // Hand-written bundle, no build step. The host's @deepseek-ai/dsh-client-modules
 // loads this file with a classic <script> and expects exactly one call to
@@ -12,7 +12,7 @@
 //     registration and every async path is wrapped in try/catch and swallowed;
 //   · all UI text goes through the tiny t() below (zh + en, keyed by
 //     documentElement.lang);
-//   · every class is prefixed drp-, every colour comes from a --dsw-alias-*
+//   · every class is prefixed yuremote-, every colour comes from a --dsw-alias-*
 //     token with a literal fallback, so the panel follows light/dark and any
 //     third-party skin automatically;
 //   · the only DOM writes outside the React subtree are the two asset tags in
@@ -27,16 +27,16 @@
 //                               main area rather than full-screen covers.
 //
 // Host routes used (same-origin control routes registered by index.js):
-//   GET  /dsh-remote-portal/status          → Status (ARCHITECTURE §4.1)
-//   GET  /dsh-remote-portal/devices         → Device[] | { devices: Device[] }
-//   POST /dsh-remote-portal/pair            → { url, expiresAt } | { token, ttlSeconds }
-//   POST /dsh-remote-portal/config          → Status | { status: Status }
-//   POST /dsh-remote-portal/password        → any 2xx
-//   POST /dsh-remote-portal/devices/revoke  → any 2xx
-//   GET  /dsh-remote-portal/qr.svg?text=…   → image/svg+xml
-//   GET  /dsh-remote-portal/assets/mobile.{css,js}
+//   GET  /yuremote/status          → Status (ARCHITECTURE §4.1)
+//   GET  /yuremote/devices         → Device[] | { devices: Device[] }
+//   POST /yuremote/pair            → { url, expiresAt } | { token, ttlSeconds }
+//   POST /yuremote/config          → Status | { status: Status }
+//   POST /yuremote/password        → any 2xx
+//   POST /yuremote/devices/revoke  → any 2xx
+//   GET  /yuremote/qr.svg?text=…   → image/svg+xml
+//   GET  /yuremote/assets/mobile.{css,js}
 window.__ModuleLoader__.load({
-  id: "dsh-remote-portal",
+  id: "yuremote",
   factory: function (require) {
     "use strict";
 
@@ -51,10 +51,10 @@ window.__ModuleLoader__.load({
 
     // ── constants ────────────────────────────────────────────────────────────
     // Relative on purpose: the app document carries `<base href="./">`, so this
-    // resolves to /dsh-remote-portal/… at the root *and* to
-    // /__t/<id>/dsh-remote-portal/… when the whole UI is mounted under a relay
+    // resolves to /yuremote/… at the root *and* to
+    // /__t/<id>/yuremote/… when the whole UI is mounted under a relay
     // prefix. An absolute path here would break remote access through a tunnel.
-    var BASE = "./dsh-remote-portal";
+    var BASE = "./yuremote";
   // Must match package.json: it is what busts the browser cache for the layer.
   var CLIENT_VERSION = "0.6.2";
     var POLL_MS = 3000;         // status poll while the settings page is visible
@@ -416,7 +416,7 @@ window.__ModuleLoader__.load({
       var paths = ICON_PATHS[props.name] || [];
       var size = props.size || 16;
       return h("svg", {
-        className: "drp-ico" + (props.className ? " " + props.className : ""),
+        className: "yuremote-ico" + (props.className ? " " + props.className : ""),
         width: size, height: size, viewBox: "0 0 24 24",
         fill: "none", stroke: "currentColor", strokeWidth: 1.7,
         strokeLinecap: "round", strokeLinejoin: "round",
@@ -424,420 +424,425 @@ window.__ModuleLoader__.load({
       }, paths.map(function (d, i) { return h("path", { key: i, d: d }); }));
     }
 
+    function BrandIcon(props) {
+      var size = props.size || 18;
+      return h("img", { className: "yuremote-ico", src: BASE + "/assets/brand/yuremote-transparent.png", width: size, height: size, alt: "" });
+    }
+
     // ── stylesheet ───────────────────────────────────────────────────────────
     // Rendered inside the panel subtree (never appended to <head>), so it
     // unmounts with the section and cannot leak into the host UI. Only tokens:
     // light/dark and third-party skins are all handled by the cascade.
     var CSS = [
-      ".drp-ui,.drp-ui *,.drp-ui *::before,.drp-ui *::after{box-sizing:border-box}",
+      ".yuremote-ui,.yuremote-ui *,.yuremote-ui *::before,.yuremote-ui *::after{box-sizing:border-box}",
       // Token scope shared by the inline section and the overlay sheet, so both
       // follow light/dark and any third-party skin automatically.
-      ".drp-root,.drp-sheet{",
-      "--drp-fg:var(--dsw-alias-label-primary,#0f1115);",
-      "--drp-fg2:var(--dsw-alias-label-secondary,#61666b);",
-      "--drp-fg3:var(--dsw-alias-label-tertiary,#81858c);",
-      "--drp-line:var(--dsw-alias-border-l2,rgba(0,0,0,.10));",
-      "--drp-card:var(--dsw-alias-bg-layer-2,#fff);",
-      "--drp-soft:var(--dsw-alias-bg-layer-1,#fff);",
-      "--drp-link:var(--dsw-alias-link,#4176e6);",
-      "--drp-mono:ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace;",
-      "--drp-ok:var(--dsw-alias-state-success-primary,#22c55e);",
-      "--drp-err:var(--dsw-alias-state-error-primary,#ec1313);",
-      "--drp-btn:var(--dsw-alias-button-primary-fill,#0f1115);",
-      "--drp-btn-fg:var(--dsw-alias-label-primary-inverted,#fff);",
-      "color:var(--drp-fg);font-size:13px;line-height:1.55;font-family:inherit;",
+      ".yuremote-root,.yuremote-sheet{",
+      "--yuremote-fg:var(--dsw-alias-label-primary,#0f1115);",
+      "--yuremote-fg2:var(--dsw-alias-label-secondary,#61666b);",
+      "--yuremote-fg3:var(--dsw-alias-label-tertiary,#81858c);",
+      "--yuremote-line:var(--dsw-alias-border-l2,rgba(0,0,0,.10));",
+      "--yuremote-card:var(--dsw-alias-bg-layer-2,#fff);",
+      "--yuremote-soft:var(--dsw-alias-bg-layer-1,#fff);",
+      "--yuremote-link:var(--dsw-alias-link,#4176e6);",
+      "--yuremote-mono:ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace;",
+      "--yuremote-ok:var(--dsw-alias-state-success-primary,#22c55e);",
+      "--yuremote-err:var(--dsw-alias-state-error-primary,#ec1313);",
+      "--yuremote-btn:var(--dsw-alias-button-primary-fill,#0f1115);",
+      "--yuremote-btn-fg:var(--dsw-alias-label-primary-inverted,#fff);",
+      "color:var(--yuremote-fg);font-size:13px;line-height:1.55;font-family:inherit;",
       "-webkit-text-size-adjust:100%}",
       // The section itself: a plain block in the Settings page.
-      ".drp-root{",
+      ".yuremote-root{",
       "display:flex;flex-direction:column;gap:16px;max-width:1040px;",
       // The host's settings content column is not the viewport, so the two-column
       // split is driven by the panel's own width; the viewport query below stays
       // as the fallback for engines without container queries.
       "container-type:inline-size}",
-      ".drp-root h2,.drp-root h3,.drp-root p{margin:0}",
-      ".drp-sheet h2,.drp-sheet h3,.drp-sheet p{margin:0}",
+      ".yuremote-root h2,.yuremote-root h3,.yuremote-root p{margin:0}",
+      ".yuremote-sheet h2,.yuremote-sheet h3,.yuremote-sheet p{margin:0}",
 
       /* header */
-      ".drp-head{display:flex;flex-direction:column;gap:6px}",
-      ".drp-head-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;min-width:0}",
-      ".drp-title{flex:1 1 auto;min-width:0;font-size:17px;line-height:1.35;font-weight:600;letter-spacing:-.01em;color:var(--drp-fg)}",
-      ".drp-sub{font-size:12.5px;line-height:1.5;color:var(--drp-fg2);max-width:74ch}",
+      ".yuremote-head{display:flex;flex-direction:column;gap:6px}",
+      ".yuremote-head-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;min-width:0}",
+      ".yuremote-title{flex:1 1 auto;min-width:0;font-size:17px;line-height:1.35;font-weight:600;letter-spacing:-.01em;color:var(--yuremote-fg)}",
+      ".yuremote-sub{font-size:12.5px;line-height:1.5;color:var(--yuremote-fg2);max-width:74ch}",
 
       /* status pill */
-      ".drp-pill{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:999px;",
-      "border:1px solid var(--drp-line);font-size:12px;font-weight:500;white-space:nowrap;color:var(--drp-fg2);flex:none}",
-      ".drp-pill-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex:none}",
-      ".drp-pill-running{color:var(--drp-ok)}",
-      ".drp-pill-running .drp-pill-dot{box-shadow:0 0 0 3px rgba(34,197,94,.16)}",
-      ".drp-pill-error{color:var(--drp-err);border-color:rgba(236,19,19,.35)}",
-      ".drp-pill-loading{color:var(--drp-fg3)}",
-      ".drp-pill-loading .drp-pill-dot{animation:drp-pulse 1.4s ease-in-out infinite}",
-      "@keyframes drp-pulse{0%,100%{opacity:.35}50%{opacity:1}}",
+      ".yuremote-pill{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:999px;",
+      "border:1px solid var(--yuremote-line);font-size:12px;font-weight:500;white-space:nowrap;color:var(--yuremote-fg2);flex:none}",
+      ".yuremote-pill-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex:none}",
+      ".yuremote-pill-running{color:var(--yuremote-ok)}",
+      ".yuremote-pill-running .yuremote-pill-dot{box-shadow:0 0 0 3px rgba(34,197,94,.16)}",
+      ".yuremote-pill-error{color:var(--yuremote-err);border-color:rgba(236,19,19,.35)}",
+      ".yuremote-pill-loading{color:var(--yuremote-fg3)}",
+      ".yuremote-pill-loading .yuremote-pill-dot{animation:yuremote-pulse 1.4s ease-in-out infinite}",
+      "@keyframes yuremote-pulse{0%,100%{opacity:.35}50%{opacity:1}}",
 
       /* alerts */
-      ".drp-alerts{display:flex;flex-direction:column;gap:8px}",
+      ".yuremote-alerts{display:flex;flex-direction:column;gap:8px}",
       /* first run: the one required step, made impossible to miss */
-      ".drp-firstrun{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:10px;",
-      "border:1px solid rgba(245,158,11,.38);background:rgba(245,158,11,.10);color:var(--drp-fg2);",
+      ".yuremote-firstrun{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:10px;",
+      "border:1px solid rgba(245,158,11,.38);background:rgba(245,158,11,.10);color:var(--yuremote-fg2);",
       "font-size:12.5px;line-height:1.5;flex-wrap:wrap}",
-      ".drp-firstrun .drp-ico{flex:none;color:var(--dsw-alias-state-warn-primary,#f59e0b)}",
-      ".drp-firstrun-text{flex:1 1 220px;min-width:0}",
-      ".drp-firstrun-title{font-weight:600;color:var(--drp-fg)}",
-      ".drp-firstrun-note{color:var(--drp-fg2);margin-top:1px}",
-      ".drp-firstrun .drp-btn{flex:none}",
-      ".drp-alert{display:flex;align-items:flex-start;gap:8px;padding:9px 12px;border-radius:10px;",
-      "border:1px solid var(--drp-line);background:var(--drp-soft);font-size:12.5px;line-height:1.5;color:var(--drp-fg2)}",
-      ".drp-alert .drp-ico{margin-top:2px;flex:none}",
-      ".drp-alert-err{color:var(--drp-err);border-color:rgba(236,19,19,.35);background:rgba(236,19,19,.07)}",
-      ".drp-alert-ok{color:var(--drp-ok);border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.08)}",
-      ".drp-alert-sub{margin-top:2px;color:var(--drp-fg3);font-size:12px}",
+      ".yuremote-firstrun .yuremote-ico{flex:none;color:var(--dsw-alias-state-warn-primary,#f59e0b)}",
+      ".yuremote-firstrun-text{flex:1 1 220px;min-width:0}",
+      ".yuremote-firstrun-title{font-weight:600;color:var(--yuremote-fg)}",
+      ".yuremote-firstrun-note{color:var(--yuremote-fg2);margin-top:1px}",
+      ".yuremote-firstrun .yuremote-btn{flex:none}",
+      ".yuremote-alert{display:flex;align-items:flex-start;gap:8px;padding:9px 12px;border-radius:10px;",
+      "border:1px solid var(--yuremote-line);background:var(--yuremote-soft);font-size:12.5px;line-height:1.5;color:var(--yuremote-fg2)}",
+      ".yuremote-alert .yuremote-ico{margin-top:2px;flex:none}",
+      ".yuremote-alert-err{color:var(--yuremote-err);border-color:rgba(236,19,19,.35);background:rgba(236,19,19,.07)}",
+      ".yuremote-alert-ok{color:var(--yuremote-ok);border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.08)}",
+      ".yuremote-alert-sub{margin-top:2px;color:var(--yuremote-fg3);font-size:12px}",
 
       /* layout */
-      ".drp-grid{display:grid;grid-template-columns:minmax(0,1fr) 288px;gap:16px;align-items:start}",
-      ".drp-col{display:flex;flex-direction:column;gap:16px;min-width:0}",
-      ".drp-card{background:var(--drp-card);border:1px solid var(--drp-line);border-radius:12px;padding:16px;min-width:0}",
-      ".drp-card-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;flex-wrap:wrap}",
-      ".drp-card-title{font-size:13.5px;font-weight:600;color:var(--drp-fg);line-height:1.4}",
-      ".drp-card-note{font-size:12px;line-height:1.5;color:var(--drp-fg3)}",
-      ".drp-sub{margin-top:16px;padding-top:16px;border-top:1px solid var(--drp-line)}",
-      ".drp-sub .drp-card-head{margin-bottom:8px}",
+      ".yuremote-grid{display:grid;grid-template-columns:minmax(0,1fr) 288px;gap:16px;align-items:start}",
+      ".yuremote-col{display:flex;flex-direction:column;gap:16px;min-width:0}",
+      ".yuremote-card{background:var(--yuremote-card);border:1px solid var(--yuremote-line);border-radius:12px;padding:16px;min-width:0}",
+      ".yuremote-card-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;flex-wrap:wrap}",
+      ".yuremote-card-title{font-size:13.5px;font-weight:600;color:var(--yuremote-fg);line-height:1.4}",
+      ".yuremote-card-note{font-size:12px;line-height:1.5;color:var(--yuremote-fg3)}",
+      ".yuremote-sub{margin-top:16px;padding-top:16px;border-top:1px solid var(--yuremote-line)}",
+      ".yuremote-sub .yuremote-card-head{margin-bottom:8px}",
 
       /* url row */
-      ".drp-url{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap}",
-      ".drp-url-box{flex:1 1 220px;min-width:0;display:flex;align-items:center;height:34px;padding:0 10px;",
-      "border:1px solid var(--drp-line);border-radius:8px;background:transparent;overflow-x:auto;white-space:nowrap;",
-      "font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,\"Liberation Mono\",monospace;font-size:12.5px;color:var(--drp-fg)}",
-      ".drp-url .drp-btn{flex:none}",
-      ".drp-url-empty{font-family:inherit;font-size:12.5px;color:var(--drp-fg3)}",
-      ".drp-hint{margin-top:8px;font-size:12px;line-height:1.5;color:var(--drp-fg3)}",
-      ".drp-hint-warn{color:var(--drp-err)}",
+      ".yuremote-url{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap}",
+      ".yuremote-url-box{flex:1 1 220px;min-width:0;display:flex;align-items:center;height:34px;padding:0 10px;",
+      "border:1px solid var(--yuremote-line);border-radius:8px;background:transparent;overflow-x:auto;white-space:nowrap;",
+      "font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,\"Liberation Mono\",monospace;font-size:12.5px;color:var(--yuremote-fg)}",
+      ".yuremote-url .yuremote-btn{flex:none}",
+      ".yuremote-url-empty{font-family:inherit;font-size:12.5px;color:var(--yuremote-fg3)}",
+      ".yuremote-hint{margin-top:8px;font-size:12px;line-height:1.5;color:var(--yuremote-fg3)}",
+      ".yuremote-hint-warn{color:var(--yuremote-err)}",
 
       /* buttons */
-      ".drp-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:34px;padding:0 14px;",
-      "border-radius:8px;border:1px solid transparent;background:var(--drp-btn);color:var(--drp-btn-fg);",
+      ".yuremote-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:34px;padding:0 14px;",
+      "border-radius:8px;border:1px solid transparent;background:var(--yuremote-btn);color:var(--yuremote-btn-fg);",
       "font-family:inherit;font-size:13px;font-weight:600;line-height:1;white-space:nowrap;cursor:pointer;",
       "transition:opacity .15s ease,background-color .15s ease}",
-      ".drp-btn:hover:not(:disabled){opacity:.86}",
-      ".drp-btn:disabled{opacity:.45;cursor:default}",
-      ".drp-btn:focus-visible{outline:2px solid var(--drp-link);outline-offset:2px}",
-      ".drp-btn-ghost{background:transparent;color:var(--drp-fg);border-color:var(--drp-line)}",
-      ".drp-btn-ghost:hover:not(:disabled){background:rgba(127,127,127,.12);opacity:1}",
-      ".drp-btn-sm{height:28px;padding:0 10px;font-size:12px;font-weight:500}",
+      ".yuremote-btn:hover:not(:disabled){opacity:.86}",
+      ".yuremote-btn:disabled{opacity:.45;cursor:default}",
+      ".yuremote-btn:focus-visible{outline:2px solid var(--yuremote-link);outline-offset:2px}",
+      ".yuremote-btn-ghost{background:transparent;color:var(--yuremote-fg);border-color:var(--yuremote-line)}",
+      ".yuremote-btn-ghost:hover:not(:disabled){background:rgba(127,127,127,.12);opacity:1}",
+      ".yuremote-btn-sm{height:28px;padding:0 10px;font-size:12px;font-weight:500}",
 
       /* switch */
-      ".drp-switch{position:relative;flex:none;width:38px;height:22px;padding:0;border-radius:999px;",
-      "border:1px solid var(--drp-line);background:rgba(127,127,127,.35);cursor:pointer;",
+      ".yuremote-switch{position:relative;flex:none;width:38px;height:22px;padding:0;border-radius:999px;",
+      "border:1px solid var(--yuremote-line);background:rgba(127,127,127,.35);cursor:pointer;",
       "transition:background-color .16s ease,border-color .16s ease}",
-      ".drp-switch.is-on{background:var(--drp-btn);border-color:var(--drp-btn)}",
-      ".drp-switch:disabled{opacity:.5;cursor:default}",
-      ".drp-switch:focus-visible{outline:2px solid var(--drp-link);outline-offset:2px}",
-      ".drp-switch-knob{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;",
+      ".yuremote-switch.is-on{background:var(--yuremote-btn);border-color:var(--yuremote-btn)}",
+      ".yuremote-switch:disabled{opacity:.5;cursor:default}",
+      ".yuremote-switch:focus-visible{outline:2px solid var(--yuremote-link);outline-offset:2px}",
+      ".yuremote-switch-knob{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;",
       "background:var(--dsw-alias-bg-base,#fff);box-shadow:0 1px 2px rgba(0,0,0,.25);",
       "transition:transform .16s ease,background-color .16s ease}",
-      ".drp-switch:not(.is-on) .drp-switch-knob{background:var(--drp-fg3)}",
-      ".drp-switch.is-on .drp-switch-knob{transform:translateX(16px)}",
-      ".drp-toggle-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}",
-      ".drp-toggle-text{min-width:0}",
-      ".drp-toggle-title{font-size:13px;font-weight:500;color:var(--drp-fg)}",
-      ".drp-toggle-note{margin-top:2px;font-size:12px;line-height:1.45;color:var(--drp-fg3)}",
+      ".yuremote-switch:not(.is-on) .yuremote-switch-knob{background:var(--yuremote-fg3)}",
+      ".yuremote-switch.is-on .yuremote-switch-knob{transform:translateX(16px)}",
+      ".yuremote-toggle-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}",
+      ".yuremote-toggle-text{min-width:0}",
+      ".yuremote-toggle-title{font-size:13px;font-weight:500;color:var(--yuremote-fg)}",
+      ".yuremote-toggle-note{margin-top:2px;font-size:12px;line-height:1.45;color:var(--yuremote-fg3)}",
 
       /* form */
-      ".drp-form{display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap}",
-      ".drp-field{display:flex;flex-direction:column;gap:6px;flex:1 1 150px;min-width:0}",
-      ".drp-field-sm{flex:0 0 108px}",
-      ".drp-label{font-size:12px;font-weight:500;color:var(--drp-fg2)}",
+      ".yuremote-form{display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap}",
+      ".yuremote-field{display:flex;flex-direction:column;gap:6px;flex:1 1 150px;min-width:0}",
+      ".yuremote-field-sm{flex:0 0 108px}",
+      ".yuremote-label{font-size:12px;font-weight:500;color:var(--yuremote-fg2)}",
       // A label that owns a whole line (the firewall hint): no fixed column, so a
       // long sentence wraps instead of collapsing to one character per line.
-      ".drp-label-wrap{display:block;width:auto;margin-bottom:2px;line-height:1.5}",
-      ".drp-input{width:100%;min-width:0;height:34px;padding:0 10px;border-radius:8px;",
-      "border:1px solid var(--drp-line);background:transparent;color:var(--drp-fg);",
+      ".yuremote-label-wrap{display:block;width:auto;margin-bottom:2px;line-height:1.5}",
+      ".yuremote-input{width:100%;min-width:0;height:34px;padding:0 10px;border-radius:8px;",
+      "border:1px solid var(--yuremote-line);background:transparent;color:var(--yuremote-fg);",
       "font-family:inherit;font-size:13px;line-height:1}",
-      ".drp-input::placeholder{color:var(--drp-fg3)}",
-      ".drp-input:focus{outline:none;border-color:var(--drp-link);box-shadow:0 0 0 3px rgba(65,118,230,.18)}",
-      ".drp-pw{position:relative;display:flex;flex:1 1 180px;min-width:0}",
-      ".drp-pw .drp-input{padding-right:58px}",
-      ".drp-pw-eye{position:absolute;top:4px;right:4px;height:26px;padding:0 8px;border:0;border-radius:6px;",
-      "background:transparent;color:var(--drp-fg3);font-family:inherit;font-size:11.5px;font-weight:500;cursor:pointer}",
-      ".drp-pw-eye:hover{background:rgba(127,127,127,.14);color:var(--drp-fg)}",
-      ".drp-pw-eye:focus-visible{outline:2px solid var(--drp-link);outline-offset:1px}",
-      ".drp-check{display:inline-flex;align-items:center;gap:7px;margin-top:10px;font-size:12px;",
-      "color:var(--drp-fg2);cursor:pointer}",
-      ".drp-check input{width:14px;height:14px;margin:0;accent-color:var(--drp-btn)}",
+      ".yuremote-input::placeholder{color:var(--yuremote-fg3)}",
+      ".yuremote-input:focus{outline:none;border-color:var(--yuremote-link);box-shadow:0 0 0 3px rgba(65,118,230,.18)}",
+      ".yuremote-pw{position:relative;display:flex;flex:1 1 180px;min-width:0}",
+      ".yuremote-pw .yuremote-input{padding-right:58px}",
+      ".yuremote-pw-eye{position:absolute;top:4px;right:4px;height:26px;padding:0 8px;border:0;border-radius:6px;",
+      "background:transparent;color:var(--yuremote-fg3);font-family:inherit;font-size:11.5px;font-weight:500;cursor:pointer}",
+      ".yuremote-pw-eye:hover{background:rgba(127,127,127,.14);color:var(--yuremote-fg)}",
+      ".yuremote-pw-eye:focus-visible{outline:2px solid var(--yuremote-link);outline-offset:1px}",
+      ".yuremote-check{display:inline-flex;align-items:center;gap:7px;margin-top:10px;font-size:12px;",
+      "color:var(--yuremote-fg2);cursor:pointer}",
+      ".yuremote-check input{width:14px;height:14px;margin:0;accent-color:var(--yuremote-btn)}",
 
       /* chips */
-      ".drp-chip{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:999px;",
-      "border:1px solid var(--drp-line);font-size:11.5px;line-height:1;color:var(--drp-fg2);white-space:nowrap;flex:none}",
-      ".drp-chip-warn{color:var(--drp-err);border-color:rgba(236,19,19,.35)}",
+      ".yuremote-chip{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:999px;",
+      "border:1px solid var(--yuremote-line);font-size:11.5px;line-height:1;color:var(--yuremote-fg2);white-space:nowrap;flex:none}",
+      ".yuremote-chip-warn{color:var(--yuremote-err);border-color:rgba(236,19,19,.35)}",
 
       /* QR */
-      ".drp-qr{display:flex;flex-direction:column;gap:12px}",
-      ".drp-qr-frame{position:relative;display:flex;align-items:center;justify-content:center;",
+      ".yuremote-qr{display:flex;flex-direction:column;gap:12px}",
+      ".yuremote-qr-frame{position:relative;display:flex;align-items:center;justify-content:center;",
       "width:100%;max-width:216px;margin:0 auto}",
-      ".drp-qr-frame:has(.drp-qr-img){background:#fff;border-radius:10px;padding:10px}",
-      ".drp-qr-img{display:block;width:100%;max-width:216px;height:auto;aspect-ratio:1/1}",
-      ".drp-card .drp-qr{flex-direction:row;align-items:flex-start;gap:16px;flex-wrap:wrap}",
-      ".drp-card .drp-qr > .drp-qr-frame,.drp-card .drp-qr > .drp-qr-empty{max-width:150px;margin:0}",
-      ".drp-card .drp-qr-note{flex:1 1 160px;min-width:140px;text-align:left;margin:0}",
-      ".drp-qr-empty{display:flex;align-items:center;justify-content:center;width:100%;max-width:216px;",
-      "aspect-ratio:1/1;padding:16px;border-radius:10px;background:transparent;color:var(--drp-fg3);",
-      "border:1px dashed var(--drp-line);font-size:13px;line-height:1.55;text-align:center}",
-      ".drp-qr-veil{position:absolute;inset:12px;display:flex;align-items:center;justify-content:center;",
+      ".yuremote-qr-frame:has(.yuremote-qr-img){background:#fff;border-radius:10px;padding:10px}",
+      ".yuremote-qr-img{display:block;width:100%;max-width:216px;height:auto;aspect-ratio:1/1}",
+      ".yuremote-card .yuremote-qr{flex-direction:row;align-items:flex-start;gap:16px;flex-wrap:wrap}",
+      ".yuremote-card .yuremote-qr > .yuremote-qr-frame,.yuremote-card .yuremote-qr > .yuremote-qr-empty{max-width:150px;margin:0}",
+      ".yuremote-card .yuremote-qr-note{flex:1 1 160px;min-width:140px;text-align:left;margin:0}",
+      ".yuremote-qr-empty{display:flex;align-items:center;justify-content:center;width:100%;max-width:216px;",
+      "aspect-ratio:1/1;padding:16px;border-radius:10px;background:transparent;color:var(--yuremote-fg3);",
+      "border:1px dashed var(--yuremote-line);font-size:13px;line-height:1.55;text-align:center}",
+      ".yuremote-qr-veil{position:absolute;inset:12px;display:flex;align-items:center;justify-content:center;",
       "border-radius:8px;background:rgba(255,255,255,.9);color:#0f1115;font-size:12.5px;font-weight:500}",
-      ".drp-qr-note{font-size:12px;line-height:1.55;color:var(--drp-fg3);max-width:280px;margin:0 auto}",
-      ".drp-qr-actions{display:flex;gap:8px;flex-wrap:wrap;max-width:280px;margin:0 auto;width:100%}",
-      ".drp-qr-actions .drp-btn{flex:1 1 auto}",
+      ".yuremote-qr-note{font-size:12px;line-height:1.55;color:var(--yuremote-fg3);max-width:280px;margin:0 auto}",
+      ".yuremote-qr-actions{display:flex;gap:8px;flex-wrap:wrap;max-width:280px;margin:0 auto;width:100%}",
+      ".yuremote-qr-actions .yuremote-btn{flex:1 1 auto}",
 
       /* devices */
-      ".drp-devs{display:flex;flex-direction:column}",
-      ".drp-dev{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--drp-line)}",
-      ".drp-dev:first-child{border-top:0;padding-top:0}",
-      ".drp-dev-main{flex:1 1 auto;min-width:0}",
-      ".drp-dev-name{font-size:13px;font-weight:500;color:var(--drp-fg);overflow:hidden;",
+      ".yuremote-devs{display:flex;flex-direction:column}",
+      ".yuremote-dev{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--yuremote-line)}",
+      ".yuremote-dev:first-child{border-top:0;padding-top:0}",
+      ".yuremote-dev-main{flex:1 1 auto;min-width:0}",
+      ".yuremote-dev-name{font-size:13px;font-weight:500;color:var(--yuremote-fg);overflow:hidden;",
       "text-overflow:ellipsis;white-space:nowrap}",
-      ".drp-dev-meta{margin-top:1px;font-size:12px;color:var(--drp-fg3);overflow:hidden;",
+      ".yuremote-dev-meta{margin-top:1px;font-size:12px;color:var(--yuremote-fg3);overflow:hidden;",
       "text-overflow:ellipsis;white-space:nowrap}",
-      ".drp-empty{padding:2px 0;font-size:12.5px;line-height:1.55;color:var(--drp-fg3)}",
+      ".yuremote-empty{padding:2px 0;font-size:12.5px;line-height:1.55;color:var(--yuremote-fg3)}",
 
       /* diagnostics: a compact key/value table that degrades to two lines on a
          narrow container instead of squeezing the value into an ellipsis */
-      ".drp-kv{display:flex;flex-direction:column;gap:6px}",
-      ".drp-kv-row{display:flex;gap:10px;align-items:baseline;font-size:12.5px;line-height:1.5}",
-      ".drp-kv-k{flex:none;width:52px;color:var(--drp-fg3)}",
-      ".drp-kv-v{flex:1 1 auto;min-width:0;color:var(--drp-fg2);font-variant-numeric:tabular-nums;",
+      ".yuremote-kv{display:flex;flex-direction:column;gap:6px}",
+      ".yuremote-kv-row{display:flex;gap:10px;align-items:baseline;font-size:12.5px;line-height:1.5}",
+      ".yuremote-kv-k{flex:none;width:52px;color:var(--yuremote-fg3)}",
+      ".yuremote-kv-v{flex:1 1 auto;min-width:0;color:var(--yuremote-fg2);font-variant-numeric:tabular-nums;",
       "overflow-wrap:anywhere}",
-      ".drp-url-sm{font-family:var(--drp-mono);font-size:11.5px;line-height:1.55;color:var(--drp-fg2);",
-      "background:var(--drp-soft);border:1px solid var(--drp-line);border-radius:8px;padding:8px 10px;",
+      ".yuremote-url-sm{font-family:var(--yuremote-mono);font-size:11.5px;line-height:1.55;color:var(--yuremote-fg2);",
+      "background:var(--yuremote-soft);border:1px solid var(--yuremote-line);border-radius:8px;padding:8px 10px;",
       "overflow-wrap:anywhere;margin-top:4px}",
-      ".drp-row-actions{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}",
-      ".drp-notes{margin:8px 0 0;padding-left:16px;font-size:12px;line-height:1.6;color:var(--drp-fg3)}",
-      ".drp-btn-sm{height:30px;padding:0 10px;font-size:12px;gap:6px}",
+      ".yuremote-row-actions{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}",
+      ".yuremote-notes{margin:8px 0 0;padding-left:16px;font-size:12px;line-height:1.6;color:var(--yuremote-fg3)}",
+      ".yuremote-btn-sm{height:30px;padding:0 10px;font-size:12px;gap:6px}",
       /* public-access card */
-      ".drp-url-mono{font-family:var(--drp-mono);font-size:11.5px}",
-      ".drp-qr-small{padding:6px}",
-      ".drp-qr-small .drp-qr-img{width:150px;height:150px}",
-      ".drp-chip-ok{color:var(--drp-ok);border-color:rgba(34,197,94,.38);background:rgba(34,197,94,.10)}",
-      ".drp-chip-wait{color:var(--dsw-alias-state-warn-primary,#f59e0b);border-color:rgba(245,158,11,.38);background:rgba(245,158,11,.10)}",
-      ".drp-chip-err{color:var(--drp-err);border-color:rgba(236,19,19,.35);background:rgba(236,19,19,.08)}",
-      ".drp-chip-muted{color:var(--drp-fg3)}",
+      ".yuremote-url-mono{font-family:var(--yuremote-mono);font-size:11.5px}",
+      ".yuremote-qr-small{padding:6px}",
+      ".yuremote-qr-small .yuremote-qr-img{width:150px;height:150px}",
+      ".yuremote-chip-ok{color:var(--yuremote-ok);border-color:rgba(34,197,94,.38);background:rgba(34,197,94,.10)}",
+      ".yuremote-chip-wait{color:var(--dsw-alias-state-warn-primary,#f59e0b);border-color:rgba(245,158,11,.38);background:rgba(245,158,11,.10)}",
+      ".yuremote-chip-err{color:var(--yuremote-err);border-color:rgba(236,19,19,.35);background:rgba(236,19,19,.08)}",
+      ".yuremote-chip-muted{color:var(--yuremote-fg3)}",
       /* access log: fixed columns so rows line up like a tiny table */
-      ".drp-log{display:flex;flex-direction:column;gap:2px;margin-top:2px}",
-      ".drp-log-row{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:10px;align-items:baseline;",
-      "font-size:12px;line-height:1.6;padding:3px 0;border-top:1px solid var(--drp-line)}",
-      ".drp-log-row:first-child{border-top:0}",
-      ".drp-log-time{color:var(--drp-fg3);font-variant-numeric:tabular-nums}",
-      ".drp-log-path{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;",
-      "font-family:var(--drp-mono);font-size:11.5px;color:var(--drp-fg2)}",
-      ".drp-log-meta{color:var(--drp-fg3);font-variant-numeric:tabular-nums;white-space:nowrap;font-size:11.5px}",
-      ".drp-log-warn{color:var(--dsw-alias-state-warn-primary,#f59e0b)}",
-      ".drp-log-bad{color:var(--drp-err)}",
+      ".yuremote-log{display:flex;flex-direction:column;gap:2px;margin-top:2px}",
+      ".yuremote-log-row{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:10px;align-items:baseline;",
+      "font-size:12px;line-height:1.6;padding:3px 0;border-top:1px solid var(--yuremote-line)}",
+      ".yuremote-log-row:first-child{border-top:0}",
+      ".yuremote-log-time{color:var(--yuremote-fg3);font-variant-numeric:tabular-nums}",
+      ".yuremote-log-path{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;",
+      "font-family:var(--yuremote-mono);font-size:11.5px;color:var(--yuremote-fg2)}",
+      ".yuremote-log-meta{color:var(--yuremote-fg3);font-variant-numeric:tabular-nums;white-space:nowrap;font-size:11.5px}",
+      ".yuremote-log-warn{color:var(--dsw-alias-state-warn-primary,#f59e0b)}",
+      ".yuremote-log-bad{color:var(--yuremote-err)}",
       
 
       /* sidebar entry */
       /* Sidebar entry: same rhythm as the app's own footer rows (40 px tall,
          14 px label, 20 px icon box) so it does not look pasted in. */
-      ".drp-nav{display:flex;align-items:center;gap:8px;width:calc(100% + 4px);min-height:44px;padding:0 10px 0 6px;margin:0 -2px;",
-      "border:0;border-radius:9px;background:transparent;color:var(--drp-fg);font-family:inherit;",
+      ".yuremote-nav{display:flex;align-items:center;gap:8px;width:calc(100% + 4px);min-height:44px;padding:0 10px 0 6px;margin:0 -2px;",
+      "border:0;border-radius:9px;background:transparent;color:var(--yuremote-fg);font-family:inherit;",
       "font-size:14px;font-weight:500;letter-spacing:.01em;line-height:1.35;text-align:left;cursor:pointer;",
       "transition:background-color .12s ease,color .12s ease}",
-      ".drp-nav:hover{background:rgba(127,127,127,.14)}",
-      "html[data-drp-overlay-up] .drp-nav{background:rgba(127,127,127,.18);color:var(--drp-fg)}",
-      ".drp-nav:focus-visible{outline:2px solid var(--drp-link);outline-offset:1px}",
-      ".drp-nav .drp-ico{flex:none;width:24px;height:24px;color:var(--drp-fg3)}",
-      ".drp-nav:hover .drp-ico{color:var(--drp-fg2)}",
-      ".drp-nav-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
+      ".yuremote-nav:hover{background:rgba(127,127,127,.14)}",
+      "html[data-yuremote-overlay-up] .yuremote-nav{background:rgba(127,127,127,.18);color:var(--yuremote-fg)}",
+      ".yuremote-nav:focus-visible{outline:2px solid var(--yuremote-link);outline-offset:1px}",
+      ".yuremote-nav .yuremote-ico{flex:none;width:24px;height:24px;color:var(--yuremote-fg3)}",
+      ".yuremote-nav:hover .yuremote-ico{color:var(--yuremote-fg2)}",
+      ".yuremote-nav-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
 
       /* overlay sheet (shell.overlay): the host's overlay layer is
          pointer-events:none, so the root re-enables them for our sheet. */
       /* Frame the centre column: the panel occupies the main area, never the
-         sidebar. `--drp-main-*` are set by client.js from the live geometry
+         sidebar. `--yuremote-main-*` are set by client.js from the live geometry
          (see frameOverlay()), with a full-window fallback. */
-      ".drp-overlay{position:fixed;z-index:20;display:flex;align-items:stretch;justify-content:stretch;",
-      "top:var(--drp-main-top,0px);left:var(--drp-main-left,0px);right:var(--drp-main-right,0px);",
-      "bottom:var(--drp-main-bottom,0px);padding:0;pointer-events:auto}",
-      ".drp-scrim{position:absolute;inset:0;background:rgba(0,0,0,.45);animation:drp-fade .16s ease-out}",
-      ".drp-sheet{position:relative;display:flex;flex-direction:column;width:min(720px,100%);",
-      "max-height:calc(100vh - 32px);background:var(--drp-card);border:1px solid var(--drp-line);",
+      ".yuremote-overlay{position:fixed;z-index:20;display:flex;align-items:stretch;justify-content:stretch;",
+      "top:var(--yuremote-main-top,0px);left:var(--yuremote-main-left,0px);right:var(--yuremote-main-right,0px);",
+      "bottom:var(--yuremote-main-bottom,0px);padding:0;pointer-events:auto}",
+      ".yuremote-scrim{position:absolute;inset:0;background:rgba(0,0,0,.45);animation:yuremote-fade .16s ease-out}",
+      ".yuremote-sheet{position:relative;display:flex;flex-direction:column;width:min(720px,100%);",
+      "max-height:calc(100vh - 32px);background:var(--yuremote-card);border:1px solid var(--yuremote-line);",
       "border-radius:14px;box-shadow:0 24px 64px rgba(0,0,0,.32);overflow:hidden;",
-      "pointer-events:auto;animation:drp-slide .18s ease-out}",
-      ".drp-sheet:focus{outline:none}",
-      ".drp-sheet-body{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;",
+      "pointer-events:auto;animation:yuremote-slide .18s ease-out}",
+      ".yuremote-sheet:focus{outline:none}",
+      ".yuremote-sheet-body{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;",
       "padding:20px 20px 24px}",
-      "@keyframes drp-fade{from{opacity:0}to{opacity:1}}",
-      "@keyframes drp-slide{from{opacity:.5;transform:translateX(16px)}to{opacity:1;transform:none}}",
-      ".drp-x{display:inline-flex;align-items:center;justify-content:center;flex:none;width:30px;",
-      "height:30px;padding:0;border:1px solid var(--drp-line);border-radius:8px;background:transparent;",
-      "color:var(--drp-fg2);cursor:pointer}",
-      ".drp-x:hover{background:rgba(127,127,127,.14);color:var(--drp-fg)}",
-      ".drp-x:focus-visible{outline:2px solid var(--drp-link);outline-offset:2px}",
-      ".drp-sheet-x{position:absolute;top:12px;right:12px;z-index:5;width:36px;height:36px;background:transparent;border:0;display:grid;place-items:center;color:var(--drp-fg2);border-radius:9px}",
+      "@keyframes yuremote-fade{from{opacity:0}to{opacity:1}}",
+      "@keyframes yuremote-slide{from{opacity:.5;transform:translateX(16px)}to{opacity:1;transform:none}}",
+      ".yuremote-x{display:inline-flex;align-items:center;justify-content:center;flex:none;width:30px;",
+      "height:30px;padding:0;border:1px solid var(--yuremote-line);border-radius:8px;background:transparent;",
+      "color:var(--yuremote-fg2);cursor:pointer}",
+      ".yuremote-x:hover{background:rgba(127,127,127,.14);color:var(--yuremote-fg)}",
+      ".yuremote-x:focus-visible{outline:2px solid var(--yuremote-link);outline-offset:2px}",
+      ".yuremote-sheet-x{position:absolute;top:12px;right:12px;z-index:5;width:36px;height:36px;background:transparent;border:0;display:grid;place-items:center;color:var(--yuremote-fg2);border-radius:9px}",
       /* main-area page (the panel's home) */
       // ── tabs ────────────────────────────────────────────────────────────────
-  ".drp-tabbar{display:flex;align-items:flex-end;gap:2px;margin:0 0 18px;border-bottom:1px solid var(--drp-line);overflow-x:auto;scrollbar-width:none;overscroll-behavior-x:contain}",
-  ".drp-tabbar::-webkit-scrollbar{display:none}",
-  ".drp-tab{appearance:none;-webkit-appearance:none;background:none;border:0;border-bottom:2px solid transparent;margin:0 0 -1px;padding:9px 14px;font:inherit;font-size:13.5px;line-height:20px;color:var(--drp-fg2);cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:7px;transition:color .15s ease,border-color .15s ease}",
-  ".drp-tab:hover{color:var(--drp-fg)}",
-  ".drp-tab:focus-visible{outline:2px solid var(--drp-accent,#4d6bfe);outline-offset:-2px;border-radius:6px}",
-  ".drp-tab.drp-tab-on{color:var(--drp-accent,#4d6bfe);border-bottom-color:var(--drp-accent,#4d6bfe);font-weight:500}",
-  ".drp-tab-badge{min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--drp-line);color:var(--drp-fg2);font-size:11px;font-weight:500;display:inline-flex;align-items:center;justify-content:center}",
-  ".drp-pane{animation:drp-pane-in .16s ease-out}",
-  "@keyframes drp-pane-in{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}",
-  "@media (prefers-reduced-motion:reduce){.drp-pane{animation:none}}",
-  ".drp-stack{display:flex;flex-direction:column;gap:14px}",
-  ".drp-lan{display:grid;grid-template-columns:minmax(0,1fr) 288px;gap:16px;align-items:start}",
-  "@media (max-width:1080px){.drp-lan{grid-template-columns:minmax(0,1fr);gap:0}}",
-  ".drp-form-row{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap}",
-  ".drp-form-row .drp-field{flex:1 1 180px;min-width:0}",
-  ".drp-form-row .drp-field-sm{flex:0 1 108px}",
-  ".drp-btn-inline{flex:0 0 auto}",
-  ".drp-form-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1.6fr);gap:12px}",
-  ".drp-form .drp-form-grid{flex:1 1 100%;margin-bottom:2px}",
-  ".drp-form .drp-check{flex:1 1 100%}",
-  "@media (max-width:720px){.drp-form-grid{grid-template-columns:minmax(0,1fr)}}",
-  "@media (max-width:560px){.drp-form-row .drp-field,.drp-form-row .drp-field-sm{flex:1 1 100%}.drp-form-row .drp-btn-inline{width:100%}}",
-  ".drp-page{height:100%;overflow-y:auto;overscroll-behavior:contain;padding:0 48px 48px}",
-      ".drp-page .drp-tabbar{margin:0 0 6px;border-bottom:0.5px solid var(--drp-line)}",
-  ".drp-page .drp-tab{padding:14px 0 12px;margin-right:32px;font-size:14px;letter-spacing:0.01em}",
-  ".drp-page .drp-stack{gap:0}",
-  ".drp-page .drp-qr-note{flex:0 0 auto;text-align:left;margin:0}",
-  ".drp-page .drp-qr-actions{max-width:none;margin:0;justify-content:flex-start}",
-  ".drp-page .drp-lan{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 44px;align-items:start}",
-  "@media (max-width:1080px){.drp-page .drp-lan{grid-template-columns:minmax(0,1fr);gap:0}}",
-  "@media (max-width:560px){.drp-page .drp-tabbar{margin:0}.drp-page .drp-tab{padding:12px 8px;margin-right:0;font-size:13.5px;flex:1 0 auto;justify-content:center}}",
-  ".drp-page-inner{width:100%;max-width:960px;margin:0}",
+  ".yuremote-tabbar{display:flex;align-items:flex-end;gap:2px;margin:0 0 18px;border-bottom:1px solid var(--yuremote-line);overflow-x:auto;scrollbar-width:none;overscroll-behavior-x:contain}",
+  ".yuremote-tabbar::-webkit-scrollbar{display:none}",
+  ".yuremote-tab{appearance:none;-webkit-appearance:none;background:none;border:0;border-bottom:2px solid transparent;margin:0 0 -1px;padding:9px 14px;font:inherit;font-size:13.5px;line-height:20px;color:var(--yuremote-fg2);cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:7px;transition:color .15s ease,border-color .15s ease}",
+  ".yuremote-tab:hover{color:var(--yuremote-fg)}",
+  ".yuremote-tab:focus-visible{outline:2px solid var(--yuremote-accent,#4d6bfe);outline-offset:-2px;border-radius:6px}",
+  ".yuremote-tab.yuremote-tab-on{color:var(--yuremote-accent,#4d6bfe);border-bottom-color:var(--yuremote-accent,#4d6bfe);font-weight:500}",
+  ".yuremote-tab-badge{min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--yuremote-line);color:var(--yuremote-fg2);font-size:11px;font-weight:500;display:inline-flex;align-items:center;justify-content:center}",
+  ".yuremote-pane{animation:yuremote-pane-in .16s ease-out}",
+  "@keyframes yuremote-pane-in{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}",
+  "@media (prefers-reduced-motion:reduce){.yuremote-pane{animation:none}}",
+  ".yuremote-stack{display:flex;flex-direction:column;gap:14px}",
+  ".yuremote-lan{display:grid;grid-template-columns:minmax(0,1fr) 288px;gap:16px;align-items:start}",
+  "@media (max-width:1080px){.yuremote-lan{grid-template-columns:minmax(0,1fr);gap:0}}",
+  ".yuremote-form-row{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap}",
+  ".yuremote-form-row .yuremote-field{flex:1 1 180px;min-width:0}",
+  ".yuremote-form-row .yuremote-field-sm{flex:0 1 108px}",
+  ".yuremote-btn-inline{flex:0 0 auto}",
+  ".yuremote-form-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1.6fr);gap:12px}",
+  ".yuremote-form .yuremote-form-grid{flex:1 1 100%;margin-bottom:2px}",
+  ".yuremote-form .yuremote-check{flex:1 1 100%}",
+  "@media (max-width:720px){.yuremote-form-grid{grid-template-columns:minmax(0,1fr)}}",
+  "@media (max-width:560px){.yuremote-form-row .yuremote-field,.yuremote-form-row .yuremote-field-sm{flex:1 1 100%}.yuremote-form-row .yuremote-btn-inline{width:100%}}",
+  ".yuremote-page{height:100%;overflow-y:auto;overscroll-behavior:contain;padding:0 48px 48px}",
+      ".yuremote-page .yuremote-tabbar{margin:0 0 6px;border-bottom:0.5px solid var(--yuremote-line)}",
+  ".yuremote-page .yuremote-tab{padding:14px 0 12px;margin-right:32px;font-size:14px;letter-spacing:0.01em}",
+  ".yuremote-page .yuremote-stack{gap:0}",
+  ".yuremote-page .yuremote-qr-note{flex:0 0 auto;text-align:left;margin:0}",
+  ".yuremote-page .yuremote-qr-actions{max-width:none;margin:0;justify-content:flex-start}",
+  ".yuremote-page .yuremote-lan{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 44px;align-items:start}",
+  "@media (max-width:1080px){.yuremote-page .yuremote-lan{grid-template-columns:minmax(0,1fr);gap:0}}",
+  "@media (max-width:560px){.yuremote-page .yuremote-tabbar{margin:0}.yuremote-page .yuremote-tab{padding:12px 8px;margin-right:0;font-size:13.5px;flex:1 0 auto;justify-content:center}}",
+  ".yuremote-page-inner{width:100%;max-width:960px;margin:0}",
       /* The host page header: 20px/500 title, 16px supporting line. */
-      ".drp-page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:28px 0 20px}",
-      ".drp-page-title{margin:0;font-size:20px;font-weight:500;line-height:28px;letter-spacing:0}",
-      ".drp-page-sub{margin:6px 0 0;font-size:16px;line-height:24px;color:var(--drp-fg2)}",
+      ".yuremote-page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:28px 0 20px}",
+      ".yuremote-page-title{margin:0;font-size:20px;font-weight:500;line-height:28px;letter-spacing:0}",
+      ".yuremote-page-sub{margin:6px 0 0;font-size:16px;line-height:24px;color:var(--yuremote-fg2)}",
       /* Groups, not cards: the host uses a divider and a group label. */
-      ".drp-page .drp-card{background:transparent;border:0;border-top:0.5px solid var(--drp-line);border-radius:0;padding:20px 0}",
-      ".drp-page .drp-card:first-of-type{border-top:0}",
-  ".drp-page .drp-lan > .drp-card{border-top:0}",
-      ".drp-page .drp-card-head{margin:0 0 14px}",
-      ".drp-page .drp-card-title{font-size:15px;font-weight:600;line-height:22px;letter-spacing:0}",
-      ".drp-page .drp-label{font-size:13.5px;color:var(--drp-fg2);font-weight:400}",
-      ".drp-page .drp-hint{font-size:13px;line-height:20px;color:var(--drp-fg3)}",
-      ".drp-page .drp-input{height:36px;font-size:14px;border-radius:7px}",
-      ".drp-page .drp-btn{height:36px;font-size:13.5px;border-radius:7px;padding:0 16px}",
-      ".drp-page .drp-btn-sm{height:28px;font-size:12.5px}",
-      ".drp-page .drp-url-box{height:36px;font-size:13px;border-radius:7px}",
-      ".drp-page .drp-card-head{margin:0 0 12px;align-items:center}",
-      ".drp-page .drp-card{padding:24px 0}",
-  ".drp-page .drp-toggle-row{margin:14px 0 18px}",
-  ".drp-page .drp-card-note{margin:0 0 14px}",
-      ".drp-page .drp-chip{height:22px;font-size:11.5px;padding:0 8px}",
-      ".drp-page .drp-sub{font-size:15px;line-height:23px;color:var(--drp-fg2);max-width:none}",
+      ".yuremote-page .yuremote-card{background:transparent;border:0;border-top:0.5px solid var(--yuremote-line);border-radius:0;padding:20px 0}",
+      ".yuremote-page .yuremote-card:first-of-type{border-top:0}",
+  ".yuremote-page .yuremote-lan > .yuremote-card{border-top:0}",
+      ".yuremote-page .yuremote-card-head{margin:0 0 14px}",
+      ".yuremote-page .yuremote-card-title{font-size:15px;font-weight:600;line-height:22px;letter-spacing:0}",
+      ".yuremote-page .yuremote-label{font-size:13.5px;color:var(--yuremote-fg2);font-weight:400}",
+      ".yuremote-page .yuremote-hint{font-size:13px;line-height:20px;color:var(--yuremote-fg3)}",
+      ".yuremote-page .yuremote-input{height:36px;font-size:14px;border-radius:7px}",
+      ".yuremote-page .yuremote-btn{height:36px;font-size:13.5px;border-radius:7px;padding:0 16px}",
+      ".yuremote-page .yuremote-btn-sm{height:28px;font-size:12.5px}",
+      ".yuremote-page .yuremote-url-box{height:36px;font-size:13px;border-radius:7px}",
+      ".yuremote-page .yuremote-card-head{margin:0 0 12px;align-items:center}",
+      ".yuremote-page .yuremote-card{padding:24px 0}",
+  ".yuremote-page .yuremote-toggle-row{margin:14px 0 18px}",
+  ".yuremote-page .yuremote-card-note{margin:0 0 14px}",
+      ".yuremote-page .yuremote-chip{height:22px;font-size:11.5px;padding:0 8px}",
+      ".yuremote-page .yuremote-sub{font-size:15px;line-height:23px;color:var(--yuremote-fg2);max-width:none}",
       /* Two columns when the page is wide enough, one when it is not — the same
          behaviour the host's own pages have. */
-      ".drp-page .drp-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 44px;align-items:start}",
-      ".drp-span-2{grid-column:1/-1}",
-      "@media (max-width:1080px){.drp-page .drp-grid{grid-template-columns:minmax(0,1fr);gap:0}}",
-      ".drp-page .drp-head{padding:0 0 8px}",
-      ".drp-page .drp-head-top{justify-content:flex-end}",
+      ".yuremote-page .yuremote-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 44px;align-items:start}",
+      ".yuremote-span-2{grid-column:1/-1}",
+      "@media (max-width:1080px){.yuremote-page .yuremote-grid{grid-template-columns:minmax(0,1fr);gap:0}}",
+      ".yuremote-page .yuremote-head{padding:0 0 8px}",
+      ".yuremote-page .yuremote-head-top{justify-content:flex-end}",
       /* Connection row: address left, pairing right, equal height. A flex column
          per card lets the buttons sit on the baseline instead of leaving a gap. */
       /* Two strips, not two columns: the address on its own line, then the pairing
          block laid out horizontally (code, explanation, buttons). Columns of
          unequal height are what produced the empty space this replaces. */
-      ".drp-connect{display:flex;flex-direction:column;border-bottom:0.5px solid var(--drp-line)}",
-      ".drp-connect > .drp-card{border-top:0;padding:14px 0}",
-      ".drp-connect > .drp-card > .drp-card-head{margin:0 0 8px}",
-      ".drp-connect .drp-qr{flex-direction:row;align-items:center;gap:18px;flex-wrap:wrap}",
-      ".drp-connect .drp-qr-frame,.drp-connect .drp-qr-empty{max-width:112px;margin:0;flex:0 0 auto}",
-      ".drp-connect .drp-qr-empty{aspect-ratio:1/1;padding:8px;font-size:11.5px}",
-      ".drp-connect .drp-qr-note{flex:1 1 220px;min-width:160px;text-align:left;margin:0;font-size:12.5px;line-height:1.5}",
-      ".drp-connect .drp-qr-actions{flex:0 0 auto;flex-direction:row;gap:8px;margin:0;max-width:none}",
-      ".drp-connect .drp-qr-actions .drp-btn{height:32px;padding:0 12px;font-size:12.5px;flex:0 0 auto;white-space:nowrap}",
-      "@media (max-width:760px){.drp-connect .drp-qr-note{flex:1 1 100%}}",
-      "@media (max-width:900px){.drp-page{padding:0 20px 32px}.drp-page-head{padding:18px 0 14px}}",
+      ".yuremote-connect{display:flex;flex-direction:column;border-bottom:0.5px solid var(--yuremote-line)}",
+      ".yuremote-connect > .yuremote-card{border-top:0;padding:14px 0}",
+      ".yuremote-connect > .yuremote-card > .yuremote-card-head{margin:0 0 8px}",
+      ".yuremote-connect .yuremote-qr{flex-direction:row;align-items:center;gap:18px;flex-wrap:wrap}",
+      ".yuremote-connect .yuremote-qr-frame,.yuremote-connect .yuremote-qr-empty{max-width:112px;margin:0;flex:0 0 auto}",
+      ".yuremote-connect .yuremote-qr-empty{aspect-ratio:1/1;padding:8px;font-size:11.5px}",
+      ".yuremote-connect .yuremote-qr-note{flex:1 1 220px;min-width:160px;text-align:left;margin:0;font-size:12.5px;line-height:1.5}",
+      ".yuremote-connect .yuremote-qr-actions{flex:0 0 auto;flex-direction:row;gap:8px;margin:0;max-width:none}",
+      ".yuremote-connect .yuremote-qr-actions .yuremote-btn{height:32px;padding:0 12px;font-size:12.5px;flex:0 0 auto;white-space:nowrap}",
+      "@media (max-width:760px){.yuremote-connect .yuremote-qr-note{flex:1 1 100%}}",
+      "@media (max-width:900px){.yuremote-page{padding:0 20px 32px}.yuremote-page-head{padding:18px 0 14px}}",
       /* directory picker */
-      ".drp-picker-body{display:flex;flex-direction:column;min-height:0;overflow:hidden}",
-      ".drp-picker{flex:1 1 auto;min-height:0;width:100%;max-width:880px;margin:0 auto;display:flex;flex-direction:column;gap:10px}",
-      ".drp-sheet-body > .drp-root{width:100%;max-width:1120px;margin:0 auto}",
-      ".drp-picker-head{display:flex;align-items:center;justify-content:space-between;position:relative;min-height:40px;flex:0 0 auto}",
-      ".drp-picker-title{margin:0;font-size:18px;font-weight:600;letter-spacing:-.01em}",
-      ".drp-picker-path{display:flex;align-items:center;gap:8px;min-width:0;flex:0 0 auto}",
-      ".drp-picker-cwd{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;",
-      "font-family:var(--drp-mono);font-size:12px;color:var(--drp-fg2);background:var(--drp-soft);",
+      ".yuremote-picker-body{display:flex;flex-direction:column;min-height:0;overflow:hidden}",
+      ".yuremote-picker{flex:1 1 auto;min-height:0;width:100%;max-width:880px;margin:0 auto;display:flex;flex-direction:column;gap:10px}",
+      ".yuremote-sheet-body > .yuremote-root{width:100%;max-width:1120px;margin:0 auto}",
+      ".yuremote-picker-head{display:flex;align-items:center;justify-content:space-between;position:relative;min-height:40px;flex:0 0 auto}",
+      ".yuremote-picker-title{margin:0;font-size:18px;font-weight:600;letter-spacing:-.01em}",
+      ".yuremote-picker-path{display:flex;align-items:center;gap:8px;min-width:0;flex:0 0 auto}",
+      ".yuremote-picker-cwd{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;",
+      "font-family:var(--yuremote-mono);font-size:12px;color:var(--yuremote-fg2);background:var(--yuremote-soft);",
       "padding:8px 10px;border-radius:8px}",
-      ".drp-picker-roots{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;flex:0 0 auto}",
-      ".drp-chip-root{flex:0 0 auto;font-size:12px}",
-      ".drp-picker-list{flex:1 1 auto;min-height:120px;overflow-y:auto;-webkit-overflow-scrolling:touch;flex-shrink:1;",
-      "border:1px solid var(--drp-line);border-radius:10px;background:var(--drp-card)}",
-      ".drp-picker-row{display:flex;align-items:center;gap:10px;width:100%;min-height:44px;padding:0 12px;",
-      "background:transparent;border:0;border-bottom:1px solid var(--drp-line);color:var(--drp-fg);",
+      ".yuremote-picker-roots{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;flex:0 0 auto}",
+      ".yuremote-chip-root{flex:0 0 auto;font-size:12px}",
+      ".yuremote-picker-list{flex:1 1 auto;min-height:120px;overflow-y:auto;-webkit-overflow-scrolling:touch;flex-shrink:1;",
+      "border:1px solid var(--yuremote-line);border-radius:10px;background:var(--yuremote-card)}",
+      ".yuremote-picker-row{display:flex;align-items:center;gap:10px;width:100%;min-height:44px;padding:0 12px;",
+      "background:transparent;border:0;border-bottom:1px solid var(--yuremote-line);color:var(--yuremote-fg);",
       "font-family:inherit;font-size:14px;text-align:left;cursor:pointer}",
-      ".drp-picker-row:last-child{border-bottom:0}",
-      ".drp-picker-row:hover{background:var(--drp-soft)}",
-      ".drp-picker-row.is-hidden{opacity:.55}",
-      ".drp-picker-name{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
-      ".drp-picker-empty{padding:28px 12px;text-align:center;color:var(--drp-fg3);font-size:13px}",
-      ".drp-picker-error{display:flex;align-items:center;gap:8px;color:var(--drp-err);font-size:12.5px}",
-      ".drp-picker-foot{display:flex;gap:8px;align-items:center;padding-top:2px;flex:0 0 auto}",
-      ".drp-picker-new{display:flex;gap:8px;align-items:center;flex:0 0 auto}",
-      ".drp-picker-new-input{flex:1 1 auto;min-width:0;height:40px;font-size:16px}",
-      ".drp-spacer{flex:1 1 auto}",
+      ".yuremote-picker-row:last-child{border-bottom:0}",
+      ".yuremote-picker-row:hover{background:var(--yuremote-soft)}",
+      ".yuremote-picker-row.is-hidden{opacity:.55}",
+      ".yuremote-picker-name{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}",
+      ".yuremote-picker-empty{padding:28px 12px;text-align:center;color:var(--yuremote-fg3);font-size:13px}",
+      ".yuremote-picker-error{display:flex;align-items:center;gap:8px;color:var(--yuremote-err);font-size:12.5px}",
+      ".yuremote-picker-foot{display:flex;gap:8px;align-items:center;padding-top:2px;flex:0 0 auto}",
+      ".yuremote-picker-new{display:flex;gap:8px;align-items:center;flex:0 0 auto}",
+      ".yuremote-picker-new-input{flex:1 1 auto;min-width:0;height:40px;font-size:16px}",
+      ".yuremote-spacer{flex:1 1 auto}",
       /* Page, not a card: the panel replaces the view (no floating frame, no
          transparent scrim showing the chat behind it). */
-      ".drp-overlay{padding:0}",
-      ".drp-overlay{align-items:stretch;justify-content:flex-start}",
-      ".drp-sheet{position:relative;flex:1 1 auto;width:100%;max-width:none;height:100%;max-height:none;margin:0;border-radius:0;border:0;box-shadow:none;background:var(--dsw-alias-bg-base,var(--drp-card))}",
-      ".drp-sheet-x{top:8px;right:8px}",
-      ".drp-sheet-x:hover{background:var(--drp-soft);color:var(--drp-fg)}",
-      ".drp-sheet-x:focus{outline:none}",
-      ".drp-sheet-x:focus-visible{outline:2px solid var(--drp-link);outline-offset:2px}",
-      ".drp-sheet .drp-head-top{padding-right:44px}",
+      ".yuremote-overlay{padding:0}",
+      ".yuremote-overlay{align-items:stretch;justify-content:flex-start}",
+      ".yuremote-sheet{position:relative;flex:1 1 auto;width:100%;max-width:none;height:100%;max-height:none;margin:0;border-radius:0;border:0;box-shadow:none;background:var(--dsw-alias-bg-base,var(--yuremote-card))}",
+      ".yuremote-sheet-x{top:8px;right:8px}",
+      ".yuremote-sheet-x:hover{background:var(--yuremote-soft);color:var(--yuremote-fg)}",
+      ".yuremote-sheet-x:focus{outline:none}",
+      ".yuremote-sheet-x:focus-visible{outline:2px solid var(--yuremote-link);outline-offset:2px}",
+      ".yuremote-sheet .yuremote-head-top{padding-right:44px}",
 
       /* Single column when the *panel* is narrow (container query), because the
          host's settings content column is not the viewport. display:contents
          dissolves the two wrappers so the active tab's cards can stack. */
       "@container (max-width:640px){",
-      ".drp-grid{display:flex;flex-direction:column;align-items:stretch;gap:12px}",
-      ".drp-col{display:contents}",
+      ".yuremote-grid{display:flex;flex-direction:column;align-items:stretch;gap:12px}",
+      ".yuremote-col{display:contents}",
       "}",
       "@supports not (container-type:inline-size){",
       "@media (max-width:900px){",
-      ".drp-grid{display:flex;flex-direction:column;align-items:stretch;gap:12px}",
-      ".drp-col{display:contents}",
+      ".yuremote-grid{display:flex;flex-direction:column;align-items:stretch;gap:12px}",
+      ".yuremote-col{display:contents}",
       "}}",
       "@media (max-width:900px){",
       /* The panel is a page at every width: a settings surface, not a card
          floating over the conversation. */
-      ".drp-overlay{padding:0}",
-      ".drp-sheet{width:100%;max-height:100vh;max-height:100dvh;border-radius:0;border:0}",
-      ".drp-sheet-body{padding:16px 14px calc(24px + env(safe-area-inset-bottom))}",
-      ".drp-sheet-x{top:10px;right:10px;width:40px;height:40px}",
-      ".drp-picker-head .drp-sheet-x{position:static;flex:none}",
-      ".drp-sheet .drp-head-top{padding-right:48px}",
+      ".yuremote-overlay{padding:0}",
+      ".yuremote-sheet{width:100%;max-height:100vh;max-height:100dvh;border-radius:0;border:0}",
+      ".yuremote-sheet-body{padding:16px 14px calc(24px + env(safe-area-inset-bottom))}",
+      ".yuremote-sheet-x{top:10px;right:10px;width:40px;height:40px}",
+      ".yuremote-picker-head .yuremote-sheet-x{position:static;flex:none}",
+      ".yuremote-sheet .yuremote-head-top{padding-right:48px}",
       "}",
       "@media (max-width:640px){",
-      ".drp-root{gap:12px}",
-      ".drp-grid,.drp-col{gap:12px}",
-      ".drp-card{padding:12px;border-radius:10px}",
-      ".drp-head{gap:8px}",
-      ".drp-title{font-size:16px}",
-      ".drp-sub{font-size:12.5px}",
-      ".drp-pill{height:24px;padding:0 9px}",
-      ".drp-form{gap:10px}",
-      ".drp-field{flex:1 1 100%}",
-      ".drp-field-sm{flex:0 0 96px}",
-      ".drp-input{height:40px;font-size:16px}",
-      ".drp-btn{height:40px}",
-      ".drp-btn-sm{height:32px;font-size:12px}",
-      ".drp-url-box{height:40px;font-size:13px}",
-      ".drp-pw-eye{height:32px;top:4px}",
-      ".drp-switch{width:46px;height:26px}",
-      ".drp-switch-knob{width:20px;height:20px}",
-      ".drp-switch.is-on .drp-switch-knob{transform:translateX(20px)}",
-      ".drp-qr-img{max-width:240px}",
-      ".drp-overlay{padding:0}",
-      ".drp-sheet{width:100%;max-height:100vh;max-height:100dvh;border-radius:0;border:0}",
-      ".drp-sheet-body{padding:16px 14px calc(24px + env(safe-area-inset-bottom))}",
-      ".drp-sheet-x{top:10px;right:10px;width:40px;height:40px}",
-      ".drp-sheet .drp-head-top{padding-right:48px}",
+      ".yuremote-root{gap:12px}",
+      ".yuremote-grid,.yuremote-col{gap:12px}",
+      ".yuremote-card{padding:12px;border-radius:10px}",
+      ".yuremote-head{gap:8px}",
+      ".yuremote-title{font-size:16px}",
+      ".yuremote-sub{font-size:12.5px}",
+      ".yuremote-pill{height:24px;padding:0 9px}",
+      ".yuremote-form{gap:10px}",
+      ".yuremote-field{flex:1 1 100%}",
+      ".yuremote-field-sm{flex:0 0 96px}",
+      ".yuremote-input{height:40px;font-size:16px}",
+      ".yuremote-btn{height:40px}",
+      ".yuremote-btn-sm{height:32px;font-size:12px}",
+      ".yuremote-url-box{height:40px;font-size:13px}",
+      ".yuremote-pw-eye{height:32px;top:4px}",
+      ".yuremote-switch{width:46px;height:26px}",
+      ".yuremote-switch-knob{width:20px;height:20px}",
+      ".yuremote-switch.is-on .yuremote-switch-knob{transform:translateX(20px)}",
+      ".yuremote-qr-img{max-width:240px}",
+      ".yuremote-overlay{padding:0}",
+      ".yuremote-sheet{width:100%;max-height:100vh;max-height:100dvh;border-radius:0;border:0}",
+      ".yuremote-sheet-body{padding:16px 14px calc(24px + env(safe-area-inset-bottom))}",
+      ".yuremote-sheet-x{top:10px;right:10px;width:40px;height:40px}",
+      ".yuremote-sheet .yuremote-head-top{padding-right:48px}",
       "}",
       "@media (prefers-reduced-motion:reduce){",
-      ".drp-btn,.drp-switch,.drp-switch-knob,.drp-pill-dot{transition:none;animation:none}",
-      ".drp-scrim,.drp-sheet{animation:none}",
+      ".yuremote-btn,.yuremote-switch,.yuremote-switch-knob,.yuremote-pill-dot{transition:none;animation:none}",
+      ".yuremote-scrim,.yuremote-sheet{animation:none}",
       "}"
     ].join("");
 
@@ -1081,12 +1086,12 @@ window.__ModuleLoader__.load({
     }
 
     /**
-     * Publish the centre column's box as `--drp-main-*`, so the overlay can sit
+     * Publish the centre column's box as `--yuremote-main-*`, so the overlay can sit
      * exactly where a main-area page would. Re-measured on resize and whenever
      * the panel opens; a hidden column falls back to the full window.
      */
     /**
-     * Publish the centre column's box as `--drp-main-*`, so the overlay sits
+     * Publish the centre column's box as `--yuremote-main-*`, so the overlay sits
      * exactly where a main-area page would (插件 / 自动化任务), leaving the sidebar
      * reachable. Re-measured on open and on resize; a missing column or a narrow
      * window falls back to the whole viewport.
@@ -1103,16 +1108,16 @@ window.__ModuleLoader__.load({
         var box = col ? col.getBoundingClientRect() : null;
         var wide = window.innerWidth > 900;
         if (!box || !wide || box.width < 240) {
-          root.style.removeProperty("--drp-main-top");
-          root.style.removeProperty("--drp-main-left");
-          root.style.removeProperty("--drp-main-right");
-          root.style.removeProperty("--drp-main-bottom");
+          root.style.removeProperty("--yuremote-main-top");
+          root.style.removeProperty("--yuremote-main-left");
+          root.style.removeProperty("--yuremote-main-right");
+          root.style.removeProperty("--yuremote-main-bottom");
           return;
         }
-        root.style.setProperty("--drp-main-top", Math.round(box.top) + "px");
-        root.style.setProperty("--drp-main-left", Math.round(box.left) + "px");
-        root.style.setProperty("--drp-main-right", Math.round(window.innerWidth - box.right) + "px");
-        root.style.setProperty("--drp-main-bottom", Math.round(window.innerHeight - box.bottom) + "px");
+        root.style.setProperty("--yuremote-main-top", Math.round(box.top) + "px");
+        root.style.setProperty("--yuremote-main-left", Math.round(box.left) + "px");
+        root.style.setProperty("--yuremote-main-right", Math.round(window.innerWidth - box.right) + "px");
+        root.style.setProperty("--yuremote-main-bottom", Math.round(window.innerHeight - box.bottom) + "px");
       } catch (e) { /* layout is a nicety: never break the panel over it */ }
     };
 
@@ -1205,12 +1210,12 @@ window.__ModuleLoader__.load({
       };
       var tone = props.tone || "loading";
       return h("span", {
-        className: "drp-pill drp-pill-" + tone,
+        className: "yuremote-pill yuremote-pill-" + tone,
         role: "status",
         title: t("statusLabel"),
         "aria-label": t("statusLabel") + ": " + labels[tone]
       },
-        h("span", { className: "drp-pill-dot", "aria-hidden": "true" }),
+        h("span", { className: "yuremote-pill-dot", "aria-hidden": "true" }),
         h("span", null, labels[tone]));
     }
 
@@ -1220,10 +1225,10 @@ window.__ModuleLoader__.load({
         role: "switch",
         "aria-checked": props.checked ? "true" : "false",
         "aria-label": props.label,
-        className: "drp-switch" + (props.checked ? " is-on" : ""),
+        className: "yuremote-switch" + (props.checked ? " is-on" : ""),
         disabled: !!props.disabled,
         onClick: props.onClick
-      }, h("span", { className: "drp-switch-knob", "aria-hidden": "true" }));
+      }, h("span", { className: "yuremote-switch-knob", "aria-hidden": "true" }));
     }
 
     function Countdown(props) {
@@ -1236,7 +1241,7 @@ window.__ModuleLoader__.load({
         return function () { try { clearInterval(id); } catch (e) { /* ignore */ } };
       }, []);
       var left = Math.max(0, Math.ceil((props.expiresAt - Date.now()) / 1000));
-      return h("span", { className: "drp-chip" + (left === 0 ? " drp-chip-warn" : "") },
+      return h("span", { className: "yuremote-chip" + (left === 0 ? " yuremote-chip-warn" : "") },
         left === 0 ? t("qrExpired") : t("qrLeft", { t: mmss(left) }));
     }
 
@@ -1626,34 +1631,34 @@ window.__ModuleLoader__.load({
 
       var alerts = [];
       if (st.selfOff) {
-        alerts.push(h("div", { className: "drp-alert drp-alert-err", role: "alert", key: "selfOff" },
+        alerts.push(h("div", { className: "yuremote-alert yuremote-alert-err", role: "alert", key: "selfOff" },
           h(Icon, { name: "alert", size: 14 }),
           h("div", null, t("offHere"))));
       } else if (st.pollErr && !status) {
-        alerts.push(h("div", { className: "drp-alert drp-alert-err", role: "alert", key: "poll" },
+        alerts.push(h("div", { className: "yuremote-alert yuremote-alert-err", role: "alert", key: "poll" },
           h(Icon, { name: "alert", size: 14 }),
           h("div", null,
             h("div", null, t("statusFail")),
-            h("div", { className: "drp-alert-sub" }, t("statusFailHint") + " (" + st.pollErr + ")"))));
+            h("div", { className: "yuremote-alert-sub" }, t("statusFailHint") + " (" + st.pollErr + ")"))));
       } else {
         if (st.pollErr) {
-          alerts.push(h("div", { className: "drp-alert drp-alert-err", role: "alert", key: "stale" },
+          alerts.push(h("div", { className: "yuremote-alert yuremote-alert-err", role: "alert", key: "stale" },
             h(Icon, { name: "alert", size: 14 }),
             h("div", null,
               h("div", null, t("statusStale")),
-              h("div", { className: "drp-alert-sub" }, t("statusStaleHint") + " (" + st.pollErr + ")"))));
+              h("div", { className: "yuremote-alert-sub" }, t("statusStaleHint") + " (" + st.pollErr + ")"))));
         }
         if (status && status.lastError && !blockedByPassword) {
-          alerts.push(h("div", { className: "drp-alert drp-alert-err", role: "alert", key: "lastError" },
+          alerts.push(h("div", { className: "yuremote-alert yuremote-alert-err", role: "alert", key: "lastError" },
             h(Icon, { name: "alert", size: 14 }),
             h("div", null,
               h("div", null, t("statusErrorTitle")),
-              h("div", { className: "drp-alert-sub" }, friendlyGateway(status.lastError)))));
+              h("div", { className: "yuremote-alert-sub" }, friendlyGateway(status.lastError)))));
         }
       }
       if (notice) {
         alerts.push(h("div", {
-          className: "drp-alert " + (notice.kind === "err" ? "drp-alert-err" : "drp-alert-ok"),
+          className: "yuremote-alert " + (notice.kind === "err" ? "yuremote-alert-err" : "yuremote-alert-ok"),
           role: "alert",
           key: "notice"
         },
@@ -1662,22 +1667,22 @@ window.__ModuleLoader__.load({
       }
 
       // ── cards ─────────────────────────────────────────────────────────────
-      var addrCard = h("section", { className: "drp-card", "data-drp": "address", key: "addr" },
-        h("div", { className: "drp-card-head" },
-          h("h3", { className: "drp-card-title" }, t("cardAddr")),
-          url ? h("span", { className: "drp-chip" }, t("chipLan")) : null),
-        h("div", { className: "drp-url" },
-          h("div", { className: "drp-url-box", title: url || undefined },
-            url ? h("span", null, url) : h("span", { className: "drp-url-empty" }, t("noUrl"))),
+      var addrCard = h("section", { className: "yuremote-card", "data-yuremote": "address", key: "addr" },
+        h("div", { className: "yuremote-card-head" },
+          h("h3", { className: "yuremote-card-title" }, t("cardAddr")),
+          url ? h("span", { className: "yuremote-chip" }, t("chipLan")) : null),
+        h("div", { className: "yuremote-url" },
+          h("div", { className: "yuremote-url-box", title: url || undefined },
+            url ? h("span", null, url) : h("span", { className: "yuremote-url-empty" }, t("noUrl"))),
           h("button", {
             type: "button",
-            className: "drp-btn drp-btn-ghost",
+            className: "yuremote-btn yuremote-btn-ghost",
             disabled: !url,
             onClick: onCopy
           },
             h(Icon, { name: st.copied ? "check" : "copy", size: 14 }),
             h("span", null, st.copied ? t("copied") : t("copy")))),
-        loop ? h("p", { className: "drp-hint drp-hint-warn" }, t("loopHint")) : null);
+        loop ? h("p", { className: "yuremote-hint yuremote-hint-warn" }, t("loopHint")) : null);
 
       // A pairing code is only meaningful while the gateway is listening: a phone
       // that scans one before that gets a dead address. Gating the card on
@@ -1686,32 +1691,32 @@ window.__ModuleLoader__.load({
       var canPair = !!(status && status.running);
       var pairUrl = pair && typeof pair.url === "string" ? pair.url : "";
 
-      var qrCard = h("section", { className: "drp-card drp-qr", "data-drp": "qr", key: "qr" },
-        h("div", { className: "drp-card-head" },
-          h("h3", { className: "drp-card-title" }, t("cardQr")),
+      var qrCard = h("section", { className: "yuremote-card yuremote-qr", "data-yuremote": "qr", key: "qr" },
+        h("div", { className: "yuremote-card-head" },
+          h("h3", { className: "yuremote-card-title" }, t("cardQr")),
           canPair && pair && pair.expiresAt ? h(Countdown, { expiresAt: pair.expiresAt }) : null),
-        h("div", { className: "drp-qr-frame" },
+        h("div", { className: "yuremote-qr-frame" },
           !canPair
-            ? h("div", { className: "drp-qr-empty" },
+            ? h("div", { className: "yuremote-qr-empty" },
                 status && status.lastError && !blockedByPassword ? friendlyGateway(status.lastError) : t("qrNotRunning"))
             : qrSrc && !st.qrBroken
               ? h("img", {
-                  className: "drp-qr-img",
+                  className: "yuremote-qr-img",
                   src: qrSrc,
                   alt: t("qrAlt"),
                   width: 216,
                   height: 216,
                   onError: function () { patch({ qrBroken: true }); }
                 })
-              : h("div", { className: "drp-qr-empty" }, t("qrEmpty")),
-          canPair && expired ? h("div", { className: "drp-qr-veil" }, t("qrExpired")) : null),
+              : h("div", { className: "yuremote-qr-empty" }, t("qrEmpty")),
+          canPair && expired ? h("div", { className: "yuremote-qr-veil" }, t("qrExpired")) : null),
         canPair
-          ? h("p", { className: "drp-qr-note" }, pair ? t("qrNotePair") : t("qrNotePlain"))
+          ? h("p", { className: "yuremote-qr-note" }, pair ? t("qrNotePair") : t("qrNotePlain"))
           : null,
-        h("div", { className: "drp-qr-actions" },
+        h("div", { className: "yuremote-qr-actions" },
           h("button", {
             type: "button",
-            className: "drp-btn drp-btn-ghost",
+            className: "yuremote-btn yuremote-btn-ghost",
             disabled: busy === "pair" || !canPair,
             onClick: onRefreshQr
           },
@@ -1721,7 +1726,7 @@ window.__ModuleLoader__.load({
           // camera is not in the loop.
           h("button", {
             type: "button",
-            className: "drp-btn drp-btn-ghost",
+            className: "yuremote-btn yuremote-btn-ghost",
             disabled: !canPair || !pairUrl,
             onClick: function () {
               if (!pairUrl) return;
@@ -1736,24 +1741,24 @@ window.__ModuleLoader__.load({
             h("span", null, t("copyPairLink")))));
 
       // ── basic tab, part 1: the switch and where the portal listens ────────
-      var serviceCard = h("section", { className: "drp-card", "data-drp": "access", key: "service" },
-        h("div", { className: "drp-card-head" },
-          h("h3", { className: "drp-card-title" }, t("cardService"))),
-        h("div", { className: "drp-toggle-row" },
-          h("div", { className: "drp-toggle-text" },
-            h("div", { className: "drp-toggle-title" }, t("swEnable")),
-            h("div", { className: "drp-toggle-note" }, t("swEnableNote"))),
+      var serviceCard = h("section", { className: "yuremote-card", "data-yuremote": "access", key: "service" },
+        h("div", { className: "yuremote-card-head" },
+          h("h3", { className: "yuremote-card-title" }, t("cardService"))),
+        h("div", { className: "yuremote-toggle-row" },
+          h("div", { className: "yuremote-toggle-text" },
+            h("div", { className: "yuremote-toggle-title" }, t("swEnable")),
+            h("div", { className: "yuremote-toggle-note" }, t("swEnableNote"))),
           h(Toggle, {
             checked: !st.selfOff && !!(status && status.enabled),
             disabled: !!busy || !!st.selfOff,
             label: t("swEnable"),
             onClick: onToggleEnabled
           })),
-        h("div", { className: "drp-form drp-form-row" },
-          h("label", { className: "drp-field" },
-            h("span", { className: "drp-label" }, t("host")),
+        h("div", { className: "yuremote-form yuremote-form-row" },
+          h("label", { className: "yuremote-field" },
+            h("span", { className: "yuremote-label" }, t("host")),
             h("input", {
-              className: "drp-input",
+              className: "yuremote-input",
               type: "text",
               value: st.host,
               spellCheck: false,
@@ -1762,10 +1767,10 @@ window.__ModuleLoader__.load({
               "aria-label": t("host"),
               onChange: function (e) { patch({ host: e.target.value, dirty: true }); }
             })),
-          h("label", { className: "drp-field drp-field-sm" },
-            h("span", { className: "drp-label" }, t("port")),
+          h("label", { className: "yuremote-field yuremote-field-sm" },
+            h("span", { className: "yuremote-label" }, t("port")),
             h("input", {
-              className: "drp-input",
+              className: "yuremote-input",
               type: "text",
               value: st.port,
               inputMode: "numeric",
@@ -1778,30 +1783,30 @@ window.__ModuleLoader__.load({
             })),
           h("button", {
             type: "button",
-            className: "drp-btn drp-btn-inline",
+            className: "yuremote-btn yuremote-btn-inline",
             disabled: !!busy || !st.dirty,
             onClick: onSaveConfig
           }, busy === "cfg" ? t("saving") : t("save"))),
-        h("p", { className: "drp-hint" }, t("cfgNote")));
+        h("p", { className: "yuremote-hint" }, t("cfgNote")));
 
       // ── basic tab, part 2: the one credential that guards the portal ───────
-      var passwordCard = h("section", { className: "drp-card", "data-drp": "password", key: "password" },
-        h("div", { className: "drp-card-head" },
-          h("h3", { className: "drp-card-title" }, t("pwTitle")),
-          h("span", { className: "drp-chip" + (passwordSet ? "" : " drp-chip-warn") },
+      var passwordCard = h("section", { className: "yuremote-card", "data-yuremote": "password", key: "password" },
+        h("div", { className: "yuremote-card-head" },
+          h("h3", { className: "yuremote-card-title" }, t("pwTitle")),
+          h("span", { className: "yuremote-chip" + (passwordSet ? "" : " yuremote-chip-warn") },
             passwordSet ? t("pwStateSet") : t("pwStateUnset"))),
-        h("p", { className: "drp-card-note" }, t("pwNote", { n: MIN_PW })),
-        passwordSet ? null : h("p", { className: "drp-hint drp-hint-warn" }, t("pwWarn")),
-        h("div", { className: "drp-form drp-form-row" },
-          h("div", { className: "drp-pw" },
+        h("p", { className: "yuremote-card-note" }, t("pwNote", { n: MIN_PW })),
+        passwordSet ? null : h("p", { className: "yuremote-hint yuremote-hint-warn" }, t("pwWarn")),
+        h("div", { className: "yuremote-form yuremote-form-row" },
+          h("div", { className: "yuremote-pw" },
             h("input", {
-              className: "drp-input",
-              id: "drp-pw-input",
+              className: "yuremote-input",
+              id: "yuremote-pw-input",
               type: st.showPwd ? "text" : "password",
               value: st.pwd,
               placeholder: t("pwPlaceholder"),
               autoComplete: "off",
-              name: "drp-portal-password",
+              name: "yuremote-portal-password",
               "data-1p-ignore": "true",
               "data-lpignore": "true",
               "data-bwignore": "true",
@@ -1811,42 +1816,42 @@ window.__ModuleLoader__.load({
             }),
             h("button", {
               type: "button",
-              className: "drp-pw-eye",
+              className: "yuremote-pw-eye",
               "aria-pressed": st.showPwd ? "true" : "false",
               "aria-label": st.showPwd ? t("pwHide") : t("pwShow"),
               onClick: function () { patch({ showPwd: !st.showPwd }); }
             }, st.showPwd ? t("pwHide") : t("pwShow"))),
           h("button", {
             type: "button",
-            className: "drp-btn drp-btn-inline",
+            className: "yuremote-btn yuremote-btn-inline",
             disabled: !!busy || String(st.pwd).length < MIN_PW,
             onClick: onSavePassword
           }, busy === "pw" ? t("pwSaving") : t("pwSave"))),
         st.pwd && String(st.pwd).length < MIN_PW
-          ? h("p", { className: "drp-hint drp-hint-warn" }, t("pwShort", { n: MIN_PW }))
+          ? h("p", { className: "yuremote-hint yuremote-hint-warn" }, t("pwShort", { n: MIN_PW }))
           : null);
 
       var deviceRows = devices.map(function (d, i) {
         var id = deviceId(d) || ("idx-" + i);
         var revoking = busy === "rev:" + id;
-        return h("div", { className: "drp-dev", key: id },
-          h("div", { className: "drp-dev-main" },
-            h("div", { className: "drp-dev-name", title: deviceLabel(d) }, deviceLabel(d)),
-            h("div", { className: "drp-dev-meta" }, deviceIp(d) + " · " + deviceSeen(d))),
+        return h("div", { className: "yuremote-dev", key: id },
+          h("div", { className: "yuremote-dev-main" },
+            h("div", { className: "yuremote-dev-name", title: deviceLabel(d) }, deviceLabel(d)),
+            h("div", { className: "yuremote-dev-meta" }, deviceIp(d) + " · " + deviceSeen(d))),
           h("button", {
             type: "button",
-            className: "drp-btn drp-btn-ghost drp-btn-sm",
+            className: "yuremote-btn yuremote-btn-ghost yuremote-btn-sm",
             disabled: !!busy,
             onClick: function () { onRevoke(deviceId(d)); }
           }, revoking ? t("revoking") : t("revoke")));
       });
 
-      var devicesCard = h("section", { className: "drp-card", "data-drp": "devices", key: "devices" },
-        h("div", { className: "drp-card-head" },
-          h("h3", { className: "drp-card-title" }, t("cardDev"))),
+      var devicesCard = h("section", { className: "yuremote-card", "data-yuremote": "devices", key: "devices" },
+        h("div", { className: "yuremote-card-head" },
+          h("h3", { className: "yuremote-card-title" }, t("cardDev"))),
         devices.length === 0
-          ? h("p", { className: "drp-empty" }, t("devEmpty"))
-          : h("div", { className: "drp-devs" }, deviceRows));
+          ? h("p", { className: "yuremote-empty" }, t("devEmpty"))
+          : h("div", { className: "yuremote-devs" }, deviceRows));
 
       // ── public access through a relay ─────────────────────────────────────
       // `status.public` is the host's view: configured?, connected?, and the URL
@@ -1866,16 +1871,16 @@ window.__ModuleLoader__.load({
         ? BASE + "/qr.svg?text=" + encodeURIComponent(pub.url) + "&size=180" + (st.nonce ? "&v=" + st.nonce : "")
         : "";
 
-      var publicCard = h("section", { className: "drp-card", "data-drp": "public", key: "public" },
-        h("div", { className: "drp-card-head" },
-          h("h3", { className: "drp-card-title" }, t("cardPublic")),
-          h("span", { className: "drp-chip drp-chip-" + pubTone }, pubLabel)),
+      var publicCard = h("section", { className: "yuremote-card", "data-yuremote": "public", key: "public" },
+        h("div", { className: "yuremote-card-head" },
+          h("h3", { className: "yuremote-card-title" }, t("cardPublic")),
+          h("span", { className: "yuremote-chip yuremote-chip-" + pubTone }, pubLabel)),
         pubOnline
-          ? h("div", { className: "drp-url" },
-              h("div", { className: "drp-url-box drp-url-mono", title: pub.url }, pub.url),
+          ? h("div", { className: "yuremote-url" },
+              h("div", { className: "yuremote-url-box yuremote-url-mono", title: pub.url }, pub.url),
               h("button", {
                 type: "button",
-                className: "drp-btn drp-btn-ghost",
+                className: "yuremote-btn yuremote-btn-ghost",
                 onClick: function () {
                   copyText(pub.url, function (ok) { flash(ok ? "ok" : "err", ok ? t("copied") : t("copyFail")); });
                 }
@@ -1884,9 +1889,9 @@ window.__ModuleLoader__.load({
                 h("span", null, t("copy"))))
           : null,
         pubOnline && pubQr
-          ? h("div", { className: "drp-qr-frame drp-qr-small" },
+          ? h("div", { className: "yuremote-qr-frame yuremote-qr-small" },
               h("img", {
-                className: "drp-qr-img",
+                className: "yuremote-qr-img",
                 src: pubQr,
                 alt: t("qrAlt"),
                 width: 180,
@@ -1895,15 +1900,15 @@ window.__ModuleLoader__.load({
               }))
           : null,
         pub.lastError
-          ? h("p", { className: "drp-hint drp-hint-warn" }, friendlyGateway(pub.lastError))
+          ? h("p", { className: "yuremote-hint yuremote-hint-warn" }, friendlyGateway(pub.lastError))
           : null,
-        h("div", { className: "drp-sub" },
-          h("div", { className: "drp-form" },
-            h("div", { className: "drp-form-grid" },
-            h("label", { className: "drp-field" },
-              h("span", { className: "drp-label" }, t("tunnelUrlLabel")),
+        h("div", { className: "yuremote-sub" },
+          h("div", { className: "yuremote-form" },
+            h("div", { className: "yuremote-form-grid" },
+            h("label", { className: "yuremote-field" },
+              h("span", { className: "yuremote-label" }, t("tunnelUrlLabel")),
               h("input", {
-                className: "drp-input",
+                className: "yuremote-input",
                 type: "text",
                 value: st.tunnelUrl,
                 spellCheck: false,
@@ -1913,10 +1918,10 @@ window.__ModuleLoader__.load({
                 "aria-label": t("tunnelUrlLabel"),
                 onChange: function (e) { patch({ tunnelUrl: e.target.value }); }
               })),
-            h("label", { className: "drp-field" },
-              h("span", { className: "drp-label" }, t("tunnelTokenLabel")),
+            h("label", { className: "yuremote-field" },
+              h("span", { className: "yuremote-label" }, t("tunnelTokenLabel")),
               h("input", {
-                className: "drp-input",
+                className: "yuremote-input",
                 type: "password",
                 value: st.tunnelToken,
                 autoComplete: "off",
@@ -1924,24 +1929,24 @@ window.__ModuleLoader__.load({
                 "aria-label": t("tunnelTokenLabel"),
                 onChange: function (e) { patch({ tunnelToken: e.target.value }); }
               }))),
-            h("label", { className: "drp-check" },
+            h("label", { className: "yuremote-check" },
               h("input", {
                 type: "checkbox",
                 checked: !!st.tunnelInsecure,
                 onChange: function (e) { patch({ tunnelInsecure: !!e.target.checked }); }
               }),
               h("span", null, t("tunnelInsecure"))),
-            h("div", { className: "drp-row-actions" },
+            h("div", { className: "yuremote-row-actions" },
               h("button", {
                 type: "button",
-                className: "drp-btn",
+                className: "yuremote-btn",
                 disabled: !!st.tunnelBusy,
                 onClick: onSaveTunnel
               }, st.tunnelBusy === "save" ? t("saving") : t("tunnelSave")),
               pub.configured
                 ? h("button", {
                     type: "button",
-                    className: "drp-btn drp-btn-ghost",
+                    className: "yuremote-btn yuremote-btn-ghost",
                     disabled: !!st.tunnelBusy,
                     onClick: onDisconnectTunnel
                   }, st.tunnelBusy === "clear" ? t("saving") : t("tunnelDisconnect"))
@@ -1990,17 +1995,17 @@ window.__ModuleLoader__.load({
         { id: "devices", label: t("tabDevices") }
       ];
       var activeTab = st.tab || "basic";
-      var tabBar = h("div", { className: "drp-tabbar", role: "tablist", "aria-label": t("section") },
+      var tabBar = h("div", { className: "yuremote-tabbar", role: "tablist", "aria-label": t("section") },
         tabItems.map(function (item) {
           var on = item.id === activeTab;
           return h("button", {
             key: item.id,
             type: "button",
             role: "tab",
-            id: "drp-tab-" + item.id,
-            className: "drp-tab" + (on ? " drp-tab-on" : ""),
+            id: "yuremote-tab-" + item.id,
+            className: "yuremote-tab" + (on ? " yuremote-tab-on" : ""),
             "aria-selected": on ? "true" : "false",
-            "aria-controls": "drp-pane-" + item.id,
+            "aria-controls": "yuremote-pane-" + item.id,
             onClick: function (e) {
               patch({ tab: item.id });
               // With large text the bar scrolls sideways; keep the chosen tab in view.
@@ -2013,57 +2018,57 @@ window.__ModuleLoader__.load({
 
       var pane =
         activeTab === "lan"
-          ? h("div", { className: "drp-lan" }, addrCard, qrCard)
+          ? h("div", { className: "yuremote-lan" }, addrCard, qrCard)
           : activeTab === "public"
             ? publicCard
             : activeTab === "devices"
               ? devicesCard
-              : h("div", { className: "drp-stack" }, serviceCard, passwordCard);
+              : h("div", { className: "yuremote-stack" }, serviceCard, passwordCard);
 
       // ── frame ─────────────────────────────────────────────────────────────
       return h("div", {
-        className: "drp-ui drp-root",
-        "data-drp": "panel",
-        "data-drp-sheet": inSheet ? "1" : undefined,
-        "data-plugin": "dsh-remote-portal"
+        className: "yuremote-ui yuremote-root",
+        "data-yuremote": "panel",
+        "data-yuremote-sheet": inSheet ? "1" : undefined,
+        "data-plugin": "yuremote"
       },
         // No <style> child here: the stylesheet is mounted once into <head> by
         // apply() (mountBaseCss). Rendering it only inside the panel root left
         // the sidebar entry unstyled whenever the panel was closed — the entry
         // lives outside this subtree, so it saw no rules at all until a panel
         // happened to mount (which is exactly what shipped in the first build).
-        h("div", { className: "drp-head" },
+        h("div", { className: "yuremote-head" },
           // Title and status share a row (status right-aligned); the subtitle
           // owns the full width underneath, so a long sentence never pushes the
           // pill onto a line of its own on a phone.
-          h("div", { className: "drp-head-top" },
+          h("div", { className: "yuremote-head-top" },
             // In page mode the page header owns the title; the section keeps the pill.
             isPage ? null : h("h2", {
-              className: "drp-title",
+              className: "yuremote-title",
               // Only the sheet instance claims the dialog's label id, so the
               // inline section can never collide with it.
-              id: inSheet ? "drp-sheet-title" : undefined
+              id: inSheet ? "yuremote-sheet-title" : undefined
             }, t("section"))),
-          isPage ? null : h("p", { className: "drp-sub" }, t("subtitle"))),
+          isPage ? null : h("p", { className: "yuremote-sub" }, t("subtitle"))),
 
-        alerts.length ? h("div", { className: "drp-alerts" }, alerts) : null,
+        alerts.length ? h("div", { className: "yuremote-alerts" }, alerts) : null,
 
         // First-run path: with no password the gateway deliberately refuses to
         // listen, which looks like "it is broken" unless the one required step is
         // the most visible thing on the panel. One button takes the user straight
         // to the field instead of leaving them to hunt for it.
         !passwordSet && status
-          ? h("div", { className: "drp-firstrun", "data-drp": "firstrun" },
+          ? h("div", { className: "yuremote-firstrun", "data-yuremote": "firstrun" },
               h(Icon, { name: "alert", size: 15 }),
-              h("div", { className: "drp-firstrun-text" },
-                h("div", { className: "drp-firstrun-title" }, t("firstRunTitle")),
-                h("div", { className: "drp-firstrun-note" }, t("firstRunNote"))),
+              h("div", { className: "yuremote-firstrun-text" },
+                h("div", { className: "yuremote-firstrun-title" }, t("firstRunTitle")),
+                h("div", { className: "yuremote-firstrun-note" }, t("firstRunNote"))),
               h("button", {
                 type: "button",
-                className: "drp-btn",
+                className: "yuremote-btn",
                 onClick: function () {
                   try {
-                    var el = document.getElementById("drp-pw-input");
+                    var el = document.getElementById("yuremote-pw-input");
                     if (!el) return;
                     el.scrollIntoView({ block: "center", behavior: "smooth" });
                     el.focus({ preventScroll: true });
@@ -2073,7 +2078,7 @@ window.__ModuleLoader__.load({
           : null,
 
         tabBar,
-        h("div", { className: "drp-pane", role: "tabpanel", id: "drp-pane-" + activeTab, "aria-labelledby": "drp-tab-" + activeTab },
+        h("div", { className: "yuremote-pane", role: "tabpanel", id: "yuremote-pane-" + activeTab, "aria-labelledby": "yuremote-tab-" + activeTab },
           pane));
     }
 
@@ -2163,75 +2168,75 @@ window.__ModuleLoader__.load({
       var roots = (listing && listing.roots) || [];
       var entries = (listing && listing.entries) || [];
 
-      return h("div", { className: "drp-overlay", "data-drp-overlay": "1" },
-        h("div", { className: "drp-ui drp-sheet", "data-drp": "picker", role: "dialog", "aria-modal": "true", "aria-label": t("pickTitle") },
-          h("div", { className: "drp-sheet-body drp-picker-body" },
-          h("div", { className: "drp-picker" },
-            h("header", { className: "drp-picker-head" },
-              h("h2", { className: "drp-picker-title" }, t("pickTitle")),
+      return h("div", { className: "yuremote-overlay", "data-yuremote-overlay": "1" },
+        h("div", { className: "yuremote-ui yuremote-sheet", "data-yuremote": "picker", role: "dialog", "aria-modal": "true", "aria-label": t("pickTitle") },
+          h("div", { className: "yuremote-sheet-body yuremote-picker-body" },
+          h("div", { className: "yuremote-picker" },
+            h("header", { className: "yuremote-picker-head" },
+              h("h2", { className: "yuremote-picker-title" }, t("pickTitle")),
               h("button", {
-                type: "button", className: "drp-sheet-x", "aria-label": t("close"),
+                type: "button", className: "yuremote-sheet-x", "aria-label": t("close"),
                 onClick: function () { finishPicker(null); }
               }, h(Icon, { name: "close", size: 16 }))),
 
-            h("div", { className: "drp-picker-path" },
+            h("div", { className: "yuremote-picker-path" },
               h("button", {
                 type: "button",
-                className: "drp-btn drp-btn-ghost drp-btn-sm",
+                className: "yuremote-btn yuremote-btn-ghost yuremote-btn-sm",
                 disabled: !listing || !listing.parent,
                 onClick: function () { if (listing && listing.parent) load(listing.parent); }
               }, h(Icon, { name: "up", size: 14 }), h("span", null, t("pickUp"))),
-              h("code", { className: "drp-picker-cwd", title: path }, path || "…")),
+              h("code", { className: "yuremote-picker-cwd", title: path }, path || "…")),
 
             roots.length > 0
-              ? h("div", { className: "drp-picker-roots" }, roots.map(function (root) {
+              ? h("div", { className: "yuremote-picker-roots" }, roots.map(function (root) {
                   return h("button", {
                     key: root.path,
                     type: "button",
-                    className: "drp-chip drp-chip-root" + (root.path === path ? " is-on" : ""),
+                    className: "yuremote-chip yuremote-chip-root" + (root.path === path ? " is-on" : ""),
                     onClick: function () { load(root.path); }
                   }, root.name);
                 }))
               : null,
 
             view.error
-              ? h("div", { className: "drp-picker-error" },
+              ? h("div", { className: "yuremote-picker-error" },
                   h(Icon, { name: "alert", size: 14 }),
                   h("span", null, view.error),
-                  h("button", { type: "button", className: "drp-btn drp-btn-sm", onClick: function () { load(path); } },
+                  h("button", { type: "button", className: "yuremote-btn yuremote-btn-sm", onClick: function () { load(path); } },
                     t("retry")))
               : null,
 
-            h("div", { className: "drp-picker-list", role: "listbox", "aria-label": t("pickTitle") },
+            h("div", { className: "yuremote-picker-list", role: "listbox", "aria-label": t("pickTitle") },
               view.loading && entries.length === 0
-                ? h("div", { className: "drp-picker-empty" }, t("pickLoading"))
+                ? h("div", { className: "yuremote-picker-empty" }, t("pickLoading"))
                 : entries.length === 0 && !view.error
-                  ? h("div", { className: "drp-picker-empty" }, t("pickEmpty"))
+                  ? h("div", { className: "yuremote-picker-empty" }, t("pickEmpty"))
                   : entries.map(function (entry) {
                       return h("button", {
                         key: entry.path,
                         type: "button",
                         role: "option",
                         "aria-selected": false,
-                        className: "drp-picker-row" + (entry.hidden ? " is-hidden" : ""),
+                        className: "yuremote-picker-row" + (entry.hidden ? " is-hidden" : ""),
                         title: entry.path,
                         onClick: function () { load(entry.path); }
                       },
                         h(Icon, { name: "folder", size: 16 }),
-                        h("span", { className: "drp-picker-name" }, entry.name),
+                        h("span", { className: "yuremote-picker-name" }, entry.name),
                         h(Icon, { name: "chevron", size: 14 }));
                     })),
 
             creating
               ? h("form", {
-                  className: "drp-picker-new",
+                  className: "yuremote-picker-new",
                   onSubmit: function (e) {
                     try { e.preventDefault(); } catch (e2) { /* ignore */ }
                     create(draft);
                   }
                 },
                   h("input", {
-                    className: "drp-input drp-picker-new-input",
+                    className: "yuremote-input yuremote-picker-new-input",
                     type: "text",
                     value: draft,
                     autoFocus: true,
@@ -2242,23 +2247,23 @@ window.__ModuleLoader__.load({
                       if (e && (e.key === "Escape" || e.key === "Esc")) { setCreating(false); setDraft(""); }
                     }
                   }),
-                  h("button", { type: "submit", className: "drp-btn drp-btn-primary", disabled: draft.trim() === "" }, t("pickCreate")),
-                  h("button", { type: "button", className: "drp-btn drp-btn-ghost", onClick: function () { setCreating(false); setDraft(""); } }, t("cancel")))
+                  h("button", { type: "submit", className: "yuremote-btn yuremote-btn-primary", disabled: draft.trim() === "" }, t("pickCreate")),
+                  h("button", { type: "button", className: "yuremote-btn yuremote-btn-ghost", onClick: function () { setCreating(false); setDraft(""); } }, t("cancel")))
               : null,
 
-            h("footer", { className: "drp-picker-foot" },
+            h("footer", { className: "yuremote-picker-foot" },
               h("button", {
                 type: "button",
-                className: "drp-btn drp-btn-ghost",
+                className: "yuremote-btn yuremote-btn-ghost",
                 disabled: !listing || creating,
                 onClick: function () { setCreating(true); setDraft(""); }
               }, h(Icon, { name: "plus", size: 14 }), h("span", null, t("pickNew"))),
-              h("span", { className: "drp-spacer" }),
-              h("button", { type: "button", className: "drp-btn drp-btn-ghost", onClick: function () { finishPicker(null); } },
+              h("span", { className: "yuremote-spacer" }),
+              h("button", { type: "button", className: "yuremote-btn yuremote-btn-ghost", onClick: function () { finishPicker(null); } },
                 t("cancel")),
               h("button", {
                 type: "button",
-                className: "drp-btn drp-btn-primary",
+                className: "yuremote-btn yuremote-btn-primary",
                 disabled: !path || view.loading,
                 onClick: function () { finishPicker(path); }
               }, t("pickUse")))))));
@@ -2276,14 +2281,14 @@ window.__ModuleLoader__.load({
       useEffect(function () {
         try {
           frameOverlay();
-          if (open) document.documentElement.setAttribute("data-drp-overlay-up", "");
-          else document.documentElement.removeAttribute("data-drp-overlay-up");
+          if (open) document.documentElement.setAttribute("data-yuremote-overlay-up", "");
+          else document.documentElement.removeAttribute("data-yuremote-overlay-up");
           window.addEventListener("resize", frameOverlay);
         } catch (e) { /* ignore */ }
         return function () {
           try {
             window.removeEventListener("resize", frameOverlay);
-            document.documentElement.removeAttribute("data-drp-overlay-up");
+            document.documentElement.removeAttribute("data-yuremote-overlay-up");
           } catch (e2) { /* ignore */ }
         };
       }, [open]);
@@ -2334,34 +2339,34 @@ window.__ModuleLoader__.load({
         };
       }, []);
 
-      return h("div", { className: "drp-overlay", "data-drp-overlay": "1" },
+      return h("div", { className: "yuremote-overlay", "data-yuremote-overlay": "1" },
         h("div", {
-          className: "drp-scrim",
+          className: "yuremote-scrim",
           "aria-hidden": "true",
           onClick: function () { setOverlayOpen(false); }
         }),
         h("div", {
-          className: "drp-ui drp-sheet",
+          className: "yuremote-ui yuremote-sheet",
           role: "dialog",
           "aria-modal": "true",
-          "aria-labelledby": "drp-sheet-title",
+          "aria-labelledby": "yuremote-sheet-title",
           tabIndex: -1,
           ref: sheetRef,
-          "data-drp": "panel",
-          "data-drp-sheet": "1"
+          "data-yuremote": "panel",
+          "data-yuremote-sheet": "1"
         },
           // Outside the scroll container on purpose: on a 390 px phone the sheet
           // is full-screen, so a close button that scrolls with the content would
           // be unreachable at the bottom of a long panel.
           h("button", {
             type: "button",
-            className: "drp-x drp-sheet-x",
+            className: "yuremote-x yuremote-sheet-x",
             ref: closeRef,
             title: t("close"),
             "aria-label": t("close"),
             onClick: function () { setOverlayOpen(false); }
           }, h(Icon, { name: "close", size: 15 })),
-          h("div", { className: "drp-sheet-body" },
+          h("div", { className: "yuremote-sheet-body" },
             h(RemotePortalSection, { sheet: true }))));
     }
 
@@ -2379,9 +2384,9 @@ window.__ModuleLoader__.load({
       var wide = !(props && props.wide === false);
       return h("button", {
         type: "button",
-        className: "drp-nav",
-        "data-drp-nav": "1",
-        "data-plugin": "dsh-remote-portal",
+        className: "yuremote-nav",
+        "data-yuremote-nav": "1",
+        "data-plugin": "yuremote",
         title: t("navTitle"),
         "aria-label": t("navLabel"),
         "aria-haspopup": "dialog",
@@ -2390,8 +2395,8 @@ window.__ModuleLoader__.load({
           setOverlayOpen(true);
         }
       },
-        h(Icon, { name: "portal", size: 16 }),
-        wide ? h("span", { className: "drp-nav-label" }, t("navLabel")) : null);
+        h(BrandIcon, { size: 16 }),
+        wide ? h("span", { className: "yuremote-nav-label" }, t("navLabel")) : null);
     }
 
     // The app asks for a directory through this global when it exists (see
@@ -2407,7 +2412,7 @@ window.__ModuleLoader__.load({
     // ── asset injection ──────────────────────────────────────────────────────
     // The mobile layer (assets/mobile.css + mobile.js) belongs to the whole app,
     // not to this panel, so it has to be fetched from the host route and mounted
-    // once. Both tags are idempotent by data-drp, both failures are silent (404
+    // once. Both tags are idempotent by data-yuremote, both failures are silent (404
     // when the package is installed without assets/), and both are removed by the
     // ctx.effect disposer when the plugin unloads.
     var assetsStarted = false;
@@ -2420,17 +2425,17 @@ window.__ModuleLoader__.load({
 
       function mountCss() {
         try {
-          if (document.querySelector('[data-drp="mobile-css"], [data-drp="mobile-css-host"]')) return;
+          if (document.querySelector('[data-yuremote="mobile-css"], [data-yuremote="mobile-css-host"]')) return;
         } catch (e) { /* ignore */ }
         fetch(BASE + "/assets/mobile.css?v=" + CLIENT_VERSION, { credentials: "same-origin" }).then(function (res) {
           if (!res.ok) return null;
           return res.text();
         }).then(function (css) {
           if (!css || !css.length) return;
-          if (document.querySelector('[data-drp="mobile-css"]')) return;
+          if (document.querySelector('[data-yuremote="mobile-css"]')) return;
           var style = document.createElement("style");
-          style.setAttribute("data-plugin", "dsh-remote-portal");
-          style.setAttribute("data-drp", "mobile-css");
+          style.setAttribute("data-plugin", "yuremote");
+          style.setAttribute("data-yuremote", "mobile-css");
           style.textContent = css;
           (document.head || document.documentElement).appendChild(style);
           tags.push(style);
@@ -2439,20 +2444,20 @@ window.__ModuleLoader__.load({
 
       function mountJs() {
         try {
-          if (document.querySelector('[data-drp="mobile-js"], [data-drp="mobile-js-host"]')) return;
+          if (document.querySelector('[data-yuremote="mobile-js"], [data-yuremote="mobile-js-host"]')) return;
         } catch (e) { /* ignore */ }
         fetch(BASE + "/assets/mobile.js?v=" + CLIENT_VERSION, { credentials: "same-origin" }).then(function (res) {
           if (!res.ok) return null;
           return res.text();
         }).then(function (js) {
           if (!js || !js.length) return;
-          if (document.querySelector('[data-drp="mobile-js"]')) return;
+          if (document.querySelector('[data-yuremote="mobile-js"]')) return;
           var script = document.createElement("script");
-          script.setAttribute("data-plugin", "dsh-remote-portal");
-          script.setAttribute("data-drp", "mobile-js");
+          script.setAttribute("data-plugin", "yuremote");
+          script.setAttribute("data-yuremote", "mobile-js");
           // Kept for debugging: the code is inlined so a single guarded fetch is
           // enough (the host has no CSP that would block an inline script).
-          script.setAttribute("data-drp-src", BASE + "/assets/mobile.js");
+          script.setAttribute("data-yuremote-src", BASE + "/assets/mobile.js");
           script.textContent = js;
           (document.head || document.documentElement).appendChild(script);
           tags.push(script);
@@ -2491,10 +2496,10 @@ window.__ModuleLoader__.load({
     function mountBaseCss(ctx) {
       var mount = function () {
         try {
-          if (document.querySelector('[data-drp="base-css"]')) return;
+          if (document.querySelector('[data-yuremote="base-css"]')) return;
           var el = document.createElement("style");
-          el.setAttribute("data-plugin", "dsh-remote-portal");
-          el.setAttribute("data-drp", "base-css");
+          el.setAttribute("data-plugin", "yuremote");
+          el.setAttribute("data-yuremote", "base-css");
           el.textContent = CSS;
           (document.head || document.documentElement).appendChild(el);
         } catch (e) { /* no document: nothing to style */ }
@@ -2505,7 +2510,7 @@ window.__ModuleLoader__.load({
           ctx.effect(function () {
             return function () {
               try {
-                var el = document.querySelector('[data-drp="base-css"]');
+                var el = document.querySelector('[data-yuremote="base-css"]');
                 if (el && el.parentNode) el.parentNode.removeChild(el);
               } catch (e) { /* ignore */ }
             };
@@ -2524,7 +2529,7 @@ window.__ModuleLoader__.load({
       //    same id in `sidebar.panellist` (the button) and `main` (the page) is
       //    what makes it a page switch rather than an overlay — the sidebar keeps
       //    working and selecting a session or another panel closes it by itself.
-      var PANEL_ID = "dsh-remote-portal";
+      var PANEL_ID = "yuremote";
       try {
         if (ctx && ctx.slots && typeof ctx.slots.inject === "function") {
           // The sidebar entry (the button) …
@@ -2535,17 +2540,17 @@ window.__ModuleLoader__.load({
               order: 90,
               label: function () { return t("navLabel"); }
             }, function PanelIcon(props) {
-              return h(Icon, { name: "portal", size: (props && props.size) || 18 });
+              return h(BrandIcon, { size: (props && props.size) || 18 });
             });
           });
 
           // … and the page it switches to.
           ctx.slots.inject("main", function () {
             return ctx.slots.register({ name: "main", key: PANEL_ID }, function PanelPage() {
-              return h("div", { className: "drp-ui drp-page" },
-                h("div", { className: "drp-page-inner" },
-                  h("header", { className: "drp-page-head" },
-                    h("h1", { className: "drp-page-title" }, t("navLabel"))),
+              return h("div", { className: "yuremote-ui yuremote-page" },
+                h("div", { className: "yuremote-page-inner" },
+                  h("header", { className: "yuremote-page-head" },
+                    h("h1", { className: "yuremote-page-title" }, t("navLabel"))),
                   h(RemotePortalSection, { page: true })));
             });
           });
@@ -2556,7 +2561,7 @@ window.__ModuleLoader__.load({
           // "Add workspace" silently does nothing.
           ctx.slots.inject("shell.overlay", function () {
             return ctx.slots.register(
-              { name: "shell.overlay", id: "dsh-remote-portal-picker", order: 95 },
+              { name: "shell.overlay", id: "yuremote-picker", order: 95 },
               PortalOverlayRouter,
             );
           });
@@ -2590,7 +2595,6 @@ window.__ModuleLoader__.load({
     return { inject: ["slots"], apply: apply };
   }
 });
-
 
 
 

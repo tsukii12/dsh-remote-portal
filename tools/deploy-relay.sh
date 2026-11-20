@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 #
-# dsh-remote-portal — deploy the public relay.
+# yuremote — deploy the public relay.
 #
 # Run it with no arguments: it detects the environment, asks a few questions
 # (every answer has a default, so Enter works throughout) and finishes the setup.
-# It prints the two values to paste into dsh, and installs a `drp` command for
+# It prints the two values to paste into dsh, and installs a `yuremote` command for
 # day-to-day management.
 #
 #   sudo ./deploy-relay.sh              interactive (English)
 #   sudo ./deploy-relay.sh --lang zh    interactive, Chinese
 #   sudo ./deploy-relay.sh --yes        accept every default (unattended)
-#   sudo ./deploy-relay.sh --uninstall  remove the relay and the `drp` command
+#   sudo ./deploy-relay.sh --uninstall  remove the relay and the `yuremote` command
 #
 # Everything else is asked interactively (HTTP or HTTPS, domain or IP, ports).
 # Only two switches exist: --yes (take the defaults) and --uninstall.
@@ -21,11 +21,16 @@ if [ ! -x "$0" ] && [ -f "$0" ]; then chmod +x "$0" 2>/dev/null || true; fi
 
 SELF_VERSION="0.6.2"
 
-RELAY_DIR=/opt/dsh-relay
-STATE_DIR=/var/lib/dsh-relay
-UNIT=/etc/systemd/system/dsh-relay.service
-SERVICE=dsh-relay
-BIN=/usr/local/bin/drp
+RELAY_DIR=/opt/yuremote-relay
+STATE_DIR=/var/lib/yuremote-relay
+UNIT=/etc/systemd/system/yuremote-relay.service
+SERVICE=yuremote-relay
+BIN=/usr/local/bin/yuremote
+LEGACY_RELAY_DIR=/opt/dsh-relay
+LEGACY_STATE_DIR=/var/lib/dsh-relay
+LEGACY_SERVICE=dsh-relay
+LEGACY_UNIT=/etc/systemd/system/$LEGACY_SERVICE.service
+LEGACY_BACKUP=$LEGACY_UNIT.bak-yuremote
 PORTAL_DIR="$(cd "$(dirname "$0")" 2>/dev/null && pwd || echo .)"
 
 HOST=""; AGENT_PORT=9443; HTTP_PORT=8080; PUBLIC_PORT=80
@@ -235,26 +240,26 @@ if [ -f "$UNIT" ]; then
   OWN_PORTS=$(grep -oE '\-\-(agent|http|tls)-port [^ ]+' "$UNIT" 2>/dev/null | awk '{print $2}' | sed 's/.*://' | tr '\n' ' ' || true)
 fi
 
-install_drp() {
-  cat > "$BIN" <<'DRP_EOF'
+install_yuremote() {
+  cat > "$BIN" <<'YUREMOTE_EOF'
 #!/bin/sh
-# drp — manage the dsh-remote-portal relay.
-#   drp                     status (default)
-#   drp url                 public URL to open
-#   drp token               tunnel token (the value to paste into dsh)
-#   drp tokens              every tunnel on this relay, with its state
-#   drp urls                every public URL
-#   drp token add           mint a token for another dsh and restart
-#   drp token remove <id>   drop a tunnel (id or number from `drp tokens`)
-#   drp start|stop|restart
-#   drp log [-f]
-#   drp config              show the saved answers
-#   drp config K=V [K=V…]   change them and reinstall the unit
-#   drp uninstall           remove the service, /opt/dsh-relay and this command
-#   drp help
-CONF=/var/lib/dsh-relay/deploy.conf
-TOKEN_FILE=/var/lib/dsh-relay/token
-SERVICE=dsh-relay
+# yuremote — manage the yuremote relay.
+#   yuremote                     status (default)
+#   yuremote url                 public URL to open
+#   yuremote token               tunnel token (the value to paste into dsh)
+#   yuremote tokens              every tunnel on this relay, with its state
+#   yuremote urls                every public URL
+#   yuremote token add           mint a token for another dsh and restart
+#   yuremote token remove <id>   drop a tunnel (id or number from `yuremote tokens`)
+#   yuremote start|stop|restart
+#   yuremote log [-f]
+#   yuremote config              show the saved answers
+#   yuremote config K=V [K=V…]   change them and reinstall the unit
+#   yuremote uninstall           remove the service, /opt/yuremote-relay and this command
+#   yuremote help
+CONF=/var/lib/yuremote-relay/deploy.conf
+TOKEN_FILE=/var/lib/yuremote-relay/token
+SERVICE=yuremote-relay
 set -u
 
 # Colour only when someone is looking at a terminal.
@@ -402,7 +407,7 @@ case "${1:-status}" in
         printf 'public      %s %s\n' "$(cyan "$i)")" "$(cyan "$(url_base)/__t/$(id_of "$tk")/")"
       done < "$urls"
       rm -f "$urls"
-      printf '            %s\n' "$(grey "drp tokens for ids, drp token add for another machine")"
+      printf '            %s\n' "$(grey "yuremote tokens for ids, yuremote token add for another machine")"
     else
       printf 'public      %s\n' "$(cyan "$(url_base)/__t/$(tunnel_id)/")"
     fi
@@ -428,7 +433,7 @@ case "${1:-status}" in
       printf '%-16s %-11s %s\n' "$i) $id" "$(online_of "$id")" "$(mask "$tk")"
     done < "$list"
     rm -f "$list"
-    printf '\n%s\n' "$(grey "drp urls · drp token add · drp token remove <id|number>")"
+    printf '\n%s\n' "$(grey "yuremote urls · yuremote token add · yuremote token remove <id|number>")"
     ;;
 
   urls)
@@ -451,7 +456,7 @@ case "${1:-status}" in
         ;;
       rm|remove)
         remove=${3:-}
-        if [ -z "$remove" ]; then printf 'usage: drp token remove <id|number>   (see drp tokens)\n' >&2; exit 2; fi
+        if [ -z "$remove" ]; then printf 'usage: yuremote token remove <id|number>   (see yuremote tokens)\n' >&2; exit 2; fi
         list=$(mktemp); kept=$(mktemp)
         tokens_all > "$list"; : > "$kept"
         n=0; found=0
@@ -462,7 +467,7 @@ case "${1:-status}" in
           printf '%s\n' "$tk" >> "$kept"
         done < "$list"
         if [ "$found" = 0 ]; then
-          printf 'no such tunnel: %s (see drp tokens)\n' "$remove" >&2
+          printf 'no such tunnel: %s (see yuremote tokens)\n' "$remove" >&2
           rm -f "$list" "$kept"; exit 2
         fi
         cat "$kept" > "$TOKEN_FILE"
@@ -522,19 +527,19 @@ case "${1:-status}" in
     fi
     # No installer on disk (older release): do the same steps by hand.
     systemctl disable --now "$SERVICE" >/dev/null 2>&1 || true
-    rm -f /etc/systemd/system/dsh-relay.service
+    rm -f /etc/systemd/system/yuremote-relay.service
     systemctl daemon-reload >/dev/null 2>&1 || true
-    rm -rf /opt/dsh-relay /usr/local/bin/drp
-    printf 'removed the service, /opt/dsh-relay and drp\n'
-    printf 'kept /var/lib/dsh-relay (token and certificates), remove it yourself if you want a clean slate\n'
+    rm -rf /opt/yuremote-relay /usr/local/bin/yuremote
+    printf 'removed the service, /opt/yuremote-relay and yuremote\n'
+    printf 'kept /var/lib/yuremote-relay (token and certificates), remove it yourself if you want a clean slate\n'
     ;;
 
   help|--help|-h) sed -n '2,12p' "$0" | sed 's/^# \{0,1\}//' ;;
-  *) echo "unknown command: $1 (try: drp help)" >&2; exit 1 ;;
+  *) echo "unknown command: $1 (try: yuremote help)" >&2; exit 1 ;;
 esac
-DRP_EOF
+YUREMOTE_EOF
   chmod 755 "$BIN"
-  ok "$(t "installed the management command: drp" "已安装管理命令：drp")"
+  ok "$(t "installed the management command: yuremote" "已安装管理命令：yuremote")"
 }
 
 # ── uninstall ───────────────────────────────────────────────────────────────
@@ -546,7 +551,7 @@ if [ "$UNINSTALL" = 1 ]; then
     ok "$(t "service removed" "服务已移除")"
   fi
   rm -rf "$RELAY_DIR"; ok "$RELAY_DIR removed"
-  for f in /opt/1panel/www/conf.d/dsh-relay.conf /etc/nginx/conf.d/dsh-relay.conf /etc/caddy/sites/dsh-relay.caddy; do
+  for f in /opt/1panel/www/conf.d/yuremote-relay.conf /etc/nginx/conf.d/yuremote-relay.conf /etc/caddy/sites/yuremote-relay.caddy; do
     [ -f "$f" ] && { rm -f "$f"; ok "removed $f"; }
   done
   rm -f "$BIN" && ok "$BIN removed"
@@ -667,15 +672,15 @@ ensure_node
 if [ -n "${RELAY_RAW_BASE:-}" ]; then
   RAW_BASES=$RELAY_RAW_BASE
 else
-  RAW_BASES="https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master \
-https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@v${SELF_VERSION} \
-https://ghfast.top/https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master \
-https://gh-proxy.com/https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master"
+  RAW_BASES="https://raw.githubusercontent.com/tsukii12/dsh-YuRemote/master \
+https://cdn.jsdelivr.net/gh/tsukii12/dsh-YuRemote@v${SELF_VERSION} \
+https://ghfast.top/https://raw.githubusercontent.com/tsukii12/dsh-YuRemote/master \
+https://gh-proxy.com/https://raw.githubusercontent.com/tsukii12/dsh-YuRemote/master"
 fi
 
 relay_version_of() { sed -n 's/.*RELAY_VERSION = "\([^"]*\)".*/\1/p' "$1" 2>/dev/null | head -n 1; }
 
-fetch_relay() { # fetch_relay <dest>: prints the base that worked; fails when none does
+fetch_relay() { # fetch_relay <dest>: prints the matching base; fails when none does
   local dest=$1 base
   for base in $RAW_BASES; do
     if command -v curl >/dev/null 2>&1; then
@@ -686,10 +691,28 @@ fetch_relay() { # fetch_relay <dest>: prints the base that worked; fails when no
       die "$(t "need curl or wget to fetch relay.mjs" "需要 curl 或 wget 才能下载 relay.mjs")"
     fi
     node --check "$dest" >/dev/null 2>&1 || continue
+    [ "$(relay_version_of "$dest")" = "$SELF_VERSION" ] || continue
     printf '%s' "$base"
     return 0
   done
   return 1
+}
+
+cleanup_download() { [ -z "${TMP_RELAY_DIR:-}" ] || rm -rf -- "$TMP_RELAY_DIR"; }
+trap cleanup_download EXIT
+
+install_brand() {
+  local logo="$PORTAL_DIR/../assets/brand/yuremote-transparent.png"
+  local target="$RELAY_DIR/yuremote-transparent.png"
+  if [ ! -f "$logo" ] && [ -n "${got:-}" ]; then
+    logo="$TMP_RELAY_DIR/yuremote-transparent.png"
+    if command -v curl >/dev/null 2>&1; then
+      curl -fsSL --max-time 10 "$got/assets/brand/yuremote-transparent.png" -o "$logo" 2>/dev/null || return 0
+    else
+      wget -qT 10 -O "$logo" "$got/assets/brand/yuremote-transparent.png" || return 0
+    fi
+  fi
+  if [ -f "$logo" ] && ! cmp -s "$logo" "$target"; then install -m 0644 "$logo" "$target"; fi
 }
 
 if [ ! -f "$PORTAL_DIR/relay.mjs" ] && [ -f "$STATE_DIR/relay.mjs" ]; then
@@ -703,7 +726,8 @@ if [ -f "$PORTAL_DIR/relay.mjs" ]; then
   relay_have=$(relay_version_of "$PORTAL_DIR/relay.mjs")
   if [ -n "$relay_have" ] && [ "$relay_have" != "$SELF_VERSION" ]; then
     warn "$(t "the relay.mjs next to this script is v$relay_have, but this installer is v$SELF_VERSION" "脚本旁边的 relay.mjs 是 v$relay_have，而安装脚本是 v$SELF_VERSION")"
-    TMP_RELAY=$(mktemp -d)/relay.mjs
+    TMP_RELAY_DIR=$(mktemp -d)
+    TMP_RELAY=$TMP_RELAY_DIR/relay.mjs
     got=""
     if got=$(fetch_relay "$TMP_RELAY") && [ "$(relay_version_of "$TMP_RELAY")" = "$SELF_VERSION" ]; then
       PORTAL_DIR=$(dirname "$TMP_RELAY")
@@ -715,7 +739,8 @@ if [ -f "$PORTAL_DIR/relay.mjs" ]; then
     ok "relay.mjs v${relay_have:-$SELF_VERSION}"
   fi
 else
-  TMP_RELAY=$(mktemp -d)/relay.mjs
+  TMP_RELAY_DIR=$(mktemp -d)
+  TMP_RELAY=$TMP_RELAY_DIR/relay.mjs
   got=$(fetch_relay "$TMP_RELAY") || got=""
   [ -n "$got" ] || die "$(t "could not fetch relay.mjs from GitHub or any mirror. Download it once on a machine that can reach GitHub and put it next to this script, then run again." "GitHub 和所有镜像都取不到 relay.mjs。在一台能访问 GitHub 的机器上下载它，放到本脚本旁边，再重新运行。")"
   PORTAL_DIR=$(dirname "$TMP_RELAY")
@@ -728,6 +753,88 @@ if [ "$HAVE_SYSTEMD" = 1 ] && ! as_root; then
   die "$(t "installing a service needs root: run with sudo" "安装服务需要 root：请用 sudo 运行")"
 fi
 if [ "$HAVE_SYSTEMD" = 1 ]; then ok "systemd"; else warn "$(t "no systemd: the relay will run unmanaged" "没有 systemd：relay 不会被托管")"; fi
+
+migrate_relay() {
+  local attempt drop_ins health_addr unit_stage was_active=0 was_enabled=0
+  [ -f "$LEGACY_UNIT" ] && [ ! -L "$LEGACY_UNIT" ] || die "Expected a regular unit at $LEGACY_UNIT"
+  [ ! -e "$UNIT" ] && [ ! -e "$LEGACY_BACKUP" ] && [ ! -e "$STATE_DIR" ] && [ ! -e "$RELAY_DIR" ] ||
+    die "Migration targets already exist; resolve the previous install before retrying."
+  [ -f "$LEGACY_RELAY_DIR/relay.mjs" ] && [ -s "$LEGACY_STATE_DIR/token" ] ||
+    die "Legacy relay code or token file is missing."
+  drop_ins=$(systemctl show -p DropInPaths --value "$LEGACY_SERVICE.service") ||
+    die "Could not read the legacy unit's overrides."
+  [ -z "$drop_ins" ] ||
+    die "Legacy relay has unit overrides; migrate those overrides with the unit before switching."
+  grep -Fq -- "$LEGACY_RELAY_DIR/relay.mjs " "$LEGACY_UNIT" &&
+    grep -Fq -- "--token-file $LEGACY_STATE_DIR/token" "$LEGACY_UNIT" ||
+    die "Legacy unit uses a custom code or token path; migrate it explicitly."
+  health_addr=$(sed -nE 's/.*--http-port ([^ ]+).*/\1/p' "$LEGACY_UNIT" | head -n 1)
+  case "$health_addr" in ''|*[!0-9.:]*) die "Cannot infer the legacy relay's HTTP health address." ;; esac
+  health_addr="127.0.0.1:${health_addr##*:}"
+  command -v curl >/dev/null 2>&1 || die "curl is required to check the migrated relay."
+  node --check "$PORTAL_DIR/relay.mjs"
+  cp -a -- "$LEGACY_STATE_DIR" "$STATE_DIR"
+  rm -f -- "$STATE_DIR/relay.mjs" "$STATE_DIR/deploy-relay.sh"
+  install -d -m 0755 "$RELAY_DIR"
+  install -m 0644 "$PORTAL_DIR/relay.mjs" "$RELAY_DIR/relay.mjs"
+  install -m 0644 "$PORTAL_DIR/relay.mjs" "$STATE_DIR/relay.mjs"
+  install_brand
+  if [ -f "$0" ]; then install -m 0755 "$0" "$STATE_DIR/deploy-relay.sh"; fi
+  if [ -f "$CONF_FILE" ]; then
+    sed -i "s#^SCRIPT=.*#SCRIPT=$STATE_DIR/deploy-relay.sh#" "$CONF_FILE"
+  fi
+  unit_stage=$(mktemp)
+  sed -e "s#$LEGACY_RELAY_DIR/relay.mjs#$RELAY_DIR/relay.mjs#g" \
+      -e "s#--token-file $LEGACY_STATE_DIR/token#--token-file $STATE_DIR/token#g" \
+      -e "s#^ReadOnlyPaths=$LEGACY_RELAY_DIR\$#ReadOnlyPaths=$RELAY_DIR#" \
+      -e "s#^ReadWritePaths=$LEGACY_STATE_DIR\$#ReadWritePaths=$STATE_DIR#" \
+      -e 's/^Description=.*/Description=YuRemote relay/' "$LEGACY_UNIT" > "$unit_stage"
+  install -m 0644 "$unit_stage" "$UNIT"
+  rm -f -- "$unit_stage"
+  systemctl is-active --quiet "$LEGACY_SERVICE.service" && was_active=1
+  systemctl is-enabled --quiet "$LEGACY_SERVICE.service" && was_enabled=1
+  if systemctl disable --now "$LEGACY_SERVICE.service" &&
+      mv -- "$LEGACY_UNIT" "$LEGACY_BACKUP" &&
+      ln -s -- "$UNIT" "$LEGACY_UNIT" &&
+      systemctl daemon-reload && systemctl enable --now "$SERVICE.service"; then
+    for ((attempt=0; attempt<10; attempt++)); do
+      if systemctl is-active --quiet "$SERVICE.service" &&
+          curl -fsS --max-time 2 "http://$health_addr/__relay/health" >/dev/null 2>&1; then
+        install_yuremote
+        ok "Migrated to $SERVICE; kept the legacy code and the certificate renewal path."
+        info "Rollback: sudo sh -c 'systemctl disable --now $SERVICE.service && rm $LEGACY_UNIT && mv $LEGACY_BACKUP $LEGACY_UNIT && systemctl daemon-reload && systemctl enable --now $LEGACY_SERVICE.service && mv $UNIT $UNIT.rolled-back'"
+        return 0
+      fi
+      sleep 1
+    done
+  fi
+  systemctl disable --now "$SERVICE.service" || true
+  rm -f -- "$UNIT"
+  if [ -f "$LEGACY_BACKUP" ]; then
+    rm -f -- "$LEGACY_UNIT"
+    mv -- "$LEGACY_BACKUP" "$LEGACY_UNIT"
+  fi
+  systemctl daemon-reload
+  if [ "$was_enabled" = 1 ]; then systemctl enable "$LEGACY_SERVICE.service"; fi
+  if [ "$was_active" = 1 ]; then systemctl start "$LEGACY_SERVICE.service"; fi
+  die "New relay did not become healthy; restored the legacy unit. Staged files remain in $RELAY_DIR and $STATE_DIR."
+}
+
+if [ "$HAVE_SYSTEMD" = 1 ] && [ -f "$LEGACY_UNIT" ] && [ ! -L "$LEGACY_UNIT" ]; then
+  migrate_relay
+  exit 0
+fi
+if [ "$HAVE_SYSTEMD" = 1 ] && [ -L "$LEGACY_UNIT" ] && [ "$(readlink "$LEGACY_UNIT")" = "$UNIT" ] && [ -f "$LEGACY_BACKUP" ]; then
+  install_brand
+  if ! cmp -s "$PORTAL_DIR/relay.mjs" "$RELAY_DIR/relay.mjs"; then
+    node --check "$PORTAL_DIR/relay.mjs"
+    install -m 0644 "$PORTAL_DIR/relay.mjs" "$RELAY_DIR/relay.mjs"
+    if [ "$PORTAL_DIR" != "$STATE_DIR" ]; then install -m 0644 "$PORTAL_DIR/relay.mjs" "$STATE_DIR/relay.mjs"; fi
+    systemctl restart "$SERVICE.service"
+  fi
+  ok "$SERVICE is already migrated."
+  exit 0
+fi
 
 # ── 2. detection ────────────────────────────────────────────────────────────
 say "2/6 $(t "Detecting the environment" "探测运行环境")"
@@ -983,16 +1090,17 @@ if can_ask; then ask_yn "$(t "Install with these settings" "确认安装")" y ||
 # ── 4. install ──────────────────────────────────────────────────────────────
 say "4/6 $(t "Installing the relay" "安装 relay")"
 if [ "$HAVE_SYSTEMD" = 1 ]; then
-  useradd --system --home "$STATE_DIR" --shell /usr/sbin/nologin dsh-relay 2>/dev/null || true
-  install -d -o dsh-relay -g dsh-relay -m 0750 "$STATE_DIR"
-  install -d -o dsh-relay -g dsh-relay -m 0755 "$RELAY_DIR"
-  install -o dsh-relay -g dsh-relay -m 0644 "$PORTAL_DIR/relay.mjs" "$RELAY_DIR/relay.mjs"
+  useradd --system --home "$STATE_DIR" --shell /usr/sbin/nologin yuremote-relay 2>/dev/null || true
+  install -d -o yuremote-relay -g yuremote-relay -m 0750 "$STATE_DIR"
+  install -d -o yuremote-relay -g yuremote-relay -m 0755 "$RELAY_DIR"
+  install -o yuremote-relay -g yuremote-relay -m 0644 "$PORTAL_DIR/relay.mjs" "$RELAY_DIR/relay.mjs"
 else
   RELAY_DIR="$PWD/.relay-run"; STATE_DIR="$PWD/.relay-state"
   install -d -m 0755 "$RELAY_DIR"; install -d -m 0700 "$STATE_DIR"
   install -m 0644 "$PORTAL_DIR/relay.mjs" "$RELAY_DIR/relay.mjs"
 fi
 ok "$RELAY_DIR/relay.mjs"
+install_brand
 
 if [ -f "$0" ] && [ -r "$0" ]; then
   install -m 0755 "$0" "$STATE_DIR/deploy-relay.sh" 2>/dev/null || true
@@ -1009,7 +1117,7 @@ if [ -s "$TOKEN_FILE" ]; then
 else
   TOKEN=$(node -e 'process.stdout.write(require("node:crypto").randomBytes(32).toString("base64url"))')
   ( umask 077; printf '%s\n' "$TOKEN" > "$TOKEN_FILE" )
-  [ "$HAVE_SYSTEMD" = 1 ] && chown dsh-relay:dsh-relay "$TOKEN_FILE"
+  [ "$HAVE_SYSTEMD" = 1 ] && chown yuremote-relay:yuremote-relay "$TOKEN_FILE"
   ok "$(t "generated a tunnel token" "已生成隧道令牌")"
 fi
 
@@ -1059,24 +1167,24 @@ acme_install_cert() { # acme_install_cert <domain> <fullchain-out> <key-out>
     fi
   fi
   chmod 600 "$ekey"; chmod 644 "$earned"
-  [ "$HAVE_SYSTEMD" = 1 ] && chown -R dsh-relay:dsh-relay "$STATE_DIR" 2>/dev/null || true
+  [ "$HAVE_SYSTEMD" = 1 ] && chown -R yuremote-relay:yuremote-relay "$STATE_DIR" 2>/dev/null || true
 }
 
 acme_renewal_timer() {
   [ "$HAVE_SYSTEMD" = 1 ] || return 0
   # acme.sh was installed with --nocron, so its own cron entry point runs from a
   # timer instead. Twice a day is what acme.sh's crontab would have done.
-  cat > /etc/systemd/system/dsh-relay-acme.service <<ACME_UNIT
+  cat > /etc/systemd/system/yuremote-relay-acme.service <<ACME_UNIT
 [Unit]
-Description=dsh-remote-portal certificate renewal (acme.sh)
+Description=yuremote certificate renewal (acme.sh)
 
 [Service]
 Type=oneshot
-ExecStart=/bin/sh -c '"'"'$ACME_BIN' --home '$ACME_HOME' --cron >/var/log/dsh-relay-acme.log 2>&1'"'"'
+ExecStart=/bin/sh -c '"'"'$ACME_BIN' --home '$ACME_HOME' --cron >/var/log/yuremote-relay-acme.log 2>&1'"'"'
 ACME_UNIT
-  cat > /etc/systemd/system/dsh-relay-acme.timer <<ACME_TIMER
+  cat > /etc/systemd/system/yuremote-relay-acme.timer <<ACME_TIMER
 [Unit]
-Description=Daily dsh-remote-portal certificate renewal
+Description=Daily yuremote certificate renewal
 
 [Timer]
 OnCalendar=*-*-* 03:17:00
@@ -1087,8 +1195,8 @@ Persistent=true
 WantedBy=timers.target
 ACME_TIMER
   systemctl daemon-reload
-  systemctl enable --now dsh-relay-acme.timer >/dev/null 2>&1 || true
-  ok "$(t "renewal timer installed" "已安装续期定时器") (dsh-relay-acme.timer)"
+  systemctl enable --now yuremote-relay-acme.timer >/dev/null 2>&1 || true
+  ok "$(t "renewal timer installed" "已安装续期定时器") (yuremote-relay-acme.timer)"
 }
 
 ca_reachable() { # a few samples: an international path is bursty
@@ -1243,7 +1351,7 @@ elif [ "$NEED_CERT" = 1 ]; then
       *) SAN="IP:$HOST,DNS:localhost" ;;
     esac
     openssl req -x509 -newkey rsa:2048 -nodes -days 3650 -keyout "$KEY" -out "$CERT" \
-      -subj "/CN=dsh-relay" -addext "subjectAltName=$SAN" >/dev/null 2>&1 || die "openssl failed"
+      -subj "/CN=yuremote-relay" -addext "subjectAltName=$SAN" >/dev/null 2>&1 || die "openssl failed"
     chmod 600 "$KEY"; chmod 644 "$CERT"
     ok "$(t "generated a self-signed certificate" "已生成自签证书") ($SAN)"
   else
@@ -1252,7 +1360,7 @@ elif [ "$NEED_CERT" = 1 ]; then
     AGENT_TLS=0
     VISITOR_TLS=0
   fi
-  [ "$HAVE_SYSTEMD" = 1 ] && chown -R dsh-relay:dsh-relay "$STATE_DIR"
+  [ "$HAVE_SYSTEMD" = 1 ] && chown -R yuremote-relay:yuremote-relay "$STATE_DIR"
   if [ "$NEED_CERT" = 1 ]; then TLS_CERT="$CERT"; TLS_KEY="$KEY"; fi
 fi
 
@@ -1285,14 +1393,14 @@ fi
 if [ "$HAVE_SYSTEMD" = 1 ]; then
   cat > "$UNIT" <<UNIT_EOF
 [Unit]
-Description=dsh-remote-portal relay
+Description=yuremote relay
 After=network-online.target
 Wants=network-online.target
 
 [Service]
 Type=simple
-User=dsh-relay
-Group=dsh-relay
+User=yuremote-relay
+Group=yuremote-relay
 ExecStart=/usr/bin/env node $RELAY_ARGS
 $CAPS
 Restart=always
@@ -1330,7 +1438,7 @@ else
 fi
 
 write_nginx() {
-  local target="$NGINX_CONF_DIR/dsh-relay.conf"
+  local target="$NGINX_CONF_DIR/yuremote-relay.conf"
   local tls=""
   if [ "$SCHEME" = https ]; then
     tls="    ssl_certificate     $TLS_CERT;
@@ -1338,7 +1446,7 @@ write_nginx() {
     http2 on;"
   fi
   cat > "$target" <<NGINX_EOF
-# dsh-remote-portal — public entry for the tunnel (generated by deploy-relay.sh).
+# yuremote — public entry for the tunnel (generated by deploy-relay.sh).
 # Only /__t/ is forwarded; nothing else on this host is touched.
 map \$http_upgrade \$dsh_relay_upgrade {
     default upgrade;
@@ -1388,7 +1496,7 @@ write_caddy() {
   local site_dir=/etc/caddy/sites
   mkdir -p "$site_dir"
   grep -qs "import $site_dir" /etc/caddy/Caddyfile || printf '\nimport %s/*.caddy\n' "$site_dir" >> /etc/caddy/Caddyfile
-  cat > "$site_dir/dsh-relay.caddy" <<CADDY_EOF
+  cat > "$site_dir/yuremote-relay.caddy" <<CADDY_EOF
 $HOST {
 	encode zstd gzip
 	reverse_proxy 127.0.0.1:$HTTP_PORT {
@@ -1401,7 +1509,7 @@ CADDY_EOF
     systemctl reload caddy 2>/dev/null || "$CADDY_BIN" reload --config /etc/caddy/Caddyfile
     ok "Caddy $(t "site installed and reloaded" "站点已安装并重载")"
   else
-    rm -f "$site_dir/dsh-relay.caddy"; tail -3 /tmp/caddy-t.log; die "Caddy $(t "rejected the config; rolled back" "校验失败，已回滚")"
+    rm -f "$site_dir/yuremote-relay.caddy"; tail -3 /tmp/caddy-t.log; die "Caddy $(t "rejected the config; rolled back" "校验失败，已回滚")"
   fi
 }
 
@@ -1416,7 +1524,7 @@ case "$PROXY_MODE" in
     fi
     # A block left over from a previous proxy-mode install would keep handling this
     # host (and serve the default site on /). Remove it and reload.
-    stale="$NGINX_CONF_DIR/dsh-relay.conf"
+    stale="$NGINX_CONF_DIR/yuremote-relay.conf"
     if [ -n "$NGINX_CONF_DIR" ] && [ -f "$stale" ]; then
       rm -f "$stale"
       if [ -n "$NGINX_RUN" ]; then docker exec "$NGINX_RUN" nginx -s reload >/dev/null 2>&1 || true
@@ -1446,9 +1554,9 @@ KEY_FILE=$TLS_KEY
 SCRIPT=$STATE_DIR/deploy-relay.sh
 CONF_EOF
 chmod 644 "$CONF_FILE" 2>/dev/null || true
-[ "$HAVE_SYSTEMD" = 1 ] && chown dsh-relay:dsh-relay "$CONF_FILE" 2>/dev/null || true
+[ "$HAVE_SYSTEMD" = 1 ] && chown yuremote-relay:yuremote-relay "$CONF_FILE" 2>/dev/null || true
 
-install_drp
+install_yuremote
 
 # ── 6. verify and hand over ─────────────────────────────────────────────────
 say "6/6 $(t "Checking" "自检")"
@@ -1456,7 +1564,7 @@ sleep 1
 if curl -fsS --max-time 4 "http://127.0.0.1:$HTTP_PORT/__relay/health" >/dev/null 2>&1; then
   ok "$(t "relay answers on 127.0.0.1:$HTTP_PORT" "relay 健康检查通过")"
 else
-  warn "$(t "health check failed; see: drp log" "健康检查未通过；查看：drp log")"
+  warn "$(t "health check failed; see: yuremote log" "健康检查未通过；查看：yuremote log")"
 fi
 
 TUNNEL_ID=$(node -e 'const c=require("node:crypto");process.stdout.write(c.createHash("sha256").update(process.argv[1]).digest("base64url").slice(0,12))' "$TOKEN")
@@ -1468,7 +1576,7 @@ printf '\n  %s  %s\n' "$(t "Relay endpoint " "中转服务器   ")" "$(hi "$AGEN
 printf '  %s  %s\n' "$(t "Tunnel token   " "隧道令牌     ")" "$(key "$TOKEN")"
 EXTRA=$(sed -e '/^[[:space:]]*#/d' -e '/^[[:space:]]*$/d' "$TOKEN_FILE" 2>/dev/null | wc -l | tr -d ' ')
 if [ "${EXTRA:-1}" -gt 1 ]; then
-  printf '  %s\n' "$(t "this relay serves $EXTRA tunnels; drp tokens lists them" "这台中转上有 $EXTRA 条隧道，用 drp tokens 查看")"
+  printf '  %s\n' "$(t "this relay serves $EXTRA tunnels; yuremote tokens lists them" "这台中转上有 $EXTRA 条隧道，用 yuremote tokens 查看")"
 fi
 if [ "$AGENT_SCHEME" = tls ]; then
   printf '  %s\n' "$(t "also tick \"trust a self-signed certificate\" in the panel" "同时勾选「信任自签名证书」")"
@@ -1481,11 +1589,11 @@ printf '\n%s\n\n  %s/tcp   ← %s\n  %s/tcp   ← %s\n' \
   "$PUBLIC_PORT" "$(t "visitors" "访客入口")"
 
 printf '\n%s\n' "$(t "Manage it later with:" "以后用这条命令管理：")"
-printf '  drp            # %s\n' "$(t "status" "状态")"
-printf '  drp url        # %s\n' "$(t "public URL" "公网地址")"
-printf '  drp token      # %s\n' "$(t "tunnel token" "隧道令牌")"
-printf '  drp tokens     # %s\n' "$(t "every tunnel on this relay" "这台中转上的所有隧道")"
-printf '  drp token add  # %s\n' "$(t "add another dsh" "再加一台 dsh")"
-printf '  drp restart    # %s\n' "$(t "restart" "重启")"
-printf '  drp log -f     # %s\n' "$(t "follow the log" "跟踪日志")"
+printf '  yuremote            # %s\n' "$(t "status" "状态")"
+printf '  yuremote url        # %s\n' "$(t "public URL" "公网地址")"
+printf '  yuremote token      # %s\n' "$(t "tunnel token" "隧道令牌")"
+printf '  yuremote tokens     # %s\n' "$(t "every tunnel on this relay" "这台中转上的所有隧道")"
+printf '  yuremote token add  # %s\n' "$(t "add another dsh" "再加一台 dsh")"
+printf '  yuremote restart    # %s\n' "$(t "restart" "重启")"
+printf '  yuremote log -f     # %s\n' "$(t "follow the log" "跟踪日志")"
 printf '\n%s sudo ./deploy-relay.sh --uninstall\n' "$(t "Uninstall:" "卸载：")"

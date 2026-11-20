@@ -1,5 +1,5 @@
 /*
- * dsh-remote-portal — assets/mobile.css
+ * yuremote — assets/mobile.css
  *
  * The presentation half of the mobile layer for a stock DeepSeek Harness Web UI
  * that ships without *any* responsive rules (the only @media blocks in 77 KB of
@@ -7,7 +7,7 @@
  *
  * Contract with mobile.js
  * -----------------------
- * Nothing here applies unless `<html data-drp-mobile>` is set, which mobile.js
+ * Nothing here applies unless `<html data-yuremote-mobile>` is set, which mobile.js
  * does when `matchMedia("(max-width: 900px)")` matches — the same 900 px
  * boundary used below. No script, no layout change: a stylesheet that lost its
  * script can never damage the desktop UI.
@@ -53,7 +53,7 @@
  * Only three declarations need it, all because the layout solver writes the
  * value inline: `grid-template-columns` on the frame, the right panel's `width`
  * and its matching `--dsh-sidebar-width`, plus the sidebar surface's inline
- * `width`. Everything else wins on specificity (`html[data-drp-mobile] …`) or
+ * `width`. Everything else wins on specificity (`html[data-yuremote-mobile] …`) or
  * source order. test/mobile.test.mjs lints exactly this.
  */
 
@@ -61,28 +61,28 @@
   /* =====================================================================
    * 0. Document-level behaviour
    * ===================================================================== */
-  html[data-drp-mobile] {
+  html[data-yuremote-mobile] {
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
     /* keep the ribbon / pull-to-refresh gesture from fighting the chat scroller */
     overscroll-behavior-y: contain;
 
-    --drp-drawer-width: min(86vw, 320px);
-    --drp-gutter: 14px;
-    --drp-touch: 44px;
-    --drp-drawer-z: 18;
-    --drp-ease: cubic-bezier(0.32, 0.72, 0, 1);
-    --drp-dur: 240ms;
-    --drp-safe-top: env(safe-area-inset-top, 0px);
-    --drp-safe-bottom: env(safe-area-inset-bottom, 0px);
-    --drp-safe-left: env(safe-area-inset-left, 0px);
-    --drp-safe-right: env(safe-area-inset-right, 0px);
+    --yuremote-drawer-width: min(86vw, 320px);
+    --yuremote-gutter: 14px;
+    --yuremote-touch: 44px;
+    --yuremote-drawer-z: 18;
+    --yuremote-ease: cubic-bezier(0.32, 0.72, 0, 1);
+    --yuremote-dur: 240ms;
+    --yuremote-safe-top: env(safe-area-inset-top, 0px);
+    --yuremote-safe-bottom: env(safe-area-inset-bottom, 0px);
+    --yuremote-safe-left: env(safe-area-inset-left, 0px);
+    --yuremote-safe-right: env(safe-area-inset-right, 0px);
   }
 
   /* =====================================================================
    * 1. Frame → one full-width column
    * ===================================================================== */
-  html[data-drp-mobile] [data-slot="root"] > div {
+  html[data-yuremote-mobile] [data-slot="root"] > div {
     /* The solver writes e.g. `grid-template-columns: 56px minmax(0px,1fr)
        minmax(0px,0px)` inline; an inline style only loses to !important.
        One track means the centre column is the whole screen. */
@@ -98,7 +98,7 @@
   /* dsh 0.2 wraps the main slot in a panel (`centerCol > mainPanel > main`);
      without the second form the column kept its inline `grid-column: 2`, so
      an implicit track opened and a page squeezed into the right ~45%. */
-  html[data-drp-mobile]
+  html[data-yuremote-mobile]
     [data-slot="root"]
     > div
     > div:has(> [data-slot="main"], > * > [data-slot="main"]) {
@@ -111,12 +111,12 @@
      on every page title (Remote access, Plugins, Automation tasks): phones in
      landscape and small tablets. Same clearance, same place. */
   @media (min-width: 768px) {
-    html[data-drp-mobile] [data-slot="root"] :has(> [data-slot="main"]) {
-      padding-top: calc(var(--drp-safe-top) + 48px);
+    html[data-yuremote-mobile] [data-slot="root"] :has(> [data-slot="main"]) {
+      padding-top: calc(var(--yuremote-safe-top) + 48px);
     }
   }
 
-  html[data-drp-mobile]
+  html[data-yuremote-mobile]
     [data-slot="root"]
     > div
     > div:has(> [data-slot="rightbar"]) {
@@ -130,7 +130,7 @@
     pointer-events: none;
   }
 
-  html[data-drp-mobile]
+  html[data-yuremote-mobile]
     [data-slot="root"]
     > div
     > div:has(> [data-slot="rightbar"])
@@ -138,30 +138,30 @@
     pointer-events: auto;
   }
 
-  html[data-drp-mobile]
+  html[data-yuremote-mobile]
     [data-slot="root"]
     > div
     > div:has(> [data-slot="shell.bottom"]) {
     grid-area: 2 / 1 / 3 / 2;
-    padding-bottom: var(--drp-safe-bottom);
+    padding-bottom: var(--yuremote-safe-bottom);
   }
 
   /* =====================================================================
    * 2. Sidebar → off-canvas drawer
    * ===================================================================== */
-  html[data-drp-mobile]
+  html[data-yuremote-mobile]
     [data-slot="root"]
     > div
     > div:has(> [data-slot="sidebar"]) {
     position: fixed;
     inset: 0 auto 0 0;
-    width: var(--drp-drawer-width);
+    width: var(--yuremote-drawer-width);
     height: 100dvh;
-    z-index: var(--drp-drawer-z);
+    z-index: var(--yuremote-drawer-z);
     box-sizing: border-box;
-    padding-top: var(--drp-safe-top);
-    padding-bottom: var(--drp-safe-bottom);
-    padding-left: var(--drp-safe-left);
+    padding-top: var(--yuremote-safe-top);
+    padding-bottom: var(--yuremote-safe-bottom);
+    padding-left: var(--yuremote-safe-left);
     background: var(--dsw-specific-sidebar-fill);
     border-right: 0.5px solid var(--dsw-alias-border-l3);
     box-shadow: 12px 0 34px -16px rgb(0 0 0 / 0.55);
@@ -175,34 +175,34 @@
     /* closed: parked off the left edge and out of the focus order */
     transform: translateX(-100%);
     visibility: hidden;
-    transition: transform var(--drp-dur) var(--drp-ease),
-      visibility 0s linear var(--drp-dur);
+    transition: transform var(--yuremote-dur) var(--yuremote-ease),
+      visibility 0s linear var(--yuremote-dur);
     will-change: transform;
   }
 
-  html[data-drp-mobile][data-drp-drawer="open"]
+  html[data-yuremote-mobile][data-yuremote-drawer="open"]
     [data-slot="root"]
     > div
     > div:has(> [data-slot="sidebar"]) {
     transform: translateX(0);
     visibility: visible;
-    transition: transform var(--drp-dur) var(--drp-ease),
+    transition: transform var(--yuremote-dur) var(--yuremote-ease),
       visibility 0s linear 0s;
   }
 
   /* dsh's own drawer mask (`[data-sidebar-mask]`, z-index 70 inside the frame)
      sits above our drawer column (z 18), so every real tap on a sidebar row
      hit the mask and only closed the drawer. The layer brings its own scrim. */
-  html[data-drp-mobile] [data-slot="root"] > div > [data-sidebar-mask] {
+  html[data-yuremote-mobile] [data-slot="root"] > div > [data-sidebar-mask] {
     display: none;
   }
 
   /* Thumb-sized rows and icon buttons inside the drawer. */
-  html[data-drp-mobile] [data-slot="sidebar"] button {
+  html[data-yuremote-mobile] [data-slot="sidebar"] button {
     min-height: 40px;
   }
 
-  html[data-drp-mobile]
+  html[data-yuremote-mobile]
     [data-slot="sidebar"]
     button[aria-label]:not(:has(> span:not(:empty))) {
     min-width: 40px;
@@ -212,7 +212,7 @@
      (`style="width: 280px"`, the desktop track). Inside the drawer the column
      is the authority, so that inline width has to go. Scoped to the open state
      so the closed rail keeps its own metrics. */
-  html[data-drp-mobile][data-drp-drawer="open"]
+  html[data-yuremote-mobile][data-yuremote-drawer="open"]
     [data-slot="sidebar"]
     > :first-child {
     width: 100% !important;
@@ -224,7 +224,7 @@
      60 px — exactly three 28 px desktop buttons. With 40 px touch targets the
      cap would clip the third icon, so lift it inside the drawer. If a future
      build renames the class the cap simply comes back. */
-  html[data-drp-mobile][data-drp-drawer="open"]
+  html[data-yuremote-mobile][data-yuremote-drawer="open"]
     [data-slot="sidebar"]
     [class*="_headerActions"] {
     max-width: none;
@@ -233,35 +233,35 @@
   /* =====================================================================
    * 3. Scrim + floating drawer button (nodes created by mobile.js)
    * ===================================================================== */
-  html[data-drp-mobile] .drp-drawer-scrim {
+  html[data-yuremote-mobile] .yuremote-drawer-scrim {
     position: fixed;
     inset: 0;
-    z-index: calc(var(--drp-drawer-z) - 1);
+    z-index: calc(var(--yuremote-drawer-z) - 1);
     background: rgb(0 0 0 / 0.45);
     -webkit-backdrop-filter: blur(2px);
     backdrop-filter: blur(2px);
     opacity: 0;
     visibility: hidden;
     touch-action: manipulation;
-    transition: opacity var(--drp-dur) ease, visibility 0s linear var(--drp-dur);
+    transition: opacity var(--yuremote-dur) ease, visibility 0s linear var(--yuremote-dur);
   }
 
-  html[data-drp-mobile][data-drp-drawer="open"] .drp-drawer-scrim {
+  html[data-yuremote-mobile][data-yuremote-drawer="open"] .yuremote-drawer-scrim {
     opacity: 1;
     visibility: visible;
-    transition: opacity var(--drp-dur) ease, visibility 0s linear 0s;
+    transition: opacity var(--yuremote-dur) ease, visibility 0s linear 0s;
   }
 
-  html[data-drp-mobile] .drp-drawer-btn {
+  html[data-yuremote-mobile] .yuremote-drawer-btn {
     position: fixed;
-    z-index: calc(var(--drp-drawer-z) - 2);
-    top: calc(var(--drp-safe-top) + 8px);
-    left: calc(var(--drp-safe-left) + 8px);
+    z-index: calc(var(--yuremote-drawer-z) - 2);
+    top: calc(var(--yuremote-safe-top) + 8px);
+    left: calc(var(--yuremote-safe-left) + 8px);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: var(--drp-touch);
-    height: var(--drp-touch);
+    width: var(--yuremote-touch);
+    height: var(--yuremote-touch);
     margin: 0;
     padding: 0;
     color: var(--dsw-alias-label-primary);
@@ -277,16 +277,16 @@
       opacity 120ms ease;
   }
 
-  html[data-drp-mobile] .drp-drawer-btn:active {
+  html[data-yuremote-mobile] .yuremote-drawer-btn:active {
     transform: scale(0.94);
     background: var(--dsw-alias-interactive-bg-hover);
   }
 
-  html[data-drp-mobile] .drp-drawer-btn svg {
+  html[data-yuremote-mobile] .yuremote-drawer-btn svg {
     display: block;
   }
 
-  html[data-drp-mobile][data-drp-drawer="open"] .drp-drawer-btn {
+  html[data-yuremote-mobile][data-yuremote-drawer="open"] .yuremote-drawer-btn {
     opacity: 0;
     pointer-events: none;
   }
@@ -294,33 +294,33 @@
   /* =====================================================================
    * 4. Conversation header — room for the drawer button
    * ===================================================================== */
-  html[data-drp-mobile] [data-slot="conversation.header"] > header {
+  html[data-yuremote-mobile] [data-slot="conversation.header"] > header {
     min-height: 52px;
     /* The right-panel toggle in the header corner carries `margin-right:-16px`
        by design; the right padding is 16 px wider so that margin still lands
        on a 14 px gutter instead of 2 px past the viewport edge. */
-    padding: 6px calc(var(--drp-gutter) + 16px) 0 var(--drp-gutter);
+    padding: 6px calc(var(--yuremote-gutter) + 16px) 0 var(--yuremote-gutter);
   }
 
   /* =====================================================================
    * 5. Chat content — phone gutters, nothing wider than the viewport
    * ===================================================================== */
-  html[data-drp-mobile] [data-conversation-scroll] {
+  html[data-yuremote-mobile] [data-conversation-scroll] {
     /* the app adds `clearance + 16px` padding on each side of the message
        column; a phone wants the 16 px, not 32 px */
     --dsh-composer-side-clearance: 0px;
   }
 
-  html[data-drp-mobile] img,
-  html[data-drp-mobile] video,
-  html[data-drp-mobile] canvas {
+  html[data-yuremote-mobile] img,
+  html[data-yuremote-mobile] video,
+  html[data-yuremote-mobile] canvas {
     max-width: 100%;
     height: auto;
   }
 
-  html[data-drp-mobile] pre,
-  html[data-drp-mobile] [class*="_tableScroll"],
-  html[data-drp-mobile] table {
+  html[data-yuremote-mobile] pre,
+  html[data-yuremote-mobile] [class*="_tableScroll"],
+  html[data-yuremote-mobile] table {
     max-width: 100%;
   }
 
@@ -328,7 +328,7 @@
      It must scroll inside the block, never widen the page: on a phone that is
      the difference between "readable" and "the whole conversation slides
      sideways". `overflow-x:auto` is what keeps the page width stable. */
-  html[data-drp-mobile] pre {
+  html[data-yuremote-mobile] pre {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
@@ -336,7 +336,7 @@
   /* The app wraps markdown tables in `_tableScroll`, but a table that arrives
      any other way (a tool result, a plugin panel) still has to be pan-able
      rather than clipped. */
-  html[data-drp-mobile] table:not([class*="_tableScroll"] *) {
+  html[data-yuremote-mobile] table:not([class*="_tableScroll"] *) {
     display: block;
     overflow-x: auto;
   }
@@ -346,14 +346,14 @@
      the app decided the table was "wide" at desktop width — that decision was
      made for a 1400 px column, and re-measuring it here is not worth a layout
      read on every render. */
-  html[data-drp-mobile] [class*="_tableScroll"],
-  html[data-drp-mobile] .md-table-wide {
+  html[data-yuremote-mobile] [class*="_tableScroll"],
+  html[data-yuremote-mobile] .md-table-wide {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     padding-bottom: 0;
   }
 
-  html[data-drp-mobile] [role="dialog"] table {
+  html[data-yuremote-mobile] [role="dialog"] table {
     display: block;
     overflow-x: auto;
   }
@@ -361,21 +361,21 @@
   /* A hair tighter than the desktop setting for body copy (-1 px). The two
      `--dsh-*` font variables live in an inline style on <body>, so scaling the
      consumer is both sufficient and cheaper than an !important redeclaration. */
-  html[data-drp-mobile] [data-slot="conversation.chat.flow"] {
+  html[data-yuremote-mobile] [data-slot="conversation.chat.flow"] {
     font-size: calc(var(--dsh-content-font-size, 14px) - 1px);
   }
 
   /* =====================================================================
    * 6. Composer — real 16 px inputs (no iOS zoom) + safe area
    * ===================================================================== */
-  html[data-drp-mobile] [data-composer-seat] {
-    padding-bottom: var(--drp-safe-bottom);
+  html[data-yuremote-mobile] [data-composer-seat] {
+    padding-bottom: var(--yuremote-safe-bottom);
   }
 
-  html[data-drp-mobile] textarea,
-  html[data-drp-mobile] input,
-  html[data-drp-mobile] select,
-  html[data-drp-mobile] [contenteditable="true"] {
+  html[data-yuremote-mobile] textarea,
+  html[data-yuremote-mobile] input,
+  html[data-yuremote-mobile] select,
+  html[data-yuremote-mobile] [contenteditable="true"] {
     /* < 16 px makes Safari zoom on focus and never zoom back out */
     font-size: 16px;
   }
@@ -383,7 +383,7 @@
   /* =====================================================================
    * 7. Right panel — full screen when open, own close affordance visible
    * ===================================================================== */
-  html[data-drp-mobile] [data-sidebar-right-panel] {
+  html[data-yuremote-mobile] [data-sidebar-right-panel] {
     /* the solver writes width + the matching slide distance inline */
     width: 100vw !important;
     --dsh-sidebar-width: 100vw !important;
@@ -391,7 +391,7 @@
     border-left: 0;
   }
 
-  html[data-drp-mobile] [data-sidebar-right-panel] button[aria-label] {
+  html[data-yuremote-mobile] [data-sidebar-right-panel] button[aria-label] {
     min-width: 40px;
     min-height: 40px;
   }
@@ -399,15 +399,15 @@
   /* =====================================================================
    * 8. Dialogs — bounded, scrollable, thumb-sized
    * ===================================================================== */
-  html[data-drp-mobile] [role="presentation"]:has(> [role="dialog"]) {
+  html[data-yuremote-mobile] [role="presentation"]:has(> [role="dialog"]) {
     box-sizing: border-box;
     align-items: center;
-    padding: max(12px, var(--drp-safe-top)) 12px max(12px, var(--drp-safe-bottom));
+    padding: max(12px, var(--yuremote-safe-top)) 12px max(12px, var(--yuremote-safe-bottom));
   }
 
   /* Our own surfaces (the panel, the picker) are pages, not app dialogs: they
-     opt out of the dialog sizing below by carrying `data-drp`. */
-  html[data-drp-mobile] [role="dialog"]:not([data-drp]) {
+     opt out of the dialog sizing below by carrying `data-yuremote`. */
+  html[data-yuremote-mobile] [role="dialog"]:not([data-yuremote]) {
     box-sizing: border-box;
     max-width: calc(100vw - 24px);
     max-height: calc(100dvh - 24px);
@@ -422,41 +422,41 @@
     -webkit-overflow-scrolling: touch;
   }
 
-  html[data-drp-mobile] [role="dialog"]:not([data-drp]) > * {
+  html[data-yuremote-mobile] [role="dialog"]:not([data-yuremote]) > * {
     min-height: 0;
     max-height: none;
     overflow: visible;
   }
 
   /* The action row stays reachable while the body scrolls. */
-  html[data-drp-mobile] [role="dialog"] [class*="_actions"],
-  html[data-drp-mobile] [role="dialog"] [class*="_footer"] {
+  html[data-yuremote-mobile] [role="dialog"] [class*="_actions"],
+  html[data-yuremote-mobile] [role="dialog"] [class*="_footer"] {
     position: sticky;
     bottom: 0;
     z-index: 2;
     background: var(--dsw-alias-bg-layer-2);
-    padding-bottom: max(6px, var(--drp-safe-bottom));
+    padding-bottom: max(6px, var(--yuremote-safe-bottom));
   }
 
-  html[data-drp-mobile] [role="dialog"]:not([data-drp]) button {
-    min-height: var(--drp-touch);
+  html[data-yuremote-mobile] [role="dialog"]:not([data-yuremote]) button {
+    min-height: var(--yuremote-touch);
   }
 
-  html[data-drp-mobile] [role="dialog"]:not([data-drp]) button[aria-label] {
-    min-width: var(--drp-touch);
+  html[data-yuremote-mobile] [role="dialog"]:not([data-yuremote]) button[aria-label] {
+    min-width: var(--yuremote-touch);
   }
 
   /* ---------------------------------------------------------------------
-   * 8b. dsh-remote-portal's own control panel.
+   * 8b. yuremote's own control panel.
    *
    * client.js renders it as a sheet inside [data-slot="shell.overlay"]:
-   *   .drp-overlay > .drp-scrim + .drp-sheet[role="dialog"][data-drp="panel"]
-   *     > .drp-sheet-body (the scroller)
+   *   .yuremote-overlay > .yuremote-scrim + .yuremote-sheet[role="dialog"][data-yuremote="panel"]
+   *     > .yuremote-sheet-body (the scroller)
    * It is a full-screen sheet, not a modal: the generic bounds above would
    * squash it to 100vw-24 / 100dvh-24 and add a second scroll container on top
-   * of .drp-sheet-body. Give it the whole screen and let it own its scrolling.
+   * of .yuremote-sheet-body. Give it the whole screen and let it own its scrolling.
    * --------------------------------------------------------------------- */
-  html[data-drp-mobile] [role="dialog"][data-drp="panel"] {
+  html[data-yuremote-mobile] [role="dialog"][data-yuremote="panel"] {
     max-width: none;
     max-height: none;
     width: 100%;
@@ -466,57 +466,57 @@
     border: 0;
   }
 
-  html[data-drp-mobile] [role="dialog"][data-drp="panel"] > * {
+  html[data-yuremote-mobile] [role="dialog"][data-yuremote="panel"] > * {
     min-height: 0;
   }
 
-  html[data-drp-mobile] [role="dialog"][data-drp="panel"] .drp-sheet-body {
+  html[data-yuremote-mobile] [role="dialog"][data-yuremote="panel"] .yuremote-sheet-body {
     flex: 1 1 auto;
     min-height: 0;
     overflow-y: auto;
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
-    padding-bottom: calc(24px + var(--drp-safe-bottom));
+    padding-bottom: calc(24px + var(--yuremote-safe-bottom));
   }
 
   /* Nothing inside the sheet may be wider than the sheet. */
-  html[data-drp-mobile] [data-drp="panel"] :is(pre, table, img) {
+  html[data-yuremote-mobile] [data-yuremote="panel"] :is(pre, table, img) {
     max-width: 100%;
   }
 
   /* =====================================================================
    * 9. Menus / popovers
    * ===================================================================== */
-  html[data-drp-mobile] [role="menu"],
-  html[data-drp-mobile] [role="listbox"] {
+  html[data-yuremote-mobile] [role="menu"],
+  html[data-yuremote-mobile] [role="listbox"] {
     max-width: calc(100vw - 16px);
     max-height: min(70dvh, 460px);
     overflow-y: auto;
     overscroll-behavior: contain;
   }
 
-  html[data-drp-mobile] [role="menuitem"],
-  html[data-drp-mobile] [role="option"],
-  html[data-drp-mobile] [role="treeitem"] {
+  html[data-yuremote-mobile] [role="menuitem"],
+  html[data-yuremote-mobile] [role="option"],
+  html[data-yuremote-mobile] [role="treeitem"] {
     min-height: 40px;
   }
 
   /* =====================================================================
    * 10. Touch affordances
    * ===================================================================== */
-  html[data-drp-mobile] button,
-  html[data-drp-mobile] [role="button"],
-  html[data-drp-mobile] [role="switch"],
-  html[data-drp-mobile] a[href],
-  html[data-drp-mobile] summary,
-  html[data-drp-mobile] label {
+  html[data-yuremote-mobile] button,
+  html[data-yuremote-mobile] [role="button"],
+  html[data-yuremote-mobile] [role="switch"],
+  html[data-yuremote-mobile] a[href],
+  html[data-yuremote-mobile] summary,
+  html[data-yuremote-mobile] label {
     touch-action: manipulation;
   }
 
   /* Hover-only reveals are already guarded by the app's own
      `@media (hover: hover)` blocks, which stop matching on touch — nothing to
      undo. What is missing on touch is a pressed state for those controls. */
-  html[data-drp-mobile] button[aria-label]:active {
+  html[data-yuremote-mobile] button[aria-label]:active {
     background: var(--dsw-alias-interactive-bg-hover);
   }
 
@@ -534,10 +534,10 @@
    *   header div:has(> nav)         the cluster: title + badge + actions
    *   header nav + div              the badge that sits next to the title
    */
-  html[data-drp-mobile] [data-slot="conversation.header"] > header nav {
+  html[data-yuremote-mobile] [data-slot="conversation.header"] > header nav {
     min-width: 84px;
   }
-  html[data-drp-mobile]
+  html[data-yuremote-mobile]
     [data-slot="conversation.header"]
     > header
     div:has(> nav) {
@@ -546,7 +546,7 @@
   }
   /* The badge is the first thing to yield: it clips instead of pushing the
      title out of the row. */
-  html[data-drp-mobile] [data-slot="conversation.header"] > header nav + div {
+  html[data-yuremote-mobile] [data-slot="conversation.header"] > header nav + div {
     flex: 0 1 auto;
     min-width: 0;
     overflow: hidden;
@@ -556,14 +556,14 @@
      the title wins — the badge is a secondary indicator, still reachable from
      the session's own surfaces. */
   @media (max-width: 430px) {
-    html[data-drp-mobile]
+    html[data-yuremote-mobile]
       [data-slot="conversation.header"]
       > header
       nav
       + div {
       display: none;
     }
-    html[data-drp-mobile] [data-slot="conversation.header"] > header nav {
+    html[data-yuremote-mobile] [data-slot="conversation.header"] > header nav {
       min-width: 110px;
     }
   }
@@ -572,10 +572,10 @@
     /* Reclaim the last few tens of pixels for the title: the drawer button ends
        at x=56, so 60 px of leading clearance is still enough, and the two
        selector chips (workspace + model) cap at 112 px instead of 130. */
-    html[data-drp-mobile] {
+    html[data-yuremote-mobile] {
       --dsh-frame-leading-clearance: 60px;
     }
-    html[data-drp-mobile]
+    html[data-yuremote-mobile]
       [data-slot="conversation.header"]
       > header
       div:has(> nav)
@@ -595,16 +595,16 @@
    * ===================================================================== */
 
   /* 11.1 Composer gutters — the composer card was flush with both edges. */
-  html[data-drp-mobile] [class*="composerSeat"] {
-    padding-left: max(12px, var(--drp-safe-left));
-    padding-right: max(12px, var(--drp-safe-right));
+  html[data-yuremote-mobile] [class*="composerSeat"] {
+    padding-left: max(12px, var(--yuremote-safe-left));
+    padding-right: max(12px, var(--yuremote-safe-right));
     box-sizing: border-box;
   }
 
   /* 11.2 The ledger/trajectory view is a wide table. On the desktop it clips and
      you pan with a trackpad; on a phone the clip left no way to see the rest of
      the timeline, so the pane itself pans now. */
-  html[data-drp-mobile] [class*="tablePane"] {
+  html[data-yuremote-mobile] [class*="tablePane"] {
     overflow-x: auto;
     overscroll-behavior-x: contain;
     -webkit-overflow-scrolling: touch;
@@ -613,18 +613,18 @@
   /* 11.3 Settings: the two-pane layout (nav 188px + body 178px) squeezed the
      labels into a one-character-wide column. One column, sections as a
      horizontal strip, body full width. */
-  html[data-drp-mobile] [role="dialog"]:has([data-slot="settings.header"]) {
+  html[data-yuremote-mobile] [role="dialog"]:has([data-slot="settings.header"]) {
     flex-direction: column;
   }
 
-  html[data-drp-mobile] [role="dialog"]:has([data-slot="settings.header"]) > nav {
+  html[data-yuremote-mobile] [role="dialog"]:has([data-slot="settings.header"]) > nav {
     width: 100%;
     flex: 0 0 auto;
     border-right: 0;
     border-bottom: 0.5px solid var(--dsw-alias-border-l3);
   }
 
-  html[data-drp-mobile]
+  html[data-yuremote-mobile]
     [role="dialog"]:has([data-slot="settings.header"])
     > nav
     > div:last-child {
@@ -639,7 +639,7 @@
     -webkit-overflow-scrolling: touch;
   }
 
-  html[data-drp-mobile]
+  html[data-yuremote-mobile]
     [role="dialog"]:has([data-slot="settings.header"])
     > nav
     > div:last-child
@@ -651,7 +651,7 @@
     white-space: nowrap;
   }
 
-  html[data-drp-mobile] [role="dialog"]:has([data-slot="settings.header"]) > div {
+  html[data-yuremote-mobile] [role="dialog"]:has([data-slot="settings.header"]) > div {
     width: 100%;
     min-width: 0;
     flex: 1 1 auto;
@@ -661,7 +661,7 @@
   /* Children may shrink (a wide row used to clip both edges of the pane). Text
      wrapping stays opt-in per element: applying `overflow-wrap: anywhere` to a
      button or a switch deforms its label, which is worse than the overflow. */
-  html[data-drp-mobile]
+  html[data-yuremote-mobile]
     [role="dialog"]:has([data-slot="settings.header"])
     > div
     > * {
@@ -670,8 +670,8 @@
 
   /* Our own full-page surfaces (the panel, the directory picker) are modal: the
      floating drawer button must not sit on top of their header. */
-  html[data-drp-mobile][data-drp-overlay-up] .drp-drawer-btn,
-  html[data-drp-mobile][data-drp-overlay-up] .drp-drawer-scrim {
+  html[data-yuremote-mobile][data-yuremote-overlay-up] .yuremote-drawer-btn,
+  html[data-yuremote-mobile][data-yuremote-overlay-up] .yuremote-drawer-scrim {
     display: none;
   }
 
@@ -679,17 +679,17 @@
    * 12. Reduced motion — the drawer snaps instead of sliding
    * ===================================================================== */
   @media (prefers-reduced-motion: reduce) {
-    html[data-drp-mobile][data-drp-drawer="open"]
+    html[data-yuremote-mobile][data-yuremote-drawer="open"]
       [data-slot="root"]
       > div
       > div:has(> [data-slot="sidebar"]),
-    html[data-drp-mobile]
+    html[data-yuremote-mobile]
       [data-slot="root"]
       > div
       > div:has(> [data-slot="sidebar"]),
-    html[data-drp-mobile] .drp-drawer-scrim,
-    html[data-drp-mobile][data-drp-drawer="open"] .drp-drawer-scrim,
-    html[data-drp-mobile] .drp-drawer-btn {
+    html[data-yuremote-mobile] .yuremote-drawer-scrim,
+    html[data-yuremote-mobile][data-yuremote-drawer="open"] .yuremote-drawer-scrim,
+    html[data-yuremote-mobile] .yuremote-drawer-btn {
       transition: none;
     }
   }
@@ -701,10 +701,10 @@
    show/hide button keep their own size: a 40 px minimum turns a 38×22 pill
    into a blob and pushes the button out of its 36 px field. */
 @media (max-width: 900px) and (pointer: coarse) {
-  html[data-drp-mobile]
+  html[data-yuremote-mobile]
     button[aria-label]:not(:has(> span:not(:empty))):not(
       [class*="_composer"]
-    ):not([role="switch"]):not([data-drp="panel"] .drp-pw-eye) {
+    ):not([role="switch"]):not([data-yuremote="panel"] .yuremote-pw-eye) {
     min-width: 40px;
     min-height: 40px;
   }
@@ -715,11 +715,11 @@
  *
  * The layout layer above is width-gated; this block is not. A 1440 px laptop
  * on the LAN or across a relay is still not the machine that owns the files,
- * so the native-only entries are hidden there too. `data-drp-remote` is set by
+ * so the native-only entries are hidden there too. `data-yuremote-remote` is set by
  * mobile.js only when the page was served to another device (never for the
  * desktop shell or loopback).
  * ===================================================================== */
-html[data-drp-remote] .drp-hidden {
+html[data-yuremote-remote] .yuremote-hidden {
   display: none;
 }
 

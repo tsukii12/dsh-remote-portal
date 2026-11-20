@@ -9,7 +9,7 @@
 ```mermaid
 flowchart LR
   subgraph home["Home machine — no public IP, nothing opened"]
-    app["dsh + dsh-remote-portal<br/>gateway 127.0.0.1:3081"]
+    app["dsh + yuremote<br/>gateway 127.0.0.1:3081"]
   end
 
   subgraph server["Server with a public IP"]
@@ -36,7 +36,7 @@ enforced by the portal at home — the relay only moves bytes.
 4. [Do I need nginx? No](#4-do-i-need-nginx-no)
 5. [Mirrors and offline installs](#5-mirrors-and-offline-installs)
 6. [Manual deployment (advanced)](#6-manual-deployment-advanced)
-7. [Managing it with `drp`](#7-managing-it-with-drp)
+7. [Managing it with `yuremote`](#7-managing-it-with-yuremote)
 8. [Connecting the home machine](#8-connecting-the-home-machine)
 9. [Bring your own tunnel](#9-bring-your-own-tunnel)
 10. [Operations and troubleshooting](#10-operations-and-troubleshooting)
@@ -48,11 +48,11 @@ enforced by the portal at home — the relay only moves bytes.
 ## 1. Install the plugin first
 
 Inside dsh: Plugins → Add plugin → paste
-`https://github.com/tsukii12/dsh-remote-portal`. Or from a shell:
+`https://github.com/tsukii12/dsh-YuRemote`. Or from a shell:
 
 ```bash
-git clone https://github.com/tsukii12/dsh-remote-portal
-cd dsh-remote-portal && ./install.sh      # Windows: .\install.ps1
+git clone https://github.com/tsukii12/dsh-YuRemote
+cd dsh-YuRemote && ./install.sh      # Windows: .\install.ps1
 ```
 
 Restart dsh afterwards. Everything below assumes this repository's `tools/`
@@ -74,10 +74,21 @@ The installer picks A or B from your answers, and you can go further with C.
 
 ## 3. One command, no arguments
 
+On a systemd host with a standard legacy `dsh-relay.service`, the installer
+migrates instead of asking fresh-install questions. It copies the existing
+state (including all tunnel tokens) to `/var/lib/yuremote-relay`, installs
+code under `/opt/yuremote-relay`, and preserves the old unit's listener
+arguments, environment and certificate paths. The original service is
+disabled; its name becomes an alias so existing certificate renewal hooks
+still restart the relay. This does not touch the proxy or firewall.
+The installer checks the new service and prints a one-line rollback command;
+`/opt/dsh-relay` stays untouched. Custom unit drop-ins require manual review
+before migration.
+
 No checkout needed. Run this on the server as root:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master/tools/deploy-relay.sh | sudo bash
+curl -fsSL https://raw.githubusercontent.com/tsukii12/dsh-YuRemote/master/tools/deploy-relay.sh | sudo bash
 ```
 
 **Node is not required.** If the host has none, the installer offers to install a
@@ -87,7 +98,7 @@ unpacked into `/usr/local/lib/nodejs`) and carries on.
 Prefer to read before running? Download it and execute the same file:
 
 ```bash
-curl -fsSLO https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master/tools/deploy-relay.sh
+curl -fsSLO https://raw.githubusercontent.com/tsukii12/dsh-YuRemote/master/tools/deploy-relay.sh
 sudo bash deploy-relay.sh
 ```
 
@@ -147,8 +158,8 @@ domain is on Cloudflare it also prints the way out: proxy the record, set SSL mo
 
 acme.sh is downloaded once (the real ~300 KB script, not the 1 KB bootstrap, through a
 mirror chain) and installed under `~/.acme.sh`. Both automatic routes use it, and both
-end with `--install-cert` putting `fullchain`/`key` into `/var/lib/dsh-relay/tls/`
-plus a `dsh-relay-acme.timer` that renews twice a day.
+end with `--install-cert` putting `fullchain`/`key` into `/var/lib/yuremote-relay/tls/`
+plus a `yuremote-relay-acme.timer` that renews twice a day.
 
 **The CA has to be reachable.** Before issuing, the installer samples the Let's Encrypt
 directory up to four times with a 10 s ceiling each; only when every sample fails does
@@ -173,11 +184,11 @@ Manual DNS takes two passes because acme.sh 3.x works that way: `--issue` prints
 The installer prints the record on its own line and waits for Enter between the passes.
 
 A certificate that is still valid is reused without touching the network, so an
-unattended re-run (`drp config`, `--yes`) also works offline.
+unattended re-run (`yuremote config`, `--yes`) also works offline.
 
 ### 3.4 Ports below 1024
 
-The service runs as the unprivileged `dsh-relay` user. When any port is below 1024
+The service runs as the unprivileged `yuremote-relay` user. When any port is below 1024
 the unit is written with `AmbientCapabilities=CAP_NET_BIND_SERVICE`, so 443 works
 without running the relay as root.
 
@@ -203,8 +214,8 @@ the side that initiates the connection to it.
 ### 3.6 Unattended and other switches
 
 ```bash
-sudo ./deploy-relay.sh --yes        # accept every default (also how `drp config` reinstalls)
-sudo ./deploy-relay.sh --uninstall  # remove the service, /opt/dsh-relay and drp
+sudo ./deploy-relay.sh --yes        # accept every default (also how `yuremote config` reinstalls)
+sudo ./deploy-relay.sh --uninstall  # remove the service, /opt/yuremote-relay and yuremote
 sudo ./deploy-relay.sh --lang zh    # Chinese
 ```
 
@@ -281,7 +292,7 @@ install must run from its own directory.
 **Pin a source yourself:**
 
 ```bash
-sudo -E RELAY_RAW_BASE=https://ghfast.top/https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master bash deploy-relay.sh
+sudo -E RELAY_RAW_BASE=https://ghfast.top/https://raw.githubusercontent.com/tsukii12/dsh-YuRemote/master bash deploy-relay.sh
 ```
 
 **Fully offline** (most reliable): fetch `relay.mjs` once on a machine that can reach
@@ -290,10 +301,10 @@ GitHub, put it next to `deploy-relay.sh`, and nothing is downloaded.
 The script itself can come from a mirror too:
 
 ```bash
-curl -fsSL https://ghfast.top/https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master/tools/deploy-relay.sh | sudo bash
+curl -fsSL https://ghfast.top/https://raw.githubusercontent.com/tsukii12/dsh-YuRemote/master/tools/deploy-relay.sh | sudo bash
 ```
 
-Re-running is safe: the answers are stored in `/var/lib/dsh-relay/deploy.conf` and
+Re-running is safe: the answers are stored in `/var/lib/yuremote-relay/deploy.conf` and
 offered as defaults next time, the token and certificate are reused (encryption is
 never downgraded), and ports the install already owns are not counted as conflicts.
 
@@ -309,15 +320,15 @@ A Linux VPS; one core and 512 MB is plenty (the relay only forwards bytes). The
 examples use public IPv4 `203.0.113.10` and `dsh.example.com` pointing at it.
 
 ```bash
-sudo useradd --system --home /var/lib/dsh-relay --create-home dsh-relay
-sudo mkdir -p /opt/dsh-relay && sudo chown dsh-relay:dsh-relay /opt/dsh-relay
+sudo useradd --system --home /var/lib/yuremote-relay --create-home yuremote-relay
+sudo mkdir -p /opt/yuremote-relay && sudo chown yuremote-relay:yuremote-relay /opt/yuremote-relay
 node --version        # v20 or newer
 ```
 
 `tools/relay.mjs` is a **single file with no dependencies** — no `npm install`:
 
 ```bash
-sudo -u dsh-relay cp tools/relay.mjs /opt/dsh-relay/
+sudo -u yuremote-relay cp tools/relay.mjs /opt/yuremote-relay/
 ```
 
 ### 6.2 Create a tunnel token
@@ -332,8 +343,8 @@ openssl rand -base64 32
 Store it where only the service user can read it:
 
 ```bash
-sudo -u dsh-relay bash -c 'printf "%s\n" "8f3k…your token…" > /var/lib/dsh-relay/token'
-sudo chmod 600 /var/lib/dsh-relay/token
+sudo -u yuremote-relay bash -c 'printf "%s\n" "8f3k…your token…" > /var/lib/yuremote-relay/token'
+sudo chmod 600 /var/lib/yuremote-relay/token
 ```
 
 One token per line; several lines means several machines, each with its own public
@@ -343,8 +354,8 @@ stands in the way — rotate it anyway if you suspect one.
 ### 6.3 Run the relay
 
 ```bash
-sudo -u dsh-relay node /opt/dsh-relay/relay.mjs \
-  --token-file /var/lib/dsh-relay/token \
+sudo -u yuremote-relay node /opt/yuremote-relay/relay.mjs \
+  --token-file /var/lib/yuremote-relay/token \
   --agent-port 9443 \
   --http-port 127.0.0.1:8080 \
   --public-url https://dsh.example.com
@@ -372,20 +383,20 @@ Two more flags worth knowing:
 
 ### 6.4 Hand it to systemd
 
-`/etc/systemd/system/dsh-relay.service`:
+`/etc/systemd/system/yuremote-relay.service`:
 
 ```ini
 [Unit]
-Description=dsh-remote-portal relay
+Description=yuremote relay
 After=network-online.target
 Wants=network-online.target
 
 [Service]
 Type=simple
-User=dsh-relay
-Group=dsh-relay
-ExecStart=/usr/bin/node /opt/dsh-relay/relay.mjs \
-  --token-file /var/lib/dsh-relay/token \
+User=yuremote-relay
+Group=yuremote-relay
+ExecStart=/usr/bin/node /opt/yuremote-relay/relay.mjs \
+  --token-file /var/lib/yuremote-relay/token \
   --agent-port 9443 --http-port 127.0.0.1:8080 \
   --public-url https://dsh.example.com
 # only needed when a port is below 1024
@@ -398,8 +409,8 @@ ProtectSystem=strict
 ProtectHome=true
 PrivateTmp=true
 RestrictAddressFamilies=AF_INET AF_INET6
-ReadOnlyPaths=/opt/dsh-relay
-ReadWritePaths=/var/lib/dsh-relay
+ReadOnlyPaths=/opt/yuremote-relay
+ReadWritePaths=/var/lib/yuremote-relay
 
 [Install]
 WantedBy=multi-user.target
@@ -407,8 +418,8 @@ WantedBy=multi-user.target
 
 ```bash
 sudo systemctl daemon-reload
-sudo systemctl enable --now dsh-relay
-journalctl -u dsh-relay -f          # tunnel connect / disconnect
+sudo systemctl enable --now yuremote-relay
+journalctl -u yuremote-relay -f          # tunnel connect / disconnect
 ```
 
 > `--http-port 127.0.0.1:8080` keeps the plain listener on loopback: when a proxy
@@ -487,15 +498,15 @@ proxy does not.
 
 ```bash
 openssl req -x509 -newkey rsa:2048 -sha256 -days 365 -nodes \
-  -keyout /opt/dsh-relay/key.pem -out /opt/dsh-relay/cert.pem \
+  -keyout /opt/yuremote-relay/key.pem -out /opt/yuremote-relay/cert.pem \
   -subj "/CN=203.0.113.10" \
   -addext "subjectAltName=IP:203.0.113.10"
-sudo chown dsh-relay: /opt/dsh-relay/*.pem && sudo chmod 600 /opt/dsh-relay/key.pem
+sudo chown yuremote-relay: /opt/yuremote-relay/*.pem && sudo chmod 600 /opt/yuremote-relay/key.pem
 
-sudo -u dsh-relay node /opt/dsh-relay/relay.mjs \
-  --token-file /var/lib/dsh-relay/token \
+sudo -u yuremote-relay node /opt/yuremote-relay/relay.mjs \
+  --token-file /var/lib/yuremote-relay/token \
   --agent-port 9443 --http-port 127.0.0.1:8080 \
-  --tls-port 0.0.0.0:8443 --tls-cert /opt/dsh-relay/cert.pem --tls-key /opt/dsh-relay/key.pem \
+  --tls-port 0.0.0.0:8443 --tls-cert /opt/yuremote-relay/cert.pem --tls-key /opt/yuremote-relay/key.pem \
   --public-url https://203.0.113.10:8443
 ```
 
@@ -504,13 +515,13 @@ a self-signed certificate, and it is only appropriate for your own devices.
 
 ---
 
-## 7. Managing it with `drp`
+## 7. Managing it with `yuremote`
 
-The installer writes `/usr/local/bin/drp`; you never have to visit the install
+The installer writes `/usr/local/bin/yuremote`; you never have to visit the install
 directory again.
 
 ```console
-$ drp
+$ yuremote
 service     running · autostart on
 uptime      2h 14m
 agent port  dsh.example.com:9443 (TLS)
@@ -525,14 +536,14 @@ public      https://dsh.example.com/__t/3TerRaeZuv7S/
 
 | Command | Does |
 |---|---|
-| `drp` | status (the above) |
-| `drp url` | just the public URL |
-| `drp token` | just the tunnel token |
-| `drp start` / `stop` / `restart` | service control |
-| `drp log [-f]` | journal for the unit |
-| `drp config` | the saved answers |
-| `drp config K=V …` | change them and reinstall the unit |
-| `drp uninstall` | remove the service, `/opt/dsh-relay` and `drp` itself |
+| `yuremote` | status (the above) |
+| `yuremote url` | just the public URL |
+| `yuremote token` | just the tunnel token |
+| `yuremote start` / `stop` / `restart` | service control |
+| `yuremote log [-f]` | journal for the unit |
+| `yuremote config` | the saved answers |
+| `yuremote config K=V …` | change them and reinstall the unit |
+| `yuremote uninstall` | remove the service, `/opt/yuremote-relay` and `yuremote` itself |
 
 The `visitor` line names what is actually served — `CA certificate`, `your
 certificate` or `self-signed` — so it is obvious whether a real certificate ended up
@@ -545,9 +556,9 @@ tunnel flaps: `ping timeout` means the network or NAT dropped it silently,
 socket was still registered, and `closed` means the other side hung up (a sleeping
 laptop is the usual cause).
 
-`drp config` edits `/var/lib/dsh-relay/deploy.conf` and then re-runs the installer
+`yuremote config` edits `/var/lib/yuremote-relay/deploy.conf` and then re-runs the installer
 with `--yes`, so ports and certificates in the unit's command line actually change.
-The installer and `relay.mjs` are kept in `/var/lib/dsh-relay`, so this needs no
+The installer and `relay.mjs` are kept in `/var/lib/yuremote-relay`, so this needs no
 network.
 
 ### One relay, several machines
@@ -561,26 +572,26 @@ https://dsh.example.com/__t/HnCjh8ciUJg2/     ← machine B
 ```
 
 ```bash
-drp token add              # mint a token for another machine and restart
-drp tokens                 # every tunnel: id, state, masked token
-drp urls                   # every public URL
-drp token remove <id|#>    # drop one (the id, or the number drp tokens shows)
+yuremote token add              # mint a token for another machine and restart
+yuremote tokens                 # every tunnel: id, state, masked token
+yuremote urls                   # every public URL
+yuremote token remove <id|#>    # drop one (the id, or the number yuremote tokens shows)
 ```
 
-The token list is `/var/lib/dsh-relay/token`, one per line, with `#` comments
+The token list is `/var/lib/yuremote-relay/token`, one per line, with `#` comments
 allowed — the installer and these commands both use it, and the relay reads it every
 time it starts.
 
 | Shared | Per tunnel |
 |---|---|
 | visitor port, agent port, certificate | password, sessions, static-asset cache |
-| one `dsh-relay` service and its config | its own URL path, its own token |
+| one `yuremote-relay` service and its config | its own URL path, its own token |
 
 One visitor port means no extra firewall rules. The certificate is shared because the
 domain is; every harness is reached under the same hostname with a different path.
 
 Anyone holding a token can attach a machine to your relay, so the file stays mode
-`0600` and `drp token remove` is the way to revoke one.
+`0600` and `yuremote token remove` is the way to revoke one.
 
 
 ---
@@ -607,8 +618,8 @@ Anyone holding a token can attach a machine to your relay, so the file stays mod
 It can also be pinned in `cordis.patch.yml`:
 
 ```yaml
-- id: dsh-remote-portal
-  name: dsh-remote-portal
+- id: yuremote
+  name: yuremote
   config:
     tunnel:
       url: tls://dsh.example.com:9443
@@ -616,7 +627,7 @@ It can also be pinned in `cordis.patch.yml`:
       caFile: /path/to/cert.pem    # only for a self-signed agent certificate
 ```
 
-Values entered in the panel are stored in `~/.dsh/dsh-remote-portal/state.json`
+Values entered in the panel are stored in `~/.dsh/yuremote/state.json`
 (mode 0600) and take precedence over the YAML. Neither the panel nor `status()` ever
 echoes the token back.
 
@@ -644,7 +655,7 @@ curl -s https://dsh.example.com/__relay/health | jq
 # {"ok":true,"tunnels":[{"id":"3TerRaeZuv7S","connected":true,"streams":0,
 #   "reconnects":0,"lastDropReason":"","agentVersion":"0.6.0"}],"stats":{...}}
 
-journalctl -u dsh-relay -f     # connect / disconnect
+journalctl -u yuremote-relay -f     # connect / disconnect
 ```
 
 ### The relay caches only versioned public portal assets
@@ -657,7 +668,7 @@ to the origin. Harness assets and other content still go to the origin.
 
 The size cap is 128 MB (`DSH_RELAY_CACHE_MB` to change it), objects over 16 MB
 are skipped, and entries expire after six hours. `curl -D -` shows
-`x-drp-cache: hit`; `/__relay/health` reports `cacheHits` and `cacheStored`.
+`x-yuremote-cache: hit`; `/__relay/health` reports `cacheHits` and `cacheStored`.
 
 | Symptom | Cause | Fix |
 |---|---|---|
@@ -671,7 +682,7 @@ are skipped, and entries expire after six hours. `curl -D -` shows
 | `port 80 is in use` when issuing a certificate | a web panel owns 80, and the standalone HTTP check needs it exclusively | the installer offers to switch to the DNS check; no port is needed for that |
 | `the certificate authority did not answer` | the host cannot reach Let's Encrypt right now (four samples, 10 s each) | run it from a better network, use the Cloudflare token, or issue elsewhere and paste the certificate |
 | `Unknown tunnel` although the panel says connected | the relay on the server is from another release | re-run the installer: it now compares `RELAY_VERSION` with its own version and fetches the matching one |
-| the tunnel reconnects every ~35 s | the keepalive got no answer within 10 s, so the agent rebuilt the link and killed whatever was in flight | check `reconnects` and `last drop` in `drp`; on a lossy path raise `DSH_TUNNEL_PONG_TIMEOUT_MS` (agent side) |
+| the tunnel reconnects every ~35 s | the keepalive got no answer within 10 s, so the agent rebuilt the link and killed whatever was in flight | check `reconnects` and `last drop` in `yuremote`; on a lossy path raise `DSH_TUNNEL_PONG_TIMEOUT_MS` (agent side) |
 | Ctrl+C does not stop an acme run | older installer: `timeout` puts acme.sh in another process group | upgrade the installer — it uses `timeout --foreground` now |
 
 ---
@@ -724,4 +735,4 @@ secrets:
     file: ./relay-token
 ```
 
-In the proxy container, point `reverse_proxy dsh-relay:8080` at that service name.
+In the proxy container, point `reverse_proxy yuremote-relay:8080` at that service name.

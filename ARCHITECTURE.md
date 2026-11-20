@@ -66,7 +66,7 @@ why a cookie minted for `127.0.0.1:19887` still validates when it comes back thr
 ## Request path
 
 Requests the gateway answers itself: `__portal/*` (login, pairing, logout,
-manifest) and `dsh-remote-portal/*` (assets, control API). Everything else is
+manifest) and `yuremote/*` (assets, control API). Everything else is
 proxied, with `Host`/`Origin`/`Referer` rewritten to the upstream authority,
 `X-Forwarded-*` appended, upstream `Location` headers rewritten back to the portal,
 the response streamed through unbuffered (SSE and large downloads), and WebSocket
@@ -118,7 +118,7 @@ sequenceDiagram
   attaches and retries with backoff.
 * **Keepalive**: the relay answers `PING` with `PONG` every 25 s; 10 s without one
   makes the agent reconnect, which is what recovers from a dead NAT mapping. The
-  relay counts those reconnects and the reason for the last drop, and `drp` shows
+  relay counts those reconnects and the reason for the last drop, and `yuremote` shows
   both.
 
 ## Browser halves
@@ -133,15 +133,15 @@ independently guarded, because a throwing client plugin blanks the whole web app
 
 | Slot | What it is |
 |---|---|
-| `sidebar.panellist`, id `dsh-remote-portal` | the sidebar entry |
-| `main`, key `dsh-remote-portal` | the page; the host dispatches `main` by the entry's id, so it behaves like *Plugins* / *Scheduled tasks* |
+| `sidebar.panellist`, id `yuremote` | the sidebar entry |
+| `main`, key `yuremote` | the page; the host dispatches `main` by the entry's id, so it behaves like *Plugins* / *Scheduled tasks* |
 | `shell.overlay` | the directory picker — it needs its own surface because the panel already owns `main` |
 
 Without that third registration `__DSH_DIRECTORY_PICKER__.pick()` has no receiver and
 "Add workspace" does nothing, silently. That is worth remembering before deleting it.
 
 **Mobile layer** — the shipped UI has one `@media` rule in 77 KB of CSS. The layer is
-gated behind `@media (max-width: 900px)` **and** `html[data-drp-mobile]`, and keyed to
+gated behind `@media (max-width: 900px)` **and** `html[data-yuremote-mobile]`, and keyed to
 stable hooks (`[data-slot=…]`, `[role=dialog]`, `:has()`), never CSS-module hashes. It
 is inert above 900 px, so the desktop app is untouched.
 
@@ -149,7 +149,7 @@ Whether that attribute is set is decided from facts, not from window width: an
 entry-only origin (`file://`, loopback) means the machine hosting dsh, so the layer
 stays off there; anything else is a remote visitor. Earlier versions guessed from
 width alone and hid working controls on the desktop — that is why the decision is
-now explicit and recorded in `data-drp-decision`.
+now explicit and recorded in `data-yuremote-decision`.
 
 ## Host facts
 

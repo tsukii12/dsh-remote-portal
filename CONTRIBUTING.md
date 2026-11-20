@@ -20,7 +20,7 @@ change is “does it keep the guarantees below intact?”.
 ## Getting set up
 
 ```bash
-git clone <repo> dsh-remote-portal && cd dsh-remote-portal
+git clone <repo> yuremote && cd yuremote
 node --test                                 # see the testing guide for browser setup
 node --test test/host.test.mjs               # one suite
 ```

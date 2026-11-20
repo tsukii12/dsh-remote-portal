@@ -41,7 +41,7 @@ test("the deploy script pins the mirror to its own version", () => {
   const script = read("tools/deploy-relay.sh");
   assert.match(
     script,
-    /cdn\.jsdelivr\.net\/gh\/tsukii12\/dsh-remote-portal@v\$\{SELF_VERSION\}/,
+    /cdn\.jsdelivr\.net\/gh\/tsukii12\/dsh-YuRemote@v\$\{SELF_VERSION\}/,
     "jsDelivr caches by ref: an unpinned @master there can serve an older relay.mjs",
   );
   assert.equal(

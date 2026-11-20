@@ -1,5 +1,5 @@
 /**
- * dsh-remote-portal — host-side tests (node:test, no dependencies).
+ * yuremote — host-side tests (node:test, no dependencies).
  *
  * Everything here runs against a *real* listener and a *real* dummy upstream on
  * loopback: the behaviours worth pinning (header rewriting, upgrade tunnelling,
@@ -35,7 +35,7 @@ const dirs = [];
 const cleanups = [];
 
 function tmpDir() {
-  const dir = mkdtempSync(join(tmpdir(), "drp-host-"));
+  const dir = mkdtempSync(join(tmpdir(), "yuremote-host-"));
   dirs.push(dir);
   return dir;
 }
@@ -46,7 +46,7 @@ function tmpDir() {
  * (A `process.on('exit')` handler cannot await a `server.close()`.)
  */
 after(async () => {
-  const verbose = process.env.DRP_TEST_VERBOSE === "1";
+  const verbose = process.env.YUREMOTE_TEST_VERBOSE === "1";
   for (const fn of cleanups.splice(0).reverse()) {
     const startedAt = Date.now();
     if (verbose) console.log(`# cleanup start ${String(fn).slice(0, 60)}`);
@@ -783,7 +783,7 @@ test("/__portal/* is answered locally and never reaches the upstream", async () 
   assert.equal(health.status, 200);
   const payload = JSON.parse(health.body);
   assert.equal(payload.ok, true);
-  assert.equal(payload.name, "dsh-remote-portal");
+  assert.equal(payload.name, "yuremote");
   assert.equal(payload.version, "9.9.9-test");
   assert.equal(payload.auth.passwordSet, true);
   assert.equal(payload.upstream.port, upstream.port);
@@ -869,7 +869,7 @@ test("the login page only advertises a LAN address to LAN visitors", async () =>
   // 192.168.x.x address that is meaningless from where they are.
   const remote = await request(status.port, path, { headers: { host: "dsh.example.com" } });
   assert.equal(remote.status, 200);
-  assert.match(remote.body, /drp-submit/, "the login form must render for a foreign Host");
+  assert.match(remote.body, /yuremote-submit/, "the login form must render for a foreign Host");
   if (lanHost) {
     assert.equal(remote.body.includes(lanHost), false, "a public visitor must not see the LAN address");
     const local = await request(status.port, path, { headers: { host: `127.0.0.1:${status.port}` } });
@@ -887,17 +887,17 @@ test("serves pairing QR codes locally (size clamped, oversized text refused)", a
   const before = upstream.seen.length;
   const pairing = await gw.mintPairing({ ttlSeconds: 180 });
 
-  const qr = await request(port, `/dsh-remote-portal/qr.svg?text=${encodeURIComponent(pairing.url)}&size=9999`);
+  const qr = await request(port, `/yuremote/qr.svg?text=${encodeURIComponent(pairing.url)}&size=9999`);
   assert.equal(qr.status, 200);
   assert.match(qr.headers["content-type"], /image\/svg\+xml/);
   assert.match(qr.body, /^<svg/);
   assert.match(qr.body, /role="img"/);
   assert.match(qr.body, /width="1024"/, "size must be clamped to 1024");
 
-  const tooLong = await request(port, `/dsh-remote-portal/qr.svg?text=${"a".repeat(214)}`);
+  const tooLong = await request(port, `/yuremote/qr.svg?text=${"a".repeat(214)}`);
   assert.equal(tooLong.status, 400, "more than 213 UTF-8 bytes must be refused, never truncated");
 
-  const empty = await request(port, "/dsh-remote-portal/qr.svg");
+  const empty = await request(port, "/yuremote/qr.svg");
   assert.equal(empty.status, 400);
   assert.equal(upstream.seen.length, before, "the QR route must never reach the upstream");
   await gw.stop();
@@ -1208,7 +1208,7 @@ test("the directory picker endpoint is behind the portal gate", async () => {
   // The picker lists directories on the *host*: it must never be reachable
   // without a portal session. (The listing itself is exercised end to end in
   // the live instance; here the security property is what matters.)
-  const anonymous = await request(port, "/dsh-remote-portal/fs");
+  const anonymous = await request(port, "/yuremote/fs");
   assert.equal(anonymous.status, 401, "an unauthenticated caller must not list directories");
   assert.equal(/listing/.test(anonymous.body), false);
 
@@ -1219,7 +1219,7 @@ test("the directory picker endpoint is behind the portal gate", async () => {
     body: "password=correct+horse+battery",
   });
   const cookie = cookieHeaderFrom(login).portal;
-  const authed = await request(port, "/dsh-remote-portal/fs", { headers: { cookie } });
+  const authed = await request(port, "/yuremote/fs", { headers: { cookie } });
   assert.equal(authed.status === 401 || authed.status === 200, true, "a session may reach the route");
 });
 
@@ -1236,10 +1236,12 @@ test("the login page speaks the visitor's language and never stores a theme", as
   assert.match(zh.body, /访问密码/, "Chinese page expected");
   assert.equal(/密码在桌面端/.test(zh.body), false, "the setup hint must be gone");
   assert.equal(/localStorage/.test(zh.body), false, "the page must not persist a theme");
-  assert.match(zh.body, /viewBox="0 0 50 50"/, "the Harness mark is inlined");
+  assert.match(zh.body, /<img class="yuremote-mark" src="yuremote\/assets\/brand\/yuremote-transparent\.png"/);
+  assert.match(zh.body, /<title>登录 · 鱼鱼远程<\/title>/);
 
   const en = await request(port, "/", { headers: { accept: "text/html", "accept-language": "en-US,en;q=0.9" } });
   assert.match(en.body, /access password|Remote access/i);
+  assert.match(en.body, /<title>Sign in · YuRemote<\/title>/);
 });
 
 test("redirects stay inside the mount prefix a proxy reports", async () => {
@@ -1552,14 +1554,19 @@ test("the login page links the home-screen manifest, and the manifest follows th
 
   const page = await request(port, "/", { headers: { accept: "text/html", ...mounted } });
   assert.match(page.body, /<link rel="manifest" href="__portal\/manifest\.webmanifest">/);
-  assert.match(page.body, /<link rel="apple-touch-icon" href="__portal\/icon\.svg">/);
+  assert.match(page.body, /<link rel="apple-touch-icon" href="yuremote\/assets\/brand\/yuremote-1024\.png">/);
+  assert.match(page.body, /<link rel="icon" type="image\/png" href="yuremote\/assets\/brand\/yuremote-transparent\.png">/);
   assert.match(String(page.headers["content-security-policy"]), /manifest-src 'self'/, "the page CSP must let the browser load the manifest");
 
   const viaRelay = JSON.parse((await request(port, "/__portal/manifest.webmanifest", { headers: mounted })).body);
   assert.equal(viaRelay.start_url, "/__t/abc123/");
   assert.equal(viaRelay.scope, "/__t/abc123/");
+  assert.equal(viaRelay.name, "YuRemote");
+  assert.equal(viaRelay.icons.length, 1);
   for (const icon of viaRelay.icons) assert.ok(icon.src.startsWith("/__t/abc123/"), icon.src);
 
   const direct = JSON.parse((await request(port, "/__portal/manifest.webmanifest")).body);
   assert.equal(direct.start_url, "/");
+  const chinese = JSON.parse((await request(port, "/__portal/manifest.webmanifest", { headers: { "accept-language": "zh-CN" } })).body);
+  assert.equal(chinese.name, "鱼鱼远程");
 });

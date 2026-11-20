@@ -1,4 +1,4 @@
-// The workspace picker's directory listing (`GET /dsh-remote-portal/fs`).
+// The workspace picker's directory listing (`GET /yuremote/fs`).
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { mkdtempSync, mkdirSync, writeFileSync, symlinkSync, rmSync } from "node:fs";
@@ -19,7 +19,7 @@ function fsRoute(stateDir) {
     effect(fn, label) { if (/control routes$/.test(label)) fn(); },
   };
   apply(ctx, { stateDir, mobile: false });
-  const route = routes.find((r) => r.path === "/dsh-remote-portal/fs");
+  const route = routes.find((r) => r.path === "/yuremote/fs");
   assert.ok(route, "fs route not registered");
   return (path) => new Promise((resolve) => {
     const res = {
@@ -30,14 +30,14 @@ function fsRoute(stateDir) {
     };
     route.handler({
       method: "GET",
-      url: "/dsh-remote-portal/fs?path=" + encodeURIComponent(path),
+      url: "/yuremote/fs?path=" + encodeURIComponent(path),
       headers: { host: "127.0.0.1:3080" },
     }, res);
   });
 }
 
 test("the picker lists directories and directory symlinks, never files or dangling links", async (t) => {
-  const root = mkdtempSync(join(tmpdir(), "drp-fs-"));
+  const root = mkdtempSync(join(tmpdir(), "yuremote-fs-"));
   t.after(() => rmSync(root, { recursive: true, force: true }));
   const dir = join(root, "list");
   mkdirSync(join(dir, "alpha"), { recursive: true });
@@ -62,7 +62,7 @@ test("the picker lists directories and directory symlinks, never files or dangli
 });
 
 test("the picker caps a huge directory at 400 entries and says so", async (t) => {
-  const root = mkdtempSync(join(tmpdir(), "drp-fs-"));
+  const root = mkdtempSync(join(tmpdir(), "yuremote-fs-"));
   t.after(() => rmSync(root, { recursive: true, force: true }));
   const dir = join(root, "many");
   for (let i = 0; i < 405; i++) mkdirSync(join(dir, `d${i}`), { recursive: true });
