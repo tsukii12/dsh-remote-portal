@@ -26,7 +26,7 @@ struct TranscriptTurn: Identifiable {
     var messageCount: Int { items.filter { $0.role == "assistant" || $0.role == "user" }.count }
     var countsLabel: String { L(" · \(toolCount) tool \(toolCount == 1 ? "call" : "calls") · \(messageCount) \(messageCount == 1 ? "message" : "messages")", " · \(toolCount) 次工具调用 · \(messageCount) 条消息") }
     var outcome: String? { items.flatMap(\.blocks).first { $0.kind == "turn/end" }?.raw["event"]["data"]["reason"]["kind"].string }
-    var detailItems: [TranscriptItem] { items.filter { !Self.visibleFinal($0, finalID: final?.id) } }
+    var detailItems: [TranscriptItem] { items.filter { $0.role != "notice" && !Self.visibleFinal($0, finalID: final?.id) } }
     var final: TranscriptItem? { items.last { $0.role == "assistant" && $0.blocks.contains { ["text", "image", "file"].contains($0.kind) } } }
     private static func visibleFinal(_ item: TranscriptItem, finalID: String?) -> Bool { item.role == "user" || item.id == finalID }
     static func group(_ items: [TranscriptItem]) -> [TranscriptTurn] {

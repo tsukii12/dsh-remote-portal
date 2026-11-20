@@ -39,6 +39,8 @@ struct ChatView: View {
     @State private var showingUsage = false
     @State private var editingQueue: String?
     @State private var queuedText = ""
+    @ScaledMetric(relativeTo: .caption) private var queueRowHeight: CGFloat = 64
+    @ScaledMetric(relativeTo: .caption) private var queueHeaderHeight: CGFloat = 26
     @State private var steer = false
     @State private var sendFeedback = 0
     @FocusState private var composerFocused: Bool
@@ -155,19 +157,15 @@ struct ChatView: View {
         }
     }
     private var composer: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 8) {
             if !chat.queue.isEmpty { queueDock }
             if let notice = chat.commandNotice { Text(notice).font(.caption).foregroundStyle(.secondary).lineLimit(3).textSelection(.enabled) }
             if let file = chat.exportedFile { ShareLink(item: file) { Label(L("Share session log", "分享会话日志"), systemImage: "square.and.arrow.up") }.font(.caption) }
             if draft.hasPrefix("/") { commandSuggestions }
             if FileMentionToken.active(in: draft) != nil { mentionSuggestions }
-            Button { optionsPage = .access } label: {
-                Label(ChatLabels.permission(chat.projections["permissions"]["currentValue"].text), systemImage: "checkmark.shield").font(.caption).frame(minHeight: 44)
-            }.padding(.horizontal, 12)
-            ChatComposer(chat: chat, attachments: attachments, text: $draft, focused: $composerFocused, sending: sending, canSend: canSend, onSend: send, onError: { actionError = $0; dismissedError = nil }, onModel: { optionsPage = .model }, onMode: { optionsPage = .mode }, onUsage: { showingUsage = true }, onCancel: { perform { try await chat.cancel() } })
-            if chat.running { Toggle(L("Steer immediately instead of queue", "立即引导而不是排队"), isOn: $steer).font(.caption).frame(minHeight: 44) }
+            ChatComposer(chat: chat, attachments: attachments, text: $draft, focused: $composerFocused, sending: sending, canSend: canSend, onSend: send, onError: { actionError = $0; dismissedError = nil }, onModel: { optionsPage = .model }, onMode: { optionsPage = .mode }, onUsage: { showingUsage = true }, onCancel: { perform { try await chat.cancel() } }, onAccess: { optionsPage = .access }, steering: $steer)
         }
-        .padding(.top, 6).frame(maxWidth: 800).frame(maxWidth: .infinity).background(Color(uiColor: .systemBackground)).overlay(alignment: .top) { Divider() }
+        .padding(.horizontal, 16).padding(.vertical, 8).frame(maxWidth: 800).frame(maxWidth: .infinity).background(Color(uiColor: .systemBackground)).overlay(alignment: .top) { Divider() }
     }
     private var canSend: Bool { !sending && attachments.ready && (!draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !attachments.items.isEmpty) }
     private var mentionSuggestions: some View {
@@ -210,9 +208,9 @@ struct ChatView: View {
                 Text(L("Queued messages", "排队消息")).font(.caption.weight(.semibold))
                 ForEach(Array(chat.queue.enumerated()), id: \.offset) { _, item in
                     HStack {
-                        VStack(alignment: .leading) {
+                        VStack(alignment: .leading, spacing: 3) {
                             Text(item["placement"] == "steering" ? L("Steering", "引导中") : L("Queued", "排队中")).font(.caption2).foregroundStyle(.secondary)
-                            Text(item["content"].array.map { $0["text"].text }.joined(separator: "\n")).font(.caption).lineLimit(2)
+                            Text(item["content"].array.map { $0["text"].text }.joined(separator: "\n")).font(.caption).lineLimit(2, reservesSpace: true)
                         }
                         Spacer()
                         Menu {
@@ -220,11 +218,11 @@ struct ChatView: View {
                                 .disabled(item["content"].array.contains { $0["type"] != "text" })
                             Button(L("Steer now", "立即引导")) { perform { try await chat.updateQueue(item["id"].text, kind: "steer") } }
                             Button(L("Remove", "移除"), role: .destructive) { perform { try await chat.updateQueue(item["id"].text, kind: "remove") } }
-                        } label: { Image(systemName: "ellipsis.circle").padding(6) }.accessibilityLabel(L("Queued message actions", "排队消息操作"))
-                    }.padding(8).background(DRPStyle.sidebar, in: RoundedRectangle(cornerRadius: 10))
+                        } label: { Image(systemName: "ellipsis.circle").frame(width: 44, height: 44) }.accessibilityLabel(L("Queued message actions", "排队消息操作"))
+                    }.padding(8).frame(height: queueRowHeight).background(DRPStyle.sidebar, in: RoundedRectangle(cornerRadius: 10))
                 }
             }
-        }.frame(maxHeight: 140)
+        }.frame(height: min(140, queueHeaderHeight + CGFloat(chat.queue.count) * queueRowHeight + CGFloat(max(0, chat.queue.count - 1)) * 8))
     }
     private func send() {
         guard canSend else { return }
@@ -256,9 +254,13 @@ private struct TurnView: View {
     let turn: TranscriptTurn
     @ObservedObject var chat: ChatStore
     @State private var expanded = false
+    private func followsFinal(_ item: TranscriptItem) -> Bool {
+        guard item.role == "notice", let final = turn.final else { return false }
+        return item.seq == nil || (item.seq ?? 0) > (final.seq ?? Int.max)
+    }
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
-            ForEach(turn.items.filter { $0.role == "user" }) { item in MessageView(item: item, api: chat.api, sessionID: chat.sessionID).id(item.id) }
+            ForEach(turn.items.filter { ($0.role == "user" || $0.role == "notice") && !followsFinal($0) }) { item in MessageView(item: item, api: chat.api, sessionID: chat.sessionID).id(item.id) }
             if turn.final != nil || turn.toolCount > 0 {
                 DisclosureGroup(isExpanded: $expanded) {
                     VStack(alignment: .leading, spacing: 18) {
@@ -275,8 +277,9 @@ private struct TurnView: View {
                 }.tint(.secondary)
                 if let final = turn.final { MessageView(item: final, api: chat.api, sessionID: chat.sessionID, hideDetails: true).id(final.id) }
             } else {
-                ForEach(turn.items.filter { $0.role != "user" }) { item in MessageView(item: item, api: chat.api, sessionID: chat.sessionID).id(item.id) }
+                ForEach(turn.items.filter { $0.role != "user" && $0.role != "notice" }) { item in MessageView(item: item, api: chat.api, sessionID: chat.sessionID).id(item.id) }
             }
+            ForEach(turn.items.filter(followsFinal)) { item in MessageView(item: item, api: chat.api, sessionID: chat.sessionID).id(item.id) }
         }.frame(maxWidth: .infinity, alignment: .leading)
     }
 }
@@ -315,7 +318,11 @@ private struct MessageView: View {
                     }
                 }
             } else if item.role == "notice" {
-                ForEach(Array(item.blocks.enumerated()), id: \.offset) { _, block in GenericTranscriptBlock(block: block) }
+                ForEach(Array(item.blocks.enumerated()), id: \.offset) { _, block in
+                    if ["system-notice", "system/message"].contains(block.kind), !block.text.isEmpty, block.text.count <= 600 {
+                        Text(block.text).font(.caption).foregroundStyle(.secondary).multilineTextAlignment(.center).textSelection(.enabled).frame(maxWidth: .infinity)
+                    } else { GenericTranscriptBlock(block: block).frame(maxWidth: .infinity, alignment: .center) }
+                }
             } else {
                 ForEach(Array(visibleBlocks.enumerated()), id: \.offset) { _, block in
                     switch block.kind {

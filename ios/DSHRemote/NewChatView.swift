@@ -135,6 +135,7 @@ private struct NewChatDraftView: View {
         }
         .safeAreaInset(edge: .bottom) {
             ChatComposer(chat: chat, attachments: attachments, text: $text, focused: $focused, sending: draft.sending, canSend: !draft.sending && (!text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !attachments.items.isEmpty), onSend: send, onError: { draft.error = $0 }, onModel: { options = .model }, onMode: { options = .mode }, onUsage: { usage = true })
+                .padding(.horizontal, 16).padding(.vertical, 8)
                 .frame(maxWidth: 800).frame(maxWidth: .infinity).background(Color(uiColor: .systemBackground)).overlay(alignment: .top) { Divider() }
         }
         .sheet(item: $options) { ChatOptionsView(chat: chat, page: $0) }

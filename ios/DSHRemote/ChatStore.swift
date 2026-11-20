@@ -33,6 +33,7 @@ struct TranscriptItem: Identifiable, Equatable {
     var inProgress = false
     var turn: Int?
     var step: Int?
+    var messageID: String?
     var text: String { blocks.filter { $0.kind == "text" || role == "notice" }.map(\.text).joined() }
 }
 
@@ -99,6 +100,7 @@ final class ChatStore: ObservableObject {
     private var projectionCursor = -1
     private var history: [Int: JSON] = [:]
     private var optimistic: [TranscriptItem] = []
+    private var queuedNotices: [JSON] = []
     private var snapshotCursor: Int?
     private var attemptID: String?
     private var revision = -1
@@ -118,6 +120,7 @@ final class ChatStore: ObservableObject {
 
     func activate() {
         guard !isDraft else { return }
+        if startupTask != nil && error != nil { stop() }
         guard startupTask == nil else { return }
         let id = UUID(); startupID = id; error = nil
         startupTask = Task { [weak self] in
@@ -215,8 +218,13 @@ final class ChatStore: ObservableObject {
         guard state["running"] == true || state["running"] == false else { return }
         stateRevision += 1
         running = state["running"].boolean
-        queue = state["queue"].array
+        queue = state["queue"].array.filter(Self.isUserInput)
+        queuedNotices = state["queue"].array.filter { !Self.isUserInput($0) }
         rebuild()
+    }
+    private static func isUserInput(_ message: JSON) -> Bool {
+        let kind = message["source"]["kind"]
+        return message["placement"] != "context" && (kind == .null || kind == "user") && (message["role"] == .null || message["role"] == "user")
     }
     func applyControl(_ frame: JSON) {
         if frame["type"] == "connection-reset" { projectionCursor = -1; return }
@@ -342,13 +350,13 @@ final class ChatStore: ObservableObject {
             }
             if type == "tool/call" { blocks = [TranscriptBlock(["type": "tool-call", "id": data["callId"], "name": data["name"], "arguments": data["arguments"]])] }
             let role: String
-            if type == "user/message", message["source"]["kind"] == .null || message["source"]["kind"] == "user" { role = "user" }
+            if type == "user/message", Self.isUserInput(message) { role = "user" }
             else if ["assistant/message", "assistant/attempt", "tool/call"].contains(type) { role = "assistant" }
             else { role = "notice" }
             if role == "notice" {
-                blocks = [TranscriptBlock(["type": .string(type), "text": .string(blocks.map(\.text).filter { !$0.isEmpty }.joined(separator: "\n")), "event": event])]
+                blocks = [TranscriptBlock(["type": .string(type == "user/message" ? "system-notice" : type), "text": .string(blocks.map(\.text).filter { !$0.isEmpty }.joined(separator: "\n")), "event": event])]
             }
-            items.append(TranscriptItem(id: "seq:\(event["seq"].int ?? 0)", role: role, blocks: blocks, seq: event["seq"].int, requestID: message["source"]["rpcId"].string, turn: data["turn"].int, step: data["step"].int))
+            items.append(TranscriptItem(id: "seq:\(event["seq"].int ?? 0)", role: role, blocks: blocks, seq: event["seq"].int, requestID: message["source"]["rpcId"].string, turn: data["turn"].int, step: data["step"].int, messageID: message["id"].string))
         }
         for result in results {
             let message = result["data"]["message"]
@@ -361,7 +369,13 @@ final class ChatStore: ObservableObject {
         }
         let positions = Dictionary(uniqueKeysWithValues: surface.enumerated().compactMap { index, event in event["seq"].int.map { ($0, index) } })
         let queuedRequests = Set(queue.compactMap { $0["rpcId"].string })
-        transcript = items.sorted { (positions[$0.seq ?? -1] ?? 0) < (positions[$1.seq ?? -1] ?? 0) } + optimistic.filter { !queuedRequests.contains($0.requestID ?? "") }
+        let committedMessages = Set(items.compactMap(\.messageID))
+        let notices = queuedNotices.enumerated().compactMap { index, message -> TranscriptItem? in
+            if let id = message["id"].string, committedMessages.contains(id) { return nil }
+            let text = message["content"].array.map { $0["text"].text }.filter { !$0.isEmpty }.joined(separator: "\n")
+            return TranscriptItem(id: "pending-notice:" + (message["id"].string ?? String(index)), role: "notice", blocks: [TranscriptBlock(["type": "system-notice", "text": .string(text), "event": message])], messageID: message["id"].string)
+        }
+        transcript = items.sorted { (positions[$0.seq ?? -1] ?? 0) < (positions[$1.seq ?? -1] ?? 0) } + notices + optimistic.filter { !queuedRequests.contains($0.requestID ?? "") }
     }
     @discardableResult
     func send(_ text: String, steer: Bool = false, attachments: [DraftAttachment] = [], requestID: String? = nil) async throws -> String {
@@ -436,7 +450,7 @@ final class ChatStore: ObservableObject {
         applyProjections(try await api.rpc("session/projections", args: ["request": ["sessionId": .string(sessionID)]]))
     }
     @discardableResult
-    func executeCommand(_ line: String, attachments: [JSON] = []) async throws -> JSON {
+    func executeCommand(_ line: String, attachments: [JSON] = [], showNotice: Bool = true) async throws -> JSON {
         if isDraft, line == "/plan" || line == "/plan off" {
             projections["plan"]["active"] = .bool(line == "/plan")
             return ["result": ["kind": "text", "text": ""]]
@@ -446,14 +460,14 @@ final class ChatStore: ObservableObject {
         guard response["result"]["kind"].string != nil else { throw PortalError.message(L("Unknown command. Choose a suggestion or send ordinary text.", "未知命令，请选择建议或发送普通文本。")) }
         let result = response["result"]
         if result["kind"] == "error" { throw PortalError.message(result["text"].string ?? L("Command failed.", "命令执行失败。")) }
-        commandNotice = result["text"].string.map(ChatLabels.notice)
+        commandNotice = showNotice ? result["text"].string.map(ChatLabels.notice) : nil
         if line.trimmingCharacters(in: .whitespacesAndNewlines) == "/export" { exportedFile = try await api.exportSession(sessionID) }
         try await refreshProjections()
         return response
     }
     func selectPermission(_ preset: String) async throws {
         if isDraft { projections["permissions"]["currentValue"] = .string(preset); return }
-        try await executeCommand("/permission " + preset)
+        try await executeCommand("/permission " + preset, showNotice: false)
     }
     func selectPreset(_ preset: String) async throws {
         if isDraft { projections["agentPreset"] = .string(preset); return }

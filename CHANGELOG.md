@@ -5,6 +5,9 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+- Render sourced host context (including pending approval-policy notices) inline as system messages, not editable queued prompts. Remove redundant access acknowledgements and compact native composer controls into one row with standard margins.
+- 将主机来源的上下文（包括尚待处理的审批策略通知）以内联系统消息显示，不再作为可编辑的排队提示；移除重复权限回执，使用标准边距并将原生输入区控制项合并为紧凑的一行。
+
 - Restore standard native iOS navigation, sectioned searchable sidebar, system forms, menus and bottom composer. Remove custom glass panels, gradients, floating circles and the whale while retaining lazy chats, controls, turn summaries and relay fixes. QR scanning also accepts plain HTTP(S) LAN/visitor URLs and opens login without losing relay prefixes.
 - 恢复标准 iOS 导航栏、分组可搜索侧栏、系统表单、菜单与底部输入框，移除自绘玻璃面板、渐变、悬浮圆钮和鲸鱼，同时保留延迟创建聊天、控制项、轮次摘要与中继修复。二维码扫描也支持普通 HTTP(S) 局域网或访客链接，保留中继路径前缀并进入登录页。
 

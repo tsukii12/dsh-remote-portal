@@ -31,6 +31,7 @@ private final class RecoveryAPI: RPCServing {
             return state
         }
         if method == "session/modelCatalog", failModels { throw APIError.http(503) }
+        if method == "commands/execute" { return ["result": ["kind": "text", "text": "permission danger-full-access"]] }
         return [:]
     }
     func stream(_ endpoint: String, args: JSON) -> AsyncThrowingStream<JSON, Error> {
@@ -42,6 +43,47 @@ private final class RecoveryAPI: RPCServing {
 
 @MainActor
 final class Round4Tests: XCTestCase {
+    func testHostQueueNoticesAreInlineAndNeverEditablePrompts() {
+        let chat = ChatStore(sessionID: "fixture", api: RecoveryAPI())
+        let notice: JSON = ["id": "approval", "placement": "context", "content": [["type": "text", "text": "The user changed the approval policy."]]]
+        let prompt: JSON = ["id": "prompt", "source": ["kind": "user", "rpcId": "request"], "placement": "queued", "content": [["type": "text", "text": "My queued prompt"]]]
+        let legacy: JSON = ["id": "legacy", "content": [["type": "text", "text": "Legacy prompt"]]]
+        let unknown: JSON = ["id": "plugin", "source": ["kind": "future-plugin"], "content": [["type": "text", "text": "Host context"]]]
+        chat.applyState(["running": false, "queue": [notice, prompt, legacy, unknown]])
+        XCTAssertEqual(chat.queue.map { $0["id"].text }, ["prompt", "legacy"])
+        XCTAssertEqual(chat.transcript.map(\.role), ["notice", "notice"])
+        XCTAssertEqual(chat.transcript.first?.text, "The user changed the approval policy.")
+        XCTAssertEqual(chat.transcript.first?.blocks.first?.kind, "system-notice")
+        var committed = notice; committed["source"] = ["kind": "user-approval"]
+        chat.apply(["type": "event", "event": ["type": "user/message", "seq": 1, "data": committed]])
+        XCTAssertEqual(chat.transcript.filter { $0.messageID == "approval" }.count, 1)
+        chat.applyState(["running": false, "queue": []])
+        XCTAssertTrue(chat.queue.isEmpty)
+        XCTAssertEqual(chat.transcript.count, 1)
+        chat.applyState(["queue": [prompt]])
+        XCTAssertTrue(chat.queue.isEmpty)
+        XCTAssertEqual(chat.transcript.count, 1)
+    }
+    func testSystemNoticesStayOutsideCollapsedTurnsAndSummaryCounts() {
+        let items = [TranscriptItem(id: "u", role: "user", blocks: []), TranscriptItem(id: "a", role: "assistant", blocks: [TranscriptBlock(["type": "text", "text": "Reply"])]), TranscriptItem(id: "n", role: "notice", blocks: [TranscriptBlock(["type": "system-notice", "text": "Policy changed"])]), TranscriptItem(id: "next", role: "user", blocks: [])]
+        let turns = TranscriptTurn.group(items)
+        XCTAssertEqual(turns.count, 2)
+        XCTAssertTrue(turns[0].items.contains { $0.id == "n" })
+        XCTAssertFalse(turns[0].detailItems.contains { $0.id == "n" })
+        XCTAssertEqual(turns[0].messageCount, 2)
+        XCTAssertTrue(TranscriptTurn.group([]).isEmpty)
+    }
+    func testAccessPickerDoesNotRepeatItsValueAsACommandCaption() async throws {
+        let chat = ChatStore(sessionID: "fixture", api: RecoveryAPI())
+        try await chat.executeCommand("/example")
+        XCTAssertEqual(chat.commandNotice, L("Full access", "完全权限"))
+        var captions: [String?] = []
+        let subscription = chat.$commandNotice.dropFirst().sink { captions.append($0) }
+        defer { subscription.cancel() }
+        try await chat.selectPermission("danger-full-access")
+        XCTAssertNil(chat.commandNotice)
+        XCTAssertTrue(captions.allSatisfy { $0 == nil })
+    }
     func testScannedServerAcceptsVisitorAndLANAddressesWithoutLosingPrefixes() throws {
         for address in ["https://relay.example:8443/__t/fixture/", "http://192.168.1.20:3081/"] {
             let target = try PortalURL.scannedServer(address)
@@ -99,7 +141,7 @@ final class Round4Tests: XCTestCase {
         XCTAssertEqual(TranscriptTurn(id: "single", items: [items[0]]).countsLabel, L(" · 0 tool calls · 1 message", " · 0 次工具调用 · 1 条消息"))
         XCTAssertEqual(turns.last?.messageCount, 3)
         XCTAssertEqual(turns.last?.final?.id, "b")
-        XCTAssertEqual(turns.last?.detailItems.map(\.id), ["a", "notice"])
+        XCTAssertEqual(turns.last?.detailItems.map(\.id), ["a"])
         XCTAssertTrue(TranscriptTurn.group([]).isEmpty)
         let preface = TranscriptItem(id: "system", role: "notice", blocks: [], turn: 1)
         let observed = TranscriptTurn.group([preface, items[0], items[3]])
