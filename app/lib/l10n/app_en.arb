@@ -2835,7 +2835,7 @@
   "hubTableTintFillHint": "Alternating rows, easier to scan long tables",
   "hubTableTintFollowHint": "Header tint only, body follows the reply",
   "hubTableTintNoneHint": "Grid lines only, the lightest",
-  "hubAbout": "About DSH Go",
+  "hubAbout": "About YuRemote",
   "hubAboutAuthor": "Original author of DSH Go",
   "hubAboutBilibili": "Bilibili profile",
   "hubAboutX": "X profile",

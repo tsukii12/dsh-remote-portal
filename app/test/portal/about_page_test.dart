@@ -44,6 +44,7 @@ void main() {
 
   testWidgets('shows YuRemote version, source and upstream credit without account data', (tester) async {
     await show(tester);
+    expect(find.text('About YuRemote'), findsWidgets);
     expect(find.text('YuRemote'), findsOneWidget);
     expect(find.text(AppInfo.displayVersion), findsOneWidget);
     expect(find.text(AppInfo.repositoryUrl), findsOneWidget);
@@ -51,6 +52,14 @@ void main() {
     await tester.tap(find.text('Project repository'));
     await tester.pumpAndSettle();
     expect(launched, [AppInfo.repositoryUrl]);
+  });
+
+  testWidgets('localizes the YuRemote About heading and name in Chinese', (tester) async {
+    AppLocale.use(AppLocale.zhCN);
+    await show(tester);
+    expect(find.text('关于鱼鱼远程'), findsWidgets);
+    expect(find.text('鱼鱼远程'), findsOneWidget);
+    expect(find.text(AppInfo.repositoryUrl), findsOneWidget);
   });
 
   for (final failsWithException in [false, true]) {

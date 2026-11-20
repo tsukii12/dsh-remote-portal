@@ -9245,7 +9245,7 @@ class L10nZh extends L10n {
   String get hubTableTintNoneHint => '只剩网格线，最轻';
 
   @override
-  String get hubAbout => '关于 DSH Go';
+  String get hubAbout => '关于鱼鱼远程';
 
   @override
   String get hubAboutAuthor => 'DSH Go 原作者';
