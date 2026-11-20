@@ -47,6 +47,14 @@ versions are the plugin's own, not dsh's.
 - DRP now preserves gateway sign-in failure reasons, localizes client errors and the local-network permission prompt, and recovers approval-input loading after failures. Real-listener tests cover authentication, isolated logout and approval requests.
 - DRP 现保留网关登录失败原因，提供双语客户端错误和本地网络权限提示，并支持工具授权输入加载失败后的重试。真实监听器测试覆盖认证、独立退出登录和工具授权请求。
 
+- Remote access password: changing it from the panel now signs out every
+  device and cancels unused pairing links, as the note under the field always
+  said. Before, signed-in phones stayed signed in. A phone that makes the change
+  is asked first and told that it will be signed out too.
+- Home screen: the sign-in page now links the portal's manifest and icon, so a
+  phone that adds it to its home screen gets the right name and icon. Through
+  the relay, the manifest's start page and icon stay under `/__t/<id>/` instead
+  of pointing at the relay's root.
 - Folder picker and password: the host's errors for an invalid folder name, a
   folder that can't be created, a missing folder, a file instead of a folder,
   and a password over 200 characters now show in the panel's language instead
@@ -1233,7 +1241,6 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
-
 
 
 
