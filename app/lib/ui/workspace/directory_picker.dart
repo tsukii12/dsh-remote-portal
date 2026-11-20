@@ -1,14 +1,7 @@
-// Native mirror of the official in-app folder browser
-// (`dsh-client-ui-directory-picker-browse`): a sheet with where to start
-// (the home folder, the engine's default folder, the phone's storage, recent
-// places), then a full page that walks the host's folders one level at a
-// time through `directoryPicker/list` — breadcrumb capsules on top, folders
-// only, 「新建文件夹」 through `directoryPicker/createDirectory`. Remote hosts
-// browse their own disks through the same calls.
-
 import 'dart:async';
 
 import 'package:dsh_client/dsh_client.dart';
+import 'package:dsh_portal/dsh_portal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -19,7 +12,6 @@ import '../../state/sessions_state.dart' show localWorkspaceDir;
 import '../../state/settings_state.dart';
 import '../../state/workspaces_state.dart';
 import '../common/app_sheet.dart';
-import '../common/breadcrumb_row.dart';
 import '../common/fade_in.dart';
 import '../common/list_page_row.dart';
 import '../common/sheet_title_bar.dart';
@@ -107,11 +99,11 @@ class DirectoryLocationsSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final conn = ref.watch(activeConnectionProvider).value;
-    final local = conn?.isLocal ?? true;
+    const local = false;
     final phoneStorage = ref.watch(settingsProvider.select((s) => s.phoneStorage));
     final recent = ref.watch(workspacePrefsProvider.select((p) => p.recent));
     final shortcuts = directoryShortcuts(local: local, phoneStorage: phoneStorage, workingDir: conn?.workingDirectory);
-    final canBrowse = conn?.client.canBrowseDirectories ?? false;
+    final canBrowse = conn?.client.carrier is DshHttpCarrier;
     final known = {for (final s in shortcuts) ?s.path};
     final places = [
       for (final p in recent)
@@ -266,7 +258,7 @@ class DirectoryBrowserPage extends ConsumerStatefulWidget {
 }
 
 class _DirectoryBrowserPageState extends ConsumerState<DirectoryBrowserPage> {
-  DirectoryLevel? _level;
+  PortalDirectoryListing? _level;
   Object? _error;
   bool _busy = false;
   bool _showHidden = false;
@@ -274,11 +266,13 @@ class _DirectoryBrowserPageState extends ConsumerState<DirectoryBrowserPage> {
   /// Folders walked through, for 「返回」 one level at a time.
   final List<String> _history = [];
 
-  DshClient? get _client => ref.read(activeConnectionProvider).value?.client;
+  PortalFileSystem? _files;
 
   @override
   void initState() {
     super.initState();
+    final carrier = ref.read(activeConnectionProvider).value?.client.carrier;
+    if (carrier is DshHttpCarrier) _files = PortalFileSystem(carrier.connection);
     unawaited(_open(widget.start, record: false));
   }
 
@@ -286,12 +280,12 @@ class _DirectoryBrowserPageState extends ConsumerState<DirectoryBrowserPage> {
 
   /// Lists [path]; keeps the current level on screen until it arrives.
   Future<void> _open(String? path, {bool record = true}) async {
-    final client = _client;
+    final client = _files;
     if (client == null) return setState(() => _error = const DshTransportException('not connected'));
     if (_busy) return;
     setState(() => _busy = true);
     try {
-      final level = await client.browseDirectory(path);
+      final level = await client.browse(path);
       if (!mounted) return;
       setState(() {
         if (record && _level != null && _level!.path != level.path) _history.add(_level!.path);
@@ -312,36 +306,39 @@ class _DirectoryBrowserPageState extends ConsumerState<DirectoryBrowserPage> {
   }
 
   Future<void> _back() async {
-    if (_history.isEmpty) return;
+    if (_busy || _history.isEmpty) return;
     final previous = _history.removeLast();
     await _open(previous, record: false);
   }
 
   Future<void> _newFolder() async {
     final level = _level;
-    final client = _client;
+    final client = _files;
     if (level == null || client == null) return;
-    final local = ref.read(activeConnectionProvider).value?.isLocal ?? true;
+    const local = false;
     final name = await askFolderName(context, parentName: levelTitle(level, local: local));
     if (name == null || !mounted) return;
+    setState(() => _busy = true);
     try {
-      final created = await client.createDirectory(level.path, name);
+      final created = await client.mkdir(level.path, name);
       if (!mounted) return;
+      setState(() => _busy = false);
       await _open(created);
     } catch (e) {
       if (mounted) _toast(workspaceErrorText(e, fallback: context.l10n.remoteDirectoryErrCreate));
+    } finally {
+      if (mounted) setState(() => _busy = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final conn = ref.watch(activeConnectionProvider).value;
-    final local = conn?.isLocal ?? true;
+    const local = false;
     final level = _level;
     final title = level == null ? l10n.remoteDirectoryPickerTitle : levelTitle(level, local: local);
     final confirmLabel = widget.confirmLabel ?? l10n.remoteDirectoryChoose;
-    final canCreate = conn?.client.canCreateDirectories ?? false;
+    final canCreate = _files != null;
 
     final Widget body;
     if (level == null && _error != null) {
@@ -370,19 +367,22 @@ class _DirectoryBrowserPageState extends ConsumerState<DirectoryBrowserPage> {
       title: title,
       actions: [
         if (canCreate && level != null)
-          GlassIconButton(icon: AppIcons.newFolder, tooltip: l10n.remoteDirectoryNewFolder, onPressed: _newFolder),
+          GlassIconButton(icon: AppIcons.newFolder, tooltip: l10n.remoteDirectoryNewFolder, onPressed: _busy ? null : _newFolder),
       ],
       slivers: [
         SliverList.list(
           children: [
-            if (level != null)
-              BreadcrumbRow(
-                crumbs: displayCrumbs(level, local: local),
-                onTap: (path) {
-                  if (path != level.path) unawaited(_open(path));
-                },
-              ),
-            body,
+            FeatureNote(l10n.portalDirectoryHostHint),
+            if (level != null && level.parent != null)
+              ListPageRow(icon: AppIcons.scrollToTop, title: l10n.portalDirectoryParent,
+                onTap: _busy ? null : () => unawaited(_open(level.parent!.path))),
+            if (level != null && level.roots.isNotEmpty)
+              ListPageCard(children: [for (final root in level.roots)
+                ListPageRow(icon: AppIcons.folder, title: root.name,
+                  onTap: _busy ? null : () => unawaited(_open(root.path))),
+              ]),
+            if (level != null) FeatureNote(level.path),
+            AbsorbPointer(absorbing: _busy, child: body),
             const SizedBox(height: FormBottomBar.height),
           ],
         ),

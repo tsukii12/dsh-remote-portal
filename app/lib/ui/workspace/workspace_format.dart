@@ -57,11 +57,11 @@ String workspaceErrorText(Object error, {String? fallback}) {
   if (error is DshRemoteException) {
     return switch (error.code) {
       WorkspaceErrors.nameConflict => appL10n.remoteWorkspaceErrNameConflict,
-      WorkspaceErrors.invalidPath => appL10n.remoteWorkspaceErrInvalidPath,
-      WorkspaceErrors.notFound => appL10n.remoteWorkspaceErrNotFound,
+      WorkspaceErrors.invalidPath || 'bad-path' || 'bad-name' || 'not-a-directory' || 'bad-request' => appL10n.remoteWorkspaceErrInvalidPath,
+      WorkspaceErrors.notFound || 'not-found' => appL10n.remoteWorkspaceErrNotFound,
       WorkspaceErrors.unreadable => appL10n.remoteDirectoryErrUnreadable,
-      WorkspaceErrors.exists => appL10n.remoteDirectoryErrExists,
-      WorkspaceErrors.createFailed => appL10n.remoteDirectoryErrCreate,
+      WorkspaceErrors.exists || 'exists' => appL10n.remoteDirectoryErrExists,
+      WorkspaceErrors.createFailed || 'mkdir-failed' => appL10n.remoteDirectoryErrCreate,
       WorkspaceErrors.pickerUnavailable => appL10n.remoteDirectoryErrUnavailable,
       'METHOD_NOT_ALLOWED' || 'gateway/method-not-found' => appL10n.remoteWorkspaceErrUnsupported,
       _ => fallback ?? appL10n.commonFailedTryAgain,

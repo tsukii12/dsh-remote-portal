@@ -27962,6 +27962,12 @@ abstract class L10n {
   /// **'第 {index} 张'**
   String plugViewGalleryPicture(int index);
 
+  /// No description provided for @portalAppName.
+  ///
+  /// In zh, this message translates to:
+  /// **'鱼鱼远程'**
+  String get portalAppName;
+
   /// No description provided for @portalRemoteOnly.
   ///
   /// In zh, this message translates to:
@@ -28001,14 +28007,26 @@ abstract class L10n {
   /// No description provided for @portalOnly.
   ///
   /// In zh, this message translates to:
-  /// **'此功能需要本机引擎，DRP 不提供此功能。'**
+  /// **'此功能需要本机引擎，鱼鱼远程不提供此功能。'**
   String get portalOnly;
 
   /// No description provided for @portalWebRemoved.
   ///
   /// In zh, this message translates to:
-  /// **'DRP 不提供内嵌网页功能。'**
+  /// **'鱼鱼远程不提供内嵌网页功能。'**
   String get portalWebRemoved;
+
+  /// No description provided for @portalDirectoryParent.
+  ///
+  /// In zh, this message translates to:
+  /// **'上一级文件夹'**
+  String get portalDirectoryParent;
+
+  /// No description provided for @portalDirectoryHostHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'文件夹位于远程主机上，而非此设备。'**
+  String get portalDirectoryHostHint;
 
   /// No description provided for @readListUpdating.
   ///

@@ -4,6 +4,8 @@
 
 # dsh-remote-portal
 
+Native client: **YuRemote / 鱼鱼远程** (`app/`, Flutter for iOS and Android).
+
 License scope: the portal gateway is [MIT](LICENSE). The Flutter client in
 `app/` and its Dart packages are [AGPL-3.0](app/LICENSE), derived from dsh-Go
 v1.2.0; see [provenance](app/NOTICE) and [third-party exceptions](app/THIRD_PARTY_NOTICES.md).

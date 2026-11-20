@@ -6,6 +6,8 @@ import 'dart:io';
 
 import 'package:dsh_client/dsh_client.dart';
 
+export 'src/filesystem.dart';
+
 Uri normalizePortalUrl(String input) {
   final value = Uri.tryParse(input.trim());
   if (value == null || !['http', 'https'].contains(value.scheme.toLowerCase()) ||

@@ -15207,6 +15207,9 @@ class L10nZh extends L10n {
   }
 
   @override
+  String get portalAppName => '鱼鱼远程';
+
+  @override
   String get portalRemoteOnly => '连接 dsh-remote-portal 服务器，引擎仅在远程主机运行。';
 
   @override
@@ -15225,10 +15228,16 @@ class L10nZh extends L10n {
   String get portalPairingReady => '配对链接已就绪';
 
   @override
-  String get portalOnly => '此功能需要本机引擎，DRP 不提供此功能。';
+  String get portalOnly => '此功能需要本机引擎，鱼鱼远程不提供此功能。';
 
   @override
-  String get portalWebRemoved => 'DRP 不提供内嵌网页功能。';
+  String get portalWebRemoved => '鱼鱼远程不提供内嵌网页功能。';
+
+  @override
+  String get portalDirectoryParent => '上一级文件夹';
+
+  @override
+  String get portalDirectoryHostHint => '文件夹位于远程主机上，而非此设备。';
 
   @override
   String get readListUpdating => '更新中 · 上次结果';

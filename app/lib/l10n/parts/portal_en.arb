@@ -1,10 +1,11 @@
 {
+  "portalAppName": "YuRemote",
   "portalRemoteOnly": "Connect to your dsh-remote-portal server. The engine stays on your host.",
   "portalAddress": "Server address",
   "portalName": "Server name",
   "portalPassword": "Password",
   "portalScan": "Scan server or pairing link",
   "portalPairingReady": "Pairing link ready",
-  "portalOnly": "This feature requires the on-device engine and is not available in DRP.",
-  "portalWebRemoved": "Embedded web features are not available in DRP."
+  "portalOnly": "This feature requires the on-device engine and is not available in YuRemote.",
+  "portalWebRemoved": "Embedded web features are not available in YuRemote."
 }

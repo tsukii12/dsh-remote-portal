@@ -101,7 +101,7 @@ class _Overview extends StatelessWidget {
           ),
         ),
       ),
-      title: const Text(AppInfo.name),
+      title: Text(AppInfo.name),
       subtitle: Text(tagline ?? l10n.botsOpenSource),
       onTap: () => unawaited(openCommunityLink(context, dshGoProjectUrl)),
     );

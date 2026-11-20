@@ -15985,6 +15985,9 @@ class L10nEn extends L10n {
   }
 
   @override
+  String get portalAppName => 'YuRemote';
+
+  @override
   String get portalRemoteOnly => 'Connect to your dsh-remote-portal server. The engine stays on your host.';
 
   @override
@@ -16003,10 +16006,16 @@ class L10nEn extends L10n {
   String get portalPairingReady => 'Pairing link ready';
 
   @override
-  String get portalOnly => 'This feature requires the on-device engine and is not available in DRP.';
+  String get portalOnly => 'This feature requires the on-device engine and is not available in YuRemote.';
 
   @override
-  String get portalWebRemoved => 'Embedded web features are not available in DRP.';
+  String get portalWebRemoved => 'Embedded web features are not available in YuRemote.';
+
+  @override
+  String get portalDirectoryParent => 'Parent folder';
+
+  @override
+  String get portalDirectoryHostHint => 'Folders are on the remote host, not this device.';
 
   @override
   String get readListUpdating => 'Updating · previous results';
