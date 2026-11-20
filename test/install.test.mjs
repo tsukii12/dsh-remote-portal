@@ -138,7 +138,7 @@ test("legacy drp revokes a token from the active migrated relay, and works after
   assert.equal(rolledBack.stdout, "legacy-manager\n");
 });
 
-test("migrated manager applies HTTP_PORT without changing TLS or the other listeners", { skip }, (t) => {
+test("migrated manager only edits an independent listener and refuses transport or identity changes", { skip }, (t) => {
   const sandbox = home([]);
   t.after(() => rmSync(sandbox, { recursive: true, force: true }));
   const unit = join(sandbox, "yuremote-relay.service");
@@ -151,7 +151,8 @@ test("migrated manager applies HTTP_PORT without changing TLS or the other liste
   const conf = join(state, "deploy.conf");
   const cert = join(sandbox, "cert.pem");
   const key = join(sandbox, "key.pem");
-  const line = `User=dsh-relay\nExecStart=/usr/bin/env node relay.mjs --http-port 127.0.0.1:8080 --agent-port 9443 --tls-port 0.0.0.0:8443 --tls-cert ${cert} --tls-key ${key}\n`;
+  const line = `[Service]\nUser=dsh-relay\nEnvironment="DSH_RELAY_CACHE_MB=64 --http-port 4231"\nExecStart=/usr/bin/env node relay.mjs --prefix /custom --max-streams 32 \\
+    --http-port "127.0.0.1:8080" --agent-port 9443 --tls-port 0.0.0.0:8443 --tls-cert ${cert} --tls-key ${key}\n`;
   const initial = `HOST=relay.test\nSCHEME=https\nVISIT_MODE=https\nVISITOR_TLS=1\nAGENT_TLS=1\nHTTP_PORT=8080\nAGENT_PORT=9443\nPUBLIC_PORT=8443\nPROXY_MODE=none\nCERT_SOURCE=user\nLANG_MODE=zh\nSCRIPT=${installer}\n`;
   mkdirSync(state);
   writeFileSync(cert, "certificate fixture");
@@ -170,19 +171,8 @@ test("migrated manager applies HTTP_PORT without changing TLS or the other liste
     .replace("command -v caddy >/dev/null 2>&1", "false")
     .replace('as_root() { [ "$(id -u)" = "0" ]; }', "as_root() { :; }")
     .replace("set -euo pipefail", `set -euo pipefail
-install() {
-  local args=()
-  while [ "$#" -gt 0 ]; do
-    case "$1" in -o|-g) shift 2 ;; *) args+=("$1"); shift ;; esac
-  done
-  command install "\${args[@]}"
-}
-systemctl() { [ "$1" = is-active ] || printf '%s\\n' "$*" >> "${log}"; }
+systemctl() { case "$1" in show|is-active) : ;; *) printf '%s\\n' "$*" >> "${log}" ;; esac; }
 ss() { printf 'header\\na b c 0.0.0.0:8090 d\\n'; }
-useradd() { :; }
-chown() { :; }
-curl() { return 1; }
-docker() { return 1; }
 sleep() { :; }`);
   writeFileSync(installer, fixture);
   const prepared = spawnSync("bash", ["-s"], {
@@ -193,24 +183,36 @@ sleep() { :; }`);
   const runConfig = (...settings) => spawnSync(manager, ["config", ...settings], {
     encoding: "utf8", env: { ...process.env, PUBLIC_IP: "192.0.2.10" },
   });
+  function reject(setting, message, saved = initial, installed = line) {
+    writeFileSync(conf, saved);
+    writeFileSync(unit, installed);
+    const rejected = runConfig(setting);
+    assert.equal(rejected.status, 1, rejected.stderr);
+    assert.match(rejected.stderr, message);
+    assert.equal(readFileSync(conf, "utf8"), saved);
+    assert.equal(readFileSync(unit, "utf8"), installed);
+    assert.equal(existsSync(log), false);
+  }
+  const plain = initial.replaceAll("=https\n", "=http\n").replace("VISITOR_TLS=1", "VISITOR_TLS=0")
+    .replace("AGENT_TLS=1", "AGENT_TLS=0").replace("CERT_SOURCE=user", "CERT_SOURCE=none");
+  reject("VISIT_MODE=https", /无法使用 yuremote config 更改 VISIT_MODE.*--reconfigure --lang zh/,
+    plain, line.replace(/ --tls-port[^\n]+/, ""));
+  reject("HOST=other.test", /无法使用 yuremote config 更改 HOST.*--reconfigure --lang zh/,
+    initial.replace("CERT_SOURCE=user", "CERT_SOURCE=acme"));
+  for (const setting of ["CERT_SOURCE=acme", "TLS_CERT=/other", "TLS_KEY=/other", "AGENT_TLS=0", "SCHEME=http"]) {
+    reject(setting, /--reconfigure --lang zh/);
+  }
   for (const [port, message] of [
     ["9443", /请求的监听端口有冲突/], ["8443", /请求的监听端口有冲突/],
     ["8090", /端口 8090 已被占用/], ["invalid", /HTTP_PORT 必须是 1–65535 之间的端口/],
   ]) {
-    const rejected = runConfig("HOST=other.test", `HTTP_PORT=${port}`);
-    assert.equal(rejected.status, 1, rejected.stderr);
-    assert.match(rejected.stderr, message);
-    assert.equal(readFileSync(conf, "utf8"), initial);
-    assert.equal(readFileSync(unit, "utf8"), line);
-    assert.equal(existsSync(log), false);
+    reject(`HTTP_PORT=${port}`, message);
   }
   const result = runConfig("HTTP_PORT=8081");
   assert.equal(result.status, 0, result.stderr);
-  const updated = readFileSync(unit, "utf8");
-  assert.match(updated, /--agent-port 9443 --http-port 127\.0\.0\.1:8081 .* --tls-port 0\.0\.0\.0:8443/);
-  assert.ok(updated.includes(`--tls-cert ${cert} --tls-key ${key}`));
-  assert.match(readFileSync(conf, "utf8"), /^HTTP_PORT=8081$/m);
-  assert.equal(readFileSync(log, "utf8"), "daemon-reload\nenable yuremote-relay\nrestart yuremote-relay\n");
+  assert.equal(readFileSync(unit, "utf8"), line.replace("127.0.0.1:8080", "127.0.0.1:8081"));
+  assert.equal(readFileSync(conf, "utf8"), initial.replace("HTTP_PORT=8080\n", "") + "HTTP_PORT=8081\n");
+  assert.equal(readFileSync(log, "utf8"), "daemon-reload\nrestart yuremote-relay\n");
 });
 
 test("a migrated relay can be reinstalled after uninstall without reverting its unit", { skip }, (t) => {
@@ -232,7 +234,7 @@ test("a migrated relay can be reinstalled after uninstall without reverting its 
   writeFileSync(join(state, "relay.mjs"), "export {};\n");
   const setup = `
 set -euo pipefail
-UNINSTALL=$1 HAVE_SYSTEMD=1 APPLY_CONFIG=0
+UNINSTALL=$1 HAVE_SYSTEMD=1 RECONFIGURE=0
 UNIT=${unit} LEGACY_UNIT=${oldUnit} LEGACY_BACKUP=${backup}
 RELAY_DIR=${relay} STATE_DIR=${state} PORTAL_DIR=${state} BIN=${bin} SERVICE=yuremote-relay
 as_root() { :; }

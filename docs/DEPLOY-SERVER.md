@@ -214,7 +214,8 @@ the side that initiates the connection to it.
 ### 3.6 Unattended and other switches
 
 ```bash
-sudo ./deploy-relay.sh --yes        # accept every default (also how `yuremote config` reinstalls)
+sudo ./deploy-relay.sh --yes        # accept every default
+sudo ./deploy-relay.sh --reconfigure # run the full interactive setup for an existing relay
 sudo ./deploy-relay.sh --uninstall  # remove the service, /opt/yuremote-relay and yuremote
 sudo ./deploy-relay.sh --lang zh    # Chinese
 ```
@@ -542,8 +543,12 @@ public      https://dsh.example.com/__t/3TerRaeZuv7S/
 | `yuremote start` / `stop` / `restart` | service control |
 | `yuremote log [-f]` | journal for the unit |
 | `yuremote config` | the saved answers |
-| `yuremote config K=V …` | change them and reinstall the unit |
+| `yuremote config K=V` | change one independent listener port: `AGENT_PORT`, or `HTTP_PORT` for a relay with its own separate TLS visitor listener |
 | `yuremote uninstall` | remove the service, `/opt/yuremote-relay` and `yuremote` itself |
+
+For changes to the public port, hostname, transport, proxy, or certificates, run
+`sudo bash /var/lib/yuremote-relay/deploy-relay.sh --reconfigure` and choose the
+matching settings interactively.
 
 The `visitor` line names what is actually served — `CA certificate`, `your
 certificate` or `self-signed` — so it is obvious whether a real certificate ended up
