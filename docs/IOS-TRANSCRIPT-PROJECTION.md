@@ -19,6 +19,7 @@ which is in `dsh-session/src/`.
 | Context forms | `chat/ContextBody.tsx`: instructions, catalog, snapshot, notice, relay, recall; malformed / foreign source falls back to opaque context | Same form validation, content order, fields and bounded bodies; notice summary in header |
 | `system/message` | `request-prompt.ts`, `contract/chat-visibility.ts`: system-prompt node excluded from Chat | Hidden; not a generic notice |
 | `assistant/message`, append | `assistant.ts`: nonblank visible blocks; every reply remains outside process folding | Empty blocks removed; every reply retained; reasoning/tool details separately foldable |
+| Stopped turn process | Stopped turns retain collapsed command/process groups; opening one reveals reasoning, arguments and aborted-tool results | Aborted turns can collapse details just like completed turns; partial replies stay outside the fold and tool errors remain inspectable |
 | `assistant/attempt` | Trajectory/turn bookkeeping, not an assistant Chat message | Hidden, including recorded stream fragments |
 | Live assistant stream | Nonempty text/reasoning/tool deltas; durable settlement replaces stream | Existing stream reconstruction; empty block starts and whitespace-only thinking hidden |
 | Interrupted assistant message | Meaningful visible content remains; interrupted turn has stopped state | Preserved with explicit interrupted/stopped presentation, not an invented reply |

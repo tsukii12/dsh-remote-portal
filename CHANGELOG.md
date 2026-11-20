@@ -5,6 +5,9 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+- Let stopped turns fold reasoning and tool details like completed turns, while preserving partial replies and inspectable aborted-tool errors.
+- 已停止的轮次也可像已完成轮次一样折叠思考与工具详情，同时保留部分回复及可展开的工具中止错误。
+
 - Project the native transcript using dsh web's append-surface and visibility rules: hide internal records and system prompts, disclose injected context, correlate commands and compaction, retain every assistant reply, hide empty thinking, and reconcile queued/optimistic/durable input by identity.
 - 按 dsh 网页版的追加表面事件及可见性规则投影原生对话：隐藏内部记录与系统提示、折叠展示注入上下文、关联命令和压缩记录、保留所有助手回复、隐藏空思考，并按标识去重排队／乐观／已提交输入。
 

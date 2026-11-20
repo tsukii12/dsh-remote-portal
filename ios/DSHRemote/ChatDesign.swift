@@ -27,7 +27,7 @@ struct TranscriptTurn: Identifiable {
     var countsLabel: String { L(" · \(toolCount) tool \(toolCount == 1 ? "call" : "calls") · \(messageCount) \(messageCount == 1 ? "message" : "messages")", " · \(toolCount) 次工具调用 · \(messageCount) 条消息") }
     var outcome: String? { items.compactMap(\.turnOutcome).last }
     var canCollapse: Bool {
-        guard outcome == "completed", let first = items.firstIndex(where: { $0.role == "assistant" || $0.role == "tool" }) else { return false }
+        guard outcome == "completed" || outcome == "aborted", let first = items.firstIndex(where: { $0.role == "assistant" || $0.role == "tool" }) else { return false }
         return !items.dropFirst(first + 1).contains { $0.role == "user" }
     }
     func independent(_ item: TranscriptItem) -> Bool {

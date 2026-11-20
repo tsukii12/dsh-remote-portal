@@ -73,6 +73,23 @@ final class Round4Tests: XCTestCase {
         var stopped = first; stopped.turnOutcome = "error"
         XCTAssertFalse(TranscriptTurn(id: "error", items: [user, stopped]).canCollapse)
     }
+    func testAbortedProcessCanFoldWithoutDiscardingPartialRepliesOrErrors() {
+        let user = TranscriptItem(id: "u", role: "user", blocks: [], turn: 1, turnOutcome: "aborted")
+        let thinking = TranscriptItem(id: "a", role: "assistant", blocks: [TranscriptBlock(["type": "reasoning", "text": "Checking the result"])], turn: 1, turnOutcome: "aborted", interrupted: true)
+        let reply = TranscriptItem(id: "b", role: "assistant", blocks: [TranscriptBlock(["type": "text", "text": "Partial reply"])], turn: 1, turnOutcome: "aborted", interrupted: true)
+        let failure = TranscriptItem(id: "t", role: "tool", blocks: [TranscriptBlock(["type": "tool-call", "callId": "C", "result": ["isError": true, "content": [["type": "text", "text": "Error: tool call aborted"]]]])], turn: 1, turnOutcome: "aborted")
+        for replies in [[thinking], [thinking, reply]] {
+            let turn = TranscriptTurn(id: "aborted", items: [user] + replies + [failure])
+            XCTAssertTrue(turn.canCollapse)
+            XCTAssertTrue(turn.independent(user))
+            XCTAssertEqual(turn.items.filter { $0.role == "assistant" }.count, replies.count)
+            XCTAssertEqual(turn.items.last, failure)
+            XCTAssertTrue(turn.items.filter { $0.role == "assistant" }.allSatisfy(\.interrupted))
+            XCTAssertEqual(turn.final?.text, replies.count == 1 ? nil : "Partial reply")
+        }
+        var active = thinking; active.turnOutcome = nil
+        XCTAssertFalse(TranscriptTurn(id: "active", items: [active]).canCollapse)
+    }
     func testCommandAcknowledgementRetiresWhenItsDurableCardArrives() async throws {
         let api = RecoveryAPI()
         api.commandReply = ["commandId": "C", "result": ["kind": "success", "text": "Receipt"]]
