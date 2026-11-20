@@ -34,6 +34,9 @@ struct TranscriptItem: Identifiable, Equatable {
     var turn: Int?
     var step: Int?
     var messageID: String?
+    var turnOutcome: String?
+    var interrupted = false
+    var steering = false
     var text: String { blocks.filter { $0.kind == "text" || role == "notice" }.map(\.text).joined() }
 }
 
@@ -56,7 +59,7 @@ enum CompactStream {
     }
     static func apply(_ chunk: JSON, to blocks: inout [TranscriptBlock]) {
         guard let index = chunk["index"].int, index >= 0, index < 4096 else { return }
-        while blocks.count <= index { blocks.append(TranscriptBlock(["type": "unknown"])) }
+        while blocks.count <= index { blocks.append(TranscriptBlock(["type": ""])) }
         switch chunk["type"].text {
         case "block-start": blocks[index] = TranscriptBlock(["type": chunk["blockType"]])
         case "text-delta", "reasoning-delta":
@@ -70,6 +73,217 @@ enum CompactStream {
         case "block-end": blocks[index] = TranscriptBlock(chunk["block"])
         default: break
         }
+    }
+}
+
+enum ChatTranscriptProjection {
+    static func bounded(_ text: String) -> String {
+        text.count > 20_000 ? String(text.prefix(20_000)) + L("\nTruncated (\(text.count) characters)", "\n已截断（共 \(text.count) 个字符）") : text
+    }
+    static func contextBody(_ block: TranscriptBlock) -> (form: String?, rows: [JSON]) {
+        let source = block.raw["source"]
+        let content = block.raw["content"].array
+        let form = source["form"].text
+        if !content.isEmpty, content.allSatisfy({ ["tool-addition", "tool-removal"].contains($0["type"].text) }) {
+            return ("tools", content.map { ["label": .string($0["type"] == "tool-addition" ? L("Added", "已添加") : L("Removed", "已移除")), "text": $0["toolName"]] })
+        }
+        var model: [JSON] = []
+        for content in content {
+            if content["type"] == "text", let last = model.indices.last, model[last]["kind"] == "text" {
+                model[last]["text"] = .string(model[last]["text"].text + content["text"].text)
+            } else { model.append(["kind": content["type"] == "text" ? "text" : "json", "text": content["type"] == "text" ? content["text"] : .string(content.formatted)]) }
+        }
+        switch form {
+        case "snapshot":
+            let sections = source["sections"].array
+            if !sections.isEmpty, sections.allSatisfy({ !$0["name"].text.isEmpty && $0["text"].string != nil }) {
+                return (form, [["text": .string(L("This snapshot supersedes earlier snapshots.", "此快照取代先前的快照。"))]] + sections.map { ["label": $0["name"], "text": $0["text"]] })
+            }
+        case "catalog":
+            if case .array(let entries) = source["entries"], entries.allSatisfy({ !$0["name"].text.isEmpty && $0["description"].string != nil }) {
+                var rows: [JSON] = source["update"] == true ? [["text": .string(L("Catalog replaced", "目录已替换"))]] : []
+                rows += entries.prefix(200).map { ["label": $0["name"], "text": $0["description"]] }
+                if entries.count > 200 { rows.append(["text": .string(L("\(entries.count - 200) more entries", "另有 \(entries.count - 200) 项"))]) }
+                return (form, rows + model.filter { $0["kind"] == "json" })
+            }
+        case "instructions":
+            let changes = source["changes"].array
+            if !changes.isEmpty, changes.allSatisfy({ !$0["path"].text.isEmpty && ["set", "replace", "remove"].contains($0["action"].text) }) {
+                var seen = Set<String>()
+                let rows: [JSON] = changes.filter { seen.insert($0["path"].text).inserted }.map { change in
+                    let action = change["action"].text
+                    let label = action == "remove" ? L("Removed", "已移除") : source["baseline"] == true ? L("Loaded", "已加载") : action == "set" ? L("Added", "已添加") : L("Updated", "已更新")
+                    return ["label": change["path"], "text": .string(label), "digest": change["digest"]]
+                }
+                return (form, rows + model)
+            }
+        case "notice":
+            if !source["summary"].text.isEmpty { return (form, model) }
+        case "relay":
+            if !source["senderSessionId"].text.isEmpty { return (form, [["label": .string(L("From session", "来自会话")), "text": source["senderSessionId"]]] + model) }
+        case "recall":
+            let references = source["references"].array
+            if !references.isEmpty, references.allSatisfy({ !$0["label"].text.isEmpty && $0["retainedMessages"].int != nil && $0["omittedMessages"].int != nil && ($0["truncated"] == true || $0["truncated"] == false) }) {
+                let rows: [JSON] = references.map { reference in
+                    let retained = reference["retainedMessages"].int ?? 0
+                    let omitted = reference["omittedMessages"].int ?? 0
+                    return ["label": reference["label"], "text": .string(L("\(retained) retained · \(omitted) omitted", "保留 \(retained) 条 · 省略 \(omitted) 条") + (reference["truncated"] == true ? L(" · Truncated", " · 已截断") : ""))]
+                }
+                return (form, rows + model)
+            }
+        default: break
+        }
+        return (nil, model + source.object.keys.filter { $0 != "kind" }.sorted().map { ["label": .string($0), "text": .string(source[$0].string ?? source[$0].formatted)] })
+    }
+    static func visible(_ block: TranscriptBlock) -> Bool {
+        guard !block.kind.isEmpty else { return false }
+        if ["text", "reasoning"].contains(block.kind) { return !block.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+        return block.kind != "tool-call" || !block.callID.isEmpty || !block.name.isEmpty || !block.arguments.isEmpty
+    }
+    static func producer(_ source: JSON) -> String {
+        switch source["kind"].text {
+        case "session-reference":
+            let labels = source["references"].array.compactMap { $0["label"].string }
+            return labels.isEmpty ? source["kind"].text : labels.joined(separator: ", ")
+        case "agent-instructions":
+            let paths = source["changes"].array.compactMap { $0["path"].string }
+            return paths.isEmpty ? source["kind"].text : paths.joined(separator: ", ")
+        case "skill-invocation": return source["name"].string ?? source["kind"].text
+        default: return source["kind"].text
+        }
+    }
+    static func project(_ events: [JSON]) -> [TranscriptItem] {
+        var items: [TranscriptItem] = []
+        var turn: Int?
+        var step: Int?
+        var outcomes: [Int: String] = [:]
+        var inboxes: [String: [JSON]] = [:]
+        var claims: [String: Set<String>] = [:]
+        var claimSequences: [String: Int] = [:]
+        var turnStartSeq = -1
+        var steering = Set<String>()
+        var commands: [String: JSON] = [:]
+        var summaries: [String: JSON] = [:]
+        var retries: [String: Int] = [:]
+        var results: [JSON] = []
+        let representedCalls = Set(events.filter { $0["type"] == "assistant/message" && ($0["surfaceOp"] == "append" || $0["surfaceOp"] == .null) }.flatMap { $0["data"]["message"]["content"].array }.filter { $0["type"] == "tool-call" }.compactMap { $0["id"].string })
+        for event in events {
+            if event["type"] == "command/done" { commands[event["data"]["commandId"].text] = event["data"] }
+            if event["type"] == "compaction/summary" { summaries[event["data"]["compactionId"].text] = event["data"] }
+        }
+        for event in events {
+            let type = event["type"].text
+            let data = event["data"]
+            let seq = event["seq"].int ?? 0
+            if type == "turn/start" { turn = data["turn"].int; step = nil; turnStartSeq = seq; continue }
+            if type == "step/start" { turn = data["turn"].int; step = data["step"].int; continue }
+            if type == "agent/inbox/spliced" {
+                let target = data["target"].text
+                var pending = inboxes[target] ?? []
+                let start = min(max(0, data["start"].int ?? 0), pending.count)
+                let end = min(pending.count, start + max(0, data["removedCount"].int ?? 0))
+                if end > start, data["outcome"] != "canceled" {
+                    claims[target] = Set(pending[start..<end].map { $0["id"].text })
+                    claimSequences[target] = seq
+                    if target == "next-step" { steering = claims[target] ?? [] }
+                }
+                for message in data["inserted"].array { claims[target]?.remove(message["id"].text); steering.remove(message["id"].text) }
+                pending.replaceSubrange(start..<end, with: data["inserted"].array)
+                inboxes[target] = pending
+                continue
+            }
+            var role = "notice"
+            var blocks: [TranscriptBlock] = []
+            var message: JSON = .null
+            let itemTurn = data["turn"].int ?? turn
+            let itemStep = data["step"].int ?? step
+            switch type {
+            case "user/message", "developer/message":
+                message = type == "user/message" ? data : data["message"]
+                if event["surfaceOp"] != .null && event["surfaceOp"] != "append" {
+                    guard type == "user/message", message["source"]["kind"] == "compact-checkpoint" else { continue }
+                    let source = message["source"]
+                    let summary = summaries[source["compactionId"].text]?["summary"].array ?? []
+                    let metadata = summaries[source["compactionId"].text] ?? .null
+                    blocks = [TranscriptBlock(["type": "compaction", "text": .string(summary.filter { $0["type"] == "text" }.map { $0["text"].text }.joined()), "shadowedItemCount": metadata["shadowedSeqs"] == .null ? .null : .int(metadata["shadowedSeqs"].array.count), "shadowedTokenCount": metadata["shadowedTokenCount"]])]
+                    if let commandID = source["sourceCommandId"].string, let index = items.firstIndex(where: { $0.id == "command:" + commandID }) {
+                        items[index].blocks = blocks; items[index].role = "notice"; continue
+                    }
+                } else if type == "user/message", message["source"]["kind"] == "user" || message["source"]["kind"] == .null {
+                    role = "user"; blocks = message["content"].array.map(TranscriptBlock.init)
+                } else {
+                    role = "context"
+                    let id = message["id"].text
+                    let claimed = claims["next-turn"]?.contains(id) == true
+                    let idleSteer = step == 1 && (claimSequences["next-step"] ?? -1) > turnStartSeq && (claimSequences["next-turn"] ?? -1) < turnStartSeq && claims["next-step"]?.contains(id) == true && !events.contains { $0["type"] == "user/message" && $0["data"]["source"]["kind"] == "user" && claims["next-step"]?.contains($0["data"]["id"].text) == true }
+                    if claimed || idleSteer || (message["source"]["kind"] == "retry" && message["content"].array.isEmpty) { role = "trigger" }
+                    blocks = [TranscriptBlock(["type": "context", "source": message["source"], "content": message["content"], "text": .string(message["content"].array.map { $0["text"].text }.joined()), "producer": .string(producer(message["source"])), "trigger": .bool(role == "trigger")])]
+                }
+            case "assistant/message":
+                if event["surfaceOp"] != .null && event["surfaceOp"] != "append" { continue }
+                role = "assistant"; message = data["message"]
+                blocks = message["content"].array.map(TranscriptBlock.init)
+                blocks = blocks.filter(visible)
+                guard !blocks.isEmpty else { continue }
+            case "tool/call":
+                guard !representedCalls.contains(data["callId"].text) else { continue }
+                role = "tool"
+                blocks = [TranscriptBlock(["type": "tool-call", "id": data["callId"], "name": data["name"], "arguments": data["arguments"]])]
+            case "tool/result":
+                if event["surfaceOp"] == "append" || event["surfaceOp"] == .null { results.append(event) }
+                continue
+            case "command/run":
+                if data["name"] == "goal" {
+                    let args = String(data["args"].text.reversed().drop(while: \.isWhitespace).reversed())
+                    items.append(TranscriptItem(id: "command-input:" + data["commandId"].text, role: "command-input", blocks: [TranscriptBlock(["type": "text", "text": .string("/goal" + args)])], seq: seq, turn: itemTurn, step: itemStep))
+                }
+                let outcome = commands[data["commandId"].text] ?? .null
+                if data["name"] == "permission" { continue }
+                if data["name"] == "team", ["on", "off"].contains(data["args"].text.trimmingCharacters(in: .whitespacesAndNewlines)), outcome["kind"] != "error" { continue }
+                role = "command"
+                blocks = [TranscriptBlock(["type": "command", "name": data["name"], "arguments": data["args"], "text": outcome["text"], "outcome": outcome["kind"]])]
+            case "command/done":
+                guard !events.contains(where: { $0["type"] == "command/run" && $0["data"]["commandId"] == data["commandId"] }) else { continue }
+                role = "command"
+                blocks = [TranscriptBlock(["type": "command", "text": data["text"], "outcome": data["kind"]])]
+            case "turn/end":
+                let reason = data["reason"]
+                if let endedTurn = data["turn"].int { outcomes[endedTurn] = reason["kind"].text }
+                turn = nil; step = nil
+                var text: String?
+                if reason["kind"] == "error" { text = reason["error"]["code"] == "AUTH" ? L("Authentication failed.", "身份认证失败。") : reason["error"]["message"].string }
+                if reason["kind"] == "interrupted" { text = L("The DSH process exited before this turn finished.", "DSH 进程在此轮完成前退出。") }
+                if reason["kind"] == "aborted", reason["reason"]["kind"] == "hook", reason["reason"]["reason"] == "deepseek-account/signed-out" { text = L("Stopped because you signed out of DeepSeek.", "已停止，因为您已退出 DeepSeek。") }
+                if reason["kind"] == "max-tokens" { text = L("Maximum output tokens reached.", "已达到最大输出令牌数。") }
+                guard let text else { continue }
+                blocks = [TranscriptBlock(["type": "system-notice", "text": .string(text)])]
+            case "llm/retry":
+                guard !data["retryId"].text.isEmpty else { continue }
+                let failure = data["error"]
+                let text = failure["code"] == "AUTH" ? "" : failure["message"].text
+                blocks = [TranscriptBlock(["type": "model-retry", "text": .string(text), "retry": data["retry"]])]
+                if let index = retries[data["retryId"].text] { items[index].blocks = blocks; continue }
+                retries[data["retryId"].text] = items.count
+            case "llm/retry-started":
+                if let index = retries[data["retryId"].text] { items[index].blocks[0].raw["started"] = true }
+                continue
+            default:
+                continue
+            }
+            let id = type == "command/run" ? "command:" + data["commandId"].text : "seq:\(seq)"
+            items.append(TranscriptItem(id: id, role: role, blocks: blocks, seq: seq, requestID: message["source"]["rpcId"].string, turn: itemTurn, step: itemStep, messageID: message["id"].string, interrupted: data["interrupted"].boolean || type == "assistant/attempt", steering: role == "user" && steering.contains(message["id"].text)))
+        }
+        for result in results {
+            let message = result["data"]["message"]
+            let call = message["toolCallId"].text
+            if let item = items.lastIndex(where: { $0.blocks.contains { $0.kind == "tool-call" && $0.callID == call } }), let block = items[item].blocks.firstIndex(where: { $0.callID == call && $0.kind == "tool-call" }) {
+                items[item].blocks[block].result = result["data"]
+            } else {
+                items.append(TranscriptItem(id: "result:\(result["seq"].int ?? 0)", role: "notice", blocks: [TranscriptBlock(["type": "unknown-surface", "text": .string(message.formatted)])], seq: result["seq"].int, turn: result["data"]["turn"].int))
+            }
+        }
+        for index in items.indices { if let turn = items[index].turn { items[index].turnOutcome = outcomes[turn] } }
+        return items.sorted { ($0.seq ?? 0) < ($1.seq ?? 0) }
     }
 }
 
@@ -90,6 +304,11 @@ final class ChatStore: ObservableObject {
     @Published private(set) var presetCatalog: JSON = [:]
     @Published private(set) var commands: [JSON] = []
     @Published private(set) var commandNotice: String?
+    private var commandNoticeID: String?
+    var visibleCommandNotice: String? {
+        guard let commandNoticeID else { return commandNotice }
+        return history.values.contains { $0["type"] == "command/done" && $0["data"]["commandId"].text == commandNoticeID } ? nil : commandNotice
+    }
     @Published private(set) var exportedFile: URL?
     @Published private(set) var error: String?
     let api: RPCServing
@@ -100,7 +319,7 @@ final class ChatStore: ObservableObject {
     private var projectionCursor = -1
     private var history: [Int: JSON] = [:]
     private var optimistic: [TranscriptItem] = []
-    private var queuedNotices: [JSON] = []
+    private var pendingQueue: [JSON] = []
     private var snapshotCursor: Int?
     private var attemptID: String?
     private var revision = -1
@@ -218,8 +437,7 @@ final class ChatStore: ObservableObject {
         guard state["running"] == true || state["running"] == false else { return }
         stateRevision += 1
         running = state["running"].boolean
-        queue = state["queue"].array.filter(Self.isUserInput)
-        queuedNotices = state["queue"].array.filter { !Self.isUserInput($0) }
+        pendingQueue = state["queue"].array.filter(Self.isUserInput)
         rebuild()
     }
     private static func isUserInput(_ message: JSON) -> Bool {
@@ -323,59 +541,25 @@ final class ChatStore: ObservableObject {
         rebuild()
     }
     private func rebuild() {
-        turnUsage = TurnUsage.byTurn(history.sorted(by: { $0.key < $1.key }).map(\.value))
-        var surface: [JSON] = []
-        for event in history.sorted(by: { $0.key < $1.key }).map(\.value) {
-            if ["step/start", "step/end", "turn/start", "request/header", "request/context", "session/title", "session/title-llm-request", "job/registered", "job/settled", "agent/inbox/spliced", "workspace/changes"].contains(event["type"].text) { continue }
-            if event["type"] == "turn/end", event["data"]["reason"]["kind"] == "completed" { continue }
-            let op = event["surfaceOp"]
-            if op["op"] == "replace", let start = surface.firstIndex(where: { $0["seq"] == op["startSeq"] }), let end = surface.firstIndex(where: { $0["seq"] == op["endSeq"] }), start <= end {
-                surface.replaceSubrange(start...end, with: [event])
-            } else { surface.append(event) }
-        }
-        let committedRequests = Set(history.values.filter { $0["type"] == "user/message" }.compactMap { $0["data"]["source"]["rpcId"].string })
+        let events = history.sorted(by: { $0.key < $1.key }).map(\.value)
+        turnUsage = TurnUsage.byTurn(events)
+        let committed = events.filter { $0["type"] == "user/message" && ($0["surfaceOp"] == "append" || $0["surfaceOp"] == .null) }
+        let committedRequests = Set(committed.compactMap { $0["data"]["source"]["rpcId"].string })
+        let committedIDs = Set(committed.compactMap { $0["data"]["id"].string })
         optimistic.removeAll { $0.requestID.map(committedRequests.contains) ?? false }
-        var items: [TranscriptItem] = []
-        var results: [JSON] = []
-        let representedCalls = Set(surface.flatMap { $0["data"]["message"]["content"].array }.filter { $0["type"] == "tool-call" }.compactMap { $0["id"].string })
-        for event in surface {
-            let type = event["type"].text
-            let data = event["data"]
-            if type == "tool/result" { results.append(event); continue }
-            if type == "tool/call", representedCalls.contains(data["callId"].text) { continue }
-            let message = type == "user/message" ? data : data["message"]
-            var blocks = message["content"].array.map(TranscriptBlock.init)
-            if blocks.isEmpty && ["assistant/message", "assistant/attempt"].contains(type) {
-                for chunk in CompactStream.expand(data["stream"].array) { CompactStream.apply(chunk, to: &blocks) }
-            }
-            if type == "tool/call" { blocks = [TranscriptBlock(["type": "tool-call", "id": data["callId"], "name": data["name"], "arguments": data["arguments"]])] }
-            let role: String
-            if type == "user/message", Self.isUserInput(message) { role = "user" }
-            else if ["assistant/message", "assistant/attempt", "tool/call"].contains(type) { role = "assistant" }
-            else { role = "notice" }
-            if role == "notice" {
-                blocks = [TranscriptBlock(["type": .string(type == "user/message" ? "system-notice" : type), "text": .string(blocks.map(\.text).filter { !$0.isEmpty }.joined(separator: "\n")), "event": event])]
-            }
-            items.append(TranscriptItem(id: "seq:\(event["seq"].int ?? 0)", role: role, blocks: blocks, seq: event["seq"].int, requestID: message["source"]["rpcId"].string, turn: data["turn"].int, step: data["step"].int, messageID: message["id"].string))
+        queue = pendingQueue.filter {
+            !committedIDs.contains($0["id"].text) && !committedRequests.contains(($0["rpcId"].string ?? $0["source"]["rpcId"].text))
         }
-        for result in results {
-            let message = result["data"]["message"]
-            let call = message["toolCallId"].text
-            if let item = items.lastIndex(where: { $0.blocks.contains { $0.kind == "tool-call" && $0.callID == call } }), let block = items[item].blocks.firstIndex(where: { $0.callID == call && $0.kind == "tool-call" }) {
-                items[item].blocks[block].result = result["data"]
-            } else {
-                items.append(TranscriptItem(id: "result:\(result["seq"].int ?? 0)", role: "tool", blocks: message["content"].array.map(TranscriptBlock.init), seq: result["seq"].int))
-            }
+        let steering = queue.filter { $0["placement"] == "steering" }
+        queue.removeAll { $0["placement"] == "steering" }
+        let pendingRequests = Set((queue + steering).compactMap { $0["rpcId"].string ?? $0["source"]["rpcId"].string })
+        let pendingSteering = steering.map { message -> TranscriptItem in
+            let request = message["rpcId"].string ?? message["source"]["rpcId"].string
+            var item = optimistic.first { $0.requestID != nil && $0.requestID == request } ?? TranscriptItem(id: "steering:" + message["id"].text, role: "user", blocks: message["content"].array.map(TranscriptBlock.init), requestID: request, messageID: message["id"].string)
+            item.steering = true
+            return item
         }
-        let positions = Dictionary(uniqueKeysWithValues: surface.enumerated().compactMap { index, event in event["seq"].int.map { ($0, index) } })
-        let queuedRequests = Set(queue.compactMap { $0["rpcId"].string })
-        let committedMessages = Set(items.compactMap(\.messageID))
-        let notices = queuedNotices.enumerated().compactMap { index, message -> TranscriptItem? in
-            if let id = message["id"].string, committedMessages.contains(id) { return nil }
-            let text = message["content"].array.map { $0["text"].text }.filter { !$0.isEmpty }.joined(separator: "\n")
-            return TranscriptItem(id: "pending-notice:" + (message["id"].string ?? String(index)), role: "notice", blocks: [TranscriptBlock(["type": "system-notice", "text": .string(text), "event": message])], messageID: message["id"].string)
-        }
-        transcript = items.sorted { (positions[$0.seq ?? -1] ?? 0) < (positions[$1.seq ?? -1] ?? 0) } + notices + optimistic.filter { !queuedRequests.contains($0.requestID ?? "") }
+        transcript = ChatTranscriptProjection.project(events) + pendingSteering + optimistic.filter { !pendingRequests.contains($0.requestID ?? "") }
     }
     @discardableResult
     func send(_ text: String, steer: Bool = false, attachments: [DraftAttachment] = [], requestID: String? = nil) async throws -> String {
@@ -455,12 +639,13 @@ final class ChatStore: ObservableObject {
             projections["plan"]["active"] = .bool(line == "/plan")
             return ["result": ["kind": "text", "text": ""]]
         }
-        commandNotice = nil; exportedFile = nil
+        commandNotice = nil; commandNoticeID = nil; exportedFile = nil
         let response = try await api.rpc("commands/execute", args: ["agentId": .string(sessionID), "line": .string(line), "submittedAttachments": .array(attachments)])
         guard response["result"]["kind"].string != nil else { throw PortalError.message(L("Unknown command. Choose a suggestion or send ordinary text.", "未知命令，请选择建议或发送普通文本。")) }
         let result = response["result"]
         if result["kind"] == "error" { throw PortalError.message(result["text"].string ?? L("Command failed.", "命令执行失败。")) }
-        commandNotice = showNotice ? result["text"].string.map(ChatLabels.notice) : nil
+        commandNoticeID = response["commandId"].string
+        commandNotice = showNotice && line.split(whereSeparator: \.isWhitespace).first != "/permission" ? result["text"].string.map(ChatLabels.notice) : nil
         if line.trimmingCharacters(in: .whitespacesAndNewlines) == "/export" { exportedFile = try await api.exportSession(sessionID) }
         try await refreshProjections()
         return response

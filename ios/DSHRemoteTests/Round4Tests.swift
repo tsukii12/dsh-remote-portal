@@ -24,6 +24,7 @@ private final class RecoveryAPI: RPCServing {
     var stateGate: CheckedContinuation<JSON, Error>?
     var holdState = false
     var onRead: (() -> Void)?
+    var commandReply: JSON = ["result": ["kind": "text", "text": "permission danger-full-access"]]
     func rpc(_ method: String, args: JSON) async throws -> JSON {
         if method == "session/state" {
             if failState { throw APIError.http(503) }
@@ -31,7 +32,7 @@ private final class RecoveryAPI: RPCServing {
             return state
         }
         if method == "session/modelCatalog", failModels { throw APIError.http(503) }
-        if method == "commands/execute" { return ["result": ["kind": "text", "text": "permission danger-full-access"]] }
+        if method == "commands/execute" { return commandReply }
         return [:]
     }
     func stream(_ endpoint: String, args: JSON) -> AsyncThrowingStream<JSON, Error> {
@@ -43,7 +44,170 @@ private final class RecoveryAPI: RPCServing {
 
 @MainActor
 final class Round4Tests: XCTestCase {
-    func testHostQueueNoticesAreInlineAndNeverEditablePrompts() {
+    func testGoalCommandInputEchoAndResultRemainSeparate() {
+        for (args, text) in [(" 中文目标  \n", "/goal 中文目标"), ("", "/goal")] {
+            let items = ChatTranscriptProjection.project([
+                ["type": "command/run", "seq": 1, "data": ["commandId": "G", "name": "goal", "args": .string(args)]],
+                ["type": "command/done", "seq": 2, "data": ["commandId": "G", "kind": "error", "text": "Failed"]]
+            ])
+            XCTAssertEqual(items.map(\.role), ["command-input", "command"])
+            XCTAssertEqual(items.first?.text, text)
+            XCTAssertEqual(items.last?.blocks.first?.raw["outcome"], "error")
+        }
+        XCTAssertFalse(ChatTranscriptProjection.project([["type": "command/done", "seq": 1, "data": ["commandId": "partial", "kind": "success"]]]).contains { $0.role == "command-input" })
+    }
+    func testWebProcessFoldingKeepsRepliesInputsAndTerminalNoticesIndependent() {
+        let user = TranscriptItem(id: "u", role: "user", blocks: [], turn: 1, turnOutcome: "completed")
+        let first = TranscriptItem(id: "a", role: "assistant", blocks: [TranscriptBlock(["type": "text", "text": "First reply"])], turn: 1, turnOutcome: "completed")
+        let second = TranscriptItem(id: "b", role: "assistant", blocks: [TranscriptBlock(["type": "text", "text": "Final reply"])], turn: 1, turnOutcome: "completed")
+        let command = TranscriptItem(id: "c", role: "command", blocks: [], turn: 1)
+        let context = TranscriptItem(id: "d", role: "context", blocks: [], turn: 1)
+        let notice = TranscriptItem(id: "n", role: "notice", blocks: [TranscriptBlock(["type": "system-notice", "text": "Stopped"])], turn: 1)
+        let turn = TranscriptTurn(id: "turn", items: [user, context, first, command, second])
+        XCTAssertTrue(turn.canCollapse)
+        XCTAssertTrue(turn.independent(user)); XCTAssertTrue(turn.independent(notice))
+        XCTAssertFalse(turn.independent(command)); XCTAssertFalse(turn.independent(context))
+        XCTAssertEqual(turn.items.filter { $0.role == "assistant" }.map(\.text), ["First reply", "Final reply"])
+        XCTAssertFalse(TranscriptTurn(id: "steer", items: [first, user, second]).canCollapse)
+        XCTAssertFalse(TranscriptTurn(id: "empty", items: []).canCollapse)
+        var stopped = first; stopped.turnOutcome = "error"
+        XCTAssertFalse(TranscriptTurn(id: "error", items: [user, stopped]).canCollapse)
+    }
+    func testCommandAcknowledgementRetiresWhenItsDurableCardArrives() async throws {
+        let api = RecoveryAPI()
+        api.commandReply = ["commandId": "C", "result": ["kind": "success", "text": "Receipt"]]
+        let chat = ChatStore(sessionID: "fixture", api: api)
+        try await chat.executeCommand("/example")
+        XCTAssertEqual(chat.visibleCommandNotice, "Receipt")
+        chat.apply(["type": "event", "event": ["type": "command/run", "seq": 1, "data": ["commandId": "C", "name": "example"]]])
+        chat.apply(["type": "event", "event": ["type": "command/done", "seq": 2, "data": ["commandId": "C", "kind": "success", "text": "Receipt"]]])
+        XCTAssertEqual(chat.commandNotice, "Receipt"); XCTAssertNil(chat.visibleCommandNotice)
+        XCTAssertEqual(chat.transcript.filter { $0.role == "command" }.count, 1)
+        api.commandReply = ["commandId": "empty", "result": ["kind": "success"]]
+        try await chat.executeCommand("/empty"); XCTAssertNil(chat.visibleCommandNotice)
+        api.commandReply = ["commandId": "error", "result": ["kind": "error", "text": "Failed"]]
+        do { try await chat.executeCommand("/error"); XCTFail("Error swallowed") } catch { XCTAssertNil(chat.visibleCommandNotice) }
+        api.commandReply = ["commandId": "permission", "result": ["kind": "success", "text": "preset danger-full-access"]]
+        try await chat.executeCommand("/permission danger-full-access"); XCTAssertNil(chat.commandNotice)
+    }
+    func testWebProjectionSuppressesInternalRecordsAndGroupsContext() throws {
+        let url = try XCTUnwrap(Bundle(for: Self.self).url(forResource: "r7-local-projection", withExtension: "json"))
+        let fixture = try JSONDecoder().decode(JSON.self, from: Data(contentsOf: url))
+        let events = fixture["records"].array.map { $0["event"] }
+        let projected = ChatTranscriptProjection.project(events)
+        let suppressed = Set(["permission/preset", "sandbox/mode", "approval/policy", "turn/end", "command/run", "command/done", "system/message", "request/header", "request/context", "step/start", "step/end", "session/title", "approval/asked", "approval/decided"])
+        XCTAssertTrue(projected.flatMap(\.blocks).allSatisfy { !suppressed.contains($0.kind) })
+        XCTAssertTrue(projected.contains { $0.role == "context" && $0.blocks.first?.raw["source"]["kind"] == "time-context" })
+        XCTAssertFalse(projected.filter { $0.role == "user" }.contains { $0.text.contains("Time sampled") || $0.text.contains("Browser time zone") })
+        XCTAssertTrue(projected.contains { $0.blocks.contains { $0.kind == "tool-call" && $0.result != nil } })
+        XCTAssertTrue(projected.contains { $0.blocks.contains { $0.kind == "text" && $0.text.contains("Local native chat demo") } })
+        XCTAssertEqual(projected.filter { $0.role == "user" }.count, events.filter { $0["type"] == "user/message" && $0["surfaceOp"] == "append" && $0["data"]["source"]["kind"] == "user" }.count)
+        for type in Set(events.map { $0["type"].text }).sorted() {
+            let isolated = ChatTranscriptProjection.project(events.filter { $0["type"].text == type })
+            if suppressed.contains(type), !["turn/end", "command/run", "command/done"].contains(type) { XCTAssertTrue(isolated.isEmpty, type) }
+        }
+        let repeated = ChatTranscriptProjection.project(fixture["r6Repeated"].array.map { $0["event"] })
+        XCTAssertEqual(repeated.count, 3)
+        XCTAssertEqual(Set(repeated.compactMap(\.requestID)).count, 3)
+        XCTAssertEqual(Set(repeated.compactMap(\.messageID)).count, 3)
+        let interrupted = ChatTranscriptProjection.project(fixture["interrupted"].array.map { $0["event"] })
+        XCTAssertFalse(interrupted.isEmpty)
+        XCTAssertTrue(interrupted.allSatisfy { $0.interrupted && $0.blocks.allSatisfy(ChatTranscriptProjection.visible) })
+        let pendingChat = ChatStore(sessionID: "fixture", api: RecoveryAPI())
+        for message in fixture["pendingState"]["queue"].array {
+            pendingChat.addOptimistic(text: message["content"].array.first?["text"].text ?? "", requestID: message["rpcId"].text)
+        }
+        pendingChat.applyState(fixture["pendingState"])
+        XCTAssertEqual(pendingChat.queue.count, 1)
+        XCTAssertEqual(pendingChat.transcript.count, 1)
+        XCTAssertTrue(pendingChat.transcript[0].steering)
+    }
+    func testWebQueueOptimisticAndDurableIdentityReconciliation() {
+        let chat = ChatStore(sessionID: "fixture", api: RecoveryAPI())
+        chat.addOptimistic(text: "DRP测试 r6 slow queue", requestID: "rpc")
+        let message: JSON = ["id": "message", "placement": "queued", "rpcId": "rpc", "source": ["kind": "user", "rpcId": "rpc"], "content": [["type": "text", "text": "DRP测试 r6 slow queue"]]]
+        chat.applyState(["running": true, "queue": [message]])
+        XCTAssertEqual(chat.queue.count, 1); XCTAssertTrue(chat.transcript.isEmpty)
+        chat.apply(["type": "event", "event": ["type": "user/message", "seq": 1, "surfaceOp": "append", "data": message]])
+        XCTAssertTrue(chat.queue.isEmpty); XCTAssertEqual(chat.transcript.map(\.text), ["DRP测试 r6 slow queue"])
+        chat.applyState(["running": false, "queue": [message]])
+        XCTAssertTrue(chat.queue.isEmpty); XCTAssertFalse(chat.transcript.contains { $0.optimistic })
+        var second = message; second["id"] = "second"; second["source"]["rpcId"] = "other"
+        chat.apply(["type": "event", "event": ["type": "user/message", "seq": 2, "surfaceOp": "append", "data": second]])
+        XCTAssertEqual(chat.transcript.count, 2)
+        XCTAssertTrue(ChatTranscriptProjection.project([]).isEmpty)
+    }
+    func testWebAssistantVisibilityAndTerminalReasons() {
+        func assistant(_ seq: Int, _ content: [JSON], interrupted: Bool = false) -> JSON {
+            ["seq": .int(seq), "type": "assistant/message", "surfaceOp": "append", "data": ["turn": 1, "step": .int(seq), "interrupted": .bool(interrupted), "message": ["content": .array(content)]]]
+        }
+        let empty = assistant(1, [["type": "reasoning", "text": " \n"]])
+        let reply = assistant(2, [["type": "reasoning", "text": "Consider"], ["type": "text", "text": "First reply"]])
+        let next = assistant(3, [["type": "text", "text": "Final reply"]])
+        let partial = assistant(4, [["type": "reasoning", "text": "Interrupted evidence"]], interrupted: true)
+        let projected = ChatTranscriptProjection.project([empty, reply, next, partial])
+        XCTAssertEqual(projected.count, 3)
+        XCTAssertEqual(projected.filter { !$0.text.isEmpty }.map(\.text), ["First reply", "Final reply"])
+        XCTAssertTrue(projected.last!.interrupted)
+        XCTAssertFalse(ChatTranscriptProjection.visible(TranscriptBlock(["type": "reasoning", "text": ""])))
+        XCTAssertTrue(ChatTranscriptProjection.project([["seq": 5, "type": "assistant/attempt", "data": ["stream": [["type": "reasoning-chunks", "index": 0, "texts": ["trajectory only"]]]]]]).isEmpty)
+        for kind in ["completed", "aborted", "blocked"] {
+            let event: JSON = ["seq": 9, "type": "turn/end", "data": ["turn": 1, "reason": ["kind": .string(kind)]]]
+            let result = ChatTranscriptProjection.project([reply, event])
+            XCTAssertEqual(result.count, 1, kind); XCTAssertEqual(result[0].turnOutcome, kind)
+        }
+        for kind in ["error", "interrupted", "max-tokens"] {
+            let event: JSON = ["seq": 9, "type": "turn/end", "data": ["turn": 1, "reason": ["kind": .string(kind), "error": ["code": "AUTH", "message": "sensitive provider detail"]]]]
+            let result = ChatTranscriptProjection.project([reply, event])
+            XCTAssertEqual(result.count, 2, kind)
+            XCTAssertFalse(result.flatMap(\.blocks).contains { $0.raw.formatted.contains("sensitive provider detail") })
+        }
+    }
+    func testWebCommandsCompactionAndFallbackBoundaries() {
+        func command(_ seq: Int, _ name: String, args: String = "", outcome: String = "success") -> [JSON] {
+            [["seq": .int(seq), "type": "command/run", "data": ["commandId": .string(name), "name": .string(name), "args": .string(args)]], ["seq": .int(seq + 1), "type": "command/done", "data": ["commandId": .string(name), "kind": .string(outcome), "text": "receipt"]]]
+        }
+        XCTAssertTrue(ChatTranscriptProjection.project(command(1, "permission", outcome: "error")).isEmpty)
+        XCTAssertTrue(ChatTranscriptProjection.project(command(1, "team", args: " on ")).isEmpty)
+        XCTAssertEqual(ChatTranscriptProjection.project(command(1, "team", args: "off", outcome: "error")).count, 1)
+        XCTAssertEqual(ChatTranscriptProjection.project(command(1, "export")).count, 1)
+        XCTAssertEqual(ChatTranscriptProjection.project([command(1, "export")[1]]).count, 1)
+        let internalEvent: JSON = ["seq": 1, "type": "future/plugin", "surfaceOp": "append", "data": ["value": "hidden"]]
+        XCTAssertTrue(ChatTranscriptProjection.project([internalEvent]).isEmpty)
+        let opaque: JSON = ["seq": 2, "type": "assistant/message", "surfaceOp": "append", "data": ["message": ["content": [["type": "future/block", "payload": "kept"]]]]]
+        XCTAssertEqual(ChatTranscriptProjection.project([opaque]).first?.blocks.first?.raw["payload"], "kept")
+        let orphan: JSON = ["seq": 3, "type": "tool/result", "surfaceOp": "append", "data": ["message": ["toolCallId": "absent", "content": [["type": "future/result", "payload": "kept"]]]]]
+        XCTAssertEqual(ChatTranscriptProjection.project([orphan]).first?.blocks.first?.kind, "unknown-surface")
+        let start: JSON = ["seq": 3, "type": "compaction/start", "data": ["compactionId": "C"]]
+        let summary: JSON = ["seq": 4, "type": "compaction/summary", "data": ["compactionId": "C", "summary": [["type": "text", "text": "Summary"]]]]
+        let checkpoint: JSON = ["seq": 5, "type": "user/message", "surfaceOp": ["op": "replace", "startSeq": 1, "endSeq": 3], "data": ["source": ["kind": "compact-checkpoint", "compactionId": "C"], "content": [["type": "text", "text": "model history"]]]]
+        XCTAssertTrue(ChatTranscriptProjection.project([start, summary]).isEmpty)
+        XCTAssertEqual(ChatTranscriptProjection.project([start, summary, checkpoint]).first?.blocks.first?.text, "Summary")
+        var manual = checkpoint; manual["data"]["source"]["sourceCommandId"] = "compact"
+        XCTAssertEqual(ChatTranscriptProjection.project(command(1, "compact") + [summary, manual]).flatMap(\.blocks).map(\.kind), ["compaction"])
+    }
+    func testWebContextFormsUseOpaqueFallbackForMalformedSources() {
+        let sources: [JSON] = [
+            ["kind": "instructions", "form": "instructions", "changes": [["path": "AGENTS.md", "action": "set"]]],
+            ["kind": "skills", "form": "catalog", "entries": []],
+            ["kind": "time-context", "form": "snapshot", "sections": [["name": "time", "text": "Time sampled…"]]],
+            ["kind": "notice", "form": "notice", "summary": "Policy changed"],
+            ["kind": "agent", "form": "relay", "senderSessionId": "sender"],
+            ["kind": "session-reference", "form": "recall", "references": [["label": "Earlier", "retainedMessages": 1, "omittedMessages": 2, "truncated": true]]]
+        ]
+        for source in sources {
+            let block = TranscriptBlock(["type": "context", "source": source, "content": [["type": "text", "text": "one"], ["type": "text", "text": "two"], ["type": "future/context", "payload": 42]]])
+            XCTAssertEqual(ChatTranscriptProjection.contextBody(block).form, source["form"].text)
+            var malformed = block; malformed.raw["source"] = ["form": source["form"]]
+            let fallback = ChatTranscriptProjection.contextBody(malformed)
+            XCTAssertNil(fallback.form)
+            XCTAssertEqual(fallback.rows.first?["text"], "onetwo")
+            XCTAssertTrue(fallback.rows.contains { $0["text"].text.contains("future/context") })
+        }
+        XCTAssertTrue(ChatTranscriptProjection.contextBody(TranscriptBlock([:])).rows.isEmpty)
+        XCTAssertTrue(ChatTranscriptProjection.bounded(String(repeating: "月", count: 20_001)).contains("20001"))
+    }
+    func testHostQueueContextWaitsForItsDurableContextRowAndIsNeverEditable() {
         let chat = ChatStore(sessionID: "fixture", api: RecoveryAPI())
         let notice: JSON = ["id": "approval", "placement": "context", "content": [["type": "text", "text": "The user changed the approval policy."]]]
         let prompt: JSON = ["id": "prompt", "source": ["kind": "user", "rpcId": "request"], "placement": "queued", "content": [["type": "text", "text": "My queued prompt"]]]
@@ -51,12 +215,12 @@ final class Round4Tests: XCTestCase {
         let unknown: JSON = ["id": "plugin", "source": ["kind": "future-plugin"], "content": [["type": "text", "text": "Host context"]]]
         chat.applyState(["running": false, "queue": [notice, prompt, legacy, unknown]])
         XCTAssertEqual(chat.queue.map { $0["id"].text }, ["prompt", "legacy"])
-        XCTAssertEqual(chat.transcript.map(\.role), ["notice", "notice"])
-        XCTAssertEqual(chat.transcript.first?.text, "The user changed the approval policy.")
-        XCTAssertEqual(chat.transcript.first?.blocks.first?.kind, "system-notice")
+        XCTAssertTrue(chat.transcript.isEmpty)
         var committed = notice; committed["source"] = ["kind": "user-approval"]
         chat.apply(["type": "event", "event": ["type": "user/message", "seq": 1, "data": committed]])
         XCTAssertEqual(chat.transcript.filter { $0.messageID == "approval" }.count, 1)
+        XCTAssertEqual(chat.transcript.first?.role, "context")
+        XCTAssertEqual(chat.transcript.first?.blocks.first?.text, "The user changed the approval policy.")
         chat.applyState(["running": false, "queue": []])
         XCTAssertTrue(chat.queue.isEmpty)
         XCTAssertEqual(chat.transcript.count, 1)
@@ -201,7 +365,8 @@ final class Round4Tests: XCTestCase {
         let chat = ChatStore(sessionID: "fixture", api: StubAPI()); chat.apply(snapshot)
         XCTAssertTrue(chat.loaded)
         let blocks = chat.transcript.flatMap(\.blocks)
-        for kind in ["system/message", "developer/message", "compaction/prune"] { XCTAssertTrue(blocks.contains { $0.kind == kind }, kind) }
+        XCTAssertTrue(blocks.contains { $0.kind == "context" })
+        for kind in ["system/message", "developer/message", "compaction/prune"] { XCTAssertFalse(blocks.contains { $0.kind == kind }, kind) }
         XCTAssertTrue(blocks.contains { $0.kind == "reasoning" })
         for name in ["pwsh", "read_image", "ask_user_question", "write", "edit", "read", "working_directory"] {
             XCTAssertTrue(blocks.contains { $0.kind == "tool-call" && $0.name == name }, name)
@@ -282,10 +447,8 @@ final class Round4Tests: XCTestCase {
             ["event": ["seq": 3, "type": "tool/result", "data": ["message": ["toolCallId": "C", "content": [["type": "structured", "value": 42]]]]]],
             ["event": ["seq": 4, "type": "future/plugin", "data": ["value": "retained"]]]
         ]])
-        XCTAssertEqual(chat.transcript.count, 3)
-        XCTAssertEqual(chat.transcript.first?.text, "Notice")
-        XCTAssertEqual(chat.transcript.last?.blocks.first?.kind, "future/plugin")
-        XCTAssertTrue(chat.transcript.last!.blocks[0].raw.formatted.contains("retained"))
+        XCTAssertEqual(chat.transcript.count, 1)
+        XCTAssertEqual(chat.transcript.first?.blocks.first?.kind, "tool-call")
         let call = chat.transcript.flatMap(\.blocks).first { $0.kind == "tool-call" }!
         XCTAssertTrue(ToolPresentation.result(call.result!).contains("42"))
         let mixed: JSON = ["message": ["content": [["type": "text", "text": "Readable"], ["type": "future/result", "value": "retained"]]]]

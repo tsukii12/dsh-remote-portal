@@ -5,6 +5,9 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+- Project the native transcript using dsh web's append-surface and visibility rules: hide internal records and system prompts, disclose injected context, correlate commands and compaction, retain every assistant reply, hide empty thinking, and reconcile queued/optimistic/durable input by identity.
+- 按 dsh 网页版的追加表面事件及可见性规则投影原生对话：隐藏内部记录与系统提示、折叠展示注入上下文、关联命令和压缩记录、保留所有助手回复、隐藏空思考，并按标识去重排队／乐观／已提交输入。
+
 - Render sourced host context (including pending approval-policy notices) inline as system messages, not editable queued prompts. Remove redundant access acknowledgements and compact native composer controls into one row with standard margins.
 - 将主机来源的上下文（包括尚待处理的审批策略通知）以内联系统消息显示，不再作为可编辑的排队提示；移除重复权限回执，使用标准边距并将原生输入区控制项合并为紧凑的一行。
 
@@ -1254,7 +1257,6 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
-
 
 
 

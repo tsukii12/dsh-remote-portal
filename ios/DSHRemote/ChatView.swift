@@ -128,7 +128,7 @@ struct ChatView: View {
                             }.frame(maxWidth: .infinity).padding(.vertical, 80)
                         }
                         ForEach(TranscriptTurn.group(chat.transcript)) { turn in TurnView(turn: turn, chat: chat).id(turn.id) }
-                        if let message = chat.inProgress { MessageView(item: message, api: chat.api, sessionID: chat.sessionID).id(message.id) }
+                        if let message = chat.inProgress, message.blocks.contains(where: ChatTranscriptProjection.visible) { MessageView(item: message, api: chat.api, sessionID: chat.sessionID).id(message.id) }
                         Color.clear.frame(height: 1)
                             .id("bottom")
                     }.padding(.horizontal, 16).padding(.vertical, 20).frame(maxWidth: 900).frame(maxWidth: .infinity)
@@ -159,7 +159,7 @@ struct ChatView: View {
     private var composer: some View {
         VStack(alignment: .leading, spacing: 8) {
             if !chat.queue.isEmpty { queueDock }
-            if let notice = chat.commandNotice { Text(notice).font(.caption).foregroundStyle(.secondary).lineLimit(3).textSelection(.enabled) }
+            if let notice = chat.visibleCommandNotice { Text(notice).font(.caption).foregroundStyle(.secondary).lineLimit(3).textSelection(.enabled) }
             if let file = chat.exportedFile { ShareLink(item: file) { Label(L("Share session log", "分享会话日志"), systemImage: "square.and.arrow.up") }.font(.caption) }
             if draft.hasPrefix("/") { commandSuggestions }
             if FileMentionToken.active(in: draft) != nil { mentionSuggestions }
@@ -254,32 +254,28 @@ private struct TurnView: View {
     let turn: TranscriptTurn
     @ObservedObject var chat: ChatStore
     @State private var expanded = false
-    private func followsFinal(_ item: TranscriptItem) -> Bool {
-        guard item.role == "notice", let final = turn.final else { return false }
-        return item.seq == nil || (item.seq ?? 0) > (final.seq ?? Int.max)
-    }
+    private var headerID: String? { turn.items.first { $0.role != "user" && $0.role != "command" }?.id }
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
-            ForEach(turn.items.filter { ($0.role == "user" || $0.role == "notice") && !followsFinal($0) }) { item in MessageView(item: item, api: chat.api, sessionID: chat.sessionID).id(item.id) }
-            if turn.final != nil || turn.toolCount > 0 {
-                DisclosureGroup(isExpanded: $expanded) {
-                    VStack(alignment: .leading, spacing: 18) {
-                        ForEach(turn.detailItems) { item in MessageView(item: item, api: chat.api, sessionID: chat.sessionID).id(item.id) }
-                        if let final = turn.final {
-                            MessageView(item: final, api: chat.api, sessionID: chat.sessionID, detailsOnly: true)
-                            if let usage = chat.usage(for: final) { TurnUsageView(usage: usage) }
-                        }
-                    }.padding(.top, 12)
-                } label: {
+            ForEach(turn.items) { item in
+                if item.id == headerID, turn.items.contains(where: { $0.turn != nil }) {
                     let active = chat.running && turn.outcome == nil && turn.id == TranscriptTurn.group(chat.transcript).last?.id
-                    let label = active ? L("Running", "运行中") : turn.outcome != nil ? L("Stopped", "已停止") : L("Completed", "已完成")
-                    Label(label + turn.countsLabel, systemImage: active ? "ellipsis.circle" : turn.outcome != nil ? "exclamationmark.circle" : "checkmark.circle").font(.subheadline).foregroundStyle(.secondary).frame(minHeight: 44)
-                }.tint(.secondary)
-                if let final = turn.final { MessageView(item: final, api: chat.api, sessionID: chat.sessionID, hideDetails: true).id(final.id) }
-            } else {
-                ForEach(turn.items.filter { $0.role != "user" && $0.role != "notice" }) { item in MessageView(item: item, api: chat.api, sessionID: chat.sessionID).id(item.id) }
+                    let label = active ? L("Running", "运行中") : turn.outcome == "completed" ? L("Completed", "已完成") : turn.outcome == "error" ? L("Failed", "失败") : turn.outcome != nil ? L("Stopped", "已停止") : L("Work details", "工作详情")
+                    if turn.canCollapse {
+                        Button { expanded.toggle() } label: {
+                            Label(label + turn.countsLabel, systemImage: expanded ? "chevron.down" : "chevron.right").font(.subheadline).foregroundStyle(.secondary).frame(minHeight: 44)
+                        }.tint(.secondary)
+                    } else { Text(label + turn.countsLabel).font(.subheadline).foregroundStyle(.secondary) }
+                }
+                if turn.independent(item) {
+                    MessageView(item: item, api: chat.api, sessionID: chat.sessionID).id(item.id)
+                } else if item.role == "assistant" {
+                    if expanded || !turn.canCollapse { MessageView(item: item, api: chat.api, sessionID: chat.sessionID, detailsOnly: true) }
+                    MessageView(item: item, api: chat.api, sessionID: chat.sessionID, usage: chat.usage(for: item), hideDetails: true).id(item.id)
+                } else if expanded || !turn.canCollapse {
+                    MessageView(item: item, api: chat.api, sessionID: chat.sessionID).id(item.id)
+                }
             }
-            ForEach(turn.items.filter(followsFinal)) { item in MessageView(item: item, api: chat.api, sessionID: chat.sessionID).id(item.id) }
         }.frame(maxWidth: .infinity, alignment: .leading)
     }
 }
@@ -294,15 +290,16 @@ private struct MessageView: View {
     private var visibleBlocks: [TranscriptBlock] {
         item.blocks.filter { block in
             let main = ["text", "image", "file"].contains(block.kind)
-            return detailsOnly ? !main : hideDetails ? main : true
+            return ChatTranscriptProjection.visible(block) && (detailsOnly ? !main : hideDetails ? main : true)
         }
     }
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            if item.role == "user" {
+            if item.role == "user" || item.role == "command-input" {
                 HStack {
                     Spacer(minLength: 40)
                     VStack(alignment: .trailing, spacing: 6) {
+                        if item.steering { Text(L("Steering", "引导中")).font(.caption2).foregroundStyle(.secondary) }
                         ForEach(Array(item.blocks.enumerated()), id: \.offset) { _, block in
                             if block.kind == "image" || block.kind == "file" { HistoricalAttachmentView(block: block, api: api, sessionID: sessionID) }
                         }
@@ -317,13 +314,41 @@ private struct MessageView: View {
                         else if item.optimistic { Text(L("Sending…", "正在发送…")).font(.caption2).foregroundStyle(.secondary) }
                     }
                 }
+            } else if item.role == "context" || item.role == "trigger" {
+                ForEach(Array(item.blocks.enumerated()), id: \.offset) { _, block in ContextTranscriptBlock(block: block) }
+            } else if item.role == "command" {
+                ForEach(Array(item.blocks.enumerated()), id: \.offset) { _, block in
+                    DisclosureGroup {
+                        if !block.text.isEmpty { Text(block.text).font(.caption).textSelection(.enabled) }
+                    } label: {
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(block.name.isEmpty ? L("Command", "命令") : block.name)
+                            Text(block.text.isEmpty ? (block.raw["outcome"] == .null ? L("Running…", "运行中…") : block.raw["outcome"] == "error" ? L("Failed", "失败") : L("Done", "完成")) : block.text).lineLimit(1)
+                        }.font(.caption).foregroundStyle(.secondary)
+                    }.tint(.secondary)
+                }
             } else if item.role == "notice" {
                 ForEach(Array(item.blocks.enumerated()), id: \.offset) { _, block in
-                    if ["system-notice", "system/message"].contains(block.kind), !block.text.isEmpty, block.text.count <= 600 {
+                    if block.kind == "compaction" {
+                        DisclosureGroup {
+                            MarkdownView(text: block.text).textSelection(.enabled)
+                        } label: {
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(L("Conversation compacted", "对话已压缩"))
+                                if let count = block.raw["shadowedItemCount"].int {
+                                    Text(L("\(count) history items", "\(count) 条历史记录") + (block.raw["shadowedTokenCount"].int.map { L(" (~\($0) tokens)", "（约 \($0) 个令牌）") } ?? ""))
+                                }
+                            }
+                        }.font(.caption).foregroundStyle(.secondary).tint(.secondary)
+                    } else if block.kind == "model-retry" {
+                        Label(L("Retrying model request", "正在重试模型请求"), systemImage: "arrow.clockwise").font(.caption).foregroundStyle(.secondary)
+                        if !block.text.isEmpty { Text(block.text).font(.caption).foregroundStyle(.secondary) }
+                    } else if block.kind == "system-notice", !block.text.isEmpty {
                         Text(block.text).font(.caption).foregroundStyle(.secondary).multilineTextAlignment(.center).textSelection(.enabled).frame(maxWidth: .infinity)
                     } else { GenericTranscriptBlock(block: block).frame(maxWidth: .infinity, alignment: .center) }
                 }
             } else {
+                if item.interrupted && !detailsOnly { Text(L("Interrupted", "已中断")).font(.caption).foregroundStyle(.secondary) }
                 ForEach(Array(visibleBlocks.enumerated()), id: \.offset) { _, block in
                     switch block.kind {
                     case "text": MarkdownView(text: block.text).textSelection(.enabled)
@@ -339,6 +364,27 @@ private struct MessageView: View {
     }
 }
 
+private struct ContextTranscriptBlock: View {
+    let block: TranscriptBlock
+    var body: some View {
+        DisclosureGroup {
+            ScrollView([.horizontal, .vertical]) {
+                VStack(alignment: .leading, spacing: 8) {
+                    ForEach(Array(ChatTranscriptProjection.contextBody(block).rows.enumerated()), id: \.offset) { _, row in
+                        if !row["label"].text.isEmpty { Text(row["label"].text).font(.caption.weight(.semibold)) }
+                        Text(ChatTranscriptProjection.bounded(row["text"].text)).font(.caption).textSelection(.enabled)
+                    }
+                }.frame(maxWidth: .infinity, alignment: .leading)
+            }.frame(maxHeight: 240)
+        } label: {
+            let producer = block.raw["producer"].text
+            let summary = ChatTranscriptProjection.contextBody(block).form == "notice" ? block.raw["source"]["summary"].text : ""
+            let tools = ChatTranscriptProjection.contextBody(block).form == "tools"
+            Label((tools ? L("Tools updated", "工具已更新") : block.raw["trigger"] == true ? L("Execution request", "执行请求") : block.raw["source"]["kind"] == "session-reference" ? L("Recall", "召回") : L("Inject", "注入")) + (producer.isEmpty ? "" : " · " + producer) + (summary.isEmpty ? "" : " · " + summary), systemImage: "text.badge.plus").font(.caption).foregroundStyle(.secondary)
+        }.tint(.secondary)
+    }
+}
+
 private struct GenericTranscriptBlock: View {
     let block: TranscriptBlock
     var body: some View {
@@ -347,7 +393,7 @@ private struct GenericTranscriptBlock: View {
                 Text(block.text.isEmpty ? block.raw.formatted : block.text).font(.system(.caption, design: .monospaced)).textSelection(.enabled).padding(.top, 8)
             }.frame(maxHeight: 240)
         } label: {
-            Label(block.kind, systemImage: "info.circle").font(.caption).foregroundStyle(.secondary).lineLimit(1)
+            Label(block.kind == "unknown-surface" ? L("Unknown message", "未知消息") : block.kind, systemImage: "info.circle").font(.caption).foregroundStyle(.secondary).lineLimit(1)
         }
     }
 }
@@ -358,6 +404,11 @@ private struct ThinkingView: View {
     var body: some View {
         DisclosureGroup(isExpanded: $expanded) {
             Text(text).font(.subheadline).foregroundStyle(.secondary).textSelection(.enabled).frame(maxWidth: .infinity, alignment: .leading).padding(.top, 8)
-        } label: { Label(L("Thinking", "思考过程"), systemImage: "sparkles").font(.caption).foregroundStyle(Color.secondary) }
+        } label: {
+            HStack {
+                Text(L("Thinking", "思考过程"))
+                Text(text.split(separator: "\n").first.map(String.init) ?? "").lineLimit(1)
+            }.font(.caption).foregroundStyle(Color.secondary)
+        }
     }
 }

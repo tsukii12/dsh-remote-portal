@@ -217,6 +217,7 @@ final class ListenerTests: XCTestCase {
                 switch body["method"].text {
                 case "session/create": creations += 1; return self.reply(["sessionId": "retry"])
                 case "session/state": return self.reply(["running": false])
+                case "session/events": return self.reply(["cursor": 0, "records": [], "hasMore": false])
                 case "session/list": return self.reply(["items": [["sessionId": "retry", "blank": true]]])
                 case "session/modelCatalog": return self.reply(["default": ["provider": "p", "model": "one"], "groups": []])
                 case "permissionPresets/catalog": return self.reply(["defaultPreset": "full-access"])
@@ -248,7 +249,7 @@ final class ListenerTests: XCTestCase {
             try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
             let api = PortalAPI(base: base, client: client)
             let draft = NewChatDraft(api: api, sidebar: SidebarStore(api: api), workspaceID: nil)
-            defer { draft.attachments.clear(); server.stop(); client.session.invalidateAndCancel(); try? FileManager.default.removeItem(at: directory) }
+            defer { draft.chat.stop(); draft.attachments.clear(); server.stop(); client.session.invalidateAndCancel(); try? FileManager.default.removeItem(at: directory) }
             await draft.load()
             try await draft.chat.selectModel(provider: "p", model: "one")
             try await draft.chat.selectPermission("full-access")

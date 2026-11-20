@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0064414DE458BACF5DE9054A /* ChatStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAD55BA925A3292BC9BE346B /* ChatStore.swift */; };
+		0A1B0E4FF07D1BD1E4CB1C15 /* r7-local-projection.json in Resources */ = {isa = PBXBuildFile; fileRef = BDF593EE7A94EAAB7E9A26B4 /* r7-local-projection.json */; };
 		0C1263A9F581026D3ADE67A8 /* live-stream-all.json in Resources */ = {isa = PBXBuildFile; fileRef = F47AEBC220E3699A87934461 /* live-stream-all.json */; };
 		0F34057475377F517D1387CF /* MarkdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855CABEA5AE01E87CFD9B0B2 /* MarkdownView.swift */; };
 		123178A77FE7836FA332B1CE /* RemoteEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7E7013EB502DA108045EF4 /* RemoteEvents.swift */; };
@@ -113,6 +114,7 @@
 		B896439645C80D92D51A5D57 /* JSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
 		BAE3DE41EEF7C093D12022B7 /* Connection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
 		BCC61F94CDD3BA17CA29F58C /* FileMentions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileMentions.swift; sourceTree = "<group>"; };
+		BDF593EE7A94EAAB7E9A26B4 /* r7-local-projection.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "r7-local-projection.json"; sourceTree = "<group>"; };
 		C848BD31BDC4E6E9359A1052 /* ListenerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListenerTests.swift; sourceTree = "<group>"; };
 		CA3430E2CC2CBD6539757293 /* PortalMux.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortalMux.swift; sourceTree = "<group>"; };
 		CAD55BA925A3292BC9BE346B /* ChatStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatStore.swift; sourceTree = "<group>"; };
@@ -228,6 +230,7 @@
 				F47AEBC220E3699A87934461 /* live-stream-all.json */,
 				A802E3426AD81E789CF18C84 /* live-workspace-stream.json */,
 				099C48B7E97FA0E12864F97D /* r4-relay-render.json */,
+				BDF593EE7A94EAAB7E9A26B4 /* r7-local-projection.json */,
 			);
 			path = Fixtures;
 			sourceTree = "<group>";
@@ -334,6 +337,7 @@
 				0C1263A9F581026D3ADE67A8 /* live-stream-all.json in Resources */,
 				660B34C92A2416C5F3BC0CBC /* live-workspace-stream.json in Resources */,
 				72A52C23E4D17EBDDF701108 /* r4-relay-render.json in Resources */,
+				0A1B0E4FF07D1BD1E4CB1C15 /* r7-local-projection.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

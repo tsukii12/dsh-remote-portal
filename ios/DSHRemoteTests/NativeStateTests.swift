@@ -545,10 +545,10 @@ final class NativeStateTests: XCTestCase {
         chat.apply(user(1, "one")); chat.apply(user(2, "two")); chat.apply(user(3, "three"))
         chat.apply(user(4, "replacement", op: ["op": "replace", "startSeq": 1, "endSeq": 2]))
         chat.apply(["type": "event", "event": ["seq": 5, "type": "future/plugin", "data": [:]]])
-        XCTAssertEqual(chat.transcript.filter { $0.role == "user" }.map(\.text), ["replacement", "three"])
-        XCTAssertEqual(chat.transcript.last?.blocks.first?.kind, "future/plugin")
+        XCTAssertEqual(chat.transcript.filter { $0.role == "user" }.map(\.text), ["one", "two", "three"])
+        XCTAssertFalse(chat.transcript.contains { $0.blocks.contains { $0.kind == "future/plugin" } })
         chat.apply(user(6, "replacement again", op: ["op": "replace", "startSeq": 4, "endSeq": 3]))
-        XCTAssertEqual(chat.transcript.filter { $0.role == "user" }.map(\.text), ["replacement again"])
+        XCTAssertEqual(chat.transcript.filter { $0.role == "user" }.map(\.text), ["one", "two", "three"])
     }
     func testInteractionsFromLiveEventsAndGenerationReset() async throws {
         let api = StubAPI()

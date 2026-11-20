@@ -1,0 +1,2482 @@
+{
+  "capture": {
+    "host": "owned loopback dsh host only",
+    "source": "session/events + session/state",
+    "frontend": "@deepseek-ai/dsh-client-ui-chat installed source",
+    "sanitization": "System prompts and request payloads elided; home directory replaced; no credentials captured."
+  },
+  "records": [
+    {
+      "type": "event",
+      "event": {
+        "type": "permission/preset",
+        "seq": 0,
+        "time": 1795150874670,
+        "data": {
+          "preset": "workspace-write"
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "sandbox/mode",
+        "seq": 1,
+        "time": 1795150874671,
+        "data": {
+          "mode": "workspace-write"
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "approval/policy",
+        "seq": 2,
+        "time": 1795150874671,
+        "data": {
+          "policy": "ask"
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "session/title",
+        "seq": 3,
+        "time": 1795150874679,
+        "data": {
+          "title": "DRP测试 r7 projection",
+          "messageSeqs": [],
+          "source": {
+            "kind": "user"
+          }
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "model/selection",
+        "seq": 4,
+        "time": 1795150874683,
+        "data": {
+          "provider": "local-fake",
+          "model": "native-demo-fast"
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "command/run",
+        "seq": 5,
+        "time": 1795150874787,
+        "data": {
+          "commandId": "cmd-d3315a1a-51",
+          "name": "permission",
+          "args": " workspace-write",
+          "source": {
+            "kind": "user"
+          }
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "command/done",
+        "seq": 6,
+        "time": 1795150874787,
+        "data": {
+          "commandId": "cmd-d3315a1a-51",
+          "kind": "success",
+          "text": "preset workspace-write"
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "agent/inbox/spliced",
+        "seq": 7,
+        "time": 1795150874901,
+        "data": {
+          "target": "next-turn",
+          "start": 0,
+          "inserted": [
+            {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "DRP测试 r7 hello"
+                }
+              ],
+              "source": {
+                "kind": "user",
+                "rpcId": "ffb14869-e4ba-4580-b3a9-9b4427dacc32",
+                "clientTimeZone": "Asia/Shanghai"
+              },
+              "role": "user",
+              "id": "fc015bcb-af42-4f65-a951-9580b1bf89f9"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "turn/start",
+        "seq": 8,
+        "time": 1795150874902,
+        "data": {
+          "turn": 1
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "agent/inbox/spliced",
+        "seq": 9,
+        "time": 1795150874902,
+        "data": {
+          "target": "next-turn",
+          "start": 0,
+          "removedCount": 1,
+          "inserted": []
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "step/start",
+        "seq": 10,
+        "time": 1795150874917,
+        "data": {
+          "turn": 1,
+          "step": 1
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "system/message",
+        "seq": 11,
+        "time": 1795150874918,
+        "data": {
+          "turn": 1,
+          "step": 1,
+          "message": {
+            "content": [
+              {
+                "type": "text",
+                "text": "Sanitized system prompt"
+              }
+            ]
+          }
+        },
+        "surfaceOp": "append"
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "user/message",
+        "seq": 12,
+        "time": 1795150874918,
+        "data": {
+          "content": [
+            {
+              "type": "text",
+              "text": "DRP测试 r7 hello"
+            }
+          ],
+          "source": {
+            "kind": "user",
+            "rpcId": "ffb14869-e4ba-4580-b3a9-9b4427dacc32",
+            "clientTimeZone": "Asia/Shanghai"
+          },
+          "role": "user",
+          "id": "fc015bcb-af42-4f65-a951-9580b1bf89f9"
+        },
+        "surfaceOp": "append"
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "user/message",
+        "seq": 13,
+        "time": 1795150874918,
+        "data": {
+          "content": [
+            {
+              "type": "text",
+              "text": "<system-reminder>\nThe following information describes your current session:\n\nCurrent working directory: \"/workspace\".\n\nCurrent DSH file policy: workspace-write. Any available operation enforced by the DSH file sandbox may modify files under the session workspace: \"/workspace\". Some platform temporary areas may also be writable.\n\nApproval prompts are enabled in this session: operations that require approval may ask through the configured answerers; without an available answerer, the request fails closed.\n\nYou are the root agent. Your name is \"lead\".\n\nTo message other agents, use send_message({ agent: \"<agent-name>\", message: \"...\" }).\nUse list_agents({}) to find your collaborator agents and their names.\n\nCurrent DeepSeek Harness implementation checkout: \"/opt/homebrew/lib/node_modules/@deepseek-ai/dsh/\".\n\nCurrent DeepSeek Harness Web GUI URL: \"http://127.0.0.1:3080\".\n</system-reminder>"
+            }
+          ],
+          "source": {
+            "kind": "runtime-context",
+            "form": "snapshot",
+            "sections": [
+              {
+                "name": "working-directory:current",
+                "text": "Current working directory: \"/workspace\"."
+              },
+              {
+                "name": "sandbox:policy",
+                "text": "Current DSH file policy: workspace-write. Any available operation enforced by the DSH file sandbox may modify files under the session workspace: \"/workspace\". Some platform temporary areas may also be writable."
+              },
+              {
+                "name": "approval:policy",
+                "text": "Approval prompts are enabled in this session: operations that require approval may ask through the configured answerers; without an available answerer, the request fails closed."
+              },
+              {
+                "name": "subagent:identity",
+                "text": "You are the root agent. Your name is \"lead\".\n\nTo message other agents, use send_message({ agent: \"<agent-name>\", message: \"...\" }).\nUse list_agents({}) to find your collaborator agents and their names."
+              },
+              {
+                "name": "harness:source",
+                "text": "Current DeepSeek Harness implementation checkout: \"/opt/homebrew/lib/node_modules/@deepseek-ai/dsh/\"."
+              },
+              {
+                "name": "app:web-surface",
+                "text": "Current DeepSeek Harness Web GUI URL: \"http://127.0.0.1:3080\"."
+              }
+            ]
+          },
+          "role": "user",
+          "id": "9f5d2e37-3fb3-4e8f-b60d-dd1c607614b4"
+        },
+        "surfaceOp": "append"
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "user/message",
+        "seq": 14,
+        "time": 1795150874918,
+        "data": {
+          "content": [
+            {
+              "type": "text",
+              "text": "<system-reminder>\nA skill is a reusable set of task-specific instructions. The following skills are available in this session:\n\n<available_skills>\n- `dsh-doc`: Use when a task needs facts about DeepSeek Harness (DSH) itself, such as how a feature, setting, plugin, agent preset, tool, or Cordis API of the running installation works; when the user asks to design, review, build, install, enable, or debug a DSH plugin, bundle, MCP connection, agent preset, plugin icon or detail page, or a DSH tool definition or skill; and when upgrading a plugin or profile to a newer DSH release. Loading it grants no permission to change files or the profile.\n- `office`: Create or edit Office files; inspect Office files and PDFs. Load before rendering, conversion, or recalculation to enable office_render, office_convert, and office_recalculate next step.\n- `office-docx`: Create, read, edit, and validate Word documents (.docx).\n- `office-pptx`: Create, read, edit, and validate PowerPoint presentations (.pptx).\n- `office-xlsx`: Read, create, edit, and validate Excel workbooks, data, and formulas (.xlsx).\n</available_skills>\n\nIf the user names a skill, or the task clearly matches a skill's description, call the `skill` tool with the exact skill name before taking task actions. Load all applicable skills, then follow their full instructions. This catalog contains summaries only; do not infer or follow a skill's instructions until it has been loaded.\nA user may also invoke a skill directly; its <skill_content> block then appears in this conversation. Follow it, and do not call the `skill` tool again for that skill.\n</system-reminder>"
+            }
+          ],
+          "source": {
+            "kind": "skill-catalog",
+            "form": "catalog",
+            "entries": [
+              {
+                "name": "dsh-doc",
+                "description": "Use when a task needs facts about DeepSeek Harness (DSH) itself, such as how a feature, setting, plugin, agent preset, tool, or Cordis API of the running installation works; when the user asks to design, review, build, install, enable, or debug a DSH plugin, bundle, MCP connection, agent preset, plugin icon or detail page, or a DSH tool definition or skill; and when upgrading a plugin or profile to a newer DSH release. Loading it grants no permission to change files or the profile."
+              },
+              {
+                "name": "office",
+                "description": "Create or edit Office files; inspect Office files and PDFs. Load before rendering, conversion, or recalculation to enable office_render, office_convert, and office_recalculate next step."
+              },
+              {
+                "name": "office-docx",
+                "description": "Create, read, edit, and validate Word documents (.docx)."
+              },
+              {
+                "name": "office-pptx",
+                "description": "Create, read, edit, and validate PowerPoint presentations (.pptx)."
+              },
+              {
+                "name": "office-xlsx",
+                "description": "Read, create, edit, and validate Excel workbooks, data, and formulas (.xlsx)."
+              }
+            ]
+          },
+          "role": "user",
+          "id": "7fda04cb-2e8f-4339-b648-673e68895fa3"
+        },
+        "surfaceOp": "append"
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "user/message",
+        "seq": 15,
+        "time": 1795150874918,
+        "data": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Time sampled while preparing turn 1, step 1: 2026-11-20T13:01:14+08:00[Asia/Shanghai]\nBrowser time zone for this request: Asia/Shanghai. Interpret otherwise-unqualified dates and times in this zone.\nElapsed since the preceding model-visible message: unavailable."
+            }
+          ],
+          "source": {
+            "kind": "time-context",
+            "form": "snapshot",
+            "sections": [
+              {
+                "name": "time-context",
+                "text": "Time sampled while preparing turn 1, step 1: 2026-11-20T13:01:14+08:00[Asia/Shanghai]\nBrowser time zone for this request: Asia/Shanghai. Interpret otherwise-unqualified dates and times in this zone.\nElapsed since the preceding model-visible message: unavailable."
+              }
+            ]
+          },
+          "role": "user",
+          "id": "05edc045-e74d-4840-aa95-5c0e5520869d"
+        },
+        "surfaceOp": "append"
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "request/header",
+        "seq": 16,
+        "time": 1795150874919,
+        "data": {}
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "request/context",
+        "seq": 17,
+        "time": 1795150874919,
+        "data": {}
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "assistant/message",
+        "seq": 18,
+        "time": 1795150875492,
+        "data": {
+          "turn": 1,
+          "step": 1,
+          "message": {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "reasoning",
+                "text": "This is a local deterministic demo. I will format a short markdown answer."
+              },
+              {
+                "type": "text",
+                "text": "# Local native chat demo\n\n- Streaming text works.\n- Thinking and markdown are available.\n\nModel: native-demo-fast\n\n```sh\npwd\n```\n"
+              }
+            ],
+            "source": {
+              "kind": "model",
+              "provider": "local-fake",
+              "model": "native-demo-fast",
+              "replayState": {
+                "response": {
+                  "kind": "pi-ai",
+                  "version": 2,
+                  "api": "openai-completions",
+                  "provider": "local-fake",
+                  "model": "native-demo-fast",
+                  "responseId": "chatcmpl-5f00ed5d-b22f-4db2-859e-aedae5282187",
+                  "stopReason": "stop"
+                },
+                "blocks": [
+                  {
+                    "type": "reasoning",
+                    "thinkingSignature": "reasoning_content"
+                  },
+                  {
+                    "type": "text"
+                  }
+                ]
+              }
+            },
+            "id": "d3698ac6-1316-45eb-89a0-ea3476b40d18"
+          },
+          "usage": {
+            "inputTokens": 100,
+            "outputTokens": 50,
+            "totalTokens": 150
+          },
+          "stream": [
+            {
+              "type": "chunk",
+              "time": 1795150874993,
+              "chunk": {
+                "type": "block-start",
+                "index": 0,
+                "blockType": "reasoning"
+              }
+            },
+            {
+              "type": "reasoning-chunks",
+              "time0": 1795150874993,
+              "index": 0,
+              "dt": [
+                62
+              ],
+              "texts": [
+                "This is a local deterministic demo. ",
+                "I will format a short markdown answer."
+              ]
+            },
+            {
+              "type": "chunk",
+              "time": 1795150875117,
+              "chunk": {
+                "type": "block-start",
+                "index": 1,
+                "blockType": "text"
+              }
+            },
+            {
+              "type": "text-chunks",
+              "time0": 1795150875117,
+              "index": 1,
+              "dt": [
+                63,
+                63,
+                61,
+                62
+              ],
+              "texts": [
+                "# Local native chat demo\n\n",
+                "- Streaming text works.\n",
+                "- Thinking and markdown are available.\n\n",
+                "Model: native-demo-fast\n\n",
+                "```sh\npwd\n```\n"
+              ]
+            },
+            {
+              "type": "chunk",
+              "time": 1795150875491,
+              "chunk": {
+                "type": "block-end",
+                "index": 0,
+                "block": {
+                  "type": "reasoning",
+                  "text": "This is a local deterministic demo. I will format a short markdown answer."
+                }
+              }
+            },
+            {
+              "type": "chunk",
+              "time": 1795150875491,
+              "chunk": {
+                "type": "block-end",
+                "index": 1,
+                "block": {
+                  "type": "text",
+                  "text": "# Local native chat demo\n\n- Streaming text works.\n- Thinking and markdown are available.\n\nModel: native-demo-fast\n\n```sh\npwd\n```\n"
+                }
+              }
+            },
+            {
+              "type": "chunk",
+              "time": 1795150875491,
+              "chunk": {
+                "type": "usage",
+                "usage": {
+                  "inputTokens": 100,
+                  "outputTokens": 50,
+                  "totalTokens": 150
+                }
+              }
+            },
+            {
+              "type": "chunk",
+              "time": 1795150875491,
+              "chunk": {
+                "type": "finish",
+                "reason": {
+                  "kind": "stop"
+                },
+                "replayState": {
+                  "response": {
+                    "kind": "pi-ai",
+                    "version": 2,
+                    "api": "openai-completions",
+                    "provider": "local-fake",
+                    "model": "native-demo-fast",
+                    "responseId": "chatcmpl-5f00ed5d-b22f-4db2-859e-aedae5282187",
+                    "stopReason": "stop"
+                  },
+                  "blocks": [
+                    {
+                      "type": "reasoning",
+                      "thinkingSignature": "reasoning_content"
+                    },
+                    {
+                      "type": "text"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "surfaceOp": "append"
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "step/end",
+        "seq": 19,
+        "time": 1795150875492,
+        "data": {
+          "turn": 1,
+          "step": 1
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "turn/end",
+        "seq": 20,
+        "time": 1795150875492,
+        "data": {
+          "turn": 1,
+          "reason": {
+            "kind": "completed"
+          }
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "agent/inbox/spliced",
+        "seq": 21,
+        "time": 1795150890848,
+        "data": {
+          "target": "next-turn",
+          "start": 0,
+          "inserted": [
+            {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "DRP测试 r7 run pwd approval"
+                }
+              ],
+              "source": {
+                "kind": "user",
+                "rpcId": "a38e128f-f7d1-44c9-8da0-1db0273510a8",
+                "clientTimeZone": "Asia/Shanghai"
+              },
+              "role": "user",
+              "id": "1b8d866d-1235-46b9-bdae-a169a67876de"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "turn/start",
+        "seq": 22,
+        "time": 1795150890849,
+        "data": {
+          "turn": 2
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "agent/inbox/spliced",
+        "seq": 23,
+        "time": 1795150890849,
+        "data": {
+          "target": "next-turn",
+          "start": 0,
+          "removedCount": 1,
+          "inserted": []
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "step/start",
+        "seq": 24,
+        "time": 1795150890864,
+        "data": {
+          "turn": 2,
+          "step": 1
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "user/message",
+        "seq": 25,
+        "time": 1795150890866,
+        "data": {
+          "content": [
+            {
+              "type": "text",
+              "text": "DRP测试 r7 run pwd approval"
+            }
+          ],
+          "source": {
+            "kind": "user",
+            "rpcId": "a38e128f-f7d1-44c9-8da0-1db0273510a8",
+            "clientTimeZone": "Asia/Shanghai"
+          },
+          "role": "user",
+          "id": "1b8d866d-1235-46b9-bdae-a169a67876de"
+        },
+        "surfaceOp": "append"
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "assistant/message",
+        "seq": 26,
+        "time": 1795150891251,
+        "data": {
+          "turn": 2,
+          "step": 1,
+          "message": {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "reasoning",
+                "text": "This is a local deterministic demo. I will request pwd using the supplied bash tool."
+              },
+              {
+                "type": "tool-call",
+                "id": "call_0a3f71ebe5ac440d89d3b405f57984e0",
+                "name": "bash",
+                "arguments": "{\"command\":\"pwd\",\"description\":\"Print the current working directory\",\"sandbox_permissions\":\"danger-full-access\",\"justification\":\"Demonstrate native approval safely by running only pwd.\"}"
+              }
+            ],
+            "source": {
+              "kind": "model",
+              "provider": "local-fake",
+              "model": "native-demo-fast",
+              "replayState": {
+                "response": {
+                  "kind": "pi-ai",
+                  "version": 2,
+                  "api": "openai-completions",
+                  "provider": "local-fake",
+                  "model": "native-demo-fast",
+                  "responseId": "chatcmpl-4894216d-3422-45b7-a01d-e0ce67c9cc00",
+                  "stopReason": "toolUse"
+                },
+                "blocks": [
+                  {
+                    "type": "reasoning",
+                    "thinkingSignature": "reasoning_content"
+                  },
+                  {
+                    "type": "tool-call"
+                  }
+                ]
+              }
+            },
+            "id": "dbf4221b-67ce-47ba-aed1-314af12a59da"
+          },
+          "usage": {
+            "inputTokens": 100,
+            "outputTokens": 50,
+            "totalTokens": 150
+          },
+          "stream": [
+            {
+              "type": "chunk",
+              "time": 1795150890937,
+              "chunk": {
+                "type": "block-start",
+                "index": 0,
+                "blockType": "reasoning"
+              }
+            },
+            {
+              "type": "reasoning-chunks",
+              "time0": 1795150890937,
+              "index": 0,
+              "dt": [
+                60
+              ],
+              "texts": [
+                "This is a local deterministic demo. ",
+                "I will request pwd using the supplied bash tool."
+              ]
+            },
+            {
+              "type": "chunk",
+              "time": 1795150891059,
+              "chunk": {
+                "type": "block-start",
+                "index": 1,
+                "blockType": "tool-call"
+              }
+            },
+            {
+              "type": "tool-call-chunks",
+              "time0": 1795150891060,
+              "index": 1,
+              "dt": [
+                63
+              ],
+              "id": "call_0a3f71ebe5ac440d89d3b405f57984e0",
+              "name": "bash",
+              "args": [
+                "{\"command\":\"",
+                "pwd\",\"description\":\"Print the current working directory\",\"sandbox_permissions\":\"danger-full-access\",\"justification\":\"Demonstrate native approval safely by running only pwd.\"}"
+              ]
+            },
+            {
+              "type": "chunk",
+              "time": 1795150891250,
+              "chunk": {
+                "type": "block-end",
+                "index": 0,
+                "block": {
+                  "type": "reasoning",
+                  "text": "This is a local deterministic demo. I will request pwd using the supplied bash tool."
+                }
+              }
+            },
+            {
+              "type": "chunk",
+              "time": 1795150891251,
+              "chunk": {
+                "type": "block-end",
+                "index": 1,
+                "block": {
+                  "type": "tool-call",
+                  "id": "call_0a3f71ebe5ac440d89d3b405f57984e0",
+                  "name": "bash",
+                  "arguments": "{\"command\":\"pwd\",\"description\":\"Print the current working directory\",\"sandbox_permissions\":\"danger-full-access\",\"justification\":\"Demonstrate native approval safely by running only pwd.\"}"
+                }
+              }
+            },
+            {
+              "type": "chunk",
+              "time": 1795150891251,
+              "chunk": {
+                "type": "usage",
+                "usage": {
+                  "inputTokens": 100,
+                  "outputTokens": 50,
+                  "totalTokens": 150
+                }
+              }
+            },
+            {
+              "type": "chunk",
+              "time": 1795150891251,
+              "chunk": {
+                "type": "finish",
+                "reason": {
+                  "kind": "tool-calls"
+                },
+                "replayState": {
+                  "response": {
+                    "kind": "pi-ai",
+                    "version": 2,
+                    "api": "openai-completions",
+                    "provider": "local-fake",
+                    "model": "native-demo-fast",
+                    "responseId": "chatcmpl-4894216d-3422-45b7-a01d-e0ce67c9cc00",
+                    "stopReason": "toolUse"
+                  },
+                  "blocks": [
+                    {
+                      "type": "reasoning",
+                      "thinkingSignature": "reasoning_content"
+                    },
+                    {
+                      "type": "tool-call"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "surfaceOp": "append"
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "tool/call",
+        "seq": 27,
+        "time": 1795150891251,
+        "data": {
+          "turn": 2,
+          "step": 1,
+          "callId": "call_0a3f71ebe5ac440d89d3b405f57984e0",
+          "name": "bash",
+          "arguments": "{\"command\":\"pwd\",\"description\":\"Print the current working directory\",\"sandbox_permissions\":\"danger-full-access\",\"justification\":\"Demonstrate native approval safely by running only pwd.\"}"
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "approval/asked",
+        "seq": 28,
+        "time": 1795150891257,
+        "data": {
+          "id": "ba3fbedf-962c-4f66-889e-4403d3752dd0",
+          "toolName": "bash",
+          "callId": "call_0a3f71ebe5ac440d89d3b405f57984e0",
+          "reason": "escalate sandbox to danger-full-access: Demonstrate native approval safely by running only pwd."
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "approval/decided",
+        "seq": 29,
+        "time": 1795151094250,
+        "data": {
+          "id": "ba3fbedf-962c-4f66-889e-4403d3752dd0",
+          "outcome": "allowed-once"
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "job/registered",
+        "seq": 30,
+        "time": 1795151094252,
+        "data": {
+          "jobId": "bash-03a36b0da44a4912",
+          "owner": "session-fc301ff1-3d8a-45d6-bc76-0e92619656d7",
+          "kind": "bash",
+          "label": "pwd",
+          "startedAt": 1795151094252,
+          "toolCall": {
+            "callId": "call_0a3f71ebe5ac440d89d3b405f57984e0",
+            "rootCallId": "call_0a3f71ebe5ac440d89d3b405f57984e0"
+          }
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "job/settled",
+        "seq": 31,
+        "time": 1795151094262,
+        "data": {
+          "jobId": "bash-03a36b0da44a4912",
+          "owner": "session-fc301ff1-3d8a-45d6-bc76-0e92619656d7",
+          "kind": "bash",
+          "label": "pwd",
+          "startedAt": 1795151094252,
+          "toolCall": {
+            "callId": "call_0a3f71ebe5ac440d89d3b405f57984e0",
+            "rootCallId": "call_0a3f71ebe5ac440d89d3b405f57984e0"
+          },
+          "finishedAt": 1795151094262,
+          "status": "completed",
+          "cause": "producer",
+          "producerReported": true,
+          "detail": "exit code: 0"
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "tool/result",
+        "seq": 32,
+        "time": 1795151094263,
+        "data": {
+          "turn": 2,
+          "step": 1,
+          "message": {
+            "role": "tool",
+            "source": {
+              "kind": "tool",
+              "callId": "call_0a3f71ebe5ac440d89d3b405f57984e0"
+            },
+            "toolCallId": "call_0a3f71ebe5ac440d89d3b405f57984e0",
+            "content": [
+              {
+                "type": "text",
+                "text": "/workspace\n"
+              }
+            ],
+            "isError": false,
+            "id": "a496535b-d8d3-4b58-ac87-2e46bcd4a124"
+          },
+          "meta": {
+            "cwd": "/workspace"
+          }
+        },
+        "sourceEventSeqs": [
+          27
+        ],
+        "surfaceOp": "append"
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "step/end",
+        "seq": 33,
+        "time": 1795151094263,
+        "data": {
+          "turn": 2,
+          "step": 1
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "step/start",
+        "seq": 34,
+        "time": 1795151094276,
+        "data": {
+          "turn": 2,
+          "step": 2
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "command/run",
+        "seq": 35,
+        "time": 1795151094635,
+        "data": {
+          "commandId": "cmd-d3315a1a-52",
+          "name": "goal",
+          "args": " clear",
+          "source": {
+            "kind": "user"
+          }
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "command/done",
+        "seq": 36,
+        "time": 1795151094636,
+        "data": {
+          "commandId": "cmd-d3315a1a-52",
+          "kind": "success",
+          "text": "No goal to clear."
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "command/run",
+        "seq": 37,
+        "time": 1795151094761,
+        "data": {
+          "commandId": "cmd-d3315a1a-53",
+          "name": "compact",
+          "args": "",
+          "source": {
+            "kind": "user"
+          }
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "command/done",
+        "seq": 38,
+        "time": 1795151094762,
+        "data": {
+          "commandId": "cmd-d3315a1a-53",
+          "kind": "error",
+          "text": "Compaction is unavailable because this process has an active compaction, or the agent is not idle."
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "assistant/message",
+        "seq": 39,
+        "time": 1795151095028,
+        "data": {
+          "turn": 2,
+          "step": 2,
+          "message": {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "reasoning",
+                "text": "This is a local deterministic demo. I will format a short markdown answer."
+              },
+              {
+                "type": "text",
+                "text": "# Local native chat demo\n\n- Streaming text works.\n- Thinking and markdown are available.\n\nModel: native-demo-fast\n\n```sh\npwd\n```\n\nTool result:\n\n```text\n/workspace\n\n```\n"
+              }
+            ],
+            "source": {
+              "kind": "model",
+              "provider": "local-fake",
+              "model": "native-demo-fast",
+              "replayState": {
+                "response": {
+                  "kind": "pi-ai",
+                  "version": 2,
+                  "api": "openai-completions",
+                  "provider": "local-fake",
+                  "model": "native-demo-fast",
+                  "responseId": "chatcmpl-63277e3a-e096-4034-8c98-c0ee466cd863",
+                  "stopReason": "stop"
+                },
+                "blocks": [
+                  {
+                    "type": "reasoning",
+                    "thinkingSignature": "reasoning_content"
+                  },
+                  {
+                    "type": "text"
+                  }
+                ]
+              }
+            },
+            "id": "7186f19a-d000-4b26-8780-be5e61e26233"
+          },
+          "usage": {
+            "inputTokens": 100,
+            "outputTokens": 50,
+            "totalTokens": 150
+          },
+          "stream": [
+            {
+              "type": "chunk",
+              "time": 1795151094344,
+              "chunk": {
+                "type": "block-start",
+                "index": 0,
+                "blockType": "reasoning"
+              }
+            },
+            {
+              "type": "reasoning-chunks",
+              "time0": 1795151094345,
+              "index": 0,
+              "dt": [
+                62
+              ],
+              "texts": [
+                "This is a local deterministic demo. ",
+                "I will format a short markdown answer."
+              ]
+            },
+            {
+              "type": "chunk",
+              "time": 1795151094469,
+              "chunk": {
+                "type": "block-start",
+                "index": 1,
+                "blockType": "text"
+              }
+            },
+            {
+              "type": "text-chunks",
+              "time0": 1795151094469,
+              "index": 1,
+              "dt": [
+                63,
+                63,
+                60,
+                62,
+                63,
+                62,
+                62
+              ],
+              "texts": [
+                "# Local native chat demo\n\n",
+                "- Streaming text works.\n",
+                "- Thinking and markdown are available.\n\n",
+                "Model: native-demo-fast\n\n",
+                "```sh\npwd\n```\n",
+                "\nTool result:\n\n```text\n",
+                "/workspace\n",
+                "\n```\n"
+              ]
+            },
+            {
+              "type": "chunk",
+              "time": 1795151095028,
+              "chunk": {
+                "type": "block-end",
+                "index": 0,
+                "block": {
+                  "type": "reasoning",
+                  "text": "This is a local deterministic demo. I will format a short markdown answer."
+                }
+              }
+            },
+            {
+              "type": "chunk",
+              "time": 1795151095028,
+              "chunk": {
+                "type": "block-end",
+                "index": 1,
+                "block": {
+                  "type": "text",
+                  "text": "# Local native chat demo\n\n- Streaming text works.\n- Thinking and markdown are available.\n\nModel: native-demo-fast\n\n```sh\npwd\n```\n\nTool result:\n\n```text\n/workspace\n\n```\n"
+                }
+              }
+            },
+            {
+              "type": "chunk",
+              "time": 1795151095028,
+              "chunk": {
+                "type": "usage",
+                "usage": {
+                  "inputTokens": 100,
+                  "outputTokens": 50,
+                  "totalTokens": 150
+                }
+              }
+            },
+            {
+              "type": "chunk",
+              "time": 1795151095028,
+              "chunk": {
+                "type": "finish",
+                "reason": {
+                  "kind": "stop"
+                },
+                "replayState": {
+                  "response": {
+                    "kind": "pi-ai",
+                    "version": 2,
+                    "api": "openai-completions",
+                    "provider": "local-fake",
+                    "model": "native-demo-fast",
+                    "responseId": "chatcmpl-63277e3a-e096-4034-8c98-c0ee466cd863",
+                    "stopReason": "stop"
+                  },
+                  "blocks": [
+                    {
+                      "type": "reasoning",
+                      "thinkingSignature": "reasoning_content"
+                    },
+                    {
+                      "type": "text"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "surfaceOp": "append"
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "step/end",
+        "seq": 40,
+        "time": 1795151095029,
+        "data": {
+          "turn": 2,
+          "step": 2
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "turn/end",
+        "seq": 41,
+        "time": 1795151095029,
+        "data": {
+          "turn": 2,
+          "reason": {
+            "kind": "completed"
+          }
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "agent/inbox/spliced",
+        "seq": 42,
+        "time": 1795151131110,
+        "data": {
+          "target": "next-turn",
+          "start": 0,
+          "inserted": [
+            {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "DRP测试 r7 queue primary"
+                }
+              ],
+              "source": {
+                "kind": "user",
+                "rpcId": "c3731886-99d2-4f5d-9352-66abe7c91146",
+                "clientTimeZone": "Asia/Shanghai"
+              },
+              "role": "user",
+              "id": "a899e406-03c3-4011-964d-efb1723a59a2"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "turn/start",
+        "seq": 43,
+        "time": 1795151131111,
+        "data": {
+          "turn": 3
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "agent/inbox/spliced",
+        "seq": 44,
+        "time": 1795151131111,
+        "data": {
+          "target": "next-turn",
+          "start": 0,
+          "removedCount": 1,
+          "inserted": []
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "agent/inbox/spliced",
+        "seq": 45,
+        "time": 1795151131121,
+        "data": {
+          "target": "next-turn",
+          "start": 0,
+          "inserted": [
+            {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "DRP测试 r7 queued input"
+                }
+              ],
+              "source": {
+                "kind": "user",
+                "rpcId": "ff43cf51-e500-4fb6-9c67-50bb82f7f6a7",
+                "clientTimeZone": "Asia/Shanghai"
+              },
+              "role": "user",
+              "id": "b0368e39-f494-469e-87cb-c8f46777f7c9"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "agent/inbox/spliced",
+        "seq": 46,
+        "time": 1795151131126,
+        "data": {
+          "target": "next-step",
+          "start": 0,
+          "inserted": [
+            {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "DRP测试 r7 steering input"
+                }
+              ],
+              "source": {
+                "kind": "user",
+                "rpcId": "3b8883a8-4dfb-4ba6-91ea-03836fd340c6",
+                "clientTimeZone": "Asia/Shanghai"
+              },
+              "role": "user",
+              "id": "12c52eae-64df-4322-b621-f9e4514f9c91"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "step/start",
+        "seq": 47,
+        "time": 1795151131131,
+        "data": {
+          "turn": 3,
+          "step": 1
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "user/message",
+        "seq": 48,
+        "time": 1795151131132,
+        "data": {
+          "content": [
+            {
+              "type": "text",
+              "text": "DRP测试 r7 queue primary"
+            }
+          ],
+          "source": {
+            "kind": "user",
+            "rpcId": "c3731886-99d2-4f5d-9352-66abe7c91146",
+            "clientTimeZone": "Asia/Shanghai"
+          },
+          "role": "user",
+          "id": "a899e406-03c3-4011-964d-efb1723a59a2"
+        },
+        "surfaceOp": "append"
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "assistant/message",
+        "seq": 49,
+        "time": 1795151135659,
+        "data": {
+          "turn": 3,
+          "step": 1,
+          "message": {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "reasoning",
+                "text": "This is a local deterministic demo. I will format a short markdown answer."
+              },
+              {
+                "type": "text",
+                "text": "# Local native chat demo\n\n- Streaming text works.\n- Thinking and markdown are available.\n\nModel: native-demo-fast\n\n```sh\npwd\n```\n"
+              }
+            ],
+            "source": {
+              "kind": "model",
+              "provider": "local-fake",
+              "model": "native-demo-fast",
+              "replayState": {
+                "response": {
+                  "kind": "pi-ai",
+                  "version": 2,
+                  "api": "openai-completions",
+                  "provider": "local-fake",
+                  "model": "native-demo-fast",
+                  "responseId": "chatcmpl-cbe1b6f9-88f1-4efb-a712-d7e0a73197c5",
+                  "stopReason": "stop"
+                },
+                "blocks": [
+                  {
+                    "type": "reasoning",
+                    "thinkingSignature": "reasoning_content"
+                  },
+                  {
+                    "type": "text"
+                  }
+                ]
+              }
+            },
+            "id": "d88cf698-81f0-4153-97c2-3e80ed0e0750"
+          },
+          "usage": {
+            "inputTokens": 100,
+            "outputTokens": 50,
+            "totalTokens": 150
+          },
+          "stream": [
+            {
+              "type": "chunk",
+              "time": 1795151131643,
+              "chunk": {
+                "type": "block-start",
+                "index": 0,
+                "blockType": "reasoning"
+              }
+            },
+            {
+              "type": "reasoning-chunks",
+              "time0": 1795151131643,
+              "index": 0,
+              "dt": [
+                503
+              ],
+              "texts": [
+                "This is a local deterministic demo. ",
+                "I will format a short markdown answer."
+              ]
+            },
+            {
+              "type": "chunk",
+              "time": 1795151132648,
+              "chunk": {
+                "type": "block-start",
+                "index": 1,
+                "blockType": "text"
+              }
+            },
+            {
+              "type": "text-chunks",
+              "time0": 1795151132649,
+              "index": 1,
+              "dt": [
+                502,
+                503,
+                502,
+                501
+              ],
+              "texts": [
+                "# Local native chat demo\n\n",
+                "- Streaming text works.\n",
+                "- Thinking and markdown are available.\n\n",
+                "Model: native-demo-fast\n\n",
+                "```sh\npwd\n```\n"
+              ]
+            },
+            {
+              "type": "chunk",
+              "time": 1795151135658,
+              "chunk": {
+                "type": "block-end",
+                "index": 0,
+                "block": {
+                  "type": "reasoning",
+                  "text": "This is a local deterministic demo. I will format a short markdown answer."
+                }
+              }
+            },
+            {
+              "type": "chunk",
+              "time": 1795151135659,
+              "chunk": {
+                "type": "block-end",
+                "index": 1,
+                "block": {
+                  "type": "text",
+                  "text": "# Local native chat demo\n\n- Streaming text works.\n- Thinking and markdown are available.\n\nModel: native-demo-fast\n\n```sh\npwd\n```\n"
+                }
+              }
+            },
+            {
+              "type": "chunk",
+              "time": 1795151135659,
+              "chunk": {
+                "type": "usage",
+                "usage": {
+                  "inputTokens": 100,
+                  "outputTokens": 50,
+                  "totalTokens": 150
+                }
+              }
+            },
+            {
+              "type": "chunk",
+              "time": 1795151135659,
+              "chunk": {
+                "type": "finish",
+                "reason": {
+                  "kind": "stop"
+                },
+                "replayState": {
+                  "response": {
+                    "kind": "pi-ai",
+                    "version": 2,
+                    "api": "openai-completions",
+                    "provider": "local-fake",
+                    "model": "native-demo-fast",
+                    "responseId": "chatcmpl-cbe1b6f9-88f1-4efb-a712-d7e0a73197c5",
+                    "stopReason": "stop"
+                  },
+                  "blocks": [
+                    {
+                      "type": "reasoning",
+                      "thinkingSignature": "reasoning_content"
+                    },
+                    {
+                      "type": "text"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "surfaceOp": "append"
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "step/end",
+        "seq": 50,
+        "time": 1795151135659,
+        "data": {
+          "turn": 3,
+          "step": 1
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "agent/inbox/spliced",
+        "seq": 51,
+        "time": 1795151135660,
+        "data": {
+          "target": "next-step",
+          "start": 0,
+          "removedCount": 1,
+          "inserted": []
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "step/start",
+        "seq": 52,
+        "time": 1795151135673,
+        "data": {
+          "turn": 3,
+          "step": 2
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "user/message",
+        "seq": 53,
+        "time": 1795151135674,
+        "data": {
+          "content": [
+            {
+              "type": "text",
+              "text": "DRP测试 r7 steering input"
+            }
+          ],
+          "source": {
+            "kind": "user",
+            "rpcId": "3b8883a8-4dfb-4ba6-91ea-03836fd340c6",
+            "clientTimeZone": "Asia/Shanghai"
+          },
+          "role": "user",
+          "id": "12c52eae-64df-4322-b621-f9e4514f9c91"
+        },
+        "surfaceOp": "append"
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "assistant/message",
+        "seq": 54,
+        "time": 1795151136238,
+        "data": {
+          "turn": 3,
+          "step": 2,
+          "message": {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "reasoning",
+                "text": "This is a local deterministic demo. I will format a short markdown answer."
+              },
+              {
+                "type": "text",
+                "text": "# Local native chat demo\n\n- Streaming text works.\n- Thinking and markdown are available.\n\nModel: native-demo-fast\n\n```sh\npwd\n```\n"
+              }
+            ],
+            "source": {
+              "kind": "model",
+              "provider": "local-fake",
+              "model": "native-demo-fast",
+              "replayState": {
+                "response": {
+                  "kind": "pi-ai",
+                  "version": 2,
+                  "api": "openai-completions",
+                  "provider": "local-fake",
+                  "model": "native-demo-fast",
+                  "responseId": "chatcmpl-d2252c94-6786-4ed3-a530-94b4bdc0b84e",
+                  "stopReason": "stop"
+                },
+                "blocks": [
+                  {
+                    "type": "reasoning",
+                    "thinkingSignature": "reasoning_content"
+                  },
+                  {
+                    "type": "text"
+                  }
+                ]
+              }
+            },
+            "id": "570648ec-345a-423b-94ff-798fb086fe91"
+          },
+          "usage": {
+            "inputTokens": 100,
+            "outputTokens": 50,
+            "totalTokens": 150
+          },
+          "stream": [
+            {
+              "type": "chunk",
+              "time": 1795151135741,
+              "chunk": {
+                "type": "block-start",
+                "index": 0,
+                "blockType": "reasoning"
+              }
+            },
+            {
+              "type": "reasoning-chunks",
+              "time0": 1795151135741,
+              "index": 0,
+              "dt": [
+                61
+              ],
+              "texts": [
+                "This is a local deterministic demo. ",
+                "I will format a short markdown answer."
+              ]
+            },
+            {
+              "type": "chunk",
+              "time": 1795151135865,
+              "chunk": {
+                "type": "block-start",
+                "index": 1,
+                "blockType": "text"
+              }
+            },
+            {
+              "type": "text-chunks",
+              "time0": 1795151135865,
+              "index": 1,
+              "dt": [
+                62,
+                61,
+                63,
+                62
+              ],
+              "texts": [
+                "# Local native chat demo\n\n",
+                "- Streaming text works.\n",
+                "- Thinking and markdown are available.\n\n",
+                "Model: native-demo-fast\n\n",
+                "```sh\npwd\n```\n"
+              ]
+            },
+            {
+              "type": "chunk",
+              "time": 1795151136237,
+              "chunk": {
+                "type": "block-end",
+                "index": 0,
+                "block": {
+                  "type": "reasoning",
+                  "text": "This is a local deterministic demo. I will format a short markdown answer."
+                }
+              }
+            },
+            {
+              "type": "chunk",
+              "time": 1795151136237,
+              "chunk": {
+                "type": "block-end",
+                "index": 1,
+                "block": {
+                  "type": "text",
+                  "text": "# Local native chat demo\n\n- Streaming text works.\n- Thinking and markdown are available.\n\nModel: native-demo-fast\n\n```sh\npwd\n```\n"
+                }
+              }
+            },
+            {
+              "type": "chunk",
+              "time": 1795151136237,
+              "chunk": {
+                "type": "usage",
+                "usage": {
+                  "inputTokens": 100,
+                  "outputTokens": 50,
+                  "totalTokens": 150
+                }
+              }
+            },
+            {
+              "type": "chunk",
+              "time": 1795151136237,
+              "chunk": {
+                "type": "finish",
+                "reason": {
+                  "kind": "stop"
+                },
+                "replayState": {
+                  "response": {
+                    "kind": "pi-ai",
+                    "version": 2,
+                    "api": "openai-completions",
+                    "provider": "local-fake",
+                    "model": "native-demo-fast",
+                    "responseId": "chatcmpl-d2252c94-6786-4ed3-a530-94b4bdc0b84e",
+                    "stopReason": "stop"
+                  },
+                  "blocks": [
+                    {
+                      "type": "reasoning",
+                      "thinkingSignature": "reasoning_content"
+                    },
+                    {
+                      "type": "text"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "surfaceOp": "append"
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "step/end",
+        "seq": 55,
+        "time": 1795151136239,
+        "data": {
+          "turn": 3,
+          "step": 2
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "turn/end",
+        "seq": 56,
+        "time": 1795151136239,
+        "data": {
+          "turn": 3,
+          "reason": {
+            "kind": "completed"
+          }
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "turn/start",
+        "seq": 57,
+        "time": 1795151136240,
+        "data": {
+          "turn": 4
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "agent/inbox/spliced",
+        "seq": 58,
+        "time": 1795151136240,
+        "data": {
+          "target": "next-turn",
+          "start": 0,
+          "removedCount": 1,
+          "inserted": []
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "step/start",
+        "seq": 59,
+        "time": 1795151136252,
+        "data": {
+          "turn": 4,
+          "step": 1
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "user/message",
+        "seq": 60,
+        "time": 1795151136254,
+        "data": {
+          "content": [
+            {
+              "type": "text",
+              "text": "DRP测试 r7 queued input"
+            }
+          ],
+          "source": {
+            "kind": "user",
+            "rpcId": "ff43cf51-e500-4fb6-9c67-50bb82f7f6a7",
+            "clientTimeZone": "Asia/Shanghai"
+          },
+          "role": "user",
+          "id": "b0368e39-f494-469e-87cb-c8f46777f7c9"
+        },
+        "surfaceOp": "append"
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "assistant/message",
+        "seq": 61,
+        "time": 1795151140787,
+        "data": {
+          "turn": 4,
+          "step": 1,
+          "message": {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "reasoning",
+                "text": "This is a local deterministic demo. I will format a short markdown answer."
+              },
+              {
+                "type": "text",
+                "text": "# Local native chat demo\n\n- Streaming text works.\n- Thinking and markdown are available.\n\nModel: native-demo-fast\n\n```sh\npwd\n```\n"
+              }
+            ],
+            "source": {
+              "kind": "model",
+              "provider": "local-fake",
+              "model": "native-demo-fast",
+              "replayState": {
+                "response": {
+                  "kind": "pi-ai",
+                  "version": 2,
+                  "api": "openai-completions",
+                  "provider": "local-fake",
+                  "model": "native-demo-fast",
+                  "responseId": "chatcmpl-5fb9c46c-ca29-4e2b-9b3d-2582fb27b360",
+                  "stopReason": "stop"
+                },
+                "blocks": [
+                  {
+                    "type": "reasoning",
+                    "thinkingSignature": "reasoning_content"
+                  },
+                  {
+                    "type": "text"
+                  }
+                ]
+              }
+            },
+            "id": "c6011871-fb3b-4085-af43-77795b5d6289"
+          },
+          "usage": {
+            "inputTokens": 100,
+            "outputTokens": 50,
+            "totalTokens": 150
+          },
+          "stream": [
+            {
+              "type": "chunk",
+              "time": 1795151136764,
+              "chunk": {
+                "type": "block-start",
+                "index": 0,
+                "blockType": "reasoning"
+              }
+            },
+            {
+              "type": "reasoning-chunks",
+              "time0": 1795151136764,
+              "index": 0,
+              "dt": [
+                502
+              ],
+              "texts": [
+                "This is a local deterministic demo. ",
+                "I will format a short markdown answer."
+              ]
+            },
+            {
+              "type": "chunk",
+              "time": 1795151137768,
+              "chunk": {
+                "type": "block-start",
+                "index": 1,
+                "blockType": "text"
+              }
+            },
+            {
+              "type": "text-chunks",
+              "time0": 1795151137769,
+              "index": 1,
+              "dt": [
+                503,
+                502,
+                503,
+                504
+              ],
+              "texts": [
+                "# Local native chat demo\n\n",
+                "- Streaming text works.\n",
+                "- Thinking and markdown are available.\n\n",
+                "Model: native-demo-fast\n\n",
+                "```sh\npwd\n```\n"
+              ]
+            },
+            {
+              "type": "chunk",
+              "time": 1795151140786,
+              "chunk": {
+                "type": "block-end",
+                "index": 0,
+                "block": {
+                  "type": "reasoning",
+                  "text": "This is a local deterministic demo. I will format a short markdown answer."
+                }
+              }
+            },
+            {
+              "type": "chunk",
+              "time": 1795151140786,
+              "chunk": {
+                "type": "block-end",
+                "index": 1,
+                "block": {
+                  "type": "text",
+                  "text": "# Local native chat demo\n\n- Streaming text works.\n- Thinking and markdown are available.\n\nModel: native-demo-fast\n\n```sh\npwd\n```\n"
+                }
+              }
+            },
+            {
+              "type": "chunk",
+              "time": 1795151140786,
+              "chunk": {
+                "type": "usage",
+                "usage": {
+                  "inputTokens": 100,
+                  "outputTokens": 50,
+                  "totalTokens": 150
+                }
+              }
+            },
+            {
+              "type": "chunk",
+              "time": 1795151140786,
+              "chunk": {
+                "type": "finish",
+                "reason": {
+                  "kind": "stop"
+                },
+                "replayState": {
+                  "response": {
+                    "kind": "pi-ai",
+                    "version": 2,
+                    "api": "openai-completions",
+                    "provider": "local-fake",
+                    "model": "native-demo-fast",
+                    "responseId": "chatcmpl-5fb9c46c-ca29-4e2b-9b3d-2582fb27b360",
+                    "stopReason": "stop"
+                  },
+                  "blocks": [
+                    {
+                      "type": "reasoning",
+                      "thinkingSignature": "reasoning_content"
+                    },
+                    {
+                      "type": "text"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "surfaceOp": "append"
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "step/end",
+        "seq": 62,
+        "time": 1795151140787,
+        "data": {
+          "turn": 4,
+          "step": 1
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "turn/end",
+        "seq": 63,
+        "time": 1795151140787,
+        "data": {
+          "turn": 4,
+          "reason": {
+            "kind": "completed"
+          }
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "command/run",
+        "seq": 64,
+        "time": 1795151151092,
+        "data": {
+          "commandId": "cmd-d3315a1a-54",
+          "name": "compact",
+          "args": "",
+          "source": {
+            "kind": "user"
+          }
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "compaction/start",
+        "seq": 65,
+        "time": 1795151151093,
+        "data": {
+          "compactionId": "0ea64134-6614-45b6-b740-42e3545768fb",
+          "sourceCommandId": "cmd-d3315a1a-54",
+          "turn": null
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "compaction/summary",
+        "seq": 66,
+        "time": 1795151151666,
+        "data": {
+          "compactionId": "0ea64134-6614-45b6-b740-42e3545768fb",
+          "sourceCommandId": "cmd-d3315a1a-54",
+          "summary": [
+            {
+              "type": "text",
+              "text": "# Local native chat demo\n\n- Streaming text works.\n- Thinking and markdown are available.\n\nModel: native-demo-fast\n\n```sh\npwd\n```\n"
+            }
+          ],
+          "rawOutput": [
+            {
+              "type": "reasoning",
+              "text": "This is a local deterministic demo. I will format a short markdown answer."
+            },
+            {
+              "type": "text",
+              "text": "# Local native chat demo\n\n- Streaming text works.\n- Thinking and markdown are available.\n\nModel: native-demo-fast\n\n```sh\npwd\n```\n"
+            }
+          ],
+          "llmStreamCall": true,
+          "shadowedRange": {
+            "start": 12,
+            "end": 60
+          },
+          "shadowedSeqs": [
+            12,
+            13,
+            14,
+            15,
+            18,
+            25,
+            26,
+            32,
+            39,
+            48,
+            49,
+            53,
+            54,
+            60
+          ],
+          "shadowedTokenCount": 1174,
+          "provider": "local-fake",
+          "model": "native-demo-fast",
+          "maxTokens": 65536,
+          "usage": {
+            "inputTokens": 100,
+            "outputTokens": 50,
+            "totalTokens": 150
+          }
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "user/message",
+        "seq": 67,
+        "time": 1795151151666,
+        "data": {
+          "content": [
+            {
+              "type": "text",
+              "text": "This is an automatically generated checkpoint condensing an earlier span of the conversation to free up context. Treat the captured context as established background and build on it without restating it. Continue the task directly from the messages that follow, without acknowledging this checkpoint.\n\n<compacted-summary>"
+            },
+            {
+              "type": "text",
+              "text": "# Local native chat demo\n\n- Streaming text works.\n- Thinking and markdown are available.\n\nModel: native-demo-fast\n\n```sh\npwd\n```\n"
+            },
+            {
+              "type": "text",
+              "text": "</compacted-summary>"
+            }
+          ],
+          "source": {
+            "kind": "compact-checkpoint",
+            "compactionId": "0ea64134-6614-45b6-b740-42e3545768fb",
+            "sourceCommandId": "cmd-d3315a1a-54"
+          },
+          "role": "user",
+          "id": "cb5d5463-4ee0-47b2-931c-f91a87d44852"
+        },
+        "sourceEventSeqs": [
+          65,
+          66,
+          12,
+          13,
+          14,
+          15,
+          18,
+          25,
+          26,
+          32,
+          39,
+          48,
+          49,
+          53,
+          54,
+          60
+        ],
+        "surfaceOp": {
+          "op": "replace",
+          "startSeq": 12,
+          "endSeq": 60
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "compaction/end",
+        "seq": 68,
+        "time": 1795151151667,
+        "data": {
+          "compactionId": "0ea64134-6614-45b6-b740-42e3545768fb",
+          "sourceCommandId": "cmd-d3315a1a-54",
+          "turn": null
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "command/done",
+        "seq": 69,
+        "time": 1795151151670,
+        "data": {
+          "commandId": "cmd-d3315a1a-54",
+          "kind": "success",
+          "text": "Compacted 14 history items (~1174 tokens).",
+          "sourceEventSeq": 66
+        }
+      }
+    }
+  ],
+  "pendingState": {
+    "running": true,
+    "queue": [
+      {
+        "id": "b0368e39-f494-469e-87cb-c8f46777f7c9",
+        "placement": "queued",
+        "rpcId": "ff43cf51-e500-4fb6-9c67-50bb82f7f6a7",
+        "content": [
+          {
+            "type": "text",
+            "text": "DRP测试 r7 queued input"
+          }
+        ]
+      },
+      {
+        "id": "12c52eae-64df-4322-b621-f9e4514f9c91",
+        "placement": "steering",
+        "rpcId": "3b8883a8-4dfb-4ba6-91ea-03836fd340c6",
+        "content": [
+          {
+            "type": "text",
+            "text": "DRP测试 r7 steering input"
+          }
+        ]
+      }
+    ]
+  },
+  "r6Repeated": [
+    {
+      "type": "event",
+      "event": {
+        "type": "user/message",
+        "seq": 308,
+        "time": 1795149358989,
+        "data": {
+          "content": [
+            {
+              "type": "text",
+              "text": "DRP测试 r6 slow queue"
+            }
+          ],
+          "source": {
+            "kind": "user",
+            "rpcId": "efa66756-5c04-43cc-96ad-d886df0e6d65"
+          },
+          "role": "user",
+          "id": "0453265f-fd86-42cd-a779-71f24e42b07c"
+        },
+        "surfaceOp": "append"
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "user/message",
+        "seq": 334,
+        "time": 1795149785783,
+        "data": {
+          "content": [
+            {
+              "type": "text",
+              "text": "DRP测试 r6 slow queue"
+            }
+          ],
+          "source": {
+            "kind": "user",
+            "rpcId": "ccf0204c-859a-4ddb-b368-a6a954b7b6f0"
+          },
+          "role": "user",
+          "id": "f2c993b5-cb7a-4dc1-86d8-c92d77e9cf73"
+        },
+        "surfaceOp": "append"
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "user/message",
+        "seq": 344,
+        "time": 1795150003838,
+        "data": {
+          "content": [
+            {
+              "type": "text",
+              "text": "DRP测试 r6 slow queue"
+            }
+          ],
+          "source": {
+            "kind": "user",
+            "rpcId": "c666a42f-f03d-4fd4-89dd-a0f60db47036"
+          },
+          "role": "user",
+          "id": "e13918b1-ae9e-4ca5-8555-6b4914c52635"
+        },
+        "surfaceOp": "append"
+      }
+    }
+  ],
+  "interrupted": [
+    {
+      "type": "event",
+      "event": {
+        "type": "assistant/message",
+        "seq": 46,
+        "time": 1795146691335,
+        "data": {
+          "turn": 4,
+          "step": 1,
+          "message": {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "reasoning",
+                "text": "This is a local deterministic demo. I will format a short markdown answer."
+              }
+            ],
+            "source": {
+              "kind": "model",
+              "provider": "local-fake",
+              "model": "native-demo"
+            },
+            "id": "87412fa1-2018-4de9-9fd1-bae2923b1621"
+          },
+          "interrupted": true,
+          "stream": [
+            {
+              "type": "chunk",
+              "time": 1795146600993,
+              "chunk": {
+                "type": "block-start",
+                "index": 0,
+                "blockType": "reasoning"
+              }
+            },
+            {
+              "type": "reasoning-chunks",
+              "time0": 1795146600994,
+              "index": 0,
+              "dt": [
+                60001
+              ],
+              "texts": [
+                "This is a local deterministic demo. ",
+                "I will format a short markdown answer."
+              ]
+            }
+          ]
+        },
+        "surfaceOp": "append"
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "assistant/message",
+        "seq": 337,
+        "time": 1795149945029,
+        "data": {
+          "turn": 31,
+          "step": 1,
+          "message": {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "reasoning",
+                "text": "This is a local deterministic demo. I will format a short markdown answer."
+              }
+            ],
+            "source": {
+              "kind": "model",
+              "provider": "local-fake",
+              "model": "native-demo"
+            },
+            "id": "94b9bbc2-fec6-40f3-8e4c-e8bec07a547d"
+          },
+          "interrupted": true,
+          "stream": [
+            {
+              "type": "chunk",
+              "time": 1795149845792,
+              "chunk": {
+                "type": "block-start",
+                "index": 0,
+                "blockType": "reasoning"
+              }
+            },
+            {
+              "type": "reasoning-chunks",
+              "time0": 1795149845792,
+              "index": 0,
+              "dt": [
+                60002
+              ],
+              "texts": [
+                "This is a local deterministic demo. ",
+                "I will format a short markdown answer."
+              ]
+            }
+          ]
+        },
+        "surfaceOp": "append"
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "assistant/message",
+        "seq": 348,
+        "time": 1795150088875,
+        "data": {
+          "turn": 32,
+          "step": 1,
+          "message": {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "reasoning",
+                "text": "This is a local deterministic demo. "
+              }
+            ],
+            "source": {
+              "kind": "model",
+              "provider": "local-fake",
+              "model": "native-demo"
+            },
+            "id": "3fd44821-2b41-48d5-9605-ffa49012338a"
+          },
+          "interrupted": true,
+          "stream": [
+            {
+              "type": "chunk",
+              "time": 1795150063848,
+              "chunk": {
+                "type": "block-start",
+                "index": 0,
+                "blockType": "reasoning"
+              }
+            },
+            {
+              "type": "reasoning-chunks",
+              "time0": 1795150063848,
+              "index": 0,
+              "dt": [],
+              "texts": [
+                "This is a local deterministic demo. "
+              ]
+            }
+          ]
+        },
+        "surfaceOp": "append"
+      }
+    }
+  ]
+}
