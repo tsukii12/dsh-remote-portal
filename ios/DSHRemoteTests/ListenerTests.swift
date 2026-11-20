@@ -124,6 +124,7 @@ final class ListenerTests: XCTestCase {
         defer { server.stop(); client.session.invalidateAndCancel(); try? FileManager.default.removeItem(at: directory) }
         let draft = NewChatDraft(api: api, sidebar: SidebarStore(api: api), workspaceID: "ws")
         await draft.load(); XCTAssertNil(draft.error); XCTAssertNil(draft.sessionID)
+        XCTAssertEqual(draft.chat.projections["agentPreset"], "standard")
         do { _ = try await draft.submit(""); XCTFail("Empty draft sent") } catch {}
         try await draft.chat.selectModel(provider: "p", model: "m", reasoningEffort: "off")
         try await draft.chat.selectPermission("workspace-write"); try await draft.chat.selectPreset("standard")

@@ -110,7 +110,10 @@ final class ChatStore: ObservableObject {
     private var stateRevision = 0
     let isDraft: Bool
     private let transcriptAddress: JSON?
-    init(sessionID: String, api: RPCServing, events: RemoteEvents? = nil, isDraft: Bool = false, address: JSON? = nil) { self.sessionID = sessionID; self.api = api; self.events = events; self.isDraft = isDraft; transcriptAddress = address }
+    init(sessionID: String, api: RPCServing, events: RemoteEvents? = nil, isDraft: Bool = false, address: JSON? = nil) {
+        self.sessionID = sessionID; self.api = api; self.events = events; self.isDraft = isDraft; transcriptAddress = address
+        if isDraft { projections["agentPreset"] = "standard" }
+    }
     private var address: JSON { transcriptAddress ?? ["kind": "session", "sessionId": .string(sessionID)] }
 
     func activate() {

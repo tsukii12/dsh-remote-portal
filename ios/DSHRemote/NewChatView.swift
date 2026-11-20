@@ -111,7 +111,7 @@ private struct NewChatDraftView: View {
                 HStack(spacing: 8) {
                     GlassCircle(symbol: "line.3.horizontal", label: L("Conversations", "对话列表"), action: onMenu)
                     ChatTitlePill(title: L("New chat", "新对话"), subtitle: serverName + " · " + PortalRoute.label(base))
-                    Button { options = .model } label: { Text(chat.modelName + " ⌄").font(.caption).lineLimit(1).padding(.horizontal, 12).frame(maxWidth: 145, minHeight: 44).background(.regularMaterial, in: Capsule()) }.accessibilityLabel(L("Choose model", "选择模型"))
+                    Button { options = .model } label: { Text(chat.modelName + " · " + ChatLabels.preset(chat.projections["agentPreset"].text) + " ⌄").font(.caption).lineLimit(1).padding(.horizontal, 12).frame(maxWidth: 145, minHeight: 44).background(.regularMaterial, in: Capsule()) }.accessibilityLabel(L("Choose model", "选择模型")).accessibilityValue(chat.modelName + " · " + ChatLabels.preset(chat.projections["agentPreset"].text))
                 }.buttonStyle(.plain).padding(.horizontal, 12).padding(.vertical, 8)
             }
             .safeAreaInset(edge: .bottom) {
