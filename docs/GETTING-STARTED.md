@@ -38,7 +38,7 @@ For passwordless enrollment, on the host open **Local network** and scan its pai
 
 Copy the address, scan the code, or copy the pairing link. Refresh an expiring code here. A loopback address cannot be dialed directly from another device.
 
-![Local network tab with address and QR redacted](screenshots/desktop-local-network.png)
+![Local network tab with LAN address redacted and a demo pairing QR code](screenshots/desktop-local-network.png)
 
 ### Public access
 

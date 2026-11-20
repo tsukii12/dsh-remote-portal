@@ -6,7 +6,7 @@
 
 在其他设备上使用 DeepSeek Harness，工作仍留在主机上。可以用浏览器打开网页端，也可以在 iPhone、iPad 或 Android 上使用 Flutter 原生应用。
 
-<img src="docs/screenshots/mobile-home.png" alt="手机上的鱼鱼远程网页首页" width="350">
+<img src="docs/screenshots/mobile-home.png" alt="手机上的鱼鱼远程网页首页" width="280"> <img src="docs/screenshots/app-settings-about.png" alt="iOS 应用中的关于鱼鱼远程页面" width="280">
 
 - **网页端：** 用手机或电脑访问 dsh，界面会适应窄屏。
 - **移动应用：** 继续会话、接收流式回复和处理授权请求；访问主机支持的工作区与文件。

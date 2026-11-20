@@ -6,7 +6,7 @@
 
 Use DeepSeek Harness on another device without moving your work off the host. Open the web remote in a browser, or use the native Flutter app for iPhone, iPad and Android.
 
-<img src="docs/screenshots/mobile-home.png" alt="YuRemote web home on a phone" width="350">
+<img src="docs/screenshots/mobile-home.png" alt="YuRemote web home on a phone" width="280"> <img src="docs/screenshots/app-settings-about.png" alt="About YuRemote in the iOS app" width="280">
 
 - **Web remote:** use dsh from a phone or computer, with a layout that adapts to narrow screens.
 - **Mobile app:** continue conversations, stream replies and answer approvals; access workspaces and files supported by your host.

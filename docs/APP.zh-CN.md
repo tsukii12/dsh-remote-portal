@@ -4,6 +4,8 @@
 
 鱼鱼远程基于 dsh-Go v1.2.0 的 Flutter 界面移植，仅用于远程连接。应用需要鱼鱼远程网关，不支持通过 SSH 或普通 dsh Web 地址连接；手机上不运行 dsh，也不嵌入网页。可打开并继续会话、接收流式回复、处理授权和提问；主机支持时，也能浏览工作区和添加附件。
 
+<img src="screenshots/app-agent-team.png" alt="iOS 应用中的智能体团队成员、任务和消息" width="280"> <img src="screenshots/app-settings-about.png" alt="iOS 应用中的关于页面，显示许可与上游致谢" width="280">
+
 ## 安装
 
 打开 [v0.7.0 发布页](https://github.com/tsukii12/dsh-YuRemote/releases/tag/v0.7.0)，选择 Android APK 或未签名的 iOS IPA。发布页当前的安装包文件名中标有 `0.7.1`。

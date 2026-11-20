@@ -38,7 +38,7 @@ Windows 下先运行 `dsh --profile web --dump-config`，再在检出目录运�
 
 可复制地址、扫码或复制配对链接，也可刷新即将过期的二维码。其他设备无法直接连接回环地址。
 
-![局域网访问页签，地址和二维码已遮盖](screenshots/desktop-local-network.png)
+![局域网访问页签，已遮盖局域网地址，二维码仅供演示](screenshots/desktop-local-network.png)
 
 ### 公网访问
 
