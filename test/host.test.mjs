@@ -1236,7 +1236,7 @@ test("the login page speaks the visitor's language and never stores a theme", as
   assert.match(zh.body, /访问密码/, "Chinese page expected");
   assert.equal(/密码在桌面端/.test(zh.body), false, "the setup hint must be gone");
   assert.equal(/localStorage/.test(zh.body), false, "the page must not persist a theme");
-  assert.match(zh.body, /<img class="yuremote-mark" src="yuremote\/assets\/brand\/yuremote-transparent\.png"/);
+  assert.match(zh.body, /<img class="yuremote-mark" src="yuremote\/assets\/brand\/yuremote-favicon\.png"/);
   assert.match(zh.body, /<title>登录 · 鱼鱼远程<\/title>/);
 
   const en = await request(port, "/", { headers: { accept: "text/html", "accept-language": "en-US,en;q=0.9" } });
@@ -1554,16 +1554,21 @@ test("the login page links the home-screen manifest, and the manifest follows th
 
   const page = await request(port, "/", { headers: { accept: "text/html", ...mounted } });
   assert.match(page.body, /<link rel="manifest" href="__portal\/manifest\.webmanifest">/);
-  assert.match(page.body, /<link rel="apple-touch-icon" href="yuremote\/assets\/brand\/yuremote-1024\.png">/);
-  assert.match(page.body, /<link rel="icon" type="image\/png" href="yuremote\/assets\/brand\/yuremote-transparent\.png">/);
+  assert.match(page.body, /<link rel="apple-touch-icon" sizes="180x180" href="yuremote\/assets\/brand\/yuremote-apple-touch\.png">/);
+  assert.match(page.body, /<link rel="icon" type="image\/png" sizes="48x48" href="yuremote\/assets\/brand\/yuremote-favicon\.png">/);
   assert.match(String(page.headers["content-security-policy"]), /manifest-src 'self'/, "the page CSP must let the browser load the manifest");
 
   const viaRelay = JSON.parse((await request(port, "/__portal/manifest.webmanifest", { headers: mounted })).body);
   assert.equal(viaRelay.start_url, "/__t/abc123/");
   assert.equal(viaRelay.scope, "/__t/abc123/");
   assert.equal(viaRelay.name, "YuRemote");
-  assert.equal(viaRelay.icons.length, 1);
-  for (const icon of viaRelay.icons) assert.ok(icon.src.startsWith("/__t/abc123/"), icon.src);
+  assert.deepEqual(viaRelay.icons.map(icon => icon.sizes), ["192x192", "512x512"]);
+  for (const icon of viaRelay.icons) {
+    assert.ok(icon.src.startsWith("/__t/abc123/"), icon.src);
+    const response = await request(port, icon.src.slice("/__t/abc123".length));
+    assert.equal(response.status, 200);
+    assert.equal(response.headers["content-type"], "image/png");
+  }
 
   // The proxied dsh page links this path, which browsers fetch without cookies.
   const webManifest = await request(port, "/manifest.webmanifest", { headers: mounted });

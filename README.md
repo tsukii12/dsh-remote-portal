@@ -2,7 +2,7 @@
 
 **简体中文** · [English](README.en.md)
 
-<img src="assets/brand/yuremote-1024.png" alt="鱼鱼远程" width="96" height="96">
+<img src="assets/brand/yuremote-wordmark.png" alt="鱼鱼远程" width="96" height="96">
 
 # 鱼鱼远程 · YuRemote
 

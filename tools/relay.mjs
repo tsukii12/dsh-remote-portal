@@ -354,7 +354,7 @@ function serveBrand(req, res) {
     sendPlain(res, 405, "method-not-allowed\n", { allow: "GET, HEAD" });
     return;
   }
-  for (const file of [join(relayDir, "yuremote-transparent.png"), join(relayDir, "../assets/brand/yuremote-transparent.png")]) {
+  for (const file of [join(relayDir, "yuremote-transparent.png"), join(relayDir, "../assets/brand/yuremote-favicon.png")]) {
     try {
       const body = readFileSync(file);
       res.writeHead(200, {

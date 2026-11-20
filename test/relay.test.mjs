@@ -544,6 +544,7 @@ test("the relay home and missing-route pages are localized", async () => {
   assert.equal(logo.status, 200);
   assert.equal(logo.headers["content-type"], "image/png");
   assert.equal(logo.body.subarray(1, 4).toString(), "PNG");
+  assert.deepEqual([logo.body.readUInt32BE(16), logo.body.readUInt32BE(20)], [48, 48]);
 });
 
 test("an unknown tunnel id gets a page, not a proxy attempt", async () => {

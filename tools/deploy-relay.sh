@@ -702,14 +702,14 @@ cleanup_download() { [ -z "${TMP_RELAY_DIR:-}" ] || rm -rf -- "$TMP_RELAY_DIR"; 
 trap cleanup_download EXIT
 
 install_brand() {
-  local logo="$PORTAL_DIR/../assets/brand/yuremote-transparent.png"
+  local logo="$PORTAL_DIR/../assets/brand/yuremote-favicon.png"
   local target="$RELAY_DIR/yuremote-transparent.png"
   if [ ! -f "$logo" ] && [ -n "${got:-}" ]; then
     logo="$TMP_RELAY_DIR/yuremote-transparent.png"
     if command -v curl >/dev/null 2>&1; then
-      curl -fsSL --max-time 10 "$got/assets/brand/yuremote-transparent.png" -o "$logo" 2>/dev/null || return 0
+      curl -fsSL --max-time 10 "$got/assets/brand/yuremote-favicon.png" -o "$logo" 2>/dev/null || return 0
     else
-      wget -qT 10 -O "$logo" "$got/assets/brand/yuremote-transparent.png" || return 0
+      wget -qT 10 -O "$logo" "$got/assets/brand/yuremote-favicon.png" || return 0
     fi
   fi
   if [ -f "$logo" ] && ! cmp -s "$logo" "$target"; then install -m 0644 "$logo" "$target"; fi

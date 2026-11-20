@@ -2,7 +2,7 @@
 
 [简体中文](README.md) · **English**
 
-<img src="assets/brand/yuremote-1024.png" alt="YuRemote" width="96" height="96">
+<img src="assets/brand/yuremote-wordmark.png" alt="YuRemote" width="96" height="96">
 
 # YuRemote
 

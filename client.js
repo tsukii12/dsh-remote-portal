@@ -426,7 +426,7 @@ window.__ModuleLoader__.load({
 
     function BrandIcon(props) {
       var size = props.size || 18;
-      return h("img", { className: "yuremote-ico", src: BASE + "/assets/brand/yuremote-transparent.png", width: size, height: size, alt: "" });
+      return h("img", { className: "yuremote-ico", src: BASE + "/assets/brand/yuremote-favicon.png", width: size, height: size, alt: "" });
     }
 
     // ── stylesheet ───────────────────────────────────────────────────────────
