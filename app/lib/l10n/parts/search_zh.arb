@@ -1,0 +1,22 @@
+{
+  "searchNeedsEngineField": "当前主机提供时可用",
+  "searchNeedsAnimations": "开启动画时可用",
+  "searchNeedsChat": "打开对话时可用",
+  "searchKwTheme": "外观,配色,颜色,主题色,强调色,图标",
+  "searchKwModels": "模型渠道,渠道,供应商,换模型,OpenRouter,ChatGPT,Claude",
+  "searchKwRemote": "远程,SSH,电脑,服务器,DSH Remote,连接电脑",
+  "searchKwPermission": "权限,别问我,确认,审批,自动允许,只读,完全权限,自动执行命令",
+  "searchKwAgentPresets": "预设,模式,工作方式",
+  "searchKwLanguage": "中文,英文,简体,English",
+  "searchKwTextSize": "字号,字体,文字大小,大字,字体大小",
+  "searchKwFoldTurns": "收起,折叠,过程,步骤",
+  "searchKwVersion": "版本号,关于",
+  "searchKwLicenses": "许可证,开源,License",
+  "searchKwDarkMode": "深色,浅色,暗色,夜间,深色模式,跟随系统,外观",
+  "searchKwAccent": "颜色,主题色,强调色,壁纸,取色",
+  "searchKwPermissionCurrent": "本对话都允许,这个对话,当前权限",
+  "searchKwPermissionDefault": "默认权限,只读,工作区内修改,完全权限,自动执行命令,别问我",
+  "searchSettingsHint": "搜索设置",
+  "searchNoResults": "没有找到相关设置",
+  "searchKwAbout": "关于,版本,更新,许可,dsh-go"
+}

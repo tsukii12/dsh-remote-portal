@@ -1,0 +1,163 @@
+{
+  "plugViewInvalid": "Plugin view has an error",
+  "plugViewEmpty": "No data yet",
+  "plugViewImageUnavailable": "Can’t display image",
+  "plugViewUnavailableList": "Can’t display list",
+  "plugViewUnavailableKeyValue": "Can’t display details",
+  "plugViewUnavailableProgress": "Can’t display progress",
+  "plugViewUnavailableTable": "Can’t display table",
+  "plugViewUnavailableActions": "Can’t display buttons",
+  "plugViewFrom": "From {name}",
+  "@plugViewFrom": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "plugViewUnknownTone": "Unknown tone {value}, ignored; available: good, warn, bad, info, muted",
+  "@plugViewUnknownTone": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "plugViewBadActionId": "Invalid action id {value}; this element isn’t tappable",
+  "@plugViewBadActionId": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "plugViewBadAction": "An action must be an id string or {shape}; ignored",
+  "@plugViewBadAction": {
+    "placeholders": {
+      "shape": {
+        "type": "String"
+      }
+    }
+  },
+  "plugViewArgsLimit": "Action args exceed {limit, plural, =1{1 byte} other{{limit} bytes}}; ignored",
+  "@plugViewArgsLimit": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "plugViewUnknownIcon": "Unknown icon {value}; drawn with the default icon",
+  "@plugViewUnknownIcon": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "plugViewExpectedItems": "Expected an array of {shape}",
+  "@plugViewExpectedItems": {
+    "placeholders": {
+      "shape": {
+        "type": "String"
+      }
+    }
+  },
+  "plugViewSkippedItem": "Expected {shape}; item skipped",
+  "@plugViewSkippedItem": {
+    "placeholders": {
+      "shape": {
+        "type": "String"
+      }
+    }
+  },
+  "plugViewBadMax": "max must be a number above 0; using 100",
+  "plugViewColumnLimit": "{first, plural, =1{1 column} other{{first} columns}}, exceeding the limit of {second}",
+  "@plugViewColumnLimit": {
+    "placeholders": {
+      "first": {
+        "type": "int"
+      },
+      "second": {
+        "type": "int"
+      }
+    }
+  },
+  "plugViewFirstColumns": "Showing only the first {limit, plural, =1{1 column} other{{limit} columns}}",
+  "@plugViewFirstColumns": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "plugViewFirstRows": "Showing only the first {limit, plural, =1{1 row} other{{limit} rows}}",
+  "@plugViewFirstRows": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "plugViewOnePrimary": "A view has at most one primary button; this one is drawn as plain",
+  "plugViewBadImageSource": "Images take a plugin asset (asset:<path>, png, jpg, webp or gif) or a data:image/… URL",
+  "plugViewBadAspect": "aspect must be a number from 0.25 to 4; ignored",
+  "plugViewImageTooLarge": "data: image exceeds {limit, plural, =1{1 byte} other{{limit} bytes}}",
+  "@plugViewImageTooLarge": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "plugViewImageDecode": "Image can’t be decoded (PNG, JPEG, WebP or GIF only)",
+  "plugViewImagePixels": "Image exceeds the size limit: 4096 per side, 4 million pixels in total",
+  "plugViewTooDeep": "JSON nested deeper than {limit, plural, =1{1 level} other{{limit} levels}}",
+  "@plugViewTooDeep": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "plugViewV2Content": "Plugin content",
+  "plugViewVersionFallback": "View version {version} is not supported; using the compatible view",
+  "@plugViewVersionFallback": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "plugViewStyleInvalid": "Invalid style; expected {values}",
+  "@plugViewStyleInvalid": {
+    "placeholders": {
+      "values": {
+        "type": "String"
+      }
+    }
+  },
+  "plugViewStyleReserved": "This appearance is reserved for the app; ignored",
+  "plugViewStyleContainerOnly": "This style is only available on stack and row",
+  "plugViewStyleTextOnly": "This style is only available on text, metric and callout",
+  "plugViewContrastAdjusted": "{mode}: {before} adjusted to {after}, contrast at least {minimum}:1",
+  "@plugViewContrastAdjusted": {
+    "placeholders": {
+      "mode": {
+        "type": "String"
+      },
+      "before": {
+        "type": "String"
+      },
+      "after": {
+        "type": "String"
+      },
+      "minimum": {
+        "type": "String"
+      }
+    }
+  },
+  "plugViewRichLimit": "Rich text exceeds the limit; truncated",
+  "plugViewBadTrend": "trend takes 2–{max} numbers (nulls allowed); ignored",
+  "plugViewGalleryPicture": "Picture {index}"
+}

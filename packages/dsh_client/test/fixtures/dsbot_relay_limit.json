@@ -1,0 +1,114 @@
+{
+  "provenance": {
+    "repo": "https://github.com/Fei2411/DS-Bot",
+    "base": "4a7b55069ad300eae8be42a74f31bc170b40ead7",
+    "mobilePr": "6f3e1b3e8603abd84820b334a7f99985236dbbdf",
+    "note": "Actual Fetch-route responses from createRuntime with upstream fakeContext; temporary synthetic team, no model/network call."
+  },
+  "initialRoom": {
+    "id": "s3",
+    "name": "Fixture room",
+    "named": true,
+    "members": [
+      "s1",
+      "s2"
+    ],
+    "admin": "s1",
+    "mode": "admin",
+    "notice": "",
+    "createdAt": 1793130494937,
+    "createdBy": null,
+    "relayLimitDefault": 6,
+    "parts": []
+  },
+  "changed": {
+    "ok": true,
+    "value": {
+      "room": {
+        "id": "s3",
+        "name": "Fixture room",
+        "named": true,
+        "members": [
+          "s1",
+          "s2"
+        ],
+        "admin": "s1",
+        "mode": "admin",
+        "notice": "",
+        "createdAt": 1793130494937,
+        "createdBy": null,
+        "relayLimit": 19,
+        "relayLimitDefault": 6,
+        "parts": []
+      },
+      "changes": [
+        "Bots now pause after 19 relays"
+      ]
+    }
+  },
+  "customRoom": {
+    "id": "s3",
+    "name": "Fixture room",
+    "named": true,
+    "members": [
+      "s1",
+      "s2"
+    ],
+    "admin": "s1",
+    "mode": "admin",
+    "notice": "",
+    "createdAt": 1793130494937,
+    "createdBy": null,
+    "relayLimit": 19,
+    "relayLimitDefault": 6,
+    "parts": []
+  },
+  "reset": {
+    "ok": true,
+    "value": {
+      "room": {
+        "id": "s3",
+        "name": "Fixture room",
+        "named": true,
+        "members": [
+          "s1",
+          "s2"
+        ],
+        "admin": "s1",
+        "mode": "admin",
+        "notice": "",
+        "createdAt": 1793130494937,
+        "createdBy": null,
+        "relayLimitDefault": 6,
+        "parts": []
+      },
+      "changes": [
+        "Bots pause at the default relay count again"
+      ]
+    }
+  },
+  "defaultRoom": {
+    "id": "s3",
+    "name": "Fixture room",
+    "named": true,
+    "members": [
+      "s1",
+      "s2"
+    ],
+    "admin": "s1",
+    "mode": "admin",
+    "notice": "",
+    "createdAt": 1793130494937,
+    "createdBy": null,
+    "relayLimitDefault": 6,
+    "parts": []
+  },
+  "invalid": {
+    "ok": false,
+    "error": {
+      "code": "bot/refused",
+      "message": "Relay limit must be a whole number from 1 to 200",
+      "details": {}
+    }
+  }
+}

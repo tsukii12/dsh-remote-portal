@@ -1,0 +1,8 @@
+{
+  "riskDontShowAgain": "不再提示",
+  "riskFullAccessAction": "开启完全权限",
+  "riskAutoReviewAction": "开启自动审查",
+  "riskAllowForChatTitle": "本对话都允许？",
+  "riskAllowForChatBody": "这个对话之后的命令和改动都直接放行，可在输入框上方随时关闭。",
+  "riskAllowForChatAction": "全部允许"
+}

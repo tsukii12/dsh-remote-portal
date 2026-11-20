@@ -1,0 +1,29 @@
+{
+  "@@locale": "en",
+  "harmonyUnknownResults": "Some tool calls never got a result. They may or may not have run. This conversation can't call tools until you deal with them.",
+  "harmonyUnknownResultsReview": "Review",
+  "harmonyUnknownResultsTitle": "These tool calls have unknown results",
+  "harmonyUnknownResultsBody": "{tools}\n\nThe app was interrupted while waiting for them, so they may or may not have run. You can check first, for example whether a file changed.\n\nIf you continue, they won't run again, and they won't be recorded as successful.",
+  "@harmonyUnknownResultsBody": {
+    "placeholders": {
+      "tools": {
+        "type": "String"
+      }
+    }
+  },
+  "harmonyUnknownResultsContinue": "Continue this conversation",
+  "harmonyUnknownResultsChanged": "Something changed. Please look again.",
+  "harmonyUnknownResultsFailed": "Couldn't confirm that. Try again.",
+  "harmonyCallsNotRecorded": "The local engine can't record the state of tool calls, so they're paused. Restart the engine and try again.",
+  "harmonySchedulesLocal": "Tasks on this phone only fire while the app is running: they won't run on time while the system has it suspended",
+  "harmonyTerminalNoPty": "This engine has no interactive terminal. Connect to an SSH host for one",
+  "harmonyTerminalSupportedHosts": "Available on SSH hosts",
+  "harmonyKwAccent": "color,colour,accent,palette",
+  "harmonySaveToFile": "Save to file",
+  "harmonySaveChooseLocation": "Choose where to save",
+  "harmonySaving": "Saving…",
+  "harmonySaved": "Saved",
+  "harmonyCommandExportDescription": "Export this chat’s full history as a ZIP to share or save to a file",
+  "harmonyReminderSet": "Reminder set",
+  "harmonyReminderRefused": "The system didn't accept the reminder, so nothing was set. It may be at its limit, or this version may not have the service."
+}

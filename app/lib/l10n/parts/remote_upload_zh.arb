@@ -1,0 +1,9 @@
+{
+  "stateWorkspaceFilesHint": "已上传到当前工作区的文件：",
+  "stateRemoteUploadNameInvalid": "文件名不受主机支持，请去掉特殊字符或缩短后再试",
+  "stateRemoteUploadWorkspaceUnavailable": "当前对话没有可写的工作目录",
+  "stateRemoteUploadWorkspaceChanged": "工作目录已变化，请确认后重新上传",
+  "stateRemoteUploadLimit": "主机拒绝了上传，请检查文件大小或稍后重试",
+  "stateRemoteUploadUnsupported": "这台主机不支持文件上传，请更新主机上的 Remote 插件后重连",
+  "stateRemoteUploadTooLarge": "文件超过远程上传协议的大小上限"
+}

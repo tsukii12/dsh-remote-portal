@@ -1,0 +1,8 @@
+{
+  "@@locale": "zh",
+  "iosSaveToFiles": "存到「文件」",
+  "iosFilesFolderHint": "文件 App 的 DSH Go 文件夹",
+  "iosSavingToFiles": "正在存到「文件」…",
+  "iosCommandExportDescription": "把这个对话的完整记录打包成 ZIP，分享或存到「文件」",
+  "iosPhotosDenied": "没有相册权限，未能保存"
+}

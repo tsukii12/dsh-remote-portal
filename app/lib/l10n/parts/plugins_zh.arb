@@ -1,0 +1,25 @@
+{
+  "pluginsFile": "文件",
+  "pluginsChat": "对话",
+  "pluginsImage": "图片",
+  "pluginsTheme": "主题",
+  "pluginsColors": "配色",
+  "pluginsCustomColor": "自定义",
+  "pluginsColorLabel": "配色：{label}",
+  "@pluginsColorLabel": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsCoral": "珊瑚",
+  "pluginsRouge": "胭脂",
+  "pluginsOchre": "赭石",
+  "pluginsMoss": "苔绿",
+  "pluginsLake": "湖蓝",
+  "pluginsIndigo": "靛紫",
+  "pluginsHue": "色相",
+  "pluginsWallpaper": "壁纸",
+  "pluginsFollowWallpaper": "跟随壁纸"
+}

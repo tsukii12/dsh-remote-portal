@@ -1,0 +1,380 @@
+{
+  "stateStoragePermission": "没有存储权限，存不进「下载」",
+  "stateBrowserOpenFailed": "没能打开浏览器",
+  "stateFileOpenFailed": "无法打开这个文件",
+  "stateLinkOpenFailed": "无法打开这个链接",
+  "stateRunCommand": "运行命令",
+  "stateWriteFile": "写入文件",
+  "stateEditFile": "修改文件",
+  "stateOpenPage": "打开网页",
+  "stateWebSearch": "联网搜索",
+  "stateAlertQuestion": "问你一个问题",
+  "stateSizeSmall": "小",
+  "stateSizeStandard": "标准",
+  "stateSizeLarge": "大",
+  "stateAgentError": "出错",
+  "stateNotRunning": "未运行",
+  "stateAgentOneShot": "一次性",
+  "stateAgentContinuable": "可继续",
+  "stateAgentExternal": "外部任务",
+  "stateSubagent": "子代理",
+  "stateParentChat": "上级对话",
+  "statePreparing": "准备中",
+  "stateAppDisclaimer": "基于 DeepSeek Harness 构建 · 非 DeepSeek 官方应用",
+  "stateWallpaper": "壁纸",
+  "stateFileMissing": "找不到这个文件了，可能已被删除或移走",
+  "stateFileNoApp": "手机上没有能打开这类文件的应用",
+  "stateFileConnectionLimit": "文件太大，这个连接传不过来",
+  "stateFileReadUnsupported": "这个连接不支持读取文件",
+  "stateArtifactImage": "图片",
+  "stateArtifactDocument": "文档",
+  "stateArtifactSheet": "表格",
+  "stateArtifactSlides": "演示文稿",
+  "stateArtifactArchive": "压缩包",
+  "stateArtifactAudio": "音频",
+  "stateArtifactVideo": "视频",
+  "stateArtifactWeb": "网页",
+  "stateArtifactText": "文本",
+  "stateArtifactFile": "文件",
+  "statePrivateKeyTooLarge": "文件太大，不像是私钥",
+  "stateChatAgentBusy": "AI 正忙，稍后再试",
+  "stateChatWriterHeld": "这个对话正在别处使用",
+  "stateChatModelUnavailable": "这个模型现在用不了",
+  "stateChatAttachmentInvalid": "这个附件发不了",
+  "stateChatForkUnavailable": "这里不能分叉",
+  "stateChatImagesTooLarge": "图片太大，少选几张再发",
+  "stateChatSyncInterrupted": "对话同步中断",
+  "stateChatSynchronizing": "正在同步对话",
+  "stateChatSyncRetry": "重新同步",
+  "stateChatSyncRequired": "对话尚未同步，请重新同步后再试",
+  "stateChatAutoApproveFailed": "自动允许失败",
+  "stateCommandMissing": "没有这个指令",
+  "stateCommandFailed": "指令没有执行",
+  "stateChatStopSteered": "没能停下本轮，已作为插话发送",
+  "stateChatTextOnlyModel": "当前模型未声明支持图片，已按文件发送。可换模型，或把自定义模型的输入类型设为「文本和图片」",
+  "stateAttachmentUploadFailed": "附件上传失败",
+  "stateChatImageModelRequired": "当前模型未声明支持图片。请换模型，或把自定义模型的输入类型设为「文本和图片」再发",
+  "stateSendFailed": "发送失败",
+  "stateChatStopFailed": "没能停下，再试一次",
+  "stateChatTurnEnded": "这一轮已经结束，消息会作为新一轮发送",
+  "stateChatSteerFailed": "插话失败",
+  "stateChatUndoTooLate": "来不及了，AI 已经读到这条消息",
+  "stateChatUndoFailed": "撤回失败",
+  "stateChatApprovalFailed": "审批提交失败",
+  "stateChatAnswerFailed": "回答提交失败",
+  "stateChatModelSwitchFailed": "切换模型失败",
+  "stateChatHistoryFailed": "加载历史失败",
+  "stateChatBranchLastReply": "只能从已完成的一轮的最后一条回复分叉",
+  "stateChatBranchFailed": "分叉失败",
+  "stateChatEarlierHistoryFailed": "读取更早的记录失败",
+  "stateChatNoEarlierHistory": "这条消息之前没有能保留的记录，直接新建对话就好",
+  "stateCommandNewDescription": "开始一个新对话",
+  "stateModelLabel": "模型",
+  "stateCommandModelDescription": "切换模型与思考深度",
+  "stateCommandExportLabel": "导出日志",
+  "stateCommandExportDescription": "把这个对话的完整记录打包成 ZIP，分享或存到「下载」",
+  "stateCompactLabel": "压缩",
+  "stateCommandCompactDescription": "压缩以上对话内容，腾出上下文",
+  "statePermissionLabel": "权限",
+  "stateCommandPermissionDescription": "切换权限预设（沙箱模式与审批策略）",
+  "stateCommandPermissionHint": "<预设名>",
+  "statePlanLabel": "计划",
+  "stateCommandPlanDescription": "进入或退出计划模式",
+  "stateGoalLabel": "目标",
+  "stateCommandGoalDescription": "设置或查看长期任务目标",
+  "stateFeedbackLabel": "反馈",
+  "stateCommandFeedbackDescription": "发送关于当前对话的反馈",
+  "stateCommandFeedbackHint": "<内容>",
+  "stateShareFileTooLarge": "有文件太大，未添加",
+  "stateShareFileUnreadable": "有文件没能读取",
+  "stateShareImagesOnly": "当前主机只能发送图片",
+  "stateComposerInserted": "已放进输入框",
+  "stateCordisPending": "待确认",
+  "stateDrawerAll": "全部",
+  "stateDrawerUnread": "未读",
+  "stateDrawerToday": "今天",
+  "stateDrawerThisWeek": "本周",
+  "stateDrawerEarlier": "更早",
+  "stateEngineAuthFailed": "没能通过引擎的验证",
+  "stateChatMissing": "这个对话已经不在了",
+  "stateChatFormatUnsupported": "当前引擎无法读取此对话的日志格式，请导出诊断包排查",
+  "stateEngineUnsupported": "当前引擎版本不支持",
+  "stateEngineServiceUnavailable": "所需的引擎服务未就绪，请查看引擎日志或导出诊断包",
+  "stateEngineOperationUnavailable": "引擎当前无法执行此操作，请查看引擎日志",
+  "stateSettingsRefreshed": "刚在别处改过，已刷新",
+  "stateCredentialFromEnvironment": "引擎的启动环境已提供这个 Key，无法在这里修改",
+  "stateSettingsFromFile": "由配置文件固定",
+  "stateSettingsInteger": "请填整数",
+  "stateSettingsInvalidFormat": "格式不对",
+  "stateSettingsReadOnly": "引擎设置是只读的",
+  "statePluginDisabled": "插件已停用",
+  "stateSettingsRestartRequired": "这一项要重启引擎才能改",
+  "stateSettingsInvalidValue": "值不合法",
+  "stateSettingsRejected": "引擎没有接受这个值",
+  "stateLoading": "加载中",
+  "stateGoalEmpty": "目标不能为空",
+  "stateGoalPauseFailed": "没能暂停",
+  "stateGoalResumeFailed": "没能恢复",
+  "stateGoalClearOffline": "没能清除：没能连上引擎",
+  "stateGoalClearFailed": "没能清除",
+  "stateGoalStale": "目标刚有变化，再试一次",
+  "stateGoalMissing": "目标已不在",
+  "stateGoalChatNotReady": "对话未就绪，稍后再试",
+  "stateGoalTurnsExhausted": "轮次已用完",
+  "stateGoalStateChanged": "目标状态已变化",
+  "stateProviderOpenAi": "OpenAI 兼容",
+  "stateProviderAnthropic": "Anthropic 兼容",
+  "stateProviderUrlRequired": "填写 Base URL",
+  "stateProviderUrlInvalid": "以 http:// 或 https:// 开头的完整地址",
+  "stateProviderUrlSuffix": "去掉 ? 或 # 之后的部分",
+  "stateProviderKeyRequired": "填写 API Key",
+  "stateProviderKeyOnly": "只粘贴 Key 本身，不带变量名",
+  "stateProviderKeyQuotes": "去掉两边的引号",
+  "stateProviderKeyInvalid": "Key 含有无效字符",
+  "stateProviderModelRequired": "填写模型 ID",
+  "stateProviderModelSpaces": "模型 ID 不能有空格",
+  "stateProviderAlreadyAdded": "已经添加过",
+  "stateProviderConflict": "渠道刚被改过，返回后重试",
+  "stateProviderUnsupported": "当前引擎版本不支持这个操作",
+  "stateProviderKeyRejected": "API Key 无效或没有权限",
+  "stateProviderModelsMissing": "找不到模型列表，检查 Base URL",
+  "stateProviderRateLimited": "请求太频繁，稍后再试",
+  "stateProviderResponseTooLarge": "返回的内容过大",
+  "stateProviderUnreachable": "连不上这个地址，检查 Base URL 和网络",
+  "stateProviderModelsUnreadable": "没有读到模型列表，检查 Base URL",
+  "stateProviderManualModels": "这个协议不能获取模型，请手动添加",
+  "stateProviderConfigRejected": "引擎拒绝了这个配置，检查协议和模型",
+  "stateProviderOffline": "没有连上引擎",
+  "stateScheduleNotCreated": "对话结束了，但没有建成任务",
+  "stateScheduleChatFailed": "对话出错了",
+  "stateScheduleResultPending": "还没等到结果",
+  "statePlanPending": "计划待审",
+  "stateQuestionPending": "待回答",
+  "stateExportRelayUnsupported": "经中转连接暂不支持导出",
+  "stateExportChatMissing": "找不到这个对话了",
+  "stateExportFailed": "没能导出",
+  "stateSizeExtraLarge": "特大",
+  "stateTerminalLimit": "终端数量已达上限",
+  "stateTerminalStartFailed": "没能启动终端",
+  "stateTerminalDisabledOnHost": "这台电脑关掉了远程终端。在电脑上打开 Remote 设置里的「终端」，再回来重试",
+  "stateTileDuotone": "扁平双色",
+  "stateTileGeometric": "极简几何",
+  "stateTileGlassy": "玻璃渐变",
+  "stateDefaultWorkspace": "默认工作区",
+  "stateAlertUseTool": "使用工具 {name}",
+  "@stateAlertUseTool": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "stateAlertApprovalAction": "等你确认：{action}",
+  "@stateAlertApprovalAction": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      }
+    }
+  },
+  "stateAlertApprovalReason": "等你确认：{action} · {reason}",
+  "@stateAlertApprovalReason": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      },
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "stateAlertQuestions": "问你：{question}（共 {count} 个）",
+  "@stateAlertQuestions": {
+    "placeholders": {
+      "question": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stateAlertQuestionText": "问你：{question}",
+  "@stateAlertQuestionText": {
+    "placeholders": {
+      "question": {
+        "type": "String"
+      }
+    }
+  },
+  "stateAttachmentEmpty": "「{name}」是空文件",
+  "@stateAttachmentEmpty": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "stateAttachmentImageLimit": "图片「{name}」超过 20 MB",
+  "@stateAttachmentImageLimit": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "stateAttachmentFileLimit": "文件「{name}」超过 200 MB",
+  "@stateAttachmentFileLimit": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "stateAttachmentTotalLimit": "附件总大小超过 400 MB",
+  "stateCommandPlanHint": "[off | 要求]",
+  "stateCommandGoalHint": "[目标 | clear | pause | resume]",
+  "stateShareReadFailed": "没能读取「{name}」",
+  "@stateShareReadFailed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "stateShareAttachmentLimit": "每条消息最多 {count} 个附件",
+  "@stateShareAttachmentLimit": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stateShareNamedFileTooLarge": "「{name}」太大，未添加",
+  "@stateShareNamedFileTooLarge": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "stateShareTextTruncated": "文字太长，只保留了前 {count} 字",
+  "@stateShareTextTruncated": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stateSettingsMinimum": "不能小于 {bound}",
+  "@stateSettingsMinimum": {
+    "placeholders": {
+      "bound": {
+        "type": "String"
+      }
+    }
+  },
+  "stateSettingsMaximum": "不能大于 {bound}",
+  "@stateSettingsMaximum": {
+    "placeholders": {
+      "bound": {
+        "type": "String"
+      }
+    }
+  },
+  "stateSettingsMultiple": "需是 {bound} 的倍数",
+  "@stateSettingsMultiple": {
+    "placeholders": {
+      "bound": {
+        "type": "String"
+      }
+    }
+  },
+  "stateSettingsMinLength": "至少 {count} 个字符",
+  "@stateSettingsMinLength": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stateSettingsMaxLength": "最多 {count} 个字符",
+  "@stateSettingsMaxLength": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stateEngineHttpRejected": "引擎拒绝了请求（{status}）",
+  "@stateEngineHttpRejected": {
+    "placeholders": {
+      "status": {
+        "type": "int"
+      }
+    }
+  },
+  "stateGoalActionOffline": "{action}：没能连上引擎",
+  "@stateGoalActionOffline": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      }
+    }
+  },
+  "stateProviderServiceUnavailable": "服务暂时不可用（{status}）",
+  "@stateProviderServiceUnavailable": {
+    "placeholders": {
+      "status": {
+        "type": "int"
+      }
+    }
+  },
+  "stateProviderServiceStatus": "服务返回了 {status}",
+  "@stateProviderServiceStatus": {
+    "placeholders": {
+      "status": {
+        "type": "int"
+      }
+    }
+  },
+  "stateProviderKeySaveFailed": "渠道已保存，Key 没有存上：{reason}",
+  "@stateProviderKeySaveFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "stateScheduleCreatePrompt": "新建自动化任务「{title}」：{rule}。\n只调用一次 schedule_create，参数原样使用；现在不要执行任务内容。\n\n```json\n{args}\n```",
+  "@stateScheduleCreatePrompt": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "rule": {
+        "type": "String"
+      },
+      "args": {
+        "type": "String"
+      }
+    }
+  },
+  "stateActionReason": "{action}：{reason}",
+  "@stateActionReason": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      },
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "stateProviderTokenCountInvalid": "填写数字，如 128K",
+  "appSlogan": "随时随刻，想go就Go！",
+  "statePasteEmpty": "剪贴板中没有可粘贴的文本。",
+  "statePasteDenied": "系统未授予粘贴权限，请重新点击粘贴按钮。",
+  "statePasteBusy": "粘贴窗口尚未结束或仍在关闭，请完成或取消后重试。",
+  "statePasteFailed": "无法读取剪贴板，请重试或手动输入。"
+}

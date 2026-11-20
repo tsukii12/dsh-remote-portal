@@ -1,0 +1,18 @@
+{
+  "pluginsFile": "File",
+  "pluginsChat": "Chat",
+  "pluginsImage": "Image",
+  "pluginsTheme": "Theme",
+  "pluginsColors": "Colors",
+  "pluginsCustomColor": "Custom",
+  "pluginsColorLabel": "Color: {label}",
+  "pluginsCoral": "Coral",
+  "pluginsRouge": "Rouge",
+  "pluginsOchre": "Ochre",
+  "pluginsMoss": "Moss",
+  "pluginsLake": "Lake",
+  "pluginsIndigo": "Indigo",
+  "pluginsHue": "Hue",
+  "pluginsWallpaper": "Wallpaper",
+  "pluginsFollowWallpaper": "Use wallpaper colors"
+}

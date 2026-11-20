@@ -224,4 +224,6 @@ public      https://relay.example.com/__t/EXAMPLE_ID/
 
 ## 许可
 
-[MIT](LICENSE)
+Portal／服务端采用 [MIT](LICENSE) 许可。原生 iOS／iPadOS 与 Android
+[鱼鱼远程 Flutter 客户端](app/README.md)基于 dsh-Go v1.2.0，采用
+[AGPL-3.0](app/LICENSE) 许可；来源见 [app/NOTICE](app/NOTICE)。

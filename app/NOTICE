@@ -1,0 +1,20 @@
+YuRemote / 鱼鱼远程 Flutter application, derived from dsh-Go v1.2.0
+https://github.com/ccch1mneyyy/dsh-Go
+Source commit: c1a84e3f833ad59ff07a5027994dae3935907a2d
+
+The native plugin-view test schema in legacy_test/fixtures/plugin_view.schema.json
+is from sdk/plugin-kit at the same commit; its MIT license is preserved in
+legacy_test/fixtures/plugin_view.LICENSE.
+
+The application and accompanying Dart packages are AGPL-3.0 (see LICENSE),
+with upstream third-party exceptions preserved in THIRD_PARTY_NOTICES.md.
+Modified for YuRemote: portal-only authentication/transport, removal
+of embedded runtimes and WebViews, and YuRemote branding. Original copyright and
+third-party notices remain with their source files.
+
+Brand and mascot assets excluded by upstream ASSETS.md are omitted/replaced.
+The YuRemote illustration was supplied by Tsuki for this application. Its
+inner artwork is cropped without the outer illustrated frame and made opaque for app and in-app icons. It is not
+part of dsh-Go's excluded brand/mascot asset set.
+
+The separate portal gateway at the repository root remains MIT licensed.

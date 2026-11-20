@@ -1,0 +1,19 @@
+{
+  "@@locale": "en",
+  "systemActionsOpenedUi": "Page opened",
+  "systemActionsResultUnknown": "Outcome unknown",
+  "systemActionsNotSupported": "Not supported",
+  "systemActionsNotRun": "Didn't run",
+  "systemActionsResultOpened": "The page opened. Whether the job got done there isn't known.",
+  "systemActionsResultContinued": "You pressed Continue. That only says you confirmed, not that anything in another app finished.",
+  "systemActionsResultNotified": "The notification was sent. Whether you saw it isn't known.",
+  "systemActionsResultReminder": "Handed to the system's reminders, which go off on their own. The engine doesn't run for it.",
+  "systemActionsResultClipboard": "The text is on the clipboard.",
+  "systemActionsResultUnknownDetail": "The system call may have gone out and the outcome is unknown. It won't be retried, so check for yourself.",
+  "systemActionsResultUnsupported": "HarmonyOS doesn't support this action. Nothing ran.",
+  "systemActionsResultOffScreen": "DSH Go wasn't on screen. Nothing ran.",
+  "systemActionsResultUnavailable": "System actions are off or can't connect right now. Nothing ran. See Settings > System actions.",
+  "systemActionsResultStopped": "Stopped.",
+  "systemActionsResultTimeout": "Timed out with no outcome.",
+  "systemActionsResultNotRun": "Nothing ran."
+}

@@ -1,0 +1,107 @@
+{
+  "mediaAiGenerated": "AI-generated",
+  "mediaCostEstimate": "About {amount}",
+  "@mediaCostEstimate": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "mediaSavedCount": "Saved {count} to Photos",
+  "@mediaSavedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaRegenerate": "Regenerate",
+  "mediaCopyPrompt": "Copy prompt",
+  "mediaFileGone": "File is gone",
+  "mediaKindImage": "Image",
+  "mediaKindVideo": "Video",
+  "mediaTitleImage": "New image",
+  "mediaTitleVideo": "New video",
+  "mediaOpenElsewhere": "Open in another app",
+  "mediaShowInFiles": "Show in files",
+  "mediaGenerating": "Generating",
+  "mediaCancelled": "Cancelled",
+  "mediaNotGenerated": "Not created",
+  "mediaPartial": "{done} of {total}",
+  "@mediaPartial": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaCount": "{count, plural, =1{1 image} other{{count} images}}",
+  "@mediaCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaSeconds": "{seconds} s",
+  "@mediaSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaImageOf": "Image {index} of {count}",
+  "@mediaImageOf": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaPageOf": "{index} / {count}",
+  "@mediaPageOf": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaErrorPolicyInput": "The description didn't pass content review",
+  "mediaErrorPolicyOutput": "The result didn't pass content review",
+  "mediaErrorAuth": "Service not authorized",
+  "mediaErrorBalance": "Insufficient balance",
+  "mediaErrorQuota": "Today's limit is used up",
+  "mediaErrorUnavailable": "Service unavailable for now",
+  "mediaErrorExpired": "The result expired",
+  "mediaErrorGeneric": "Couldn't create it",
+  "mediaEdit": "Edit",
+  "mediaMakeVideo": "Make a video",
+  "mediaDetailModel": "Model",
+  "mediaDetailSize": "Size",
+  "mediaDetailCost": "Cost",
+  "mediaDetailProvenance": "Provenance",
+  "mediaDetailFile": "File",
+  "mediaOriginalPrompt": "Original: {text}",
+  "@mediaOriginalPrompt": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "mediaProvenanceC2pa": "C2PA",
+  "mediaProvenanceImplicit": "Embedded",
+  "mediaProvenanceVisible": "Visible mark",
+  "mediaParamDuration": "Length"
+}

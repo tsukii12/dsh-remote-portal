@@ -1,0 +1,107 @@
+{
+  "mediaAiGenerated": "AI 生成",
+  "mediaCostEstimate": "约 {amount}",
+  "@mediaCostEstimate": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "mediaSavedCount": "已保存 {count} 张到相册",
+  "@mediaSavedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaRegenerate": "重新生成",
+  "mediaCopyPrompt": "复制提示词",
+  "mediaFileGone": "文件已不在",
+  "mediaKindImage": "图像",
+  "mediaKindVideo": "视频",
+  "mediaTitleImage": "生成图像",
+  "mediaTitleVideo": "生成视频",
+  "mediaOpenElsewhere": "在其他应用中打开",
+  "mediaShowInFiles": "在文件中显示",
+  "mediaGenerating": "生成中",
+  "mediaCancelled": "已取消",
+  "mediaNotGenerated": "未生成",
+  "mediaPartial": "{done} / {total} 张",
+  "@mediaPartial": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaCount": "{count} 张",
+  "@mediaCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaSeconds": "{seconds} 秒",
+  "@mediaSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaImageOf": "第 {index} 张，共 {count} 张",
+  "@mediaImageOf": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaPageOf": "{index} / {count}",
+  "@mediaPageOf": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaErrorPolicyInput": "描述未通过内容审核",
+  "mediaErrorPolicyOutput": "生成结果未通过内容审核",
+  "mediaErrorAuth": "服务未授权",
+  "mediaErrorBalance": "余额不足",
+  "mediaErrorQuota": "今天的额度已用完",
+  "mediaErrorUnavailable": "服务暂时不可用",
+  "mediaErrorExpired": "结果已过期",
+  "mediaErrorGeneric": "没能生成",
+  "mediaEdit": "编辑",
+  "mediaMakeVideo": "做成视频",
+  "mediaDetailModel": "模型",
+  "mediaDetailSize": "尺寸",
+  "mediaDetailCost": "费用",
+  "mediaDetailProvenance": "来源标识",
+  "mediaDetailFile": "文件",
+  "mediaOriginalPrompt": "原文：{text}",
+  "@mediaOriginalPrompt": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "mediaProvenanceC2pa": "C2PA",
+  "mediaProvenanceImplicit": "隐式",
+  "mediaProvenanceVisible": "可见水印",
+  "mediaParamDuration": "时长"
+}

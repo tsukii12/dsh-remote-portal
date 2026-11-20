@@ -1,0 +1,316 @@
+{
+  "provenance": {
+    "repo": "https://github.com/Fei2411/DS-Bot",
+    "base": "4a7b55069ad300eae8be42a74f31bc170b40ead7",
+    "mobilePr": "6f3e1b3e8603abd84820b334a7f99985236dbbdf",
+    "note": "Actual Fetch-route responses from createRuntime with upstream fakeContext; temporary synthetic team, no model/network call."
+  },
+  "hello": {
+    "ok": true,
+    "value": {
+      "api": 1,
+      "apiMin": 1,
+      "apiMax": 1,
+      "plugin": {
+        "name": "ds-bot",
+        "version": "0.2.3"
+      },
+      "capabilities": [
+        "state",
+        "state-avatar-refs",
+        "avatar",
+        "chat",
+        "room-chat",
+        "send",
+        "feed",
+        "feed-room",
+        "notices",
+        "questions",
+        "views",
+        "approvals",
+        "stop-member-work",
+        "memory",
+        "memory-edit",
+        "usage-summary",
+        "rpc"
+      ],
+      "boot": "46831f65-1aae-4d1a-8ced-52cf2dd47bf0",
+      "seq": 0,
+      "revision": 1,
+      "readOnly": null,
+      "memory": true,
+      "feed": "api/bot/feed",
+      "rpc": {
+        "call": "dsBot/call",
+        "feed": "dsBot/feed"
+      }
+    }
+  },
+  "state": {
+    "ok": true,
+    "value": {
+      "revision": 7,
+      "workspaceId": "w1",
+      "mainBotId": "s1",
+      "mainBotIds": [
+        "s1"
+      ],
+      "bots": [
+        {
+          "id": "s1",
+          "name": "Chief",
+          "role": "Chief of Staff",
+          "color": "deepseek",
+          "avatar": {
+            "shape": "whale"
+          },
+          "instructions": "",
+          "createdAt": 1793127774295,
+          "createdBy": null,
+          "capabilities": [],
+          "sessionId": "s1",
+          "parts": [],
+          "waiting": true
+        },
+        {
+          "id": "s2",
+          "name": "Writer",
+          "role": "writer",
+          "model": "deepseek/deepseek-v4-flash",
+          "instructions": "",
+          "createdAt": 1793127774299,
+          "createdBy": null,
+          "capabilities": [],
+          "appliedModel": "deepseek/deepseek-v4-flash",
+          "sessionId": "s2",
+          "parts": []
+        }
+      ],
+      "rooms": [
+        {
+          "id": "s3",
+          "name": "Fixture room",
+          "named": true,
+          "members": [
+            "s1",
+            "s2"
+          ],
+          "admin": "s1",
+          "mode": "admin",
+          "notice": "",
+          "createdAt": 1793127774302,
+          "createdBy": null,
+          "paused": [
+            {
+              "id": "fixture-parked-call",
+              "botId": "s2",
+              "name": "Writer"
+            }
+          ],
+          "relayLimitDefault": 6,
+          "parts": []
+        }
+      ],
+      "exchangeTurns": {},
+      "questions": {},
+      "views": {},
+      "btwCards": {},
+      "sideChats": {},
+      "agents": [],
+      "secrets": [],
+      "capabilities": [],
+      "secretRequests": {},
+      "colors": [
+        "deepseek",
+        "blue",
+        "violet",
+        "orange",
+        "green",
+        "magenta",
+        "cyan",
+        "red",
+        "yellow",
+        "brown",
+        "gray",
+        "black",
+        "aurora",
+        "charcoal",
+        "graphite",
+        "rose",
+        "sky",
+        "tangerine",
+        "cobalt"
+      ],
+      "models": [
+        {
+          "ref": "deepseek/deepseek-v4-flash",
+          "provider": "deepseek",
+          "providerName": "DeepSeek",
+          "id": "deepseek-v4-flash",
+          "name": "deepseek-v4-flash"
+        }
+      ],
+      "defaultModel": "deepseek/deepseek-v4-flash",
+      "permissions": null,
+      "modelsKey": "deepseek/deepseek-v4-flash|deepseek/deepseek-v4-flash",
+      "prefs": {},
+      "browser": false,
+      "memory": true,
+      "readOnly": null,
+      "activity": {},
+      "work": {
+        "bots": {},
+        "rooms": {},
+        "approvals": [],
+        "waiting": {},
+        "turns": {},
+        "steered": {}
+      },
+      "memoryNews": {},
+      "memoryReviews": 0,
+      "connectors": [
+        {
+          "id": "github",
+          "name": "GitHub",
+          "state": "off",
+          "account": null
+        }
+      ],
+      "capabilityStatuses": {
+        "s1": {},
+        "s2": {}
+      }
+    }
+  },
+  "chat": {
+    "ok": true,
+    "value": {
+      "sessionId": "s1",
+      "items": [],
+      "cursor": null
+    }
+  },
+  "roomChat": {
+    "ok": true,
+    "value": {
+      "roomId": "s3",
+      "items": [],
+      "cursor": null,
+      "running": false,
+      "speaking": null
+    }
+  },
+  "continued": {
+    "ok": true,
+    "value": {
+      "revision": 8,
+      "workspaceId": "w1",
+      "mainBotId": "s1",
+      "mainBotIds": [
+        "s1"
+      ],
+      "bots": [
+        {
+          "id": "s1",
+          "name": "Chief",
+          "role": "Chief of Staff",
+          "color": "deepseek",
+          "avatar": {
+            "shape": "whale"
+          },
+          "instructions": "",
+          "createdAt": 1793127774295,
+          "createdBy": null,
+          "capabilities": [],
+          "sessionId": "s1",
+          "parts": [],
+          "waiting": true
+        },
+        {
+          "id": "s2",
+          "name": "Writer",
+          "role": "writer",
+          "model": "deepseek/deepseek-v4-flash",
+          "instructions": "",
+          "createdAt": 1793127774299,
+          "createdBy": null,
+          "capabilities": [],
+          "appliedModel": "deepseek/deepseek-v4-flash",
+          "sessionId": "s2",
+          "parts": []
+        }
+      ],
+      "rooms": [
+        {
+          "id": "s3",
+          "name": "Fixture room",
+          "named": true,
+          "members": [
+            "s1",
+            "s2"
+          ],
+          "admin": "s1",
+          "mode": "admin",
+          "notice": "",
+          "createdAt": 1793127774302,
+          "createdBy": null,
+          "paused": [
+            {
+              "id": "fixture-parked-call",
+              "botId": "s2",
+              "name": "Writer"
+            }
+          ],
+          "relayLimitDefault": 6,
+          "parts": []
+        }
+      ],
+      "exchangeTurns": {},
+      "questions": {},
+      "views": {},
+      "btwCards": {},
+      "sideChats": {},
+      "agents": [],
+      "secrets": [],
+      "capabilities": [],
+      "secretRequests": {},
+      "colors": [
+        "deepseek",
+        "blue",
+        "violet",
+        "orange",
+        "green",
+        "magenta",
+        "cyan",
+        "red",
+        "yellow",
+        "brown",
+        "gray",
+        "black",
+        "aurora",
+        "charcoal",
+        "graphite",
+        "rose",
+        "sky",
+        "tangerine",
+        "cobalt"
+      ],
+      "models": [
+        {
+          "ref": "deepseek/deepseek-v4-flash",
+          "provider": "deepseek",
+          "providerName": "DeepSeek",
+          "id": "deepseek-v4-flash",
+          "name": "deepseek-v4-flash"
+        }
+      ],
+      "defaultModel": "deepseek/deepseek-v4-flash",
+      "permissions": null,
+      "modelsKey": "deepseek/deepseek-v4-flash|deepseek/deepseek-v4-flash",
+      "prefs": {},
+      "browser": false,
+      "memory": true,
+      "readOnly": null
+    }
+  }
+}

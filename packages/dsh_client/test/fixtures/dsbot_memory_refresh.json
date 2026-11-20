@@ -1,0 +1,264 @@
+{
+  "provenance": {
+    "repo": "Fei2411/DS-Bot",
+    "ref": "6f3e1b3e8603abd84820b334a7f99985236dbbdf",
+    "scope": "Actual Fetch memory-add/memory-view with temporary synthetic team and upstream fakeContext; no models/full Host claim"
+  },
+  "team": {
+    "revision": 1,
+    "workspaceId": null,
+    "mainBotId": "chief",
+    "mainBotIds": [
+      "chief"
+    ],
+    "bots": [
+      {
+        "id": "chief",
+        "name": "Chief",
+        "role": "Lead",
+        "sessionId": "chief",
+        "createdAt": 1,
+        "capabilities": [],
+        "avatar": {
+          "shape": "whale"
+        },
+        "color": "deepseek",
+        "parts": []
+      },
+      {
+        "id": "writer",
+        "name": "Writer",
+        "role": "Write",
+        "sessionId": "writer-now",
+        "createdAt": 2,
+        "capabilities": [],
+        "parts": [
+          "writer-old"
+        ]
+      }
+    ],
+    "rooms": [
+      {
+        "id": "r1",
+        "name": "Ops",
+        "members": [
+          "writer"
+        ],
+        "mode": "admin",
+        "admin": "writer",
+        "named": true,
+        "relayLimitDefault": 3,
+        "parts": [
+          "writer-group"
+        ]
+      }
+    ],
+    "exchangeTurns": {},
+    "questions": {},
+    "views": {},
+    "btwCards": {},
+    "sideChats": {},
+    "agents": [],
+    "secrets": [],
+    "capabilities": [],
+    "secretRequests": {},
+    "colors": [
+      "deepseek",
+      "blue",
+      "violet",
+      "orange",
+      "green",
+      "magenta",
+      "cyan",
+      "red",
+      "yellow",
+      "brown",
+      "gray",
+      "black",
+      "aurora",
+      "charcoal",
+      "graphite",
+      "rose",
+      "sky",
+      "tangerine",
+      "cobalt"
+    ],
+    "models": [],
+    "defaultModel": null,
+    "permissions": null,
+    "modelsKey": "|",
+    "prefs": {},
+    "browser": false,
+    "memory": true,
+    "readOnly": null,
+    "activity": {},
+    "work": {
+      "bots": {},
+      "rooms": {},
+      "approvals": [],
+      "waiting": {},
+      "turns": {},
+      "steered": {}
+    },
+    "memoryNews": {},
+    "memoryReviews": 0,
+    "connectors": [
+      {
+        "id": "github",
+        "name": "GitHub",
+        "state": "off",
+        "account": null
+      }
+    ],
+    "capabilityStatuses": {
+      "chief": {},
+      "writer": {}
+    }
+  },
+  "before": {
+    "bot": {
+      "ok": true,
+      "value": {
+        "botId": "writer",
+        "entries": [
+          {
+            "scope": "own",
+            "topic": "preferences",
+            "text": "SYNTHETIC_bot_MEMORY_INITIAL",
+            "added": "2026-10-27",
+            "by": "user",
+            "source": "memory panel"
+          }
+        ],
+        "sizes": {
+          "own": 37,
+          "team": 0
+        },
+        "limits": {
+          "entry": 300,
+          "main": 4000,
+          "topic": 16000,
+          "topics": 40
+        },
+        "summary": null,
+        "fresh": false,
+        "summarizing": false,
+        "error": null
+      }
+    },
+    "room": {
+      "ok": true,
+      "value": {
+        "roomId": "r1",
+        "entries": [
+          {
+            "scope": "group",
+            "topic": "preferences",
+            "text": "SYNTHETIC_room_MEMORY_INITIAL",
+            "added": "2026-10-27",
+            "by": "user",
+            "source": "memory panel"
+          }
+        ],
+        "sizes": {
+          "group": 37
+        },
+        "limits": {
+          "entry": 300,
+          "main": 4000,
+          "topic": 16000,
+          "topics": 40
+        },
+        "summary": null,
+        "fresh": false,
+        "summarizing": false,
+        "error": null
+      }
+    }
+  },
+  "after": {
+    "bot": {
+      "ok": true,
+      "value": {
+        "botId": "writer",
+        "entries": [
+          {
+            "scope": "own",
+            "topic": "preferences",
+            "text": "SYNTHETIC_bot_MEMORY_INITIAL",
+            "added": "2026-10-27",
+            "by": "user",
+            "source": "memory panel"
+          },
+          {
+            "scope": "own",
+            "topic": "preferences",
+            "text": "SYNTHETIC_bot_MEMORY_REFRESHED",
+            "added": "2026-10-27",
+            "by": "user",
+            "source": "memory panel"
+          }
+        ],
+        "sizes": {
+          "own": 37,
+          "team": 0
+        },
+        "limits": {
+          "entry": 300,
+          "main": 4000,
+          "topic": 16000,
+          "topics": 40
+        },
+        "summary": null,
+        "fresh": false,
+        "summarizing": false,
+        "error": null
+      }
+    },
+    "room": {
+      "ok": true,
+      "value": {
+        "roomId": "r1",
+        "entries": [
+          {
+            "scope": "group",
+            "topic": "preferences",
+            "text": "SYNTHETIC_room_MEMORY_INITIAL",
+            "added": "2026-10-27",
+            "by": "user",
+            "source": "memory panel"
+          },
+          {
+            "scope": "group",
+            "topic": "preferences",
+            "text": "SYNTHETIC_room_MEMORY_REFRESHED",
+            "added": "2026-10-27",
+            "by": "user",
+            "source": "memory panel"
+          }
+        ],
+        "sizes": {
+          "group": 37
+        },
+        "limits": {
+          "entry": 300,
+          "main": 4000,
+          "topic": 16000,
+          "topics": 40
+        },
+        "summary": null,
+        "fresh": false,
+        "summarizing": false,
+        "error": null
+      }
+    }
+  },
+  "unavailable": {
+    "ok": false,
+    "error": {
+      "code": "bot/refused",
+      "message": "Unknown Bot",
+      "details": {}
+    }
+  }
+}

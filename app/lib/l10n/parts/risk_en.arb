@@ -1,0 +1,8 @@
+{
+  "riskDontShowAgain": "Don’t show again",
+  "riskFullAccessAction": "Turn on Full access",
+  "riskAutoReviewAction": "Turn on Auto review",
+  "riskAllowForChatTitle": "Allow everything in this chat?",
+  "riskAllowForChatBody": "Commands and changes in this chat run without asking. Turn it off above the message box anytime.",
+  "riskAllowForChatAction": "Allow all"
+}

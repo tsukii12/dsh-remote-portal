@@ -1,0 +1,127 @@
+{
+  "provenance": {
+    "repo": "https://github.com/Fei2411/DS-Bot",
+    "ref": "v0.2.3",
+    "commit": "4a7b55069ad300eae8be42a74f31bc170b40ead7",
+    "note": "Unmodified official release createRuntime Fetch routes, upstream fakeContext, no mobile PR. Both routes actually exist; hello is an unknown endpoint, not HTTP404. No model call."
+  },
+  "registeredRoutes": [
+    "/api/bot/feed",
+    "/api/bot"
+  ],
+  "hello": {
+    "status": 200,
+    "contentType": "application/json",
+    "body": {
+      "ok": false,
+      "error": {
+        "code": "bot/not-found",
+        "message": "Unknown endpoint hello",
+        "details": {}
+      }
+    }
+  },
+  "feed": {
+    "status": 200,
+    "contentType": "text/event-stream; charset=utf-8",
+    "firstChunk": "event: hello\ndata: {\"revision\":3}\n\n"
+  },
+  "state": {
+    "ok": true,
+    "value": {
+      "revision": 3,
+      "workspaceId": "w1",
+      "mainBotId": "s1",
+      "mainBotIds": [
+        "s1"
+      ],
+      "bots": [
+        {
+          "id": "s1",
+          "name": "Chief",
+          "role": "Chief of Staff",
+          "color": "deepseek",
+          "avatar": {
+            "shape": "whale"
+          },
+          "instructions": "",
+          "createdAt": 1793132299239,
+          "createdBy": null,
+          "capabilities": [],
+          "sessionId": "s1",
+          "parts": [],
+          "waiting": true
+        }
+      ],
+      "rooms": [],
+      "exchangeTurns": {},
+      "questions": {},
+      "views": {},
+      "btwCards": {},
+      "sideChats": {},
+      "agents": [],
+      "secrets": [],
+      "capabilities": [],
+      "secretRequests": {},
+      "colors": [
+        "deepseek",
+        "blue",
+        "violet",
+        "orange",
+        "green",
+        "magenta",
+        "cyan",
+        "red",
+        "yellow",
+        "brown",
+        "gray",
+        "black",
+        "aurora",
+        "charcoal",
+        "graphite",
+        "rose",
+        "sky",
+        "tangerine",
+        "cobalt"
+      ],
+      "models": [
+        {
+          "ref": "deepseek/deepseek-v4-flash",
+          "provider": "deepseek",
+          "providerName": "DeepSeek",
+          "id": "deepseek-v4-flash",
+          "name": "deepseek-v4-flash"
+        }
+      ],
+      "defaultModel": "deepseek/deepseek-v4-flash",
+      "permissions": null,
+      "modelsKey": "deepseek/deepseek-v4-flash|deepseek/deepseek-v4-flash",
+      "prefs": {},
+      "browser": false,
+      "memory": true,
+      "readOnly": null,
+      "activity": {},
+      "work": {
+        "bots": {},
+        "rooms": {},
+        "approvals": [],
+        "waiting": {},
+        "turns": {},
+        "steered": {}
+      },
+      "memoryNews": {},
+      "memoryReviews": 0,
+      "connectors": [
+        {
+          "id": "github",
+          "name": "GitHub",
+          "state": "off",
+          "account": null
+        }
+      ],
+      "capabilityStatuses": {
+        "s1": {}
+      }
+    }
+  }
+}

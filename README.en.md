@@ -268,4 +268,6 @@ Linux, start dsh Web and set `CHROME_PATH`, `DSH_WEB_TEST_URL`, and
 
 ## License
 
-[MIT](LICENSE)
+The portal/server is [MIT](LICENSE). The native iOS/iPadOS and Android
+[YuRemote Flutter app](app/README.md), based on dsh-Go v1.2.0, is
+[AGPL-3.0](app/LICENSE); see [app/NOTICE](app/NOTICE) for provenance.

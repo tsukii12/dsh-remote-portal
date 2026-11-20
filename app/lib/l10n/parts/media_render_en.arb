@@ -1,0 +1,14 @@
+{
+  "mediaImageLoading": "Loading image",
+  "mediaImageReload": "Reload image",
+  "mediaImageReloadHint": "Reads the file again; does not generate again or incur generation charges",
+  "mediaVideoNoPoster": "Tap to play video",
+  "mediaSavedFilesCount": "Saved {count} files to gallery",
+  "@mediaSavedFilesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
+}

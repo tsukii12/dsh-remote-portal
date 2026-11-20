@@ -1,0 +1,50 @@
+name: Flutter client
+
+on:
+  pull_request:
+    paths:
+      - 'app/**'
+      - 'packages/**'
+      - '.github/workflows/flutter.yml'
+  push:
+    branches: [master, devin/1795101871-ios-app]
+    paths:
+      - 'app/**'
+      - 'packages/**'
+      - '.github/workflows/flutter.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  flutter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.7'
+          channel: stable
+          cache: true
+      - name: Analyze and test portal client
+        working-directory: packages/dsh_portal
+        run: |
+          dart pub get
+          dart analyze
+          dart test
+      - name: Analyze and test dsh client
+        working-directory: packages/dsh_client
+        run: |
+          dart pub get
+          dart analyze
+          dart test
+      - name: Analyze production app and test active portal coverage
+        env:
+          DSH_TEST_FONT_DIR: /usr/share/fonts/opentype/noto
+        working-directory: app
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fonts-noto-cjk fonts-noto-cjk-extra
+          flutter pub get
+          flutter analyze lib
+          flutter test test/portal

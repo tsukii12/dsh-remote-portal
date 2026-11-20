@@ -1,0 +1,94 @@
+{
+  "provenance": {
+    "repo": "Fei2411/DS-Bot",
+    "ref": "6f3e1b3e8603abd84820b334a7f99985236dbbdf",
+    "scope": "Actual Fetch chat response and actual HTTP SSE stream; upstream fakeContext sessionController record store, synthetic data, no LLM/full Host claim; response buffering models independent HTTP/SSE delivery"
+  },
+  "order": [
+    "HTTP chat response fully generated and buffered before next session event",
+    "new session event projected by actual feed and SSE message read before buffered HTTP is released to client"
+  ],
+  "snapshot": {
+    "ok": true,
+    "value": {
+      "sessionId": "b2-c",
+      "items": [
+        {
+          "kind": "user",
+          "text": "SYNTHETIC prior message",
+          "time": 1000,
+          "seq": 41
+        }
+      ],
+      "cursor": null
+    }
+  },
+  "live": {
+    "event": "message",
+    "data": {
+      "botId": "b2",
+      "sessionId": "b2-c",
+      "item": {
+        "kind": "bot",
+        "text": "SYNTHETIC live reply",
+        "time": 1001,
+        "seq": 42
+      }
+    }
+  },
+  "after": {
+    "ok": true,
+    "value": {
+      "sessionId": "b2-c",
+      "items": [
+        {
+          "kind": "user",
+          "text": "SYNTHETIC prior message",
+          "time": 1000,
+          "seq": 41
+        },
+        {
+          "kind": "bot",
+          "text": "SYNTHETIC live reply",
+          "time": 1001,
+          "seq": 42
+        }
+      ],
+      "cursor": null
+    }
+  },
+  "empty": {
+    "ok": true,
+    "value": {
+      "sessionId": "b2-c",
+      "items": [],
+      "cursor": null
+    }
+  },
+  "pageCalls": [
+    {
+      "address": {
+        "kind": "session",
+        "sessionId": "b2-c"
+      },
+      "throughSeq": 41,
+      "maxMessages": 60
+    },
+    {
+      "address": {
+        "kind": "session",
+        "sessionId": "b2-c"
+      },
+      "throughSeq": 42,
+      "maxMessages": 60
+    },
+    {
+      "address": {
+        "kind": "session",
+        "sessionId": "b2-c"
+      },
+      "throughSeq": 42,
+      "maxMessages": 60
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "spec": "chara_card_v3",
+  "spec_version": "3.0",
+  "unknown_root": {
+    "exactText": " {\"不解释\":true} \r\n\t",
+    "unknownNumber": 17
+  },
+  "data": {
+    "name": "知更",
+    "nickname": "小知",
+    "description": "守着灯塔的人。",
+    "personality": "安静",
+    "scenario": "岛屿",
+    "first_mes": "{{user}}，你来啦。",
+    "alternate_greetings": [
+      "来坐一会儿？"
+    ],
+    "group_only_greetings": [
+      "大家好。"
+    ],
+    "mes_example": "",
+    "system_prompt": "{{original}}\n保持角色。",
+    "post_history_instructions": "",
+    "creator_notes": "English fallback",
+    "creator_notes_multilingual": {
+      "en": "English note",
+      "zh": "中文说明"
+    },
+    "tags": [
+      "fixture",
+      "中文"
+    ],
+    "creator": "dsh_tavern tests",
+    "character_version": "1",
+    "creation_date": 1234567890,
+    "modification_date": 0,
+    "source": [
+      "https://example.invalid/card/one",
+      "source-id-2"
+    ],
+    "extensions": {
+      "regex_scripts": [],
+      "unknown": {
+        "deep": {
+          "value": " $1 \\ {{x}} 🐳 "
+        }
+      }
+    },
+    "character_book": {
+      "name": "灯塔设定",
+      "extensions": {},
+      "entries": [
+        {
+          "keys": [
+            "灯塔"
+          ],
+          "content": "@@depth 2\r\n@@@unknown x\r\n世界书正文\n第二行",
+          "enabled": true,
+          "insertion_order": 100,
+          "use_regex": false,
+          "extensions": {
+            "unknown": {
+              "nested": "保留"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

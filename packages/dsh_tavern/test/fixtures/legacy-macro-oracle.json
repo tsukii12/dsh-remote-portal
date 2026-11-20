@@ -1,0 +1,4482 @@
+{
+  "description": "自制输入；期望值来自固定 SillyTavern 真实函数。Dart 未在网页环境运行。",
+  "sourceCommit": "7e8663cd9c184a550b37238218bdd32c6efc68e9",
+  "sourceFiles": [
+    "public/scripts/macros.js",
+    "public/scripts/variables.js",
+    "public/script.js",
+    "public/scripts/instruct-mode.js",
+    "public/scripts/macros/engine/MacroEngine.js",
+    "public/scripts/macros/engine/MacroCstWalker.js",
+    "public/scripts/extensions/regex/engine.js"
+  ],
+  "dependencies": {
+    "seedrandom": "3.0.5",
+    "moment": "2.30.1",
+    "droll": "0.2.1",
+    "chevrotain": "11.2.0"
+  },
+  "adapters": "浏览器/UI/存储以显式内存环境替换；时间固定；random 熵函数固定0.99；pick使用真实seedrandom；dice源夹具只用1d1。",
+  "intentionallyExcluded": "动态函数throw第二次的探针不能由String overrides表达；Dart以空变量名和postProcess异常覆盖同类批次回退。",
+  "actualDartRun": false,
+  "legacyCases": [
+    {
+      "id": "get-before-set",
+      "text": "{{getvar::x}}|{{setvar::x::new}}{{getvar::x}}",
+      "context": {
+        "local": {
+          "x": "old"
+        },
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "new|new",
+        "local": {
+          "x": "new"
+        },
+        "global": {}
+      },
+      "modern": {
+        "output": "old|new",
+        "local": {
+          "x": "new"
+        },
+        "global": {}
+      }
+    },
+    {
+      "id": "inc-around-set",
+      "text": "{{incvar::x}}|{{setvar::x::10}}{{incvar::x}}",
+      "context": {
+        "local": {
+          "x": 0
+        },
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "11|12",
+        "local": {
+          "x": 12
+        },
+        "global": {}
+      },
+      "modern": {
+        "output": "1|11",
+        "local": {
+          "x": 11
+        },
+        "global": {}
+      }
+    },
+    {
+      "id": "two-sets",
+      "text": "{{setvar::x::A}}{{getvar::x}}|{{setvar::x::B}}{{getvar::x}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "B|B",
+        "local": {
+          "x": "B"
+        },
+        "global": {}
+      },
+      "modern": {
+        "output": "A|B",
+        "local": {
+          "x": "B"
+        },
+        "global": {}
+      }
+    },
+    {
+      "id": "set-nested-user",
+      "text": "{{setvar::x::{{user}}}}|{{getvar::x}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "}}|{{user",
+        "local": {
+          "x": "{{user"
+        },
+        "global": {}
+      },
+      "modern": {
+        "output": "|U",
+        "local": {
+          "x": "U"
+        },
+        "global": {}
+      }
+    },
+    {
+      "id": "nested-global",
+      "text": "{{setvar::x::{{getglobalvar::g}}}}|{{getvar::x}}",
+      "context": {
+        "local": {},
+        "global": {
+          "g": "G"
+        },
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "}}|{{getglobalvar::g",
+        "local": {
+          "x": "{{getglobalvar::g"
+        },
+        "global": {
+          "g": "G"
+        }
+      },
+      "modern": {
+        "output": "|G",
+        "local": {
+          "x": "G"
+        },
+        "global": {
+          "g": "G"
+        }
+      }
+    },
+    {
+      "id": "spaced-variable-name",
+      "text": "{{setvar:: x ::v}}|{{getvar::x}}|{{getvar:: x }}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "|v|v",
+        "local": {
+          "x": "v"
+        },
+        "global": {}
+      },
+      "modern": {
+        "output": "|v|v",
+        "local": {
+          "x": "v"
+        },
+        "global": {}
+      }
+    },
+    {
+      "id": "comment-side-effect",
+      "text": "A{{// {{incvar::x}} }}B",
+      "context": {
+        "local": {
+          "x": 0
+        },
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "AB",
+        "local": {
+          "x": 1
+        },
+        "global": {}
+      },
+      "modern": {
+        "output": "AB",
+        "local": {
+          "x": 1
+        },
+        "global": {}
+      }
+    },
+    {
+      "id": "false-branch-side-effect",
+      "text": "{{if false}}{{incvar::x}}{{else}}ok{{/if}}",
+      "context": {
+        "local": {
+          "x": 0
+        },
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "{{if false}}1{{else}}ok{{/if}}",
+        "local": {
+          "x": 1
+        },
+        "global": {}
+      },
+      "modern": {
+        "output": "ok",
+        "local": {
+          "x": 0
+        },
+        "global": {}
+      }
+    },
+    {
+      "id": "shorthand",
+      "text": "{{.x++}}|{{.x}}",
+      "context": {
+        "local": {
+          "x": 0
+        },
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "{{.x++}}|{{.x}}",
+        "local": {
+          "x": 0
+        },
+        "global": {}
+      },
+      "modern": {
+        "output": "1|1",
+        "local": {
+          "x": 1
+        },
+        "global": {}
+      }
+    },
+    {
+      "id": "spaces-case",
+      "text": "{{ user }}|{{USER}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "{{ user }}|U",
+        "local": {},
+        "global": {}
+      },
+      "modern": {
+        "output": "U|U",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "block-reverse",
+      "text": "{{reverse}} a\nb {{/reverse}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "{{reverse}} a\nb {{/reverse}}",
+        "local": {},
+        "global": {}
+      },
+      "modern": {
+        "output": "b\na",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "reverse-one-colon",
+      "text": "{{reverse:ab}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "ba",
+        "local": {},
+        "global": {}
+      },
+      "modern": {
+        "output": "ba",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "reverse-two-colons",
+      "text": "{{reverse::ab}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "ba:",
+        "local": {},
+        "global": {}
+      },
+      "modern": {
+        "output": "ba",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "reverse-multiline",
+      "text": "{{reverse::a\nb}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "{{reverse::a\nb}}",
+        "local": {},
+        "global": {}
+      },
+      "modern": {
+        "output": "b\na",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "env-cascade-forward",
+      "text": "{{a}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {
+        "a": "{{b}}",
+        "b": "done"
+      },
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "done",
+        "local": {},
+        "global": {}
+      },
+      "modern": {
+        "output": "{{b}}",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "env-cascade-reverse",
+      "text": "{{a}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {
+        "b": "done",
+        "a": "{{b}}"
+      },
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "{{b}}",
+        "local": {},
+        "global": {}
+      },
+      "modern": {
+        "output": "{{b}}",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "env-earlier-variable-pass",
+      "text": "{{a}}",
+      "context": {
+        "local": {
+          "x": 0
+        },
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {
+        "a": "{{incvar::x}}"
+      },
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "{{incvar::x}}",
+        "local": {
+          "x": 0
+        },
+        "global": {}
+      },
+      "modern": {
+        "output": "{{incvar::x}}",
+        "local": {
+          "x": 0
+        },
+        "global": {}
+      }
+    },
+    {
+      "id": "env-self-no-loop",
+      "text": "{{a}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {
+        "a": "{{a}}!"
+      },
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "{{a}}!",
+        "local": {},
+        "global": {}
+      },
+      "modern": {
+        "output": "{{a}}!",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "env-generated-trim",
+      "text": "A\n{{a}}\nB",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {
+        "a": "{{trim}}"
+      },
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "A\n{{trim}}\nB",
+        "local": {},
+        "global": {}
+      },
+      "modern": {
+        "output": "AB",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "env-generated-random",
+      "text": "{{a}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {
+        "a": "{{random::A::B}}"
+      },
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "B",
+        "local": {},
+        "global": {}
+      },
+      "modern": {
+        "output": "{{random::A::B}}",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "escaped-braces",
+      "text": "\\{\\{user\\}\\}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "\\{\\{user\\}\\}",
+        "local": {},
+        "global": {}
+      },
+      "modern": {
+        "output": "{{user}}",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "original-single-consumption",
+      "text": "{{original}}|{{original}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "original": "{{user}}",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "U|",
+        "local": {},
+        "global": {}
+      },
+      "modern": {
+        "output": "{{user}}|",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "get-object",
+      "text": "{{getvar::x}}",
+      "context": {
+        "local": {
+          "x": {
+            "a": 1
+          }
+        },
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "[object Object]",
+        "local": {
+          "x": {
+            "a": 1
+          }
+        },
+        "global": {}
+      },
+      "modern": {
+        "output": "{\"a\":1}",
+        "local": {
+          "x": {
+            "a": 1
+          }
+        },
+        "global": {}
+      }
+    },
+    {
+      "id": "inc-array",
+      "text": "{{incvar::x}}",
+      "context": {
+        "local": {
+          "x": "[1,\"z\"]"
+        },
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "1,z,1",
+        "local": {
+          "x": "[1,\"z\",1]"
+        },
+        "global": {}
+      },
+      "modern": {
+        "output": "[1,\"z\",1]",
+        "local": {
+          "x": "[1,\"z\",1]"
+        },
+        "global": {}
+      }
+    },
+    {
+      "id": "empty-add",
+      "text": "{{addvar::x::}}|{{getvar::x}}",
+      "context": {
+        "local": {
+          "x": 2
+        },
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "{{addvar::x::}}|2",
+        "local": {
+          "x": 2
+        },
+        "global": {}
+      },
+      "modern": {
+        "output": "|2",
+        "local": {
+          "x": 2
+        },
+        "global": {}
+      }
+    },
+    {
+      "id": "new-indexed-variable",
+      "text": "{{setvarkey::x::a::2}}|{{getvarkey::x::a}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "{{setvarkey::x::a::2}}|{{getvarkey::x::a}}",
+        "local": {},
+        "global": {}
+      },
+      "modern": {
+        "output": "|2",
+        "local": {
+          "x": "{\"a\":\"2\"}"
+        },
+        "global": {}
+      }
+    },
+    {
+      "id": "empty-pick-random",
+      "text": "{{pick}}|{{random}}|{{pick::}}|{{random::}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "{{pick}}|{{random}}|:|:",
+        "local": {},
+        "global": {}
+      },
+      "modern": {
+        "output": "|||",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "space-and-counted-newline",
+      "text": "{{space}}|{{newline::2}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "{{space}}|{{newline::2}}",
+        "local": {},
+        "global": {}
+      },
+      "modern": {
+        "output": " |\n\n",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "random-double-colon-padding",
+      "text": "{{random:: A :: B }}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": " B ",
+        "local": {},
+        "global": {}
+      },
+      "modern": {
+        "output": "B",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "random-single-colon-padding",
+      "text": "{{random: A :: B }}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": " B ",
+        "local": {},
+        "global": {}
+      },
+      "modern": {
+        "output": "B",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "pick-seed-type",
+      "text": "{{pick::a::b::c::d::e::f::g::h::i::j}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "h",
+        "local": {},
+        "global": {}
+      },
+      "modern": {
+        "output": "e",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "pick-reroll",
+      "text": "{{pick::a::b::c::d::e::f::g::h::i::j}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "pickRerollSeed": "again",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "h",
+        "local": {},
+        "global": {}
+      },
+      "modern": {
+        "output": "c",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "roll-double-colon-deterministic-d1",
+      "text": "{{roll::1d1}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "",
+        "local": {},
+        "global": {}
+      },
+      "modern": {
+        "output": "1",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "roll-single-colon-deterministic-d1",
+      "text": "{{roll:1d1}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "1",
+        "local": {},
+        "global": {}
+      },
+      "modern": {
+        "output": "1",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "unused-eager-field",
+      "text": "plain",
+      "context": {
+        "local": {
+          "x": 0
+        },
+        "global": {},
+        "card": {
+          "personality": "{{incvar::x}}"
+        },
+        "replaceCharacterCard": true,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "plain",
+        "local": {
+          "x": 1
+        },
+        "global": {}
+      },
+      "modern": {
+        "output": "plain",
+        "local": {
+          "x": 0
+        },
+        "global": {}
+      }
+    },
+    {
+      "id": "eager-order-vs-lazy-alias-cache",
+      "text": "{{personality}}/{{personality}}",
+      "context": {
+        "local": {
+          "x": 0
+        },
+        "global": {},
+        "card": {
+          "description": "{{incvar::x}}",
+          "personality": "{{incvar::x}}",
+          "first_mes": "{{incvar::x}}",
+          "alternate_greetings": [
+            "{{incvar::x}}"
+          ]
+        },
+        "replaceCharacterCard": true,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "2/2",
+        "local": {
+          "x": 4
+        },
+        "global": {}
+      },
+      "modern": {
+        "output": "1/1",
+        "local": {
+          "x": 1
+        },
+        "global": {}
+      }
+    },
+    {
+      "id": "base-mode-known-fields",
+      "text": "{{description}}/{{user}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {
+          "description": "D"
+        },
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "{{description}}/U",
+        "local": {},
+        "global": {}
+      },
+      "modern": {
+        "output": "/U",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "old-vs-new-field-names",
+      "text": "{{charDescription}}|{{description}}|{{charJailbreak}}|{{charInstruction}}|{{charFirstMessage}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {
+          "description": "D",
+          "post_history_instructions": "J",
+          "first_mes": "G"
+        },
+        "replaceCharacterCard": true,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "{{charDescription}}|D|J|J|{{charFirstMessage}}",
+        "local": {},
+        "global": {}
+      },
+      "modern": {
+        "output": "D|D|{{charJailbreak}}|J|G",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "cross-field-reference",
+      "text": "{{description}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {
+          "description": "left {{personality}} right",
+          "personality": "P"
+        },
+        "replaceCharacterCard": true,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "left P right",
+        "local": {},
+        "global": {}
+      },
+      "modern": {
+        "output": "left  right",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "pick-prefix-0",
+      "text": "{{prefix}}/{{pick::a::b::c::d::e::f::g::h::i::j}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {
+        "prefix": ""
+      },
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "/e",
+        "local": {},
+        "global": {}
+      },
+      "modern": {
+        "output": "/d",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "pick-prefix-13",
+      "text": "{{prefix}}/{{pick::a::b::c::d::e::f::g::h::i::j}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {
+        "prefix": "longer-prefix"
+      },
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "longer-prefix/h",
+        "local": {},
+        "global": {}
+      },
+      "modern": {
+        "output": "longer-prefix/d",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "batch-invalid-variable-name",
+      "text": "{{setvar::x::ok}}|{{setvar:: ::bad}}|{{setvar::y::no}}/{{getvar::x}}/{{getvar::y}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "{{setvar::x::ok}}|{{setvar:: ::bad}}|{{setvar::y::no}}/ok/",
+        "local": {
+          "x": "ok"
+        },
+        "global": {}
+      }
+    },
+    {
+      "id": "global-pass-after-local-pass",
+      "text": "{{setglobalvar::x::{{getvar::x}}}}/{{getglobalvar::x}}",
+      "context": {
+        "local": {
+          "x": "local"
+        },
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "/local",
+        "local": {
+          "x": "local"
+        },
+        "global": {
+          "x": "local"
+        }
+      }
+    },
+    {
+      "id": "upper-case-env-key-is-distinct",
+      "text": "{{user}}/{{USER}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {
+        "USER": "X"
+      },
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "U/U",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "exact-env-key-overrides",
+      "text": "<USER>/{{USER}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {
+        "user": "X"
+      },
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "X/X",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "registry-overwrites-additional-mobile",
+      "text": "{{isMobile}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {
+        "isMobile": "X"
+      },
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "false",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "integer-env-keys-sort-before-other-keys",
+      "text": "{{2}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {
+        "1": "one",
+        "2": "{{1}}"
+      },
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "{{2}}",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "jailbreak-insertion-before-instruction",
+      "text": "{{charJailbreak}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": true,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {
+        "charInstruction": "I",
+        "charJailbreak": "{{charInstruction}}"
+      },
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "I",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "outlet-late-trim-is-not-revisited",
+      "text": "A{{outlet:: knowledge }}B",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {
+          "knowledge": "{{trim}}"
+        },
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "A{{trim}}B",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "input-before-env-and-variables",
+      "text": "{{input}}",
+      "context": {
+        "local": {
+          "x": 0
+        },
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "{{user}}/{{incvar::x}}",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "U/{{incvar::x}}",
+        "local": {
+          "x": 0
+        },
+        "global": {}
+      }
+    },
+    {
+      "id": "banned-greedy-single-line",
+      "text": "a{{banned \"one\"}}mid{{banned \"two\"}}b",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "ab",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "shared-variable-types",
+      "text": "{{getvar::nil}}/{{getvar::missing}}/{{incvar::numeric}}/{{getglobalvar::g}}",
+      "context": {
+        "local": {
+          "nil": null,
+          "numeric": "0x10"
+        },
+        "global": {
+          "g": false
+        },
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "0//17/0",
+        "local": {
+          "nil": null,
+          "numeric": 17
+        },
+        "global": {
+          "g": false
+        }
+      }
+    },
+    {
+      "id": "instruct-before-variable-pass",
+      "text": "{{instructInput}}/{{getvar::x}}/{{instructFirstInput}}",
+      "context": {
+        "local": {
+          "x": 0
+        },
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {
+          "enabled": true,
+          "input_sequence": "{{incvar::x}}",
+          "first_input_sequence": ""
+        },
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "1/2/2",
+        "local": {
+          "x": 2
+        },
+        "global": {}
+      }
+    },
+    {
+      "id": "system-preference-and-default",
+      "text": "{{systemPrompt}}/{{defaultSystemPrompt}}/{{charPrompt}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {
+          "system_prompt": "CARD"
+        },
+        "replaceCharacterCard": true,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {
+          "enabled": true,
+          "content": "DEFAULT"
+        },
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "CARD/DEFAULT/CARD",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "system-preference-disabled",
+      "text": "{{systemPrompt}}/{{charPrompt}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {
+          "system_prompt": "CARD"
+        },
+        "replaceCharacterCard": true,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": false,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {
+          "enabled": true,
+          "content": "DEFAULT"
+        },
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "DEFAULT/",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "context-delimiters-before-env",
+      "text": "{{chatStart}}/{{chatSeparator}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {
+          "chat_start": "{{user}}",
+          "example_separator": "<START>"
+        }
+      },
+      "legacy": {
+        "output": "U/<START>",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "example-separator-expands-even-when-discarded",
+      "text": "{{mesExamples}}",
+      "context": {
+        "local": {
+          "x": 0,
+          "sep": 0
+        },
+        "global": {},
+        "card": {
+          "mes_example": "<START>\nC: hi",
+          "personality": "{{incvar::x}}"
+        },
+        "replaceCharacterCard": true,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {
+          "example_separator": "{{incvar::sep}}",
+          "chat_start": ""
+        }
+      },
+      "legacy": {
+        "output": "<START>\nC: hi\n",
+        "local": {
+          "x": 2,
+          "sep": 1
+        },
+        "global": {}
+      }
+    },
+    {
+      "id": "card-prepare-crlf-and-collapse",
+      "text": "{{description}}/{{charVersion}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {
+          "description": " A\r\n\nB ",
+          "character_version": " {{user}} "
+        },
+        "replaceCharacterCard": true,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": true,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "A\nB/ U ",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "time-old-syntax-utc-and-locale",
+      "text": "{{time}}/{{date}}/{{weekday}}/{{isotime}}/{{isodate}}/{{time_UTC-5}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 480,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "2:07 AM/March 1, 2024/Friday/02:07/2024-03-01/1:07 PM",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "time-format-and-unsupported-new-form",
+      "text": "{{datetimeformat YYYY-MM-DD HH:mm}}/{{datetimeformat::YYYY}}/{{idleDuration}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 480,
+        "locale": "zh-cn",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "2024-03-01 02:07/{{datetimeformat::YYYY}}/{{idleDuration}}",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "time-diff-and-idle",
+      "text": "{{timeDiff::2024-02-29T19:07:08.123Z::2024-02-29T18:07:08.123Z}}/{{idle_duration}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [
+          {
+            "mes": "old",
+            "is_user": true,
+            "send_date": "2024-02-29T18:02:08.123Z"
+          },
+          {
+            "mes": "new",
+            "is_user": true,
+            "send_date": "2024-02-29T18:06:08.123Z"
+          }
+        ],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "in an hour/5 minutes",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "history-skips-in-progress-and-system-by-role",
+      "text": "{{lastMessage}}/{{lastMessageId}}/{{lastUserMessage}}/{{lastCharMessage}}/{{lastSwipeId}}/{{currentSwipeId}}/{{allChatRange}}/{{firstIncludedMessageId}}/{{firstDisplayedMessageId}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [
+          {
+            "mes": "U",
+            "is_user": true
+          },
+          {
+            "mes": "C",
+            "is_user": false
+          },
+          {
+            "mes": "S",
+            "is_system": true
+          },
+          {
+            "mes": "pending",
+            "swipes": [
+              "a",
+              "b"
+            ],
+            "swipe_id": 2
+          }
+        ],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": "",
+        "firstIncludedMessageId": 1,
+        "firstDisplayedMessageId": 0
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "S/2/U/C/2/3/0-3/1/0",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "current-swipe-empty",
+      "text": "{{currentSwipeId}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "NaN",
+        "local": {},
+        "global": {}
+      },
+      "modern": {
+        "output": "",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "current-swipe-absent",
+      "text": "{{currentSwipeId}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [
+          {
+            "mes": "message"
+          }
+        ],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "NaN",
+        "local": {},
+        "global": {}
+      },
+      "modern": {
+        "output": "",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "current-swipe-null",
+      "text": "{{currentSwipeId}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [
+          {
+            "mes": "message",
+            "swipe_id": null
+          }
+        ],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "",
+        "local": {},
+        "global": {}
+      },
+      "modern": {
+        "output": "",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "current-swipe-zero",
+      "text": "{{currentSwipeId}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [
+          {
+            "mes": "message",
+            "swipe_id": 0
+          }
+        ],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "1",
+        "local": {},
+        "global": {}
+      },
+      "modern": {
+        "output": "1",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "pick-emoji-prefix",
+      "text": "😀/{{pick::a::b::c::d::e::f::g::h::i::j}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "😀/f",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "pick-cjk-expanded-prefix",
+      "text": "{{prefix}}/{{pick::a::b::c::d::e::f::g::h::i::j}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {
+        "prefix": "中文"
+      },
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "中文/i",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "pick-emoji-expanded-prefix",
+      "text": "{{prefix}}/{{pick::a::b::c::d::e::f::g::h::i::j}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {
+        "prefix": "😀"
+      },
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "😀/i",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "pick-cjk-chat-id",
+      "text": "{{pick::a::b::c::d::e::f::g::h::i::j}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "对话-甲",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "d",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "pick-emoji-chat-id",
+      "text": "{{pick::a::b::c::d::e::f::g::h::i::j}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "😀",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "c",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "pick-two-late-offsets",
+      "text": "{{pick::a::b::c::d::e::f::g::h::i::j}}/{{pick::a::b::c::d::e::f::g::h::i::j}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "d/c",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "pick-after-variable-removal",
+      "text": "{{setvar::x::v}}/{{pick::a::b::c::d::e::f::g::h::i::j}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "/f",
+        "local": {
+          "x": "v"
+        },
+        "global": {}
+      }
+    },
+    {
+      "id": "pick-reroll-zero-ignored",
+      "text": "{{pick::a::b::c::d::e::f::g::h::i::j}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "pickRerollSeed": 0,
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "h",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "pick-explicit-hash",
+      "text": "{{pick::a::b::c::d::e::f::g::h::i::j}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "chatIdHash": 42,
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "e",
+        "local": {},
+        "global": {}
+      }
+    },
+    {
+      "id": "pick-zero-cached-hash",
+      "text": "{{pick::a::b::c::d::e::f::g::h::i::j}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "chatIdHash": 0,
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "h",
+        "local": {},
+        "global": {}
+      },
+      "modern": {
+        "output": "a",
+        "local": {},
+        "global": {}
+      }
+    }
+  ],
+  "postProcessCases": [
+    {
+      "id": "regex-static-and-string-variable",
+      "text": "^(?:{{getvar::x}})$|[.]",
+      "context": {
+        "local": {
+          "x": "a.*[b](c)+?^$\\|"
+        },
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "^(?:a\\.\\*\\[b\\]\\(c\\)\\+\\?\\^\\$\\\\\\|)$|[.]",
+        "local": {
+          "x": "a.*[b](c)+?^$\\|"
+        },
+        "global": {}
+      },
+      "modern": {
+        "output": "^(?:a\\.\\*\\[b\\]\\(c\\)\\+\\?\\^\\$\\\\\\|)$|[.]",
+        "local": {
+          "x": "a.*[b](c)+?^$\\|"
+        },
+        "global": {}
+      },
+      "hook": "regex",
+      "calls": {
+        "legacy": [
+          {
+            "value": "a.*[b](c)+?^$\\|",
+            "type": "string"
+          }
+        ],
+        "modern": [
+          {
+            "value": "a.*[b](c)+?^$\\|",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "id": "regex-nested-results",
+      "text": "^{{reverse::{{getvar::x}}}}$",
+      "context": {
+        "local": {
+          "x": "a.*[b]"
+        },
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "^\\]\\\\b\\[\\\\\\*\\\\\\.\\\\a:$",
+        "local": {
+          "x": "a.*[b]"
+        },
+        "global": {}
+      },
+      "modern": {
+        "output": "^\\]\\\\b\\[\\\\\\*\\\\\\.\\\\a$",
+        "local": {
+          "x": "a.*[b]"
+        },
+        "global": {}
+      },
+      "hook": "regex",
+      "calls": {
+        "legacy": [
+          {
+            "value": "a.*[b]",
+            "type": "string"
+          },
+          {
+            "value": "]\\b[\\*\\.\\a:",
+            "type": "string"
+          }
+        ],
+        "modern": [
+          {
+            "value": "a.*[b]",
+            "type": "string"
+          },
+          {
+            "value": "]\\b[\\*\\.\\a",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "id": "regex-unknown-outer",
+      "text": "{{unknown::{{getvar::x}}}}",
+      "context": {
+        "local": {
+          "x": "a.*[b]"
+        },
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "{{unknown::a\\.\\*\\[b\\]}}",
+        "local": {
+          "x": "a.*[b]"
+        },
+        "global": {}
+      },
+      "modern": {
+        "output": "{{unknown::a\\.\\*\\[b\\]}}",
+        "local": {
+          "x": "a.*[b]"
+        },
+        "global": {}
+      },
+      "hook": "regex",
+      "calls": {
+        "legacy": [
+          {
+            "value": "a.*[b]",
+            "type": "string"
+          }
+        ],
+        "modern": [
+          {
+            "value": "a.*[b]",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "id": "regex-wrong-arity",
+      "text": "{{user::{{getvar::x}}}}",
+      "context": {
+        "local": {
+          "x": "a.*"
+        },
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "{{user::a\\.\\*}}",
+        "local": {
+          "x": "a.*"
+        },
+        "global": {}
+      },
+      "modern": {
+        "output": "{{user::a\\.\\*}}",
+        "local": {
+          "x": "a.*"
+        },
+        "global": {}
+      },
+      "hook": "regex",
+      "calls": {
+        "legacy": [
+          {
+            "value": "a.*",
+            "type": "string"
+          }
+        ],
+        "modern": [
+          {
+            "value": "a.*",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "id": "regex-shorthand",
+      "text": "{{.x}}/{{getvar::x}}",
+      "context": {
+        "local": {
+          "x": "a.*[b]"
+        },
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "{{.x}}/a\\.\\*\\[b\\]",
+        "local": {
+          "x": "a.*[b]"
+        },
+        "global": {}
+      },
+      "modern": {
+        "output": "a.*[b]/a\\.\\*\\[b\\]",
+        "local": {
+          "x": "a.*[b]"
+        },
+        "global": {}
+      },
+      "hook": "regex",
+      "calls": {
+        "legacy": [
+          {
+            "value": "a.*[b]",
+            "type": "string"
+          }
+        ],
+        "modern": [
+          {
+            "value": "a.*[b]",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "id": "regex-legacy-nonstring-number",
+      "text": "^{{getvar::x}}$",
+      "context": {
+        "local": {
+          "x": 1.25
+        },
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "^1.25$",
+        "local": {
+          "x": 1.25
+        },
+        "global": {}
+      },
+      "modern": {
+        "output": "^1\\.25$",
+        "local": {
+          "x": 1.25
+        },
+        "global": {}
+      },
+      "hook": "regex",
+      "calls": {
+        "legacy": [
+          {
+            "value": 1.25,
+            "type": "number"
+          }
+        ],
+        "modern": [
+          {
+            "value": "1.25",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "id": "regex-legacy-nonstring-object",
+      "text": "^{{getvar::x}}$",
+      "context": {
+        "local": {
+          "x": {
+            "a": ".*"
+          }
+        },
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "^[object Object]$",
+        "local": {
+          "x": {
+            "a": ".*"
+          }
+        },
+        "global": {}
+      },
+      "modern": {
+        "output": "^{\"a\":\"\\.\\*\"}$",
+        "local": {
+          "x": {
+            "a": ".*"
+          }
+        },
+        "global": {}
+      },
+      "hook": "regex",
+      "calls": {
+        "legacy": [
+          {
+            "value": {
+              "a": ".*"
+            },
+            "type": "object"
+          }
+        ],
+        "modern": [
+          {
+            "value": "{\"a\":\".*\"}",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "id": "regex-card-base-no-hook",
+      "text": "{{description}}",
+      "context": {
+        "local": {
+          "x": "a.*[b]"
+        },
+        "global": {},
+        "card": {
+          "description": "{{getvar::x}}"
+        },
+        "replaceCharacterCard": true,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "a\\.\\*\\[b\\]",
+        "local": {
+          "x": "a.*[b]"
+        },
+        "global": {}
+      },
+      "modern": {
+        "output": "a\\.\\*\\[b\\]",
+        "local": {
+          "x": "a.*[b]"
+        },
+        "global": {}
+      },
+      "hook": "regex",
+      "calls": {
+        "legacy": [
+          {
+            "value": "a.*[b]",
+            "type": "string"
+          }
+        ],
+        "modern": [
+          {
+            "value": "a.*[b]",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "id": "regex-dynamic-known-result",
+      "text": "{{extra}}/{{unknown}}",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {
+        "extra": ".*[]"
+      },
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "\\.\\*\\[\\]/{{unknown}}",
+        "local": {},
+        "global": {}
+      },
+      "modern": {
+        "output": "\\.\\*\\[\\]/{{unknown}}",
+        "local": {},
+        "global": {}
+      },
+      "hook": "regex",
+      "calls": {
+        "legacy": [
+          {
+            "value": ".*[]",
+            "type": "string"
+          }
+        ],
+        "modern": [
+          {
+            "value": ".*[]",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "id": "regex-trim-result",
+      "text": "A\n{{trim}}\nB",
+      "context": {
+        "local": {},
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "AB",
+        "local": {},
+        "global": {}
+      },
+      "modern": {
+        "output": "AB",
+        "local": {},
+        "global": {}
+      },
+      "hook": "regex",
+      "calls": {
+        "legacy": [
+          {
+            "value": "",
+            "type": "string"
+          }
+        ],
+        "modern": [
+          {
+            "value": "{{trim}}",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "id": "hook-failure-whole-pass-versus-result",
+      "text": "{{incvar::x}}|{{incvar::x}}|{{incvar::x}}/{{getvar::x}}",
+      "context": {
+        "local": {
+          "x": 0
+        },
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "{{incvar::x}}|{{incvar::x}}|{{incvar::x}}/[2]",
+        "local": {
+          "x": 2
+        },
+        "global": {}
+      },
+      "modern": {
+        "output": "[1]|2|[3]/[3]",
+        "local": {
+          "x": 3
+        },
+        "global": {}
+      },
+      "hook": "throwOnSecond"
+    },
+    {
+      "id": "hook-visible-empty-result",
+      "text": "{{noop}}|{{setvar::x::v}}|{{getvar::x}}",
+      "context": {
+        "local": {
+          "x": 0
+        },
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "[]|[]|[v]",
+        "local": {
+          "x": "v"
+        },
+        "global": {}
+      },
+      "modern": {
+        "output": "[]|[]|[v]",
+        "local": {
+          "x": "v"
+        },
+        "global": {}
+      },
+      "hook": "wrap"
+    },
+    {
+      "id": "hook-return-null",
+      "text": "{{user}}/{{getvar::x}}",
+      "context": {
+        "local": {
+          "x": 0
+        },
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "null/null",
+        "local": {
+          "x": 0
+        },
+        "global": {}
+      },
+      "modern": {
+        "output": "/",
+        "local": {
+          "x": 0
+        },
+        "global": {}
+      },
+      "hook": "null"
+    },
+    {
+      "id": "hook-return-object",
+      "text": "{{user}}/{{getvar::x}}",
+      "context": {
+        "local": {
+          "x": 0
+        },
+        "global": {},
+        "card": {},
+        "replaceCharacterCard": false,
+        "userName": "U",
+        "charName": "C",
+        "model": "m",
+        "persona": "",
+        "now": "2024-02-29T18:07:08.123Z",
+        "offsetMinutes": 0,
+        "locale": "en",
+        "random": 0.99,
+        "maxContext": 900,
+        "maxResponse": 100,
+        "maxPrompt": 800,
+        "chatId": "review",
+        "preferCharacterPrompt": true,
+        "preferCharacterJailbreak": true,
+        "collapseNewlines": false,
+        "history": [],
+        "input": "",
+        "outlets": {},
+        "lastGenerationType": ""
+      },
+      "overrides": {},
+      "config": {
+        "instruct": {},
+        "systemPrompt": {},
+        "contextTemplate": {}
+      },
+      "legacy": {
+        "output": "[object Object]/[object Object]",
+        "local": {
+          "x": 0
+        },
+        "global": {}
+      },
+      "modern": {
+        "output": "[object Object]/[object Object]",
+        "local": {
+          "x": 0
+        },
+        "global": {}
+      },
+      "hook": "object"
+    }
+  ],
+  "numericSeedFlattening": [
+    {
+      "seed": 0,
+      "values": [
+        0.038085370776470735,
+        0.08624634995353292,
+        0.5921039987135952,
+        0.5283513935579917
+      ]
+    },
+    {
+      "seed": 1,
+      "values": [
+        0.1776348083296759,
+        0.21606903041839373,
+        0.5251053930849383,
+        0.6111927269176093
+      ]
+    },
+    {
+      "seed": -1,
+      "values": [
+        0.470093686445952,
+        0.7909463237352709,
+        0.623129488985286,
+        0.6090556115454999
+      ]
+    },
+    {
+      "seed": 7944625591574698,
+      "values": [
+        0.5019764178475816,
+        0.33192618713864563,
+        0.2637455688794261,
+        0.038653956977944354
+      ]
+    },
+    {
+      "seed": 9007199254740991,
+      "values": [
+        0.8454316376100453,
+        0.7231607195585142,
+        0.3065211830675488,
+        0.7054469398646801
+      ]
+    }
+  ]
+}

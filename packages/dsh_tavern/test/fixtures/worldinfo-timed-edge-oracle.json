@@ -1,0 +1,1032 @@
+{
+  "version": 1,
+  "status": "ST_SOURCE_EDGE_VECTORS_CONFIRMED",
+  "commit": "7e8663cd9c184a550b37238218bdd32c6efc68e9",
+  "sourceHarnessSHA256": "6e819b1a1aea39df668c6f4cd9ea201c8ee582a4bb93ccc57cf13a6f37275d03",
+  "comparisonNotes": [
+    "bookJsonText must be decoded directly by Dart; do not JSON.parse and reserialize the input before transferring it.",
+    "activatedTimerKeys use native loaded world/uid, not the project-local book identity. Compare hashes, timer state and activatedCount independently.",
+    "NaN in native timer end serializes to null. Missing uid is omitted from hashes but stringifies as undefined in the timer key.",
+    "Explicit harness adapters: book IO and UI/event context, identity macro/regex, tokenCount=UTF-16 string length. Actual fixed ST hash, loaders, V3 conversion, scanner and timed class are executed.",
+    "Incomplete/malformed V3 and coercion inputs are accepted-source compatibility probes, not claims of strict-schema validity.",
+    "No Dart, full browser, model or network executed.",
+    "Actual fixed ST scanner/timer; same declared IO/UI/macro/regex/tokenizer adapters as source-harness.mjs.",
+    "Only after the complete native evaluation does JSON serialization turn internal NaN into null.",
+    "Dart 3.13.5 VM String.trim source fetched separately; no Dart executed."
+  ],
+  "vectors": [
+    {
+      "name": "v3-complete-property-order",
+      "bookId": "book",
+      "source": "character",
+      "bookJsonText": "{\"entries\":[{\"keys\":[\"key\"],\"content\":\"V3\",\"enabled\":true,\"insertion_order\":100,\"extensions\":{\"sticky\":3,\"cooldown\":2}}]}",
+      "messages": [
+        {
+          "text": "noise"
+        },
+        {
+          "text": "key"
+        }
+      ],
+      "maxContext": 10000,
+      "metadata": {},
+      "random": [],
+      "expected": {
+        "hashes": [
+          {
+            "uid": 0,
+            "world": "book",
+            "hash": 3707362990447372
+          }
+        ],
+        "timedWorldInfo": {
+          "sticky": {
+            "book.0": {
+              "hash": 3707362990447372,
+              "start": 2,
+              "end": 5,
+              "protected": false
+            }
+          },
+          "cooldown": {
+            "book.0": {
+              "hash": 3707362990447372,
+              "start": 2,
+              "end": 4,
+              "protected": false
+            }
+          }
+        },
+        "activatedTimerKeys": [
+          "book.0"
+        ],
+        "activatedCount": 1,
+        "before": "",
+        "after": "V3",
+        "randomUsed": 0
+      }
+    },
+    {
+      "name": "v3-missing-content-slot",
+      "bookId": "book",
+      "source": "character",
+      "bookJsonText": "{\"entries\":[{\"keys\":[\"key\"],\"enabled\":true,\"insertion_order\":100,\"extensions\":{\"sticky\":3}}]}",
+      "messages": [
+        {
+          "text": "noise"
+        },
+        {
+          "text": "key"
+        }
+      ],
+      "maxContext": 10000,
+      "metadata": {},
+      "random": [],
+      "expected": {
+        "hashes": [
+          {
+            "uid": 0,
+            "world": "book",
+            "hash": 5261203552933351
+          }
+        ],
+        "timedWorldInfo": {
+          "sticky": {
+            "book.0": {
+              "hash": 5261203552933351,
+              "start": 2,
+              "end": 5,
+              "protected": false
+            }
+          },
+          "cooldown": {}
+        },
+        "activatedTimerKeys": [
+          "book.0"
+        ],
+        "activatedCount": 1,
+        "before": "",
+        "after": "",
+        "randomUsed": 0
+      }
+    },
+    {
+      "name": "uid-exponent-start",
+      "bookId": "book",
+      "source": "global",
+      "bookJsonText": "{\"entries\":{\"0\":{\"uid\":1e+21,\"key\":[\"key\"],\"content\":\"X\",\"order\":100,\"position\":0,\"sticky\":3}}}",
+      "messages": [
+        {
+          "text": "noise"
+        },
+        {
+          "text": "key"
+        }
+      ],
+      "maxContext": 10000,
+      "metadata": {},
+      "random": [],
+      "expected": {
+        "hashes": [
+          {
+            "uid": 1e+21,
+            "world": "book",
+            "hash": 8363867987422355
+          }
+        ],
+        "timedWorldInfo": {
+          "sticky": {
+            "book.1e+21": {
+              "hash": 8363867987422355,
+              "start": 2,
+              "end": 5,
+              "protected": false
+            }
+          },
+          "cooldown": {}
+        },
+        "activatedTimerKeys": [
+          "book.1e+21"
+        ],
+        "activatedCount": 1,
+        "before": "X",
+        "after": "",
+        "randomUsed": 0
+      }
+    },
+    {
+      "name": "uid-exponent-continue",
+      "bookId": "book",
+      "source": "global",
+      "bookJsonText": "{\"entries\":{\"0\":{\"uid\":1e+21,\"key\":[\"key\"],\"content\":\"X\",\"order\":100,\"position\":0,\"sticky\":3}}}",
+      "messages": [
+        {
+          "text": "noise"
+        },
+        {
+          "text": "noise"
+        },
+        {
+          "text": "noise"
+        }
+      ],
+      "maxContext": 10000,
+      "metadata": {
+        "timedWorldInfo": {
+          "sticky": {
+            "book.1e+21": {
+              "hash": 8363867987422355,
+              "start": 2,
+              "end": 5,
+              "protected": false
+            }
+          },
+          "cooldown": {}
+        }
+      },
+      "random": [],
+      "expected": {
+        "hashes": [
+          {
+            "uid": 1e+21,
+            "world": "book",
+            "hash": 8363867987422355
+          }
+        ],
+        "timedWorldInfo": {
+          "sticky": {
+            "book.1e+21": {
+              "hash": 8363867987422355,
+              "start": 2,
+              "end": 5,
+              "protected": false
+            }
+          },
+          "cooldown": {}
+        },
+        "activatedTimerKeys": [
+          "book.1e+21"
+        ],
+        "activatedCount": 1,
+        "before": "X",
+        "after": "",
+        "randomUsed": 0
+      }
+    },
+    {
+      "name": "uid-beyond-safe-integer-start",
+      "bookId": "book",
+      "source": "global",
+      "bookJsonText": "{\"entries\":{\"0\":{\"uid\":9007199254740993,\"key\":[\"key\"],\"content\":\"X\",\"order\":100,\"position\":0,\"sticky\":3}}}",
+      "messages": [
+        {
+          "text": "noise"
+        },
+        {
+          "text": "key"
+        }
+      ],
+      "maxContext": 10000,
+      "metadata": {},
+      "random": [],
+      "expected": {
+        "hashes": [
+          {
+            "uid": 9007199254740992,
+            "world": "book",
+            "hash": 7655046815427358
+          }
+        ],
+        "timedWorldInfo": {
+          "sticky": {
+            "book.9007199254740992": {
+              "hash": 7655046815427358,
+              "start": 2,
+              "end": 5,
+              "protected": false
+            }
+          },
+          "cooldown": {}
+        },
+        "activatedTimerKeys": [
+          "book.9007199254740992"
+        ],
+        "activatedCount": 1,
+        "before": "X",
+        "after": "",
+        "randomUsed": 0
+      }
+    },
+    {
+      "name": "uid-beyond-safe-integer-continue",
+      "bookId": "book",
+      "source": "global",
+      "bookJsonText": "{\"entries\":{\"0\":{\"uid\":9007199254740993,\"key\":[\"key\"],\"content\":\"X\",\"order\":100,\"position\":0,\"sticky\":3}}}",
+      "messages": [
+        {
+          "text": "noise"
+        },
+        {
+          "text": "noise"
+        },
+        {
+          "text": "noise"
+        }
+      ],
+      "maxContext": 10000,
+      "metadata": {
+        "timedWorldInfo": {
+          "sticky": {
+            "book.9007199254740992": {
+              "hash": 7655046815427358,
+              "start": 2,
+              "end": 5,
+              "protected": false
+            }
+          },
+          "cooldown": {}
+        }
+      },
+      "random": [],
+      "expected": {
+        "hashes": [
+          {
+            "uid": 9007199254740992,
+            "world": "book",
+            "hash": 7655046815427358
+          }
+        ],
+        "timedWorldInfo": {
+          "sticky": {
+            "book.9007199254740992": {
+              "hash": 7655046815427358,
+              "start": 2,
+              "end": 5,
+              "protected": false
+            }
+          },
+          "cooldown": {}
+        },
+        "activatedTimerKeys": [
+          "book.9007199254740992"
+        ],
+        "activatedCount": 1,
+        "before": "X",
+        "after": "",
+        "randomUsed": 0
+      }
+    },
+    {
+      "name": "raw-world-overrides-loader-start",
+      "bookId": "book",
+      "source": "global",
+      "bookJsonText": "{\"entries\":{\"0\":{\"uid\":0,\"key\":[\"key\"],\"content\":\"X\",\"order\":100,\"position\":0,\"sticky\":3,\"world\":\"stored-world\"}}}",
+      "messages": [
+        {
+          "text": "noise"
+        },
+        {
+          "text": "key"
+        }
+      ],
+      "maxContext": 10000,
+      "metadata": {},
+      "random": [],
+      "expected": {
+        "hashes": [
+          {
+            "uid": 0,
+            "world": "stored-world",
+            "hash": 3964056875509089
+          }
+        ],
+        "timedWorldInfo": {
+          "sticky": {
+            "stored-world.0": {
+              "hash": 3964056875509089,
+              "start": 2,
+              "end": 5,
+              "protected": false
+            }
+          },
+          "cooldown": {}
+        },
+        "activatedTimerKeys": [
+          "stored-world.0"
+        ],
+        "activatedCount": 1,
+        "before": "X",
+        "after": "",
+        "randomUsed": 0
+      }
+    },
+    {
+      "name": "raw-world-overrides-loader-continue",
+      "bookId": "book",
+      "source": "global",
+      "bookJsonText": "{\"entries\":{\"0\":{\"uid\":0,\"key\":[\"key\"],\"content\":\"X\",\"order\":100,\"position\":0,\"sticky\":3,\"world\":\"stored-world\"}}}",
+      "messages": [
+        {
+          "text": "noise"
+        },
+        {
+          "text": "noise"
+        },
+        {
+          "text": "noise"
+        }
+      ],
+      "maxContext": 10000,
+      "metadata": {
+        "timedWorldInfo": {
+          "sticky": {
+            "stored-world.0": {
+              "hash": 3964056875509089,
+              "start": 2,
+              "end": 5,
+              "protected": false
+            }
+          },
+          "cooldown": {}
+        }
+      },
+      "random": [],
+      "expected": {
+        "hashes": [
+          {
+            "uid": 0,
+            "world": "stored-world",
+            "hash": 3964056875509089
+          }
+        ],
+        "timedWorldInfo": {
+          "sticky": {
+            "stored-world.0": {
+              "hash": 3964056875509089,
+              "start": 2,
+              "end": 5,
+              "protected": false
+            }
+          },
+          "cooldown": {}
+        },
+        "activatedTimerKeys": [
+          "stored-world.0"
+        ],
+        "activatedCount": 1,
+        "before": "X",
+        "after": "",
+        "randomUsed": 0
+      }
+    },
+    {
+      "name": "missing-uid-is-undefined-in-timer-key",
+      "bookId": "book",
+      "source": "global",
+      "bookJsonText": "{\"entries\":{\"0\":{\"key\":[\"key\"],\"content\":\"X\",\"order\":100,\"position\":0,\"sticky\":3}}}",
+      "messages": [
+        {
+          "text": "noise"
+        },
+        {
+          "text": "key"
+        }
+      ],
+      "maxContext": 10000,
+      "metadata": {},
+      "random": [],
+      "expected": {
+        "hashes": [
+          {
+            "world": "book",
+            "hash": 2424349918107298
+          }
+        ],
+        "timedWorldInfo": {
+          "sticky": {
+            "book.undefined": {
+              "hash": 2424349918107298,
+              "start": 2,
+              "end": 5,
+              "protected": false
+            }
+          },
+          "cooldown": {}
+        },
+        "activatedTimerKeys": [
+          "book.undefined"
+        ],
+        "activatedCount": 1,
+        "before": "X",
+        "after": "",
+        "randomUsed": 0
+      }
+    },
+    {
+      "name": "number-coercion-decimal-string",
+      "bookId": "book",
+      "source": "global",
+      "bookJsonText": "{\"entries\":{\"0\":{\"uid\":0,\"key\":[\"key\"],\"content\":\"X\",\"order\":100,\"position\":0,\"sticky\":\"3\"}}}",
+      "messages": [
+        {
+          "text": "noise"
+        },
+        {
+          "text": "key"
+        }
+      ],
+      "maxContext": 10000,
+      "metadata": {},
+      "random": [],
+      "expected": {
+        "hashes": [
+          {
+            "uid": 0,
+            "world": "book",
+            "hash": 6454974359939355
+          }
+        ],
+        "timedWorldInfo": {
+          "sticky": {
+            "book.0": {
+              "hash": 6454974359939355,
+              "start": 2,
+              "end": 5,
+              "protected": false
+            }
+          },
+          "cooldown": {}
+        },
+        "activatedTimerKeys": [
+          "book.0"
+        ],
+        "activatedCount": 1,
+        "before": "X",
+        "after": "",
+        "randomUsed": 0
+      }
+    },
+    {
+      "name": "number-coercion-binary-string",
+      "bookId": "book",
+      "source": "global",
+      "bookJsonText": "{\"entries\":{\"0\":{\"uid\":0,\"key\":[\"key\"],\"content\":\"X\",\"order\":100,\"position\":0,\"sticky\":\"0b10\"}}}",
+      "messages": [
+        {
+          "text": "noise"
+        },
+        {
+          "text": "key"
+        }
+      ],
+      "maxContext": 10000,
+      "metadata": {},
+      "random": [],
+      "expected": {
+        "hashes": [
+          {
+            "uid": 0,
+            "world": "book",
+            "hash": 8015982686131719
+          }
+        ],
+        "timedWorldInfo": {
+          "sticky": {
+            "book.0": {
+              "hash": 8015982686131719,
+              "start": 2,
+              "end": 4,
+              "protected": false
+            }
+          },
+          "cooldown": {}
+        },
+        "activatedTimerKeys": [
+          "book.0"
+        ],
+        "activatedCount": 1,
+        "before": "X",
+        "after": "",
+        "randomUsed": 0
+      }
+    },
+    {
+      "name": "number-coercion-octal-string",
+      "bookId": "book",
+      "source": "global",
+      "bookJsonText": "{\"entries\":{\"0\":{\"uid\":0,\"key\":[\"key\"],\"content\":\"X\",\"order\":100,\"position\":0,\"sticky\":\"0o10\"}}}",
+      "messages": [
+        {
+          "text": "noise"
+        },
+        {
+          "text": "key"
+        }
+      ],
+      "maxContext": 10000,
+      "metadata": {},
+      "random": [],
+      "expected": {
+        "hashes": [
+          {
+            "uid": 0,
+            "world": "book",
+            "hash": 888443694496928
+          }
+        ],
+        "timedWorldInfo": {
+          "sticky": {
+            "book.0": {
+              "hash": 888443694496928,
+              "start": 2,
+              "end": 10,
+              "protected": false
+            }
+          },
+          "cooldown": {}
+        },
+        "activatedTimerKeys": [
+          "book.0"
+        ],
+        "activatedCount": 1,
+        "before": "X",
+        "after": "",
+        "randomUsed": 0
+      }
+    },
+    {
+      "name": "number-coercion-signed-hex-string",
+      "bookId": "book",
+      "source": "global",
+      "bookJsonText": "{\"entries\":{\"0\":{\"uid\":0,\"key\":[\"key\"],\"content\":\"X\",\"order\":100,\"position\":0,\"sticky\":\"-0x1\"}}}",
+      "messages": [
+        {
+          "text": "noise"
+        },
+        {
+          "text": "key"
+        }
+      ],
+      "maxContext": 10000,
+      "metadata": {},
+      "random": [],
+      "expected": {
+        "hashes": [
+          {
+            "uid": 0,
+            "world": "book",
+            "hash": 1655568161038123
+          }
+        ],
+        "timedWorldInfo": {
+          "sticky": {
+            "book.0": {
+              "hash": 1655568161038123,
+              "start": 2,
+              "end": null,
+              "protected": false
+            }
+          },
+          "cooldown": {}
+        },
+        "activatedTimerKeys": [
+          "book.0"
+        ],
+        "activatedCount": 1,
+        "before": "X",
+        "after": "",
+        "randomUsed": 0
+      }
+    },
+    {
+      "name": "number-coercion-null-array",
+      "bookId": "book",
+      "source": "global",
+      "bookJsonText": "{\"entries\":{\"0\":{\"uid\":0,\"key\":[\"key\"],\"content\":\"X\",\"order\":100,\"position\":0,\"sticky\":[null]}}}",
+      "messages": [
+        {
+          "text": "noise"
+        },
+        {
+          "text": "key"
+        }
+      ],
+      "maxContext": 10000,
+      "metadata": {},
+      "random": [],
+      "expected": {
+        "hashes": [
+          {
+            "uid": 0,
+            "world": "book",
+            "hash": 8255638218704438
+          }
+        ],
+        "timedWorldInfo": {
+          "sticky": {
+            "book.0": {
+              "hash": 8255638218704438,
+              "start": 2,
+              "end": 2,
+              "protected": false
+            }
+          },
+          "cooldown": {}
+        },
+        "activatedTimerKeys": [
+          "book.0"
+        ],
+        "activatedCount": 1,
+        "before": "X",
+        "after": "",
+        "randomUsed": 0
+      }
+    },
+    {
+      "name": "probability-zero-draw-establishes-sticky",
+      "bookId": "book",
+      "source": "global",
+      "bookJsonText": "{\"entries\":{\"0\":{\"uid\":0,\"key\":[\"key\"],\"content\":\"X\",\"order\":100,\"position\":0,\"sticky\":3,\"probability\":0,\"useProbability\":true}}}",
+      "messages": [
+        {
+          "text": "noise"
+        },
+        {
+          "text": "key"
+        }
+      ],
+      "maxContext": 10000,
+      "metadata": {},
+      "random": [
+        0
+      ],
+      "expected": {
+        "hashes": [
+          {
+            "uid": 0,
+            "world": "book",
+            "hash": 7896079323511908
+          }
+        ],
+        "timedWorldInfo": {
+          "sticky": {
+            "book.0": {
+              "hash": 7896079323511908,
+              "start": 2,
+              "end": 5,
+              "protected": false
+            }
+          },
+          "cooldown": {}
+        },
+        "activatedTimerKeys": [
+          "book.0"
+        ],
+        "activatedCount": 1,
+        "before": "X",
+        "after": "",
+        "randomUsed": 1
+      }
+    },
+    {
+      "name": "real-sticky-bypasses-random",
+      "bookId": "book",
+      "source": "global",
+      "bookJsonText": "{\"entries\":{\"0\":{\"uid\":0,\"key\":[\"key\"],\"content\":\"X\",\"order\":100,\"position\":0,\"sticky\":3,\"probability\":0,\"useProbability\":true}}}",
+      "messages": [
+        {
+          "text": "noise"
+        },
+        {
+          "text": "noise"
+        },
+        {
+          "text": "noise"
+        }
+      ],
+      "maxContext": 10000,
+      "metadata": {
+        "timedWorldInfo": {
+          "sticky": {
+            "book.0": {
+              "hash": 7896079323511908,
+              "start": 2,
+              "end": 5,
+              "protected": false
+            }
+          },
+          "cooldown": {}
+        }
+      },
+      "random": [],
+      "expected": {
+        "hashes": [
+          {
+            "uid": 0,
+            "world": "book",
+            "hash": 7896079323511908
+          }
+        ],
+        "timedWorldInfo": {
+          "sticky": {
+            "book.0": {
+              "hash": 7896079323511908,
+              "start": 2,
+              "end": 5,
+              "protected": false
+            }
+          },
+          "cooldown": {}
+        },
+        "activatedTimerKeys": [
+          "book.0"
+        ],
+        "activatedCount": 1,
+        "before": "X",
+        "after": "",
+        "randomUsed": 0
+      }
+    },
+    {
+      "name": "v3-unsafe-numeric-id-key-collision",
+      "bookId": "book",
+      "source": "character",
+      "bookJsonText": "{\"entries\":[{\"id\":9007199254740992,\"keys\":[\"key\"],\"content\":\"first\",\"enabled\":true,\"insertion_order\":100,\"extensions\":{\"sticky\":3}},{\"id\":9007199254740993,\"keys\":[\"key\"],\"content\":\"second\",\"enabled\":true,\"insertion_order\":100,\"extensions\":{\"sticky\":3}}]}",
+      "messages": [
+        {
+          "text": "noise"
+        },
+        {
+          "text": "key"
+        }
+      ],
+      "maxContext": 10000,
+      "metadata": {},
+      "random": [],
+      "expected": {
+        "hashes": [
+          {
+            "uid": 9007199254740992,
+            "world": "book",
+            "hash": 4860256180981341
+          }
+        ],
+        "timedWorldInfo": {
+          "sticky": {
+            "book.9007199254740992": {
+              "hash": 4860256180981341,
+              "start": 2,
+              "end": 5,
+              "protected": false
+            }
+          },
+          "cooldown": {}
+        },
+        "activatedTimerKeys": [
+          "book.9007199254740992"
+        ],
+        "activatedCount": 1,
+        "before": "",
+        "after": "second",
+        "randomUsed": 0
+      }
+    },
+    {
+      "name": "number-string-NEL-is-not-ECMAScript-whitespace",
+      "bookId": "book",
+      "source": "global",
+      "bookJsonText": "{\"entries\":{\"0\":{\"uid\":0,\"key\":[\"key\"],\"content\":\"X\",\"order\":100,\"position\":0,\"sticky\":\"3\"}}}",
+      "messages": [
+        {
+          "text": "key"
+        },
+        {
+          "text": "key"
+        }
+      ],
+      "maxContext": 10000,
+      "metadata": {},
+      "random": [],
+      "expected": {
+        "hashes": [
+          {
+            "uid": 0,
+            "world": "book",
+            "hash": 3057785937561850
+          }
+        ],
+        "timedWorldInfo": {
+          "sticky": {
+            "book.0": {
+              "hash": 3057785937561850,
+              "start": 2,
+              "end": null,
+              "protected": false
+            }
+          },
+          "cooldown": {}
+        },
+        "activatedTimerKeys": [
+          "book.0"
+        ],
+        "activatedCount": 1,
+        "before": "X",
+        "after": "",
+        "randomUsed": 0
+      }
+    },
+    {
+      "name": "number-string-NBSP-is-ECMAScript-whitespace",
+      "bookId": "book",
+      "source": "global",
+      "bookJsonText": "{\"entries\":{\"0\":{\"uid\":0,\"key\":[\"key\"],\"content\":\"X\",\"order\":100,\"position\":0,\"sticky\":\" 3 \"}}}",
+      "messages": [
+        {
+          "text": "key"
+        },
+        {
+          "text": "key"
+        }
+      ],
+      "maxContext": 10000,
+      "metadata": {},
+      "random": [],
+      "expected": {
+        "hashes": [
+          {
+            "uid": 0,
+            "world": "book",
+            "hash": 3000527221655280
+          }
+        ],
+        "timedWorldInfo": {
+          "sticky": {
+            "book.0": {
+              "hash": 3000527221655280,
+              "start": 2,
+              "end": 5,
+              "protected": false
+            }
+          },
+          "cooldown": {}
+        },
+        "activatedTimerKeys": [
+          "book.0"
+        ],
+        "activatedCount": 1,
+        "before": "X",
+        "after": "",
+        "randomUsed": 0
+      }
+    },
+    {
+      "name": "nonfinite-cooldown-setup",
+      "bookId": "book",
+      "source": "global",
+      "bookJsonText": "{\"entries\":{\"0\":{\"uid\":0,\"key\":[\"key\"],\"content\":\"X\",\"order\":100,\"position\":0,\"sticky\":1,\"cooldown\":\"-0x1\"}}}",
+      "messages": [
+        {
+          "text": "key"
+        }
+      ],
+      "maxContext": 10000,
+      "metadata": {},
+      "random": [],
+      "expected": {
+        "hashes": [
+          {
+            "uid": 0,
+            "world": "book",
+            "hash": 1939383892716978
+          }
+        ],
+        "timedWorldInfo": {
+          "sticky": {
+            "book.0": {
+              "hash": 1939383892716978,
+              "start": 1,
+              "end": 2,
+              "protected": false
+            }
+          },
+          "cooldown": {
+            "book.0": {
+              "hash": 1939383892716978,
+              "start": 1,
+              "end": null,
+              "protected": false
+            }
+          }
+        },
+        "activatedTimerKeys": [
+          "book.0"
+        ],
+        "activatedCount": 1,
+        "before": "X",
+        "after": "",
+        "randomUsed": 0
+      }
+    },
+    {
+      "name": "nonfinite-cooldown-created-during-sticky-expiry",
+      "bookId": "book",
+      "source": "global",
+      "bookJsonText": "{\"entries\":{\"0\":{\"uid\":0,\"key\":[\"key\"],\"content\":\"X\",\"order\":100,\"position\":0,\"sticky\":1,\"cooldown\":\"-0x1\"}}}",
+      "messages": [
+        {
+          "text": "key"
+        },
+        {
+          "text": "key"
+        }
+      ],
+      "maxContext": 10000,
+      "metadata": {
+        "timedWorldInfo": {
+          "sticky": {
+            "book.0": {
+              "hash": 1939383892716978,
+              "start": 1,
+              "end": 2,
+              "protected": false
+            }
+          },
+          "cooldown": {
+            "book.0": {
+              "hash": 1939383892716978,
+              "start": 1,
+              "end": null,
+              "protected": false
+            }
+          }
+        }
+      },
+      "random": [],
+      "expected": {
+        "hashes": [
+          {
+            "uid": 0,
+            "world": "book",
+            "hash": 1939383892716978
+          }
+        ],
+        "timedWorldInfo": {
+          "sticky": {},
+          "cooldown": {
+            "book.0": {
+              "hash": 1939383892716978,
+              "start": 2,
+              "end": null,
+              "protected": true
+            }
+          }
+        },
+        "activatedTimerKeys": [],
+        "activatedCount": 0,
+        "before": "",
+        "after": "",
+        "randomUsed": 0
+      }
+    }
+  ]
+}

@@ -1,0 +1,1970 @@
+{
+  "provenance": {
+    "ref": "4a7b55069ad300eae8be42a74f31bc170b40ead7",
+    "scope": "Official actual show_view/Fetch/state/view-reply and queued normalized answer; synthetic fakeContext no LLM/full Host"
+  },
+  "cases": {
+    "form": {
+      "plain": {
+        "shown": {
+          "text": "The view is on screen; the user's answer arrives as their next message.",
+          "concluded": true
+        },
+        "state": {
+          "ok": true,
+          "value": {
+            "revision": 2,
+            "workspaceId": null,
+            "mainBotId": "chief",
+            "mainBotIds": [
+              "chief"
+            ],
+            "bots": [
+              {
+                "id": "chief",
+                "name": "Chief",
+                "role": "Lead",
+                "sessionId": "chief",
+                "createdAt": 1,
+                "capabilities": [],
+                "avatar": {
+                  "shape": "whale"
+                },
+                "color": "deepseek",
+                "parts": []
+              },
+              {
+                "id": "writer",
+                "name": "Writer",
+                "role": "Write",
+                "sessionId": "writer-now",
+                "createdAt": 2,
+                "capabilities": [],
+                "parts": [
+                  "writer-old"
+                ]
+              }
+            ],
+            "rooms": [
+              {
+                "id": "r1",
+                "name": "Ops",
+                "members": [
+                  "writer"
+                ],
+                "mode": "admin",
+                "admin": "writer",
+                "named": true,
+                "relayLimitDefault": 3,
+                "parts": [
+                  "writer-group"
+                ]
+              }
+            ],
+            "exchangeTurns": {},
+            "questions": {},
+            "views": {
+              "writer-now": {
+                "id": "5b242fab-e68e-4899-968a-ac629d5eba60",
+                "callId": "call-1",
+                "title": "Synthetic form",
+                "view": {
+                  "type": "form",
+                  "id": "act",
+                  "fields": [
+                    {
+                      "id": "body",
+                      "label": "Synthetic body"
+                    }
+                  ],
+                  "submitLabel": "Synthetic Save"
+                },
+                "askedAt": 1793153572231
+              }
+            },
+            "btwCards": {},
+            "sideChats": {},
+            "agents": [],
+            "secrets": [],
+            "capabilities": [],
+            "secretRequests": {},
+            "colors": [
+              "deepseek",
+              "blue",
+              "violet",
+              "orange",
+              "green",
+              "magenta",
+              "cyan",
+              "red",
+              "yellow",
+              "brown",
+              "gray",
+              "black",
+              "aurora",
+              "charcoal",
+              "graphite",
+              "rose",
+              "sky",
+              "tangerine",
+              "cobalt"
+            ],
+            "models": [],
+            "defaultModel": null,
+            "permissions": null,
+            "modelsKey": "|",
+            "prefs": {},
+            "browser": false,
+            "memory": true,
+            "readOnly": null,
+            "activity": {},
+            "work": {
+              "bots": {},
+              "rooms": {},
+              "approvals": [],
+              "waiting": {},
+              "turns": {},
+              "steered": {}
+            },
+            "memoryNews": {},
+            "memoryReviews": 0,
+            "connectors": [
+              {
+                "id": "github",
+                "name": "GitHub",
+                "state": "off",
+                "account": null
+              }
+            ],
+            "capabilityStatuses": {
+              "chief": {},
+              "writer": {}
+            }
+          }
+        },
+        "payload": {
+          "sessionId": "writer-now",
+          "viewId": "5b242fab-e68e-4899-968a-ac629d5eba60",
+          "action": "act",
+          "values": {
+            "fields": {
+              "body": "SYNTHETIC text"
+            }
+          }
+        },
+        "answer": {
+          "ok": true,
+          "value": true
+        },
+        "reply": {
+          "kind": "answer_to_pending_view",
+          "tool": "show_view",
+          "callId": "call-1",
+          "views": [
+            {
+              "id": "5b242fab-e68e-4899-968a-ac629d5eba60",
+              "title": "Synthetic form",
+              "view": {
+                "type": "form",
+                "id": "act",
+                "fields": [
+                  {
+                    "id": "body",
+                    "label": "Synthetic body"
+                  }
+                ],
+                "submitLabel": "Synthetic Save"
+              }
+            }
+          ],
+          "answers": [
+            {
+              "id": "5b242fab-e68e-4899-968a-ac629d5eba60",
+              "action": "act",
+              "values": {
+                "fields": {
+                  "body": "SYNTHETIC text"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "omitted": {
+        "shown": {
+          "text": "The view is on screen; the user's answer arrives as their next message.",
+          "concluded": true
+        },
+        "state": {
+          "ok": true,
+          "value": {
+            "revision": 4,
+            "workspaceId": null,
+            "mainBotId": "chief",
+            "mainBotIds": [
+              "chief"
+            ],
+            "bots": [
+              {
+                "id": "chief",
+                "name": "Chief",
+                "role": "Lead",
+                "sessionId": "chief",
+                "createdAt": 1,
+                "capabilities": [],
+                "avatar": {
+                  "shape": "whale"
+                },
+                "color": "deepseek",
+                "parts": []
+              },
+              {
+                "id": "writer",
+                "name": "Writer",
+                "role": "Write",
+                "sessionId": "writer-now",
+                "createdAt": 2,
+                "capabilities": [],
+                "parts": [
+                  "writer-old"
+                ]
+              }
+            ],
+            "rooms": [
+              {
+                "id": "r1",
+                "name": "Ops",
+                "members": [
+                  "writer"
+                ],
+                "mode": "admin",
+                "admin": "writer",
+                "named": true,
+                "relayLimitDefault": 3,
+                "parts": [
+                  "writer-group"
+                ]
+              }
+            ],
+            "exchangeTurns": {},
+            "questions": {},
+            "views": {
+              "writer-now": {
+                "id": "0a7a4264-56d2-4f54-bc78-924a6ed027ea",
+                "callId": "call-1",
+                "title": "Synthetic form",
+                "view": {
+                  "type": "stack",
+                  "children": [
+                    {
+                      "type": "text",
+                      "text": "SYNTHETIC choose count before answering."
+                    },
+                    {
+                      "type": "choice",
+                      "id": "count",
+                      "label": "Synthetic count",
+                      "options": [
+                        {
+                          "label": "One",
+                          "value": 1
+                        },
+                        {
+                          "label": "Two",
+                          "value": 2
+                        }
+                      ],
+                      "value": 1
+                    },
+                    {
+                      "type": "form",
+                      "id": "act",
+                      "fields": [
+                        {
+                          "id": "body",
+                          "label": "Synthetic body"
+                        }
+                      ],
+                      "submitLabel": "Synthetic Save"
+                    }
+                  ]
+                },
+                "askedAt": 1793153572269
+              }
+            },
+            "btwCards": {},
+            "sideChats": {},
+            "agents": [],
+            "secrets": [],
+            "capabilities": [],
+            "secretRequests": {},
+            "colors": [
+              "deepseek",
+              "blue",
+              "violet",
+              "orange",
+              "green",
+              "magenta",
+              "cyan",
+              "red",
+              "yellow",
+              "brown",
+              "gray",
+              "black",
+              "aurora",
+              "charcoal",
+              "graphite",
+              "rose",
+              "sky",
+              "tangerine",
+              "cobalt"
+            ],
+            "models": [],
+            "defaultModel": null,
+            "permissions": null,
+            "modelsKey": "|",
+            "prefs": {},
+            "browser": false,
+            "memory": true,
+            "readOnly": null,
+            "activity": {},
+            "work": {
+              "bots": {},
+              "rooms": {},
+              "approvals": [],
+              "waiting": {},
+              "turns": {},
+              "steered": {}
+            },
+            "memoryNews": {},
+            "memoryReviews": 0,
+            "connectors": [
+              {
+                "id": "github",
+                "name": "GitHub",
+                "state": "off",
+                "account": null
+              }
+            ],
+            "capabilityStatuses": {
+              "chief": {},
+              "writer": {}
+            }
+          }
+        },
+        "payload": {
+          "sessionId": "writer-now",
+          "viewId": "0a7a4264-56d2-4f54-bc78-924a6ed027ea",
+          "action": "act",
+          "values": {
+            "fields": {
+              "body": "SYNTHETIC text"
+            }
+          }
+        },
+        "answer": {
+          "ok": true,
+          "value": true
+        },
+        "reply": {
+          "kind": "answer_to_pending_view",
+          "tool": "show_view",
+          "callId": "call-1",
+          "views": [
+            {
+              "id": "0a7a4264-56d2-4f54-bc78-924a6ed027ea",
+              "title": "Synthetic form",
+              "view": {
+                "type": "stack",
+                "children": [
+                  {
+                    "type": "text",
+                    "text": "SYNTHETIC choose count before answering."
+                  },
+                  {
+                    "type": "choice",
+                    "id": "count",
+                    "label": "Synthetic count",
+                    "options": [
+                      {
+                        "label": "One",
+                        "value": 1
+                      },
+                      {
+                        "label": "Two",
+                        "value": 2
+                      }
+                    ],
+                    "value": 1
+                  },
+                  {
+                    "type": "form",
+                    "id": "act",
+                    "fields": [
+                      {
+                        "id": "body",
+                        "label": "Synthetic body"
+                      }
+                    ],
+                    "submitLabel": "Synthetic Save"
+                  }
+                ]
+              }
+            }
+          ],
+          "answers": [
+            {
+              "id": "0a7a4264-56d2-4f54-bc78-924a6ed027ea",
+              "action": "act",
+              "values": {
+                "fields": {
+                  "body": "SYNTHETIC text"
+                },
+                "inputs": {
+                  "count": 1
+                }
+              }
+            }
+          ]
+        }
+      },
+      "selected": {
+        "shown": {
+          "text": "The view is on screen; the user's answer arrives as their next message.",
+          "concluded": true
+        },
+        "state": {
+          "ok": true,
+          "value": {
+            "revision": 6,
+            "workspaceId": null,
+            "mainBotId": "chief",
+            "mainBotIds": [
+              "chief"
+            ],
+            "bots": [
+              {
+                "id": "chief",
+                "name": "Chief",
+                "role": "Lead",
+                "sessionId": "chief",
+                "createdAt": 1,
+                "capabilities": [],
+                "avatar": {
+                  "shape": "whale"
+                },
+                "color": "deepseek",
+                "parts": []
+              },
+              {
+                "id": "writer",
+                "name": "Writer",
+                "role": "Write",
+                "sessionId": "writer-now",
+                "createdAt": 2,
+                "capabilities": [],
+                "parts": [
+                  "writer-old"
+                ]
+              }
+            ],
+            "rooms": [
+              {
+                "id": "r1",
+                "name": "Ops",
+                "members": [
+                  "writer"
+                ],
+                "mode": "admin",
+                "admin": "writer",
+                "named": true,
+                "relayLimitDefault": 3,
+                "parts": [
+                  "writer-group"
+                ]
+              }
+            ],
+            "exchangeTurns": {},
+            "questions": {},
+            "views": {
+              "writer-now": {
+                "id": "93293925-37d2-488f-a671-8286890e5655",
+                "callId": "call-1",
+                "title": "Synthetic form",
+                "view": {
+                  "type": "stack",
+                  "children": [
+                    {
+                      "type": "text",
+                      "text": "SYNTHETIC choose count before answering."
+                    },
+                    {
+                      "type": "choice",
+                      "id": "count",
+                      "label": "Synthetic count",
+                      "options": [
+                        {
+                          "label": "One",
+                          "value": 1
+                        },
+                        {
+                          "label": "Two",
+                          "value": 2
+                        }
+                      ],
+                      "value": 1
+                    },
+                    {
+                      "type": "form",
+                      "id": "act",
+                      "fields": [
+                        {
+                          "id": "body",
+                          "label": "Synthetic body"
+                        }
+                      ],
+                      "submitLabel": "Synthetic Save"
+                    }
+                  ]
+                },
+                "askedAt": 1793153572273
+              }
+            },
+            "btwCards": {},
+            "sideChats": {},
+            "agents": [],
+            "secrets": [],
+            "capabilities": [],
+            "secretRequests": {},
+            "colors": [
+              "deepseek",
+              "blue",
+              "violet",
+              "orange",
+              "green",
+              "magenta",
+              "cyan",
+              "red",
+              "yellow",
+              "brown",
+              "gray",
+              "black",
+              "aurora",
+              "charcoal",
+              "graphite",
+              "rose",
+              "sky",
+              "tangerine",
+              "cobalt"
+            ],
+            "models": [],
+            "defaultModel": null,
+            "permissions": null,
+            "modelsKey": "|",
+            "prefs": {},
+            "browser": false,
+            "memory": true,
+            "readOnly": null,
+            "activity": {},
+            "work": {
+              "bots": {},
+              "rooms": {},
+              "approvals": [],
+              "waiting": {},
+              "turns": {},
+              "steered": {}
+            },
+            "memoryNews": {},
+            "memoryReviews": 0,
+            "connectors": [
+              {
+                "id": "github",
+                "name": "GitHub",
+                "state": "off",
+                "account": null
+              }
+            ],
+            "capabilityStatuses": {
+              "chief": {},
+              "writer": {}
+            }
+          }
+        },
+        "payload": {
+          "sessionId": "writer-now",
+          "viewId": "93293925-37d2-488f-a671-8286890e5655",
+          "action": "act",
+          "values": {
+            "fields": {
+              "body": "SYNTHETIC text"
+            },
+            "inputs": {
+              "count": 2
+            }
+          }
+        },
+        "answer": {
+          "ok": true,
+          "value": true
+        },
+        "reply": {
+          "kind": "answer_to_pending_view",
+          "tool": "show_view",
+          "callId": "call-1",
+          "views": [
+            {
+              "id": "93293925-37d2-488f-a671-8286890e5655",
+              "title": "Synthetic form",
+              "view": {
+                "type": "stack",
+                "children": [
+                  {
+                    "type": "text",
+                    "text": "SYNTHETIC choose count before answering."
+                  },
+                  {
+                    "type": "choice",
+                    "id": "count",
+                    "label": "Synthetic count",
+                    "options": [
+                      {
+                        "label": "One",
+                        "value": 1
+                      },
+                      {
+                        "label": "Two",
+                        "value": 2
+                      }
+                    ],
+                    "value": 1
+                  },
+                  {
+                    "type": "form",
+                    "id": "act",
+                    "fields": [
+                      {
+                        "id": "body",
+                        "label": "Synthetic body"
+                      }
+                    ],
+                    "submitLabel": "Synthetic Save"
+                  }
+                ]
+              }
+            }
+          ],
+          "answers": [
+            {
+              "id": "93293925-37d2-488f-a671-8286890e5655",
+              "action": "act",
+              "values": {
+                "fields": {
+                  "body": "SYNTHETIC text"
+                },
+                "inputs": {
+                  "count": 2
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "confirm": {
+      "plain": {
+        "shown": {
+          "text": "The view is on screen; the user's answer arrives as their next message.",
+          "concluded": true
+        },
+        "state": {
+          "ok": true,
+          "value": {
+            "revision": 8,
+            "workspaceId": null,
+            "mainBotId": "chief",
+            "mainBotIds": [
+              "chief"
+            ],
+            "bots": [
+              {
+                "id": "chief",
+                "name": "Chief",
+                "role": "Lead",
+                "sessionId": "chief",
+                "createdAt": 1,
+                "capabilities": [],
+                "avatar": {
+                  "shape": "whale"
+                },
+                "color": "deepseek",
+                "parts": []
+              },
+              {
+                "id": "writer",
+                "name": "Writer",
+                "role": "Write",
+                "sessionId": "writer-now",
+                "createdAt": 2,
+                "capabilities": [],
+                "parts": [
+                  "writer-old"
+                ]
+              }
+            ],
+            "rooms": [
+              {
+                "id": "r1",
+                "name": "Ops",
+                "members": [
+                  "writer"
+                ],
+                "mode": "admin",
+                "admin": "writer",
+                "named": true,
+                "relayLimitDefault": 3,
+                "parts": [
+                  "writer-group"
+                ]
+              }
+            ],
+            "exchangeTurns": {},
+            "questions": {},
+            "views": {
+              "writer-now": {
+                "id": "1a5d62b7-298f-4c10-b6c4-4b5de31e0581",
+                "callId": "call-1",
+                "title": "Synthetic confirm",
+                "view": {
+                  "type": "confirm",
+                  "id": "act",
+                  "confirmLabel": "Confirm",
+                  "cancelLabel": "Cancel"
+                },
+                "askedAt": 1793153572276
+              }
+            },
+            "btwCards": {},
+            "sideChats": {},
+            "agents": [],
+            "secrets": [],
+            "capabilities": [],
+            "secretRequests": {},
+            "colors": [
+              "deepseek",
+              "blue",
+              "violet",
+              "orange",
+              "green",
+              "magenta",
+              "cyan",
+              "red",
+              "yellow",
+              "brown",
+              "gray",
+              "black",
+              "aurora",
+              "charcoal",
+              "graphite",
+              "rose",
+              "sky",
+              "tangerine",
+              "cobalt"
+            ],
+            "models": [],
+            "defaultModel": null,
+            "permissions": null,
+            "modelsKey": "|",
+            "prefs": {},
+            "browser": false,
+            "memory": true,
+            "readOnly": null,
+            "activity": {},
+            "work": {
+              "bots": {},
+              "rooms": {},
+              "approvals": [],
+              "waiting": {},
+              "turns": {},
+              "steered": {}
+            },
+            "memoryNews": {},
+            "memoryReviews": 0,
+            "connectors": [
+              {
+                "id": "github",
+                "name": "GitHub",
+                "state": "off",
+                "account": null
+              }
+            ],
+            "capabilityStatuses": {
+              "chief": {},
+              "writer": {}
+            }
+          }
+        },
+        "payload": {
+          "sessionId": "writer-now",
+          "viewId": "1a5d62b7-298f-4c10-b6c4-4b5de31e0581",
+          "action": "act",
+          "values": {
+            "confirmed": true
+          }
+        },
+        "answer": {
+          "ok": true,
+          "value": true
+        },
+        "reply": {
+          "kind": "answer_to_pending_view",
+          "tool": "show_view",
+          "callId": "call-1",
+          "views": [
+            {
+              "id": "1a5d62b7-298f-4c10-b6c4-4b5de31e0581",
+              "title": "Synthetic confirm",
+              "view": {
+                "type": "confirm",
+                "id": "act",
+                "confirmLabel": "Confirm",
+                "cancelLabel": "Cancel"
+              }
+            }
+          ],
+          "answers": [
+            {
+              "id": "1a5d62b7-298f-4c10-b6c4-4b5de31e0581",
+              "action": "act",
+              "values": {
+                "confirmed": true
+              }
+            }
+          ]
+        }
+      },
+      "omitted": {
+        "shown": {
+          "text": "The view is on screen; the user's answer arrives as their next message.",
+          "concluded": true
+        },
+        "state": {
+          "ok": true,
+          "value": {
+            "revision": 10,
+            "workspaceId": null,
+            "mainBotId": "chief",
+            "mainBotIds": [
+              "chief"
+            ],
+            "bots": [
+              {
+                "id": "chief",
+                "name": "Chief",
+                "role": "Lead",
+                "sessionId": "chief",
+                "createdAt": 1,
+                "capabilities": [],
+                "avatar": {
+                  "shape": "whale"
+                },
+                "color": "deepseek",
+                "parts": []
+              },
+              {
+                "id": "writer",
+                "name": "Writer",
+                "role": "Write",
+                "sessionId": "writer-now",
+                "createdAt": 2,
+                "capabilities": [],
+                "parts": [
+                  "writer-old"
+                ]
+              }
+            ],
+            "rooms": [
+              {
+                "id": "r1",
+                "name": "Ops",
+                "members": [
+                  "writer"
+                ],
+                "mode": "admin",
+                "admin": "writer",
+                "named": true,
+                "relayLimitDefault": 3,
+                "parts": [
+                  "writer-group"
+                ]
+              }
+            ],
+            "exchangeTurns": {},
+            "questions": {},
+            "views": {
+              "writer-now": {
+                "id": "398066de-50a9-40d9-9fd1-b376a25a3448",
+                "callId": "call-1",
+                "title": "Synthetic confirm",
+                "view": {
+                  "type": "stack",
+                  "children": [
+                    {
+                      "type": "text",
+                      "text": "SYNTHETIC choose count before answering."
+                    },
+                    {
+                      "type": "choice",
+                      "id": "count",
+                      "label": "Synthetic count",
+                      "options": [
+                        {
+                          "label": "One",
+                          "value": 1
+                        },
+                        {
+                          "label": "Two",
+                          "value": 2
+                        }
+                      ],
+                      "value": 1
+                    },
+                    {
+                      "type": "confirm",
+                      "id": "act",
+                      "confirmLabel": "Confirm",
+                      "cancelLabel": "Cancel"
+                    }
+                  ]
+                },
+                "askedAt": 1793153572281
+              }
+            },
+            "btwCards": {},
+            "sideChats": {},
+            "agents": [],
+            "secrets": [],
+            "capabilities": [],
+            "secretRequests": {},
+            "colors": [
+              "deepseek",
+              "blue",
+              "violet",
+              "orange",
+              "green",
+              "magenta",
+              "cyan",
+              "red",
+              "yellow",
+              "brown",
+              "gray",
+              "black",
+              "aurora",
+              "charcoal",
+              "graphite",
+              "rose",
+              "sky",
+              "tangerine",
+              "cobalt"
+            ],
+            "models": [],
+            "defaultModel": null,
+            "permissions": null,
+            "modelsKey": "|",
+            "prefs": {},
+            "browser": false,
+            "memory": true,
+            "readOnly": null,
+            "activity": {},
+            "work": {
+              "bots": {},
+              "rooms": {},
+              "approvals": [],
+              "waiting": {},
+              "turns": {},
+              "steered": {}
+            },
+            "memoryNews": {},
+            "memoryReviews": 0,
+            "connectors": [
+              {
+                "id": "github",
+                "name": "GitHub",
+                "state": "off",
+                "account": null
+              }
+            ],
+            "capabilityStatuses": {
+              "chief": {},
+              "writer": {}
+            }
+          }
+        },
+        "payload": {
+          "sessionId": "writer-now",
+          "viewId": "398066de-50a9-40d9-9fd1-b376a25a3448",
+          "action": "act",
+          "values": {
+            "confirmed": true
+          }
+        },
+        "answer": {
+          "ok": true,
+          "value": true
+        },
+        "reply": {
+          "kind": "answer_to_pending_view",
+          "tool": "show_view",
+          "callId": "call-1",
+          "views": [
+            {
+              "id": "398066de-50a9-40d9-9fd1-b376a25a3448",
+              "title": "Synthetic confirm",
+              "view": {
+                "type": "stack",
+                "children": [
+                  {
+                    "type": "text",
+                    "text": "SYNTHETIC choose count before answering."
+                  },
+                  {
+                    "type": "choice",
+                    "id": "count",
+                    "label": "Synthetic count",
+                    "options": [
+                      {
+                        "label": "One",
+                        "value": 1
+                      },
+                      {
+                        "label": "Two",
+                        "value": 2
+                      }
+                    ],
+                    "value": 1
+                  },
+                  {
+                    "type": "confirm",
+                    "id": "act",
+                    "confirmLabel": "Confirm",
+                    "cancelLabel": "Cancel"
+                  }
+                ]
+              }
+            }
+          ],
+          "answers": [
+            {
+              "id": "398066de-50a9-40d9-9fd1-b376a25a3448",
+              "action": "act",
+              "values": {
+                "confirmed": true,
+                "inputs": {
+                  "count": 1
+                }
+              }
+            }
+          ]
+        }
+      },
+      "selected": {
+        "shown": {
+          "text": "The view is on screen; the user's answer arrives as their next message.",
+          "concluded": true
+        },
+        "state": {
+          "ok": true,
+          "value": {
+            "revision": 12,
+            "workspaceId": null,
+            "mainBotId": "chief",
+            "mainBotIds": [
+              "chief"
+            ],
+            "bots": [
+              {
+                "id": "chief",
+                "name": "Chief",
+                "role": "Lead",
+                "sessionId": "chief",
+                "createdAt": 1,
+                "capabilities": [],
+                "avatar": {
+                  "shape": "whale"
+                },
+                "color": "deepseek",
+                "parts": []
+              },
+              {
+                "id": "writer",
+                "name": "Writer",
+                "role": "Write",
+                "sessionId": "writer-now",
+                "createdAt": 2,
+                "capabilities": [],
+                "parts": [
+                  "writer-old"
+                ]
+              }
+            ],
+            "rooms": [
+              {
+                "id": "r1",
+                "name": "Ops",
+                "members": [
+                  "writer"
+                ],
+                "mode": "admin",
+                "admin": "writer",
+                "named": true,
+                "relayLimitDefault": 3,
+                "parts": [
+                  "writer-group"
+                ]
+              }
+            ],
+            "exchangeTurns": {},
+            "questions": {},
+            "views": {
+              "writer-now": {
+                "id": "e88e0d23-e17c-4684-b44f-72822b1387d4",
+                "callId": "call-1",
+                "title": "Synthetic confirm",
+                "view": {
+                  "type": "stack",
+                  "children": [
+                    {
+                      "type": "text",
+                      "text": "SYNTHETIC choose count before answering."
+                    },
+                    {
+                      "type": "choice",
+                      "id": "count",
+                      "label": "Synthetic count",
+                      "options": [
+                        {
+                          "label": "One",
+                          "value": 1
+                        },
+                        {
+                          "label": "Two",
+                          "value": 2
+                        }
+                      ],
+                      "value": 1
+                    },
+                    {
+                      "type": "confirm",
+                      "id": "act",
+                      "confirmLabel": "Confirm",
+                      "cancelLabel": "Cancel"
+                    }
+                  ]
+                },
+                "askedAt": 1793153572287
+              }
+            },
+            "btwCards": {},
+            "sideChats": {},
+            "agents": [],
+            "secrets": [],
+            "capabilities": [],
+            "secretRequests": {},
+            "colors": [
+              "deepseek",
+              "blue",
+              "violet",
+              "orange",
+              "green",
+              "magenta",
+              "cyan",
+              "red",
+              "yellow",
+              "brown",
+              "gray",
+              "black",
+              "aurora",
+              "charcoal",
+              "graphite",
+              "rose",
+              "sky",
+              "tangerine",
+              "cobalt"
+            ],
+            "models": [],
+            "defaultModel": null,
+            "permissions": null,
+            "modelsKey": "|",
+            "prefs": {},
+            "browser": false,
+            "memory": true,
+            "readOnly": null,
+            "activity": {},
+            "work": {
+              "bots": {},
+              "rooms": {},
+              "approvals": [],
+              "waiting": {},
+              "turns": {},
+              "steered": {}
+            },
+            "memoryNews": {},
+            "memoryReviews": 0,
+            "connectors": [
+              {
+                "id": "github",
+                "name": "GitHub",
+                "state": "off",
+                "account": null
+              }
+            ],
+            "capabilityStatuses": {
+              "chief": {},
+              "writer": {}
+            }
+          }
+        },
+        "payload": {
+          "sessionId": "writer-now",
+          "viewId": "e88e0d23-e17c-4684-b44f-72822b1387d4",
+          "action": "act",
+          "values": {
+            "confirmed": true,
+            "inputs": {
+              "count": 2
+            }
+          }
+        },
+        "answer": {
+          "ok": true,
+          "value": true
+        },
+        "reply": {
+          "kind": "answer_to_pending_view",
+          "tool": "show_view",
+          "callId": "call-1",
+          "views": [
+            {
+              "id": "e88e0d23-e17c-4684-b44f-72822b1387d4",
+              "title": "Synthetic confirm",
+              "view": {
+                "type": "stack",
+                "children": [
+                  {
+                    "type": "text",
+                    "text": "SYNTHETIC choose count before answering."
+                  },
+                  {
+                    "type": "choice",
+                    "id": "count",
+                    "label": "Synthetic count",
+                    "options": [
+                      {
+                        "label": "One",
+                        "value": 1
+                      },
+                      {
+                        "label": "Two",
+                        "value": 2
+                      }
+                    ],
+                    "value": 1
+                  },
+                  {
+                    "type": "confirm",
+                    "id": "act",
+                    "confirmLabel": "Confirm",
+                    "cancelLabel": "Cancel"
+                  }
+                ]
+              }
+            }
+          ],
+          "answers": [
+            {
+              "id": "e88e0d23-e17c-4684-b44f-72822b1387d4",
+              "action": "act",
+              "values": {
+                "confirmed": true,
+                "inputs": {
+                  "count": 2
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "options": {
+      "plain": {
+        "shown": {
+          "text": "The view is on screen; the user's answer arrives as their next message.",
+          "concluded": true
+        },
+        "state": {
+          "ok": true,
+          "value": {
+            "revision": 14,
+            "workspaceId": null,
+            "mainBotId": "chief",
+            "mainBotIds": [
+              "chief"
+            ],
+            "bots": [
+              {
+                "id": "chief",
+                "name": "Chief",
+                "role": "Lead",
+                "sessionId": "chief",
+                "createdAt": 1,
+                "capabilities": [],
+                "avatar": {
+                  "shape": "whale"
+                },
+                "color": "deepseek",
+                "parts": []
+              },
+              {
+                "id": "writer",
+                "name": "Writer",
+                "role": "Write",
+                "sessionId": "writer-now",
+                "createdAt": 2,
+                "capabilities": [],
+                "parts": [
+                  "writer-old"
+                ]
+              }
+            ],
+            "rooms": [
+              {
+                "id": "r1",
+                "name": "Ops",
+                "members": [
+                  "writer"
+                ],
+                "mode": "admin",
+                "admin": "writer",
+                "named": true,
+                "relayLimitDefault": 3,
+                "parts": [
+                  "writer-group"
+                ]
+              }
+            ],
+            "exchangeTurns": {},
+            "questions": {},
+            "views": {
+              "writer-now": {
+                "id": "d1ca9b90-85e3-4ed4-84f5-ae7a5d48de07",
+                "callId": "call-1",
+                "title": "Synthetic options",
+                "view": {
+                  "type": "options",
+                  "id": "act",
+                  "options": [
+                    {
+                      "label": "Accept"
+                    },
+                    {
+                      "label": "Decline"
+                    }
+                  ]
+                },
+                "askedAt": 1793153572290
+              }
+            },
+            "btwCards": {},
+            "sideChats": {},
+            "agents": [],
+            "secrets": [],
+            "capabilities": [],
+            "secretRequests": {},
+            "colors": [
+              "deepseek",
+              "blue",
+              "violet",
+              "orange",
+              "green",
+              "magenta",
+              "cyan",
+              "red",
+              "yellow",
+              "brown",
+              "gray",
+              "black",
+              "aurora",
+              "charcoal",
+              "graphite",
+              "rose",
+              "sky",
+              "tangerine",
+              "cobalt"
+            ],
+            "models": [],
+            "defaultModel": null,
+            "permissions": null,
+            "modelsKey": "|",
+            "prefs": {},
+            "browser": false,
+            "memory": true,
+            "readOnly": null,
+            "activity": {},
+            "work": {
+              "bots": {},
+              "rooms": {},
+              "approvals": [],
+              "waiting": {},
+              "turns": {},
+              "steered": {}
+            },
+            "memoryNews": {},
+            "memoryReviews": 0,
+            "connectors": [
+              {
+                "id": "github",
+                "name": "GitHub",
+                "state": "off",
+                "account": null
+              }
+            ],
+            "capabilityStatuses": {
+              "chief": {},
+              "writer": {}
+            }
+          }
+        },
+        "payload": {
+          "sessionId": "writer-now",
+          "viewId": "d1ca9b90-85e3-4ed4-84f5-ae7a5d48de07",
+          "action": "act",
+          "values": {
+            "selected": [
+              "Accept"
+            ]
+          }
+        },
+        "answer": {
+          "ok": true,
+          "value": true
+        },
+        "reply": {
+          "kind": "answer_to_pending_view",
+          "tool": "show_view",
+          "callId": "call-1",
+          "views": [
+            {
+              "id": "d1ca9b90-85e3-4ed4-84f5-ae7a5d48de07",
+              "title": "Synthetic options",
+              "view": {
+                "type": "options",
+                "id": "act",
+                "options": [
+                  {
+                    "label": "Accept"
+                  },
+                  {
+                    "label": "Decline"
+                  }
+                ]
+              }
+            }
+          ],
+          "answers": [
+            {
+              "id": "d1ca9b90-85e3-4ed4-84f5-ae7a5d48de07",
+              "action": "act",
+              "values": {
+                "selected": [
+                  "Accept"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "omitted": {
+        "shown": {
+          "text": "The view is on screen; the user's answer arrives as their next message.",
+          "concluded": true
+        },
+        "state": {
+          "ok": true,
+          "value": {
+            "revision": 16,
+            "workspaceId": null,
+            "mainBotId": "chief",
+            "mainBotIds": [
+              "chief"
+            ],
+            "bots": [
+              {
+                "id": "chief",
+                "name": "Chief",
+                "role": "Lead",
+                "sessionId": "chief",
+                "createdAt": 1,
+                "capabilities": [],
+                "avatar": {
+                  "shape": "whale"
+                },
+                "color": "deepseek",
+                "parts": []
+              },
+              {
+                "id": "writer",
+                "name": "Writer",
+                "role": "Write",
+                "sessionId": "writer-now",
+                "createdAt": 2,
+                "capabilities": [],
+                "parts": [
+                  "writer-old"
+                ]
+              }
+            ],
+            "rooms": [
+              {
+                "id": "r1",
+                "name": "Ops",
+                "members": [
+                  "writer"
+                ],
+                "mode": "admin",
+                "admin": "writer",
+                "named": true,
+                "relayLimitDefault": 3,
+                "parts": [
+                  "writer-group"
+                ]
+              }
+            ],
+            "exchangeTurns": {},
+            "questions": {},
+            "views": {
+              "writer-now": {
+                "id": "20b79e18-745f-4d70-926d-32269b90c93a",
+                "callId": "call-1",
+                "title": "Synthetic options",
+                "view": {
+                  "type": "stack",
+                  "children": [
+                    {
+                      "type": "text",
+                      "text": "SYNTHETIC choose count before answering."
+                    },
+                    {
+                      "type": "choice",
+                      "id": "count",
+                      "label": "Synthetic count",
+                      "options": [
+                        {
+                          "label": "One",
+                          "value": 1
+                        },
+                        {
+                          "label": "Two",
+                          "value": 2
+                        }
+                      ],
+                      "value": 1
+                    },
+                    {
+                      "type": "options",
+                      "id": "act",
+                      "options": [
+                        {
+                          "label": "Accept"
+                        },
+                        {
+                          "label": "Decline"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "askedAt": 1793153572295
+              }
+            },
+            "btwCards": {},
+            "sideChats": {},
+            "agents": [],
+            "secrets": [],
+            "capabilities": [],
+            "secretRequests": {},
+            "colors": [
+              "deepseek",
+              "blue",
+              "violet",
+              "orange",
+              "green",
+              "magenta",
+              "cyan",
+              "red",
+              "yellow",
+              "brown",
+              "gray",
+              "black",
+              "aurora",
+              "charcoal",
+              "graphite",
+              "rose",
+              "sky",
+              "tangerine",
+              "cobalt"
+            ],
+            "models": [],
+            "defaultModel": null,
+            "permissions": null,
+            "modelsKey": "|",
+            "prefs": {},
+            "browser": false,
+            "memory": true,
+            "readOnly": null,
+            "activity": {},
+            "work": {
+              "bots": {},
+              "rooms": {},
+              "approvals": [],
+              "waiting": {},
+              "turns": {},
+              "steered": {}
+            },
+            "memoryNews": {},
+            "memoryReviews": 0,
+            "connectors": [
+              {
+                "id": "github",
+                "name": "GitHub",
+                "state": "off",
+                "account": null
+              }
+            ],
+            "capabilityStatuses": {
+              "chief": {},
+              "writer": {}
+            }
+          }
+        },
+        "payload": {
+          "sessionId": "writer-now",
+          "viewId": "20b79e18-745f-4d70-926d-32269b90c93a",
+          "action": "act",
+          "values": {
+            "selected": [
+              "Accept"
+            ]
+          }
+        },
+        "answer": {
+          "ok": true,
+          "value": true
+        },
+        "reply": {
+          "kind": "answer_to_pending_view",
+          "tool": "show_view",
+          "callId": "call-1",
+          "views": [
+            {
+              "id": "20b79e18-745f-4d70-926d-32269b90c93a",
+              "title": "Synthetic options",
+              "view": {
+                "type": "stack",
+                "children": [
+                  {
+                    "type": "text",
+                    "text": "SYNTHETIC choose count before answering."
+                  },
+                  {
+                    "type": "choice",
+                    "id": "count",
+                    "label": "Synthetic count",
+                    "options": [
+                      {
+                        "label": "One",
+                        "value": 1
+                      },
+                      {
+                        "label": "Two",
+                        "value": 2
+                      }
+                    ],
+                    "value": 1
+                  },
+                  {
+                    "type": "options",
+                    "id": "act",
+                    "options": [
+                      {
+                        "label": "Accept"
+                      },
+                      {
+                        "label": "Decline"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "answers": [
+            {
+              "id": "20b79e18-745f-4d70-926d-32269b90c93a",
+              "action": "act",
+              "values": {
+                "selected": [
+                  "Accept"
+                ],
+                "inputs": {
+                  "count": 1
+                }
+              }
+            }
+          ]
+        }
+      },
+      "selected": {
+        "shown": {
+          "text": "The view is on screen; the user's answer arrives as their next message.",
+          "concluded": true
+        },
+        "state": {
+          "ok": true,
+          "value": {
+            "revision": 18,
+            "workspaceId": null,
+            "mainBotId": "chief",
+            "mainBotIds": [
+              "chief"
+            ],
+            "bots": [
+              {
+                "id": "chief",
+                "name": "Chief",
+                "role": "Lead",
+                "sessionId": "chief",
+                "createdAt": 1,
+                "capabilities": [],
+                "avatar": {
+                  "shape": "whale"
+                },
+                "color": "deepseek",
+                "parts": []
+              },
+              {
+                "id": "writer",
+                "name": "Writer",
+                "role": "Write",
+                "sessionId": "writer-now",
+                "createdAt": 2,
+                "capabilities": [],
+                "parts": [
+                  "writer-old"
+                ]
+              }
+            ],
+            "rooms": [
+              {
+                "id": "r1",
+                "name": "Ops",
+                "members": [
+                  "writer"
+                ],
+                "mode": "admin",
+                "admin": "writer",
+                "named": true,
+                "relayLimitDefault": 3,
+                "parts": [
+                  "writer-group"
+                ]
+              }
+            ],
+            "exchangeTurns": {},
+            "questions": {},
+            "views": {
+              "writer-now": {
+                "id": "6a096cee-659d-45b2-b76f-32aeabb4674d",
+                "callId": "call-1",
+                "title": "Synthetic options",
+                "view": {
+                  "type": "stack",
+                  "children": [
+                    {
+                      "type": "text",
+                      "text": "SYNTHETIC choose count before answering."
+                    },
+                    {
+                      "type": "choice",
+                      "id": "count",
+                      "label": "Synthetic count",
+                      "options": [
+                        {
+                          "label": "One",
+                          "value": 1
+                        },
+                        {
+                          "label": "Two",
+                          "value": 2
+                        }
+                      ],
+                      "value": 1
+                    },
+                    {
+                      "type": "options",
+                      "id": "act",
+                      "options": [
+                        {
+                          "label": "Accept"
+                        },
+                        {
+                          "label": "Decline"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "askedAt": 1793153572298
+              }
+            },
+            "btwCards": {},
+            "sideChats": {},
+            "agents": [],
+            "secrets": [],
+            "capabilities": [],
+            "secretRequests": {},
+            "colors": [
+              "deepseek",
+              "blue",
+              "violet",
+              "orange",
+              "green",
+              "magenta",
+              "cyan",
+              "red",
+              "yellow",
+              "brown",
+              "gray",
+              "black",
+              "aurora",
+              "charcoal",
+              "graphite",
+              "rose",
+              "sky",
+              "tangerine",
+              "cobalt"
+            ],
+            "models": [],
+            "defaultModel": null,
+            "permissions": null,
+            "modelsKey": "|",
+            "prefs": {},
+            "browser": false,
+            "memory": true,
+            "readOnly": null,
+            "activity": {},
+            "work": {
+              "bots": {},
+              "rooms": {},
+              "approvals": [],
+              "waiting": {},
+              "turns": {},
+              "steered": {}
+            },
+            "memoryNews": {},
+            "memoryReviews": 0,
+            "connectors": [
+              {
+                "id": "github",
+                "name": "GitHub",
+                "state": "off",
+                "account": null
+              }
+            ],
+            "capabilityStatuses": {
+              "chief": {},
+              "writer": {}
+            }
+          }
+        },
+        "payload": {
+          "sessionId": "writer-now",
+          "viewId": "6a096cee-659d-45b2-b76f-32aeabb4674d",
+          "action": "act",
+          "values": {
+            "selected": [
+              "Accept"
+            ],
+            "inputs": {
+              "count": 2
+            }
+          }
+        },
+        "answer": {
+          "ok": true,
+          "value": true
+        },
+        "reply": {
+          "kind": "answer_to_pending_view",
+          "tool": "show_view",
+          "callId": "call-1",
+          "views": [
+            {
+              "id": "6a096cee-659d-45b2-b76f-32aeabb4674d",
+              "title": "Synthetic options",
+              "view": {
+                "type": "stack",
+                "children": [
+                  {
+                    "type": "text",
+                    "text": "SYNTHETIC choose count before answering."
+                  },
+                  {
+                    "type": "choice",
+                    "id": "count",
+                    "label": "Synthetic count",
+                    "options": [
+                      {
+                        "label": "One",
+                        "value": 1
+                      },
+                      {
+                        "label": "Two",
+                        "value": 2
+                      }
+                    ],
+                    "value": 1
+                  },
+                  {
+                    "type": "options",
+                    "id": "act",
+                    "options": [
+                      {
+                        "label": "Accept"
+                      },
+                      {
+                        "label": "Decline"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "answers": [
+            {
+              "id": "6a096cee-659d-45b2-b76f-32aeabb4674d",
+              "action": "act",
+              "values": {
+                "selected": [
+                  "Accept"
+                ],
+                "inputs": {
+                  "count": 2
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,4060 @@
+{
+  "sourceCommit": "7e8663cd9c184a550b37238218bdd32c6efc68e9",
+  "sourceFiles": [
+    {
+      "path": "public/scripts/extensions/regex/engine.js",
+      "commit": "7e8663cd9c184a550b37238218bdd32c6efc68e9",
+      "bytes": 16189,
+      "sha256": "091bb3402a12552cf1754d6e4d2b44df38d3553aa374539896c716e78905d350",
+      "gitBlob": "2b6bdc235816542c6348a558665804388f71e73b"
+    },
+    {
+      "path": "public/scripts/extensions/regex/index.js",
+      "commit": "7e8663cd9c184a550b37238218bdd32c6efc68e9",
+      "bytes": 85485,
+      "sha256": "7a43b7d6e40a1b6f38a8a7c53a4d552e1aa56c4a13e893224fddf79b663ecb7f",
+      "gitBlob": "ca51b606cdf04942dacdcb1d9d9589ae38bd62aa"
+    },
+    {
+      "path": "public/scripts/utils.js",
+      "commit": "7e8663cd9c184a550b37238218bdd32c6efc68e9",
+      "bytes": 113042,
+      "sha256": "2a2cfe240d5a84ce2e09ba053db6c0c71473b6406173f614f3521d89f50ada61",
+      "gitBlob": "6d57bb7b1700c06d160df049dea87dd56cbc9f28"
+    }
+  ],
+  "nodeVersion": "v24.22.1",
+  "scope": "Original ST regex functions, deterministic macro/environment adapters; no Dart or browser run.",
+  "cases": [
+    {
+      "name": "mode-writeBack-ordinary",
+      "input": "x x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "phase": "writeBack",
+      "expected": {
+        "output": "Y Y",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "mode-writeBack-prompt",
+      "input": "x x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": true,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "phase": "writeBack",
+      "expected": {
+        "output": "x x",
+        "events": [],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "mode-writeBack-display",
+      "input": "x x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": true,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "phase": "writeBack",
+      "expected": {
+        "output": "x x",
+        "events": [],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "mode-writeBack-both",
+      "input": "x x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": true,
+          "promptOnly": true,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "phase": "writeBack",
+      "expected": {
+        "output": "x x",
+        "events": [],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "mode-prompt-ordinary",
+      "input": "x x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "phase": "prompt",
+      "expected": {
+        "output": "x x",
+        "events": [],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "mode-prompt-prompt",
+      "input": "x x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": true,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "phase": "prompt",
+      "expected": {
+        "output": "Y Y",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "mode-prompt-display",
+      "input": "x x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": true,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "phase": "prompt",
+      "expected": {
+        "output": "x x",
+        "events": [],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "mode-prompt-both",
+      "input": "x x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": true,
+          "promptOnly": true,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "phase": "prompt",
+      "expected": {
+        "output": "Y Y",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "mode-display-ordinary",
+      "input": "x x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "phase": "display",
+      "expected": {
+        "output": "x x",
+        "events": [],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "mode-display-prompt",
+      "input": "x x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": true,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "phase": "display",
+      "expected": {
+        "output": "x x",
+        "events": [],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "mode-display-display",
+      "input": "x x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": true,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "phase": "display",
+      "expected": {
+        "output": "Y Y",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "mode-display-both",
+      "input": "x x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": true,
+          "promptOnly": true,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "phase": "display",
+      "expected": {
+        "output": "Y Y",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "source-and-array-order",
+      "input": "a",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "a",
+          "replaceString": "b",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        },
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "b",
+          "replaceString": "c",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "preset": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "c",
+          "replaceString": "d",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "character": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "d",
+          "replaceString": "e",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "e",
+        "events": [
+          {
+            "text": "b",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "c",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "d",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "e",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "wrong-placement",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            2
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "placement": 1,
+      "expected": {
+        "output": "x",
+        "events": [],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "world-info-needs-prompt-only",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            5
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "placement": 5,
+      "phase": "prompt",
+      "expected": {
+        "output": "x",
+        "events": [],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "world-info-prompt",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            5
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": true,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "placement": 5,
+      "phase": "prompt",
+      "expected": {
+        "output": "Y",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "reasoning-write-back",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "placement": 6,
+      "expected": {
+        "output": "Y",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "disabled-script-no-macros",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "{{inc}}",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": true,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 1,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "x",
+        "events": [],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "disabled-extension-no-macros",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "{{inc}}",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 1,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "enabled": false,
+      "expected": {
+        "output": "x",
+        "events": [],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "edit-skips-default",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "isEdit": true,
+      "expected": {
+        "output": "x",
+        "events": [],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "edit-allowed",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": true,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "isEdit": true,
+      "expected": {
+        "output": "Y",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "edit-still-filtered-in-prompt",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": true,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "phase": "prompt",
+      "isEdit": true,
+      "expected": {
+        "output": "x",
+        "events": [],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "write-back-ignores-depth",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": 5,
+          "maxDepth": 5
+        }
+      ],
+      "depth": 0,
+      "expected": {
+        "output": "Y",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "prompt-min-boundary",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": true,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": 2,
+          "maxDepth": null
+        }
+      ],
+      "phase": "prompt",
+      "depth": 2,
+      "expected": {
+        "output": "Y",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "prompt-below-minimum",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": true,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": 2,
+          "maxDepth": null
+        }
+      ],
+      "phase": "prompt",
+      "depth": 1,
+      "expected": {
+        "output": "x",
+        "events": [],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "display-max-boundary",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": true,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": 2
+        }
+      ],
+      "phase": "display",
+      "depth": 2,
+      "expected": {
+        "output": "Y",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "display-above-maximum",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": true,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": 2
+        }
+      ],
+      "phase": "display",
+      "depth": 3,
+      "expected": {
+        "output": "x",
+        "events": [],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "continue-minus-one",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": true,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": -1,
+          "maxDepth": 0
+        }
+      ],
+      "phase": "prompt",
+      "depth": -1,
+      "expected": {
+        "output": "Y",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "continue-excluded-by-zero",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": true,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": 0,
+          "maxDepth": null
+        }
+      ],
+      "phase": "prompt",
+      "depth": -1,
+      "expected": {
+        "output": "x",
+        "events": [],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "invalid-negative-bounds-ignored",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": true,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": -2,
+          "maxDepth": -1
+        }
+      ],
+      "phase": "prompt",
+      "depth": 99,
+      "expected": {
+        "output": "Y",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "absent-depth-unfiltered",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": true,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": 5,
+          "maxDepth": 5
+        }
+      ],
+      "phase": "prompt",
+      "expected": {
+        "output": "Y",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "numeric-string-bounds",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": true,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": "2",
+          "maxDepth": "3"
+        }
+      ],
+      "phase": "prompt",
+      "depth": 2,
+      "expected": {
+        "output": "Y",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "empty-string-bound-is-zero",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": true,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": ""
+        }
+      ],
+      "phase": "prompt",
+      "depth": 1,
+      "expected": {
+        "output": "x",
+        "events": [],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "nan-bounds-ignored",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": true,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": "bad",
+          "maxDepth": {}
+        }
+      ],
+      "phase": "prompt",
+      "depth": 99,
+      "expected": {
+        "output": "Y",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "fractional-depth",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": true,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": 1.5,
+          "maxDepth": 2.5
+        }
+      ],
+      "phase": "prompt",
+      "depth": 1.5,
+      "expected": {
+        "output": "Y",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "legacy-zero-only",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            0
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "placement": 5,
+      "phase": "prompt",
+      "migrate": true,
+      "expected": {
+        "output": "Y",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "legacy-zero-with-user",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            0,
+            1
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "placement": 2,
+      "phase": "prompt",
+      "migrate": true,
+      "expected": {
+        "output": "x",
+        "events": [],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "legacy-zero-no-write-back",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            0
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "migrate": true,
+      "expected": {
+        "output": "x",
+        "events": [],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "legacy-four-only",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            4
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "placement": 3,
+      "migrate": true,
+      "expected": {
+        "output": "Y",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "legacy-four-with-user",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            4,
+            1
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "placement": 3,
+      "migrate": true,
+      "expected": {
+        "output": "x",
+        "events": [],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "legacy-zero-then-four",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            0,
+            4
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "placement": 3,
+      "phase": "prompt",
+      "migrate": true,
+      "expected": {
+        "output": "Y",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "legacy-zero-with-unknown",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            0,
+            "unknown"
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "phase": "prompt",
+      "migrate": true,
+      "expected": {
+        "output": "x",
+        "events": [],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "legacy-duplicate-zero",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            0,
+            0
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "phase": "prompt",
+      "migrate": true,
+      "expected": {
+        "output": "x",
+        "events": [],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "first-without-g",
+      "input": "x x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "x",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "Y x",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "case-insensitive-global",
+      "input": "x X",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/gi",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "Y Y",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "multiline-crlf",
+      "input": "a\r\nb\r\n",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/^.$/gm",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "Y\r\nY\r\n",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "dotall-crlf",
+      "input": "a\r\nb",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/.+/gs",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "Y",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "dot-without-s",
+      "input": "a\r\nb",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/./g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "Y\r\nY",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "invalid-syntax-skipped",
+      "input": "[x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/[/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "[x",
+        "events": [],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "unsupported-whitelisted-flag-x",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/x",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "x",
+        "events": [],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "unknown-flag-is-literal",
+      "input": "/x/y x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/y",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "Y x",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "duplicate-flags-is-literal",
+      "input": "/x/gg /x/gg",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/gg",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "Y /x/gg",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "d-flag-is-literal",
+      "input": "/x/d",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/d",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "Y",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "v-flag-is-literal",
+      "input": "/x/v",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/v",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "Y",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "parser-ignores-after-newline",
+      "input": "x\ng",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/\ng",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "Y\ng",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "raw-pattern-newline-is-truncated",
+      "input": "a\nb",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "a\nb",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "Y\nb",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "greedy-slash-parser",
+      "input": "/a/",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/[/a]+/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "Y",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "empty-input-guard",
+      "input": "",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/(?:)/g",
+          "replaceString": "{{inc}}",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "",
+        "events": [],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "empty-pattern-guard",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "",
+          "replaceString": "{{inc}}",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "x",
+        "events": [],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "newline-pattern-unparseable",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "\n",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "x",
+        "events": [],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "empty-matches-utf16",
+      "input": "😀",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/(?:)/g",
+          "replaceString": "|",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "|\ud83d|\ude00|",
+        "events": [
+          {
+            "text": "|",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "|",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "|",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "empty-matches-unicode",
+      "input": "😀",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/(?:)/gu",
+          "replaceString": "|",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "|😀|",
+        "events": [
+          {
+            "text": "|",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "|",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "empty-matches-end-boundary",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/^|$/g",
+          "replaceString": "|",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "|x|",
+        "events": [
+          {
+            "text": "|",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "|",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "empty-and-nonempty-matches",
+      "input": "ba",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/a*/g",
+          "replaceString": "_",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "_b__",
+        "events": [
+          {
+            "text": "_",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "_",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "_",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "emoji-code-units",
+      "input": "😀你",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/./g",
+          "replaceString": "X",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "XXX",
+        "events": [
+          {
+            "text": "X",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "X",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "X",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "emoji-code-points",
+      "input": "😀你",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/./gu",
+          "replaceString": "X",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "XX",
+        "events": [
+          {
+            "text": "X",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "X",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "unicode-property-han",
+      "input": "你好abc再见",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/\\p{Script=Han}+/gu",
+          "replaceString": "X",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "XabcX",
+        "events": [
+          {
+            "text": "X",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "X",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "unicode-ignore-case",
+      "input": "sſS",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/s/giu",
+          "replaceString": "X",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "XXX",
+        "events": [
+          {
+            "text": "X",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "X",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "X",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "cjk-lookbehind",
+      "input": "你好你好",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/(?<=你)好/g",
+          "replaceString": "X",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "你X你X",
+        "events": [
+          {
+            "text": "X",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "X",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "lookahead-captures",
+      "input": "aba",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/(?=(a))/g",
+          "replaceString": "<$1>",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "<a>ab<a>a",
+        "events": [
+          {
+            "text": "<a>",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "<a>",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "numbered-named-unmatched-groups",
+      "input": "ab a",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/(?<first>a)(b)?/g",
+          "replaceString": "$0/$1/$2/$<first>/$<missing>/$99",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "ab/a/b/a// a/a//a//",
+        "events": [
+          {
+            "text": "ab/a/b/a//",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "a/a//a//",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "cjk-named-group",
+      "input": "你好",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/(?<词>你)/u",
+          "replaceString": "[$<词>]",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "[你]好",
+        "events": [
+          {
+            "text": "[你]",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "full-match-macro-case",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "{{MATCH}}/{{match}}/$0",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "x/x/x",
+        "events": [
+          {
+            "text": "x/x/x",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "unsupported-replacement-tokens",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "$&|$`|$'|$$|$<>",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "$&|$`|$'|$$|$<>",
+        "events": [
+          {
+            "text": "$&|$`|$'|$$|$<>",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "dollar-prefix-before-capture",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "$$0",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "$x",
+        "events": [
+          {
+            "text": "$x",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "no-two-digit-fallback",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "(x)",
+          "replaceString": "$10/$01",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "/x",
+        "events": [
+          {
+            "text": "/x",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "offset-zero-falsy",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "x",
+          "replaceString": "$0|$1|$2|$3|$99",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "x||x||",
+        "events": [
+          {
+            "text": "x||x||",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "offset-and-input-slots",
+      "input": "ax",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "x",
+          "replaceString": "$0|$1|$2|$3|$99",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "ax|1|ax||",
+        "events": [
+          {
+            "text": "x|1|ax||",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "offset-with-trim-error",
+      "input": "ax",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "x",
+          "replaceString": "$1",
+          "trimStrings": [
+            "a"
+          ],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "error": {
+          "name": "TypeError",
+          "message": "finalString.replaceAll is not a function"
+        },
+        "events": [
+          {
+            "text": "a",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "named-groups-object-error",
+      "input": "ax",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "(?<n>x)",
+          "replaceString": "$4",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "error": {
+          "name": "TypeError",
+          "message": "Cannot convert object to primitive value"
+        },
+        "events": [],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "trim-order-is-literal",
+      "input": "ababa",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "(ababa)",
+          "replaceString": "$1",
+          "trimStrings": [
+            "ab",
+            "a"
+          ],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "",
+        "events": [
+          {
+            "text": "ab",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "a",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "trim-cjk-emoji",
+      "input": "你😀你",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "(你😀你)",
+          "replaceString": "$1",
+          "trimStrings": [
+            "你"
+          ],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "😀",
+        "events": [
+          {
+            "text": "你",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "😀",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "trim-repeated-reference-expands-each-time",
+      "input": "123",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "(123)",
+          "replaceString": "$1/$1",
+          "trimStrings": [
+            "{{inc}}"
+          ],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "23/13",
+        "events": [
+          {
+            "text": "{{inc}}",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "{{inc}}",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "23/13",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 2
+      },
+      "warnings": []
+    },
+    {
+      "name": "unmatched-capture-does-not-expand-trims",
+      "input": "a",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "(a)(b)?",
+          "replaceString": "$2/$2",
+          "trimStrings": [
+            "{{inc}}"
+          ],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "/",
+        "events": [
+          {
+            "text": "/",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "macro-result-is-not-reparsed-as-captures",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "{{user}}",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "macros": {
+        "user": "$0"
+      },
+      "expected": {
+        "output": "$0",
+        "events": [
+          {
+            "text": "{{user}}",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "replacement-macro-per-match",
+      "input": "xx",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "{{inc}}",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "12",
+        "events": [
+          {
+            "text": "{{inc}}",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "{{inc}}",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 2
+      },
+      "warnings": []
+    },
+    {
+      "name": "replacement-only-does-not-expand-untouched-text",
+      "input": "{{inc}}x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "{{inc}}Y",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "raw-pattern-macro",
+      "input": "a.b axb",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/{{user}}/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 1,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "macros": {
+        "user": "a.b"
+      },
+      "expected": {
+        "output": "Y Y",
+        "events": [
+          {
+            "text": "/{{user}}/g",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "escaped-pattern-macro",
+      "input": "a.b axb",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/{{user}}/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 2,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "macros": {
+        "user": "a.b"
+      },
+      "expected": {
+        "output": "Y axb",
+        "events": [
+          {
+            "text": "/{{user}}/g",
+            "characterOverride": null,
+            "postProcess": true
+          },
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "legacy-true-means-raw",
+      "input": "a.b axb",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/{{user}}/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": true,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "macros": {
+        "user": "a.b"
+      },
+      "expected": {
+        "output": "Y Y",
+        "events": [
+          {
+            "text": "/{{user}}/g",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "string-number-means-escaped",
+      "input": "a.b axb",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/{{user}}/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": "2",
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "macros": {
+        "user": "a.b"
+      },
+      "expected": {
+        "output": "Y axb",
+        "events": [
+          {
+            "text": "/{{user}}/g",
+            "characterOverride": null,
+            "postProcess": true
+          },
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "unknown-mode-leaves-pattern-literal",
+      "input": "{{user}}",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "{{user}}",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 99,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "macros": {
+        "user": "other"
+      },
+      "expected": {
+        "output": "Y",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": [
+        "runRegexScript: Unknown substituteRegex value 99. Using raw regex."
+      ]
+    },
+    {
+      "name": "no-match-pattern-macro-still-runs",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "{{inc}}",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 1,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "x",
+        "events": [
+          {
+            "text": "{{inc}}",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 1
+      },
+      "warnings": []
+    },
+    {
+      "name": "invalid-expanded-pattern-still-mutates",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "[{{inc}}",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 1,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "x",
+        "events": [
+          {
+            "text": "[{{inc}}",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 1
+      },
+      "warnings": []
+    },
+    {
+      "name": "sanitizer-only-macro-values",
+      "input": "pre(a.b)-post preaxb-post",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/pre{{user}}-post/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 2,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "macros": {
+        "user": "(a.b)"
+      },
+      "expected": {
+        "output": "Y preaxb-post",
+        "events": [
+          {
+            "text": "/pre{{user}}-post/g",
+            "characterOverride": null,
+            "postProcess": true
+          },
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "sanitizer-all-controls-and-syntax",
+      "input": "\n\r\t\u000b\f\u0000.^$*+?{}[]\\/|()-你😀",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "^{{user}}$",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 2,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "macros": {
+        "user": "\n\r\t\u000b\f\u0000.^$*+?{}[]\\/|()-你😀"
+      },
+      "expected": {
+        "output": "Y",
+        "events": [
+          {
+            "text": "^{{user}}$",
+            "characterOverride": null,
+            "postProcess": true
+          },
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "character-override-only-trims",
+      "input": "LiveStored",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "({{char}}Stored)",
+          "replaceString": "$1/{{char}}",
+          "trimStrings": [
+            "{{char}}"
+          ],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 1,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "characterOverride": "Stored",
+      "macros": {
+        "char": "Live"
+      },
+      "expected": {
+        "output": "Live/Live",
+        "events": [
+          {
+            "text": "({{char}}Stored)",
+            "characterOverride": null,
+            "postProcess": false
+          },
+          {
+            "text": "{{char}}",
+            "characterOverride": "Stored",
+            "postProcess": false
+          },
+          {
+            "text": "Live/{{char}}",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "direct-run-bypasses-filters",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": true,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": 99,
+          "maxDepth": null
+        }
+      ],
+      "direct": true,
+      "expected": {
+        "output": "Y",
+        "events": [
+          {
+            "text": "Y",
+            "characterOverride": null,
+            "postProcess": false
+          }
+        ],
+        "counter": 0
+      },
+      "warnings": []
+    },
+    {
+      "name": "truthy-string-disabled",
+      "input": "x",
+      "global": [
+        {
+          "id": "case",
+          "scriptName": "fixture",
+          "findRegex": "/x/g",
+          "replaceString": "Y",
+          "trimStrings": [],
+          "placement": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "disabled": "false",
+          "markdownOnly": false,
+          "promptOnly": false,
+          "runOnEdit": false,
+          "substituteRegex": 0,
+          "minDepth": null,
+          "maxDepth": null
+        }
+      ],
+      "expected": {
+        "output": "x",
+        "events": [],
+        "counter": 0
+      },
+      "warnings": []
+    }
+  ]
+}

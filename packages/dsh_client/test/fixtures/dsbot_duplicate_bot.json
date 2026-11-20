@@ -1,0 +1,235 @@
+{
+  "provenance": {
+    "repo": "Fei2411/DS-Bot",
+    "official": "4a7b55069ad300eae8be42a74f31bc170b40ead7",
+    "scope": "Official v0.2.3 Fetch endpoint + actual roster/createBot + temporary filesystem, fakeContext sessions. No model calls. Not full DSH Host."
+  },
+  "original": {
+    "ok": true,
+    "value": {
+      "id": "s2",
+      "name": "Writer",
+      "role": "写作者",
+      "color": "blue",
+      "workDir": "<temporary-project>/project-中国",
+      "instructions": "Use concise language.",
+      "createdAt": 1793138789972,
+      "createdBy": null,
+      "capabilities": [],
+      "kickoff": {
+        "text": "The user just created you. Greet the user in one short message, then ask in one short question what you should focus on.\nWhere your instructions say otherwise, follow them.",
+        "from": null
+      }
+    }
+  },
+  "first": {
+    "ok": true,
+    "value": {
+      "id": "s3",
+      "name": "Writer copy",
+      "role": "写作者",
+      "color": "blue",
+      "workDir": "<temporary-project>/project-中国",
+      "instructions": "Use concise language.",
+      "createdAt": 1793138789974,
+      "createdBy": null,
+      "capabilities": [],
+      "kickoff": {
+        "text": "The user just made you as a copy of Writer: same job, fresh memory. Greet the user in one short message, then ask in one short question what this copy should focus on.\nWhere your instructions say otherwise, follow them.",
+        "from": null
+      }
+    }
+  },
+  "second": {
+    "ok": true,
+    "value": {
+      "id": "s4",
+      "name": "Writer copy 2",
+      "role": "写作者",
+      "color": "blue",
+      "workDir": "<temporary-project>/project-中国",
+      "instructions": "Use concise language.",
+      "createdAt": 1793138789976,
+      "createdBy": null,
+      "capabilities": [],
+      "kickoff": {
+        "text": "The user just made you as a copy of Writer: same job, fresh memory. Greet the user in one short message, then ask in one short question what this copy should focus on.\nWhere your instructions say otherwise, follow them.",
+        "from": null
+      }
+    }
+  },
+  "missingFolder": {
+    "ok": true,
+    "value": {
+      "id": "s5",
+      "name": "Writer copy 3",
+      "role": "写作者",
+      "color": "blue",
+      "instructions": "Use concise language.",
+      "createdAt": 1793138789978,
+      "createdBy": null,
+      "capabilities": [],
+      "kickoff": {
+        "text": "The user just made you as a copy of Writer: same job, fresh memory. Greet the user in one short message, then ask in one short question what this copy should focus on.\nWhere your instructions say otherwise, follow them.",
+        "from": null
+      }
+    }
+  },
+  "absent": {
+    "ok": false,
+    "error": {
+      "code": "bot/refused",
+      "message": "Unknown Bot",
+      "details": {}
+    }
+  },
+  "after": {
+    "ok": true,
+    "value": {
+      "revision": 7,
+      "workspaceId": "w1",
+      "mainBotId": "s1",
+      "mainBotIds": [
+        "s1"
+      ],
+      "bots": [
+        {
+          "id": "s1",
+          "name": "Chief",
+          "role": "Chief of Staff",
+          "color": "deepseek",
+          "avatar": {
+            "shape": "whale"
+          },
+          "instructions": "",
+          "createdAt": 1793138789967,
+          "createdBy": null,
+          "capabilities": [],
+          "sessionId": "s1",
+          "parts": [],
+          "waiting": true
+        },
+        {
+          "id": "s2",
+          "name": "Writer",
+          "role": "写作者",
+          "color": "blue",
+          "workDir": "<temporary-project>/project-中国",
+          "instructions": "Use concise language.",
+          "createdAt": 1793138789972,
+          "createdBy": null,
+          "capabilities": [],
+          "sessionId": "s2",
+          "parts": [],
+          "waiting": true
+        },
+        {
+          "id": "s3",
+          "name": "Writer copy",
+          "role": "写作者",
+          "color": "blue",
+          "workDir": "<temporary-project>/project-中国",
+          "instructions": "Use concise language.",
+          "createdAt": 1793138789974,
+          "createdBy": null,
+          "capabilities": [],
+          "sessionId": "s3",
+          "parts": [],
+          "waiting": true
+        },
+        {
+          "id": "s4",
+          "name": "Writer copy 2",
+          "role": "写作者",
+          "color": "blue",
+          "workDir": "<temporary-project>/project-中国",
+          "instructions": "Use concise language.",
+          "createdAt": 1793138789976,
+          "createdBy": null,
+          "capabilities": [],
+          "sessionId": "s4",
+          "parts": [],
+          "waiting": true
+        },
+        {
+          "id": "s5",
+          "name": "Writer copy 3",
+          "role": "写作者",
+          "color": "blue",
+          "instructions": "Use concise language.",
+          "createdAt": 1793138789978,
+          "createdBy": null,
+          "capabilities": [],
+          "sessionId": "s5",
+          "parts": [],
+          "waiting": true
+        }
+      ],
+      "rooms": [],
+      "exchangeTurns": {},
+      "questions": {},
+      "views": {},
+      "btwCards": {},
+      "sideChats": {},
+      "agents": [],
+      "secrets": [],
+      "capabilities": [],
+      "secretRequests": {},
+      "colors": [
+        "deepseek",
+        "blue",
+        "violet",
+        "orange",
+        "green",
+        "magenta",
+        "cyan",
+        "red",
+        "yellow",
+        "brown",
+        "gray",
+        "black",
+        "aurora",
+        "charcoal",
+        "graphite",
+        "rose",
+        "sky",
+        "tangerine",
+        "cobalt"
+      ],
+      "models": [],
+      "defaultModel": null,
+      "permissions": null,
+      "modelsKey": "|",
+      "prefs": {},
+      "browser": false,
+      "memory": true,
+      "readOnly": null,
+      "activity": {},
+      "work": {
+        "bots": {},
+        "rooms": {},
+        "approvals": [],
+        "waiting": {},
+        "turns": {},
+        "steered": {}
+      },
+      "memoryNews": {},
+      "memoryReviews": 0,
+      "connectors": [
+        {
+          "id": "github",
+          "name": "GitHub",
+          "state": "off",
+          "account": null
+        }
+      ],
+      "capabilityStatuses": {
+        "s1": {},
+        "s2": {},
+        "s3": {},
+        "s4": {},
+        "s5": {}
+      }
+    }
+  }
+}

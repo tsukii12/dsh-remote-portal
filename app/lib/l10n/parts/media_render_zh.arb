@@ -1,0 +1,14 @@
+{
+  "mediaImageLoading": "正在加载图片",
+  "mediaImageReload": "重新加载",
+  "mediaImageReloadHint": "只重新读取文件，不会重新生成或收费",
+  "mediaVideoNoPoster": "轻点播放视频",
+  "mediaSavedFilesCount": "已保存 {count} 个文件到相册",
+  "@mediaSavedFilesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
+}

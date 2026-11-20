@@ -1,0 +1,31 @@
+{
+  "provenance": {
+    "ref": "4a7b55069ad300eae8be42a74f31bc170b40ead7",
+    "tag": "v0.2.3",
+    "scope": "Actual approval/request listener and Fetch handlers; upstream fakeContext; synthetic temporary team, no LLM/full Host"
+  },
+  "approval": {
+    "id": "c1230937-2767-4c27-8328-4a8f277575a5",
+    "sessionId": "writer-group",
+    "botId": "writer",
+    "roomId": "r1",
+    "tool": "synthetic-tool",
+    "reason": "SYNTHETIC review request",
+    "detail": {},
+    "at": 1793148340834,
+    "answerable": true
+  },
+  "allowed": {
+    "ok": true,
+    "value": true
+  },
+  "stale": {
+    "ok": false,
+    "error": {
+      "code": "bot/stale",
+      "message": "This approval is no longer open",
+      "details": {}
+    }
+  },
+  "afterApprovals": []
+}

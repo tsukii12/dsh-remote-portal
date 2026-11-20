@@ -1,0 +1,10 @@
+{
+  "portalAppName": "YuRemote",
+  "portalRemoteOnly": "Connect to your YuRemote server. The engine stays on your host.",
+  "portalAddress": "Server address",
+  "portalName": "Server name",
+  "portalPassword": "Password",
+  "portalScan": "Scan server or pairing link",
+  "portalPairingReady": "Pairing link ready",
+  "portalWebRemoved": "Embedded web features are not available in YuRemote."
+}

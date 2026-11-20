@@ -1,0 +1,14 @@
+{
+  "phoneEngineTidyingFilesEllipsis": "正在整理插件文件…",
+  "phoneEngineTitle": "本机引擎",
+  "phoneDecisionContinued": "你点了继续",
+  "phoneDecisionDone": "已执行",
+  "phoneDecisionTimeout": "超时",
+  "phoneAccentMist": "雾蓝",
+  "phoneAccentDaiqing": "黛青",
+  "phoneAccentDusk": "暮紫",
+  "phoneAccentTurquoise": "松石",
+  "phoneAccentAmber": "琥珀",
+  "phoneAccentGraphite": "石墨",
+  "phoneAccentCustom": "自定义"
+}

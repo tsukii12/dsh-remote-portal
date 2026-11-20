@@ -1,0 +1,14 @@
+{
+  "phoneEngineTidyingFilesEllipsis": "Tidying plugin files…",
+  "phoneEngineTitle": "Local engine",
+  "phoneDecisionContinued": "You continued",
+  "phoneDecisionDone": "Executed",
+  "phoneDecisionTimeout": "Timed out",
+  "phoneAccentMist": "Mist",
+  "phoneAccentDaiqing": "Teal",
+  "phoneAccentDusk": "Dusk",
+  "phoneAccentTurquoise": "Aqua",
+  "phoneAccentAmber": "Amber",
+  "phoneAccentGraphite": "Slate",
+  "phoneAccentCustom": "Custom"
+}

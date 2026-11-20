@@ -1,0 +1,22 @@
+{
+  "searchNeedsEngineField": "Available when the host has it",
+  "searchNeedsAnimations": "Available with animations on",
+  "searchNeedsChat": "Available with a chat open",
+  "searchKwTheme": "appearance,colors,colours,accent,icons",
+  "searchKwModels": "model providers,providers,provider,switch model,OpenRouter,ChatGPT,Claude",
+  "searchKwRemote": "remote,ssh,computer,server,DSH Remote,connect",
+  "searchKwPermission": "permissions,approval,don't ask,read only,full access,auto-run commands",
+  "searchKwAgentPresets": "presets,mode,agent mode",
+  "searchKwLanguage": "chinese,english,locale",
+  "searchKwTextSize": "font,font size,text size,larger text",
+  "searchKwFoldTurns": "collapse,fold,steps",
+  "searchKwVersion": "version,about,build",
+  "searchKwLicenses": "license,open source",
+  "searchKwDarkMode": "dark,light,dark mode,night,theme,system,appearance",
+  "searchKwAccent": "color,colour,accent,palette,wallpaper",
+  "searchKwPermissionCurrent": "allow for this chat,this chat",
+  "searchKwPermissionDefault": "default permission,read only,workspace,full access,auto-run commands,don't ask",
+  "searchSettingsHint": "Search settings",
+  "searchNoResults": "No matching settings",
+  "searchKwAbout": "about,version,update,licenses"
+}

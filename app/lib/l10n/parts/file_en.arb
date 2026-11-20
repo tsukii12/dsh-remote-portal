@@ -1,0 +1,10 @@
+{
+  "fileImageName": "image",
+  "fileSharedText": "Shared text.txt",
+  "fileChatFallback": "chat",
+  "fileUploadToHost": "Send files to the computer",
+  "fileUploadToHostHint": "Into this conversation’s workspace on the computer, uncompressed",
+  "fileUploadProgress": "Sending {done}/{total}: {name}",
+  "fileUploadDone": "Sent to the computer: {names}",
+  "fileUploadFailed": "Couldn’t send to the computer"
+}

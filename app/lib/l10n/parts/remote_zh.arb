@@ -1,0 +1,233 @@
+{
+  "remoteStepConnect": "连接服务器",
+  "remoteStepVerifyHostKey": "验证主机指纹",
+  "remoteStepStartDsh": "启动 DSH",
+  "remoteStepTunnel": "建立隧道",
+  "remoteConnecting": "正在连接",
+  "remoteConnected": "已连接",
+  "remoteReconnecting": "重新连接中",
+  "remoteReconnectAttempt": "重新连接中 · 第 {count} 次",
+  "@remoteReconnectAttempt": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "remoteHostedErrNetwork": "没能连上分享服务，检查网络后重试",
+  "remoteHostedErrTooLarge": "对话太大，生成不了链接",
+  "remoteHostedErrRateLimited": "分享太频繁，稍后再试",
+  "remoteHostedErrCreate": "没能生成链接",
+  "remoteHostedErrUnavailable": "分享服务暂时不可用，稍后再试",
+  "remoteHostedErrGone": "链接已过期或被删除",
+  "remoteHostedErrForbidden": "没有权限删除这个链接",
+  "remoteHostedErrBroken": "链接不完整或已损坏",
+  "remoteChat": "对话",
+  "remoteHostedTtlWeek": "7 天",
+  "remoteHostedTtlMonth": "30 天",
+  "remoteHostedTtlForever": "永久",
+  "remoteLinkCopied": "已复制链接",
+  "remotePathDirect": "直连",
+  "remotePathTurn": "TURN",
+  "remotePathRelay": "Relay 中继",
+  "remoteHost": "主机",
+  "remoteHostedUpdateRequired": "需要更新 App 才能打开",
+  "remoteHostedCannotOpen": "这个链接无法打开",
+  "remoteOpening": "正在打开…",
+  "remoteHostedNeverExpires": "永久有效",
+  "remoteHostedExpired": "已过期",
+  "remoteHostedExpiresToday": "今天到期",
+  "remoteHostedExpiresTomorrow": "明天到期",
+  "remoteHostedExpiresOn": "{date}到期",
+  "@remoteHostedExpiresOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "remoteHostedDeleteTitle": "删除这个链接？",
+  "remoteHostedDeleteBody": "「{title}」的链接会立即失效",
+  "@remoteHostedDeleteBody": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "remoteHostedLinkDeleted": "已删除链接",
+  "remoteUndo": "撤销",
+  "remoteHostedMyLinks": "我的分享链接",
+  "remoteHostedNoLinks": "还没有分享链接",
+  "remoteHostedErrDeleteNetwork": "没能删除，检查网络后重试",
+  "remoteHostedErrDelete": "没能删除，稍后再试",
+  "remoteDirectoryPickerTitle": "选择文件夹",
+  "remoteDirectoryChoose": "选择",
+  "remoteDirectoryDefault": "默认工作目录",
+  "remoteDirectoryHome": "主目录",
+  "remoteDirectoryPhoneStorage": "手机存储",
+  "remoteDirectoryLocations": "位置",
+  "remoteDirectoryRecent": "最近",
+  "remoteDirectoryEnterPath": "输入路径",
+  "remoteDirectoryGo": "前往",
+  "remoteDirectoryAbsolutePath": "写完整路径，如 /root/workspace 或 C:/Users/me",
+  "remoteDirectoryNewFolder": "新建文件夹",
+  "remoteDirectoryParentCaption": "在「{name}」里",
+  "@remoteDirectoryParentCaption": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "remoteDirectoryFolderName": "文件夹名称",
+  "remoteDirectoryRoot": "根目录",
+  "remoteDirectoryErrCreate": "没能新建文件夹",
+  "remoteDirectoryNoSubfolders": "这里没有子文件夹",
+  "remoteDirectoryHideHidden": "收起隐藏文件夹",
+  "remoteDirectoryShowHidden": "显示 {count} 个隐藏文件夹",
+  "@remoteDirectoryShowHidden": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "remoteDirectoryTruncated": "文件夹太多，只列出了前面一部分",
+  "remoteWorkspaceAdd": "添加工作区",
+  "remoteWorkspaceAdded": "已添加「{name}」",
+  "@remoteWorkspaceAdded": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "remoteWorkspaceErrAdd": "没能添加工作区",
+  "remoteWorkspaceNoChats": "没有对话",
+  "remoteWorkspaceChatCount": "{count} 个对话",
+  "@remoteWorkspaceChatCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "remoteWorkspaceErrRename": "没能重命名",
+  "remoteWorkspaceRemoved": "已移除「{name}」",
+  "@remoteWorkspaceRemoved": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "remoteWorkspaceErrRemove": "没能移除工作区",
+  "remoteWorkspaceRename": "重命名工作区",
+  "remoteWorkspaceName": "工作区名称",
+  "remoteWorkspaceNameRequired": "起个名字",
+  "remoteWorkspaceRemoveTitle": "移除「{name}」？",
+  "@remoteWorkspaceRemoveTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "remoteWorkspaceRemoveBody": "文件夹和对话都会保留",
+  "remoteWorkspaceRemove": "移除",
+  "remoteWorkspace": "工作区",
+  "remoteWorkspaceNewChatHere": "在这里新建对话",
+  "remoteWorkspaceUnpin": "取消置顶",
+  "remoteWorkspaceGroup": "分组",
+  "remoteWorkspaceUngrouped": "未分组",
+  "remoteWorkspaceRemoveAction": "移除工作区",
+  "remoteWorkspaceNewGroup": "新建分组",
+  "remoteWorkspaceGroupName": "分组名称",
+  "remoteDirectoryInvalidName": "名字里不能有「/」",
+  "remoteWorkspaceErrNameConflict": "已有同名的工作区",
+  "remoteWorkspaceErrInvalidPath": "这个文件夹不能用作工作区",
+  "remoteWorkspaceErrNotFound": "这个工作区已经不在了",
+  "remoteDirectoryErrUnreadable": "打不开这个文件夹",
+  "remoteDirectoryErrExists": "已经有同名的文件夹",
+  "remoteDirectoryErrUnavailable": "这台主机不能在这里浏览文件夹",
+  "remoteWorkspaceErrUnsupported": "这台主机不支持这个操作",
+  "remoteWorkspaceAllChats": "全部对话",
+  "remoteWorkspaceSwitcherSemantics": "工作区：{name}。切换工作区",
+  "@remoteWorkspaceSwitcherSemantics": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "remoteWorkspaceManage": "管理工作区",
+  "remoteWorkspaceErrLoad": "没能读取工作区",
+  "remoteWorkspaceEmpty": "还没有工作区",
+  "remoteWorkspaceEmptyHint": "把常用的文件夹加进来",
+  "remoteWorkspaceCount": "{count} 个工作区",
+  "@remoteWorkspaceCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "remoteDirectoryConfirmFolder": "{action}「{name}」",
+  "@remoteDirectoryConfirmFolder": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "remoteHostedMonthDate": "{month} 月 {day} 日",
+  "@remoteHostedMonthDate": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      },
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "remoteHostedYearDate": "{year} 年 {month} 月 {day} 日",
+  "@remoteHostedYearDate": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      },
+      "month": {
+        "type": "String"
+      },
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "remoteErrorDetail": "{message}（{detail}）",
+  "@remoteErrorDetail": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      },
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "remotePathLan": "LAN 局域网",
+  "remotePathP2p": "P2P 点对点",
+  "remoteNetworkDetails": "网络详情",
+  "remoteHostedLoadFailed": "无法读取已保存的分享链接，请重试。",
+  "remoteHostedSaveFailed": "分享链接的更改尚未保存，请重试。",
+  "remoteHostedDeleteSaveFailed": "删除未完成，链接仍然有效。请重试。",
+  "remoteHostedUndoUnsaved": "本次删除已取消，但撤销尚未保存。重启后可能继续删除，请到“我的分享链接”重试保存。",
+  "remoteHostedUndoFailed": "无法恢复分享，删除可能已开始。请检查“我的分享链接”。",
+  "remoteHostedCreatedUnsaved": "链接已创建，可以复制使用，但尚未保存到本机。请保留链接，并到“我的分享链接”重试保存。",
+  "remoteHostedStopFailed": "未能停止分享，链接仍然有效。请重试。"
+}

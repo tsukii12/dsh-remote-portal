@@ -1,0 +1,18 @@
+{
+  "name": "灯塔守望者 🐳",
+  "description": "海边的灯塔。\n中文与 emoji：🌊",
+  "personality": "耐心",
+  "scenario": "雨夜",
+  "first_mes": "你好，{{user}}。",
+  "mes_example": "<START>\n{{user}}: 你好\n{{char}}: 晚安",
+  "creatorcomment": "自制测试卡，不含真实人物。",
+  "talkativeness": 0,
+  "unknown_v1": {
+    "keep": [
+      null,
+      0,
+      false,
+      " A\r\nB "
+    ]
+  }
+}

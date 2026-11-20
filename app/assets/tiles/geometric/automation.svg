@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+<!-- dsh-go feature tile · geometric · automation. Tones: wash / mid / ink / on (see app/tool/make_feature_tiles.py); the colours here are the default accent in light, for previews only. -->
+<style>.wash{fill:#BACCF8}.mid{fill:#97B1F0}.ink{fill:#4B67B4}.on{fill:#DEE8FF}.line{fill:none}.line.wash,.fat.wash{stroke:#BACCF8}.line.mid,.fat.mid{stroke:#97B1F0}.line.ink,.fat.ink{stroke:#4B67B4}.line.on,.fat.on{stroke:#DEE8FF}.cut{fill:#000}.line.cut{stroke:#000}</style>
+<path class="line mid" d="M33.26 81.52A34 34 0 1 1 78.68 59.37" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+<path class="fat mid" d="M75.21 71.48L89.55 59.57L69.36 53.79Z" stroke-width="3" stroke-linejoin="round"/>
+<circle class="ink" cx="46" cy="50" r="22"/>
+<path class="line on" d="M46 39V51L54 56" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

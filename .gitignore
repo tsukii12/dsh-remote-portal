@@ -22,6 +22,9 @@ token
 # Scratch output from the local tools
 docs/screenshots/*.tmp.png
 .out/
+**/.dart_tool/
+**/.pub/
+**/.packages
+packages/**/coverage/
 node_modules/
 *.tgz
-

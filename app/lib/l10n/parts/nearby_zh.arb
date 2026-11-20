@@ -1,0 +1,21 @@
+{
+  "nearbyThisChat": "本对话",
+  "nearbyPermissionTitle": "本对话的权限",
+  "nearbyNewChatDefault": "新对话默认：{name}",
+  "@nearbyNewChatDefault": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "nearbySetAsDefault": "设为新对话默认",
+  "nearbyPermissionPill": "本对话的权限：{name}",
+  "@nearbyPermissionPill": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
+}

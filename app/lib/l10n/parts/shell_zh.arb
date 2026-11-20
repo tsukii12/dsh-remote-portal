@@ -1,0 +1,251 @@
+{
+  "shellSearchChats": "搜索对话",
+  "shellCollapseChatList": "收起对话列表",
+  "shellExpandChatList": "展开对话列表",
+  "shellChatList": "对话列表",
+  "shellChatDetails": "对话详情",
+  "shellCollapseDetails": "收起详情",
+  "shellExpand": "展开",
+  "shellUndo": "撤销",
+  "shellFolderDeleted": "已删除「{name}」",
+  "@shellFolderDeleted": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shellMovedToFolder": "已移到「{name}」",
+  "@shellMovedToFolder": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shellMovedOutOfFolder": "已移出文件夹",
+  "shellUnpinFailed": "没能取消置顶，稍后再试",
+  "shellPinFailed": "没能置顶，稍后再试",
+  "shellChatsUnpinned": "已取消置顶 {count} 个对话",
+  "@shellChatsUnpinned": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellChatsPinned": "已置顶 {count} 个对话",
+  "@shellChatsPinned": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellArchiveFailed": "没能归档，稍后再试",
+  "shellChatsStoppedArchived": "已停止并归档 {count} 个对话",
+  "@shellChatsStoppedArchived": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellChatsArchived": "已归档 {count} 个对话",
+  "@shellChatsArchived": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellFilterLabel": "筛选：{label}",
+  "@shellFilterLabel": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "shellFolders": "文件夹",
+  "shellNoRunningChats": "没有运行中的对话",
+  "shellNoPendingChats": "没有待确认的对话",
+  "shellNoUnreadChats": "没有未读对话",
+  "shellNoChatsYet": "还没有对话",
+  "shellFolderLabel": "文件夹「{name}」",
+  "@shellFolderLabel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shellFolderChatCount": "文件夹「{name}」，{count} 个对话",
+  "@shellFolderChatCount": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellSort": "排序",
+  "shellRecentActivity": "最近活动",
+  "shellCreatedTime": "创建时间",
+  "shellNewFolder": "新建文件夹",
+  "shellManageFolders": "管理文件夹",
+  "shellMultiSelect": "多选",
+  "shellFolderNameExists": "已有同名文件夹",
+  "shellEditFolder": "编辑文件夹",
+  "shellFolderMark": "标记",
+  "shellFolderColor": "颜色 {number}",
+  "@shellFolderColor": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "shellMoveToFolder": "移到文件夹",
+  "shellMoveOutOfFolder": "移出文件夹",
+  "shellDeleteFolder": "删除文件夹",
+  "shellDragToReorder": "拖动排序",
+  "shellSelectChats": "选择对话",
+  "shellSelectedCount": "已选 {count} 个",
+  "@shellSelectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDeselectAll": "取消全选",
+  "shellSelectAll": "全选",
+  "shellUnpin": "取消置顶",
+  "shellArchive": "归档",
+  "shellCurrentlyRunning": "正在运行",
+  "shellUnread": "未读",
+  "shellPinned": "已置顶",
+  "shellEngineNotRunning": "引擎未运行",
+  "shellHostNotConnected": "还没连上「{name}」",
+  "@shellHostNotConnected": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shellSearchAfterConnecting": "连接后才能搜索",
+  "shellChatsLoadFailed": "对话列表加载失败",
+  "shellSearchHostChats": "搜索「{name}」上的对话",
+  "@shellSearchHostChats": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shellSearchTitlesHint": "按标题查找，含已归档的对话",
+  "shellSearchContentHint": "按标题和内容查找，含已归档的对话",
+  "shellLoadingChatsEllipsis": "正在加载对话…",
+  "shellNoMatchingChats": "没有相关对话",
+  "shellSearchDifferentKeywords": "换个关键词，或用空格分开多个词",
+  "shellArchived": "已归档",
+  "shellRestoreBeforeOpening": "已归档的对话需先恢复，才能打开",
+  "shellRestoreAndOpen": "恢复并打开",
+  "shellRestoreFailed": "没能恢复，稍后再试",
+  "shellSearchingMessages": "正在搜索消息内容…",
+  "shellHostTitleSearchOnly": "这台主机仅支持按标题搜索",
+  "shellContentSearchFailed": "内容搜索失败，仅显示标题匹配",
+  "shellContentSearchLimit": "内容匹配仅列出最相关的 20 个对话",
+  "shellMoveToOtherFolder": "移到其他文件夹",
+  "shellArchiveStopsTurn": "进行中的一轮会停止",
+  "shellRenameFailed": "没能重命名，稍后再试",
+  "shellChatStoppedArchived": "已停止并归档「{title}」",
+  "@shellChatStoppedArchived": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "shellChatArchived": "已归档「{title}」",
+  "@shellChatArchived": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "shellRenameChat": "重命名对话",
+  "shellChatTitle": "对话标题",
+  "shellLoadingChats": "正在加载对话",
+  "shellWorkspaceNoChats": "这里还没有对话",
+  "shellWorkspaceNewChatsHint": "新对话会放进这个工作区。旧对话不会自动移入，可在「全部对话」中找到。",
+  "shellNewChatsHint": "新对话会出现在这里",
+  "shellHostUnreachable": "连不上「{name}」",
+  "@shellHostUnreachable": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shellHostReconnecting": "正在重新连接「{name}」…",
+  "@shellHostReconnecting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shellRetryNow": "立即重试",
+  "shellHostConnecting": "正在连接「{name}」…",
+  "@shellHostConnecting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shellHostChatsAfterConnecting": "连接后显示这台主机上的对话",
+  "shellCurrentHostLabel": "当前主机：{name}，{view}。切换主机",
+  "@shellCurrentHostLabel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "view": {
+        "type": "String"
+      }
+    }
+  },
+  "shellSemanticsSeparator": "，",
+  "shellChatsArchivedPartial": "已归档 {count} 个对话，{failed} 个没能归档",
+  "@shellChatsArchivedPartial": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "failed": {
+        "type": "int"
+      }
+    }
+  },
+  "shellPanelOverview": "信息",
+  "shellPanelWorkspace": "工作区",
+  "shellPanelModel": "模型",
+  "shellPanelHost": "主机",
+  "shellPanelOpenFull": "打开完整页面",
+  "shellQuickPanel": "快捷入口",
+  "shellQuickPanelHint": "在「{path}」里调整",
+  "@shellQuickPanelHint": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  }
+}

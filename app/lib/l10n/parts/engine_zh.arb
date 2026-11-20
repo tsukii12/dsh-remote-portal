@@ -1,0 +1,46 @@
+{
+  "engineNewChatDefaultsLast": "新对话默认（上次选择）",
+  "engineNewChatDefaultsFixed": "新对话默认（固定）",
+  "engineNewChatUseLast": "沿用上次",
+  "engineNewChatUseFixed": "固定默认",
+  "engineNewChatDefaultsHint": "保存在当前主机，只影响新对话的模型和思考深度。权限仍用独立默认，不继承临时会话授权。",
+  "engineNewChatDefaultsLegacy": "此引擎仅支持沿用上次选择；不支持固定默认，也无法确认切换时默认值是否保存成功。",
+  "engineNewChatDefaultsUnsupported": "此主机没有可编辑的默认模型设置",
+  "engineNewChatDefaultsSelectionUnavailable": "此模型或思考深度已不可用，请重新选择。",
+  "engineNewChatDefaultsInheritedEffort": "主机基础配置指定了思考深度，不能在这里为无思考模型清除。请先调整主机配置。",
+  "engineNewChatDefaultsSaving": "正在保存并确认默认值…",
+  "engineNewChatDefaultsUnconfirmed": "没能确认完整默认值，请刷新后检查模型和思考深度。主机基础配置或其他客户端可能已改变它们。",
+  "engineModelDefaultSaveFailed": "当前对话的模型已切换，但新对话默认未保存。请到设置 › 模型检查并重试。",
+  "engineSettingsReadFailed": "没能读取设置",
+  "engineProviderHeaderInvalidName": "请求头名称只能包含英文字母、数字或 HTTP 标记符号，不能包含空格或冒号",
+  "engineProviderHeaderReserved": "User-Agent 由引擎设置，请移除此请求头",
+  "engineProviderHeaderDuplicate": "请求头名称重复（不区分大小写）",
+  "engineProviderHeaderInvalidValue": "请求头值只能包含单行 Latin-1 文本，不支持换行或控制字符（制表符除外）",
+  "engineProviderReady": "可用",
+  "engineProviderMissingKey": "缺少 API Key",
+  "engineProviderMisconfigured": "配置有误",
+  "engineProviderInactive": "未启用",
+  "engineProviderConfiguredInWeb": "网页版配置",
+  "engineProvidersStartEngine": "引擎运行后可添加渠道",
+  "engineProvidersReadOnly": "引擎设置是只读的，无法添加",
+  "engineProviderContext": "上下文 {size}",
+  "@engineProviderContext": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "engineProviderModels": "{count} 个模型",
+  "@engineProviderModels": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "engineModelThinking": "思考",
+  "engineModelVision": "识图",
+  "engineSettingsHostChanged": "主机已切换，请重新打开设置后编辑。",
+  "engineSecretTargetChanged": "此项已变化，请重新打开后编辑。"
+}

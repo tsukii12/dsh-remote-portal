@@ -1,0 +1,9 @@
+{
+  "stateWorkspaceFilesHint": "Files uploaded to the current workspace:",
+  "stateRemoteUploadNameInvalid": "The host rejected the filename. Shorten it or remove special characters and try again.",
+  "stateRemoteUploadWorkspaceUnavailable": "This chat has no writable working directory",
+  "stateRemoteUploadWorkspaceChanged": "The working directory changed. Check it before uploading again.",
+  "stateRemoteUploadLimit": "The host refused the upload. Check the file size or try again later.",
+  "stateRemoteUploadUnsupported": "This host does not support file uploads. Update its Remote plugin and reconnect.",
+  "stateRemoteUploadTooLarge": "The file exceeds the remote upload protocol's size limit"
+}

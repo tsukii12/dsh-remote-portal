@@ -1,0 +1,19 @@
+{
+  "@@locale": "zh",
+  "systemActionsOpenedUi": "已打开界面",
+  "systemActionsResultUnknown": "结果未知",
+  "systemActionsNotSupported": "不支持",
+  "systemActionsNotRun": "没有执行",
+  "systemActionsResultOpened": "已打开界面，还没确认里面的事办完。",
+  "systemActionsResultContinued": "你点了继续。这只说明你确认了，不代表其他应用里的操作完成了。",
+  "systemActionsResultNotified": "通知已发出，不确定你有没有看到。",
+  "systemActionsResultReminder": "已交给系统提醒，到点由系统响。引擎不会因此运行。",
+  "systemActionsResultClipboard": "文字已写入剪贴板。",
+  "systemActionsResultUnknownDetail": "系统调用可能已经发出，结果未知。不会自动重试，请自己看一下实际状态。",
+  "systemActionsResultUnsupported": "鸿蒙版不支持这个动作，没有执行。",
+  "systemActionsResultOffScreen": "DSH Go 不在屏幕上，没有执行。",
+  "systemActionsResultUnavailable": "系统操作没开或暂时连不上，没有执行。到「设置 → 系统操作」看看。",
+  "systemActionsResultStopped": "已停止。",
+  "systemActionsResultTimeout": "等待超时，没有结果。",
+  "systemActionsResultNotRun": "没有执行。"
+}

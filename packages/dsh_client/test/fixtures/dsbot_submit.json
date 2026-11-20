@@ -1,0 +1,458 @@
+{
+  "provenance": {
+    "ref": "4a7b55069ad300eae8be42a74f31bc170b40ead7",
+    "scope": "Official v0.2.3 actual show_view tool and Fetch state/view-reply; synthetic fakeContext no LLM/full Host"
+  },
+  "shown": {
+    "text": "The view is on screen; the user's answer arrives as their next message.",
+    "concluded": true
+  },
+  "viewState": {
+    "ok": true,
+    "value": {
+      "revision": 2,
+      "workspaceId": null,
+      "mainBotId": "chief",
+      "mainBotIds": [
+        "chief"
+      ],
+      "bots": [
+        {
+          "id": "chief",
+          "name": "Chief",
+          "role": "Lead",
+          "sessionId": "chief",
+          "createdAt": 1,
+          "capabilities": [],
+          "avatar": {
+            "shape": "whale"
+          },
+          "color": "deepseek",
+          "parts": []
+        },
+        {
+          "id": "writer",
+          "name": "Writer",
+          "role": "Write",
+          "sessionId": "writer-now",
+          "createdAt": 2,
+          "capabilities": [],
+          "parts": [
+            "writer-old"
+          ]
+        }
+      ],
+      "rooms": [
+        {
+          "id": "r1",
+          "name": "Ops",
+          "members": [
+            "writer"
+          ],
+          "mode": "admin",
+          "admin": "writer",
+          "named": true,
+          "relayLimitDefault": 3,
+          "parts": [
+            "writer-group"
+          ]
+        }
+      ],
+      "exchangeTurns": {},
+      "questions": {},
+      "views": {
+        "writer-now": {
+          "id": "330a0098-1f78-4417-a3dd-cc3ea24c7127",
+          "callId": "call-1",
+          "title": "Synthetic submit",
+          "view": {
+            "type": "stack",
+            "children": [
+              {
+                "type": "text",
+                "text": "SYNTHETIC ready to proceed."
+              },
+              {
+                "type": "submit",
+                "id": "proceed",
+                "label": "Synthetic Proceed"
+              }
+            ]
+          },
+          "askedAt": 1793152197045
+        }
+      },
+      "btwCards": {},
+      "sideChats": {},
+      "agents": [],
+      "secrets": [],
+      "capabilities": [],
+      "secretRequests": {},
+      "colors": [
+        "deepseek",
+        "blue",
+        "violet",
+        "orange",
+        "green",
+        "magenta",
+        "cyan",
+        "red",
+        "yellow",
+        "brown",
+        "gray",
+        "black",
+        "aurora",
+        "charcoal",
+        "graphite",
+        "rose",
+        "sky",
+        "tangerine",
+        "cobalt"
+      ],
+      "models": [],
+      "defaultModel": null,
+      "permissions": null,
+      "modelsKey": "|",
+      "prefs": {},
+      "browser": false,
+      "memory": true,
+      "readOnly": null,
+      "activity": {},
+      "work": {
+        "bots": {},
+        "rooms": {},
+        "approvals": [],
+        "waiting": {},
+        "turns": {},
+        "steered": {}
+      },
+      "memoryNews": {},
+      "memoryReviews": 0,
+      "connectors": [
+        {
+          "id": "github",
+          "name": "GitHub",
+          "state": "off",
+          "account": null
+        }
+      ],
+      "capabilityStatuses": {
+        "chief": {},
+        "writer": {}
+      }
+    }
+  },
+  "payload": {
+    "sessionId": "writer-now",
+    "viewId": "330a0098-1f78-4417-a3dd-cc3ea24c7127",
+    "action": "proceed",
+    "values": {}
+  },
+  "failed": {
+    "ok": false,
+    "error": {
+      "code": "bot/refused",
+      "message": "synthetic flush failure",
+      "details": {}
+    }
+  },
+  "afterFailure": {
+    "ok": true,
+    "value": {
+      "revision": 2,
+      "workspaceId": null,
+      "mainBotId": "chief",
+      "mainBotIds": [
+        "chief"
+      ],
+      "bots": [
+        {
+          "id": "chief",
+          "name": "Chief",
+          "role": "Lead",
+          "sessionId": "chief",
+          "createdAt": 1,
+          "capabilities": [],
+          "avatar": {
+            "shape": "whale"
+          },
+          "color": "deepseek",
+          "parts": []
+        },
+        {
+          "id": "writer",
+          "name": "Writer",
+          "role": "Write",
+          "sessionId": "writer-now",
+          "createdAt": 2,
+          "capabilities": [],
+          "parts": [
+            "writer-old"
+          ]
+        }
+      ],
+      "rooms": [
+        {
+          "id": "r1",
+          "name": "Ops",
+          "members": [
+            "writer"
+          ],
+          "mode": "admin",
+          "admin": "writer",
+          "named": true,
+          "relayLimitDefault": 3,
+          "parts": [
+            "writer-group"
+          ]
+        }
+      ],
+      "exchangeTurns": {},
+      "questions": {},
+      "views": {
+        "writer-now": {
+          "id": "330a0098-1f78-4417-a3dd-cc3ea24c7127",
+          "callId": "call-1",
+          "title": "Synthetic submit",
+          "view": {
+            "type": "stack",
+            "children": [
+              {
+                "type": "text",
+                "text": "SYNTHETIC ready to proceed."
+              },
+              {
+                "type": "submit",
+                "id": "proceed",
+                "label": "Synthetic Proceed"
+              }
+            ]
+          },
+          "askedAt": 1793152197045
+        }
+      },
+      "btwCards": {},
+      "sideChats": {},
+      "agents": [],
+      "secrets": [],
+      "capabilities": [],
+      "secretRequests": {},
+      "colors": [
+        "deepseek",
+        "blue",
+        "violet",
+        "orange",
+        "green",
+        "magenta",
+        "cyan",
+        "red",
+        "yellow",
+        "brown",
+        "gray",
+        "black",
+        "aurora",
+        "charcoal",
+        "graphite",
+        "rose",
+        "sky",
+        "tangerine",
+        "cobalt"
+      ],
+      "models": [],
+      "defaultModel": null,
+      "permissions": null,
+      "modelsKey": "|",
+      "prefs": {},
+      "browser": false,
+      "memory": true,
+      "readOnly": null,
+      "activity": {},
+      "work": {
+        "bots": {},
+        "rooms": {},
+        "approvals": [],
+        "waiting": {},
+        "turns": {},
+        "steered": {}
+      },
+      "memoryNews": {},
+      "memoryReviews": 0,
+      "connectors": [
+        {
+          "id": "github",
+          "name": "GitHub",
+          "state": "off",
+          "account": null
+        }
+      ],
+      "capabilityStatuses": {
+        "chief": {},
+        "writer": {}
+      }
+    }
+  },
+  "answer": {
+    "ok": true,
+    "value": true
+  },
+  "after": {
+    "ok": true,
+    "value": {
+      "revision": 3,
+      "workspaceId": null,
+      "mainBotId": "chief",
+      "mainBotIds": [
+        "chief"
+      ],
+      "bots": [
+        {
+          "id": "chief",
+          "name": "Chief",
+          "role": "Lead",
+          "sessionId": "chief",
+          "createdAt": 1,
+          "capabilities": [],
+          "avatar": {
+            "shape": "whale"
+          },
+          "color": "deepseek",
+          "parts": []
+        },
+        {
+          "id": "writer",
+          "name": "Writer",
+          "role": "Write",
+          "sessionId": "writer-now",
+          "createdAt": 2,
+          "capabilities": [],
+          "parts": [
+            "writer-old"
+          ]
+        }
+      ],
+      "rooms": [
+        {
+          "id": "r1",
+          "name": "Ops",
+          "members": [
+            "writer"
+          ],
+          "mode": "admin",
+          "admin": "writer",
+          "named": true,
+          "relayLimitDefault": 3,
+          "parts": [
+            "writer-group"
+          ]
+        }
+      ],
+      "exchangeTurns": {},
+      "questions": {},
+      "views": {},
+      "btwCards": {},
+      "sideChats": {},
+      "agents": [],
+      "secrets": [],
+      "capabilities": [],
+      "secretRequests": {},
+      "colors": [
+        "deepseek",
+        "blue",
+        "violet",
+        "orange",
+        "green",
+        "magenta",
+        "cyan",
+        "red",
+        "yellow",
+        "brown",
+        "gray",
+        "black",
+        "aurora",
+        "charcoal",
+        "graphite",
+        "rose",
+        "sky",
+        "tangerine",
+        "cobalt"
+      ],
+      "models": [],
+      "defaultModel": null,
+      "permissions": null,
+      "modelsKey": "|",
+      "prefs": {},
+      "browser": false,
+      "memory": true,
+      "readOnly": null,
+      "activity": {},
+      "work": {
+        "bots": {},
+        "rooms": {},
+        "approvals": [],
+        "waiting": {},
+        "turns": {},
+        "steered": {}
+      },
+      "memoryNews": {},
+      "memoryReviews": 0,
+      "connectors": [
+        {
+          "id": "github",
+          "name": "GitHub",
+          "state": "off",
+          "account": null
+        }
+      ],
+      "capabilityStatuses": {
+        "chief": {},
+        "writer": {}
+      }
+    }
+  },
+  "repeated": {
+    "ok": false,
+    "error": {
+      "code": "bot/stale",
+      "message": "This view is no longer open",
+      "details": {}
+    }
+  },
+  "sent": [
+    {
+      "sessionId": "writer-now",
+      "message": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"kind\":\"answer_to_pending_view\",\"tool\":\"show_view\",\"callId\":\"call-1\",\"views\":[{\"id\":\"330a0098-1f78-4417-a3dd-cc3ea24c7127\",\"title\":\"Synthetic submit\",\"view\":{\"type\":\"stack\",\"children\":[{\"type\":\"text\",\"text\":\"SYNTHETIC ready to proceed.\"},{\"type\":\"submit\",\"id\":\"proceed\",\"label\":\"Synthetic Proceed\"}]}}],\"answers\":[{\"id\":\"330a0098-1f78-4417-a3dd-cc3ea24c7127\",\"action\":\"proceed\",\"values\":{}}]}"
+          }
+        ],
+        "source": {
+          "kind": "user-question-reply",
+          "callId": "call-1",
+          "outcome": "answered"
+        },
+        "role": "user",
+        "id": "f53c7449-739d-411d-99d9-bed5557a0591"
+      }
+    },
+    {
+      "sessionId": "writer-now",
+      "message": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"kind\":\"answer_to_pending_view\",\"tool\":\"show_view\",\"callId\":\"call-1\",\"views\":[{\"id\":\"330a0098-1f78-4417-a3dd-cc3ea24c7127\",\"title\":\"Synthetic submit\",\"view\":{\"type\":\"stack\",\"children\":[{\"type\":\"text\",\"text\":\"SYNTHETIC ready to proceed.\"},{\"type\":\"submit\",\"id\":\"proceed\",\"label\":\"Synthetic Proceed\"}]}}],\"answers\":[{\"id\":\"330a0098-1f78-4417-a3dd-cc3ea24c7127\",\"action\":\"proceed\",\"values\":{}}]}"
+          }
+        ],
+        "source": {
+          "kind": "user-question-reply",
+          "callId": "call-1",
+          "outcome": "answered"
+        },
+        "role": "user",
+        "id": "e09376c6-4920-4b44-838e-c430acbe0b8e"
+      }
+    }
+  ]
+}

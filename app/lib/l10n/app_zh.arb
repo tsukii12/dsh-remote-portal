@@ -1,0 +1,5700 @@
+{
+  "@@locale": "zh",
+  "activityThinkingUntangle": "嗯…让我捋捋",
+  "activityThinkingWorkThrough": "盘一下盘一下",
+  "activityThinkingGears": "大脑转起来了",
+  "activityThinkingSecond": "给我一秒",
+  "activityThinkingSmoking": "脑子在冒烟",
+  "activityThinkingOnIt": "想呢想呢",
+  "activityThinkingNoRush": "别催别催",
+  "activityThinkingPonder": "让我琢磨下",
+  "activityThinkingLogic": "正在盘逻辑",
+  "activityThinkingBrain": "小脑瓜动一下",
+  "activityThinkingSort": "让我理理",
+  "activityThinkingMemory": "翻翻脑子",
+  "activityThinkingStorm": "脑内风暴中",
+  "activityThinkingSavor": "嗯…让我品品",
+  "activityThinkingMoment": "稍等，在想",
+  "activityThinkingHeadScratch": "挠头…",
+  "activityThinkingPlayOut": "让子弹飞一会",
+  "activityThinkingLoading": "思路加载中",
+  "activityThinkingMulling": "琢磨中",
+  "activityThinkingBreakDown": "嗯…让我拆一下",
+  "activityThinkingTrain": "脑内跑火车",
+  "activityThinkingSomething": "嗯…有点东西",
+  "activityThinkingJog": "小跑一下思路",
+  "activityThinkingPicture": "等下，有画面了",
+  "activityThinkingBubbles": "思考泡泡",
+  "activityThinkingWaves": "脑电波传输中",
+  "activityThinkingCoffee": "脑子在煮咖啡",
+  "activityThinkingDraft": "我打个腹稿",
+  "activityThinkingComing": "嗯，来了来了",
+  "activityThinkingBubbling": "脑子冒泡泡",
+  "activityThinkingTackle": "嗯…盘它",
+  "activityThinkingSpark": "闪个思路",
+  "activityThinkingLogicFirst": "先捋一下逻辑",
+  "activityThinkingLocate": "定位一下",
+  "activityThinkingInvestigate": "排查一下",
+  "activityThinkingGif": "思考.gif",
+  "activityThinkingLook": "让我康康",
+  "activityThinkingInteresting": "嗯…有点意思",
+  "activityThinkingHands": "搓搓手想想",
+  "activityThinkingFiveMinutes": "5 分钟，大工程",
+  "activityThinkingSerious": "这把我得认真",
+  "activityThinkingTricky": "确实有点绕",
+  "activityThinkingAscend": "我在修仙",
+  "activityThinkingAlmostPromise": "快好了，真的",
+  "activityThinkingLongWay": "盘了一大圈",
+  "activityThinkingWrapping": "在收尾了",
+  "activityThinkingSong": "给我一首歌的时间",
+  "activityThinkingBigMove": "憋大招中",
+  "activityThinkingSimple": "这个需求很简单（不是）",
+  "activityThinkingOneMinute": "1 分钟，还在想",
+  "activityThinkingChallenge": "这题有点东西",
+  "activityThinkingDig": "让我再钻研下",
+  "activityThinkingNotSimple": "问题不简单",
+  "activityThinkingDeep": "盘得有点深",
+  "activityThinkingBurning": "脑细胞在燃烧",
+  "activityThinkingNearlyClear": "快盘清了",
+  "activityThinkingTwisty": "这个有点绕…",
+  "activityThinkingWorkout": "烧脑中…",
+  "activityThinkingStay": "别走，快了",
+  "activityThinkingCloser": "嗯，让我细想想",
+  "activityThinkingThirtySeconds": "30 秒了，还在盘",
+  "activityThinkingSoon": "别急，快出结果了",
+  "activityThinkingAnotherPass": "让我再捋一捋",
+  "activityThinkingTrack": "思路没断",
+  "activityThinkingLead": "有眉目了",
+  "activityThinkingCircles": "转圈圈…",
+  "activityThinkingAnyMoment": "马上马上",
+  "activityThinkingStillLocate": "还在定位",
+  "activityWaitingCall": "呼叫模型…",
+  "activityWaitingOnWay": "模型在路上了",
+  "activityWaitingSpeak": "等它开口…",
+  "activityWaitingWords": "它在组织语言",
+  "activityWaitingAwake": "模型醒了么",
+  "activityWaitingStretch": "等它伸懒腰",
+  "activityWaitingYawn": "它打了个哈欠",
+  "activityWaitingComing": "模型：来了来了",
+  "activityWaitingText": "等它出字",
+  "activityWaitingQueue": "还在排队",
+  "activityWaitingBrew": "它在酝酿",
+  "activityWaitingWater": "模型在喝水",
+  "activityWaitingWarmup": "等它热身",
+  "activityWaitingMeditate": "模型在冥想",
+  "activityWaitingBlink": "等它眨个眼",
+  "activityWaitingMoment": "它说稍等",
+  "activityWritingWords": "组织语言中",
+  "activityWritingTyping": "码字中",
+  "activityWritingInspired": "下笔如有神",
+  "activityWritingOnIt": "在写了在写了",
+  "activityWritingCareful": "字斟句酌",
+  "activityWritingFlow": "一气呵成",
+  "activityWritingPlain": "整理成人话",
+  "activityWritingIdeas": "把想法写下来",
+  "activityWritingKeys": "敲字中",
+  "activityWritingAlmost": "马上写完",
+  "activityWritingTell": "娓娓道来",
+  "activityWritingFast": "奋笔疾书",
+  "activityWritingBreeze": "笔下生风",
+  "activityWritingFormat": "排个版",
+  "activityNightAscend": "修仙中…",
+  "activityNightHello": "深夜冒泡",
+  "activityNightOwl": "你也是夜猫子呀",
+  "activityNightMoon": "月亮不睡我不睡",
+  "activityNightSlow": "夜里脑子慢，谅解",
+  "activityNightChampion": "熬夜冠军上线",
+  "activityNightSleepy": "困了，但能行",
+  "activityNightMidnight": "过了零点照样肝",
+  "activityNightOpen": "深夜档营业",
+  "activityNightStars": "星星都睡了",
+  "activityNightDawn": "凌晨还在盘",
+  "activityWeekendChill": "周末摸鱼中",
+  "activityWeekendHere": "周末也在！",
+  "activityWeekendCompany": "放假也陪你",
+  "activityWeekendOnline": "周末不关机",
+  "activityWeekendSneak": "周末偷着盘",
+  "activityWeekendWorking": "周末也在卷？",
+  "activityWeekendMode": "周末模式 ON",
+  "activityWeekendBugs": "周末在修 bug",
+  "activityWeekendSkin": "周末限定皮肤",
+  "activityNewYearCheers": "新年快乐！",
+  "activityNewYearDay": "元旦快乐",
+  "activityNewYearBugs": "新的一年，新的 bug",
+  "activityNewYearFirstLine": "新年第一行代码",
+  "activityNewYearWork": "开工大吉",
+  "activityValentineCode": "情人节也在敲代码",
+  "activityValentineLove": "代码才是真爱",
+  "activityValentineDate": "今天不约会？",
+  "activityValentineKeyboard": "键盘就是玫瑰",
+  "activityPiDay": "π 节快乐",
+  "activityPiCircle": "今天的圆格外圆",
+  "activityAprilFools": "愚人节快乐",
+  "activityAprilBug": "这个 bug 是假的吧",
+  "activityAprilErrors": "小心假报错",
+  "activityAprilKidding": "骗你的，没报错",
+  "activityLaborWorking": "劳动节还在卷",
+  "activityLaborPride": "劳动最光荣",
+  "activityLaborSpirit": "打工人打工魂",
+  "activityChildrenDay": "儿童节快乐",
+  "activityChildrenHeart": "谁还不是个宝宝",
+  "activityChildrenCode": "今天代码要写得可爱",
+  "activityProgrammerCheers": "1024 程序员节快乐",
+  "activityProgrammerDay": "今天是程序员节",
+  "activityProgrammer1024": "1024，节日快乐",
+  "activityProgrammerCode": "程序员节也在写代码",
+  "activityHalloween": "万圣节快乐",
+  "activityHalloweenTreat": "不给糖就捣蛋",
+  "activityHalloweenCode": "代码也会吓人",
+  "activityChristmasEve": "平安夜快乐",
+  "activityChristmasEveThinking": "平安夜也在盘",
+  "activityChristmasEveGift": "今晚写代码有礼物",
+  "activityChristmas": "圣诞快乐",
+  "activityChristmasCompany": "圣诞也陪你",
+  "activityChristmasEgg": "圣诞限定彩蛋",
+  "activityChristmasReindeer": "麋鹿送代码来了",
+  "activityYearEndEve": "跨年夜",
+  "activityYearEndLast": "今年最后一盘",
+  "activityYearEndReady": "准备跨年",
+  "activityYearEndSeeYou": "明年见！",
+  "activityZodiacRat": "鼠",
+  "activityZodiacOx": "牛",
+  "activityZodiacTiger": "虎",
+  "activityZodiacRabbit": "兔",
+  "activityZodiacDragon": "龙",
+  "activityZodiacSnake": "蛇",
+  "activityZodiacHorse": "马",
+  "activityZodiacGoat": "羊",
+  "activityZodiacMonkey": "猴",
+  "activityZodiacRooster": "鸡",
+  "activityZodiacDog": "狗",
+  "activityZodiacPig": "猪",
+  "activityLunarCheers": "春节快乐！",
+  "activityLunarCode": "过年还在写代码",
+  "activityLunarEnvelope": "红包拿来",
+  "activityLunarSpring": "新春快乐",
+  "activityLunarGreeting": "过年好",
+  "activityLunarCodeGreeting": "代码也拜个年",
+  "activityRareSsr": "SSR！稀有彩蛋",
+  "activityRareUr": "UR 掉落",
+  "activityRareLegend": "金色传说！",
+  "activityRareOrange": "出橙了",
+  "activityRareEgg": "彩蛋砸脸",
+  "activityRareChosen": "天选时刻",
+  "activityRareHidden": "你发现了隐藏款",
+  "activityRareChat": "触发隐藏对话",
+  "activityRareMax": "稀有度 MAX",
+  "activityRareLucky": "欧皇降临",
+  "activityRareCritical": "暴击了",
+  "activityRareNextLevel": "这波在大气层",
+  "activityFailCrash": "翻车了",
+  "activityFailOops": "哎呀",
+  "activityFailRun": "没跑通",
+  "activityFailTrip": "摔了一跤",
+  "activityFailWrong": "这不对",
+  "activityFailHiccup": "出岔子了",
+  "activityFailBroken": "不灵了",
+  "activityFailLocal": "我本地能跑啊",
+  "activityFailYesterday": "昨天还能跑",
+  "activityFailTough": "难绷",
+  "activityFailCrack": "裂开",
+  "activityFailPressure": "血压上来了",
+  "activityFailCareless": "这波大意了",
+  "activityFailSlip": "手滑",
+  "activityFailTryAgain": "换个姿势再来",
+  "activityFailChance": "再给我一次机会",
+  "activityTestGreen": "测试全绿",
+  "activityTestAllGreen": "全绿，舒服",
+  "activityTestFirstTry": "一次过！",
+  "activityTestNoErrors": "没报错",
+  "activityTestPassed": "过了过了",
+  "activityTestSolid": "稳了",
+  "activityTestRed": "红了，看看哪挂了",
+  "activityTestInvestigate": "测试挂了，排查一下",
+  "activityTestStubborn": "有个用例不服",
+  "activityTestFix": "红灯，再改改",
+  "activityGitCommitSave": "提交了，存个档",
+  "activityGitSaved": "存档成功",
+  "activityGitCommitRelief": "commit 一下，安心",
+  "activityGitPushed": "推上去了",
+  "activityGitPushDone": "push 完成，起飞",
+  "activityGitCodeOut": "代码出门了",
+  "activityInstallDone": "依赖装好了",
+  "activityInstallInternet": "下载了半个互联网",
+  "activityInstallPackages": "包都到齐了",
+  "activityMilestoneFive": "工具 x5，手感来了",
+  "activityMilestoneTen": "工具连击 x10",
+  "activityMilestoneTwenty": "工具 x20，停不下来",
+  "activityMilestoneFifty": "工具 x50，劳模本模",
+  "activityRetryWait": "稍等，重试中",
+  "activityRetryBackoff": "刚被拒了，退避一下",
+  "activityRetryKnock": "再敲一次门",
+  "activityRateLimited": "被限流了，缓缓再试",
+  "activityRate429": "429 了，歇口气再来",
+  "activityRateQueue": "排队的人有点多",
+  "activityCompactContext": "收拾一下上下文…",
+  "activityCompactBag": "整理背包中…",
+  "activityCompactSpace": "腾地方中",
+  "activityCompactMemory": "给记忆瘦个身",
+  "activityCompactChats": "打包旧对话",
+  "activityReminderWater": "半小时了，喝口水？",
+  "activityReminderTenMinutes": "10 分钟了，这活不小",
+  "activityDiffTitle": "本轮改动",
+  "activityDiffCopied": "已复制补丁",
+  "activityDiffNoWrap": "不换行",
+  "activityDiffWrap": "自动换行",
+  "activityDiffCopy": "复制补丁",
+  "activityDiffEmpty": "空文件，没有可显示的改动",
+  "activityDiffNewFile": "新建文件",
+  "activityDiffUnknownLines": "行号未知",
+  "activityDiffCopyPath": "复制路径",
+  "activityThinking": "思考",
+  "activityReplyInterrupted": "回复（已中断）",
+  "activityWaitingApproval": "等待确认",
+  "activityWaitingAnswer": "等待回答",
+  "activityWriting": "写回复中",
+  "activityThinkingNow": "思考中",
+  "activityRetrying": "重试中",
+  "activityCompacting": "压缩上下文",
+  "activityVerbRun": "跑",
+  "activityVerbWrite": "写",
+  "activityVerbEdit": "改",
+  "activityVerbImage": "看图",
+  "activityVerbRead": "读",
+  "activityVerbFind": "找",
+  "activityVerbSearch": "搜",
+  "activityVerbWebSearch": "搜网页",
+  "activityVerbWebView": "看网页",
+  "activityVerbSubagent": "派子代理",
+  "activityVerbTodo": "更新待办",
+  "activitySecretHide": "隐藏密钥",
+  "activitySecretShow": "显示密钥",
+  "activitySlashNoMatch": "没有匹配的指令，按普通消息发送",
+  "activitySlashCommands": "指令",
+  "activitySlashEnterArgs": "输入参数后发送",
+  "activitySlashRunIntent": "命令 · 执行",
+  "activitySlashInsertIntent": "命令 · 填入",
+  "activitySlashSkillIntent": "技能 · 填入",
+  "activityStepTitle": "步骤详情",
+  "activityStepMissing": "这一步不在已加载的记录里",
+  "activityStepQuestion": "提问",
+  "activityStepSuccess": "成功",
+  "activityStepNeedsPermission": "需要授权",
+  "activityTools": "工具",
+  "activityStepDispatched": "发出",
+  "activityStepExecution": "执行",
+  "activityStepLocation": "所在",
+  "activityStepArguments": "参数",
+  "activityStepChanges": "改动",
+  "activityStepFullScreen": "全屏查看",
+  "activityStepReadContent": "读到的内容",
+  "activityStepWrittenContent": "写入的内容",
+  "activityStepError": "错误",
+  "activityOutput": "输出",
+  "activityStepResult": "结果",
+  "activityStepDeclined": "你拒绝了这次调用",
+  "activityStepNoOutput": "没有输出",
+  "activityStepStart": "开始",
+  "activityDuration": "用时",
+  "activityFirstToken": "首字",
+  "activityStepGeneration": "生成",
+  "activityStepSpeed": "速度",
+  "activityModel": "模型",
+  "activityStepTiming": "计时",
+  "activityUsage": "用量",
+  "activityInput": "输入",
+  "activityStepCacheHit": "  命中缓存",
+  "activityStepCacheMiss": "  未命中",
+  "activityStepCacheWrite": "  写入缓存",
+  "activityStepReasoning": "  推理",
+  "activityStepAnswer": "  回答",
+  "activityStepThinking": "思考过程",
+  "activityStepExplanation": "说明",
+  "activityStepToolCalls": "本步调用的工具",
+  "activityStepProcessing": "模型正在处理",
+  "activityApprovalAllowed": "允许了",
+  "activityApprovalUnanswered": "无人确认",
+  "activityApprovalAnswered": "已答复",
+  "activityToolRead": "读取",
+  "activityToolWrite": "写入",
+  "activityToolCall": "调用工具",
+  "activityTraceTitle": "本轮轨迹",
+  "activityTraceNotLoaded": "本轮记录尚未加载",
+  "activityTraceOutputLimit": "输出达到上限",
+  "activityTraceEngineRestarted": "引擎重启，已中断",
+  "activityTraceBlocked": "已被拦截",
+  "activityTraceHeading": "本轮轨迹  ",
+  "activityTraceWaiting": "等你",
+  "activityTraceNoSteps": "本轮没有可计时的步骤",
+  "activityUsageInputIncludesCache": "输入含缓存命中",
+  "activityCacheHit": "缓存命中",
+  "activitySummaryTodo": "更新了待办",
+  "activityUsageContext": "上下文",
+  "activityUsageChat": "本对话",
+  "activityUsageWaiting": "等待上下文用量数据",
+  "activityUsageProjected": "预计下次请求",
+  "activityUsageLastRequest": "上次请求",
+  "activityUsageBreakdownEstimate": "分项为独立估算，可能与总量不同",
+  "activityUsageCumulativeInput": "累计输入",
+  "activityUsageContextFull": "上下文将满，发送 /compact 可压缩",
+  "activitySpanZero": "0 秒",
+  "activitySpanTiny": "<0.1 秒",
+  "activityUsageContextSemantics": "上下文已用 {percent}，查看用量",
+  "@activityUsageContextSemantics": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "activityUsageSystemTokens": "系统 {tokens}",
+  "@activityUsageSystemTokens": {
+    "placeholders": {
+      "tokens": {
+        "type": "String"
+      }
+    }
+  },
+  "activityUsageToolTokens": "工具 {tokens}",
+  "@activityUsageToolTokens": {
+    "placeholders": {
+      "tokens": {
+        "type": "String"
+      }
+    }
+  },
+  "activityUsageMessageTokens": "消息 {tokens}",
+  "@activityUsageMessageTokens": {
+    "placeholders": {
+      "tokens": {
+        "type": "String"
+      }
+    }
+  },
+  "activityUsageTurns": "共 {count} 轮",
+  "@activityUsageTurns": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activityUsageCacheWriteTokens": "写入缓存 {tokens}",
+  "@activityUsageCacheWriteTokens": {
+    "placeholders": {
+      "tokens": {
+        "type": "String"
+      }
+    }
+  },
+  "activitySummaryCommands": "执行 {count} 条命令",
+  "@activitySummaryCommands": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activitySummaryEditedFiles": "改了 {count} 个文件",
+  "@activitySummaryEditedFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activitySummaryReadFiles": "读了 {count} 个文件",
+  "@activitySummaryReadFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activitySummarySearches": "搜索 {count} 次",
+  "@activitySummarySearches": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activitySummaryWeb": "联网 {count} 次",
+  "@activitySummaryWeb": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activitySummarySubagents": "调用子代理 {count} 次",
+  "@activitySummarySubagents": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activitySummaryOther": "其他工具 {count} 次",
+  "@activitySummaryOther": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activitySummaryTotal": "使用了 {count} 个工具",
+  "@activitySummaryTotal": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activityDiffBlockMarker": "@@ 第 {index}/{total} 处修改 @@",
+  "@activityDiffBlockMarker": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "activityDiffEditMarker": "第 {index} 次修改（共 {total} 次）",
+  "@activityDiffEditMarker": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "activityTraceSpanSemantics": "{title} {detail}，用时 {duration}",
+  "@activityTraceSpanSemantics": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "detail": {
+        "type": "String"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "activityTraceGroupSemantics": "{label}，用时 {duration}",
+  "@activityTraceGroupSemantics": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "activityTraceEstimatedCost": "{cost}（按官方单价估算）",
+  "@activityTraceEstimatedCost": {
+    "placeholders": {
+      "cost": {
+        "type": "String"
+      }
+    }
+  },
+  "activityTraceReasoningTokens": "其中推理 {tokens}",
+  "@activityTraceReasoningTokens": {
+    "placeholders": {
+      "tokens": {
+        "type": "String"
+      }
+    }
+  },
+  "activityStepPosition": "第 {turn} 轮 · 第 {step} 步",
+  "@activityStepPosition": {
+    "placeholders": {
+      "turn": {
+        "type": "int"
+      },
+      "step": {
+        "type": "Object"
+      }
+    }
+  },
+  "activityStepTokenSpeed": "{speed} tokens/秒",
+  "@activityStepTokenSpeed": {
+    "placeholders": {
+      "speed": {
+        "type": "String"
+      }
+    }
+  },
+  "activityStepRetryCount": "{count} 次",
+  "@activityStepRetryCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activityStepTruncated": "{text}\n…（仅显示前 {count}k 字，复制可得全文）",
+  "@activityStepTruncated": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activityStepLiveElapsed": "{elapsed} · 进行中{suffix}",
+  "@activityStepLiveElapsed": {
+    "placeholders": {
+      "elapsed": {
+        "type": "String"
+      },
+      "suffix": {
+        "type": "String"
+      }
+    }
+  },
+  "activityStepCopySection": "复制{title}",
+  "@activityStepCopySection": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "activityStepCopiedSection": "已复制{title}",
+  "@activityStepCopiedSection": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "activitySlashDescriptionArgs": "{description} · 输入参数后发送",
+  "@activitySlashDescriptionArgs": {
+    "placeholders": {
+      "description": {
+        "type": "String"
+      }
+    }
+  },
+  "activitySpanSecondsText": "{seconds} 秒",
+  "@activitySpanSecondsText": {
+    "placeholders": {
+      "seconds": {
+        "type": "String"
+      }
+    }
+  },
+  "activitySpanSeconds": "{seconds} 秒",
+  "@activitySpanSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "activitySpanMinutesSeconds": "{minutes} 分 {seconds} 秒",
+  "@activitySpanMinutesSeconds": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      },
+      "seconds": {
+        "type": "String"
+      }
+    }
+  },
+  "activitySpanHoursMinutes": "{hours} 小时 {minutes} 分",
+  "@activitySpanHoursMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "activityCostUnderCent": "不到 {symbol}0.01",
+  "@activityCostUnderCent": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "activityCostApprox": "约 {symbol}{amount}",
+  "@activityCostApprox": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "activitySpanRetries": "重试 {count} 次",
+  "@activitySpanRetries": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activitySpanToolCalls": "决定调用 {count} 个工具",
+  "@activitySpanToolCalls": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activityRunningItems": "等 {count} 项",
+  "@activityRunningItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activityRetryAttempt": "第 {count} 次",
+  "@activityRetryAttempt": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activityDiffFileCount": "{count} 个文件",
+  "@activityDiffFileCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activityDiffFileSemantics": "{path}，新增 {added} 行，删除 {removed} 行",
+  "@activityDiffFileSemantics": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      },
+      "added": {
+        "type": "int"
+      },
+      "removed": {
+        "type": "int"
+      }
+    }
+  },
+  "activityDiffEditNumber": "第 {edit} 次修改",
+  "@activityDiffEditNumber": {
+    "placeholders": {
+      "edit": {
+        "type": "int"
+      }
+    }
+  },
+  "activityDiffHunkNumber": "第 {index} 处",
+  "@activityDiffHunkNumber": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "activityDiffFromLine": "第 {line} 行起",
+  "@activityDiffFromLine": {
+    "placeholders": {
+      "line": {
+        "type": "int"
+      }
+    }
+  },
+  "activityDiffEditCount": "修改 {count} 次",
+  "@activityDiffEditCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activityLunarZodiac": "{animal}年大吉",
+  "@activityLunarZodiac": {
+    "placeholders": {
+      "animal": {
+        "type": "String"
+      }
+    }
+  },
+  "activityReminderHours": "已经连续干了 {hours} 小时，歇会儿？",
+  "@activityReminderHours": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "activityStepModelRequest": "一次模型请求",
+  "activityStepModelRequestDetail": "一次模型请求 · {detail}",
+  "@activityStepModelRequestDetail": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "activityUsageEstimatedCost": "约 {symbol}{amount}",
+  "@activityUsageEstimatedCost": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "activitySlashCommandSemantics": "{label}，/{name}",
+  "@activitySlashCommandSemantics": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "activityToolListSeparator": "、",
+  "botsFolderGone": "这个文件夹已经不在了",
+  "botsFolderReadFailed": "没能读取这个文件夹",
+  "botsFolderOpenFailed": "打不开这个文件夹",
+  "botsFolderCount": "{count} 个文件夹",
+  "@botsFolderCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "botsChildCount": "{count} 个下级",
+  "@botsChildCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "botsCurrentChat": "当前对话",
+  "botsSubagentCount": "{count} 个子代理",
+  "@botsSubagentCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "botsRunningCount": "{count} 个运行中",
+  "@botsRunningCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "botsFailedCount": "{count} 个出错",
+  "@botsFailedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "botsNestedCount": "含 {count} 个下级",
+  "@botsNestedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "botsBackToParent": "返回「{title}」",
+  "@botsBackToParent": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "botsTeamMemberCount": "智能体团队，{count} 位成员",
+  "@botsTeamMemberCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "botsAgentTeam": "智能体团队",
+  "botsSubagentRunningCount": "{count} 个子代理，{running} 个运行中",
+  "@botsSubagentRunningCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "running": {
+        "type": "int"
+      }
+    }
+  },
+  "botsSubagents": "子代理",
+  "botsNoSubagents": "没有派出子代理",
+  "botsOpenChatFirst": "先打开一个对话",
+  "botsNoTeamOnHost": "这台主机没有智能体团队",
+  "botsMembersWorking": "{count} 位成员在工作",
+  "@botsMembersWorking": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "botsTeamStandby": "都在待命",
+  "botsMembers": "成员",
+  "botsTasks": "任务",
+  "botsTeamRecordUnreadable": "团队记录有一条读不出来",
+  "botsMessages": "消息",
+  "botsOwner": "负责人",
+  "botsTeamCreateHint": "在对话里请 AI 组建团队",
+  "botsCurrent": "当前",
+  "botsNoTasks": "还没有任务",
+  "botsTodo": "待办",
+  "botsUnassigned": "未分配",
+  "botsTaskWaitingFor": "等 {dependencies}",
+  "@botsTaskWaitingFor": {
+    "placeholders": {
+      "dependencies": {
+        "type": "String"
+      }
+    }
+  },
+  "botsWriteOverlap": "写入范围重叠",
+  "botsWaitingDependencies": "等依赖",
+  "botsReadyToStart": "可开始",
+  "botsTaskId": "编号",
+  "botsDependencies": "依赖",
+  "botsWriteScopes": "写入范围",
+  "botsMessagesReadFailed": "没能读到消息",
+  "botsNoMemberMessages": "成员之间还没有消息",
+  "botsMessagesIncomplete": "部分成员的消息没能读到 · 重试",
+  "botsDateTime": "{date} {time}",
+  "@botsDateTime": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "botsDiscardTitle": "放弃修改？",
+  "botsKeepEditing": "继续编辑",
+  "botsDiscard": "放弃",
+  "botsGlyphRun": "运行",
+  "botsGlyphJobOutput": "查看后台任务",
+  "botsGlyphJobs": "后台任务",
+  "botsGlyphStopJob": "停止后台任务",
+  "botsGlyphRead": "读取",
+  "botsGlyphImage": "查看图片",
+  "botsGlyphDeliver": "交付文件",
+  "botsGlyphWrite": "写入",
+  "botsGlyphSearch": "搜索",
+  "botsGlyphFindFiles": "查找文件",
+  "botsGlyphOpenWeb": "打开网页",
+  "botsGlyphMessageAgent": "发消息给子代理",
+  "botsGlyphInterruptAgent": "打断子代理",
+  "botsGlyphListModels": "列出子代理模型",
+  "botsGlyphWorkflow": "工作流",
+  "botsGlyphLoop": "循环任务",
+  "botsGlyphSkill": "使用技能",
+  "botsGlyphTodo": "更新待办",
+  "botsGlyphSetGoal": "设定目标",
+  "botsGlyphViewGoal": "查看目标",
+  "botsGlyphUpdateGoal": "更新目标",
+  "botsGlyphAsk": "提问",
+  "botsEmptyCell": "（空）",
+  "botsYesterdayTime": "昨天 {time}",
+  "@botsYesterdayTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "botsOutsideWorkspace": "不在工作区里",
+  "botsNotFolder": "这不是文件夹",
+  "botsChatNotFound": "找不到这个对话",
+  "botsBrowseUnsupported": "这个连接不支持浏览文件",
+  "botsWorkspace": "工作区",
+  "botsSearchFiles": "搜索文件",
+  "botsGoUp": "回到上一级",
+  "botsEmptyFolder": "空文件夹",
+  "botsFileCount": "{count} 个文件",
+  "@botsFileCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "botsTruncatedItems": "只列出了前 {count} 项",
+  "@botsTruncatedItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "botsMoreActions": "更多操作",
+  "botsSearchFailed": "没能搜索",
+  "botsNoResults": "没有找到",
+  "botsCopyPath": "复制路径",
+  "botsKeyEsc": "发送 Esc",
+  "botsKeyTab": "发送 Tab",
+  "botsKeyLeft": "左",
+  "botsKeyUp": "上",
+  "botsKeyDown": "下",
+  "botsKeyRight": "右",
+  "botsKeyPipe": "竖线",
+  "botsKeyTilde": "波浪号",
+  "botsKeySlash": "斜杠",
+  "botsKeyDash": "短横线",
+  "botsTerminal": "终端",
+  "botsTerminalRename": "重命名终端",
+  "botsTerminalName": "终端名称",
+  "botsTerminalRenameFailed": "没能重命名",
+  "botsTerminalCloseNamed": "关闭「{title}」？",
+  "@botsTerminalCloseNamed": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "botsTerminalCloseBody": "里面的进程会结束",
+  "botsTerminalUnsupported": "这个连接用不了终端",
+  "botsTerminalSupportedHosts": "在本机、SSH 主机或 Remote 电脑上可用",
+  "botsTerminalOpening": "正在打开终端…",
+  "botsTerminalNone": "没有打开的终端",
+  "botsTerminalNew": "新建终端",
+  "botsTerminalClose": "关闭终端",
+  "botsTerminalChooseShell": "选择 Shell",
+  "botsTerminalShellFailed": "没能读取 Shell",
+  "botsTerminalReading": "正在读取…",
+  "botsTerminalDefaultShell": "默认 Shell",
+  "botsTerminalOtherDevice": "其他设备正在输入",
+  "botsTerminalTakeOver": "接管",
+  "botsTerminalStarting": "正在启动…",
+  "botsTerminalConnecting": "正在连接…",
+  "botsTerminalDisconnected": "连接已断开",
+  "botsTerminalReconnect": "重新连接",
+  "botsTerminalEnded": "已结束",
+  "botsTerminalExitCode": "已结束 · 退出码 {code}",
+  "@botsTerminalExitCode": {
+    "placeholders": {
+      "code": {
+        "type": "int"
+      }
+    }
+  },
+  "botsTerminalGone": "这个终端已不在了",
+  "botsTerminalLimit": "先关掉不用的终端",
+  "botsListSeparator": "，",
+  "botsNameSeparator": "、",
+  "botsGlyphSubagent": "子代理",
+  "botsGlyphWebSearch": "联网搜索",
+  "botsAgentSemantics": "{title}，{state}",
+  "@botsAgentSemantics": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "state": {
+        "type": "String"
+      }
+    }
+  },
+  "chatBackgroundTaskNotice": "后台任务通知",
+  "chatBackgroundTaskMessage": "后台任务消息",
+  "chatDeclineQuestion": "不回答",
+  "chatChats": "对话列表",
+  "chatViewChatDetails": "查看对话详情",
+  "chatUnsent": "未发送",
+  "chatFailedSubmission": "未送达 · 已保留",
+  "chatEditFailedSubmission": "编辑后重发",
+  "chatErrReasoningEffortUnsupported": "当前模型不支持此推理档位，请调整档位或换模型",
+  "chatSteerNextStep": "插话 · 下一步生效",
+  "chatQueuedAfterTurn": "排队中 · 本轮结束后发送",
+  "chatSteering": "插话中",
+  "chatQueued": "排队中",
+  "chatStoppingTurn": "正在停止本轮",
+  "chatSending": "发送中",
+  "chatSendNow": "立即发送",
+  "chatSwitchToSteer": "改为插话",
+  "chatWithdraw": "撤回",
+  "chatContinuedInNewChat": "已在新对话中继续",
+  "chatReadOriginalImageFailed": "读取原图失败，请重试",
+  "chatRegenerateFailed": "重新回答失败",
+  "chatRegeneratedInNewChat": "已在新对话中重新回答",
+  "chatOpenedInNewChatReattach": "已在新对话中打开，附件需重新添加",
+  "chatOpenedInNewChat": "已在新对话中打开",
+  "chatForkQueuedLeft": "{message}（{left} 条排队消息未能带走）",
+  "@chatForkQueuedLeft": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      },
+      "left": {
+        "type": "int"
+      }
+    }
+  },
+  "chatReturnToOriginal": "返回原对话",
+  "chatWaitingCount": "{count} 项待确认",
+  "@chatWaitingCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatWaitingBackToBottom": "{count} 项待确认，回到底部",
+  "@chatWaitingBackToBottom": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatBackToBottom": "回到底部",
+  "chatCreateFailed": "新建对话失败",
+  "chatSendMode": "发送方式",
+  "chatSteer": "插话",
+  "chatSteerHint": "不打断，AI 下一步会看到",
+  "chatInterruptAndSend": "中断并发送",
+  "chatInterruptHint": "停下当前任务，先处理这条",
+  "chatQueue": "排队",
+  "chatQueueHint": "本轮结束后发送",
+  "chatWithdrawnEditable": "已撤回，可修改后再发",
+  "chatWithdrawn": "已撤回",
+  "chatAttachmentLimit": "每条消息最多 {count} 个附件",
+  "@chatAttachmentLimit": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatAttachmentPermission": "没有权限，可在系统设置中开启",
+  "chatOpenAttachmentFailed": "没能打开附件",
+  "chatReadFailed": "读取失败",
+  "chatReadImageFailed": "没能读取图片",
+  "chatOpenChatFirst": "先打开一个对话",
+  "chatTurnCompleted": "这一轮已完成",
+  "chatTurnError": "这一轮出错了",
+  "chatAnswerHint": "输入回答…",
+  "chatAnswerMode": "发送文字将回答待答问题",
+  "chatMessageMode": "发送新消息",
+  "chatQuestionAnswered": "已回答",
+  "chatStarting": "正在启动",
+  "chatConnecting": "正在连接",
+  "chatDisconnected": "连接已断开",
+  "chatReconnecting": "重新连接中",
+  "chatGenerating": "生成中",
+  "chatGoToSettings": "去设置",
+  "chatConnectToSend": "连接引擎后即可发送",
+  "chatGeneratingSteerHint": "生成中 · 可直接插话",
+  "chatComposerHint": "给 DSH 发消息…",
+  "chatStopGenerating": "停止生成",
+  "chatGoal": "目标",
+  "chatGoalActions": "目标操作",
+  "chatGoalBlocked": "受阻",
+  "chatGoalRoundLimit": "第 {rounds} / {max} 轮",
+  "@chatGoalRoundLimit": {
+    "placeholders": {
+      "rounds": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "chatGoalRound": "第 {rounds} 轮",
+  "@chatGoalRound": {
+    "placeholders": {
+      "rounds": {
+        "type": "int"
+      }
+    }
+  },
+  "chatEditGoal": "编辑目标",
+  "chatPauseGoal": "暂停",
+  "chatPauseGoalHint": "先不自动推进",
+  "chatResumeGoal": "恢复",
+  "chatResumeGoalHint": "继续自动推进",
+  "chatClearGoal": "清除目标",
+  "chatGoalHint": "要完成什么",
+  "chatClearGoalTitle": "清除目标？",
+  "chatTodoCurrent": "正在：{content}",
+  "@chatTodoCurrent": {
+    "placeholders": {
+      "content": {
+        "type": "String"
+      }
+    }
+  },
+  "chatTodoNext": "下一步：{content}",
+  "@chatTodoNext": {
+    "placeholders": {
+      "content": {
+        "type": "String"
+      }
+    }
+  },
+  "chatTodoAllDone": "全部完成",
+  "chatTodoSemantics": "待办 {count}，{label}",
+  "@chatTodoSemantics": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      },
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "chatCollapseTodos": "收起清单",
+  "chatExpandTodos": "展开清单",
+  "chatDockFolded": "{count} 条状态已叠起",
+  "@chatDockFolded": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatDockSpread": "展开",
+  "chatDockFold": "收起状态条",
+  "chatDockNext": "下一张",
+  "chatDockPrevious": "上一张",
+  "chatTodoNotStarted": "未开始",
+  "chatFile": "文件",
+  "chatFolder": "文件夹",
+  "chatChat": "对话",
+  "chatSubagent": "子代理",
+  "chatRecent": "最近",
+  "chatMentionSearching": "正在查找…",
+  "chatMentionNoFiles": "没有匹配的文件",
+  "chatMentionNoMatches": "没有匹配的文件或对话",
+  "chatQuote": "引用",
+  "chatOpenFolder": "打开文件夹",
+  "chatJustNow": "刚刚",
+  "chatMentionAgeMinutes": "{count}分钟",
+  "@chatMentionAgeMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatMentionAgeHours": "{count}小时",
+  "@chatMentionAgeHours": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatMentionAgeDays": "{count}天",
+  "@chatMentionAgeDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatMentionAgeMonths": "{count}个月",
+  "@chatMentionAgeMonths": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatMentionAgeYears": "{count}年",
+  "@chatMentionAgeYears": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatMermaidChart": "Mermaid 图表",
+  "chatPreview": "预览",
+  "chatUnwrapLines": "不换行",
+  "chatWrapLines": "自动换行",
+  "chatAlertNote": "注意",
+  "chatAlertTip": "提示",
+  "chatAlertImportant": "重要",
+  "chatAlertWarning": "警告",
+  "chatAlertCaution": "小心",
+  "chatImage": "图片",
+  "chatImageNotFound": "找不到图片",
+  "chatImageOffline": "未连接 DSH",
+  "chatImageTooLarge": "图片过大",
+  "chatImageReadFailed": "无法读取文件",
+  "chatImageDisplayFailed": "无法显示",
+  "chatImageTapToView": "轻点查看",
+  "chatImageTapToRetry": "轻点重试",
+  "chatImageUnsupportedAddress": "不支持的地址",
+  "chatViewTurnTrace": "查看本轮轨迹",
+  "chatTokensPerSecond": "约 {count} tokens/秒",
+  "@chatTokensPerSecond": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatNoTokensStreaming": "没有在出字",
+  "chatCurrentStep": "这一步 {step}",
+  "@chatCurrentStep": {
+    "placeholders": {
+      "step": {
+        "type": "String"
+      }
+    }
+  },
+  "chatTodoProgress": "待办进度 {done}/{total}",
+  "@chatTodoProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "chatProgress": "进度 {done}/{total}",
+  "@chatProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "chatApproveCommand": "允许运行这条命令？",
+  "chatApproveWrite": "允许写入这个文件？",
+  "chatApproveEdit": "允许修改这个文件？",
+  "chatApproveWebpage": "允许打开这个网页？",
+  "chatApproveSearch": "允许联网搜索？",
+  "chatApproveTool": "允许使用「{name}」？",
+  "@chatApproveTool": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "chatDecline": "拒绝",
+  "chatAllowOnce": "允许本次",
+  "chatAllowForChat": "本对话都允许",
+  "chatSaveToDownloads": "存到「下载」",
+  "chatCopyPath": "复制路径",
+  "chatOpenInDefaultApp": "用默认应用打开",
+  "chatDownloadsFolderHint": "下载/DSH-Go 文件夹",
+  "chatSavedToDownloadsPath": "已存到 下载/{path}",
+  "@chatSavedToDownloadsPath": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "chatSavedToPath": "已存到 {path}",
+  "@chatSavedToPath": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "chatDeliveredFiles": "交付了 {count} 个文件",
+  "@chatDeliveredFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatGeneratedFiles": "生成了 {count} 个文件",
+  "@chatGeneratedFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatAllFiles": "全部 {count} 个文件",
+  "@chatAllFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatCollapseFileList": "收起文件列表",
+  "chatExpandAllFiles": "展开全部 {count} 个文件",
+  "@chatExpandAllFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatDownloading": "正在下载…",
+  "chatDownloadingPercent": "正在下载… {percent}%",
+  "@chatDownloadingPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "chatOpening": "正在打开…",
+  "chatSavingToDownloads": "正在存到「下载」…",
+  "chatOpenInPhoneApp": "用手机上的应用打开",
+  "chatMoreActions": "更多操作",
+  "chatAlreadyInDownloads": "已在手机的「下载」里",
+  "chatArtifactCopyPathOnly": "当前连接无法读取文件，只能复制路径",
+  "chatReplying": "正在回复",
+  "chatInterrupted": "已中断",
+  "chatGallery": "相册",
+  "chatTakePhoto": "拍照",
+  "chatAddAttachment": "添加图片或文件",
+  "chatRemoveAttachment": "移除「{name}」",
+  "@chatRemoveAttachment": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "chatAutoApproveCommands": "自动允许命令",
+  "chatAutoApproving": "自动允许中",
+  "chatViewMoreChanges": "查看改动，还有 {count} 个文件",
+  "@chatViewMoreChanges": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatViewChanges": "查看改动",
+  "chatChangedFiles": "改动了 {count} 个文件",
+  "@chatChangedFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatMoreFiles": "还有 {count} 个文件",
+  "@chatMoreFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatFileChangeSemantics": "{path}，新增 {added} 行，删除 {removed} 行",
+  "@chatFileChangeSemantics": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      },
+      "added": {
+        "type": "int"
+      },
+      "removed": {
+        "type": "int"
+      }
+    }
+  },
+  "chatNewFileSuffix": "  新建",
+  "chatPathCopied": "已复制路径",
+  "chatCommandCompacted": "已压缩 {count} 条历史记录（约 {tokens} tokens）",
+  "@chatCommandCompacted": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "tokens": {
+        "type": "String"
+      }
+    }
+  },
+  "chatCommandPermissionChanged": "已切换为{name}",
+  "@chatCommandPermissionChanged": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "chatCommandCurrentPermission": "当前权限：{name}",
+  "@chatCommandCurrentPermission": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "chatCommandUnknownPermission": "没有这个权限预设",
+  "chatCommandFeedbackRequired": "写上反馈内容再发送",
+  "chatCommandFeedbackSubmitted": "反馈已提交",
+  "chatCommandNothingToCompact": "还没有可压缩的内容",
+  "chatCommandCompactionCancelled": "已取消压缩",
+  "chatCommandCompactionBusy": "正在忙，稍后再压缩",
+  "chatCommandCompactedSaveFailed": "已压缩，但没能保存",
+  "chatCommandCompactUsage": "/compact 不带参数",
+  "chatCommandHistoryChanged": "对话有变化，请再试一次",
+  "chatCommandCompactionFailed": "没能完成压缩，请再试一次",
+  "chatCommandCompactionIncomplete": "压缩未完成，请查看对话",
+  "chatCommandPlanEnabled": "已进入计划模式",
+  "chatCommandPlanEnabling": "下一步起进入计划模式",
+  "chatCommandPlanDisabled": "已退出计划模式",
+  "chatCommandPlanDisabling": "下一步起退出计划模式",
+  "chatCommandPlanCancelled": "已取消进入计划模式",
+  "chatCommandPlanInactive": "当前未开启计划模式",
+  "chatCommandPlanNoAttachments": "退出计划模式时不能附带文件",
+  "chatCommandNoGoal": "还没有目标",
+  "chatCommandGoalRequired": "写上新的目标再发送",
+  "chatCommandGoalAttachments": "附件需要和目标一起发送",
+  "chatCommandGoalCleared": "已清除目标",
+  "chatCommandGoalInvalid": "当前无法执行，请查看目标",
+  "chatCommandGoalExists": "已有目标，请编辑或清除后再设置",
+  "chatCommandGoalCreated": "已设置目标",
+  "chatCommandGoalUpdated": "已更新目标",
+  "chatCommandGoalPaused": "已暂停目标",
+  "chatCommandGoalResumed": "已继续目标",
+  "chatCommandCurrentGoal": "当前目标",
+  "chatCommandGoalBlocked": "等待处理",
+  "chatCommandGoalSummary": "{title}\n{objective}\n{status} · 第 {rounds}/{max} 轮",
+  "@chatCommandGoalSummary": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "objective": {
+        "type": "String"
+      },
+      "status": {
+        "type": "String"
+      },
+      "rounds": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "chatCommandFailed": "执行失败",
+  "chatImageStorageDenied": "没有存储权限，未能保存",
+  "chatImageCannotSave": "这张图片无法保存",
+  "chatImageDownloadFailed": "图片下载失败，请重试",
+  "chatImageSaveFailed": "保存失败，请重试",
+  "chatImageSavedToPhotos": "已保存到相册",
+  "chatShareFailed": "无法打开分享",
+  "chatSubmit": "提交",
+  "chatSelectText": "选择文字",
+  "chatRegenerate": "重新回答",
+  "chatBranchFromHere": "从这里分叉",
+  "chatEditAndResend": "编辑后重发",
+  "chatRegenerateHint": "在新对话中重新生成，原对话不变",
+  "chatBranchHint": "在新对话中继续，原对话不变",
+  "chatEditResendHint": "在新对话中改写，图片和文件需重新添加；原对话不变",
+  "chatSaveToPhotos": "保存到相册",
+  "chatCopyAll": "全部复制",
+  "chatRequestRetrying": "请求失败，正在重试",
+  "chatRequestRetryAttempt": "请求失败，正在重试（第 {count} 次）",
+  "@chatRequestRetryAttempt": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatRequestRetryLimit": "请求失败，正在重试（{count}/{max}）",
+  "@chatRequestRetryLimit": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "chatProviderKeyMissing": "这个模型渠道还没有密钥",
+  "chatDeepSeekKeyMissing": "还没有 DeepSeek API Key",
+  "chatOutputLimitReached": "已达单次输出上限",
+  "chatTurnBlocked": "本轮已被拦截",
+  "chatTurnEngineRestarted": "引擎重启过，本轮已中断",
+  "chatQuestionsTitle": "有 {count} 个问题想问你",
+  "@chatQuestionsTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatOneQuestion": "有个问题想问你",
+  "chatMultipleChoices": "可多选",
+  "chatCustomAnswer": "其他回答",
+  "chatCustomAnswerHint": "输入你的回答",
+  "chatQuoteSemantics": "引用：{text}",
+  "@chatQuoteSemantics": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "chatRemoveQuote": "移除引用",
+  "chatReadOnlySubagent": "一次性子代理，只能查看",
+  "chatThinkingActive": "思考中",
+  "chatThinking": "思考",
+  "chatTranslate": "翻译",
+  "chatTranslationUnavailable": "翻译暂不可用",
+  "chatViewOriginal": "查看原文",
+  "chatViewTranslation": "查看译文",
+  "chatTranslating": "正在翻译",
+  "chatToolFailures": "{label},{count} 个失败",
+  "@chatToolFailures": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatToolNeedsApproval": "需要授权后才能执行",
+  "chatCommand": "命令",
+  "chatToolLineRange": " · 第 {first}⁠–⁠{last} 行",
+  "@chatToolLineRange": {
+    "placeholders": {
+      "first": {
+        "type": "int"
+      },
+      "last": {
+        "type": "int"
+      }
+    }
+  },
+  "chatParameters": "参数",
+  "chatOutput": "输出",
+  "chatResult": "结果",
+  "chatError": "错误",
+  "chatChanges": "改动",
+  "chatContent": "内容",
+  "chatNoOutput": "没有输出",
+  "chatToolDeclined": "已拒绝这次调用",
+  "chatToolRunning": "正在执行…",
+  "chatNoDetails": "暂无详情",
+  "chatOutputHiddenLines": "{count, plural, other{中间省略 {shown} 行}}",
+  "@chatOutputHiddenLines": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "shown": {
+        "type": "String"
+      }
+    }
+  },
+  "chatOutputHiddenChars": "中间省略 {count} 字",
+  "@chatOutputHiddenChars": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "chatOutputSummary": "{count, plural, other{共 {lines} 行}} · {chars} 字",
+  "@chatOutputSummary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "lines": {
+        "type": "String"
+      },
+      "chars": {
+        "type": "String"
+      }
+    }
+  },
+  "chatOutputViewAll": "查看全部",
+  "chatOutputCopyAll": "复制全文",
+  "chatOutputCopied": "已复制全文",
+  "chatOutputToEnd": "跳到末尾",
+  "chatOutputToStart": "回到开头",
+  "chatErrApiKey": "API Key 无效或已过期",
+  "chatErrForbidden": "凭据不可用或权限不足",
+  "chatErrBalance": "余额不足",
+  "chatErrAccountQuota": "账号额度已用完",
+  "chatErrRateLimit": "请求太频繁，稍后再试",
+  "chatErrContextLength": "对话太长。若 /compact 也失败，请新建对话或换模型",
+  "chatErrModelUnavailable": "模型服务暂时不可用",
+  "chatErrModelTimeout": "模型响应超时",
+  "chatErrModelConnection": "没能连上模型服务",
+  "chatErrModelEmpty": "模型没有返回内容",
+  "chatErrEngineOutdated": "这个模型需要新版引擎",
+  "chatErrModelUnsupported": "当前模型不可用",
+  "chatSwitchModel": "换模型",
+  "chatErrTurn": "本轮出错了",
+  "chatTurnSteps": "{count} 步",
+  "@chatTurnSteps": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatTurnFootnoteSemantics": "本轮 {summary}，查看本轮轨迹",
+  "@chatTurnFootnoteSemantics": {
+    "placeholders": {
+      "summary": {
+        "type": "String"
+      }
+    }
+  },
+  "chatTurnToolCalls": "{count} 次工具调用",
+  "@chatTurnToolCalls": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatTurnMessages": "{count} 条消息",
+  "@chatTurnMessages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatTurnThoughts": "{count} 段思考",
+  "@chatTurnThoughts": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatGoalSemantics": "目标，{objective}",
+  "@chatGoalSemantics": {
+    "placeholders": {
+      "objective": {
+        "type": "String"
+      }
+    }
+  },
+  "chatGoalStateSemantics": "目标，{objective}，{state}",
+  "@chatGoalStateSemantics": {
+    "placeholders": {
+      "objective": {
+        "type": "String"
+      },
+      "state": {
+        "type": "String"
+      }
+    }
+  },
+  "chatTodoItemSemantics": "{content}，{state}",
+  "@chatTodoItemSemantics": {
+    "placeholders": {
+      "content": {
+        "type": "String"
+      },
+      "state": {
+        "type": "String"
+      }
+    }
+  },
+  "chatMentionSemantics": "{kind}：{label}",
+  "@chatMentionSemantics": {
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      },
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "chatArtifactSemantics": "{name}，{description}",
+  "@chatArtifactSemantics": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "description": {
+        "type": "String"
+      }
+    }
+  },
+  "commonMonthDay": "{month}月{day}日",
+  "@commonMonthDay": {
+    "placeholders": {
+      "month": {
+        "type": "int"
+      },
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "commonOpenBrowserHost": "在浏览器打开 {host}？",
+  "@commonOpenBrowserHost": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "commonCancel": "取消",
+  "commonRetry": "重试",
+  "commonClose": "关闭",
+  "commonCopied": "已复制",
+  "commonSave": "保存",
+  "commonSettings": "设置",
+  "commonBack": "返回",
+  "commonCopy": "复制",
+  "commonDone": "完成",
+  "commonDelete": "删除",
+  "commonShare": "分享",
+  "commonAdd": "添加",
+  "commonEdit": "编辑",
+  "commonClear": "清除",
+  "commonCollapse": "收起",
+  "commonOpen": "打开",
+  "commonDetails": "详情",
+  "commonMore": "更多",
+  "commonCreate": "创建",
+  "commonSend": "发送",
+  "commonPaste": "粘贴",
+  "commonConfirm": "确认",
+  "commonRename": "重命名",
+  "commonContinue": "继续",
+  "commonDefault": "默认",
+  "commonSaved": "已保存",
+  "commonSaveFailed": "没能保存",
+  "commonSaveFailedRetry": "没能保存，请重试",
+  "commonFailedTryAgain": "没能完成，再试一次",
+  "commonEngineUnreachable": "没能连上引擎",
+  "commonConnectionFailed": "连接失败",
+  "commonCopyLink": "复制链接",
+  "commonOpenWith": "用其他应用打开",
+  "commonUntitledChat": "未命名对话",
+  "commonNewChat": "新对话",
+  "commonYesterday": "昨天",
+  "commonSignIn": "登录",
+  "commonThisPhone": "本机",
+  "commonRemoteHost": "远程主机",
+  "commonFollowSystem": "跟随系统",
+  "commonLight": "浅色",
+  "commonDark": "深色",
+  "commonInProgress": "进行中",
+  "commonCompleted": "已完成",
+  "commonStopped": "已停止",
+  "commonCancelled": "已取消",
+  "commonRunning": "运行中",
+  "commonPaused": "已暂停",
+  "commonDeclined": "已拒绝",
+  "commonFailed": "失败",
+  "commonStopping": "正在停止",
+  "commonWaitingApproval": "等你确认",
+  "commonWaitingAnswer": "等你回答",
+  "commonNotConnected": "未连接",
+  "commonName": "名称",
+  "commonStatus": "状态",
+  "commonVersion": "版本",
+  "commonOther": "其他",
+  "commonPin": "置顶",
+  "commonReply": "回复",
+  "commonItemCount": "{count} 项",
+  "@commonItemCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "engineNewChatDefaultsLast": "新对话默认（上次选择）",
+  "engineNewChatDefaultsFixed": "新对话默认（固定）",
+  "engineNewChatUseLast": "沿用上次",
+  "engineNewChatUseFixed": "固定默认",
+  "engineNewChatDefaultsHint": "保存在当前主机，只影响新对话的模型和思考深度。权限仍用独立默认，不继承临时会话授权。",
+  "engineNewChatDefaultsLegacy": "此引擎仅支持沿用上次选择；不支持固定默认，也无法确认切换时默认值是否保存成功。",
+  "engineNewChatDefaultsUnsupported": "此主机没有可编辑的默认模型设置",
+  "engineNewChatDefaultsSelectionUnavailable": "此模型或思考深度已不可用，请重新选择。",
+  "engineNewChatDefaultsInheritedEffort": "主机基础配置指定了思考深度，不能在这里为无思考模型清除。请先调整主机配置。",
+  "engineNewChatDefaultsSaving": "正在保存并确认默认值…",
+  "engineNewChatDefaultsUnconfirmed": "没能确认完整默认值，请刷新后检查模型和思考深度。主机基础配置或其他客户端可能已改变它们。",
+  "engineModelDefaultSaveFailed": "当前对话的模型已切换，但新对话默认未保存。请到设置 › 模型检查并重试。",
+  "engineSettingsReadFailed": "没能读取设置",
+  "engineProviderHeaderInvalidName": "请求头名称只能包含英文字母、数字或 HTTP 标记符号，不能包含空格或冒号",
+  "engineProviderHeaderReserved": "User-Agent 由引擎设置，请移除此请求头",
+  "engineProviderHeaderDuplicate": "请求头名称重复（不区分大小写）",
+  "engineProviderHeaderInvalidValue": "请求头值只能包含单行 Latin-1 文本，不支持换行或控制字符（制表符除外）",
+  "engineProviderReady": "可用",
+  "engineProviderMissingKey": "缺少 API Key",
+  "engineProviderMisconfigured": "配置有误",
+  "engineProviderInactive": "未启用",
+  "engineProviderConfiguredInWeb": "网页版配置",
+  "engineProvidersStartEngine": "引擎运行后可添加渠道",
+  "engineProvidersReadOnly": "引擎设置是只读的，无法添加",
+  "engineProviderContext": "上下文 {size}",
+  "@engineProviderContext": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "engineProviderModels": "{count} 个模型",
+  "@engineProviderModels": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "engineModelThinking": "思考",
+  "engineModelVision": "识图",
+  "engineSettingsHostChanged": "主机已切换，请重新打开设置后编辑。",
+  "engineSecretTargetChanged": "此项已变化，请重新打开后编辑。",
+  "featuresCurrentChat": "当前对话",
+  "featuresPresetDefaultSet": "新对话将使用「{name}」",
+  "@featuresPresetDefaultSet": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresPresetDefaultFailed": "没能设为默认",
+  "featuresPresetDeleteTitle": "删除「{name}」？",
+  "@featuresPresetDeleteTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresPresetDeleteHint": "新对话不能再选它，已开始的对话不受影响。",
+  "featuresDeleted": "已删除",
+  "featuresDeleteFailed": "没能删除",
+  "featuresPresetAlreadyDefault": "已是新对话默认",
+  "featuresPresetSetDefault": "设为新对话默认",
+  "featuresPresetViewConfig": "查看配置",
+  "featuresPresetDuplicate": "复制为新预设",
+  "featuresPresetDefaultDeleteHint": "先把别的预设设为新对话默认",
+  "featuresAgentPresets": "Agent 预设",
+  "featuresAgentPresetsSubtitle": "新对话的工具与工作方式",
+  "featuresNew": "新建",
+  "featuresPresetsReadFailed": "没能读取 Agent 预设",
+  "featuresLoadFailed": "加载失败",
+  "featuresNewChatDefault": "新对话默认",
+  "featuresEmptyDocument": "（空）",
+  "featuresReadFailed": "没能读取",
+  "featuresTodayTime": "今天 {time}",
+  "@featuresTodayTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresTomorrowTime": "明天 {time}",
+  "@featuresTomorrowTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresYesterdayTime": "昨天 {time}",
+  "@featuresYesterdayTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresScheduleSummaryNext": "{rule} · 下次 {time}",
+  "@featuresScheduleSummaryNext": {
+    "placeholders": {
+      "rule": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresEnded": "已结束",
+  "featuresScheduleSummaryEnded": "已结束 · {time} 运行过",
+  "@featuresScheduleSummaryEnded": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresJobElapsed": "已运行 {span}",
+  "@featuresJobElapsed": {
+    "placeholders": {
+      "span": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresJobDuration": "用时 {span}",
+  "@featuresJobDuration": {
+    "placeholders": {
+      "span": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresPermissionReadOnly": "仅可查看",
+  "featuresPermissionWorkspaceWrite": "工作区内修改",
+  "featuresPermissionFullAccess": "完全权限",
+  "featuresPermissionAutoReview": "自动审查",
+  "featuresPermissionCustom": "自定义",
+  "featuresPermissionReadOnlyHint": "只看文件，不做修改",
+  "featuresPermissionWorkspaceWriteHint": "可改工作区内的文件，越界先问你",
+  "featuresPermissionFullAccessHint": "不再确认，直接执行",
+  "featuresPermissionAutoReviewHint": "由模型逐次审查，拿不准再问你",
+  "featuresPresetStandard": "标准模式",
+  "featuresPresetPtc": "PTC 模式",
+  "featuresPresetMinimal": "极简模式",
+  "featuresPresetCreator": "创造模式",
+  "featuresPresetStandardDescription": "代码、文件和资料，适合大多数任务",
+  "featuresPresetPtcDescription": "批量调用工具，再筛选、统计、汇总",
+  "featuresPresetMinimalDescription": "只用终端和读图，适合测试对比",
+  "featuresPresetCreatorDescription": "让 Agent 写插件，定制 DSH 本身",
+  "featuresHostUnreachable": "连不上「{name}」",
+  "@featuresHostUnreachable": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresHostConnecting": "正在连接「{name}」…",
+  "@featuresHostConnecting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresPermissionAutoTitle": "开启自动审查？",
+  "featuresPermissionAutoWarning": "每次操作由模型判断放不放行，可能误判。",
+  "featuresSwitchFailed": "没能切换",
+  "featuresPermissions": "权限",
+  "featuresPermissionsSubtitle": "执行命令、修改文件前，要不要先问你",
+  "featuresPermissionsReadFailed": "没能读取权限设置",
+  "featuresPermissionCustomHint": "当前用的是自定义权限，选预设会替换它",
+  "featuresModuleInstructions": "工作区指令加载",
+  "featuresModuleTime": "时间感知",
+  "featuresModuleBash": "Bash 命令工具",
+  "featuresModulePersistentBash": "持久 Bash 工具",
+  "featuresModulePowerShell": "PowerShell 命令工具",
+  "featuresModuleFiles": "文件读写工具",
+  "featuresModuleFileSearch": "文件搜索工具",
+  "featuresModuleJobs": "后台任务工具",
+  "featuresModuleSchedule": "自动化任务工具",
+  "featuresModuleLocalSkills": "本地技能加载",
+  "featuresModuleSkillTool": "技能加载工具",
+  "featuresModuleGoalCommand": "目标管理命令",
+  "featuresModuleGoalTool": "目标管理工具",
+  "featuresModulePlan": "计划模式",
+  "featuresModuleCompaction": "上下文压缩",
+  "featuresModuleCompactCommand": "上下文压缩命令",
+  "featuresModuleAskUser": "向用户提问工具",
+  "featuresModuleTodo": "待办清单工具",
+  "featuresModuleWeb": "网页搜索与读取工具",
+  "featuresModulePresent": "文件交付工具",
+  "featuresModuleCordis": "插件 API 查询工具",
+  "featuresModuleSubagent": "子代理委派工具",
+  "featuresModuleSubagentControl": "子代理控制工具",
+  "featuresModuleWorkflow": "工作流工具",
+  "featuresModulePluginManager": "插件管理工具",
+  "featuresModulePluginMarket": "插件市场工具",
+  "featuresModuleToolCalls": "工具调用方式",
+  "featuresModuleTerminal": "持久终端服务",
+  "featuresModulePersona": "智能体角色设定",
+  "featuresGroupDelegation": "子代理委派",
+  "featuresGroupTerminal": "持久终端",
+  "featuresPresetIdRequired": "填写标识",
+  "featuresPresetIdLength": "最多 40 个字符",
+  "featuresPresetIdFormat": "只用小写字母、数字和连字符",
+  "featuresPresetIdTaken": "这个标识已被使用",
+  "featuresPresetCopyName": "{name} 副本",
+  "@featuresPresetCopyName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresPresetBasedOn": "基于",
+  "featuresNameRequired": "填写名称",
+  "featuresCreatorOpenFailed": "没能打开创造模式",
+  "featuresPresetNameHint": "比如：代码审查",
+  "featuresPresetId": "标识",
+  "featuresPresetIdHint": "小写字母、数字和连字符",
+  "featuresPresetDescription": "说明",
+  "featuresPresetDescriptionHint": "一句话说明它适合做什么",
+  "featuresPresetConfigReadFailed": "没能读取预设配置",
+  "featuresPresetCreateTitle": "新建 Agent 预设",
+  "featuresPresetDuplicateTitle": "复制 Agent 预设",
+  "featuresPresetEditTitle": "编辑 Agent 预设",
+  "featuresCreatorOpening": "正在打开创造模式",
+  "featuresWaitingEngine": "等待引擎连接",
+  "featuresCreatorUnavailable": "创造模式不可用",
+  "featuresPresetStartUpdate": "开始更新",
+  "featuresPresetStartCreate": "开始创建",
+  "featuresPresetSystemPrompt": "系统提示",
+  "featuresPresetSystemPromptHint": "你是谁、怎么工作",
+  "featuresPresetReplaceSystemPrompt": "完整替换系统提示",
+  "featuresPresetTools": "工具",
+  "featuresSkills": "技能",
+  "featuresPresetContextModes": "上下文与模式",
+  "featuresCronMinute": "分钟",
+  "featuresCronHour": "小时",
+  "featuresDate": "日期",
+  "featuresCronMonth": "月份",
+  "featuresCronWeekday": "星期",
+  "featuresCronRequired": "填写 5 段 Cron 表达式",
+  "featuresCronWhitespace": "首尾不能有空格",
+  "featuresCronFieldCount": "需要 5 段，现在是 {count} 段",
+  "@featuresCronFieldCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresCronInvalidField": "第 {index} 段（{name}）写法不对",
+  "@featuresCronInvalidField": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresWeekdayMon": "一",
+  "featuresWeekdayTue": "二",
+  "featuresWeekdayWed": "三",
+  "featuresWeekdayThu": "四",
+  "featuresWeekdayFri": "五",
+  "featuresWeekdaySat": "六",
+  "featuresWeekdaySun": "日",
+  "featuresMonthJan": "一月",
+  "featuresMonthFeb": "二月",
+  "featuresMonthMar": "三月",
+  "featuresMonthApr": "四月",
+  "featuresMonthMay": "五月",
+  "featuresMonthJun": "六月",
+  "featuresMonthJul": "七月",
+  "featuresMonthAug": "八月",
+  "featuresMonthSep": "九月",
+  "featuresMonthOct": "十月",
+  "featuresMonthNov": "十一月",
+  "featuresMonthDec": "十二月",
+  "featuresWeekdayName": "周{day}",
+  "@featuresWeekdayName": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresCronWeekdayRange": "{first}至{last}",
+  "@featuresCronWeekdayRange": {
+    "placeholders": {
+      "first": {
+        "type": "String"
+      },
+      "last": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresCronEveryDay": "每天{months}",
+  "@featuresCronEveryDay": {
+    "placeholders": {
+      "months": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresCronMonthDays": "每月 {days} 日{months}",
+  "@featuresCronMonthDays": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      },
+      "months": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresCronMonthDaysAndWeekdays": "每月 {days} 日且{weekdays}{months}",
+  "@featuresCronMonthDaysAndWeekdays": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      },
+      "weekdays": {
+        "type": "String"
+      },
+      "months": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresCronMonthDaysOrWeekdays": "每月 {days} 日或{weekdays}{months}",
+  "@featuresCronMonthDaysOrWeekdays": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      },
+      "weekdays": {
+        "type": "String"
+      },
+      "months": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresCronHourRange": "{first} 至 {last}",
+  "@featuresCronHourRange": {
+    "placeholders": {
+      "first": {
+        "type": "String"
+      },
+      "last": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresEveryMinute": "每分钟",
+  "featuresCronEveryMinutes": "每 {count} 分钟",
+  "@featuresCronEveryMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresEveryHour": "每小时",
+  "featuresCronHourlyMinutes": "每小时的第 {minutes} 分钟",
+  "@featuresCronHourlyMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresCronHoursEveryMinute": "{hours} 点的每分钟",
+  "@featuresCronHoursEveryMinute": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresCronHoursEveryMinutes": "{hours} 点内每 {count} 分钟",
+  "@featuresCronHoursEveryMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresCronEveryHours": "每 {count} 小时",
+  "@featuresCronEveryHours": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresCronHoursMinutes": "{hours} 点的第 {minutes} 分钟",
+  "@featuresCronHoursMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      },
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresRepeatDaily": "每天",
+  "featuresRepeatWeekdays": "工作日",
+  "featuresRepeatWeekly": "每周",
+  "featuresRepeatMonthly": "每月",
+  "featuresRepeatInterval": "间隔",
+  "featuresRepeatOnce": "仅一次",
+  "featuresRepeatAdvanced": "高级",
+  "featuresRepeatCustom": "自定义",
+  "featuresIntervalSeconds": "秒",
+  "featuresZoneUnavailable": "时区不可用",
+  "featuresChooseDay": "至少选一天",
+  "featuresIntervalMinimum": "间隔至少为 1",
+  "featuresMinimumMinute": "至少 1 分钟",
+  "featuresTimeDoesNotExist": "这个时间在该时区不存在",
+  "featuresChooseFutureTime": "选一个以后的时间",
+  "featuresCronNeverRuns": "这个表达式不会运行",
+  "featuresRuleDaily": "每天 {time}",
+  "@featuresRuleDaily": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresRuleWeekdays": "每个工作日 {time}",
+  "@featuresRuleWeekdays": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresRuleWeekends": "每个周末 {time}",
+  "@featuresRuleWeekends": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresRuleWeekly": "每周{days} {time}",
+  "@featuresRuleWeekly": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresRuleMonthly": "每月 {days} 日 {time}",
+  "@featuresRuleMonthly": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresRepeat": "重复",
+  "featuresChat": "对话",
+  "featuresWorkspace": "工作区",
+  "featuresInstructionRequired": "填写指令",
+  "featuresScheduleSaveError": "没能保存：{reason}",
+  "@featuresScheduleSaveError": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresScheduleCreateError": "没能创建：{reason}",
+  "@featuresScheduleCreateError": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresScheduleNameHint": "比如：每日站会提醒",
+  "featuresScheduleInstruction": "指令",
+  "featuresScheduleInstructionHint": "比如：整理昨天的提交，发我摘要",
+  "featuresScheduleRunTime": "运行时间",
+  "featuresScheduleOpenChat": "去对话里看看",
+  "featuresScheduleEditTitle": "编辑自动化任务",
+  "featuresScheduleCreateTitle": "新建自动化任务",
+  "featuresScheduleSaving": "正在保存",
+  "featuresScheduleCreating": "正在对话里创建",
+  "featuresTime": "时间",
+  "featuresNotSelected": "未选",
+  "featuresMonthDaysLabel": "{days} 日",
+  "@featuresMonthDaysLabel": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresTimeZone": "时区",
+  "featuresScheduleRunLocation": "在哪里运行",
+  "featuresJustCreatedChat": "刚建的对话",
+  "featuresModel": "模型",
+  "featuresRequestRefused": "引擎没有接受这个请求",
+  "featuresScheduleNotFound": "这个任务已经不在了",
+  "featuresScheduleEndedError": "任务已结束，不能再改",
+  "featuresScheduleConflict": "任务刚被改过，返回后再试",
+  "featuresScheduleInvalidPrompt": "名称和指令不能为空，名称最多 120 字",
+  "featuresScheduleInvalidTime": "运行时间不对",
+  "featuresScheduleIntervalTooShort": "间隔至少 1 分钟",
+  "featuresScheduleTimeOutOfRange": "时间超出范围",
+  "featuresScheduleSubagentError": "这个对话收不到自动化任务",
+  "featuresEvery": "每",
+  "featuresCronExpression": "Cron 表达式",
+  "featuresCronFieldGuide": "分  时  日  月  周",
+  "featuresZoneTimeSuffix": "（{city}时间）",
+  "@featuresZoneTimeSuffix": {
+    "placeholders": {
+      "city": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresScheduleNextLocal": "接下来（本机时间）",
+  "featuresScheduleNext": "接下来",
+  "featuresMonthDayChoice": "{day} 日",
+  "@featuresMonthDayChoice": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresZonesCommon": "常用",
+  "featuresZonesAll": "全部",
+  "featuresZoneSearchHint": "搜索城市、时区或 UTC 偏移",
+  "featuresZonesNoMatch": "没有匹配的时区",
+  "featuresZoneUTC": "协调世界时",
+  "featuresZoneShanghai": "上海",
+  "featuresZoneUrumqi": "乌鲁木齐",
+  "featuresZoneHongKong": "香港",
+  "featuresZoneMacau": "澳门",
+  "featuresZoneTaipei": "台北",
+  "featuresZoneTokyo": "东京",
+  "featuresZoneSeoul": "首尔",
+  "featuresZoneSingapore": "新加坡",
+  "featuresZoneKualaLumpur": "吉隆坡",
+  "featuresZoneBangkok": "曼谷",
+  "featuresZoneHoChiMinh": "胡志明市",
+  "featuresZoneJakarta": "雅加达",
+  "featuresZoneManila": "马尼拉",
+  "featuresZoneKolkata": "加尔各答",
+  "featuresZoneDubai": "迪拜",
+  "featuresZoneJerusalem": "耶路撒冷",
+  "featuresZoneLondon": "伦敦",
+  "featuresZoneDublin": "都柏林",
+  "featuresZoneLisbon": "里斯本",
+  "featuresZoneParis": "巴黎",
+  "featuresZoneBerlin": "柏林",
+  "featuresZoneMadrid": "马德里",
+  "featuresZoneRome": "罗马",
+  "featuresZoneAmsterdam": "阿姆斯特丹",
+  "featuresZoneZurich": "苏黎世",
+  "featuresZoneStockholm": "斯德哥尔摩",
+  "featuresZoneWarsaw": "华沙",
+  "featuresZoneAthens": "雅典",
+  "featuresZoneIstanbul": "伊斯坦布尔",
+  "featuresZoneMoscow": "莫斯科",
+  "featuresZoneCairo": "开罗",
+  "featuresZoneJohannesburg": "约翰内斯堡",
+  "featuresZoneLagos": "拉各斯",
+  "featuresZoneNewYork": "纽约",
+  "featuresZoneToronto": "多伦多",
+  "featuresZoneChicago": "芝加哥",
+  "featuresZoneDenver": "丹佛",
+  "featuresZonePhoenix": "凤凰城",
+  "featuresZoneLosAngeles": "洛杉矶",
+  "featuresZoneVancouver": "温哥华",
+  "featuresZoneAnchorage": "安克雷奇",
+  "featuresZoneMexicoCity": "墨西哥城",
+  "featuresZoneBogota": "波哥大",
+  "featuresZoneLima": "利马",
+  "featuresZoneSantiago": "圣地亚哥",
+  "featuresZoneSaoPaulo": "圣保罗",
+  "featuresZoneBuenosAires": "布宜诺斯艾利斯",
+  "featuresZoneHonolulu": "檀香山",
+  "featuresZoneAuckland": "奥克兰",
+  "featuresZoneSydney": "悉尼",
+  "featuresZoneMelbourne": "墨尔本",
+  "featuresZoneBrisbane": "布里斯班",
+  "featuresZonePerth": "珀斯",
+  "featuresScheduleCreated": "已创建",
+  "featuresSchedulesReadFailed": "没能读取自动化任务",
+  "featuresSchedulesEmpty": "还没有自动化任务",
+  "featuresSchedulesEmptyHint": "到点自动发进对话，替你跑一遍",
+  "featuresScheduleNewTask": "新建任务",
+  "featuresSchedulesNoMatch": "没有匹配的任务",
+  "featuresSchedulesNoActive": "没有开启中的任务",
+  "featuresSchedulesNoEnded": "没有已结束的任务",
+  "featuresSchedules": "自动化任务",
+  "featuresSchedulesSubtitle": "到点自动发进原来的对话",
+  "featuresSchedulesSearch": "搜索任务",
+  "featuresSchedulesAllCount": "全部 {count}",
+  "@featuresSchedulesAllCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresScheduleUntitled": "未命名任务",
+  "featuresScheduleSent": "已发进对话",
+  "featuresView": "查看",
+  "featuresSendFailed": "没能发送",
+  "featuresScheduleDeleteTitle": "删除这个任务？",
+  "featuresScheduleDeleteHint": "会停止之后的运行，并删掉它的运行记录。原来的对话不受影响。",
+  "featuresScheduleDeleted": "任务已删除",
+  "featuresScheduleActive": "已开启",
+  "featuresScheduleRun": "运行",
+  "featuresScheduleNextRun": "下次",
+  "featuresScheduleLastRun": "上次",
+  "featuresScheduleRule": "规则",
+  "featuresScheduleLinkedChat": "关联对话",
+  "featuresScheduleChatDeleted": "对话已删除",
+  "featuresScheduleEdit": "编辑任务",
+  "featuresScheduleRunNow": "立即运行",
+  "featuresScheduleHistory": "运行记录",
+  "featuresScheduleNeverRun": "还没有运行过",
+  "featuresScheduleHistoryUnavailable": "记录不可用",
+  "featuresScheduleHistoryReadFailed": "没能读取运行记录",
+  "featuresScheduleDelete": "删除任务",
+  "featuresExportSavedTo": "已存到 {path}",
+  "@featuresExportSavedTo": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresExportTitle": "导出对话日志",
+  "featuresExportSubtitle": "打包成一个 ZIP，用于反馈或备份",
+  "featuresExportUnavailable": "这个连接导不了",
+  "featuresExportRemoteHint": "经 DSH Remote 中转时拿不到日志，可以在电脑上的网页版导出",
+  "featuresExportShareHint": "附在问题反馈里，或发给自己",
+  "featuresExportSaveDownloads": "存到「下载」",
+  "featuresExportDownloadsHint": "存进 下载/DSH-Go",
+  "featuresExportContents": "含这个对话和子代理的全部记录与附件",
+  "featuresArtifactsSemantic": "产出的文件，共 {count} 个，查看全部",
+  "@featuresArtifactsSemantic": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresArtifactsTitle": "产出的文件",
+  "featuresArtifactsAllCount": "全部 {count} 个",
+  "@featuresArtifactsAllCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresArtifactsCount": "{count} 个",
+  "@featuresArtifactsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresArtifactsNoFiles": "还没有文件",
+  "featuresArtifactsTotal": "{count} 个文件 · 交付的和生成的",
+  "@featuresArtifactsTotal": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresArtifactsEmpty": "还没有产出文件",
+  "featuresArtifactsEmptyHint": "AI 交付或生成的文件会出现在这里",
+  "featuresListSeparator": "、",
+  "featuresErrorReason": "{title}：{reason}",
+  "@featuresErrorReason": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresYearDate": "{year}年{date}",
+  "@featuresYearDate": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresDateWeekdayTime": "{date} {week} {time}",
+  "@featuresDateWeekdayTime": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "week": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresDateWeekday": "{date} 周{day}",
+  "@featuresDateWeekday": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresOnceDescription": "{rule} · {date} {time}",
+  "@featuresOnceDescription": {
+    "placeholders": {
+      "rule": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresCronMonthSuffix": "（{months}）",
+  "@featuresCronMonthSuffix": {
+    "placeholders": {
+      "months": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresRuleIntervalSeconds": "每 {count} 秒",
+  "@featuresRuleIntervalSeconds": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresRuleIntervalMinutes": "每 {count} 分钟",
+  "@featuresRuleIntervalMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresRuleIntervalHours": "每 {count} 小时",
+  "@featuresRuleIntervalHours": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresSchedulesActiveCount": "已开启 {count}",
+  "@featuresSchedulesActiveCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresSchedulesEndedCount": "已结束 {count}",
+  "@featuresSchedulesEndedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresScheduleRetention": "只保留最近 {days} 天、最多 {count} 条",
+  "@featuresScheduleRetention": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresScheduleRetentionUnknown": "只保留最近 {days} 天、最多 — 条",
+  "@featuresScheduleRetentionUnknown": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresArtifactsDeliveredTurn": "第 {turn} 轮 · 交付",
+  "@featuresArtifactsDeliveredTurn": {
+    "placeholders": {
+      "turn": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresArtifactsGeneratedTurn": "第 {turn} 轮 · 生成",
+  "@featuresArtifactsGeneratedTurn": {
+    "placeholders": {
+      "turn": {
+        "type": "int"
+      }
+    }
+  },
+  "featuresPresetCreateRequest": "新建 Agent 预设「{name}」（{id}）：在工作区写下这两个文件（内容原样），再用 plugin_manager 的 install_bundle 安装 `{directory}` 目录。只做这些。\n\n",
+  "@featuresPresetCreateRequest": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "id": {
+        "type": "String"
+      },
+      "directory": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresPresetUpdateRequest": "更新 Agent 预设「{name}」（{id}）：在工作区写下这两个文件（内容原样），用 plugin_manager 先移除组合包 `{replacing}`，再用 install_bundle 安装 `{directory}` 目录。只做这些。\n\n",
+  "@featuresPresetUpdateRequest": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "id": {
+        "type": "String"
+      },
+      "replacing": {
+        "type": "String"
+      },
+      "directory": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresZoneThisPhone": "{city} · 本机",
+  "@featuresZoneThisPhone": {
+    "placeholders": {
+      "city": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresPermissionResetHint": "新对话的默认权限已失效",
+  "featuresPermissionResetDefault": "恢复默认",
+  "fileImageName": "图片",
+  "fileSharedText": "分享的文字.txt",
+  "fileChatFallback": "对话",
+  "fileUploadToHost": "传文件到电脑",
+  "fileUploadToHostHint": "放进这个对话在电脑上的工作区，原文件不压缩",
+  "fileUploadProgress": "正在传 {done}/{total}：{name}",
+  "@fileUploadProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "fileUploadDone": "已传到电脑：{names}",
+  "@fileUploadDone": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "fileUploadFailed": "没能传到电脑",
+  "harmonyUnknownResults": "有工具调用没等到结果，可能已经执行，也可能没有。处理之前，这个对话不能再调用工具。",
+  "harmonyUnknownResultsReview": "处理",
+  "harmonyUnknownResultsTitle": "这些工具调用的结果未知",
+  "harmonyUnknownResultsBody": "{tools}\n\n应用在等结果时中断了，它们可能已经执行，也可能没有。可以先看看实际情况，比如文件改了没有。\n\n继续之后，这些调用不会重新运行，记录也不会改成成功。",
+  "@harmonyUnknownResultsBody": {
+    "placeholders": {
+      "tools": {
+        "type": "String"
+      }
+    }
+  },
+  "harmonyUnknownResultsContinue": "继续这个对话",
+  "harmonyUnknownResultsChanged": "情况变了，请再看一遍。",
+  "harmonyUnknownResultsFailed": "没有确认成功，请再试一次。",
+  "harmonyCallsNotRecorded": "本机引擎记不下工具调用的状态，工具调用已暂停。重启引擎后再试。",
+  "harmonySchedulesLocal": "本机的任务只在应用运行时触发：应用被系统挂起时，到点不会运行",
+  "harmonyTerminalNoPty": "这个引擎没有交互终端，可连 SSH 主机",
+  "harmonyTerminalSupportedHosts": "在 SSH 主机上可用",
+  "harmonyKwAccent": "颜色,主题色,强调色",
+  "harmonySaveToFile": "保存到文件",
+  "harmonySaveChooseLocation": "选择保存位置",
+  "harmonySaving": "正在保存…",
+  "harmonySaved": "已保存",
+  "harmonyCommandExportDescription": "把这个对话的完整记录打包成 ZIP，分享或保存到文件",
+  "harmonyReminderSet": "已设提醒",
+  "harmonyReminderRefused": "系统没有接受提醒，没有设置。",
+  "hostDetailsConnectionType": "连接方式",
+  "hubSessionDetails": "对话详情",
+  "hubTerminal": "终端",
+  "hubSessionNoTurns": "还没有完整的一轮",
+  "hubSessionElapsed": "用时",
+  "hubSessionSteps": "步骤",
+  "hubSessionChangedFiles": "改动文件",
+  "hubSessionTrajectoryHint": "每一轮的步骤和用时会排在这里",
+  "hubSessionLoadEarlier": "加载更早的轮次",
+  "hubSessionError": "出错",
+  "hubSessionInterrupted": "被中断",
+  "hubSessionOutputLimit": "达到输出上限",
+  "hubSessionNoChanges": "还没有改过文件",
+  "hubSessionShellChangesHint": "用 shell 命令改的文件不在这里",
+  "hubSessionChanges": "对话改动",
+  "hubSessionChangesNote": "只统计已加载的记录里，用写入和编辑工具做的改动",
+  "hubSessionNoGoal": "还没有目标或待办",
+  "hubSessionGoalHint": "复杂任务里 AI 会列出待办，进度在这里看",
+  "hubSessionGoal": "目标",
+  "hubSessionPlanMode": "计划模式",
+  "hubSessionPlanSwitching": "正在切换计划模式",
+  "hubSessionPlanHint": "AI 先出方案，不改文件",
+  "hubSessionTodos": "待办",
+  "hubSessionNotStarted": "未开始",
+  "hubSessionTurnUsage": "每轮用量",
+  "hubSessionNoSubagents": "没有派出子代理",
+  "hubSessionDelegations": "派活记录",
+  "hubTabTrajectory": "轨迹",
+  "hubTabChanges": "改动",
+  "hubTabFiles": "文件",
+  "hubTabProgress": "进度",
+  "hubTabContext": "上下文",
+  "hubTabSubagents": "子代理",
+  "hubSettingsFullAccessTitle": "开启完全权限？",
+  "hubSettingsFullAccessBody": "AI 执行命令、改动文件前不再问你。",
+  "hubSettingsInterface": "界面",
+  "hubSettingsAppearance": "外观",
+  "hubSettingsChatTextSize": "对话字号",
+  "hubSettingsCollapseSteps": "完成后收起过程",
+  "hubSettingsProviders": "模型",
+  "hubSettingsLicenses": "开源许可",
+  "hubSessionTurns": "共 {count} 轮",
+  "@hubSessionTurns": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "hubSessionTurnsRunning": "共 {count} 轮 · 进行中",
+  "@hubSessionTurnsRunning": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "hubSessionStepCount": "{count} 步",
+  "@hubSessionStepCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "hubSessionWaitTime": "等你 {duration}",
+  "@hubSessionWaitTime": {
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "hubSessionTurn": "第 {turn} 轮",
+  "@hubSessionTurn": {
+    "placeholders": {
+      "turn": {
+        "type": "int"
+      }
+    }
+  },
+  "hubSessionFileCount": "改动了 {count} 个文件",
+  "@hubSessionFileCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "hubSessionEditCount": "改了 {count} 次",
+  "@hubSessionEditCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "hubSessionTurnOf": "第 {turn} / {total} 轮",
+  "@hubSessionTurnOf": {
+    "placeholders": {
+      "turn": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "hubSessionCacheHit": "命中 {percent}",
+  "@hubSessionCacheHit": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "hubSessionBlocked": "受阻",
+  "hubSessionBlockedReason": "受阻：{reason}",
+  "@hubSessionBlockedReason": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "hubSessionTodoSemantics": "{content},{status}",
+  "@hubSessionTodoSemantics": {
+    "placeholders": {
+      "content": {
+        "type": "String"
+      },
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "hubGroupAi": "AI",
+  "hubGroupCapabilities": "能力",
+  "hubGroupGeneral": "通用",
+  "hubGroupHosts": "主机",
+  "hubGroupHelp": "帮助与关于",
+  "hubAbout": "关于鱼鱼远程",
+  "hubThemeLightDark": "明暗",
+  "iosSaveToFiles": "存到「文件」",
+  "iosFilesFolderHint": "文件 App 的 DSH Go 文件夹",
+  "iosSavingToFiles": "正在存到「文件」…",
+  "iosCommandExportDescription": "把这个对话的完整记录打包成 ZIP，分享或存到「文件」",
+  "iosPhotosDenied": "没有相册权限，未能保存",
+  "localeTitle": "语言",
+  "localeSystem": "跟随系统",
+  "localeZh": "简体中文",
+  "localeEn": "English",
+  "mediaAiGenerated": "AI 生成",
+  "mediaCostEstimate": "约 {amount}",
+  "@mediaCostEstimate": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "mediaSavedCount": "已保存 {count} 张到相册",
+  "@mediaSavedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaRegenerate": "重新生成",
+  "mediaCopyPrompt": "复制提示词",
+  "mediaFileGone": "文件已不在",
+  "mediaKindImage": "图像",
+  "mediaKindVideo": "视频",
+  "mediaTitleImage": "生成图像",
+  "mediaTitleVideo": "生成视频",
+  "mediaOpenElsewhere": "在其他应用中打开",
+  "mediaShowInFiles": "在文件中显示",
+  "mediaGenerating": "生成中",
+  "mediaCancelled": "已取消",
+  "mediaNotGenerated": "未生成",
+  "mediaPartial": "{done} / {total} 张",
+  "@mediaPartial": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaCount": "{count} 张",
+  "@mediaCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaSeconds": "{seconds} 秒",
+  "@mediaSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaImageOf": "第 {index} 张，共 {count} 张",
+  "@mediaImageOf": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaPageOf": "{index} / {count}",
+  "@mediaPageOf": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mediaErrorPolicyInput": "描述未通过内容审核",
+  "mediaErrorPolicyOutput": "生成结果未通过内容审核",
+  "mediaErrorAuth": "服务未授权",
+  "mediaErrorBalance": "余额不足",
+  "mediaErrorQuota": "今天的额度已用完",
+  "mediaErrorUnavailable": "服务暂时不可用",
+  "mediaErrorExpired": "结果已过期",
+  "mediaErrorGeneric": "没能生成",
+  "mediaEdit": "编辑",
+  "mediaMakeVideo": "做成视频",
+  "mediaDetailModel": "模型",
+  "mediaDetailSize": "尺寸",
+  "mediaDetailCost": "费用",
+  "mediaDetailProvenance": "来源标识",
+  "mediaDetailFile": "文件",
+  "mediaOriginalPrompt": "原文：{text}",
+  "@mediaOriginalPrompt": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "mediaProvenanceC2pa": "C2PA",
+  "mediaProvenanceImplicit": "隐式",
+  "mediaProvenanceVisible": "可见水印",
+  "mediaParamDuration": "时长",
+  "mediaVideoLoading": "正在加载视频…",
+  "mediaVideoCannotPlay": "无法在 App 内播放此视频，请重试或使用其他应用打开。",
+  "mediaVideoUnsupported": "此版本暂不支持在 App 内播放视频，可保存到相册或在其他应用中打开。",
+  "mediaVideoPlay": "播放",
+  "mediaVideoPause": "暂停",
+  "mediaVideoSaveFailed": "视频保存失败，请重试。",
+  "mediaImageLoading": "正在加载图片",
+  "mediaImageReload": "重新加载",
+  "mediaImageReloadHint": "只重新读取文件，不会重新生成或收费",
+  "mediaVideoNoPoster": "轻点播放视频",
+  "mediaSavedFilesCount": "已保存 {count} 个文件到相册",
+  "@mediaSavedFilesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "nearbyThisChat": "本对话",
+  "nearbyPermissionTitle": "本对话的权限",
+  "nearbyNewChatDefault": "新对话默认：{name}",
+  "@nearbyNewChatDefault": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "nearbySetAsDefault": "设为新对话默认",
+  "nearbyPermissionPill": "本对话的权限：{name}",
+  "@nearbyPermissionPill": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "phoneEngineTidyingFilesEllipsis": "正在整理插件文件…",
+  "phoneEngineTitle": "本机引擎",
+  "phoneDecisionContinued": "你点了继续",
+  "phoneDecisionDone": "已执行",
+  "phoneDecisionTimeout": "超时",
+  "phoneAccentMist": "雾蓝",
+  "phoneAccentDaiqing": "黛青",
+  "phoneAccentDusk": "暮紫",
+  "phoneAccentTurquoise": "松石",
+  "phoneAccentAmber": "琥珀",
+  "phoneAccentGraphite": "石墨",
+  "phoneAccentCustom": "自定义",
+  "plugInputRequired": "请填写此项",
+  "plugInputInvalidValue": "此处的值无效",
+  "plugInputNumber": "请输入有效数字",
+  "plugInputBounds": "请输入 {min}–{max} 之间的值",
+  "@plugInputBounds": {
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "plugInputLength": "长度需为 {min}–{max} 个字符",
+  "@plugInputLength": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "plugInputPattern": "格式不正确",
+  "plugInputDate": "请选择有效日期",
+  "plugInputTime": "请选择有效时间",
+  "plugInputUnavailable": "此处不支持这个组件",
+  "plugInputNoPassword": "插件不能使用密码输入框",
+  "plugInputBadBinding": "输入绑定必须是 data 下的字段路径",
+  "plugInputDuplicateBinding": "一个字段只能绑定一个输入组件",
+  "plugInputNamedPattern": "只支持内置的格式校验",
+  "plugInputNestedForm": "表单不能嵌套",
+  "plugInputSubmitMissing": "表单缺少提交动作",
+  "plugInputTooLarge": "内容过多，请缩短后重试",
+  "plugInputCheckFields": "请检查标出的项目",
+  "plugInputFailed": "未保存，请重试",
+  "plugInputSubmit": "保存",
+  "plugInputChoose": "选择",
+  "plugInputPrevious": "上一页",
+  "plugInputNext": "下一页",
+  "plugInputDecrease": "减少{label}",
+  "@plugInputDecrease": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "plugInputIncrease": "增加{label}",
+  "@plugInputIncrease": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "plugInputRating": "{label}：{value} 分，共 {max} 分",
+  "@plugInputRating": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "value": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "plugInputFormula": "公式无效或超出上限",
+  "plugInputDatePicker": "插件日期",
+  "plugInputTimePicker": "插件时间",
+  "plugInputChoices": "插件选项",
+  "pluginsFile": "文件",
+  "pluginsChat": "对话",
+  "pluginsImage": "图片",
+  "pluginsTheme": "主题",
+  "pluginsColors": "配色",
+  "pluginsCustomColor": "自定义",
+  "pluginsColorLabel": "配色：{label}",
+  "@pluginsColorLabel": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsCoral": "珊瑚",
+  "pluginsRouge": "胭脂",
+  "pluginsOchre": "赭石",
+  "pluginsMoss": "苔绿",
+  "pluginsLake": "湖蓝",
+  "pluginsIndigo": "靛紫",
+  "pluginsHue": "色相",
+  "pluginsWallpaper": "壁纸",
+  "pluginsFollowWallpaper": "跟随壁纸",
+  "plugViewInvalid": "插件界面有误",
+  "plugViewEmpty": "暂无数据",
+  "plugViewImageUnavailable": "图片无法显示",
+  "plugViewUnavailableList": "列表无法显示",
+  "plugViewUnavailableKeyValue": "信息无法显示",
+  "plugViewUnavailableProgress": "进度无法显示",
+  "plugViewUnavailableTable": "表格无法显示",
+  "plugViewUnavailableActions": "按钮无法显示",
+  "plugViewFrom": "来自 {name}",
+  "@plugViewFrom": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "plugViewUnknownTone": "未知 tone {value}，已忽略；可用：good, warn, bad, info, muted",
+  "@plugViewUnknownTone": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "plugViewBadActionId": "动作 id {value} 不合规，这个元素不可点",
+  "@plugViewBadActionId": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "plugViewBadAction": "动作应该是 id 字符串或 {shape}，已忽略",
+  "@plugViewBadAction": {
+    "placeholders": {
+      "shape": {
+        "type": "String"
+      }
+    }
+  },
+  "plugViewArgsLimit": "动作参数超过 {limit} 字节，已忽略",
+  "@plugViewArgsLimit": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "plugViewUnknownIcon": "未知图标 {value}，画默认图标",
+  "@plugViewUnknownIcon": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "plugViewExpectedItems": "应该是数组，每项是 {shape}",
+  "@plugViewExpectedItems": {
+    "placeholders": {
+      "shape": {
+        "type": "String"
+      }
+    }
+  },
+  "plugViewSkippedItem": "应该是 {shape}，这项已跳过",
+  "@plugViewSkippedItem": {
+    "placeholders": {
+      "shape": {
+        "type": "String"
+      }
+    }
+  },
+  "plugViewBadMax": "max 应该是大于 0 的数，按 100 算",
+  "plugViewColumnLimit": "{first} 列，超过上限 {second}",
+  "@plugViewColumnLimit": {
+    "placeholders": {
+      "first": {
+        "type": "int"
+      },
+      "second": {
+        "type": "int"
+      }
+    }
+  },
+  "plugViewFirstColumns": "只显示前 {limit} 列",
+  "@plugViewFirstColumns": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "plugViewFirstRows": "只显示前 {limit} 行",
+  "@plugViewFirstRows": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "plugViewOnePrimary": "一张视图只能有一个主按钮，这个按普通按钮画",
+  "plugViewBadImageSource": "图片只收插件资源 asset:<路径>（png、jpg、webp、gif）或 data:image/…",
+  "plugViewBadAspect": "aspect 应该是 0.25 到 4 之间的数，已忽略",
+  "plugViewImageTooLarge": "data: 图片超过 {limit} 字节",
+  "@plugViewImageTooLarge": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "plugViewImageDecode": "图片无法解码（只收 PNG、JPEG、WebP、GIF）",
+  "plugViewImagePixels": "图片尺寸超过上限：单边 4096、总数 400 万像素",
+  "plugViewTooDeep": "JSON 嵌套超过 {limit} 层",
+  "@plugViewTooDeep": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "plugViewV2Content": "插件内容",
+  "plugViewVersionFallback": "暂不支持视图版本 {version}，已使用兼容显示",
+  "@plugViewVersionFallback": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "plugViewStyleInvalid": "样式无效，支持 {values}",
+  "@plugViewStyleInvalid": {
+    "placeholders": {
+      "values": {
+        "type": "String"
+      }
+    }
+  },
+  "plugViewStyleReserved": "此样式由 App 保留，已忽略",
+  "plugViewStyleContainerOnly": "此样式仅用于 stack 和 row",
+  "plugViewStyleTextOnly": "此样式仅用于 text、metric 和 callout",
+  "plugViewContrastAdjusted": "{mode}：{before} 已校正为 {after}，对比度至少 {minimum}:1",
+  "@plugViewContrastAdjusted": {
+    "placeholders": {
+      "mode": {
+        "type": "String"
+      },
+      "before": {
+        "type": "String"
+      },
+      "after": {
+        "type": "String"
+      },
+      "minimum": {
+        "type": "String"
+      }
+    }
+  },
+  "plugViewRichLimit": "富文本超出上限，已截断",
+  "plugViewBadTrend": "trend 要 2–{max} 个数字（可以有 null），已忽略",
+  "@plugViewBadTrend": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "plugViewGalleryPicture": "第 {index} 张",
+  "@plugViewGalleryPicture": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "portalAppName": "鱼鱼远程",
+  "portalRemoteOnly": "连接 YuRemote 服务器，引擎仅在远程主机运行。",
+  "portalAddress": "服务器地址",
+  "portalName": "服务器名称",
+  "portalPassword": "密码",
+  "portalScan": "扫描服务器或配对链接",
+  "portalPairingReady": "配对链接已就绪",
+  "portalWebRemoved": "鱼鱼远程不提供内嵌网页功能。",
+  "portalProjectRepository": "项目仓库",
+  "portalUpstreamCredit": "上游来源",
+  "portalLicenseSplit": "鱼鱼远程及导入的 Dart 包采用 AGPL-3.0 许可。独立的服务端网关采用 MIT 许可。",
+  "portalArtworkCredit": "鱼鱼远程插画由 Tsuki 提供。未包含上游受保护的品牌与吉祥物。",
+  "portalDirectoryParent": "上一级文件夹",
+  "portalDirectoryHostHint": "文件夹位于远程主机上，而非此设备。",
+  "readListUpdating": "更新中 · 上次结果",
+  "readListOffline": "离线 · 上次结果",
+  "readListFailed": "未更新 · 上次结果",
+  "remoteStepConnect": "连接服务器",
+  "remoteStepVerifyHostKey": "验证主机指纹",
+  "remoteStepStartDsh": "启动 DSH",
+  "remoteStepTunnel": "建立隧道",
+  "remoteConnecting": "正在连接",
+  "remoteConnected": "已连接",
+  "remoteReconnecting": "重新连接中",
+  "remoteReconnectAttempt": "重新连接中 · 第 {count} 次",
+  "@remoteReconnectAttempt": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "remoteHostedErrNetwork": "没能连上分享服务，检查网络后重试",
+  "remoteHostedErrTooLarge": "对话太大，生成不了链接",
+  "remoteHostedErrRateLimited": "分享太频繁，稍后再试",
+  "remoteHostedErrCreate": "没能生成链接",
+  "remoteHostedErrUnavailable": "分享服务暂时不可用，稍后再试",
+  "remoteHostedErrGone": "链接已过期或被删除",
+  "remoteHostedErrForbidden": "没有权限删除这个链接",
+  "remoteHostedErrBroken": "链接不完整或已损坏",
+  "remoteChat": "对话",
+  "remoteHostedTtlWeek": "7 天",
+  "remoteHostedTtlMonth": "30 天",
+  "remoteHostedTtlForever": "永久",
+  "remoteLinkCopied": "已复制链接",
+  "remotePathDirect": "直连",
+  "remotePathTurn": "TURN",
+  "remotePathRelay": "Relay 中继",
+  "remoteHost": "主机",
+  "remoteHostedUpdateRequired": "需要更新 App 才能打开",
+  "remoteHostedCannotOpen": "这个链接无法打开",
+  "remoteOpening": "正在打开…",
+  "remoteHostedNeverExpires": "永久有效",
+  "remoteHostedExpired": "已过期",
+  "remoteHostedExpiresToday": "今天到期",
+  "remoteHostedExpiresTomorrow": "明天到期",
+  "remoteHostedExpiresOn": "{date}到期",
+  "@remoteHostedExpiresOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "remoteHostedDeleteTitle": "删除这个链接？",
+  "remoteHostedDeleteBody": "「{title}」的链接会立即失效",
+  "@remoteHostedDeleteBody": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "remoteHostedLinkDeleted": "已删除链接",
+  "remoteUndo": "撤销",
+  "remoteHostedMyLinks": "我的分享链接",
+  "remoteHostedNoLinks": "还没有分享链接",
+  "remoteHostedErrDeleteNetwork": "没能删除，检查网络后重试",
+  "remoteHostedErrDelete": "没能删除，稍后再试",
+  "remoteDirectoryPickerTitle": "选择文件夹",
+  "remoteDirectoryChoose": "选择",
+  "remoteDirectoryDefault": "默认工作目录",
+  "remoteDirectoryHome": "主目录",
+  "remoteDirectoryPhoneStorage": "手机存储",
+  "remoteDirectoryLocations": "位置",
+  "remoteDirectoryRecent": "最近",
+  "remoteDirectoryEnterPath": "输入路径",
+  "remoteDirectoryGo": "前往",
+  "remoteDirectoryAbsolutePath": "写完整路径，如 /root/workspace 或 C:/Users/me",
+  "remoteDirectoryNewFolder": "新建文件夹",
+  "remoteDirectoryParentCaption": "在「{name}」里",
+  "@remoteDirectoryParentCaption": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "remoteDirectoryFolderName": "文件夹名称",
+  "remoteDirectoryRoot": "根目录",
+  "remoteDirectoryErrCreate": "没能新建文件夹",
+  "remoteDirectoryNoSubfolders": "这里没有子文件夹",
+  "remoteDirectoryHideHidden": "收起隐藏文件夹",
+  "remoteDirectoryShowHidden": "显示 {count} 个隐藏文件夹",
+  "@remoteDirectoryShowHidden": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "remoteDirectoryTruncated": "文件夹太多，只列出了前面一部分",
+  "remoteWorkspaceAdd": "添加工作区",
+  "remoteWorkspaceAdded": "已添加「{name}」",
+  "@remoteWorkspaceAdded": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "remoteWorkspaceErrAdd": "没能添加工作区",
+  "remoteWorkspaceNoChats": "没有对话",
+  "remoteWorkspaceChatCount": "{count} 个对话",
+  "@remoteWorkspaceChatCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "remoteWorkspaceErrRename": "没能重命名",
+  "remoteWorkspaceRemoved": "已移除「{name}」",
+  "@remoteWorkspaceRemoved": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "remoteWorkspaceErrRemove": "没能移除工作区",
+  "remoteWorkspaceRename": "重命名工作区",
+  "remoteWorkspaceName": "工作区名称",
+  "remoteWorkspaceNameRequired": "起个名字",
+  "remoteWorkspaceRemoveTitle": "移除「{name}」？",
+  "@remoteWorkspaceRemoveTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "remoteWorkspaceRemoveBody": "文件夹和对话都会保留",
+  "remoteWorkspaceRemove": "移除",
+  "remoteWorkspace": "工作区",
+  "remoteWorkspaceNewChatHere": "在这里新建对话",
+  "remoteWorkspaceUnpin": "取消置顶",
+  "remoteWorkspaceGroup": "分组",
+  "remoteWorkspaceUngrouped": "未分组",
+  "remoteWorkspaceRemoveAction": "移除工作区",
+  "remoteWorkspaceNewGroup": "新建分组",
+  "remoteWorkspaceGroupName": "分组名称",
+  "remoteDirectoryInvalidName": "名字里不能有「/」",
+  "remoteWorkspaceErrNameConflict": "已有同名的工作区",
+  "remoteWorkspaceErrInvalidPath": "这个文件夹不能用作工作区",
+  "remoteWorkspaceErrNotFound": "这个工作区已经不在了",
+  "remoteDirectoryErrUnreadable": "打不开这个文件夹",
+  "remoteDirectoryErrExists": "已经有同名的文件夹",
+  "remoteDirectoryErrUnavailable": "这台主机不能在这里浏览文件夹",
+  "remoteWorkspaceErrUnsupported": "这台主机不支持这个操作",
+  "remoteWorkspaceAllChats": "全部对话",
+  "remoteWorkspaceSwitcherSemantics": "工作区：{name}。切换工作区",
+  "@remoteWorkspaceSwitcherSemantics": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "remoteWorkspaceManage": "管理工作区",
+  "remoteWorkspaceErrLoad": "没能读取工作区",
+  "remoteWorkspaceEmpty": "还没有工作区",
+  "remoteWorkspaceEmptyHint": "把常用的文件夹加进来",
+  "remoteWorkspaceCount": "{count} 个工作区",
+  "@remoteWorkspaceCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "remoteDirectoryConfirmFolder": "{action}「{name}」",
+  "@remoteDirectoryConfirmFolder": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "remoteHostedMonthDate": "{month} 月 {day} 日",
+  "@remoteHostedMonthDate": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      },
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "remoteHostedYearDate": "{year} 年 {month} 月 {day} 日",
+  "@remoteHostedYearDate": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      },
+      "month": {
+        "type": "String"
+      },
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "remoteErrorDetail": "{message}（{detail}）",
+  "@remoteErrorDetail": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      },
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "remotePathLan": "LAN 局域网",
+  "remotePathP2p": "P2P 点对点",
+  "remoteNetworkDetails": "网络详情",
+  "remoteHostedLoadFailed": "无法读取已保存的分享链接，请重试。",
+  "remoteHostedSaveFailed": "分享链接的更改尚未保存，请重试。",
+  "remoteHostedDeleteSaveFailed": "删除未完成，链接仍然有效。请重试。",
+  "remoteHostedUndoUnsaved": "本次删除已取消，但撤销尚未保存。重启后可能继续删除，请到“我的分享链接”重试保存。",
+  "remoteHostedUndoFailed": "无法恢复分享，删除可能已开始。请检查“我的分享链接”。",
+  "remoteHostedCreatedUnsaved": "链接已创建，可以复制使用，但尚未保存到本机。请保留链接，并到“我的分享链接”重试保存。",
+  "remoteHostedStopFailed": "未能停止分享，链接仍然有效。请重试。",
+  "stateWorkspaceFilesHint": "已上传到当前工作区的文件：",
+  "stateRemoteUploadNameInvalid": "文件名不受主机支持，请去掉特殊字符或缩短后再试",
+  "stateRemoteUploadWorkspaceUnavailable": "当前对话没有可写的工作目录",
+  "stateRemoteUploadWorkspaceChanged": "工作目录已变化，请确认后重新上传",
+  "stateRemoteUploadLimit": "主机拒绝了上传，请检查文件大小或稍后重试",
+  "stateRemoteUploadUnsupported": "这台主机不支持文件上传，请更新主机上的 Remote 插件后重连",
+  "stateRemoteUploadTooLarge": "文件超过远程上传协议的大小上限",
+  "riskDontShowAgain": "不再提示",
+  "riskFullAccessAction": "开启完全权限",
+  "riskAutoReviewAction": "开启自动审查",
+  "riskAllowForChatTitle": "本对话都允许？",
+  "riskAllowForChatBody": "这个对话之后的命令和改动都直接放行，可在输入框上方随时关闭。",
+  "riskAllowForChatAction": "全部允许",
+  "searchNeedsEngineField": "当前主机提供时可用",
+  "searchNeedsAnimations": "开启动画时可用",
+  "searchNeedsChat": "打开对话时可用",
+  "searchKwTheme": "外观,配色,颜色,主题色,强调色,图标",
+  "searchKwModels": "模型渠道,渠道,供应商,换模型,OpenRouter,ChatGPT,Claude",
+  "searchKwRemote": "远程,SSH,电脑,服务器,DSH Remote,连接电脑",
+  "searchKwPermission": "权限,别问我,确认,审批,自动允许,只读,完全权限,自动执行命令",
+  "searchKwAgentPresets": "预设,模式,工作方式",
+  "searchKwLanguage": "中文,英文,简体,English",
+  "searchKwTextSize": "字号,字体,文字大小,大字,字体大小",
+  "searchKwFoldTurns": "收起,折叠,过程,步骤",
+  "searchKwVersion": "版本号,关于",
+  "searchKwLicenses": "许可证,开源,License",
+  "searchKwDarkMode": "深色,浅色,暗色,夜间,深色模式,跟随系统,外观",
+  "searchKwAccent": "颜色,主题色,强调色,壁纸,取色",
+  "searchKwPermissionCurrent": "本对话都允许,这个对话,当前权限",
+  "searchKwPermissionDefault": "默认权限,只读,工作区内修改,完全权限,自动执行命令,别问我",
+  "searchSettingsHint": "搜索设置",
+  "searchNoResults": "没有找到相关设置",
+  "searchKwAbout": "关于,版本,更新,许可,dsh-go",
+  "shellDeletePermanently": "永久删除",
+  "shellDeleteNoUndo": "无法撤销，与归档不同",
+  "shellDeleteChecking": "正在检查此主机是否支持永久删除…",
+  "shellDeleteUnsupported": "此主机不支持安全永久删除，仍可使用归档。",
+  "shellDeleteUnavailable": "安全永久删除暂不可用，请重连或更新此主机；不会改为归档。",
+  "shellDeleteChatConfirmation": "永久删除「{title}」？",
+  "@shellDeleteChatConfirmation": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "shellDeleteChatsConfirmation": "永久删除 {count} 个对话？",
+  "@shellDeleteChatsConfirmation": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDeleteWarning": "将从此主机永久删除所选对话记录，无法撤销，与归档不同。\n\n工作目录、生成的文件、分叉对话、共享附件和已发布的云端分享都会保留。云端分享需另行删除。子代理对话会随所选对话一起删除。运行中或有定时任务的对话会被主机拒绝。",
+  "shellDeleteOwnerChanged": "主机或连接已变化。请取消后重新发起删除，原确认不再有效。",
+  "shellDeletingChats": "正在删除对话…",
+  "shellChatsDeleted": "已永久删除 {count} 个对话",
+  "@shellChatsDeleted": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDeletePartial": "已删除 {deleted} 个，失败 {failed} 个",
+  "@shellDeletePartial": {
+    "placeholders": {
+      "deleted": {
+        "type": "int"
+      },
+      "failed": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDeleteRunning": "请先停止运行中的工作；主机还会检查活动任务和定时任务。",
+  "shellDeleteRelated": "此对话仍有关联的定时任务，主机为保护它们拒绝删除。",
+  "shellDeleteWriterHeld": "其他进程正在使用此对话，请先在该进程中关闭后重试。",
+  "shellDeleteNotFound": "此主机上已没有这个对话，请刷新列表。",
+  "shellDeleteConnectionLost": "连接已断开，删除结果未确认，请刷新对话列表后再操作。",
+  "shellDeleteArchivePending": "此对话正在等待归档，请先完成或撤销归档。",
+  "shellDeleteInventoryChanged": "对话列表已变化，请刷新后重新选择。",
+  "shellDeleteProtocolError": "删除结果未确认，请刷新对话列表后再操作。",
+  "shellDeleteNotAttempted": "未执行，请核对对话列表后重试。",
+  "shellDeleteFailed": "主机无法确认删除结果，请刷新后再决定是否重试。",
+  "shellSearchChats": "搜索对话",
+  "shellCollapseChatList": "收起对话列表",
+  "shellExpandChatList": "展开对话列表",
+  "shellChatList": "对话列表",
+  "shellChatDetails": "对话详情",
+  "shellCollapseDetails": "收起详情",
+  "shellExpand": "展开",
+  "shellUndo": "撤销",
+  "shellFolderDeleted": "已删除「{name}」",
+  "@shellFolderDeleted": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shellMovedToFolder": "已移到「{name}」",
+  "@shellMovedToFolder": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shellMovedOutOfFolder": "已移出文件夹",
+  "shellUnpinFailed": "没能取消置顶，稍后再试",
+  "shellPinFailed": "没能置顶，稍后再试",
+  "shellChatsUnpinned": "已取消置顶 {count} 个对话",
+  "@shellChatsUnpinned": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellChatsPinned": "已置顶 {count} 个对话",
+  "@shellChatsPinned": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellArchiveFailed": "没能归档，稍后再试",
+  "shellChatsStoppedArchived": "已停止并归档 {count} 个对话",
+  "@shellChatsStoppedArchived": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellChatsArchived": "已归档 {count} 个对话",
+  "@shellChatsArchived": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellFilterLabel": "筛选：{label}",
+  "@shellFilterLabel": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "shellFolders": "文件夹",
+  "shellNoRunningChats": "没有运行中的对话",
+  "shellNoPendingChats": "没有待确认的对话",
+  "shellNoUnreadChats": "没有未读对话",
+  "shellNoChatsYet": "还没有对话",
+  "shellFolderLabel": "文件夹「{name}」",
+  "@shellFolderLabel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shellFolderChatCount": "文件夹「{name}」，{count} 个对话",
+  "@shellFolderChatCount": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellSort": "排序",
+  "shellRecentActivity": "最近活动",
+  "shellCreatedTime": "创建时间",
+  "shellNewFolder": "新建文件夹",
+  "shellManageFolders": "管理文件夹",
+  "shellMultiSelect": "多选",
+  "shellFolderNameExists": "已有同名文件夹",
+  "shellEditFolder": "编辑文件夹",
+  "shellFolderMark": "标记",
+  "shellFolderColor": "颜色 {number}",
+  "@shellFolderColor": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "shellMoveToFolder": "移到文件夹",
+  "shellMoveOutOfFolder": "移出文件夹",
+  "shellDeleteFolder": "删除文件夹",
+  "shellDragToReorder": "拖动排序",
+  "shellSelectChats": "选择对话",
+  "shellSelectedCount": "已选 {count} 个",
+  "@shellSelectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shellDeselectAll": "取消全选",
+  "shellSelectAll": "全选",
+  "shellUnpin": "取消置顶",
+  "shellArchive": "归档",
+  "shellCurrentlyRunning": "正在运行",
+  "shellUnread": "未读",
+  "shellPinned": "已置顶",
+  "shellEngineNotRunning": "引擎未运行",
+  "shellHostNotConnected": "还没连上「{name}」",
+  "@shellHostNotConnected": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shellSearchAfterConnecting": "连接后才能搜索",
+  "shellChatsLoadFailed": "对话列表加载失败",
+  "shellSearchHostChats": "搜索「{name}」上的对话",
+  "@shellSearchHostChats": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shellSearchTitlesHint": "按标题查找，含已归档的对话",
+  "shellSearchContentHint": "按标题和内容查找，含已归档的对话",
+  "shellLoadingChatsEllipsis": "正在加载对话…",
+  "shellNoMatchingChats": "没有相关对话",
+  "shellSearchDifferentKeywords": "换个关键词，或用空格分开多个词",
+  "shellArchived": "已归档",
+  "shellRestoreBeforeOpening": "已归档的对话需先恢复，才能打开",
+  "shellRestoreAndOpen": "恢复并打开",
+  "shellRestoreFailed": "没能恢复，稍后再试",
+  "shellSearchingMessages": "正在搜索消息内容…",
+  "shellHostTitleSearchOnly": "这台主机仅支持按标题搜索",
+  "shellContentSearchFailed": "内容搜索失败，仅显示标题匹配",
+  "shellContentSearchLimit": "内容匹配仅列出最相关的 20 个对话",
+  "shellMoveToOtherFolder": "移到其他文件夹",
+  "shellArchiveStopsTurn": "进行中的一轮会停止",
+  "shellRenameFailed": "没能重命名，稍后再试",
+  "shellChatStoppedArchived": "已停止并归档「{title}」",
+  "@shellChatStoppedArchived": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "shellChatArchived": "已归档「{title}」",
+  "@shellChatArchived": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "shellRenameChat": "重命名对话",
+  "shellChatTitle": "对话标题",
+  "shellLoadingChats": "正在加载对话",
+  "shellWorkspaceNoChats": "这里还没有对话",
+  "shellWorkspaceNewChatsHint": "新对话会放进这个工作区。旧对话不会自动移入，可在「全部对话」中找到。",
+  "shellNewChatsHint": "新对话会出现在这里",
+  "shellHostUnreachable": "连不上「{name}」",
+  "@shellHostUnreachable": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shellHostReconnecting": "正在重新连接「{name}」…",
+  "@shellHostReconnecting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shellRetryNow": "立即重试",
+  "shellHostConnecting": "正在连接「{name}」…",
+  "@shellHostConnecting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shellHostChatsAfterConnecting": "连接后显示这台主机上的对话",
+  "shellCurrentHostLabel": "当前主机：{name}，{view}。切换主机",
+  "@shellCurrentHostLabel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "view": {
+        "type": "String"
+      }
+    }
+  },
+  "shellSemanticsSeparator": "，",
+  "shellChatsArchivedPartial": "已归档 {count} 个对话，{failed} 个没能归档",
+  "@shellChatsArchivedPartial": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "failed": {
+        "type": "int"
+      }
+    }
+  },
+  "shellPanelOverview": "信息",
+  "shellPanelWorkspace": "工作区",
+  "shellPanelModel": "模型",
+  "shellPanelHost": "主机",
+  "shellPanelOpenFull": "打开完整页面",
+  "shellQuickPanel": "快捷入口",
+  "shellQuickPanelHint": "在「{path}」里调整",
+  "@shellQuickPanelHint": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "stateStoragePermission": "没有存储权限，存不进「下载」",
+  "stateBrowserOpenFailed": "没能打开浏览器",
+  "stateFileOpenFailed": "无法打开这个文件",
+  "stateLinkOpenFailed": "无法打开这个链接",
+  "stateRunCommand": "运行命令",
+  "stateWriteFile": "写入文件",
+  "stateEditFile": "修改文件",
+  "stateOpenPage": "打开网页",
+  "stateWebSearch": "联网搜索",
+  "stateAlertQuestion": "问你一个问题",
+  "stateSizeSmall": "小",
+  "stateSizeStandard": "标准",
+  "stateSizeLarge": "大",
+  "stateAgentError": "出错",
+  "stateNotRunning": "未运行",
+  "stateAgentOneShot": "一次性",
+  "stateAgentContinuable": "可继续",
+  "stateAgentExternal": "外部任务",
+  "stateSubagent": "子代理",
+  "stateParentChat": "上级对话",
+  "statePreparing": "准备中",
+  "stateAppDisclaimer": "基于 DeepSeek Harness 构建 · 非 DeepSeek 官方应用",
+  "stateWallpaper": "壁纸",
+  "stateFileMissing": "找不到这个文件了，可能已被删除或移走",
+  "stateFileNoApp": "手机上没有能打开这类文件的应用",
+  "stateFileConnectionLimit": "文件太大，这个连接传不过来",
+  "stateFileReadUnsupported": "这个连接不支持读取文件",
+  "stateArtifactImage": "图片",
+  "stateArtifactDocument": "文档",
+  "stateArtifactSheet": "表格",
+  "stateArtifactSlides": "演示文稿",
+  "stateArtifactArchive": "压缩包",
+  "stateArtifactAudio": "音频",
+  "stateArtifactVideo": "视频",
+  "stateArtifactWeb": "网页",
+  "stateArtifactText": "文本",
+  "stateArtifactFile": "文件",
+  "statePrivateKeyTooLarge": "文件太大，不像是私钥",
+  "stateChatAgentBusy": "AI 正忙，稍后再试",
+  "stateChatWriterHeld": "这个对话正在别处使用",
+  "stateChatModelUnavailable": "这个模型现在用不了",
+  "stateChatAttachmentInvalid": "这个附件发不了",
+  "stateChatForkUnavailable": "这里不能分叉",
+  "stateChatImagesTooLarge": "图片太大，少选几张再发",
+  "stateChatSyncInterrupted": "对话同步中断",
+  "stateChatSynchronizing": "正在同步对话",
+  "stateChatSyncRetry": "重新同步",
+  "stateChatSyncRequired": "对话尚未同步，请重新同步后再试",
+  "stateChatAutoApproveFailed": "自动允许失败",
+  "stateCommandMissing": "没有这个指令",
+  "stateCommandFailed": "指令没有执行",
+  "stateChatStopSteered": "没能停下本轮，已作为插话发送",
+  "stateChatTextOnlyModel": "当前模型未声明支持图片，已按文件发送。可换模型，或把自定义模型的输入类型设为「文本和图片」",
+  "stateAttachmentUploadFailed": "附件上传失败",
+  "stateChatImageModelRequired": "当前模型未声明支持图片。请换模型，或把自定义模型的输入类型设为「文本和图片」再发",
+  "stateSendFailed": "发送失败",
+  "stateChatStopFailed": "没能停下，再试一次",
+  "stateChatTurnEnded": "这一轮已经结束，消息会作为新一轮发送",
+  "stateChatSteerFailed": "插话失败",
+  "stateChatUndoTooLate": "来不及了，AI 已经读到这条消息",
+  "stateChatUndoFailed": "撤回失败",
+  "stateChatApprovalFailed": "审批提交失败",
+  "stateChatAnswerFailed": "回答提交失败",
+  "stateChatModelSwitchFailed": "切换模型失败",
+  "stateChatHistoryFailed": "加载历史失败",
+  "stateChatBranchLastReply": "只能从已完成的一轮的最后一条回复分叉",
+  "stateChatBranchFailed": "分叉失败",
+  "stateChatEarlierHistoryFailed": "读取更早的记录失败",
+  "stateChatNoEarlierHistory": "这条消息之前没有能保留的记录，直接新建对话就好",
+  "stateCommandNewDescription": "开始一个新对话",
+  "stateModelLabel": "模型",
+  "stateCommandModelDescription": "切换模型与思考深度",
+  "stateCommandExportLabel": "导出日志",
+  "stateCommandExportDescription": "把这个对话的完整记录打包成 ZIP，分享或存到「下载」",
+  "stateCompactLabel": "压缩",
+  "stateCommandCompactDescription": "压缩以上对话内容，腾出上下文",
+  "statePermissionLabel": "权限",
+  "stateCommandPermissionDescription": "切换权限预设（沙箱模式与审批策略）",
+  "stateCommandPermissionHint": "<预设名>",
+  "statePlanLabel": "计划",
+  "stateCommandPlanDescription": "进入或退出计划模式",
+  "stateGoalLabel": "目标",
+  "stateCommandGoalDescription": "设置或查看长期任务目标",
+  "stateFeedbackLabel": "反馈",
+  "stateCommandFeedbackDescription": "发送关于当前对话的反馈",
+  "stateCommandFeedbackHint": "<内容>",
+  "stateShareFileTooLarge": "有文件太大，未添加",
+  "stateShareFileUnreadable": "有文件没能读取",
+  "stateShareImagesOnly": "当前主机只能发送图片",
+  "stateComposerInserted": "已放进输入框",
+  "stateCordisPending": "待确认",
+  "stateDrawerAll": "全部",
+  "stateDrawerUnread": "未读",
+  "stateDrawerToday": "今天",
+  "stateDrawerThisWeek": "本周",
+  "stateDrawerEarlier": "更早",
+  "stateEngineAuthFailed": "没能通过引擎的验证",
+  "stateChatMissing": "这个对话已经不在了",
+  "stateChatFormatUnsupported": "当前引擎无法读取此对话的日志格式，请导出诊断包排查",
+  "stateEngineUnsupported": "当前引擎版本不支持",
+  "stateEngineServiceUnavailable": "所需的引擎服务未就绪，请查看引擎日志或导出诊断包",
+  "stateEngineOperationUnavailable": "引擎当前无法执行此操作，请查看引擎日志",
+  "stateSettingsRefreshed": "刚在别处改过，已刷新",
+  "stateCredentialFromEnvironment": "引擎的启动环境已提供这个 Key，无法在这里修改",
+  "stateSettingsFromFile": "由配置文件固定",
+  "stateSettingsInteger": "请填整数",
+  "stateSettingsInvalidFormat": "格式不对",
+  "stateSettingsReadOnly": "引擎设置是只读的",
+  "statePluginDisabled": "插件已停用",
+  "stateSettingsRestartRequired": "这一项要重启引擎才能改",
+  "stateSettingsInvalidValue": "值不合法",
+  "stateSettingsRejected": "引擎没有接受这个值",
+  "stateLoading": "加载中",
+  "stateGoalEmpty": "目标不能为空",
+  "stateGoalPauseFailed": "没能暂停",
+  "stateGoalResumeFailed": "没能恢复",
+  "stateGoalClearOffline": "没能清除：没能连上引擎",
+  "stateGoalClearFailed": "没能清除",
+  "stateGoalStale": "目标刚有变化，再试一次",
+  "stateGoalMissing": "目标已不在",
+  "stateGoalChatNotReady": "对话未就绪，稍后再试",
+  "stateGoalTurnsExhausted": "轮次已用完",
+  "stateGoalStateChanged": "目标状态已变化",
+  "stateProviderOpenAi": "OpenAI 兼容",
+  "stateProviderAnthropic": "Anthropic 兼容",
+  "stateProviderUrlRequired": "填写 Base URL",
+  "stateProviderUrlInvalid": "以 http:// 或 https:// 开头的完整地址",
+  "stateProviderUrlSuffix": "去掉 ? 或 # 之后的部分",
+  "stateProviderKeyRequired": "填写 API Key",
+  "stateProviderKeyOnly": "只粘贴 Key 本身，不带变量名",
+  "stateProviderKeyQuotes": "去掉两边的引号",
+  "stateProviderKeyInvalid": "Key 含有无效字符",
+  "stateProviderModelRequired": "填写模型 ID",
+  "stateProviderModelSpaces": "模型 ID 不能有空格",
+  "stateProviderAlreadyAdded": "已经添加过",
+  "stateProviderConflict": "渠道刚被改过，返回后重试",
+  "stateProviderUnsupported": "当前引擎版本不支持这个操作",
+  "stateProviderKeyRejected": "API Key 无效或没有权限",
+  "stateProviderModelsMissing": "找不到模型列表，检查 Base URL",
+  "stateProviderRateLimited": "请求太频繁，稍后再试",
+  "stateProviderResponseTooLarge": "返回的内容过大",
+  "stateProviderUnreachable": "连不上这个地址，检查 Base URL 和网络",
+  "stateProviderModelsUnreadable": "没有读到模型列表，检查 Base URL",
+  "stateProviderManualModels": "这个协议不能获取模型，请手动添加",
+  "stateProviderConfigRejected": "引擎拒绝了这个配置，检查协议和模型",
+  "stateProviderOffline": "没有连上引擎",
+  "stateScheduleNotCreated": "对话结束了，但没有建成任务",
+  "stateScheduleChatFailed": "对话出错了",
+  "stateScheduleResultPending": "还没等到结果",
+  "statePlanPending": "计划待审",
+  "stateQuestionPending": "待回答",
+  "stateExportRelayUnsupported": "经中转连接暂不支持导出",
+  "stateExportChatMissing": "找不到这个对话了",
+  "stateExportFailed": "没能导出",
+  "stateSizeExtraLarge": "特大",
+  "stateTerminalLimit": "终端数量已达上限",
+  "stateTerminalStartFailed": "没能启动终端",
+  "stateTerminalDisabledOnHost": "这台电脑关掉了远程终端。在电脑上打开 Remote 设置里的「终端」，再回来重试",
+  "stateTileDuotone": "扁平双色",
+  "stateTileGeometric": "极简几何",
+  "stateTileGlassy": "玻璃渐变",
+  "stateDefaultWorkspace": "默认工作区",
+  "stateAlertUseTool": "使用工具 {name}",
+  "@stateAlertUseTool": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "stateAlertApprovalAction": "等你确认：{action}",
+  "@stateAlertApprovalAction": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      }
+    }
+  },
+  "stateAlertApprovalReason": "等你确认：{action} · {reason}",
+  "@stateAlertApprovalReason": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      },
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "stateAlertQuestions": "问你：{question}（共 {count} 个）",
+  "@stateAlertQuestions": {
+    "placeholders": {
+      "question": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stateAlertQuestionText": "问你：{question}",
+  "@stateAlertQuestionText": {
+    "placeholders": {
+      "question": {
+        "type": "String"
+      }
+    }
+  },
+  "stateAttachmentEmpty": "「{name}」是空文件",
+  "@stateAttachmentEmpty": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "stateAttachmentImageLimit": "图片「{name}」超过 20 MB",
+  "@stateAttachmentImageLimit": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "stateAttachmentFileLimit": "文件「{name}」超过 200 MB",
+  "@stateAttachmentFileLimit": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "stateAttachmentTotalLimit": "附件总大小超过 400 MB",
+  "stateCommandPlanHint": "[off | 要求]",
+  "stateCommandGoalHint": "[目标 | clear | pause | resume]",
+  "stateShareReadFailed": "没能读取「{name}」",
+  "@stateShareReadFailed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "stateShareAttachmentLimit": "每条消息最多 {count} 个附件",
+  "@stateShareAttachmentLimit": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stateShareNamedFileTooLarge": "「{name}」太大，未添加",
+  "@stateShareNamedFileTooLarge": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "stateShareTextTruncated": "文字太长，只保留了前 {count} 字",
+  "@stateShareTextTruncated": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stateSettingsMinimum": "不能小于 {bound}",
+  "@stateSettingsMinimum": {
+    "placeholders": {
+      "bound": {
+        "type": "String"
+      }
+    }
+  },
+  "stateSettingsMaximum": "不能大于 {bound}",
+  "@stateSettingsMaximum": {
+    "placeholders": {
+      "bound": {
+        "type": "String"
+      }
+    }
+  },
+  "stateSettingsMultiple": "需是 {bound} 的倍数",
+  "@stateSettingsMultiple": {
+    "placeholders": {
+      "bound": {
+        "type": "String"
+      }
+    }
+  },
+  "stateSettingsMinLength": "至少 {count} 个字符",
+  "@stateSettingsMinLength": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stateSettingsMaxLength": "最多 {count} 个字符",
+  "@stateSettingsMaxLength": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stateEngineHttpRejected": "引擎拒绝了请求（{status}）",
+  "@stateEngineHttpRejected": {
+    "placeholders": {
+      "status": {
+        "type": "int"
+      }
+    }
+  },
+  "stateGoalActionOffline": "{action}：没能连上引擎",
+  "@stateGoalActionOffline": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      }
+    }
+  },
+  "stateProviderServiceUnavailable": "服务暂时不可用（{status}）",
+  "@stateProviderServiceUnavailable": {
+    "placeholders": {
+      "status": {
+        "type": "int"
+      }
+    }
+  },
+  "stateProviderServiceStatus": "服务返回了 {status}",
+  "@stateProviderServiceStatus": {
+    "placeholders": {
+      "status": {
+        "type": "int"
+      }
+    }
+  },
+  "stateProviderKeySaveFailed": "渠道已保存，Key 没有存上：{reason}",
+  "@stateProviderKeySaveFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "stateScheduleCreatePrompt": "新建自动化任务「{title}」：{rule}。\n只调用一次 schedule_create，参数原样使用；现在不要执行任务内容。\n\n```json\n{args}\n```",
+  "@stateScheduleCreatePrompt": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "rule": {
+        "type": "String"
+      },
+      "args": {
+        "type": "String"
+      }
+    }
+  },
+  "stateActionReason": "{action}：{reason}",
+  "@stateActionReason": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      },
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "stateProviderTokenCountInvalid": "填写数字，如 128K",
+  "appSlogan": "随时随刻，想go就Go！",
+  "statePasteEmpty": "剪贴板中没有可粘贴的文本。",
+  "statePasteDenied": "系统未授予粘贴权限，请重新点击粘贴按钮。",
+  "statePasteBusy": "粘贴窗口尚未结束或仍在关闭，请完成或取消后重试。",
+  "statePasteFailed": "无法读取剪贴板，请重试或手动输入。",
+  "systemActionsOpenedUi": "已打开界面",
+  "systemActionsResultUnknown": "结果未知",
+  "systemActionsNotSupported": "不支持",
+  "systemActionsNotRun": "没有执行",
+  "systemActionsResultOpened": "已打开界面，还没确认里面的事办完。",
+  "systemActionsResultContinued": "你点了继续。这只说明你确认了，不代表其他应用里的操作完成了。",
+  "systemActionsResultNotified": "通知已发出，不确定你有没有看到。",
+  "systemActionsResultReminder": "已交给系统提醒，到点由系统响。引擎不会因此运行。",
+  "systemActionsResultClipboard": "文字已写入剪贴板。",
+  "systemActionsResultUnknownDetail": "系统调用可能已经发出，结果未知。不会自动重试，请自己看一下实际状态。",
+  "systemActionsResultUnsupported": "鸿蒙版不支持这个动作，没有执行。",
+  "systemActionsResultOffScreen": "DSH Go 不在屏幕上，没有执行。",
+  "systemActionsResultUnavailable": "系统操作没开或暂时连不上，没有执行。到「设置 → 系统操作」看看。",
+  "systemActionsResultStopped": "已停止。",
+  "systemActionsResultTimeout": "等待超时，没有结果。",
+  "systemActionsResultNotRun": "没有执行。",
+  "viewArtifactSaved": "已存到 {value}",
+  "@viewArtifactSaved": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewDownloadFolder": "下载/",
+  "viewArtifactNoPreview": "无法预览",
+  "viewArtifactNotText": "不是文本文件",
+  "viewArtifactLarge": "文件较大",
+  "viewArtifactMissing": "文件已经不在了",
+  "viewArtifactNotFile": "这不是文件",
+  "viewArtifactOpenFailed": "没能打开",
+  "viewArtifactMore": "更多操作",
+  "viewWorkspace": "工作区",
+  "viewArtifactEmpty": "空文件",
+  "viewArtifactLines": "文件较大，只显示前 {count} 行",
+  "@viewArtifactLines": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewArtifactRows": "只显示前 {count} 行",
+  "@viewArtifactRows": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewArtifactColumns": "只显示前 200 列",
+  "viewArtifactWorksheet": "工作表 {value}",
+  "@viewArtifactWorksheet": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "viewArtifactEmptySheet": "空工作表",
+  "viewArtifactEmptyTable": "空表格",
+  "viewArtifactConvertFailed": "没能转换",
+  "viewArtifactConverting": "正在转换为 PDF 预览…",
+  "viewArtifactImageFailed": "无法显示这张图片",
+  "viewArtifactPhoneOpen": "用手机上的应用打开",
+  "viewArtifactPdfFailed": "无法打开这个 PDF，试试用其他应用打开",
+  "viewArtifactPages": "共 {count} 页",
+  "@viewArtifactPages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewArtifactPage": "第 {value} 页",
+  "@viewArtifactPage": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiIncomplete": "视图没有生成完",
+  "viewUiInvalid": "这个视图格式有误",
+  "viewUiResend": "让它重发",
+  "viewChartUnit": "单位：{value}",
+  "@viewChartUnit": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewChartSeries": "第 {value} 组",
+  "@viewChartSeries": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "viewChartTotal": "合计",
+  "viewChartBar": "柱状图",
+  "viewChartHorizontalBar": "横向柱状图",
+  "viewChartLine": "折线图",
+  "viewChartDonut": "环形图",
+  "viewUiResendMessage": "上一个 dsh-ui 视图无法显示：{value}。请修正后重发。",
+  "@viewUiResendMessage": {
+    "placeholders": {
+      "value": {
+        "type": "Object"
+      }
+    }
+  },
+  "viewUiBytesLimit": "视图有 {first} 字节，超过上限 {second} 字节",
+  "@viewUiBytesLimit": {
+    "placeholders": {
+      "first": {
+        "type": "int"
+      },
+      "second": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiEmptyCode": "代码块是空的",
+  "viewUiInvalidJson": "不是合法的 JSON（{message}）",
+  "@viewUiInvalidJson": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiJsonRepaired": "含注释或尾逗号，已忽略",
+  "viewUiExpectedObject": "应该是一个组件对象",
+  "viewUiDepthLimit": "第 {first} 层，超过上限 {second} 层",
+  "@viewUiDepthLimit": {
+    "placeholders": {
+      "first": {
+        "type": "int"
+      },
+      "second": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiMissingType": "缺少 type",
+  "viewUiUnknownComponent": "未知组件 {value}",
+  "@viewUiUnknownComponent": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiAvailableTypes": "{first}；可用：{second}",
+  "@viewUiAvailableTypes": {
+    "placeholders": {
+      "first": {
+        "type": "String"
+      },
+      "second": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiExpectedChildren": "应该是 1 到 {limit} 个组件的数组",
+  "@viewUiExpectedChildren": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiHiddenItems": "已截断：还有 {count} 项没有显示",
+  "@viewUiHiddenItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiNodeLimit": "超过 {first} 个组件，后 {second} 项已截断",
+  "@viewUiNodeLimit": {
+    "placeholders": {
+      "first": {
+        "type": "int"
+      },
+      "second": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiChildLimit": "超过 {first} 项，后 {second} 项已截断",
+  "@viewUiChildLimit": {
+    "placeholders": {
+      "first": {
+        "type": "int"
+      },
+      "second": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiExpectedString": "应该是字符串",
+  "viewUiTextLimit": "{first} 个字符，超过上限 {second}",
+  "@viewUiTextLimit": {
+    "placeholders": {
+      "first": {
+        "type": "int"
+      },
+      "second": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiTextTruncated": "已截断：文字过长",
+  "viewUiExpectedFinite": "应该是有限的数",
+  "viewUiYes": "是",
+  "viewUiNo": "否",
+  "viewUiExpectedStringNumber": "应该是字符串或数字",
+  "viewUiUnknownTone": "未知 tone {value}，已忽略；可用：good, warn, bad",
+  "@viewUiUnknownTone": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiUnknownChart": "未知图表 {value}，按柱状图画；可用：bar, hbar, line, donut",
+  "@viewUiUnknownChart": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiExpectedCategories": "应该是非空的标签数组",
+  "viewUiCategoryLimit": "{first} 个类别，超过上限 {second}",
+  "@viewUiCategoryLimit": {
+    "placeholders": {
+      "first": {
+        "type": "int"
+      },
+      "second": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiFirstPoints": "只显示前 {limit} 个点",
+  "@viewUiFirstPoints": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiExpectedSeries": "应该是非空的数组，每项是 {shape}",
+  "@viewUiExpectedSeries": {
+    "placeholders": {
+      "shape": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiSkippedSeries": "应该是数字数组，这组已跳过",
+  "viewUiValuesCategories": "{first} 个值对 {second} 个类别，多的截掉、缺的留空",
+  "@viewUiValuesCategories": {
+    "placeholders": {
+      "first": {
+        "type": "int"
+      },
+      "second": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiNonFiniteValues": "{count} 个值不是有限的数，已留空",
+  "@viewUiNonFiniteValues": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiNoSeries": "没有一组能画的数据",
+  "viewUiDonutSeries": "环形图只画一组数据，其余 {count} 组已忽略",
+  "@viewUiDonutSeries": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiFirstSeries": "只画第一组数据",
+  "viewUiSeriesLimit": "{first} 组数据，超过上限 {second}",
+  "@viewUiSeriesLimit": {
+    "placeholders": {
+      "first": {
+        "type": "int"
+      },
+      "second": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiFirstSeriesCount": "只显示前 {limit} 组数据",
+  "@viewUiFirstSeriesCount": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiNoFiniteValues": "没有一个有限的数值",
+  "viewUiTruncated": "已截断：{value}",
+  "@viewUiTruncated": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiExpectedCompare": "应该是 2 到 {limit} 项的数组，每项是 {shape}",
+  "@viewUiExpectedCompare": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      },
+      "shape": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiItemLimit": "{first} 项，超过上限 {second}",
+  "@viewUiItemLimit": {
+    "placeholders": {
+      "first": {
+        "type": "int"
+      },
+      "second": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiFirstItems": "只显示前 {limit} 项",
+  "@viewUiFirstItems": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiSkippedCompare": "应该是 {shape}，已跳过",
+  "@viewUiSkippedCompare": {
+    "placeholders": {
+      "shape": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiSkippedItemLabel": "应该是非空字符串，这项已跳过",
+  "viewUiRowLimit": "{first} 行，超过上限 {second}",
+  "@viewUiRowLimit": {
+    "placeholders": {
+      "first": {
+        "type": "int"
+      },
+      "second": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiSkippedRow": "应该是 [名称, 值]，已跳过",
+  "viewUiNoItems": "没有一项能画",
+  "viewUiFirstRows": "每项只显示前 {limit} 行",
+  "@viewUiFirstRows": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiExpectedSteps": "应该是非空数组，每项是 {shape}",
+  "@viewUiExpectedSteps": {
+    "placeholders": {
+      "shape": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiStepLimit": "{first} 步，超过上限 {second}",
+  "@viewUiStepLimit": {
+    "placeholders": {
+      "first": {
+        "type": "int"
+      },
+      "second": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiFirstSteps": "已截断：只显示前 {limit} 步",
+  "@viewUiFirstSteps": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiSkippedStep": "应该是 {shape}，已跳过",
+  "@viewUiSkippedStep": {
+    "placeholders": {
+      "shape": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiUnknownStatus": "未知状态 {value}，按 todo 画；可用：done, current, todo, failed",
+  "@viewUiUnknownStatus": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiNoSteps": "没有一步能画",
+  "viewUiUnknownCalloutTone": "未知 tone {value}，按 info 画；可用：info, good, warn, bad",
+  "@viewUiUnknownCalloutTone": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiExpectedOptions": "应该是 1 到 {limit} 个选项的数组，每项是 {shape}",
+  "@viewUiExpectedOptions": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      },
+      "shape": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiOptionLimit": "{first} 个选项，超过上限 {second}",
+  "@viewUiOptionLimit": {
+    "placeholders": {
+      "first": {
+        "type": "int"
+      },
+      "second": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiFirstOptions": "已截断：只显示前 {limit} 个选项",
+  "@viewUiFirstOptions": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiDuplicateLabel": "重复的 label {value}，已跳过",
+  "@viewUiDuplicateLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiNoOptions": "没有一个能用的选项",
+  "viewUiSummaryBody": "[视图] {value}",
+  "@viewUiSummaryBody": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiSummaryTitleBody": "[视图] {first}：{second}",
+  "@viewUiSummaryTitleBody": {
+    "placeholders": {
+      "first": {
+        "type": "String"
+      },
+      "second": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiSummaryInvalid": "[视图]（格式有误，未能显示）",
+  "viewUiSummaryText": "文字：{value}",
+  "@viewUiSummaryText": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiSummaryChart": "图表：{summary}",
+  "@viewUiSummaryChart": {
+    "placeholders": {
+      "summary": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiSummaryCompare": "对比：{value}",
+  "@viewUiSummaryCompare": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiSummarySteps": "步骤：{value}",
+  "@viewUiSummarySteps": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiSummaryCallout": "提示：{value}",
+  "@viewUiSummaryCallout": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiSummaryOptions": "选项：{value}",
+  "@viewUiSummaryOptions": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiSummaryConfirm": "确认：{first}/{second}",
+  "@viewUiSummaryConfirm": {
+    "placeholders": {
+      "first": {
+        "type": "String"
+      },
+      "second": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiReplyChoice": "选择：{value}",
+  "@viewUiReplyChoice": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiReplyConfirm": "确认：{value}",
+  "@viewUiReplyConfirm": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiReplyCancel": "取消：{value}",
+  "@viewUiReplyCancel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiReplyOther": "其他：{value}",
+  "@viewUiReplyOther": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiFreeTextHint": "其他（自己填）",
+  "viewUiChosenOther": "已填写：{value}",
+  "@viewUiChosenOther": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiChosen": "已选择：{value}",
+  "@viewUiChosen": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiConfirmed": "已确认",
+  "viewUiConfirmedValue": "已确认：{value}",
+  "@viewUiConfirmedValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiCancelledValue": "已取消：{value}",
+  "@viewUiCancelledValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiReplied": "已回复",
+  "viewUiGenerating": "正在生成视图",
+  "viewUiReplyAfterEnd": "回复结束后可选",
+  "viewUiExpired": "已失效",
+  "viewUiNotStarted": "未开始",
+  "viewUiMultiple": "可多选",
+  "viewSuggestWorkspace": "看看工作区",
+  "viewSuggestWorkspacePrompt": "看看工作区里现在有哪些文件和项目，简单介绍一下。",
+  "viewSuggestWordCount": "写个小脚本",
+  "viewSuggestWordCountPrompt": "写一个 Python 脚本：统计一个文本文件里出现最多的 20 个词，并运行一次给我看结果。",
+  "viewSuggestNode": "新建项目",
+  "viewSuggestNodePrompt": "在工作区新建一个 Node.js 项目，配好 TypeScript 和一个最小的单元测试。",
+  "viewSuggestGit": "讲讲 Git",
+  "viewSuggestGitPrompt": "用一个具体例子解释 git rebase 和 git merge 的区别，各自什么时候用。",
+  "viewSuggestWorkspaceHint": "列出文件和项目",
+  "viewSuggestWordCountHint": "统计词频并跑一次",
+  "viewSuggestNodeHint": "Node.js 带测试",
+  "viewSuggestGitHint": "rebase 和 merge",
+  "viewTipNext": "下一条小技巧",
+  "viewTipLabel": "小技巧：{value}",
+  "@viewTipLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewTipSteer": "生成中长按发送键，可以插话、排队或打断",
+  "viewTipMidRun": "AI 干活时也能发消息，它下一步就会看到",
+  "viewTipSlash": "输入 / 唤出指令：压缩上下文、切换模型等",
+  "viewTipMention": "输入 @ 可以引用工作区里的文件或别的对话",
+  "viewTipReplyMenu": "长按 AI 的回复，可以复制、引用或重新生成",
+  "viewTipEditResend": "长按自己的消息，可以改写后重发，原对话不动",
+  "viewTipQuote": "选中回复里的一段，点「引用」就只追问那一段",
+  "viewTipTitleDetails": "点顶部的对话标题，能看改动、文件和终端",
+  "viewTipContextRing": "发送键旁的小圆环是上下文用量，点开看详情",
+  "viewTipDrawerMenu": "长按侧栏里的对话，可以置顶、改名或归档",
+  "viewTipSearch": "主机支持时，搜索对话还能搜到聊天内容，不只是标题",
+  "viewTipSettingsSearch": "长按侧栏的设置键，可以直接搜索设置项",
+  "viewTipQuickPanel": "在对话页向左滑，打开快捷入口",
+  "viewTipFolderNewChat": "长按侧栏的文件夹，可以直接在里面开新对话",
+  "viewTipSwitchHost": "点侧栏底部的主机名，可以切到电脑上的 DSH",
+  "viewTipPasteImage": "输入法里的截图和贴图，可以直接贴进输入框",
+  "viewTipLauncher": "长按桌面图标，可以直接语音提问或开新对话",
+  "viewTipPetBubble": "宠物冒泡时点一下，就跳到等你的那个对话",
+  "viewTipPetPlay": "连点宠物三下会挠痒痒，长按可以换宠物",
+  "viewTipActivityStrip": "生成时点一下状态条，看这一轮的完整轨迹",
+  "viewTipImageZoom": "看图时双击放大、双指缩放，长按可以保存",
+  "viewTipQueuedRecall": "排队中的消息可以撤回到输入框再改",
+  "viewTipKeyboard": "接了键盘：Ctrl+Enter 发送，连按两次 Esc 停止",
+  "viewTipShareIn": "在别的 App 里分享文字或图片给 DSH Go，会填进新对话",
+  "viewTipShareSelect": "分享对话时长按再滑动，可以一次选中多条消息",
+  "viewTipChartDrag": "回复里的图表可以左右拖动，看每个点的数值",
+  "viewTipCopyPath": "改动卡里长按某个文件，可以复制它的路径",
+  "viewTipCompanion": "「伙伴小屋」藏在切换主机的面板里",
+  "viewTipAnswerInline": "AI 向你提问时，直接在输入框里打字就是回答",
+  "viewTipWallpaper": "壁纸可以拖动、缩放，还能调模糊和明暗",
+  "viewTipModelHere": "这里就能换模型、预设和权限，只对这次对话生效",
+  "viewNewChatFolder": "文件夹",
+  "viewNewChatPresetTitle": "这次对话的预设",
+  "viewNewChatPermissionTitle": "这次对话的权限",
+  "viewNewChatDefault": "默认",
+  "viewNewChatUnavailable": "不可用",
+  "viewNewChatChange": "更改",
+  "viewNewChatModesFailed": "没能设置预设或权限，消息还没发出",
+  "viewGreetingMorning": "早上好",
+  "viewGreetingNoon": "中午好",
+  "viewGreetingAfternoon": "下午好",
+  "viewGreetingEvening": "晚上好",
+  "viewGreetingNight": "夜深了",
+  "viewEmptySubtitle": "今天想做点什么？",
+  "viewEmptyStarting": "正在启动引擎…",
+  "viewEmptyConnecting": "正在连接引擎…",
+  "viewEmptyDisconnected": "引擎未连接",
+  "viewEmptyReconnect": "重新连接",
+  "viewEmptyWorkspace": "在「{value}」中",
+  "@viewEmptyWorkspace": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewEmptySwitchWorkspace": "切换工作区",
+  "viewEmptyHostDefaultDirectory": "主机默认目录",
+  "viewScheduleTitle": "自动化任务",
+  "viewScheduleRefreshFailed": "没能刷新",
+  "viewScheduleNone": "没有进行中的任务",
+  "viewScheduleNext": "下次 {value}",
+  "@viewScheduleNext": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewScheduleUntitled": "未命名任务",
+  "viewScheduleSendFailed": "没能发送",
+  "viewScheduleEnded": "已结束",
+  "viewScheduleUpcoming": "接下来",
+  "viewScheduleSending": "发送中…",
+  "viewScheduleRunNow": "立即运行",
+  "viewScheduleManage": "管理",
+  "viewScheduleToday": "今天 {value}",
+  "@viewScheduleToday": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewScheduleTomorrow": "明天 {value}",
+  "@viewScheduleTomorrow": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewScheduleYesterday": "昨天 {value}",
+  "@viewScheduleYesterday": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewScheduleWeekday": "周{first} {second}",
+  "@viewScheduleWeekday": {
+    "placeholders": {
+      "first": {
+        "type": "String"
+      },
+      "second": {
+        "type": "String"
+      }
+    }
+  },
+  "viewScheduleDue": "即将运行",
+  "viewScheduleDaysAhead": "{count} 天后",
+  "@viewScheduleDaysAhead": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewScheduleDaysOverdue": "已逾期 {count} 天",
+  "@viewScheduleDaysOverdue": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewScheduleSingleLabel": "自动化任务：{title}",
+  "@viewScheduleSingleLabel": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "viewScheduleCountLabel": "{count} 个自动化任务",
+  "@viewScheduleCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewModelSelect": "选择模型",
+  "viewModelThinkingOff": "不思考",
+  "viewModelThinkingMinimal": "极少",
+  "viewModelThinkingLow": "低",
+  "viewModelThinkingMedium": "中",
+  "viewModelThinkingHigh": "高",
+  "viewModelThinkingMax": "最高",
+  "viewModelLabel": "模型：{value}",
+  "@viewModelLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewModelEffortLabel": "思考深度{value}",
+  "@viewModelEffortLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewModelLoadFailed": "模型列表加载失败",
+  "viewModelDisconnected": "未连接引擎",
+  "viewModelConnectHint": "连接后即可选择模型",
+  "viewModelEffort": "思考深度",
+  "viewModelKeyRequired": "主机尚未配置模型",
+  "viewModelProvidersHint": "请在主机配置模型后重新打开此列表。",
+  "viewModelNone": "暂无可用模型",
+  "viewModelKeyHint": "请检查主机上的模型配置与凭据。",
+  "viewContinuePrompt": "接着附件里这段对话聊：",
+  "viewContinueRange": "第 {first}–{second} 轮，共 {third} 轮",
+  "@viewContinueRange": {
+    "placeholders": {
+      "first": {
+        "type": "int"
+      },
+      "second": {
+        "type": "int"
+      },
+      "third": {
+        "type": "int"
+      }
+    }
+  },
+  "viewContinueHeader": "> 分享的 DSH Go 对话 · {value}\n",
+  "@viewContinueHeader": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewContinueUser": "\n## 用户\n\n",
+  "viewImageCount": "{count} 张图片",
+  "@viewImageCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewContinueAttachments": "\n（附件：{value}）\n",
+  "@viewContinueAttachments": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewContinueAssistant": "\n## 助手\n\n",
+  "viewContinueInterrupted": "\n（回复被中断）\n",
+  "viewContinueFailed": "（失败）",
+  "viewContinueDeclined": "（被拒绝）",
+  "viewContinueCancelled": "（已取消）",
+  "viewLinkWeek": "7 天",
+  "viewLinkMonth": "30 天",
+  "viewLinkForever": "永久",
+  "viewShareChat": "对话",
+  "viewShareNoPermission": "没有存储权限，没能保存",
+  "viewShareOpenFailed": "没能打开分享",
+  "viewShareLinkFailed": "没能生成链接，稍后再试",
+  "viewShareLinkText": "「{first}」· DSH Go 对话\n{second}",
+  "@viewShareLinkText": {
+    "placeholders": {
+      "first": {
+        "type": "String"
+      },
+      "second": {
+        "type": "String"
+      }
+    }
+  },
+  "viewShareEmpty": "这个对话还没有内容",
+  "viewShareMessageCount": "{count} 条消息",
+  "@viewShareMessageCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewShareToolCount": "{count} 次工具调用",
+  "@viewShareToolCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewShareFileHint": "在 DSH Go 里回放、接着聊",
+  "viewShareWebHint": "任何浏览器都能打开，不用联网",
+  "viewShareMarkdownHint": "纯文本，随处可读",
+  "viewShareLinkHint": "端到端加密，服务器看不到内容",
+  "viewSharePreview": "预览",
+  "viewShareWhole": "整段对话",
+  "viewShareScopeReply": "这条回复",
+  "viewShareScopePicked": "选中消息",
+  "viewShareThinking": "思考过程",
+  "viewShareIncludeTools": "工具调用",
+  "viewShareChatFile": "对话文件",
+  "viewShareWebPage": "网页",
+  "viewShareLink": "链接",
+  "viewShareAsImage": "图片",
+  "viewShareAsFile": "文件",
+  "viewShareAsText": "文字",
+  "viewShareRedacted": "密钥已隐藏",
+  "viewShareAdjust": "调整",
+  "viewShareTooLarge": "超过 {value} MB，请缩小范围",
+  "@viewShareTooLarge": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "viewShareCreateLink": "生成链接",
+  "viewShareStop": "停止分享",
+  "viewShareStopTitle": "停止分享？",
+  "viewShareStopped": "已停止分享",
+  "viewQrCode": "二维码",
+  "viewShareTurn": "第 {value} 轮",
+  "@viewShareTurn": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "viewReplayContinue": "接着聊",
+  "viewReplayTurns": "第 {first}–{second} 轮",
+  "@viewReplayTurns": {
+    "placeholders": {
+      "first": {
+        "type": "int"
+      },
+      "second": {
+        "type": "int"
+      }
+    }
+  },
+  "viewReplaySeconds": "{count} 秒",
+  "@viewReplaySeconds": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewReplayMinutes": "{count} 分钟",
+  "@viewReplayMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewReplayFull": "全文",
+  "viewReplayPause": "暂停",
+  "viewReplayRestart": "重新播放",
+  "viewReplayPlay": "播放",
+  "viewReplaySpeed": "倍速 {value}×",
+  "@viewReplaySpeed": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "viewTemplatePaper": "纸张",
+  "viewTemplateGlass": "玻璃",
+  "viewTemplateCard": "卡片",
+  "viewShareProjectQr": "项目主页二维码",
+  "viewShareBrandLine": "手机上的 DSH · 扫码获取",
+  "viewShareBrandLineNoQr": "手机上的 DSH",
+  "viewShareSteps": "{count} 步",
+  "@viewShareSteps": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewShareWebSearch": "联网搜索",
+  "viewShareOpenPage": "打开网页",
+  "viewShareRunCommand": "运行命令",
+  "viewShareReadFile": "查看文件",
+  "viewShareEditFile": "修改文件",
+  "viewShareSubagent": "子代理",
+  "viewShareSkill": "使用技能",
+  "viewSharePresentFiles": "交付文件",
+  "viewShareWorkflow": "工作流",
+  "viewSharePlugin": "调用插件",
+  "viewShareImages": "图片",
+  "viewSharePickMessages": "选择消息",
+  "viewShareDoneCount": "完成（{count}）",
+  "@viewShareDoneCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewShareImageMarker": "〔图片〕",
+  "viewShareImagesMarker": "〔{count} 张图片〕",
+  "@viewShareImagesMarker": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewShareYou": "你",
+  "viewShareImageFailed": "没能生成图片，请重试",
+  "viewShareQuestion": "提问",
+  "viewShareModelSteps": "模型与过程",
+  "viewShareImagePreview": "分享图片预览",
+  "viewShareSaveImage": "保存图片",
+  "viewScheduleHoursAhead": "{count} 小时后",
+  "@viewScheduleHoursAhead": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewScheduleHoursOverdue": "已逾期 {count} 小时",
+  "@viewScheduleHoursOverdue": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewScheduleMinutesAhead": "{count} 分钟后",
+  "@viewScheduleMinutesAhead": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewScheduleMinutesOverdue": "已逾期 {count} 分钟",
+  "@viewScheduleMinutesOverdue": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewScheduleSecondsAhead": "{count} 秒后",
+  "@viewScheduleSecondsAhead": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewScheduleSecondsOverdue": "已逾期 {count} 秒",
+  "@viewScheduleSecondsOverdue": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewScheduleDate": "{date} {clock}",
+  "@viewScheduleDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "clock": {
+        "type": "String"
+      }
+    }
+  },
+  "viewScheduleYearDate": "{year}年{date} {clock}",
+  "@viewScheduleYearDate": {
+    "placeholders": {
+      "year": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      },
+      "clock": {
+        "type": "String"
+      }
+    }
+  },
+  "viewScheduleWeekdayName": "{day, select, 1{一} 2{二} 3{三} 4{四} 5{五} 6{六} other{日}}",
+  "@viewScheduleWeekdayName": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "viewReplayDate": "{month} 月 {day} 日",
+  "@viewReplayDate": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      },
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "viewReplayHours": "{count} 小时",
+  "@viewReplayHours": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "viewReplayHoursMinutes": "{hours} 小时 {minutes} 分钟",
+  "@viewReplayHoursMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiHundredMillion": "{value}亿",
+  "@viewUiHundredMillion": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiTenThousand": "{value}万",
+  "@viewUiTenThousand": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiMillion": "{value}M",
+  "@viewUiMillion": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewListSeparator": "，",
+  "viewAttachmentSeparator": "、",
+  "viewUiInvalidJsonOffset": "不是合法的 JSON（{message}，第 {offset} 个字符附近）",
+  "@viewUiInvalidJsonOffset": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      },
+      "offset": {
+        "type": "int"
+      }
+    }
+  },
+  "viewUiUnavailableChart": "图表无法显示",
+  "viewUiUnavailableMetric": "指标无法显示",
+  "viewUiUnavailableCompare": "对比无法显示",
+  "viewUiUnavailableSteps": "步骤无法显示",
+  "viewUiUnavailableCallout": "提示无法显示",
+  "viewUiUnavailableOptions": "选项无法显示",
+  "viewUiUnavailableConfirm": "确认无法显示",
+  "viewUiUnavailableText": "文字无法显示",
+  "viewUiUnavailableGroup": "这一组无法显示",
+  "viewUiUnavailablePart": "这部分无法显示",
+  "viewScheduleSingleNextLabel": "自动化任务：{title}，下次{when}",
+  "@viewScheduleSingleNextLabel": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "viewScheduleCountNextLabel": "{count} 个自动化任务，下次{when}",
+  "@viewScheduleCountNextLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiSkippedStepLabel": "应该是字符串，这步已跳过",
+  "viewLabeledValue": "{label}：{value}",
+  "@viewLabeledValue": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewDescribedValue": "{label}，{description}",
+  "@viewDescribedValue": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "description": {
+        "type": "String"
+      }
+    }
+  },
+  "viewSemicolonSeparator": "；",
+  "viewChartSemantics": "{kind}。{data}",
+  "@viewChartSemantics": {
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      },
+      "data": {
+        "type": "String"
+      }
+    }
+  },
+  "viewMetricSemantics": "{label} {value}",
+  "@viewMetricSemantics": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewMetricCaptionSemantics": "{label} {value}，{caption}",
+  "@viewMetricCaptionSemantics": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "value": {
+        "type": "String"
+      },
+      "caption": {
+        "type": "String"
+      }
+    }
+  },
+  "viewScheduleZone": "{rule}（{city} · {offset}）",
+  "@viewScheduleZone": {
+    "placeholders": {
+      "rule": {
+        "type": "String"
+      },
+      "city": {
+        "type": "String"
+      },
+      "offset": {
+        "type": "String"
+      }
+    }
+  },
+  "viewContinueNotice": "\n（{text}）\n",
+  "@viewContinueNotice": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "viewShareAltMarker": "〔{alt}〕",
+  "@viewShareAltMarker": {
+    "placeholders": {
+      "alt": {
+        "type": "String"
+      }
+    }
+  },
+  "viewModelThinkingXhigh": "超高",
+  "viewUiDialectWebOnly": "{kind} · 在网页版查看",
+  "@viewUiDialectWebOnly": {
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiDialectKindInteractive": "可交互内容",
+  "viewUiDialectKindChart": "图表",
+  "viewUiDialectKindDiagram": "示意图",
+  "viewUiDialectKindImage": "图片",
+  "viewUiDialectKindAudio": "音频",
+  "viewUiDialectKindVideo": "视频",
+  "viewUiDialectKindScene": "3D 场景",
+  "viewUiDialectKindFiles": "文件树",
+  "viewUiDialectKindMap": "地图",
+  "viewUiDialectKindOther": "这部分",
+  "viewUiDialectInvalid": "这块内容在网页版查看",
+  "viewUiDialectNote": "在网页版查看",
+  "wallpaperTitle": "壁纸",
+  "wallpaperDefault": "默认",
+  "wallpaperCustom": "自定义",
+  "wallpaperFrame": "调整位置",
+  "wallpaperBlur": "模糊",
+  "wallpaperLighten": "提亮",
+  "wallpaperDim": "压暗",
+  "wallpaperReplace": "更换图片",
+  "wallpaperPreview": "预览",
+  "wallpaperFooter": "用于首页、对话和抽屉。提亮在浅色模式、压暗在深色模式下各自生效，文字始终清晰。PNG、JPEG、WebP，15 MB 以内",
+  "wallpaperChanged": "壁纸已更换",
+  "wallpaperTooLarge": "图片超过 15 MB",
+  "wallpaperUnsupported": "支持 PNG、JPEG 和 WebP",
+  "wallpaperUnreadable": "无法读取这张图片",
+  "wallpaperUnavailable": "无法打开相册",
+  "wallpaperBroken": "无法读取",
+  "wallpaperEditorHint": "拖动、双指缩放",
+  "wallpaperEditorReset": "复原",
+  "wallpaperSampleTitle": "周末去海边",
+  "wallpaperSampleStatus": "刚刚",
+  "wallpaperSampleQuestion": "这周六适合去海边吗？",
+  "wallpaperSampleAnswer": "适合。周六午后晴，风力 2 级，浪高不到半米，是这周最好的一天。",
+  "wallpaperSampleNote": "傍晚降温明显，带一件薄外套。",
+  "wallpaperSampleTool": "查了 3 个天气来源",
+  "searchKwWallpaper": "背景,背景图,聊天背景,自定义背景,换背景,模糊,壁纸图片"
+}

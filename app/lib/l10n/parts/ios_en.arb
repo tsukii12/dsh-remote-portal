@@ -1,0 +1,8 @@
+{
+  "@@locale": "en",
+  "iosSaveToFiles": "Save to Files",
+  "iosFilesFolderHint": "DSH Go folder in the Files app",
+  "iosSavingToFiles": "Saving to Files…",
+  "iosCommandExportDescription": "Export this chat’s full history as a ZIP to share or save to Files",
+  "iosPhotosDenied": "Couldn’t save. Photos access is off."
+}

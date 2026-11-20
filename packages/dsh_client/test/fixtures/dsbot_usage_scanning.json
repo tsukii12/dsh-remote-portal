@@ -1,0 +1,66 @@
+{
+  "provenance": {
+    "repo": "Fei2411/DS-Bot",
+    "official": "4a7b55069ad300eae8be42a74f31bc170b40ead7",
+    "mobilePr": "6f3e1b3e8603abd84820b334a7f99985236dbbdf",
+    "scope": "Real Fetch mobile endpoint, real usageView/scan and SQLite ledger; fakeContext session list intentionally held. No replacement of usageView and no model call. Not full DSH Host."
+  },
+  "during": {
+    "ok": true,
+    "value": {
+      "botId": "s1",
+      "day": {
+        "input": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "output": 0,
+        "calls": 0
+      },
+      "week": {
+        "input": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "output": 0,
+        "calls": 0
+      },
+      "month": {
+        "input": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "output": 0,
+        "calls": 0
+      },
+      "models": [],
+      "scanning": true
+    }
+  },
+  "after": {
+    "ok": true,
+    "value": {
+      "botId": "s1",
+      "day": {
+        "input": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "output": 0,
+        "calls": 0
+      },
+      "week": {
+        "input": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "output": 0,
+        "calls": 0
+      },
+      "month": {
+        "input": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "output": 0,
+        "calls": 0
+      },
+      "models": [],
+      "scanning": false
+    }
+  }
+}
