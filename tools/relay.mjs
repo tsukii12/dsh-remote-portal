@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * dsh-remote-portal relay — a small, dependency-free reverse tunnel server.
+ * yuremote relay — a small, dependency-free reverse tunnel server.
  *
  *   home machine                          public server
  *  ┌───────────────────┐   outbound TLS   ┌────────────────────────┐
@@ -255,7 +255,7 @@ function parseArgs(argv) {
 }
 
 const USAGE = `
-dsh-remote-portal relay
+yuremote relay
 
   --agent-port <p>       port the dsh host dials OUT to; "port" or "host:port"
                          (TLS when --tls-cert is set)        (default 0.0.0.0:9443)
@@ -310,7 +310,7 @@ function sendPlain(res, status, text, extra = {}) {
 
 const PAGE_COPY = {
   en: {
-    home: ["dsh remote portal relay", "This is a <code>dsh-remote-portal</code> relay. Open the private link your Harness gave you: <code>{value}/&lt;tunnel&gt;/</code>"],
+    home: ["YuRemote relay", "Open the private link your Harness gave you: <code>{value}/&lt;tunnel&gt;/</code>"],
     notFound: ["Not found", "This relay only serves tunnel links."],
     unknown: ["Unknown tunnel", "No tunnel named <code>{value}</code> is registered here."],
     offline: ["The host is offline", "The dsh machine is not connected to the relay right now. Start dsh (or turn the portal back on) and this page will work again — the link itself does not change."],
@@ -319,7 +319,7 @@ const PAGE_COPY = {
     failed: ["Tunnel error", "The relay could not complete this request. Check that dsh is running on the host and try again."],
   },
   zh: {
-    home: ["dsh 远程访问中继", "这是 <code>dsh-remote-portal</code> 的中继。请打开 dsh 提供的专属链接：<code>{value}/&lt;隧道 ID&gt;/</code>"],
+    home: ["鱼鱼远程中继", "请打开 dsh 提供的专属链接：<code>{value}/&lt;隧道 ID&gt;/</code>"],
     notFound: ["找不到页面", "此中继只提供隧道链接。"],
     unknown: ["找不到隧道", "此中继未注册名为 <code>{value}</code> 的隧道。"],
     offline: ["主机已离线", "主机上的 dsh 尚未连接到中继。请启动 dsh，或重新开启远程访问，原链接无需更换。"],
@@ -346,22 +346,48 @@ function pageLanguage(acceptLanguage) {
   return choice;
 }
 
+const BRAND_PATH = "/__relay/brand.png";
+const relayDir = dirname(fileURLToPath(import.meta.url));
+
+function serveBrand(req, res) {
+  if (req.method !== "GET" && req.method !== "HEAD") {
+    sendPlain(res, 405, "method-not-allowed\n", { allow: "GET, HEAD" });
+    return;
+  }
+  for (const file of [join(relayDir, "yuremote-transparent.png"), join(relayDir, "../assets/brand/yuremote-favicon.png")]) {
+    try {
+      const body = readFileSync(file);
+      res.writeHead(200, {
+        ...LOCAL_HEADERS,
+        "content-type": "image/png",
+        "content-length": body.length,
+        "cache-control": "public, max-age=3600",
+      });
+      res.end(req.method === "HEAD" ? undefined : body);
+      return;
+    } catch { /* check the next layout */ }
+  }
+  sendPlain(res, 404, "not found\n");
+}
+
 function sendPage(req, res, status, page, value = "") {
   const lang = pageLanguage(req.headers["accept-language"]);
+  const brand = lang === "zh" ? "鱼鱼远程" : "YuRemote";
   const [title, template] = PAGE_COPY[lang][page];
   const escaped = String(value).replace(/[&<>]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[ch]);
   const message = template.replace("{value}", () => escaped);
   const html = `<!doctype html><html lang="${lang}"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${title}</title><style>
+<title>${title}</title><link rel="icon" type="image/png" href="${BRAND_PATH}"><style>
 :root{color-scheme:light dark}
 body{margin:0;min-height:100vh;display:grid;place-items:center;font:15px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
 background:#0f1115;color:#f9fafb;padding:24px}
 .card{max-width:420px;padding:28px 30px;border-radius:14px;background:#1b1b1c;border:1px solid #ffffff1f}
+.brand{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:13px;font-weight:600}
 h1{margin:0 0 8px;font-size:17px}p{margin:0;color:#cfd3d6}
 code{font:12px ui-monospace,Menlo,monospace;color:#adb2b8}
 @media (prefers-color-scheme:light){body{background:#f9fafb;color:#0f1115}.card{background:#fff;border-color:#0000001a}p{color:#61666b}code{color:#81858c}}
-</style></head><body><div class="card"><h1>${title}</h1><p>${message}</p></div></body></html>`;
+</style></head><body><div class="card"><div class="brand"><img src="${BRAND_PATH}" width="28" height="28" alt="">${brand}</div><h1>${title}</h1><p>${message}</p></div></body></html>`;
   const body = Buffer.from(html, "utf8");
   res.writeHead(status, {
     ...LOCAL_HEADERS,
@@ -435,7 +461,7 @@ const CACHE_MAX_BYTES = Number(process.env.DSH_RELAY_CACHE_MB) > 0
 const CACHE_MAX_OBJECT = 16 * 1024 * 1024;
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000;
 function cacheableRequest(req, path, search) {
-  if (req.method !== "GET" || !/^\/dsh-remote-portal\/assets\/mobile\.(?:css|js)$/.test(path)) return false;
+  if (req.method !== "GET" || !/^\/(?:yuremote|dsh-remote-portal)\/assets\/mobile\.(?:css|js)$/.test(path)) return false;
   if (!/^\?v=[A-Za-z0-9_-]{43}$/.test(search)) return false;
   for (const header of Object.keys(req.headers)) {
     if (header === "range" || header.startsWith("if-")) return false;
@@ -748,6 +774,10 @@ function cachePut(key, entry) {
 
   function handleVisitor(req, res) {
     const url = new URL(req.url || "/", `http://${req.headers.host || "relay"}`);
+    if (url.pathname === BRAND_PATH) {
+      serveBrand(req, res);
+      return;
+    }
     // Internal probes are this tool talking to itself; they are not traffic.
     const internal = url.pathname === "/__relay/health" || url.pathname === "/healthz";
     if (!internal) {
@@ -833,7 +863,7 @@ function cachePut(key, entry) {
       const hit = cacheGet(cacheKey);
       if (hit) {
         stats.cacheHits += 1;
-        res.writeHead(hit.status, { ...hit.headers, age: Math.floor((Date.now() - hit.at) / 1000), "x-drp-cache": "hit" });
+        res.writeHead(hit.status, { ...hit.headers, age: Math.floor((Date.now() - hit.at) / 1000), "x-yuremote-cache": "hit" });
         res.end(hit.body);
         return;
       }
@@ -844,6 +874,7 @@ function cachePut(key, entry) {
     // here is the *public* authority so its own same-origin check passes.
     const upstreamHeaders = { ...headers, "x-forwarded-proto": config.publicUrl.startsWith("https") ? "https" : "http" };
     const visitorIp = clientIp(req);
+    delete upstreamHeaders["x-yuremote-tunnel-visitor"];
     delete upstreamHeaders["x-drp-tunnel-visitor"];
     delete upstreamHeaders["x-forwarded-for"];
     if (visitorIp) upstreamHeaders["x-forwarded-for"] = visitorIp;
@@ -980,7 +1011,7 @@ function cachePut(key, entry) {
     const visitorIp = clientIp(req);
     const lines = [`${req.method} ${route.path + (url.search || "")} HTTP/1.1`];
     for (const [name, value] of Object.entries(req.headers)) {
-      if (name === "x-forwarded-for" || name === "x-drp-tunnel-visitor") continue;
+      if (name === "x-forwarded-for" || name === "x-yuremote-tunnel-visitor" || name === "x-drp-tunnel-visitor") continue;
       if (Array.isArray(value)) for (const one of value) lines.push(`${name}: ${one}`);
       else lines.push(`${name}: ${value}`);
     }

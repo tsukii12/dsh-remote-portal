@@ -1,5 +1,5 @@
 {
-  "name": "dsh-remote-portal",
+  "name": "yuremote",
   "version": "0.6.2",
   "description": "为 DeepSeek Harness 添加远程访问能力，支持局域网和公网访问。Remote access for DeepSeek Harness: LAN and public access.",
   "type": "module",
@@ -32,7 +32,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "test": "node --test test/*.test.mjs",
+    "test": "node --test",
     "test:host": "node --test test/host.test.mjs",
     "test:relay": "node --test test/relay.test.mjs",
     "relay": "node tools/relay.mjs"
@@ -66,12 +66,13 @@
   "author": "tsukii12",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tsukii12/dsh-remote-portal.git"
+    "url": "git+https://github.com/tsukii12/dsh-YuRemote.git"
   },
-  "homepage": "https://github.com/tsukii12/dsh-remote-portal#readme",
+  "homepage": "https://github.com/tsukii12/dsh-YuRemote#readme",
   "bugs": {
-    "url": "https://github.com/tsukii12/dsh-remote-portal/issues"
+    "url": "https://github.com/tsukii12/dsh-YuRemote/issues"
   }
 }
+
 
 

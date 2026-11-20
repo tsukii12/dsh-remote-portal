@@ -1,5 +1,5 @@
 /**
- * dsh-remote-portal — response-header hardening tests.
+ * yuremote — response-header hardening tests.
  *
  * The portal is the only surface in the product that hands a stranger on the
  * network an HTML page containing an authentication form, so its responses are
@@ -29,7 +29,7 @@ const dirs = [];
 const cleanups = [];
 
 function tmpDir() {
-  const dir = mkdtempSync(join(tmpdir(), "drp-sec-"));
+  const dir = mkdtempSync(join(tmpdir(), "yuremote-sec-"));
   dirs.push(dir);
   return dir;
 }
@@ -201,7 +201,7 @@ test("an unauthenticated API call is refused with the set", async () => {
 
 test("static assets served by the gateway carry the set", async () => {
   const { port } = await startPortal();
-  const res = await request(port, "/dsh-remote-portal/assets/mobile.css");
+  const res = await request(port, "/yuremote/assets/mobile.css");
   assert.equal(res.status, 200);
   assert.match(String(res.headers["content-type"]), /text\/css/);
   assertHardened(res.headers, "asset");
@@ -209,7 +209,7 @@ test("static assets served by the gateway carry the set", async () => {
 
 test("only a matching public presentation asset revision is immutable", async () => {
   const { port } = await startPortal();
-  const path = "/dsh-remote-portal/assets/mobile.css";
+  const path = "/yuremote/assets/mobile.css";
   const unversioned = await request(port, path);
   assert.equal(unversioned.headers["cache-control"], "no-cache");
   assert.equal(unversioned.headers.vary, "Accept-Encoding");
@@ -236,7 +236,7 @@ test("dsh index injection links the immutable assets relative to the tunnel root
   ctx.effect = (fn, label) => { if (/(control routes|index injections)$/.test(label)) fn(); };
   ctx.webServer.register = (route) => { routes.set(route.path, route.handler); };
   apply(ctx, { stateDir: tmpDir() });
-  const port = await listen(http.createServer(routes.get("/dsh-remote-portal/assets")));
+  const port = await listen(http.createServer(routes.get("/yuremote/assets")));
   const rows = [];
   inject(rows);
   const urls = [...rows[0].html.matchAll(/(?:href|src)="([^"]+)"/g)].map((match) => match[1]);
@@ -245,7 +245,7 @@ test("dsh index injection links the immutable assets relative to the tunnel root
     const mount = "https://relay.test/__t/test/";
     assert.ok(new URL(url, mount).pathname.startsWith(new URL(mount).pathname));
     const asset = new URL(url, "http://localhost/");
-    assert.equal(asset.pathname, "/dsh-remote-portal/assets/" + filename);
+    assert.equal(asset.pathname, "/yuremote/assets/" + filename);
     const response = await request(port, asset.pathname + asset.search);
     assert.equal(response.status, 200);
     assert.match(response.headers["cache-control"], /^public, .*immutable$/);
@@ -254,7 +254,7 @@ test("dsh index injection links the immutable assets relative to the tunnel root
 
 test("a 404 still carries the set (no bare Node response)", async () => {
   const { port } = await startPortal();
-  const res = await request(port, "/dsh-remote-portal/assets/nope.css");
+  const res = await request(port, "/yuremote/assets/nope.css");
   assert.equal(res.status, 404);
   assertHardened(res.headers, "404");
 });

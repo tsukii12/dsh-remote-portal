@@ -9,6 +9,8 @@
 3. 安装器会显示 **agent endpoint** 和 **tunnel token**。在 dsh 面板打开 **远程访问 → 公网访问**，填写中转地址（例如 `tls://relay.example.com:9443`）和隧道令牌，然后连接。不要公开令牌，也不要把它写进截图或日志。
 4. 面板显示已连接后，在另一台设备上打开访客 HTTPS 地址（形如 `https://relay.example.com/__t/EXAMPLE_ID/`），再用门户密码或配对码登录。访客地址与中转端点不是同一个地址。
 
-**排查连接：** 在服务器运行 `drp status`，查看服务、隧道状态和访客地址。如果隧道离线，先检查主机到中转端口的连通性、TLS 配置和令牌。浏览器到中转的 HTTPS 与主机到中转的 TLS 是两段连接，分别检查。不要在公网使用明文 HTTP。
+**排查连接：** 在服务器运行 `yuremote status`，查看服务、隧道状态和访客地址。如果隧道离线，先检查主机到中转端口的连通性、TLS 配置和令牌。浏览器到中转的 HTTPS 与主机到中转的 TLS 是两段连接，分别检查。不要在公网使用明文 HTTP。
 
-更多细节见英文指南：[证书选择](DEPLOY-SERVER.md#33-certificates) · [手动部署与反向代理](DEPLOY-SERVER.md#6-manual-deployment-advanced) · [管理与多台主机](DEPLOY-SERVER.md#7-managing-it-with-drp) · [故障排查](DEPLOY-SERVER.md#10-operations-and-troubleshooting)。
+**升级旧中转：** 安装器会把标准 `dsh-relay.service` 迁移至 `yuremote-relay`，保留隧道令牌、证书续期、监听端口和域名，不改代理或防火墙。旧目录 `/opt/dsh-relay` 保留，迁移成功后会输出一条回滚命令。自定义 systemd 覆盖配置须先人工检查。
+
+更多细节见英文指南：[证书选择](DEPLOY-SERVER.md#33-certificates) · [手动部署与反向代理](DEPLOY-SERVER.md#6-manual-deployment-advanced) · [管理与多台主机](DEPLOY-SERVER.md#7-managing-it-with-yuremote) · [故障排查](DEPLOY-SERVER.md#10-operations-and-troubleshooting)。

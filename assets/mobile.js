@@ -1,8 +1,8 @@
 /*
- * dsh-remote-portal — assets/mobile.js
+ * yuremote — assets/mobile.js
  *
  * The *behaviour* half of the mobile presentation layer. `mobile.css` is inert
- * unless `<html data-drp-mobile>` is present, so everything here is fail-closed:
+ * unless `<html data-yuremote-mobile>` is present, so everything here is fail-closed:
  * if this file never runs (route missing, blocked script, old browser) the
  * shipped desktop UI is untouched.
  *
@@ -10,7 +10,7 @@
  *   - `matchMedia("(max-width: 900px)")` is the single source of truth, and it
  *     uses the *same* boundary as the stylesheet. Crossing it in either
  *     direction fully activates or fully tears down the layer.
- *   - `data-drp-mobile` on <html> is the stylesheet's gate.
+ *   - `data-yuremote-mobile` on <html> is the stylesheet's gate.
  *   - A floating 44×44 drawer button + a full-height scrim are the only nodes
  *     this file adds. Nothing else in the React tree is touched: the drawer is
  *     the app's own `[data-slot="sidebar"]` column, moved off-canvas by CSS.
@@ -25,30 +25,30 @@
  *     back verbatim when the media query stops matching.
  *
  * Public surface for tests and for client.js:
- *   window.__DRP_MOBILE__ = { open, close, toggle, refresh, active }
+ *   window.__YUREMOTE_MOBILE__ = { open, close, toggle, refresh, active }
  */
 (function () {
   "use strict";
 
   // Second load of the same script: just re-sync, never double-inject.
-  if (window.__DRP_MOBILE__) {
-    try { window.__DRP_MOBILE__.refresh(); } catch (_) { /* ignore */ }
+  if (window.__YUREMOTE_MOBILE__) {
+    try { window.__YUREMOTE_MOBILE__.refresh(); } catch (_) { /* ignore */ }
     return;
   }
 
   var QUERY = "(max-width: 900px)";
-  var DRAWER_ATTR = "data-drp-drawer";
-  var MOBILE_ATTR = "data-drp-mobile";
+  var DRAWER_ATTR = "data-yuremote-drawer";
+  var MOBILE_ATTR = "data-yuremote-mobile";
   // Set when the page is served to another device (LAN or relay). The layout
   // layer is width-based; the *remote* adaptations are not: a 1440px laptop at
   // the office must not be offered "open in Explorer" either.
-  var REMOTE_ATTR = "data-drp-remote";
-  var SIDEBAR_ID = "drp-sidebar";
+  var REMOTE_ATTR = "data-yuremote-remote";
+  var SIDEBAR_ID = "yuremote-sidebar";
   // Menus in the shipped UI include actions that only make sense in the native
   // shell ("open in Explorer", "open in VS Code", "show in Finder"). Over a
   // remote link they either do nothing or open something only the host can see,
   // so the mobile layer removes them from the menu it is in.
-  var HIDDEN_CLASS = "drp-hidden";
+  var HIDDEN_CLASS = "yuremote-hidden";
   var NATIVE_LABEL = /(资源管理器|文件管理器|访达|Finder|Explorer|终端|Terminal|VS ?Code|Cursor|系统默认应用|默认应用|打开配置文件|打开数据目录|打开日志|下载 ?Session ?日志|反馈)/;
   // Triggers (not menu items): the "open with…" cluster in the session header.
   // They lead to the host's desktop, which the phone cannot see.
@@ -160,7 +160,7 @@
   function buildButton() {
     var button = doc().createElement("button");
     button.type = "button";
-    button.className = "drp-drawer-btn";
+    button.className = "yuremote-drawer-btn";
     button.setAttribute("aria-label", drawerLabel());
     button.setAttribute("aria-expanded", state.open ? "true" : "false");
     button.setAttribute("aria-controls", SIDEBAR_ID);
@@ -171,9 +171,9 @@
 
   function buildScrim() {
     var scrim = doc().createElement("div");
-    // Namespaced under `drp-drawer-`: client.js already owns a scrim node inside
+    // Namespaced under `yuremote-drawer-`: client.js already owns a scrim node inside
     // its own sheet overlay, and the two must never style each other.
-    scrim.className = "drp-drawer-scrim";
+    scrim.className = "yuremote-drawer-scrim";
     scrim.setAttribute("aria-hidden", "true");
     scrim.addEventListener("click", onScrimClick);
     return scrim;
@@ -213,7 +213,7 @@
     var originalPush = h.pushState;
     var originalReplace = h.replaceState;
     var notify = function () {
-      try { window.dispatchEvent(new Event("drp:navigate")); } catch (_) { /* ignore */ }
+      try { window.dispatchEvent(new Event("yuremote:navigate")); } catch (_) { /* ignore */ }
     };
     h.pushState = function () {
       var out = originalPush.apply(this, arguments);
@@ -329,7 +329,7 @@
   /** True when `hostname` is one of this machine's own addresses. */
   function isHostAddress(hostname) {
     try {
-      var list = (window.__DRP_HOST__ && window.__DRP_HOST__.addresses) || [];
+      var list = (window.__YUREMOTE_HOST__ && window.__YUREMOTE_HOST__.addresses) || [];
       var h = String(hostname || "").toLowerCase();
       for (var i = 0; i < list.length; i++) {
         if (String(list[i]).toLowerCase() === h) return true;
@@ -490,19 +490,19 @@
    */
   function forcedByQuery() {
     try {
-      if (/[?&]drp=mobile\b/.test(String(location.search || ""))) {
-        try { sessionStorage.setItem("drp-mobile", "1"); } catch (e) { /* private mode */ }
+      if (/[?&]yuremote=mobile\b/.test(String(location.search || ""))) {
+        try { sessionStorage.setItem("yuremote-mobile", "1"); } catch (e) { /* private mode */ }
         return true;
       }
-      return sessionStorage.getItem("drp-mobile") === "1";
+      return sessionStorage.getItem("yuremote-mobile") === "1";
     } catch (e) { return false; }
   }
 
   /** Diagnostic breadcrumb, readable from the page: why the layer is off. */
   function markDecision(reason) {
     try {
-      doc().documentElement.setAttribute("data-drp-decision", reason);
-      window.__DRP_DECISION__ = {
+      doc().documentElement.setAttribute("data-yuremote-decision", reason);
+      window.__YUREMOTE_DECISION__ = {
         reason: reason,
         protocol: String(location.protocol || ""),
         hostname: String(location.hostname || ""),
@@ -543,7 +543,7 @@
     else close();
     window.addEventListener("keydown", onKeyDown, true);
     window.addEventListener("popstate", onRouteChange);
-    window.addEventListener("drp:navigate", onRouteChange);
+    window.addEventListener("yuremote:navigate", onRouteChange);
     patchHistory();
     state.routeHooked = true;
   }
@@ -558,7 +558,7 @@
     restoreViewport();
     window.removeEventListener("keydown", onKeyDown, true);
     window.removeEventListener("popstate", onRouteChange);
-    window.removeEventListener("drp:navigate", onRouteChange);
+    window.removeEventListener("yuremote:navigate", onRouteChange);
     state.routeHooked = false;
     if (state.restoreHistory) state.restoreHistory();
   }
@@ -622,14 +622,14 @@
    * count: it would close the drawer the moment it opened.
    */
   function overlayIsUp() {
-    var list = doc().querySelectorAll('[role="dialog"][aria-modal="true"], [data-drp-overlay="1"]');
+    var list = doc().querySelectorAll('[role="dialog"][aria-modal="true"], [data-yuremote-overlay="1"]');
     for (var i = 0; i < list.length; i++) {
       if (!list[i].closest('[data-slot="sidebar"]')) return true;
     }
     return false;
   }
 
-  window.__DRP_MOBILE__ = {
+  window.__YUREMOTE_MOBILE__ = {
     open: open,
     close: close,
     toggle: toggle,

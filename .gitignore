@@ -28,8 +28,3 @@ docs/screenshots/*.tmp.png
 packages/**/coverage/
 node_modules/
 *.tgz
-ios/build/
-ios/DerivedData/
-ios/**/*.xcuserstate
-ios/**/xcuserdata/
-ios/*.xcresult

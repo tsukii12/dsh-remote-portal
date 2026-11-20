@@ -28,7 +28,7 @@ test("gateway errors shown in the panel go through the localized error table", (
 test("the pairing card names the real reason the portal is not running", () => {
   // With a password set and the port taken, the card still said "set an access
   // password and enable it".
-  assert.match(src, /drp-qr-empty[^\n]*\n[^\n]*status\.lastError && !blockedByPassword \? friendlyGateway\(status\.lastError\) : t\("qrNotRunning"\)/);
+  assert.match(src, /yuremote-qr-empty[^\n]*\n[^\n]*status\.lastError && !blockedByPassword \? friendlyGateway\(status\.lastError\) : t\("qrNotRunning"\)/);
 });
 
 test("the status poll waits for each answer before asking again", () => {

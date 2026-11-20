@@ -2,15 +2,9 @@
 
 **简体中文** · [English](README.en.md)
 
-# dsh-remote-portal
+<img src="assets/brand/yuremote-wordmark.png" alt="鱼鱼远程" width="96" height="96">
 
-原生客户端：**鱼鱼远程 / YuRemote**（`app/`，Flutter，iOS 与 Android）。
-
-许可范围：门户网关为 [MIT](LICENSE)；跨平台 Flutter 客户端 `app/` 及其 Dart 包为
-[AGPL-3.0](app/LICENSE)，基于 dsh-Go v1.2.0。来源及第三方例外见 [app/NOTICE](app/NOTICE)
-与 [第三方声明](app/THIRD_PARTY_NOTICES.md)。`ios/` 暂时保留旧 Swift 客户端作为迁移对照。
-
-[原生 iOS App（Simulator 试用）](ios/README.md)
+# 鱼鱼远程 · YuRemote
 
 **为 DeepSeek Harness 提供远程能力：局域网或公网远程访问。**
 
@@ -62,14 +56,14 @@ dsh 仍只监听本机。插件在独立端口运行网关，验证访问密码�
 **从 DeepSeek Harness 安装（推荐）**：插件 → 添加插件 → 填入
 
 ```
-https://github.com/tsukii12/dsh-remote-portal
+https://github.com/tsukii12/dsh-YuRemote
 ```
 
 **从命令行装**：
 
 ```bash
-git clone https://github.com/tsukii12/dsh-remote-portal
-cd dsh-remote-portal
+git clone https://github.com/tsukii12/dsh-YuRemote
+cd dsh-YuRemote
 sh ./install.sh         # macOS / Linux，装进 desktop + web profile
 .\install.ps1           # Windows
 ```
@@ -78,7 +72,7 @@ sh ./install.sh         # macOS / Linux，装进 desktop + web profile
 
 ```bash
 dsh plugin --profile desktop add \
-  https://ghfast.top/https://github.com/tsukii12/dsh-remote-portal/archive/refs/heads/master.tar.gz
+  https://ghfast.top/https://github.com/tsukii12/dsh-YuRemote/archive/refs/heads/master.tar.gz
 ```
 
 装完后**重启 DeepSeek Harness**。
@@ -87,10 +81,14 @@ dsh plugin --profile desktop add \
 
 ## 更新
 
+**从旧版 `dsh-remote-portal` 迁移？** 先退出 dsh，再从 YuRemote 的检出目录运行新版
+`./install.sh` 或 `./install.ps1`（需要 Node.js 20+）。即使之前用 `dsh plugin add`
+安装，也请先运行一次脚本。安装器会替换旧插件，保留密码、设备和隧道配置；迁移后重启 dsh。
+
 **用 `install.sh` / `install.ps1` 装的**（插件指向你的 checkout）：
 
 ```bash
-cd dsh-remote-portal && git pull
+cd dsh-YuRemote && git pull
 ```
 
 然后重启 dsh，不用重新安装。
@@ -98,8 +96,8 @@ cd dsh-remote-portal && git pull
 **用 `dsh plugin add` 装的：先移除，再安装：**
 
 ```bash
-dsh plugin --profile desktop remove dsh-remote-portal
-dsh plugin --profile desktop add    https://github.com/tsukii12/dsh-remote-portal
+dsh plugin --profile desktop remove yuremote
+dsh plugin --profile desktop add    https://github.com/tsukii12/dsh-YuRemote
 ```
 
 Web端把 `--profile desktop` 换成 `--profile web`。`dsh plugin` 需要 PATH 上有 pnpm（报 “pnpm was not found” 时先 `npm install -g pnpm`）。
@@ -109,7 +107,7 @@ Web端把 `--profile desktop` 换成 `--profile web`。`dsh plugin` 需要 PATH 
 **锁定版本**：
 
 ```bash
-dsh plugin --profile desktop add https://github.com/tsukii12/dsh-remote-portal#v0.6.0
+dsh plugin --profile desktop add https://github.com/tsukii12/dsh-YuRemote#v0.6.0
 ```
 
 版本记录见 [CHANGELOG.md](CHANGELOG.md)。
@@ -119,20 +117,20 @@ dsh plugin --profile desktop add https://github.com/tsukii12/dsh-remote-portal#v
 在**你自己的**服务器上跑中转（单文件、零依赖）。一条命令：
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master/tools/deploy-relay.sh | sudo bash
+curl -fsSL https://raw.githubusercontent.com/tsukii12/dsh-YuRemote/master/tools/deploy-relay.sh | sudo bash
 ```
 
 **国内网络**：
 
 ```bash
 # 推荐：ghfast 代理
-curl -fsSL https://ghfast.top/https://raw.githubusercontent.com/tsukii12/dsh-remote-portal/master/tools/deploy-relay.sh | sudo bash
+curl -fsSL https://ghfast.top/https://raw.githubusercontent.com/tsukii12/dsh-YuRemote/master/tools/deploy-relay.sh | sudo bash
 
 # 备用：jsDelivr（可能滞后数小时）
-curl -fsSL https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@master/tools/deploy-relay.sh | sudo bash
+curl -fsSL https://cdn.jsdelivr.net/gh/tsukii12/dsh-YuRemote@master/tools/deploy-relay.sh | sudo bash
 ```
 
-脚本会自己下载 `relay.mjs`，探测环境、逐项提问（回车即默认），完成安装并注册 `drp` 命令。
+脚本会自己下载 `relay.mjs`，探测环境、逐项提问（回车即默认），完成安装并注册 `yuremote` 命令。
 
 **交互式设置**：
 
@@ -149,7 +147,7 @@ curl -fsSL https://cdn.jsdelivr.net/gh/tsukii12/dsh-remote-portal@master/tools/d
 管理命令：
 
 ```console
-$ drp
+$ yuremote
 service     running · autostart on
 uptime      2h 14m
 agent port  relay.example.com:9443 (TLS)
@@ -189,9 +187,9 @@ public      https://relay.example.com/__t/EXAMPLE_ID/
 
 <details>
 <summary><strong>公网地址打不开？</strong></summary>
-一台中转可以接多台 dsh：`drp token add` 生成新令牌，`drp tokens` 列出所有隧道，`drp urls` 列出所有地址。
+一台中转可以接多台 dsh：`yuremote token add` 生成新令牌，`yuremote tokens` 列出所有隧道，`yuremote urls` 列出所有地址。
 
-`drp status` 看隧道状态：`offline` 说明家里没连上中转（检查 9443 是否放行、令牌是否一致）；`connected` 但 503 说明反代缓冲（见部署文档排障表）。
+`yuremote status` 看隧道状态：`offline` 说明家里没连上中转（检查 9443 是否放行、令牌是否一致）；`connected` 但 503 说明反代缓冲（见部署文档排障表）。
 </details>
 
 <details>
@@ -226,4 +224,6 @@ public      https://relay.example.com/__t/EXAMPLE_ID/
 
 ## 许可
 
-[MIT](LICENSE)
+Portal／服务端采用 [MIT](LICENSE) 许可。原生 iOS／iPadOS 与 Android
+[鱼鱼远程 Flutter 客户端](app/README.md)基于 dsh-Go v1.2.0，采用
+[AGPL-3.0](app/LICENSE) 许可；来源见 [app/NOTICE](app/NOTICE)。

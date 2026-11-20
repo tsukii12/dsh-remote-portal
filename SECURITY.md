@@ -57,7 +57,7 @@ Out of scope:
    it through the relay so the public hop is HTTPS.
 3. Rotate the tunnel token if it was ever pasted somewhere you do not control
    (panel → 公网访问 → 断开, change the token on the server, reconnect).
-4. Keep `~/.dsh/dsh-remote-portal/state.json` at `0600`; it holds the password
+4. Keep `~/.dsh/yuremote/state.json` at `0600`; it holds the password
    hash, session signing secret and the tunnel token.
 5. Watch the panel's 最近访问 card and 已授权设备 list; remove what you do not
    recognise.
