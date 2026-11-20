@@ -77,6 +77,7 @@ struct TranscriptTurn: Identifiable {
     var items: [TranscriptItem]
     var toolCount: Int { items.flatMap(\.blocks).filter { $0.kind == "tool-call" }.count }
     var messageCount: Int { items.filter { $0.role == "assistant" || $0.role == "user" }.count }
+    var countsLabel: String { L(" · \(toolCount) tool \(toolCount == 1 ? "call" : "calls") · \(messageCount) \(messageCount == 1 ? "message" : "messages")", " · \(toolCount) 次工具调用 · \(messageCount) 条消息") }
     var outcome: String? { items.flatMap(\.blocks).first { $0.kind == "turn/end" }?.raw["event"]["data"]["reason"]["kind"].string }
     var detailItems: [TranscriptItem] { items.filter { !Self.visibleFinal($0, finalID: final?.id) } }
     var final: TranscriptItem? { items.last { $0.role == "assistant" && $0.blocks.contains { ["text", "image", "file"].contains($0.kind) } } }

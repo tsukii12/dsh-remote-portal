@@ -1,5 +1,6 @@
 import XCTest
 import Combine
+import SwiftUI
 @testable import DSHRemote
 
 @MainActor
@@ -47,6 +48,9 @@ final class Round4Tests: XCTestCase {
         let turns = TranscriptTurn.group(items)
         XCTAssertEqual(turns.flatMap(\.items).map(\.id), items.map(\.id))
         XCTAssertEqual(turns.last?.toolCount, 1)
+        XCTAssertEqual(turns.last?.countsLabel, L(" · 1 tool call · 3 messages", " · 1 次工具调用 · 3 条消息"))
+        XCTAssertEqual(TranscriptTurn(id: "empty", items: []).countsLabel, L(" · 0 tool calls · 0 messages", " · 0 次工具调用 · 0 条消息"))
+        XCTAssertEqual(TranscriptTurn(id: "single", items: [items[0]]).countsLabel, L(" · 0 tool calls · 1 message", " · 0 次工具调用 · 1 条消息"))
         XCTAssertEqual(turns.last?.messageCount, 3)
         XCTAssertEqual(turns.last?.final?.id, "b")
         XCTAssertEqual(turns.last?.detailItems.map(\.id), ["a", "notice"])
@@ -58,6 +62,36 @@ final class Round4Tests: XCTestCase {
         let next = TranscriptItem(id: "next", role: "user", blocks: [])
         let later = TranscriptTurn.group([preface, items[0], items[3], next, TranscriptItem(id: "reply", role: "assistant", blocks: [TranscriptBlock(["type": "text", "text": "Next"])], turn: 2)])
         XCTAssertEqual(later.count, 2); XCTAssertEqual(Set(later.map(\.id)).count, 2)
+    }
+    func testToolPreviewFitsShortArgumentsAndCapsLongOrErrorOutput() {
+        XCTAssertEqual(ToolPresentation.previewHeight("", lineHeight: 18, limit: 180), 28)
+        XCTAssertEqual(ToolPresentation.previewHeight("{\"command\":\"pwd\"}", lineHeight: 18, limit: 180), 28)
+        for newline in ["\n", "\r\n", "\r"] {
+            XCTAssertEqual(ToolPresentation.previewHeight(["Path", "----", "/home/test"].joined(separator: newline), lineHeight: 18, limit: 220), 64)
+        }
+        XCTAssertEqual(ToolPresentation.previewHeight(String(repeating: "line\n", count: 100), lineHeight: 18, limit: 180), 180)
+        XCTAssertEqual(ToolPresentation.previewHeight("large type", lineHeight: 36, limit: 180), 46)
+        XCTAssertEqual(ToolPresentation.previewHeight(ToolPresentation.result(["error": ["message": "Denied"]]), lineHeight: 18, limit: 220), 28)
+    }
+    func testCompactDrawerRetainsItsMountedStateWhenClosed() async throws {
+        var appearances = 0
+        func root(_ column: NavigationSplitViewColumn) -> some View {
+            AdaptiveWorkspace(visibility: .constant(.all), column: .constant(column)) {
+                Text("Sidebar").onAppear { appearances += 1 }
+            } detail: { Text("Detail") }.environment(\.horizontalSizeClass, .compact)
+        }
+        let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.first as? UIWindowScene)
+        let window = UIWindow(windowScene: scene)
+        let host = UIHostingController(rootView: root(.sidebar))
+        window.rootViewController = host; window.makeKeyAndVisible()
+        defer { window.isHidden = true; window.rootViewController = nil }
+        try await Task.sleep(nanoseconds: 100_000_000)
+        XCTAssertEqual(appearances, 1)
+        host.rootView = root(.detail)
+        try await Task.sleep(nanoseconds: 300_000_000)
+        host.rootView = root(.sidebar)
+        try await Task.sleep(nanoseconds: 300_000_000)
+        XCTAssertEqual(appearances, 1)
     }
     func testSidebarDateGroupsAndUnread() throws {
         var calendar = Calendar(identifier: .gregorian); calendar.timeZone = TimeZone(secondsFromGMT: 0)!

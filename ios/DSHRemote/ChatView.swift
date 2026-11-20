@@ -274,7 +274,7 @@ private struct TurnView: View {
                 } label: {
                     let active = chat.running && turn.outcome == nil && turn.id == TranscriptTurn.group(chat.transcript).last?.id
                     let label = active ? L("Running", "运行中") : turn.outcome != nil ? L("Stopped", "已停止") : L("Completed", "已完成")
-                    Label(label + L(" · \(turn.toolCount) tool calls · \(turn.messageCount) messages", " · \(turn.toolCount) 次工具调用 · \(turn.messageCount) 条消息"), systemImage: active ? "ellipsis.circle" : turn.outcome != nil ? "exclamationmark.circle" : "checkmark.circle").font(.subheadline).foregroundStyle(.secondary).frame(minHeight: 44)
+                    Label(label + turn.countsLabel, systemImage: active ? "ellipsis.circle" : turn.outcome != nil ? "exclamationmark.circle" : "checkmark.circle").font(.subheadline).foregroundStyle(.secondary).frame(minHeight: 44)
                 }.tint(.secondary)
                 if let final = turn.final { MessageView(item: final, api: chat.api, sessionID: chat.sessionID, hideDetails: true).id(final.id) }
             } else {

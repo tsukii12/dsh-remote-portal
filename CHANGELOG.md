@@ -34,6 +34,8 @@ versions are the plugin's own, not dsh's.
 - 新 RPC/HTTP 路由由真实监听器测试覆盖；可选在线冒烟测试验证两个本地模拟模型的切换与明确思考强度、会话权限命令及门户文件夹浏览。
 
 ### Fixed
+- Native iOS keeps drawer workspace/status filters when reopening it, gives its dismiss scrim a native button action, fits short tool arguments and CRLF results without oversized blank areas, and uses singular English turn-summary counts.
+- 原生 iOS 重新打开侧栏时保留工作区与状态筛选，遮罩使用原生按钮操作关闭；工具参数与 CRLF 结果按内容高度显示，避免大片空白，并修正轮次摘要的英语单复数。
 - Native iOS draft retries reapply the current model/access settings and reconcile preset/Plan mode before uploading or sending, failing closed if configuration fails. First-command results/exports survive opening the chat, and Markdown tables preserve literal backslashes and Windows paths.
 - 原生 iOS 草稿重试会在上传或发送前重新应用当前模型与权限，并核对预设和计划模式；配置失败时禁止继续发送。首次执行命令后打开聊天会保留结果与导出文件，Markdown 表格保留反斜杠和 Windows 路径。
 - Native chat history remains subscribed when optional startup reads fail; ended subscriptions reopen and idle/running state reconciles with the host, including assistant end frames and admitted-but-not-completed prompts. History loading stays visible. Transcript notices, compact attempts, standalone tool calls/results and unknown event/content types have expandable native fallbacks instead of disappearing.

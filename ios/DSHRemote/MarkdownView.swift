@@ -128,6 +128,9 @@ struct MarkdownView: View {
 }
 
 enum ToolPresentation {
+    static func previewHeight(_ text: String, lineHeight: CGFloat, limit: CGFloat) -> CGFloat {
+        min(CGFloat(max(1, text.replacingOccurrences(of: "\r\n", with: "\n").components(separatedBy: .newlines).count)) * lineHeight + 10, limit)
+    }
     static func summary(_ arguments: String) -> String {
         guard let value = try? JSONDecoder().decode(JSON.self, from: Data(arguments.utf8)) else { return arguments }
         return value["command"].string ?? arguments
@@ -151,14 +154,14 @@ struct ToolCard: View {
     private var failed: Bool { block.result?["message"]["isError"].boolean == true || (block.result?["error"] ?? .null) != .null }
     var body: some View {
         DisclosureGroup(isExpanded: $expanded) {
-            ScrollView([.horizontal, .vertical]) { Text(block.arguments).font(.system(.caption, design: .monospaced)).textSelection(.enabled) }.frame(maxHeight: 180)
+            ScrollView([.horizontal, .vertical]) { Text(block.arguments).font(.system(.caption, design: .monospaced)).textSelection(.enabled) }.frame(height: ToolPresentation.previewHeight(block.arguments, lineHeight: resultLineHeight, limit: 180))
             if let result = block.result {
                 ForEach(Array(result["message"]["content"].array.enumerated()), id: \.offset) { _, content in
                     if content["type"] == "image" || content["type"] == "file" { HistoricalAttachmentView(block: TranscriptBlock(content), api: api, sessionID: sessionID) }
                 }
                 ScrollView([.horizontal, .vertical]) {
                     Text(ToolPresentation.result(result)).font(.system(.caption, design: .monospaced)).textSelection(.enabled).frame(maxWidth: .infinity, alignment: .leading).padding(.top, 10)
-                }.frame(height: min(CGFloat(max(1, ToolPresentation.result(result).components(separatedBy: .newlines).count)) * resultLineHeight + 10, 220))
+                }.frame(height: ToolPresentation.previewHeight(ToolPresentation.result(result), lineHeight: resultLineHeight, limit: 220))
             } else { Text(L("Waiting for result…", "正在等待结果…")).font(.caption).foregroundStyle(.secondary).padding(.top, 8) }
         } label: {
             VStack(alignment: .leading, spacing: 6) {
