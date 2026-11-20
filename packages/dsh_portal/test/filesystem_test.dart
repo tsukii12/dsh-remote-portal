@@ -30,7 +30,7 @@ void main() {
   test('browse preserves relay prefix, authenticated headers and Unicode query', () async {
     respond = (request) async {
       expect(request.method, 'GET');
-      expect(request.uri.path, '/__t/fixture/dsh-remote-portal/fs');
+      expect(request.uri.path, '/__t/fixture/yuremote/fs');
       expect(request.uri.queryParameters, {'path': '/host/项目 & notes'});
       expect(request.headers.value('user-agent'), PortalSession.userAgent);
       expect(request.headers.value('origin'), session.base.origin);
@@ -77,7 +77,7 @@ void main() {
   test('mkdir posts JSON and trusts the returned canonical path', () async {
     respond = (request) async {
       expect(request.method, 'POST');
-      expect(request.uri.path, '/__t/fixture/dsh-remote-portal/fs/mkdir');
+      expect(request.uri.path, '/__t/fixture/yuremote/fs/mkdir');
       expect(request.headers.contentType!.mimeType, 'application/json');
       expect(request.headers.value('cookie'), 'portal=fixture-only');
       expect(jsonDecode(await utf8.decoder.bind(request).join()), {'parent': '/host/a b', 'name': '新 & folder'});

@@ -16,7 +16,7 @@ class PortalDirectoryListing extends DirectoryLevel {
 class PortalFileSystem {
   const PortalFileSystem(this.connection);
   final DshConnection connection;
-  static const _prefix = '/dsh-remote-portal/fs';
+  static const _prefix = '/yuremote/fs';
 
   Future<PortalDirectoryListing> browse([String? path]) async {
     final response = await connection.get(_prefix,
