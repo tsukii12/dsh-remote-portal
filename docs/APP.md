@@ -4,7 +4,9 @@
 
 YuRemote is a remote-only Flutter port of dsh-Go v1.2.0. The app works with the YuRemote gateway, not with SSH or a plain dsh Web URL. It does not run dsh locally or embed its website. Open and continue chats, stream responses, handle approvals and questions, and browse workspaces or attach files when the host supports those operations.
 
-<img src="screenshots/app-agent-team.png" alt="Agent team members, tasks and messages in the iOS app" width="280"> <img src="screenshots/app-settings-about.png" alt="The iOS app's About page with license and upstream credits" width="280">
+<img src="screenshots/app-home-chat.png" alt="iOS chat view with private conversation content masked" width="220"> <img src="screenshots/app-sidebar.png" alt="iOS sidebar with conversation search and filters" width="220"> <img src="screenshots/app-folder-picker.png" alt="iOS remote folder picker with private paths and names masked" width="220">
+
+<img src="screenshots/app-agent-team.png" alt="Agent team members, tasks and messages in the iOS app" width="220"> <img src="screenshots/app-settings-about.png" alt="The iOS app's About page with license and upstream credits" width="220">
 
 ## Install
 
