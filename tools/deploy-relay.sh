@@ -828,22 +828,23 @@ write_migrated_unit() {
 
 migrate_relay() {
   local attempt drop_ins health_addr was_active=0 was_enabled=0
-  [ -f "$LEGACY_UNIT" ] && [ ! -L "$LEGACY_UNIT" ] || die "Expected a regular unit at $LEGACY_UNIT"
+  [ -f "$LEGACY_UNIT" ] && [ ! -L "$LEGACY_UNIT" ] ||
+    die "$(t "Expected a regular unit at $LEGACY_UNIT" "$LEGACY_UNIT 应是普通服务单元文件")"
   [ ! -e "$UNIT" ] && [ ! -e "$LEGACY_BACKUP" ] && [ ! -e "$STATE_DIR" ] && [ ! -e "$RELAY_DIR" ] ||
-    die "Migration targets already exist; resolve the previous install before retrying."
+    die "$(t "Migration targets already exist; resolve the previous install before retrying." "迁移目标已存在，请先处理上次安装留下的文件再重试。")"
   [ -f "$LEGACY_RELAY_DIR/relay.mjs" ] && [ -s "$LEGACY_STATE_DIR/token" ] ||
-    die "Legacy relay code or token file is missing."
+    die "$(t "Legacy relay code or token file is missing." "找不到旧中转的代码或令牌文件。")"
   drop_ins=$(systemctl show -p DropInPaths --value "$LEGACY_SERVICE.service") ||
-    die "Could not read the legacy unit's overrides."
+    die "$(t "Could not read the legacy unit's overrides." "无法读取旧服务的覆盖配置。")"
   [ -z "$drop_ins" ] ||
-    die "Legacy relay has unit overrides; migrate those overrides with the unit before switching."
+    die "$(t "Legacy relay has unit overrides; migrate those overrides with the unit before switching." "旧中转服务有覆盖配置，请在切换前将它们与服务单元一起迁移。")"
   grep -Fq -- "$LEGACY_RELAY_DIR/relay.mjs " "$LEGACY_UNIT" &&
     grep -Fq -- "--token-file $LEGACY_STATE_DIR/token" "$LEGACY_UNIT" ||
-    die "Legacy unit uses a custom code or token path; migrate it explicitly."
+    die "$(t "Legacy unit uses a custom code or token path; migrate it explicitly." "旧服务使用自定义代码或令牌路径，请手动迁移。")"
   health_addr=$(sed -nE 's/.*--http-port ([^ ]+).*/\1/p' "$LEGACY_UNIT" | head -n 1)
-  case "$health_addr" in ''|*[!0-9.:]*) die "Cannot infer the legacy relay's HTTP health address." ;; esac
+  case "$health_addr" in ''|*[!0-9.:]*) die "$(t "Cannot infer the legacy relay's HTTP health address." "无法确定旧中转的 HTTP 健康检查地址。")" ;; esac
   health_addr="127.0.0.1:${health_addr##*:}"
-  command -v curl >/dev/null 2>&1 || die "curl is required to check the migrated relay."
+  command -v curl >/dev/null 2>&1 || die "$(t "curl is required to check the migrated relay." "检查迁移后的中转需要 curl。")"
   node --check "$PORTAL_DIR/relay.mjs"
   prepare_installer
   cp -a -- "$LEGACY_STATE_DIR" "$STATE_DIR"
@@ -869,8 +870,8 @@ migrate_relay() {
           curl -fsS --max-time 2 "http://$health_addr/__relay/health" >/dev/null 2>&1; then
         install_yuremote
         install_legacy_command
-        ok "Migrated to $SERVICE; kept the legacy code and the certificate renewal path."
-        info "Rollback: sudo sh -c 'systemctl disable --now $SERVICE.service && rm $LEGACY_UNIT && mv $LEGACY_BACKUP $LEGACY_UNIT && systemctl daemon-reload && systemctl enable --now $LEGACY_SERVICE.service && mv $UNIT $UNIT.rolled-back'"
+        ok "$(t "Migrated to $SERVICE; kept the legacy code and the certificate renewal path." "已迁移至 $SERVICE，旧代码和证书续期方式已保留。")"
+        info "$(t "Rollback:" "回滚命令：") sudo sh -c 'systemctl disable --now $SERVICE.service && rm $LEGACY_UNIT && mv $LEGACY_BACKUP $LEGACY_UNIT && systemctl daemon-reload && systemctl enable --now $LEGACY_SERVICE.service && mv $UNIT $UNIT.rolled-back'"
         return 0
       fi
       sleep 1
@@ -885,7 +886,7 @@ migrate_relay() {
   systemctl daemon-reload
   if [ "$was_enabled" = 1 ]; then systemctl enable "$LEGACY_SERVICE.service"; fi
   if [ "$was_active" = 1 ]; then systemctl start "$LEGACY_SERVICE.service"; fi
-  die "New relay did not become healthy; restored the legacy unit. Staged files remain in $RELAY_DIR and $STATE_DIR."
+  die "$(t "New relay did not become healthy; restored the legacy unit. Staged files remain in $RELAY_DIR and $STATE_DIR." "新中转未通过健康检查，已恢复旧服务。迁移文件仍保存在 $RELAY_DIR 和 $STATE_DIR。")"
 }
 
 apply_migrated_http_port() {
@@ -932,7 +933,7 @@ if is_migrated_relay && [ "$APPLY_CONFIG" = 0 ]; then
   fi
   install_yuremote
   install_legacy_command
-  ok "$SERVICE is already migrated."
+  ok "$(t "$SERVICE is already migrated." "$SERVICE 已迁移。")"
   exit 0
 fi
 

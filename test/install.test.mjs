@@ -224,8 +224,8 @@ ${shellFunction("has_migrated_alias")}
   assert.equal(restored.stdout, "daemon-reload\nenable --now yuremote-relay.service\n");
 });
 
-for (const healthy of ["yes", "no"]) {
-  test(`deploy-relay.sh migrates the unit and ${healthy === "yes" ? "keeps it when healthy" : "restores it on failure"}`, { skip }, (t) => {
+for (const [healthy, language] of [["yes", "en"], ["no", "en"], ["yes", "zh"], ["no", "zh"]]) {
+  test(`deploy-relay.sh migrates the unit and ${healthy === "yes" ? "keeps it when healthy" : "restores it on failure"} (${language})`, { skip }, (t) => {
     const sandbox = home([]);
     t.after(() => rmSync(sandbox, { recursive: true, force: true }));
     const oldDir = join(sandbox, "dsh-relay");
@@ -250,6 +250,7 @@ for (const healthy of ["yes", "no"]) {
 set -euo pipefail
 LEGACY_RELAY_DIR=$1 LEGACY_STATE_DIR=$2 RELAY_DIR=$3 STATE_DIR=$4 LEGACY_UNIT=$5 UNIT=$6
 PORTAL_DIR=$7 HEALTHY=$8 LEGACY_BACKUP=$5.bak-yuremote
+LANG_MODE=$9
 SELF_VERSION=fixture-version
 RAW_BASES=https://fixture.invalid
 TMP_RELAY_DIR=$3.download
@@ -271,8 +272,10 @@ ok() { printf '%s\\n' "$*"; }
 info() { printf '%s\\n' "$*"; }
 die() { printf '%s\\n' "$*" >&2; exit 1; }
 `;
-    const result = spawnSync("bash", ["-s", "--", oldDir, oldState, newDir, newState, oldUnit, newUnit, join(ROOT, "tools"), healthy], {
-      input: [setup, shellFunction("prepare_installer"), shellFunction("write_migrated_unit"), migrate, "migrate_relay\n"].join("\n"),
+    const translate = /^t\(\) \{.*\}$/m.exec(deploy)?.[0];
+    assert.ok(translate);
+    const result = spawnSync("bash", ["-s", "--", oldDir, oldState, newDir, newState, oldUnit, newUnit, join(ROOT, "tools"), healthy, language], {
+      input: [setup, translate, shellFunction("prepare_installer"), shellFunction("write_migrated_unit"), migrate, "migrate_relay\n"].join("\n"),
       encoding: "utf8",
     });
     assert.equal(readFileSync(join(oldDir, "relay.mjs"), "utf8"), "legacy code");
@@ -290,13 +293,19 @@ die() { printf '%s\\n' "$*" >&2; exit 1; }
       assert.ok(unit.includes(`${newDir}/relay.mjs --token-file ${newState}/token ${listeners}`));
       assert.ok(unit.includes(`--tls-cert ${oldState}/cert.pem --tls-key ${oldState}/key.pem`));
       assert.ok(unit.includes("Environment=DSH_RELAY_CACHE_MB=64"));
-      assert.match(result.stdout, /Rollback: sudo sh -c/);
+      if (language === "zh") {
+        assert.match(result.stdout, /已迁移至 yuremote-relay/);
+        assert.match(result.stdout, /回滚命令： sudo sh -c/);
+      } else {
+        assert.match(result.stdout, /Rollback: sudo sh -c/);
+      }
     } else {
       assert.equal(result.status, 1, result.stdout + result.stderr);
       assert.equal(readFileSync(oldUnit, "utf8"), legacy);
       assert.equal(existsSync(backup), false);
       assert.equal(existsSync(newUnit), false);
       assert.match(result.stderr, /start dsh-relay\.service/);
+      assert.match(result.stderr, language === "zh" ? /新中转未通过健康检查，已恢复旧服务/ : /New relay did not become healthy; restored the legacy unit/);
     }
   });
 }
