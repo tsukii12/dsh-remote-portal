@@ -20,7 +20,7 @@ set -euo pipefail
 if [ ! -x "$0" ] && [ -f "$0" ]; then chmod +x "$0" 2>/dev/null || true; fi
 
 SELF_VERSION="0.6.2"
-INSTALLER_REVISION=1
+INSTALLER_REVISION=2
 
 RELAY_DIR=/opt/yuremote-relay
 STATE_DIR=/var/lib/yuremote-relay
@@ -33,19 +33,19 @@ LEGACY_SERVICE=dsh-relay
 LEGACY_UNIT=/etc/systemd/system/$LEGACY_SERVICE.service
 LEGACY_BACKUP=$LEGACY_UNIT.bak-yuremote
 LEGACY_BIN=/usr/local/bin/drp
+RUN_USER=$SERVICE; RUN_GROUP=$SERVICE
 PORTAL_DIR="$(cd "$(dirname "$0")" 2>/dev/null && pwd || echo .)"
 
 HOST=""; AGENT_PORT=9443; HTTP_PORT=8080; PUBLIC_PORT=80
 PROXY_MODE=""; ASSUME_YES=0; UNINSTALL=0; LANG_MODE=en
 VISIT_MODE=""; SCHEME=http; VISITOR_TLS=0; AGENT_TLS=1; CERT_SOURCE=none
-APPLY_CONFIG=0; CONFIG_HTTP_ONLY=0
+APPLY_CONFIG=0; REQUESTED_LANG=""
 
 while [ $# -gt 0 ]; do
   case "$1" in
-    --lang) LANG_MODE=$2; shift 2 ;;
+    --lang) REQUESTED_LANG=$2; LANG_MODE=$2; shift 2 ;;
     --yes|-y) ASSUME_YES=1; shift ;;
-    --apply-config) APPLY_CONFIG=1; shift ;;
-    --apply-http-port) APPLY_CONFIG=1; CONFIG_HTTP_ONLY=1; shift ;;
+    --apply-config) APPLY_CONFIG=1; ASSUME_YES=1; shift; break ;;
     --uninstall) UNINSTALL=1; shift ;;
     -h|--help) sed -n '2,19p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *) echo "unknown option: $1 (try --help)" >&2; exit 1 ;;
@@ -239,6 +239,8 @@ if [ "$UNINSTALL" = 0 ] && [ -r "$CONF_FILE" ]; then
   SAVED_CERT_FILE=${CERT_FILE:-}
   SAVED_KEY_FILE=${KEY_FILE:-}
 fi
+LANG_MODE=${REQUESTED_LANG:-$LANG_MODE}
+[ "$LANG_MODE" = zh ] || LANG_MODE=en
 SAVED_PROXY=${SAVED_PROXY:-}
 OWN_PORTS=""
 if [ -f "$UNIT" ]; then
@@ -266,6 +268,8 @@ CONF=/var/lib/yuremote-relay/deploy.conf
 TOKEN_FILE=/var/lib/yuremote-relay/token
 SERVICE=yuremote-relay
 set -u
+LANG_MODE=en
+t() { if [ "$LANG_MODE" = zh ]; then printf '%s' "$2"; else printf '%s' "$1"; fi; }
 
 # Colour only when someone is looking at a terminal.
 if [ -t 1 ]; then
@@ -493,45 +497,15 @@ case "${1:-status}" in
     shift
     if [ $# -eq 0 ]; then
       load
-      [ -r "$CONF" ] && cat "$CONF" || echo "no saved configuration"
+      [ -r "$CONF" ] && cat "$CONF" || echo "$(t "no saved configuration" "没有已保存的配置")"
       exit 0
     fi
     load
-    apply=--apply-config
-    if [ "$#" = 1 ]; then
-      case "$1" in
-        HTTP_PORT=*)
-          v=${1#*=}
-          case "$v" in ''|*[!0-9]*|??????*) echo "invalid HTTP port" >&2; exit 2 ;; esac
-          if [ "$v" -lt 1 ] || [ "$v" -gt 65535 ]; then echo "invalid HTTP port" >&2; exit 2; fi
-          apply=--apply-http-port
-          ;;
-      esac
-    fi
-    changed=0
-    for pair in "$@"; do
-      k=${pair%%=*}; v=${pair#*=}
-      case "$k" in
-        HOST|SCHEME|VISIT_MODE|VISITOR_TLS|AGENT_TLS|AGENT_PORT|HTTP_PORT|PUBLIC_PORT|PROXY_MODE) ;;
-        *) printf 'unknown key: %s\n  allowed: HOST SCHEME VISIT_MODE VISITOR_TLS AGENT_TLS AGENT_PORT HTTP_PORT PUBLIC_PORT PROXY_MODE\n' "$k" >&2; exit 2 ;;
-      esac
-      [ "$pair" = "$k" ] && { printf 'expected K=V, got %s\n' "$pair" >&2; exit 2; }
-      if grep -q "^$k=" "$CONF" 2>/dev/null; then
-        sed -i "s|^$k=.*|$k=$v|" "$CONF"
-      else
-        printf '%s=%s\n' "$k" "$v" >> "$CONF"
-      fi
-      printf '  %s = %s\n' "$k" "$(cyan "$v")"
-      changed=1
-    done
-    [ "$changed" = 1 ] || exit 0
-    # Ports and certificates live in the unit's command line, so editing the file is
-    # not enough: reinstall from the saved answers.
     if [ -n "${SCRIPT:-}" ] && [ -r "$SCRIPT" ]; then
-      echo "reinstalling with the new settings"
-      bash "$SCRIPT" --yes "$apply"
+      exec bash "$SCRIPT" --apply-config "$@"
     else
-      echo "re-run the installer to apply these (the saved answers are now defaults)"
+      echo "$(t "Re-run the installer before changing these settings." "请重新运行安装脚本后再更改这些设置。")" >&2
+      exit 1
     fi
     ;;
 
@@ -767,9 +741,9 @@ save_migrated_installer() {
   local saved="$STATE_DIR/deploy-relay.sh"
   if [ ! "$INSTALLER_SOURCE" -ef "$saved" ]; then install -m 0755 "$INSTALLER_SOURCE" "$saved"; fi
   if [ -f "$CONF_FILE" ]; then
-    sed -i '/^SCRIPT=/d' "$CONF_FILE"
+    sed -i '/^SCRIPT=/d; /^LANG_MODE=/d' "$CONF_FILE"
   fi
-  printf 'SCRIPT=%s\n' "$saved" >> "$CONF_FILE"
+  printf 'SCRIPT=%s\nLANG_MODE=%s\n' "$saved" "$LANG_MODE" >> "$CONF_FILE"
 }
 
 install_brand() {
@@ -833,8 +807,23 @@ write_migrated_unit() {
       -e "s#^ReadOnlyPaths=$LEGACY_RELAY_DIR\$#ReadOnlyPaths=$RELAY_DIR#" \
       -e "s#^ReadWritePaths=$LEGACY_STATE_DIR\$#ReadWritePaths=$STATE_DIR#" \
       -e 's/^Description=.*/Description=YuRemote relay/' "$1" > "$unit_stage"
+  if legacy_plain_unit "$1"; then
+    sed -i -e "s/^User=$LEGACY_SERVICE\$/User=$RUN_USER/" -e "s/^Group=$LEGACY_SERVICE\$/Group=$RUN_GROUP/" "$unit_stage"
+  fi
   install -m 0644 "$unit_stage" "$UNIT"
   rm -f -- "$unit_stage"
+}
+
+legacy_plain_unit() {
+  grep -Fxq "User=$LEGACY_SERVICE" "$1" && ! grep -Eq '^ExecStart=.* --tls-(cert|key) ' "$1"
+}
+
+transfer_migrated_state() {
+  id "$RUN_USER" >/dev/null 2>&1 ||
+    useradd --system --user-group --home "$STATE_DIR" --shell /usr/sbin/nologin "$RUN_USER" ||
+    die "$(t "Could not create the relay service user." "无法创建中转服务用户。")"
+  chown -hR "$RUN_USER:$RUN_GROUP" "$STATE_DIR" ||
+    die "$(t "Could not transfer ownership of the migrated state." "无法更改迁移状态文件的所有者。")"
 }
 
 migrate_relay() {
@@ -865,6 +854,7 @@ migrate_relay() {
   install -m 0644 "$PORTAL_DIR/relay.mjs" "$STATE_DIR/relay.mjs"
   install_brand
   save_migrated_installer
+  if legacy_plain_unit "$LEGACY_UNIT"; then transfer_migrated_state; fi
   write_migrated_unit "$LEGACY_UNIT"
   systemctl is-active --quiet "$LEGACY_SERVICE.service" && was_active=1
   systemctl is-enabled --quiet "$LEGACY_SERVICE.service" && was_enabled=1
@@ -896,18 +886,6 @@ migrate_relay() {
   die "$(t "New relay did not become healthy; restored the legacy unit. Staged files remain in $RELAY_DIR and $STATE_DIR." "新中转未通过健康检查，已恢复旧服务。迁移文件仍保存在 $RELAY_DIR 和 $STATE_DIR。")"
 }
 
-apply_migrated_http_port() {
-  local pattern='(^ExecStart=.*--http-port ([^ ]*:)?)[0-9]+( |$)'
-  grep -Eq "$pattern" "$UNIT" || die "$(t "Cannot read the migrated HTTP listener." "无法读取迁移后的 HTTP 监听地址。")"
-  case "$HTTP_PORT" in ''|*[!0-9]*|??????*) die "$(t "Invalid HTTP port." "HTTP 端口无效。")" ;; esac
-  [ "$HTTP_PORT" -ge 1 ] && [ "$HTTP_PORT" -le 65535 ] || die "$(t "Invalid HTTP port." "HTTP 端口无效。")"
-  [ "$HTTP_PORT" -ge 1024 ] || grep -q '^AmbientCapabilities=.*CAP_NET_BIND_SERVICE' "$UNIT" ||
-    die "$(t "Reconfigure the service before using a privileged HTTP port." "使用特权 HTTP 端口前请重新配置服务。")"
-  sed -i -E "s/$pattern/\1$HTTP_PORT\3/" "$UNIT"
-  systemctl daemon-reload
-  systemctl restart "$SERVICE.service"
-}
-
 if [ "$HAVE_SYSTEMD" = 1 ] && [ -f "$LEGACY_UNIT" ] && [ ! -L "$LEGACY_UNIT" ]; then
   migrate_relay
   exit 0
@@ -915,10 +893,6 @@ fi
 is_migrated_relay() {
   [ "$HAVE_SYSTEMD" = 1 ] && has_migrated_alias
 }
-if is_migrated_relay && [ "$CONFIG_HTTP_ONLY" = 1 ]; then
-  apply_migrated_http_port
-  exit 0
-fi
 if is_migrated_relay && [ "$APPLY_CONFIG" = 0 ]; then
   prepare_installer
   install -d -m 0755 "$RELAY_DIR"
@@ -982,11 +956,75 @@ else
   warn "$(t "no nginx/Caddy: the relay will listen publicly on its own port" "未发现 nginx/Caddy：relay 将直接对外监听端口")"
 fi
 
-USED_PORTS=$( { ss -tln 2>/dev/null || netstat -tln 2>/dev/null || true; } | awk 'NR>1{split($4,a,":"); print a[length(a)]}' | sort -un | tr '\n' ' ')
+if ! listeners=$(ss -tln 2>/dev/null || netstat -tln 2>/dev/null) && [ "$APPLY_CONFIG" = 1 ]; then
+  die "$(t "Cannot check port availability; install ss or netstat before changing settings." "无法检查端口是否可用；请先安装 ss 或 netstat 再更改设置。")"
+fi
+USED_PORTS=$(printf '%s\n' "$listeners" | awk 'NR>1{split($4,a,":"); print a[length(a)]}' | sort -un | tr '\n' ' ')
 port_free() {
   case " $OWN_PORTS " in *" $1 "*) return 0 ;; esac
   case " $USED_PORTS " in *" $1 "*) return 1 ;; *) return 0 ;; esac
 }
+configure_reinstall() {
+  local pair k v p public_changed=0 http_changed=0 previous_public=$PUBLIC_PORT
+  [ "$#" -gt 0 ] || die "$(t "Provide at least one setting as KEY=VALUE." "请至少提供一项 KEY=VALUE 设置。")"
+  for pair in "$@"; do
+    k=${pair%%=*}; v=${pair#*=}
+    [ "$pair" != "$k" ] || die "$(t "Expected KEY=VALUE: $pair" "应使用 KEY=VALUE 格式：$pair")"
+    case "$k" in
+      AGENT_PORT|HTTP_PORT|PUBLIC_PORT)
+        if [[ ! "$v" =~ ^[0-9]{1,5}$ ]] || [ "$v" -lt 1 ] || [ "$v" -gt 65535 ]; then
+          die "$(t "$k must be a port between 1 and 65535." "$k 必须是 1–65535 之间的端口。")"
+        fi
+        v=$((10#$v))
+        ;;
+      HOST) [[ "$v" =~ ^[a-zA-Z0-9.-]+$ ]] || die "$(t "Invalid host name or IPv4 address." "主机名或 IPv4 地址无效。")" ;;
+      SCHEME|VISIT_MODE) [[ "$v" = http || "$v" = https ]] ||
+        die "$(t "$k must be http or https." "$k 必须为 http 或 https。")" ;;
+      VISITOR_TLS|AGENT_TLS) [[ "$v" = 0 || "$v" = 1 ]] ||
+        die "$(t "$k must be 0 or 1." "$k 必须为 0 或 1。")" ;;
+      PROXY_MODE) [[ "$v" = none || "$v" = nginx || "$v" = caddy ]] ||
+        die "$(t "PROXY_MODE must be none, nginx, or caddy." "PROXY_MODE 必须为 none、nginx 或 caddy。")" ;;
+      *) die "$(t "Unknown setting: $k" "未知设置：$k")" ;;
+    esac
+    printf -v "$k" '%s' "$v"
+    case "$k" in PUBLIC_PORT) public_changed=1 ;; HTTP_PORT) http_changed=1 ;; esac
+  done
+  if [ "$PROXY_MODE" = none ] && [ "$VISITOR_TLS" = 0 ]; then
+    if [ "$http_changed" = 1 ] && [ "$public_changed" = 0 ]; then PUBLIC_PORT=$HTTP_PORT; fi
+    if [ "$public_changed" = 1 ] && [ "$http_changed" = 0 ]; then HTTP_PORT=$PUBLIC_PORT; fi
+    [ "$HTTP_PORT" = "$PUBLIC_PORT" ] ||
+      die "$(t "HTTP_PORT and PUBLIC_PORT must match when serving HTTP directly." "直接提供 HTTP 服务时，HTTP_PORT 和 PUBLIC_PORT 必须相同。")"
+  fi
+  if [ "$AGENT_PORT" = "$HTTP_PORT" ] || [ "$AGENT_PORT" = "$PUBLIC_PORT" ] ||
+    { { [ "$VISITOR_TLS" = 1 ] || [ "$PROXY_MODE" != none ]; } && [ "$HTTP_PORT" = "$PUBLIC_PORT" ]; }; then
+    die "$(t "The requested listener ports conflict." "请求的监听端口有冲突。")"
+  fi
+  for p in "$AGENT_PORT" "$HTTP_PORT"; do
+    port_free "$p" || die "$(t "Port $p is already in use." "端口 $p 已被占用。")"
+  done
+  if [ "$VISITOR_TLS" = 1 ] || [ "$PUBLIC_PORT" != "$previous_public" ]; then
+    port_free "$PUBLIC_PORT" || die "$(t "Port $PUBLIC_PORT is already in use." "端口 $PUBLIC_PORT 已被占用。")"
+  fi
+  [ "$PROXY_MODE" = none ] || [ "$PROXY_MODE" = "$DETECTED_PROXY" ] ||
+    die "$(t "The configured proxy was not detected: $PROXY_MODE" "未检测到配置的反向代理：$PROXY_MODE")"
+}
+
+if [ "$APPLY_CONFIG" = 1 ]; then
+  if ! systemctl is-active --quiet "$SERVICE.service"; then OWN_PORTS=""; fi
+  configure_reinstall "$@"
+  if [ -f "$UNIT" ]; then
+    SAVED_CERT_FILE=$(sed -nE 's/^ExecStart=.* --tls-cert ([^ ]+).*/\1/p' "$UNIT")
+    SAVED_KEY_FILE=$(sed -nE 's/^ExecStart=.* --tls-key ([^ ]+).*/\1/p' "$UNIT")
+    if is_migrated_relay && [ -n "$SAVED_KEY_FILE" ] && grep -Fxq "User=$LEGACY_SERVICE" "$UNIT"; then
+      RUN_USER=$LEGACY_SERVICE
+      RUN_GROUP=$(sed -n 's/^Group=//p' "$UNIT")
+      RUN_GROUP=${RUN_GROUP:-$RUN_USER}
+    fi
+  fi
+  if [ "$CERT_SOURCE" = user ] && { [ ! -r "${SAVED_CERT_FILE:-}" ] || [ ! -r "${SAVED_KEY_FILE:-}" ]; }; then
+    die "$(t "The saved certificate pair is no longer readable." "无法读取已保存的证书和私钥。")"
+  fi
+else
 while ! port_free "$AGENT_PORT"; do AGENT_PORT=$((AGENT_PORT + 1)); done
 while ! port_free "$HTTP_PORT"; do HTTP_PORT=$((HTTP_PORT + 1)); done
 
@@ -1181,6 +1219,7 @@ elif [ "$CERT_SOURCE" = user ]; then
   [ -r "$USER_KEY" ] || die "$(t "cannot read $USER_KEY" "读不到 $USER_KEY")"
   AGENT_TLS=1
 fi
+fi
 
 printf '\n'
 info "$(t "Summary" "汇总"):"
@@ -1200,10 +1239,11 @@ if can_ask; then ask_yn "$(t "Install with these settings" "确认安装")" y ||
 # ── 4. install ──────────────────────────────────────────────────────────────
 say "4/6 $(t "Installing the relay" "安装 relay")"
 if [ "$HAVE_SYSTEMD" = 1 ]; then
-  useradd --system --home "$STATE_DIR" --shell /usr/sbin/nologin yuremote-relay 2>/dev/null || true
-  install -d -o yuremote-relay -g yuremote-relay -m 0750 "$STATE_DIR"
-  install -d -o yuremote-relay -g yuremote-relay -m 0755 "$RELAY_DIR"
-  install -o yuremote-relay -g yuremote-relay -m 0644 "$PORTAL_DIR/relay.mjs" "$RELAY_DIR/relay.mjs"
+  if [ "$APPLY_CONFIG" = 1 ] && is_migrated_relay && legacy_plain_unit "$UNIT"; then transfer_migrated_state; fi
+  useradd --system --home "$STATE_DIR" --shell /usr/sbin/nologin "$RUN_USER" 2>/dev/null || true
+  install -d -o "$RUN_USER" -g "$RUN_GROUP" -m 0750 "$STATE_DIR"
+  install -d -o "$RUN_USER" -g "$RUN_GROUP" -m 0755 "$RELAY_DIR"
+  install -o "$RUN_USER" -g "$RUN_GROUP" -m 0644 "$PORTAL_DIR/relay.mjs" "$RELAY_DIR/relay.mjs"
 else
   RELAY_DIR="$PWD/.relay-run"; STATE_DIR="$PWD/.relay-state"
   install -d -m 0755 "$RELAY_DIR"; install -d -m 0700 "$STATE_DIR"
@@ -1227,14 +1267,14 @@ if [ -s "$TOKEN_FILE" ]; then
 else
   TOKEN=$(node -e 'process.stdout.write(require("node:crypto").randomBytes(32).toString("base64url"))')
   ( umask 077; printf '%s\n' "$TOKEN" > "$TOKEN_FILE" )
-  [ "$HAVE_SYSTEMD" = 1 ] && chown yuremote-relay:yuremote-relay "$TOKEN_FILE"
+  [ "$HAVE_SYSTEMD" = 1 ] && chown "$RUN_USER:$RUN_GROUP" "$TOKEN_FILE"
   ok "$(t "generated a tunnel token" "已生成隧道令牌")"
 fi
 
 TLS_CERT=""; TLS_KEY=""
 NEED_CERT=0
 if [ "$CERT_SOURCE" = self ]; then NEED_CERT=1; fi
-if [ "$AGENT_TLS" = 1 ] && [ -z "$TLS_CERT" ]; then NEED_CERT=1; fi
+if [ "$AGENT_TLS" = 1 ] || [ "$VISITOR_TLS" = 1 ]; then NEED_CERT=1; fi
 
 acmesh_install() { # sets ACME_BIN / ACME_HOME, or dies
   if ! command -v curl >/dev/null 2>&1; then
@@ -1277,7 +1317,7 @@ acme_install_cert() { # acme_install_cert <domain> <fullchain-out> <key-out>
     fi
   fi
   chmod 600 "$ekey"; chmod 644 "$earned"
-  [ "$HAVE_SYSTEMD" = 1 ] && chown -R yuremote-relay:yuremote-relay "$STATE_DIR" 2>/dev/null || true
+  [ "$HAVE_SYSTEMD" = 1 ] && chown -R "$RUN_USER:$RUN_GROUP" "$STATE_DIR" 2>/dev/null || true
 }
 
 acme_renewal_timer() {
@@ -1434,7 +1474,7 @@ issue_cert_acme() { # issue_cert_acme <domain> [http|dns-cf|dns-manual]
   ok "$(t "certificate issued and installed" "证书已签发并安装")"
 }
 
-if [ "$CERT_SOURCE" = user ]; then
+if [ "$CERT_SOURCE" = user ] && [ "$APPLY_CONFIG" = 0 ]; then
   install -d -m 0750 "$STATE_DIR/tls" 2>/dev/null || true
   case "$USER_CERT" in
     /tmp/*) install -m 0644 "$USER_CERT" "$STATE_DIR/tls/user-fullchain.pem"; USER_CERT="$STATE_DIR/tls/user-fullchain.pem" ;;
@@ -1444,7 +1484,10 @@ if [ "$CERT_SOURCE" = user ]; then
   esac
 fi
 
-if [ "$CERT_SOURCE" = acme ]; then
+if [ "$APPLY_CONFIG" = 1 ] && [ -n "${SAVED_CERT_FILE:-}" ] && [ -n "${SAVED_KEY_FILE:-}" ]; then
+  TLS_CERT=$SAVED_CERT_FILE
+  TLS_KEY=$SAVED_KEY_FILE
+elif [ "$CERT_SOURCE" = acme ]; then
   issue_cert_acme "$HOST" "${ACME_MODE:-http}"
 elif [ "$CERT_SOURCE" = user ]; then
   TLS_CERT=$USER_CERT
@@ -1461,7 +1504,8 @@ elif [ "$NEED_CERT" = 1 ]; then
       *) SAN="IP:$HOST,DNS:localhost" ;;
     esac
     openssl req -x509 -newkey rsa:2048 -nodes -days 3650 -keyout "$KEY" -out "$CERT" \
-      -subj "/CN=yuremote-relay" -addext "subjectAltName=$SAN" >/dev/null 2>&1 || die "openssl failed"
+      -subj "/CN=yuremote-relay" -addext "subjectAltName=$SAN" >/dev/null 2>&1 ||
+      die "$(t "openssl failed to generate the certificate." "openssl 无法生成证书。")"
     chmod 600 "$KEY"; chmod 644 "$CERT"
     ok "$(t "generated a self-signed certificate" "已生成自签证书") ($SAN)"
   else
@@ -1470,7 +1514,7 @@ elif [ "$NEED_CERT" = 1 ]; then
     AGENT_TLS=0
     VISITOR_TLS=0
   fi
-  [ "$HAVE_SYSTEMD" = 1 ] && chown -R yuremote-relay:yuremote-relay "$STATE_DIR"
+  [ "$HAVE_SYSTEMD" = 1 ] && chown -R "$RUN_USER:$RUN_GROUP" "$STATE_DIR"
   if [ "$NEED_CERT" = 1 ]; then TLS_CERT="$CERT"; TLS_KEY="$KEY"; fi
 fi
 
@@ -1509,8 +1553,8 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-User=yuremote-relay
-Group=yuremote-relay
+User=$RUN_USER
+Group=$RUN_GROUP
 ExecStart=/usr/bin/env node $RELAY_ARGS
 $CAPS
 Restart=always
@@ -1662,9 +1706,10 @@ ADVERTISED_URL=${ADVERTISED_URL:-}
 CERT_FILE=$TLS_CERT
 KEY_FILE=$TLS_KEY
 SCRIPT=$STATE_DIR/deploy-relay.sh
+LANG_MODE=$LANG_MODE
 CONF_EOF
 chmod 644 "$CONF_FILE" 2>/dev/null || true
-[ "$HAVE_SYSTEMD" = 1 ] && chown yuremote-relay:yuremote-relay "$CONF_FILE" 2>/dev/null || true
+[ "$HAVE_SYSTEMD" = 1 ] && chown "$RUN_USER:$RUN_GROUP" "$CONF_FILE" 2>/dev/null || true
 
 install_yuremote
 
@@ -1676,6 +1721,7 @@ if curl -fsS --max-time 4 "http://127.0.0.1:$HTTP_PORT/__relay/health" >/dev/nul
 else
   warn "$(t "health check failed; see: yuremote log" "健康检查未通过；查看：yuremote log")"
 fi
+if [ "$APPLY_CONFIG" = 1 ]; then exit 0; fi
 
 TUNNEL_ID=$(node -e 'const c=require("node:crypto");process.stdout.write(c.createHash("sha256").update(process.argv[1]).digest("base64url").slice(0,12))' "$TOKEN")
 AGENT_SCHEME=$([ "$AGENT_TLS" = 1 ] && echo tls || echo tcp)
