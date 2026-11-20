@@ -8,6 +8,7 @@ final class NewChatDraft: ObservableObject {
     private let events: RemoteEvents?
     @Published var workspaceID: String?
     @Published private(set) var sending = false
+    @Published private(set) var pendingText = ""
     @Published var error: String?
     private(set) var sessionID: String?
     private var submitted = false
@@ -19,7 +20,11 @@ final class NewChatDraft: ObservableObject {
         self.sidebar = sidebar; self.workspaceID = workspaceID; self.events = events
     }
     func load() async {
-        do { try await chat.loadModels(); try await chat.loadControls() }
+        do {
+            async let models: Void = chat.loadModels()
+            async let controls: Void = chat.loadControls()
+            _ = try await (models, controls)
+        }
         catch { self.error = error.localizedDescription }
     }
     func submit(_ text: String) async throws -> ChatStore {
@@ -28,23 +33,30 @@ final class NewChatDraft: ObservableObject {
         try chat.validateImageInput(attachments.items)
         let signature = text + "\u{0}" + attachments.items.map { $0.id.uuidString }.joined(separator: ",")
         if signature != self.signature { requestID = UUID().uuidString; self.signature = signature }
-        sending = true; error = nil
+        pendingText = text; sending = true; error = nil
         defer { sending = false }
-        if sessionID == nil { sessionID = try await sidebar.createSession(workspaceID: workspaceID) }
+        if sessionID == nil { sessionID = try await sidebar.createSession(workspaceID: workspaceID, refreshImmediately: false) }
         guard let id = sessionID else { throw APIError.invalidResponse }
         let target = ChatStore(sessionID: id, api: chat.api, events: events)
-        try await target.loadControls()
+        var accepted = false
+        defer { if !accepted { target.stop() } }
+        async let stream: Void = target.start()
+        async let controls: Void = target.loadControls()
+        async let models: Void = target.loadModels()
+        _ = try await (stream, controls, models)
+        try await target.waitForHistory()
         if let preset = chat.projections["agentPreset"].string, target.projections["agentPreset"].string != preset { try await target.selectPreset(preset) }
-        try await target.loadModels()
         let model = chat.currentModel
-        if let provider = model["provider"].string, let modelID = model["model"].string {
+        if let provider = model["provider"].string, let modelID = model["model"].string,
+           model["provider"] != target.currentModel["provider"] || model["model"] != target.currentModel["model"] || model["reasoningEffort"] != target.currentModel["reasoningEffort"] {
             try await target.selectModel(provider: provider, model: modelID, reasoningEffort: model["reasoningEffort"].string)
         }
-        if let access = chat.projections["permissions"]["currentValue"].string { try await target.selectPermission(access) }
+        if let access = chat.projections["permissions"]["currentValue"].string, .string(access) != target.projections["permissions"]["currentValue"] { try await target.selectPermission(access) }
         if chat.planEnabled != target.planEnabled {
             guard target.supportsPlan else { throw PortalError.message(L("This preset does not provide Plan mode. Choose another preset or turn Plan mode off.", "当前预设不支持计划模式，请选择其他预设或关闭计划模式。")) }
             _ = try await target.executeCommand(chat.planEnabled ? "/plan" : "/plan off")
         }
+        if !text.hasPrefix("/") { target.addOptimistic(text: text, requestID: requestID, attachments: attachments.items.map(\.reference)) }
         try target.validateImageInput(attachments.items)
         try await attachments.prepare(sessionID: id, limits: target.projections["imageLimits"])
         if text.hasPrefix("/") {
@@ -53,7 +65,7 @@ final class NewChatDraft: ObservableObject {
             }
             _ = try await target.executeCommand(text, attachments: parts)
         } else { try await target.send(text, attachments: attachments.items, requestID: requestID) }
-        submitted = true
+        submitted = true; accepted = true
         return target
     }
     func abandon() async { if !sending && !submitted, let sessionID { try? await sidebar.abandonEmptyCreated(sessionID) } }
@@ -94,6 +106,10 @@ private struct NewChatDraftView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
+                if draft.sending {
+                    HStack { Spacer(minLength: 40); Text(draft.pendingText).padding(16).background(DRPStyle.accent.opacity(0.09), in: RoundedRectangle(cornerRadius: 18)) }
+                    ProgressView(L("Running…", "运行中…")).frame(maxWidth: .infinity, alignment: .leading)
+                } else {
                 Text(ChatGreeting.text(hour: Calendar.current.component(.hour, from: Date()))).font(.largeTitle.weight(.light))
                 Text(L("What would you like to do today?", "今天想做点什么？")).font(.title3).foregroundStyle(.secondary)
                 Menu {
@@ -103,6 +119,7 @@ private struct NewChatDraftView: View {
                     Button { options = .mode } label: { Label((chat.projections["agentPreset"].string.map(ChatLabels.preset) ?? L("Default mode", "默认模式")) + " ⌄", systemImage: "wrench") }
                     Button { options = .access } label: { Label((chat.projections["permissions"]["currentValue"].string.map(ChatLabels.permission) ?? L("Access", "权限")) + " ⌄", systemImage: "shield") }
                 }.font(.subheadline).frame(minHeight: 44)
+                }
                 if let error = draft.error { StatusBanner(message: error, dismiss: { draft.error = nil }); Button(L("Reload options", "重新加载选项")) { Task { await draft.load() } }.frame(minHeight: 44) }
             }.frame(maxWidth: .infinity).padding(.horizontal, 20).containerRelativeFrame(.vertical) { height, _ in max(220, height * 0.8) }
         }.background { ChatBackdrop() }.toolbar(.hidden, for: .navigationBar)
@@ -110,7 +127,7 @@ private struct NewChatDraftView: View {
                 HStack(spacing: 8) {
                     GlassCircle(symbol: "line.3.horizontal", label: L("Conversations", "对话列表"), action: onMenu)
                     ChatTitlePill(title: L("New chat", "新对话"), subtitle: serverName + " · " + PortalRoute.label(base))
-                    Button { options = .model } label: { Text(chat.modelName + " · " + ChatLabels.preset(chat.projections["agentPreset"].text) + " ⌄").font(.caption).lineLimit(1).padding(.horizontal, 12).frame(maxWidth: 145, minHeight: 44).background(.regularMaterial, in: Capsule()) }.accessibilityLabel(L("Choose model", "选择模型")).accessibilityValue(chat.modelName + " · " + ChatLabels.preset(chat.projections["agentPreset"].text))
+                    Button { options = .model } label: { Text(chat.modelName + " · " + ChatLabels.preset(chat.projections["agentPreset"].text) + " ⌄").font(.caption).lineLimit(1).padding(.horizontal, 12).frame(maxWidth: 145, minHeight: 44).background(.regularMaterial, in: Capsule()) }.disabled(draft.sending).accessibilityLabel(L("Choose model", "选择模型")).accessibilityValue(chat.modelName + " · " + ChatLabels.preset(chat.projections["agentPreset"].text))
                 }.buttonStyle(.plain).padding(.horizontal, 12).padding(.vertical, 8)
             }
             .safeAreaInset(edge: .bottom) {

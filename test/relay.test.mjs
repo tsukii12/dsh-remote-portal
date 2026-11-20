@@ -38,6 +38,39 @@ const TLS_KEY = join(HERE, "fixtures", "tls", "key.pem");
 const cleanups = [];
 const dirs = [];
 
+test("UTF-8 relay bodies survive every multibyte frame split", () => {
+  const text = "你好，月亮🌙；队列、转向、@\"中文 文件.txt\"";
+  for (const framing of [agentFraming, relayFraming]) {
+    const body = Buffer.from(text, "utf8");
+    const encoded = framing.encodeFrame(framing.FRAME.REQ_BODY, 7, body);
+    for (let split = 1; split < encoded.length; split++) {
+      const frames = [];
+      const reader = framing.createFrameReader((type, id, payload) => frames.push({ type, id, payload }), assert.fail);
+      reader(encoded.subarray(0, split));
+      reader(encoded.subarray(split));
+      assert.equal(frames.length, 1);
+      assert.deepEqual(frames[0].payload, body);
+      assert.equal(frames[0].payload.toString("utf8"), text);
+    }
+  }
+});
+
+test("Chinese request bodies round-trip byte-exactly through a real relay and tunnel", async () => {
+  const gateway = await startGatewayDouble((req, res) => {
+    const chunks = [];
+    req.on("data", chunk => chunks.push(chunk));
+    req.on("end", () => res.end(Buffer.concat(chunks)));
+    return true;
+  });
+  const token = "utf8-roundtrip-local";
+  const { agentPort, httpPort } = await startRelay([token]);
+  await connectTunnel({ agentPort, token, targetPort: gateway });
+  const body = Buffer.from(JSON.stringify({ text: "你好🌙，排队、转向与中文提及" }));
+  const result = await request(httpPort, `/__t/${tunnelIdFor(token)}/utf8`, { method: "POST", body, headers: { "content-type": "application/json", "content-length": body.length } });
+  assert.equal(result.status, 200);
+  assert.deepEqual(result.body, body);
+});
+
 function tmpDir() {
   const dir = mkdtempSync(join(tmpdir(), "drp-relay-"));
   dirs.push(dir);

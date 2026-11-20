@@ -3,6 +3,7 @@ import Network
 import SwiftUI
 import Combine
 import UIKit
+import CryptoKit
 @testable import DSHRemote
 
 private final class UploadProgressLog: @unchecked Sendable {
@@ -28,6 +29,7 @@ private final class HTTPListener {
     private let listener: NWListener
     private let queue = DispatchQueue(label: "DRP.HTTPListener")
     private let handler: (Request) -> Reply
+    var onStreamOpen: ((String) -> Void)?
     init(_ handler: @escaping (Request) -> Reply) throws {
         let parameters = NWParameters.tcp
         parameters.requiredLocalEndpoint = .hostPort(host: "127.0.0.1", port: .any)
@@ -70,6 +72,12 @@ private final class HTTPListener {
                 }
                 let length = Int(headers["content-length"] ?? "0") ?? 0
                 if first.count >= 2 && data.count - split.upperBound >= length {
+                    if headers["upgrade"]?.lowercased() == "websocket", let key = headers["sec-websocket-key"] {
+                        let accept = Data(Insecure.SHA1.hash(data: Data((key + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11").utf8))).base64EncodedString()
+                        let response = Data("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: \(accept)\r\n\r\n".utf8)
+                        connection.send(content: response, completion: .contentProcessed { _ in self.receiveWebSocket(connection, buffer: Data()) })
+                        return
+                    }
                     let request = Request(path: String(first[1]), method: String(first[0]), headers: headers, body: Data(data[split.upperBound..<(split.upperBound + length)]))
                     let reply = handler(request)
                     let body = reply.data ?? Data(reply.body.utf8)
@@ -83,10 +91,116 @@ private final class HTTPListener {
             if complete { connection.cancel() } else { receive(connection, buffer: data) }
         }
     }
+    private func receiveWebSocket(_ connection: NWConnection, buffer: Data) {
+        connection.receive(minimumIncompleteLength: 1, maximumLength: 65536) { [self] bytes, _, complete, error in
+            var data = buffer; data.append(bytes ?? Data())
+            guard error == nil, !complete else { connection.cancel(); return }
+            while data.count >= 2 {
+                let opcode = data[0] & 15
+                var length = Int(data[1] & 127), offset = 2
+                if length == 126 {
+                    guard data.count >= 4 else { break }
+                    length = Int(data[2]) * 256 + Int(data[3]); offset = 4
+                }
+                guard length < 65536 else { connection.cancel(); return }
+                let masked = data[1] & 128 != 0
+                let maskCount = masked ? 4 : 0
+                guard data.count >= offset + maskCount + length else { break }
+                let mask = masked ? Array(data[offset..<(offset + 4)]) : [0, 0, 0, 0]
+                offset += maskCount
+                let payload = Data(data[offset..<(offset + length)].enumerated().map { $0.element ^ mask[$0.offset % 4] })
+                data = Data(data.dropFirst(offset + length))
+                if opcode == 8 { connection.cancel(); return }
+                if let frame = try? JSONDecoder().decode(JSON.self, from: payload), frame["type"] == "open" {
+                    onStreamOpen?(frame["endpoint"].text)
+                    guard frame["endpoint"] == "session/follow" else { continue }
+                    let value: JSON = ["type": "item", "streamId": frame["streamId"], "value": ["type": "snapshot", "records": []]]
+                    let body = try! JSONEncoder().encode(value)
+                    var response = Data([0x81])
+                    if body.count < 126 { response.append(UInt8(body.count)) }
+                    else { response.append(contentsOf: [126, UInt8(body.count >> 8), UInt8(body.count & 255)]) }
+                    response.append(body)
+                    connection.send(content: response, completion: .contentProcessed { _ in })
+                }
+            }
+            receiveWebSocket(connection, buffer: data)
+        }
+    }
 }
 
 @MainActor
 final class ListenerTests: XCTestCase {
+    func testFirstSendShowsPendingImmediatelySkipsDefaultsAndOpensStreamBeforePrompt() async throws {
+        var calls: [String] = []; var streamOpened = false
+        let server = try HTTPListener { request in
+            let body = try! JSONDecoder().decode(JSON.self, from: request.body)
+            let method = body["method"].text
+            calls.append(method)
+            switch method {
+            case "session/create": Thread.sleep(forTimeInterval: 0.2); return self.reply(["sessionId": "fast"])
+            case "session/list": return self.reply(["items": []])
+            case "session/modelCatalog": return self.reply(["default": ["provider": "p", "model": "m"]])
+            case "permissionPresets/catalog": return self.reply(["defaultPreset": "read-only"])
+            case "agentPresets/list", "session/state": return self.reply(["running": false])
+            case "commands/list": return self.reply([])
+            case "session/projections": return self.reply(["asOfSeq": 1, "values": ["agentPreset": "standard", "modelSelection": ["selected": ["provider": "p", "model": "m"]], "permissions": ["currentValue": "read-only"]]])
+            case "session/prompt":
+                XCTAssertTrue(streamOpened)
+                return self.reply(["requestId": body["payload"]["args"]["request"]["requestId"]])
+            default: XCTFail("Unnecessary apply or unexpected RPC " + method); return .init(status: 500)
+            }
+        }
+        server.onStreamOpen = { if $0 == "session/follow" { streamOpened = true } }
+        let base = try await server.start(); let directory = root(); let client = client(directory)
+        defer { server.stop(); client.session.invalidateAndCancel(); try? FileManager.default.removeItem(at: directory) }
+        let api = PortalAPI(base: base, client: client)
+        let draft = NewChatDraft(api: api, sidebar: SidebarStore(api: api), workspaceID: nil)
+        await draft.load()
+        let send = Task { try await draft.submit("立即显示你好") }
+        try await Task.sleep(nanoseconds: 50_000_000)
+        XCTAssertTrue(draft.sending); XCTAssertEqual(draft.pendingText, "立即显示你好")
+        XCTAssertNil(draft.sessionID)
+        let chat = try await send.value
+        defer { chat.stop() }
+        XCTAssertTrue(chat.loaded)
+        XCTAssertEqual(chat.transcript.filter(\.optimistic).count, 1)
+        XCTAssertEqual(calls.filter { $0 == "session/modelCatalog" }.count, 2)
+        XCTAssertFalse(calls.contains("session/selectModel")); XCTAssertFalse(calls.contains("commands/execute"))
+    }
+    func testChinesePromptQueueSteerCommandAndMentionBodiesAreByteExact() async throws {
+        let text = "你好，月亮🌙。排队→转向 @\"中文 文件.txt\"\n第二行"
+        var modes: [String] = []; var edits = 0; var commands = 0
+        let server = try HTTPListener { request in
+            let body = try! JSONDecoder().decode(JSON.self, from: request.body)
+            let args = body["payload"]["args"]
+            switch body["method"].text {
+            case "session/prompt":
+                XCTAssertEqual(Data(args["request"]["content"].array[0]["text"].text.utf8), Data(text.utf8))
+                modes.append(args["request"]["mode"].text)
+                return self.reply(["requestId": args["request"]["requestId"]])
+            case "session/updateQueue":
+                XCTAssertEqual(Data(args["request"]["action"]["content"].array[0]["text"].text.utf8), Data(text.utf8)); edits += 1
+                return self.reply([:])
+            case "commands/execute":
+                XCTAssertEqual(Data(args["line"].text.utf8), Data("/echo 中文参数🌙".utf8)); commands += 1
+                return self.reply(["result": ["kind": "text", "text": .string(text)]])
+            case "session/state": return self.reply(["running": true])
+            case "session/projections": return self.reply(["asOfSeq": 0, "values": [:]])
+            default: XCTFail("Unexpected UTF-8 RPC"); return .init(status: 404)
+            }
+        }
+        let base = try await server.start(); let directory = root(); let client = client(directory)
+        defer { server.stop(); client.session.invalidateAndCancel(); try? FileManager.default.removeItem(at: directory) }
+        let chat = ChatStore(sessionID: "utf8", api: PortalAPI(base: base, client: client))
+        try await chat.send(text)
+        chat.applyState(["running": true])
+        try await chat.send(text)
+        try await chat.send(text, steer: true)
+        try await chat.updateQueue("queued", kind: "edit", text: text)
+        _ = try await chat.executeCommand("/echo 中文参数🌙")
+        XCTAssertEqual(modes, ["queue", "queue", "steer"]); XCTAssertEqual(edits, 1); XCTAssertEqual(commands, 1)
+        XCTAssertEqual(Data(try XCTUnwrap(chat.commandNotice).utf8), Data(text.utf8))
+    }
     func testDraftRetryReappliesCurrentSettingsAfterUploadOrPromptFailure() async throws {
         for failure in ["upload", "prompt"] {
             var failingSend = true; var rejectPermission = false
@@ -102,6 +216,7 @@ final class ListenerTests: XCTestCase {
                 let args = body["payload"]["args"]
                 switch body["method"].text {
                 case "session/create": creations += 1; return self.reply(["sessionId": "retry"])
+                case "session/state": return self.reply(["running": false])
                 case "session/list": return self.reply(["items": [["sessionId": "retry", "blank": true]]])
                 case "session/modelCatalog": return self.reply(["default": ["provider": "p", "model": "one"], "groups": []])
                 case "permissionPresets/catalog": return self.reply(["defaultPreset": "full-access"])
@@ -167,6 +282,7 @@ final class ListenerTests: XCTestCase {
                 let body = try! JSONDecoder().decode(JSON.self, from: request.body)
                 switch body["method"].text {
                 case "session/create": creations += 1; return self.reply(["sessionId": "command"])
+                case "session/state": return self.reply(["running": false])
                 case "session/list": return self.reply(["items": [["sessionId": "command", "blank": true]]])
                 case "session/modelCatalog": return self.reply(["groups": []])
                 case "permissionPresets/catalog", "agentPresets/list", "agentPresets/select": return self.reply([:])
@@ -213,6 +329,7 @@ final class ListenerTests: XCTestCase {
             calls.append(method)
             switch method {
             case "session/create": XCTAssertEqual(args["request"]["workspaceId"], "ws"); return self.reply(["sessionId": "lazy"])
+            case "session/state": return self.reply(["running": false])
             case "session/list": return self.reply(["items": [["sessionId": "lazy", "blank": true]]])
             case "session/modelCatalog": return self.reply(["groups": []])
             case "permissionPresets/catalog": return self.reply(["options": []])
@@ -564,7 +681,9 @@ final class ListenerTests: XCTestCase {
         defer { subscription.cancel() }
         await fulfillment(of: [ready], timeout: 5)
         XCTAssertEqual(chat.modelName, "One"); XCTAssertEqual(chat.effortName, "high"); XCTAssertTrue(chat.supportsPlan)
-        XCTAssertEqual(calls, ["session/state", "session/modelCatalog", "permissionPresets/catalog", "agentPresets/list", "commands/list", "session/projections"])
+        XCTAssertEqual(Array(calls.prefix(2)), ["session/state", "session/modelCatalog"])
+        XCTAssertEqual(calls.count, 6)
+        XCTAssertEqual(Set(calls.dropFirst(2)), Set(["permissionPresets/catalog", "agentPresets/list", "commands/list", "session/projections"]))
     }
     private func client(_ root: URL) -> PortalClient { PortalClient(configuration: .ephemeral, cookies: CookieVault(root: root)) }
     private func root() -> URL { FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString) }

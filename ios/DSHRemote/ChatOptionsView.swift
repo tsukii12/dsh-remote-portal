@@ -5,7 +5,7 @@ enum ChatLabels {
         switch id {
         case "read-only": return L("Read Only", "只读")
         case "workspace-write": return L("Workspace Write", "工作区写入")
-        case "danger-full-access": return L("Full access", "完全访问")
+        case "danger-full-access", "full-access": return L("Full access", "完全权限")
         default: return id
         }
     }
@@ -17,6 +17,14 @@ enum ChatLabels {
         case "cordis": return L("Creator", "创造者")
         default: return id
         }
+    }
+    static func notice(_ text: String) -> String {
+        let ids = ["read-only", "workspace-write", "danger-full-access", "full-access", "standard", "ptc", "minimal", "cordis"]
+        for prefix in ["", "preset ", "permission ", "access "] where text.hasPrefix(prefix) {
+            let id = String(text.dropFirst(prefix.count)).trimmingCharacters(in: .whitespacesAndNewlines)
+            if ids.contains(id) { return permission(id) == id ? preset(id) : permission(id) }
+        }
+        return text
     }
 }
 

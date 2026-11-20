@@ -31,6 +31,14 @@ private final class RecoveryAPI: RPCServing {
 
 @MainActor
 final class Round4Tests: XCTestCase {
+    func testControlAcknowledgementsUseLocalizedNamesWithoutChangingUnknownText() {
+        XCTAssertEqual(ChatLabels.notice("preset danger-full-access"), L("Full access", "完全权限"))
+        XCTAssertEqual(ChatLabels.notice("permission read-only"), L("Read Only", "只读"))
+        XCTAssertEqual(ChatLabels.notice("preset minimal"), L("Minimal", "精简"))
+        XCTAssertEqual(ChatLabels.notice(""), "")
+        XCTAssertEqual(ChatLabels.notice("Permission denied: 中文"), "Permission denied: 中文")
+        XCTAssertEqual(ChatLabels.notice("preset custom-mode"), "preset custom-mode")
+    }
     func testTableCellsPreserveWindowsPathsAndLiteralBackslashes() {
         XCTAssertEqual(MarkdownParser.cells(#"| C:\Users\alice | \\server\share | a\|b | `C:\Users\alice\\` |"#), [#"C:\Users\alice"#, #"\\server\share"#, "a|b", #"`C:\Users\alice\\`"#])
         XCTAssertEqual(MarkdownParser.cells(#"| \ | \\ | `a\|b` |"#), [#"\"#, #"\\"#, "`a|b`"])

@@ -203,6 +203,14 @@ final class ChatStore: ObservableObject {
         recoveryTask?.cancel(); recoveryTask = nil
         if let observer { events?.removeObserver(observer) }; observer = nil
     }
+    func waitForHistory() async throws {
+        for _ in 0..<200 {
+            try Task.checkCancellation()
+            if loaded { return }
+            try await Task.sleep(nanoseconds: 50_000_000)
+        }
+        throw PortalError.message(L("The conversation stream could not connect. Try again.", "对话流连接失败，请重试。"))
+    }
     func applyState(_ state: JSON) {
         guard state["running"] == true || state["running"] == false else { return }
         stateRevision += 1
@@ -301,7 +309,9 @@ final class ChatStore: ObservableObject {
     }
     func addOptimistic(text: String, requestID: String, attachments: [JSON] = []) {
         let content: [JSON] = (text.isEmpty ? [] : [["type": "text", "text": .string(text)]]) + attachments
-        optimistic.append(TranscriptItem(id: "request:" + requestID, role: "user", blocks: content.map(TranscriptBlock.init), requestID: requestID, optimistic: true))
+        let item = TranscriptItem(id: "request:" + requestID, role: "user", blocks: content.map(TranscriptBlock.init), requestID: requestID, optimistic: true)
+        if let index = optimistic.firstIndex(where: { $0.requestID == requestID }) { optimistic[index] = item }
+        else { optimistic.append(item) }
         rebuild()
     }
     private func rebuild() {
@@ -409,14 +419,18 @@ final class ChatStore: ObservableObject {
         selectedModel = try await api.rpc("session/selectModel", args: ["request": request])
     }
     func loadControls() async throws {
-        permissionCatalog = try await api.rpc("permissionPresets/catalog", args: [:])
-        presetCatalog = try await api.rpc("agentPresets/list", args: [:])
+        async let permissions = api.rpc("permissionPresets/catalog", args: [:])
+        async let presets = api.rpc("agentPresets/list", args: [:])
         if isDraft {
+            (permissionCatalog, presetCatalog) = try await (permissions, presets)
             if projections["permissions"]["currentValue"] == .null { projections["permissions"]["currentValue"] = permissionCatalog["defaultPreset"] }
             return
         }
-        commands = try await api.rpc("commands/list", args: ["agentId": .string(sessionID)]).array
-        try await refreshProjections()
+        async let commandList = api.rpc("commands/list", args: ["agentId": .string(sessionID)])
+        async let snapshot = api.rpc("session/projections", args: ["request": ["sessionId": .string(sessionID)]])
+        let values = try await (permissions, presets, commandList, snapshot)
+        permissionCatalog = values.0; presetCatalog = values.1; commands = values.2.array
+        applyProjections(values.3)
     }
     func refreshProjections() async throws {
         applyProjections(try await api.rpc("session/projections", args: ["request": ["sessionId": .string(sessionID)]]))
@@ -432,7 +446,7 @@ final class ChatStore: ObservableObject {
         guard response["result"]["kind"].string != nil else { throw PortalError.message(L("Unknown command. Choose a suggestion or send ordinary text.", "未知命令，请选择建议或发送普通文本。")) }
         let result = response["result"]
         if result["kind"] == "error" { throw PortalError.message(result["text"].string ?? L("Command failed.", "命令执行失败。")) }
-        commandNotice = result["text"].string
+        commandNotice = result["text"].string.map(ChatLabels.notice)
         if line.trimmingCharacters(in: .whitespacesAndNewlines) == "/export" { exportedFile = try await api.exportSession(sessionID) }
         try await refreshProjections()
         return response

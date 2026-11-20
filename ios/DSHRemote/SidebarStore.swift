@@ -132,13 +132,14 @@ final class SidebarStore: ObservableObject {
         }
     }
     func stop() { tasks.forEach { $0.cancel() }; tasks = []; loaded = false }
-    func createSession(workspaceID: String? = nil, cwd: String? = nil) async throws -> String {
+    func createSession(workspaceID: String? = nil, cwd: String? = nil, refreshImmediately: Bool = true) async throws -> String {
         var request: JSON = ["agentPreset": "standard"]
         if let workspaceID { request["workspaceId"] = .string(workspaceID) }
         else if let cwd { request["cwd"] = .string(cwd) }
         let value = try await api.rpc("session/create", args: ["request": request])
         if let id = value["sessionId"].string { createdIDs.insert(id) }
-        try await refresh()
+        if refreshImmediately { try await refresh() }
+        else { Task { try? await self.refresh() } }
         return value["sessionId"].text
     }
     func abandonEmptyCreated(_ id: String) async throws {

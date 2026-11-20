@@ -3,7 +3,56 @@ import UIKit
 @testable import DSHRemote
 
 @MainActor
+private final class FirstSendProfileAPI: RPCServing {
+    let api: PortalAPI
+    var start: Date?
+    init(_ api: PortalAPI) { self.api = api }
+    func mark(_ label: String) { if let start { print("PROFILE \(Int(Date().timeIntervalSince(start) * 1000))ms \(label)") } }
+    func rpc(_ method: String, args: JSON) async throws -> JSON {
+        mark("begin " + method)
+        let result = try await api.rpc(method, args: args)
+        mark("end " + method)
+        return result
+    }
+    func stream(_ endpoint: String, args: JSON) -> AsyncThrowingStream<JSON, Error> {
+        mark("open " + endpoint)
+        let frames = api.stream(endpoint, args: args)
+        return AsyncThrowingStream { continuation in
+            let task = Task {
+                do {
+                    var first = true
+                    for try await frame in frames {
+                        if first { mark("first frame " + endpoint); first = false }
+                        continuation.yield(frame)
+                    }
+                    continuation.finish()
+                } catch { continuation.finish(throwing: error) }
+            }
+            continuation.onTermination = { _ in task.cancel() }
+        }
+    }
+}
+
+@MainActor
 final class LiveSmokeTests: XCTestCase {
+    func testFirstSendLocalRelayProfile() async throws {
+        guard let base = ProcessInfo.processInfo.environment["DSH_PROFILE_BASE"], base.hasPrefix("http://127.0.0.1:") else { throw XCTSkip("Local relay profile only") }
+        let portal = PortalAPI(base: URL(string: base)!, client: PortalClient())
+        try await portal.login(secret: "demo-pass-123", pairing: false)
+        defer { portal.mux.close(); portal.client.session.invalidateAndCancel() }
+        let api = FirstSendProfileAPI(portal)
+        let sidebar = SidebarStore(api: api)
+        let draft = NewChatDraft(api: api, sidebar: sidebar, workspaceID: nil)
+        await draft.load(); XCTAssertNil(draft.error)
+        api.start = Date()
+        let chat = try await draft.submit("本地首发计时：你好")
+        defer { chat.stop() }
+        api.mark("submit returned")
+        if !chat.loaded { try await chat.start() }
+        try await eventually("profile reply") { chat.loaded && !chat.running && chat.inProgress == nil && chat.transcript.contains { $0.role == "assistant" && !$0.text.isEmpty } }
+        api.mark("reply complete")
+        try await sidebar.archive(chat.sessionID)
+    }
     func testLazyNewChatAndSettledReply() async throws {
         guard ProcessInfo.processInfo.environment["DSH_LIVE_SMOKE"] == "1" else { throw XCTSkip("Opt in with DSH_LIVE_SMOKE=1") }
         let api = PortalAPI(base: URL(string: "http://127.0.0.1:3081/")!, client: PortalClient())

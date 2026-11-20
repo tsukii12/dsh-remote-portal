@@ -5,6 +5,9 @@ versions are the plugin's own, not dsh's.
 
 ## Unreleased
 
+- Native first send immediately shows the pending message and running indicator, loads independent controls concurrently, skips settings already matching the session, and waits for its transcript stream before prompting. Stricter access remains a mandatory pre-prompt barrier on retries. Access/preset acknowledgements use localized names; UTF-8 prompt/queue/steer and relay-framing regressions cover Chinese and emoji.
+- 原生首次发送立即显示待发消息与运行状态，并行加载独立控制项，跳过与会话一致的设置，先连接对话流再提交提示。重试时仍须先成功应用更严格的权限；权限与预设回执显示本地化名称，并增加中文、表情、排队、转向及中继分帧的 UTF-8 回归测试。
+
 ### Added
 - Reference-inspired native glass chat and drawer, blue light/dark backgrounds, pixel whale, responsive two-row composer without voice controls, context ring, turn summaries and Markdown tables. A local new-chat draft creates its session and uploads only on first send; model, mode, access and workspace selections remain local until then.
 - 参考设计的原生玻璃聊天与侧栏、蓝色明暗背景、像素鲸鱼、无语音控件的自适应双行输入框、上下文环、轮次摘要与 Markdown 表格。新对话先保存在本地草稿中，仅在首次发送时创建会话并上传附件；此前模型、模式、权限与工作区选择均不写入主机。
@@ -1245,7 +1248,6 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
-
 
 
 
