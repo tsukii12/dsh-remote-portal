@@ -84,7 +84,7 @@ class StarPromptDialog extends StatelessWidget {
   final int hours;
 
   /// The picture: 576 px, the 192 dp it is drawn at most, at 3×.
-  static const asset = 'assets/drp/whale.png';
+  static const asset = 'assets/yuremote/logo.png';
 
   /// The picture's side: 30 % of the height the dialog may take, within these.
   static const pictureMax = 192.0;

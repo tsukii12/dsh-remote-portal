@@ -16,7 +16,7 @@ This is **not** a claim that the full upstream suite passes.
       profile, not the removed implicit local-host identity.
 - [ ] Replace obsolete local-engine/WebView/phone-control/mascot expectations.
 - [ ] Restore generic session, drawer, provider and plugin suites in small groups.
-- [ ] Recreate and review DRP golden baselines on a pinned rendering environment.
+- [ ] Recreate and review YuRemote golden baselines on a pinned rendering environment.
       Imported/partially regenerated golden images are deliberately not shipped.
 - [ ] Replace or remove remaining dormant runtime/native-channel compatibility
       surfaces; native engine binaries, SSH and DSHarness transports are not bundled.
@@ -26,7 +26,7 @@ This is **not** a claim that the full upstream suite passes.
 - [ ] 补齐 portal 测试的保存主机资料，不再依赖已删除的隐式本地主机身份。
 - [ ] 移除本地引擎、WebView、本机操控和旧吉祥物的过期断言。
 - [ ] 分批恢复通用会话、抽屉、状态和插件测试。
-- [ ] 在固定渲染环境中重新生成并检查 DRP golden 基线；不提交上游或部分更新的快照。
+- [ ] 在固定渲染环境中重新生成并检查 YuRemote golden 基线；不提交上游或部分更新的快照。
 - [ ] 清理剩余休眠的运行时/原生通道兼容层；应用不打包本地引擎二进制、SSH 或 DSHarness 传输。
 - [ ] 启用周边设置、文件、通知、语音、终端能力前检查 stock dsh 与 dsh-Go 桥接能力差异。
 

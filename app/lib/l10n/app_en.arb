@@ -4646,7 +4646,7 @@
   "plugViewBadTrend": "trend takes 2–{max} numbers (nulls allowed); ignored",
   "plugViewGalleryPicture": "Picture {index}",
   "portalAppName": "YuRemote",
-  "portalRemoteOnly": "Connect to your dsh-remote-portal server. The engine stays on your host.",
+  "portalRemoteOnly": "Connect to your YuRemote server. The engine stays on your host.",
   "portalAddress": "Server address",
   "portalName": "Server name",
   "portalPassword": "Password",

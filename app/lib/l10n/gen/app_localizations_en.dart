@@ -15988,7 +15988,7 @@ class L10nEn extends L10n {
   String get portalAppName => 'YuRemote';
 
   @override
-  String get portalRemoteOnly => 'Connect to your dsh-remote-portal server. The engine stays on your host.';
+  String get portalRemoteOnly => 'Connect to your YuRemote server. The engine stays on your host.';
 
   @override
   String get portalAddress => 'Server address';

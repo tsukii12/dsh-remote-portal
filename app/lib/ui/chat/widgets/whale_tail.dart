@@ -40,7 +40,7 @@ class WhaleTailState extends State<WhaleTail> with SingleTickerProviderStateMixi
   Widget build(BuildContext context) => FadeTransition(
     opacity: _pulse.drive(Tween(begin: 0.55, end: 1.0)),
     child: ClipRRect(borderRadius: BorderRadius.circular(widget.height * 0.22),
-      child: Image.asset('assets/drp/whale.png', width: widget.height, height: widget.height,
+      child: Image.asset('assets/yuremote/logo.png', width: widget.height, height: widget.height,
         excludeFromSemantics: true)),
   );
 }

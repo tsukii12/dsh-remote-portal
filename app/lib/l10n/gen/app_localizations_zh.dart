@@ -15210,7 +15210,7 @@ class L10nZh extends L10n {
   String get portalAppName => '鱼鱼远程';
 
   @override
-  String get portalRemoteOnly => '连接 dsh-remote-portal 服务器，引擎仅在远程主机运行。';
+  String get portalRemoteOnly => '连接 YuRemote 服务器，引擎仅在远程主机运行。';
 
   @override
   String get portalAddress => '服务器地址';

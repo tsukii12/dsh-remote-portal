@@ -145,7 +145,7 @@ flutter:
           weight: 700
 
   assets:
-    - assets/drp/
+    - assets/yuremote/
     - assets/licenses/streaming-asr-model-APACHE-2.0.txt
     # Full upstream WebRTC Android release notices, shown by LicenseRegistry.
     - assets/licenses/webrtc-150.7871.04.md

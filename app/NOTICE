@@ -8,13 +8,13 @@ legacy_test/fixtures/plugin_view.LICENSE.
 
 The application and accompanying Dart packages are AGPL-3.0 (see LICENSE),
 with upstream third-party exceptions preserved in THIRD_PARTY_NOTICES.md.
-Modified for dsh-remote-portal: portal-only authentication/transport, removal
+Modified for YuRemote: portal-only authentication/transport, removal
 of embedded runtimes and WebViews, and YuRemote branding. Original copyright and
 third-party notices remain with their source files.
 
 Brand and mascot assets excluded by upstream ASSETS.md are omitted/replaced.
 The YuRemote illustration was supplied by Tsuki for this application. Its
-inner card is cropped to an opaque square for app and in-app icons. It is not
+inner artwork is cropped without the outer illustrated frame and made opaque for app and in-app icons. It is not
 part of dsh-Go's excluded brand/mascot asset set.
 
 The separate portal gateway at the repository root remains MIT licensed.

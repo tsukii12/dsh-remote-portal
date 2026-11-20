@@ -16,7 +16,7 @@ class BrandMark extends StatelessWidget {
     label: AppInfo.wordmark, image: true,
     child: ClipRRect(
       borderRadius: BorderRadius.circular(size * 0.22),
-      child: Image.asset('assets/drp/whale.png', width: size, height: size),
+      child: Image.asset('assets/yuremote/logo.png', width: size, height: size),
     ),
   );
 }

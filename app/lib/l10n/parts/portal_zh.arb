@@ -1,6 +1,6 @@
 {
   "portalAppName": "鱼鱼远程",
-  "portalRemoteOnly": "连接 dsh-remote-portal 服务器，引擎仅在远程主机运行。",
+  "portalRemoteOnly": "连接 YuRemote 服务器，引擎仅在远程主机运行。",
   "portalAddress": "服务器地址",
   "portalName": "服务器名称",
   "portalPassword": "密码",

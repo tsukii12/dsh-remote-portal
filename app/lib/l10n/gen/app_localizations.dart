@@ -27971,7 +27971,7 @@ abstract class L10n {
   /// No description provided for @portalRemoteOnly.
   ///
   /// In zh, this message translates to:
-  /// **'连接 dsh-remote-portal 服务器，引擎仅在远程主机运行。'**
+  /// **'连接 YuRemote 服务器，引擎仅在远程主机运行。'**
   String get portalRemoteOnly;
 
   /// No description provided for @portalAddress.
