@@ -12,8 +12,6 @@ import '../../state/app_info.dart';
 import '../chat/render/code_block.dart' show highlightCode;
 import '../chat/render/markdown_body.dart';
 import '../common/tool_glyph.dart' show ToolGlyphs;
-import '../plugins/plugin_detail_sheet.dart' show PluginHero, PluginStats;
-import '../plugins/plugin_widgets.dart' show PluginAvatar;
 import '../shell/brand_mark.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
@@ -540,7 +538,6 @@ class _Body extends StatelessWidget {
     final ShareQuestion q => _Question(q, width: width),
     ShareAnswer(:final markdown) => _Answer(markdown, width: width),
     final ShareFile file => _File(file),
-    final SharePlugin plugin => _Plugin(plugin),
   };
 }
 
@@ -904,61 +901,6 @@ class _File extends StatelessWidget {
           else
             MarkdownBody(text: excerpt, selectable: false),
         ],
-      ],
-    );
-  }
-}
-
-/// A plugin: icon, name, author, numbers, what it does, how to get it.
-class _Plugin extends StatelessWidget {
-  const _Plugin(this.plugin);
-
-  final SharePlugin plugin;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colors = DshColors.of(context);
-    final description = plugin.description;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        PluginHero(
-          avatar: PluginAvatar(name: plugin.name, title: plugin.title, icon: plugin.icon, size: 64),
-          title: plugin.title,
-          subtitle: plugin.author ?? plugin.name,
-          monoSubtitle: plugin.author == null,
-        ),
-        if (plugin.facts.isNotEmpty) ...[const SizedBox(height: 20), PluginStats(plugin.facts.take(3).toList())],
-        if (description != null) ...[
-          const SizedBox(height: 16),
-          Text(
-            description,
-            maxLines: 8,
-            overflow: TextOverflow.ellipsis,
-            style: theme.textTheme.bodyMedium?.copyWith(height: 1.7),
-          ),
-        ],
-        const SizedBox(height: 16),
-        DecoratedBox(
-          decoration: ShapeDecoration(
-            color: colors.codeWellBg,
-            shape: RoundedSuperellipseBorder(
-              borderRadius: AppShape.radiusSm,
-              side: BorderSide(color: colors.codeWellBorder, width: 0.5),
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            child: Text(
-              plugin.name,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: AppType.monoLabel(color: colors.codeWellFg),
-            ),
-          ),
-        ),
       ],
     );
   }

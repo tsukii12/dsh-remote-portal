@@ -21,7 +21,12 @@ class _Link extends HostLink {
     }
     return snapshot;
   }
-  void emit(HostLinkPhase phase) { value = HostLinkStatus(phase); changes.add(value); }
+
+  void emit(HostLinkPhase phase) {
+    value = HostLinkStatus(phase);
+    changes.add(value);
+  }
+
   @override
   Stream<HostLinkStatus> get statuses => changes.stream;
   @override
@@ -59,11 +64,17 @@ void main() {
   });
   for (final initial in [HostLinkPhase.connecting, HostLinkPhase.reconnecting]) {
     test('does not lose ready between initial $initial snapshot and listening', () async {
-      final link = _Link()..value = HostLinkStatus(initial)..advanceOnRead = true;
+      final link = _Link()
+        ..value = HostLinkStatus(initial)
+        ..advanceOnRead = true;
       const host = HostRef.portal('status-race');
       final container = ProviderContainer(overrides: [hostLinkProvider(host).overrideWithValue(link)]);
       final sub = container.listen(hostLinkStatusProvider(host), (_, _) {});
-      addTearDown(() async { sub.close(); container.dispose(); await link.close(); });
+      addTearDown(() async {
+        sub.close();
+        container.dispose();
+        await link.close();
+      });
       await Future<void>.delayed(Duration.zero);
       await Future<void>.delayed(Duration.zero);
       expect(link.status.phase, HostLinkPhase.connected);
@@ -78,7 +89,10 @@ void main() {
   test('missing host remains idle', () async {
     final container = ProviderContainer(overrides: [hostLinkProvider(HostRef.none).overrideWithValue(null)]);
     final sub = container.listen(hostLinkStatusProvider(HostRef.none), (_, _) {});
-    addTearDown(() { sub.close(); container.dispose(); });
+    addTearDown(() {
+      sub.close();
+      container.dispose();
+    });
     expect((await container.read(hostLinkStatusProvider(HostRef.none).future)).phase, HostLinkPhase.idle);
   });
 }

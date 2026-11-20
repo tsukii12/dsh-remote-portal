@@ -7,7 +7,6 @@ import 'connection_state.dart';
 import 'hosts_state.dart';
 import 'read_list_cache.dart';
 import 'read_list_identity.dart';
-import 'settings_state.dart';
 
 /// `session/modelCatalog` of the active host (null while disconnected).
 ///
@@ -23,7 +22,6 @@ final modelCatalogProvider = FutureProvider<ModelCatalog?>((ref) async {
   if (conn == null) return null;
   final identity = ref.watch(readListIdentityProvider);
   final cache = ref.read(readListCacheProvider);
-  ref.watch(settingsProvider.select((s) => s.apiKey));
   final sub = conn.client.hostEvents.listen((event) {
     final refresh = switch (event) {
       CredentialUpdatedEvent() || HostReadyEvent() => true,

@@ -11,7 +11,7 @@ import 'package:dsh_client/dsh_client.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'notify_state.dart' show appForegroundProvider;
+import 'foreground_state.dart' show appForegroundProvider;
 
 /// 流式文本的 token 估算:中文(含日韩)字 × 0.6,其余非空白字符 × 0.3。
 ///

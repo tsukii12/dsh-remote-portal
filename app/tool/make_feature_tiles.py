@@ -44,7 +44,7 @@ SRC = os.path.join(APP, 'assets', 'tiles')
 OUT = os.path.join(APP, 'lib', 'ui', 'common', 'feature_tile_shapes.g.dart')
 
 STYLES = ['duotone', 'geometric']
-KINDS = ['terminal', 'files', 'workspace', 'subagents', 'plugins', 'automation', 'models', 'phone', 'community']
+KINDS = ['terminal', 'files', 'workspace', 'subagents', 'automation', 'models']
 TONES = ['wash', 'mid', 'ink', 'on']
 NUM = r'-?\d+(?:\.\d+)?'
 

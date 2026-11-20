@@ -178,8 +178,7 @@ String _redactAssignments(String text) {
         at++;
       }
       final markedEnd = _maskedEnd(text, valueStart);
-      final queryToken =
-          name.toLowerCase() == 'token' && match.start > 0 && '?&#'.contains(text[match.start - 1]);
+      final queryToken = name.toLowerCase() == 'token' && match.start > 0 && '?&#'.contains(text[match.start - 1]);
       if (markedEnd > valueStart &&
           (_assignmentAt(text, markedEnd) ||
               (queryToken &&

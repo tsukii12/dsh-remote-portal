@@ -1,12 +1,5 @@
 {
-  "featuresCordisSubtitle": "动态插件 · 引擎重启后清空",
-  "featuresCordisUnavailable": "这个连接看不到 Cordis",
-  "featuresCordisRemoteUnavailable": "经 DSH Remote 中转时不可用",
-  "featuresCordisReadFailed": "没能读取插件",
-  "featuresCordisEmpty": "还没有动态插件",
-  "featuresCordisEmptyHint": "插件创建后会出现在这里",
   "featuresCurrentChat": "当前对话",
-  "featuresOtherChats": "其他对话",
   "featuresPresetDefaultSet": "新对话将使用「{name}」",
   "@featuresPresetDefaultSet": {
     "placeholders": {
@@ -133,36 +126,6 @@
       }
     }
   },
-  "featuresJobs": "后台任务",
-  "featuresJobsSubtitle": "引擎重启后清空",
-  "featuresJobsReadFailed": "没能读取后台任务",
-  "featuresJobsEmpty": "没有后台任务",
-  "featuresJobsEmptyHint": "开发服务器这类命令会在这里",
-  "featuresJobsEndedCount": "已结束 · {count}",
-  "@featuresJobsEndedCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "featuresJobStopTitle": "停止这个任务？",
-  "featuresJobAlreadyEnded": "任务已经结束了",
-  "featuresJobStopFailed": "没能停止",
-  "featuresJobOutput": "任务输出",
-  "featuresOutput": "输出",
-  "featuresJobRecentLines": "最近 {count} 行",
-  "@featuresJobRecentLines": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "featuresJobOutputSubject": "DSH 任务输出",
-  "featuresJobOutputReadFailed": "没能读取输出",
-  "featuresJobOutputWaiting": "等待输出…",
-  "featuresJobOutputEmpty": "没有输出",
   "featuresPermissionAutoTitle": "开启自动审查？",
   "featuresPermissionAutoWarning": "每次操作由模型判断放不放行，可能误判。",
   "featuresSwitchFailed": "没能切换",
@@ -663,22 +626,6 @@
   "featuresExportSaveDownloads": "存到「下载」",
   "featuresExportDownloadsHint": "存进 下载/DSH-Go",
   "featuresExportContents": "含这个对话和子代理的全部记录与附件",
-  "featuresSkillUseHere": "在对话里用",
-  "featuresSkillUseNew": "新对话里用",
-  "featuresSkillsCallHint": "输入 /技能名 调用",
-  "featuresSkillsReadFailed": "没能读取技能",
-  "featuresSkillsEmpty": "这个对话还没有技能",
-  "featuresSkillsEmptyHint": "放进 .dsh/skills 的技能会出现在这里",
-  "featuresSkillsSourceHint": "来自项目和 ~/.dsh 下的 skills 目录",
-  "featuresSkillUsage": "适用：{usage}",
-  "@featuresSkillUsage": {
-    "placeholders": {
-      "usage": {
-        "type": "String"
-      }
-    }
-  },
-  "featuresSkillManual": "仅手动",
   "featuresArtifactsSemantic": "产出的文件，共 {count} 个，查看全部",
   "@featuresArtifactsSemantic": {
     "placeholders": {

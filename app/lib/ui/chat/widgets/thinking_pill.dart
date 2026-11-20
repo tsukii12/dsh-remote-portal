@@ -17,7 +17,6 @@ import '../../common/expand_reveal.dart';
 import '../../common/pressable.dart';
 import '../../common/smooth_size.dart';
 import '../../common/think_glyph.dart';
-import '../../engine_settings/engine_settings_page.dart' show openSettingsPage;
 import '../../fx/orbs/thinking_orb.dart';
 import '../../theme/app_icons.dart';
 import '../../theme/theme.dart';
@@ -811,7 +810,6 @@ class _TranslateChip extends StatelessWidget {
   final VoidCallback onTap;
 
   /// Held down: 翻译设置 (target language, translation service).
-  void _settings(BuildContext context) => unawaited(openSettingsPage(context, 'cot-translation'));
 
   static const height = 26.0;
   static const padding = 10.0;
@@ -823,7 +821,6 @@ class _TranslateChip extends StatelessWidget {
     final fg = theme.colorScheme.onSurfaceVariant;
     return Pressable(
       onTap: onTap,
-      onLongPress: () => _settings(context),
       semanticLabel: label,
       child: Container(
         constraints: const BoxConstraints(minHeight: height),

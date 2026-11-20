@@ -340,7 +340,7 @@ List<String> _selected(Object? raw) => switch (raw) {
 
 String? _icon(Object? raw, String path, _Ctx ctx) {
   if (raw == null || raw is DshUiMissing) return null;
-  if (raw is String && nativeIcon(raw) != null) return raw;
+  if (raw is String && remoteIcon(raw) != null) return raw;
   ctx.note(path, appL10n.plugViewUnknownIcon(_show(raw)));
   return '';
 }
@@ -753,7 +753,7 @@ DshUiDataImage? _dataSource(String src, String path, _Ctx ctx) {
 // ───────────────────────── 插件视图入口 ─────────────────────────
 
 /// 解析一份插件视图：大小与嵌套 → 求值绑定 → 按档案校验。
-/// 不走缓存（缓存在 `dsh_ui_plugin.dart` 的 `parsePluginView`）。
+/// 不走缓存（缓存在 `dsh_ui_plugin.dart` 的 `parseRemoteView`）。
 ///
 /// [view] 是已解码的 JSON，或一段 JSON 文本（严格 JSON，不容忍注释）。
 DshUiParse parseDshUiPluginUncached(Object? view, {Object? data, DshUiProfile profile = DshUiProfile.panel}) {

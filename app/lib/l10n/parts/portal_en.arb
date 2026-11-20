@@ -6,6 +6,5 @@
   "portalPassword": "Password",
   "portalScan": "Scan server or pairing link",
   "portalPairingReady": "Pairing link ready",
-  "portalOnly": "This feature requires the on-device engine and is not available in YuRemote.",
   "portalWebRemoved": "Embedded web features are not available in YuRemote."
 }

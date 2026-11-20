@@ -9,15 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/l10n.dart';
-import '../../../speech/read_aloud.dart';
-import '../../speech/speech_ui.dart';
 import '../../common/expand_reveal.dart';
 import '../../common/fluid_bits.dart';
 import '../../common/typing_indicator.dart';
 import '../../theme/app_icons.dart';
 import '../../theme/theme.dart';
 import '../dsh_ui/dsh_ui.dart';
-import '../../plugins/native/message_plugin_menu.dart';
 import '../../share/share_entry.dart' show shareReply;
 import '../render/markdown_body.dart';
 import 'message_actions.dart';
@@ -217,8 +214,6 @@ class _AssistantMessageState extends State<AssistantMessage> {
                       onBranch: widget.onBranch,
                       branching: widget.branching,
                       onShare: () => shareReply(context, widget.item),
-                      onReadAloud: () => readAloudReply(context, widget.item.key, dshUiPlainText(text)),
-                      reading: ref.watch(readAloudProvider.select((s) => s.phaseOf(widget.item.key))),
                       onRegenerate: widget.onRegenerate,
                       regenerating: widget.regenerating,
                       onMore: () => _menu(text),
@@ -243,14 +238,11 @@ class _AssistantMessageState extends State<AssistantMessage> {
     final action = await showMessageMenu(
       context,
       text: text,
-      // Plugins' items for this reply, under each plugin's name.
-      extra: nativeMessageMenuGroups(context, widget.item, text: markdown),
       actions: [
         MessageAction.copy,
         MessageAction.selectText,
         if (onQuote != null) MessageAction.quote,
         MessageAction.share,
-        MessageAction.readAloud,
         if (onRegenerate != null && !widget.regenerating) MessageAction.regenerate,
         if (onBranch != null && !widget.branching) MessageAction.branch,
       ],
@@ -265,8 +257,6 @@ class _AssistantMessageState extends State<AssistantMessage> {
         onQuote?.call(text);
       case MessageAction.share:
         await shareReply(context, widget.item);
-      case MessageAction.readAloud:
-        readAloudReply(context, widget.item.key, text);
       case MessageAction.regenerate:
         onRegenerate?.call();
       case MessageAction.branch:

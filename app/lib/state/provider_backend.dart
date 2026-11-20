@@ -52,12 +52,7 @@ abstract class ProviderBackend {
 
   /// Drops one model override, back to the catalog's figure. [last] also
   /// removes the then-empty `modelOverrides` dict.
-  Future<ProviderSettings> clearModelOverride(
-    String route,
-    String modelId, {
-    bool last = false,
-    int? expectedRevision,
-  });
+  Future<ProviderSettings> clearModelOverride(String route, String modelId, {bool last = false, int? expectedRevision});
 
   Future<void> storeKey(String ref, String key);
 

@@ -7,16 +7,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../companion/companion_state.dart';
 import 'connection_state.dart';
 import 'hosts_state.dart';
-import '../runtime/local_paths.dart';
 import 'read_list_cache.dart';
 import 'read_list_identity.dart';
 import 'workspaces_state.dart';
-
-/// Default working directory for sessions created on the phone.
-String get localWorkspaceDir => LocalPaths.workspace;
 
 class ArchiveCommitResult {
   const ArchiveCommitResult(this.archived, this.failed);
@@ -190,11 +185,6 @@ class SessionsController extends AsyncNotifier<List<SessionSummary>> {
       }
     });
     ref.onDispose(_retireArchives);
-    // Which conversation is the companion's is read from preferences after
-    // launch: hide it from the drawer as soon as that's known.
-    ref.listen(companionSessionFilterProvider, (_, _) {
-      if (state.hasValue && !state.isLoading) state = AsyncData(_visible());
-    });
     final seq = ++_loadSeq;
     final host = ref.watch(activeHostProvider);
     if (host != _host) {
@@ -331,20 +321,13 @@ class SessionsController extends AsyncNotifier<List<SessionSummary>> {
 
   List<SessionSummary> _visible() {
     final pendingIds = {for (final pending in _archives) ...pending.ids};
-    // Her conversation lives in 伙伴小屋, not the drawer.
-    final companion = ref.read(companionSessionFilterProvider);
-    final host = ref.read(activeHostProvider);
     return ref
         .read(readListCacheProvider)
         .derive(
           _rows()
               .where(
                 (s) =>
-                    !s.blank &&
-                    !s.isSubagent &&
-                    !_archived.contains(s.sessionId) &&
-                    !pendingIds.contains(s.sessionId) &&
-                    !companion(host, s.sessionId),
+                    !s.blank && !s.isSubagent && !_archived.contains(s.sessionId) && !pendingIds.contains(s.sessionId),
               )
               .toList()
             ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt)),
@@ -624,7 +607,7 @@ class SessionsController extends AsyncNotifier<List<SessionSummary>> {
     final created = await createSessionInWorkspace(
       conn.client,
       workspaceId,
-      cwd: conn.isLocal ? localWorkspaceDir : conn.workingDirectory,
+      cwd: conn.workingDirectory,
       checkCurrent: checkCurrent,
     );
     checkCurrent();

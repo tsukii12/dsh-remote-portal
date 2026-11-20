@@ -11,7 +11,7 @@ import '../wallpaper/custom_wallpaper.dart';
 import '../wallpaper/wallpaper_import.dart';
 import '../wallpaper/wallpaper_render.dart';
 
-export '../wallpaper/wallpaper_import.dart' show LaunchImportProblem;
+export '../wallpaper/wallpaper_import.dart' show WallpaperImportProblem;
 
 final wallpaperImportProvider = Provider<WallpaperImport>((ref) => WallpaperImport());
 
@@ -32,11 +32,11 @@ class CustomWallpaperController extends AsyncNotifier<CustomWallpaper?> {
   Future<CustomWallpaper?> build() => CustomWallpaper.load();
 
   /// The system picker; the pick becomes the wallpaper in use. Null when it did, else why not
-  /// ([LaunchImportProblem.cancelled] included).
-  Future<LaunchImportProblem?> choose() async {
+  /// ([WallpaperImportProblem.cancelled] included).
+  Future<WallpaperImportProblem?> choose() async {
     final previous = await _current;
     final (wallpaper, problem) = await ref.read(wallpaperImportProvider).pick(previous: previous);
-    if (wallpaper == null) return problem ?? LaunchImportProblem.unreadable;
+    if (wallpaper == null) return problem ?? WallpaperImportProblem.unreadable;
     await _store(wallpaper);
     // Only now: until the new one is saved, the old file is the one the next launch reads.
     if (previous != null && previous.path != wallpaper.path) await WallpaperImport.removeFile(previous.path);

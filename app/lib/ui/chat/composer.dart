@@ -16,13 +16,8 @@ import 'package:flutter/services.dart';
 import '../../l10n/l10n.dart';
 import '../common/expand_reveal.dart';
 import '../common/smooth_size.dart';
-import '../fx/voice_glow/voice_beam.dart';
-import '../pets/pet_perch.dart';
-import '../settings/voice_settings_page.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
-import 'voice/voice_controller.dart';
-import 'voice/voice_widgets.dart';
 
 /// The editor's line height, as a multiple of its font size.
 const _lineHeight = 1.45;
@@ -56,7 +51,7 @@ class Composer extends StatefulWidget {
     this.tray,
     this.hasAttachments = false,
     this.onSendOptions,
-    this.voice,
+
     this.onKeyEvent,
     this.placeholder,
     this.waiting = false,
@@ -65,8 +60,6 @@ class Composer extends StatefulWidget {
     this.onContentInserted,
     this.maxLines = 6,
     this.hardwareEnterSends = false,
-    this.sendWhenEmpty = false,
-    this.emptySendLabel,
   });
 
   final TextEditingController controller;
@@ -107,9 +100,6 @@ class Composer extends StatefulWidget {
   /// 长按发送键:生成中可选插话 / 停下先处理 / 排队。
   final VoidCallback? onSendOptions;
 
-  /// 语音输入;null 或不可用时没有麦克风。
-  final VoiceInputController? voice;
-
   /// Hardware keys in the text field first go here (the `@` picker's
   /// arrows / Enter / Esc).
   final FocusOnKeyEventCallback? onKeyEvent;
@@ -142,8 +132,6 @@ class Composer extends StatefulWidget {
   /// An empty box sends too (the tavern: the character speaks next). The key
   /// is drawn quietly then, and labelled [emptySendLabel]; the mic, when
   /// there is one, still comes first.
-  final bool sendWhenEmpty;
-  final String? emptySendLabel;
 
   /// Shown beside the keys while the field is being typed in: the capsule opens into a
   /// rounded rectangle, the text on a line of its own and the keys and this in a row
@@ -270,9 +258,9 @@ class _ComposerState extends State<Composer> with SingleTickerProviderStateMixin
         (widget.hardwareEnterSends && !keys.isShiftPressed && !keys.isAltPressed);
     if (sendEnter && (key == LogicalKeyboardKey.enter || key == LogicalKeyboardKey.numpadEnter)) {
       if (event is KeyRepeatEvent) return KeyEventResult.handled;
-      final draft = widget.controller.text.trim().isNotEmpty || widget.hasAttachments || widget.sendWhenEmpty;
-      final dictating = widget.voice?.active ?? false;
-      if (draft && widget.connected && !widget.busy && !dictating) _send();
+      final draft = widget.controller.text.trim().isNotEmpty || widget.hasAttachments;
+
+      if (draft && widget.connected && !widget.busy) _send();
       return KeyEventResult.handled;
     }
     if (event is KeyRepeatEvent) return KeyEventResult.ignored;
@@ -297,7 +285,7 @@ class _ComposerState extends State<Composer> with SingleTickerProviderStateMixin
   void initState() {
     super.initState();
     widget.controller.addListener(_draftChanged);
-    widget.voice?.onMessage = _voiceMessage;
+
     widget.focusNode?.addListener(_focusChanged);
   }
 
@@ -327,12 +315,6 @@ class _ComposerState extends State<Composer> with SingleTickerProviderStateMixin
     if ((oldWidget.footer == null) != (widget.footer == null)) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _syncOpen());
     }
-    if (oldWidget.voice != widget.voice) {
-      if (oldWidget.voice?.onMessage == _voiceMessage) {
-        oldWidget.voice?.onMessage = null;
-      }
-      widget.voice?.onMessage = _voiceMessage;
-    }
   }
 
   @override
@@ -341,40 +323,8 @@ class _ComposerState extends State<Composer> with SingleTickerProviderStateMixin
     _draftEmpty.dispose();
     widget.focusNode?.removeListener(_focusChanged);
     _openController.dispose();
-    if (widget.voice?.onMessage == _voiceMessage) {
-      widget.voice?.onMessage = null;
-    }
+
     super.dispose();
-  }
-
-  void _voiceMessage(VoiceMessage message) {
-    if (!mounted) return;
-    final voice = widget.voice;
-    ScaffoldMessenger.maybeOf(context)
-      ?..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Text(message.text),
-          persist: false,
-          action: message.openSettings && voice != null
-              ? SnackBarAction(label: appL10n.chatGoToSettings, onPressed: () => voice.bridge.openSettings())
-              : message.change
-              ? SnackBarAction(
-                  label: appL10n.nearbyChange,
-                  onPressed: () =>
-                      Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const VoiceSettingsPage())),
-                )
-              : null,
-        ),
-      );
-  }
-
-  void _startVoice() {
-    final voice = widget.voice;
-    if (voice == null) return;
-    // Dictation shows the text in the field; the keyboard only covers it.
-    (widget.focusNode ?? FocusManager.instance.primaryFocus)?.unfocus();
-    voice.start();
   }
 
   @override
@@ -387,249 +337,186 @@ class _ComposerState extends State<Composer> with SingleTickerProviderStateMixin
     // the current text size (very large text just grows the row).
     final line = MediaQuery.textScalerOf(context).scale(_fontSize) * _lineHeight;
     final textPad = math.max(4.0, (_keySize - line) / 2);
-    final voice = widget.voice;
-    voice?.ensureFresh();
 
     // The chat page's pet stands on the composer's top edge (outside a pet
     // stage this is a plain pass-through).
-    return PetPerch(
-      kind: PerchKind.composer,
-      child: _ComposerGlass(
-        open: widget.footer == null ? null : _open,
-        child: ListenableBuilder(
-          // The editor listens to text, selection and composing changes itself.
-          // Its surrounding controls only need the draft's empty/nonempty edge.
-          listenable: Listenable.merge([_draftEmpty, ?voice]),
-          builder: (context, _) {
-            final phase = voice?.phase ?? VoicePhase.idle;
-            final dictating = phase == VoicePhase.listening || phase == VoicePhase.transcribing;
-            final empty = _draftEmpty.value && !widget.hasAttachments;
-            final showStop = widget.running && empty && !dictating;
-            final showMic = !dictating && !showStop && empty && !widget.busy && (voice?.available ?? false);
-            final enabled =
-                !widget.busy && widget.connected && widget.sessionReady && (showStop || !empty || widget.sendWhenEmpty);
-            final emptySend = empty && widget.sendWhenEmpty && !showStop && !showMic && !dictating;
-            final waiting = widget.waiting || widget.waitHint != null;
-            final hint = switch (phase) {
-              VoicePhase.listening => l10n.chatListeningEllipsis,
-              VoicePhase.transcribing => l10n.chatTranscribingEllipsis,
-              _ =>
-                !widget.connected
-                    ? l10n.chatConnectToSend
-                    : !widget.sessionReady
-                    ? l10n.stateChatSynchronizing
-                    : widget.waitHint ??
-                          (widget.running && !waiting
-                              ? l10n.chatGeneratingSteerHint
-                              : widget.placeholder ?? l10n.chatComposerHint),
-            };
-            final leading = dictating
-                ? VoiceCancelKey(key: const ValueKey('voice-cancel'), onPressed: voice!.cancel)
-                : widget.leading;
-            final accessory = dictating
-                ? VoiceWaveform(level: voice!.level, active: phase == VoicePhase.listening)
-                : widget.accessory;
-
-            final _KeyMode mode;
-            if (dictating) {
-              mode = _KeyMode.stopVoice;
-            } else if (showStop) {
-              mode = _KeyMode.stopRun;
-            } else if (showMic) {
-              mode = _KeyMode.mic;
-            } else {
-              mode = _KeyMode.send;
-            }
-            final keyBusy =
-                widget.busy ||
-                (showStop && widget.stopping) ||
-                phase == VoicePhase.transcribing ||
-                phase == VoicePhase.starting;
-
-            final leadingKey = leading == null
-                ? null
-                : AnimatedSwitcher(
-                    duration: AppMotion.of(context, AppMotion.quick),
-                    transitionBuilder: (child, anim) => FadeTransition(
-                      opacity: anim,
-                      child: ScaleTransition(scale: anim, child: child),
-                    ),
-                    child: KeyedSubtree(key: ValueKey(dictating), child: leading),
-                  );
-            final field = Focus(
-              key: _fieldKey,
+    return _ComposerGlass(
+      open: widget.footer == null ? null : _open,
+      child: ListenableBuilder(
+        // The editor listens to text, selection and composing changes itself.
+        // Its surrounding controls only need the draft's empty/nonempty edge.
+        listenable: _draftEmpty,
+        builder: (context, _) {
+          final empty = _draftEmpty.value && !widget.hasAttachments;
+          final showStop = widget.running && empty;
+          final enabled = !widget.busy && widget.connected && widget.sessionReady && (showStop || !empty);
+          final waiting = widget.waiting || widget.waitHint != null;
+          final hint = !widget.connected
+              ? l10n.chatConnectToSend
+              : !widget.sessionReady
+              ? l10n.stateChatSynchronizing
+              : widget.waitHint ??
+                    (widget.running && !waiting
+                        ? l10n.chatGeneratingSteerHint
+                        : widget.placeholder ?? l10n.chatComposerHint);
+          final leading = widget.leading;
+          final accessory = widget.accessory;
+          final mode = showStop ? _KeyMode.stopRun : _KeyMode.send;
+          final keyBusy = widget.busy || (showStop && widget.stopping);
+          final leadingKey = leading == null
+              ? null
+              : AnimatedSwitcher(
+                  duration: AppMotion.of(context, AppMotion.quick),
+                  transitionBuilder: (child, anim) => FadeTransition(
+                    opacity: anim,
+                    child: ScaleTransition(scale: anim, child: child),
+                  ),
+                  child: leading,
+                );
+          final field = Focus(
+            key: _fieldKey,
+            canRequestFocus: false,
+            skipTraversal: true,
+            onKeyEvent: _hardwareKey,
+            onFocusChange: (hasFocus) {
+              if (!hasFocus) _lastEscape = null;
+            },
+            child: Focus(
               canRequestFocus: false,
               skipTraversal: true,
-              onKeyEvent: _hardwareKey,
-              onFocusChange: (hasFocus) {
-                if (!hasFocus) _lastEscape = null;
-              },
-              child: Focus(
-                canRequestFocus: false,
-                skipTraversal: true,
-                onKeyEvent: widget.onKeyEvent,
-                child: TextField(
-                  groupId: widget.groupId,
-                  controller: widget.controller,
-                  focusNode: widget.focusNode,
-                  contentInsertionConfiguration: switch (widget.onContentInserted) {
-                    final onInserted? => ContentInsertionConfiguration(
-                      onContentInserted: onInserted,
-                      allowedMimeTypes: const ['image/png', 'image/jpeg', 'image/gif', 'image/webp'],
-                    ),
-                    null => null,
-                  },
-                  readOnly: dictating || phase == VoicePhase.starting,
-                  minLines: 1,
-                  maxLines: widget.maxLines,
-                  keyboardType: TextInputType.multiline,
-                  textInputAction: TextInputAction.newline,
-                  textCapitalization: TextCapitalization.sentences,
-                  style: textStyle,
-                  cursorColor: theme.colorScheme.primary,
-                  decoration: InputDecoration(
-                    hintText: hint,
-                    hintMaxLines: 1,
-                    hintStyle: theme.textTheme.bodyLarge?.copyWith(
-                      fontSize: _fontSize,
-                      color: dsh.textTertiary,
-                      height: 1.45,
-                    ),
-                    filled: false,
-                    isDense: true,
-                    border: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    disabledBorder: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(vertical: textPad),
+              onKeyEvent: widget.onKeyEvent,
+              child: TextField(
+                groupId: widget.groupId,
+                controller: widget.controller,
+                focusNode: widget.focusNode,
+                contentInsertionConfiguration: switch (widget.onContentInserted) {
+                  final onInserted? => ContentInsertionConfiguration(
+                    onContentInserted: onInserted,
+                    allowedMimeTypes: const ['image/png', 'image/jpeg', 'image/gif', 'image/webp'],
                   ),
+                  null => null,
+                },
+
+                minLines: 1,
+                maxLines: widget.maxLines,
+                keyboardType: TextInputType.multiline,
+                textInputAction: TextInputAction.newline,
+                textCapitalization: TextCapitalization.sentences,
+                style: textStyle,
+                cursorColor: theme.colorScheme.primary,
+                decoration: InputDecoration(
+                  hintText: hint,
+                  hintMaxLines: 1,
+                  hintStyle: theme.textTheme.bodyLarge?.copyWith(
+                    fontSize: _fontSize,
+                    color: dsh.textTertiary,
+                    height: 1.45,
+                  ),
+                  filled: false,
+                  isDense: true,
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  disabledBorder: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(vertical: textPad),
                 ),
               ),
-            );
-            final sendKey = _SendButton(
-              mode: mode,
-              busy: keyBusy,
-              quiet: (showStop && waiting && !widget.stopping) || emptySend,
-              sendLabel: emptySend ? widget.emptySendLabel : null,
-              enabled: switch (mode) {
-                _KeyMode.mic => true,
-                _KeyMode.stopVoice => phase == VoicePhase.listening,
-                _ => enabled,
-              },
-              onLongPress: mode != _KeyMode.send || !enabled ? null : widget.onSendOptions,
-              onTap: () {
-                switch (mode) {
-                  case _KeyMode.stopRun:
-                    _stop();
-                  case _KeyMode.send:
-                    _send();
-                  case _KeyMode.mic:
-                    _startVoice();
-                  case _KeyMode.stopVoice:
-                    voice?.stop();
-                }
-              },
-            );
-            final footer = widget.footer;
-            final row = footer == null
-                ? Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      if (leadingKey != null) ...[leadingKey, const SizedBox(width: 8)],
-                      Expanded(child: field),
-                      const SizedBox(width: 8),
-                      if (accessory != null) ...[accessory, const SizedBox(width: 2)],
-                      sendKey,
-                    ],
-                  )
-                : _ComposerRows(
-                    open: _open,
-                    // A new line grows the glass here: opening is its own motion, with no
-                    // second one chasing it.
-                    text: SmoothSize(
-                      duration: AppMotion.of(context, AppMotion.quick),
-                      curve: AppMotion.std,
-                      alignment: Alignment.bottomCenter,
-                      child: field,
-                    ),
-                    leading: leadingKey ?? const SizedBox.shrink(),
-                    footer: FadeTransition(opacity: _open, child: footer),
-                    // Exactly a key tall, whatever sits beside the key: the row's height is
-                    // what keeps the gaps around it even.
-                    trailing: SizedBox(
-                      height: _keySize,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (accessory != null) ...[accessory, const SizedBox(width: _keyGap)],
-                          sendKey,
-                        ],
-                      ),
-                    ),
-                  );
-            // The tray unfolds above the text and folds away again: the
-            // glass grows and shrinks, the text row never jumps.
-            final content = Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if (widget.modeLabel case final label?)
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(_keyGap, 2, _keyGap, _keyGap),
-                    child: Text(
-                      label,
-                      style: theme.textTheme.labelMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
-                    ),
-                  ),
-                ExpandReveal(
-                  open: widget.tray != null,
-                  child: Padding(padding: const EdgeInsets.fromLTRB(_keyGap, 2, _keyGap, _keyGap), child: _tray),
-                ),
-                // A new line grows the glass instead of popping it: anchored
-                // at the bottom, where the caret and the keys stay put.
-                if (footer != null)
-                  row
-                else
-                  SmoothSize(
+            ),
+          );
+          final sendKey = _SendButton(
+            mode: mode,
+            busy: keyBusy,
+            quiet: showStop && waiting && !widget.stopping,
+            enabled: switch (mode) {
+              _ => enabled,
+            },
+            onLongPress: mode != _KeyMode.send || !enabled ? null : widget.onSendOptions,
+            onTap: () {
+              switch (mode) {
+                case _KeyMode.stopRun:
+                  _stop();
+                case _KeyMode.send:
+                  _send();
+              }
+            },
+          );
+          final footer = widget.footer;
+          final row = footer == null
+              ? Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    if (leadingKey != null) ...[leadingKey, const SizedBox(width: 8)],
+                    Expanded(child: field),
+                    const SizedBox(width: 8),
+                    if (accessory != null) ...[accessory, const SizedBox(width: 2)],
+                    sendKey,
+                  ],
+                )
+              : _ComposerRows(
+                  open: _open,
+                  // A new line grows the glass here: opening is its own motion, with no
+                  // second one chasing it.
+                  text: SmoothSize(
                     duration: AppMotion.of(context, AppMotion.quick),
                     curve: AppMotion.std,
                     alignment: Alignment.bottomCenter,
-                    child: row,
+                    child: field,
                   ),
-              ],
-            );
-            final padded = Padding(
-              padding: EdgeInsets.fromLTRB(leading == null ? 18 : _keyGap, _keyGap, _keyGap, _keyGap),
-              child: content,
-            );
-            // Dictating: the pet steps away from the voice controls, and a soft light
-            // (Libraries.dev Voice) rises from the glass's bottom edge with the voice,
-            // under the text and keys.
-            return PetCover(
-              active: dictating,
-              child: voice == null
-                  ? padded
-                  : Stack(
+                  leading: leadingKey ?? const SizedBox.shrink(),
+                  footer: FadeTransition(opacity: _open, child: footer),
+                  // Exactly a key tall, whatever sits beside the key: the row's height is
+                  // what keeps the gaps around it even.
+                  trailing: SizedBox(
+                    height: _keySize,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Positioned.fill(
-                          child: IgnorePointer(
-                            child: VoiceBeam(
-                              active: dictating,
-                              level: voice.level,
-                              levelScale: voice.engine == VoiceEngine.system
-                                  ? VoiceLevelScale.linear
-                                  : VoiceLevelScale.playback,
-                              borderRadius: widget.footer != null && _open.value > 0.5 ? AppShape.lg : AppShape.xl,
-                              child: const SizedBox.expand(),
-                            ),
-                          ),
-                        ),
-                        padded,
+                        if (accessory != null) ...[accessory, const SizedBox(width: _keyGap)],
+                        sendKey,
                       ],
                     ),
-            );
-          },
-        ),
+                  ),
+                );
+          // The tray unfolds above the text and folds away again: the
+          // glass grows and shrinks, the text row never jumps.
+          final content = Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (widget.modeLabel case final label?)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(_keyGap, 2, _keyGap, _keyGap),
+                  child: Text(
+                    label,
+                    style: theme.textTheme.labelMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                  ),
+                ),
+              ExpandReveal(
+                open: widget.tray != null,
+                child: Padding(padding: const EdgeInsets.fromLTRB(_keyGap, 2, _keyGap, _keyGap), child: _tray),
+              ),
+              // A new line grows the glass instead of popping it: anchored
+              // at the bottom, where the caret and the keys stay put.
+              if (footer != null)
+                row
+              else
+                SmoothSize(
+                  duration: AppMotion.of(context, AppMotion.quick),
+                  curve: AppMotion.std,
+                  alignment: Alignment.bottomCenter,
+                  child: row,
+                ),
+            ],
+          );
+          final padded = Padding(
+            padding: EdgeInsets.fromLTRB(leading == null ? 18 : _keyGap, _keyGap, _keyGap, _keyGap),
+            child: content,
+          );
+          // Dictating: the pet steps away from the voice controls, and a soft light
+          // (Libraries.dev Voice) rises from the glass's bottom edge with the voice,
+          // under the text and keys.
+          return padded;
+        },
       ),
     );
   }
@@ -821,10 +708,8 @@ enum _KeyMode {
   stopRun,
 
   /// 🎙 start dictating (draft empty).
-  mic,
 
   /// ■ stop dictating and keep the text.
-  stopVoice,
 }
 
 /// 40 圆键:↑ 发送 / ■ 停止(实心主色);🎙 麦克风是 ＋ 键那样的淡底圆。
@@ -837,13 +722,11 @@ class _SendButton extends StatefulWidget {
     required this.onTap,
     this.onLongPress,
     this.quiet = false,
-    this.sendLabel,
   });
 
   final _KeyMode mode;
 
   /// In place of 发送, for what sending does just now.
-  final String? sendLabel;
 
   /// Drawn like the mic key (something else on screen is primary).
   final bool quiet;
@@ -866,7 +749,7 @@ class _SendButtonState extends State<_SendButton> {
     final fluid = AppMotion.fluid(context);
     final enabled = widget.enabled && !widget.busy;
     final mode = widget.mode;
-    final mic = mode == _KeyMode.mic || widget.quiet;
+    final mic = widget.quiet;
     final active = enabled || widget.busy;
     final bg = mic
         ? colors.onSurface.withValues(alpha: 0.06)
@@ -879,10 +762,8 @@ class _SendButtonState extends State<_SendButton> {
         ? colors.onPrimary
         : colors.onSurface.withValues(alpha: 0.38);
     final (icon, size, label) = switch (mode) {
-      _KeyMode.send => (AppIcons.send, 20.0, widget.sendLabel ?? l10n.commonSend),
+      _KeyMode.send => (AppIcons.send, 20.0, l10n.commonSend),
       _KeyMode.stopRun => (AppIcons.stopGenerating, 18.0, l10n.chatStopGenerating),
-      _KeyMode.mic => (AppIcons.voice, 20.0, l10n.chatVoiceInput),
-      _KeyMode.stopVoice => (AppIcons.stopGenerating, 18.0, l10n.chatStopVoiceInput),
     };
     return Semantics(
       button: true,

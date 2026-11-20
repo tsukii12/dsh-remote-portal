@@ -302,8 +302,7 @@ class _SessionImage extends ConsumerWidget {
           ViewerImage.lazy(
             name: image.name ?? '',
             heroTag: 'img-$sessionId-${image.attachmentId}',
-            load: () async =>
-                MemoryImage(await container.read(sessionImageProvider((sessionId, image)).future)),
+            load: () async => MemoryImage(await container.read(sessionImageProvider((sessionId, image)).future)),
           ),
       ];
       openAttachmentGallery(context, gallery, initialPage: index);

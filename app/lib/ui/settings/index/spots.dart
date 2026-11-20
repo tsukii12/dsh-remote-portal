@@ -24,83 +24,19 @@ enum Freq {
   final int bonus;
 }
 
-/// When a page or row is there. Search still lists it otherwise, with the
-/// reason in place of its path, and opens the page it would be on.
 enum SpotCondition {
-  /// Only with this phone's engine in use.
-  localHost,
-
-  /// Only while 手机操控 is on.
-  phoneControlOn,
-
-  /// Not in 网页模式 (the native chat takes the question).
-  nativeUi,
-
-  /// Only when the host's engine has the setting.
-  engineField,
-
-  /// Only with a conversation open.
   openChat,
-
-  /// Only with animations on.
   animationsOn,
-
-  /// Only in builds that come with a Workshop.
-  workshopBuilt;
+  engineField;
 
   String label(L10n l10n) => switch (this) {
-    localHost => l10n.searchNeedsLocal,
-    phoneControlOn => l10n.searchNeedsPhoneControl,
-    nativeUi => l10n.searchNeedsNativeUi,
-    engineField => l10n.searchNeedsEngineField,
     openChat => l10n.searchNeedsChat,
     animationsOn => l10n.searchNeedsAnimations,
-    workshopBuilt => l10n.searchNeedsWorkshop,
+    engineField => l10n.searchNeedsEngineField,
   };
 }
 
-/// The settings pages, each with one home: its [SettingsPageMeta.parent].
-enum SettingsPageId {
-  hub,
-  models,
-  permission,
-  personalization,
-  replyPrefs,
-  agentPresets,
-  phone,
-  phoneAppRules,
-  phoneAlwaysAllow,
-  phoneAndroidShell,
-  phoneDnd,
-  phoneUnlocks,
-  systemActions,
-  linuxEnvironment,
-  webSearch,
-  media,
-  plugins,
-  appearance,
-  pets,
-  interface,
-  notifications,
-  voice,
-  voiceReading,
-  performance,
-  background,
-  systemAccess,
-  privacy,
-  sharedLinks,
-  engine,
-  remote,
-  engineParams,
-  subagent,
-  agentLoop,
-  shell,
-  pluginInventory,
-  allFeatures,
-  diagnostics,
-  about,
-  account,
-}
+enum SettingsPageId { hub, models, permission, agentPresets, appearance, remote, about }
 
 /// One engine setting a spot anchors: the field [key] in any of [namespaces]
 /// (shell settings live in `bash-sandbox` or `pwsh-sandbox`).
@@ -310,13 +246,7 @@ abstract final class SettingsIndex {
   /// The link to follow on HarmonyOS for [id]: 系统操作 stands in for 手机操控
   /// and its 解除限制, whose hard rules it hasn't got, and the permission page
   /// for 确认方式, which follows it there. Anything else is itself.
-  static String ohosLink(String id) => _ohosLinks[id] ?? id;
-
-  static const _ohosLinks = {
-    'phone': 'system-actions',
-    'phone-unlocks': 'system-actions',
-    'phone-confirm': 'permission',
-  };
+  static String ohosLink(String id) => id;
 
   /// Pages from the hub down to [id], both included.
   static List<SettingsPageId> chain(SettingsPageId id) {
@@ -354,24 +284,10 @@ abstract final class SettingsIndex {
   }
 }
 
-/// A plugin's own settings form on 引擎设置: known only once the host says
-/// which plugins it has, so not in the table (search adds them from the
-/// engine's settings). [title] in each language, as search matches both.
-SettingSpot pluginFormSpot(String ns, String Function(L10n l10n) title) => SettingSpot(
-  '$pluginFormPrefix$ns',
-  page: SettingsPageId.engineParams,
-  title: title,
-  condition: SpotCondition.engineField,
-);
-
-/// The id prefix of [pluginFormSpot]s.
-const pluginFormPrefix = 'plugin:';
-
 // ── Pages ────────────────────────────────────────────────────────────────────
 
 // The hub's groups, by intent (docs/design/settings-ia.md §4.2).
 String _ai(L10n l) => l.hubGroupAi;
-String _abilities(L10n l) => l.hubGroupCapabilities;
 String _look(L10n l) => l.hubSettingsAppearance;
 String _general(L10n l) => l.hubGroupGeneral;
 String _hosts(L10n l) => l.hubGroupHosts;
@@ -379,7 +295,6 @@ String _help(L10n l) => l.hubGroupHelp;
 
 final _pages = <SettingsPageMeta>[
   SettingsPageMeta(SettingsPageId.hub, title: (l) => l.commonSettings, parent: null, links: const ['settings']),
-  // AI
   SettingsPageMeta(
     SettingsPageId.models,
     title: (l) => l.hubSettingsProviders,
@@ -397,113 +312,12 @@ final _pages = <SettingsPageMeta>[
     links: const ['permission'],
   ),
   SettingsPageMeta(
-    SettingsPageId.personalization,
-    title: (l) => l.hubPersonalization,
-    group: _ai,
-    keywords: (l) => l.searchKwPersonalization,
-    links: const ['personalization'],
-  ),
-  SettingsPageMeta(
-    SettingsPageId.replyPrefs,
-    title: (l) => l.hubSettingsPreferences,
-    parent: SettingsPageId.personalization,
-    keywords: (l) => l.searchKwReplyPrefs,
-    condition: SpotCondition.localHost,
-  ),
-  SettingsPageMeta(
     SettingsPageId.agentPresets,
     title: (l) => l.featuresAgentPresets,
-    parent: SettingsPageId.personalization,
+    parent: SettingsPageId.hub,
     keywords: (l) => l.searchKwAgentPresets,
     links: const ['agent-presets'],
   ),
-  // 能力
-  SettingsPageMeta(
-    SettingsPageId.phone,
-    title: (l) => l.phoneControlTitle,
-    group: _abilities,
-    keywords: (l) => l.searchKwPhone,
-    freq: Freq.medium,
-    links: const ['phone'],
-    androidOnly: true,
-    iosToo: true,
-  ),
-  SettingsPageMeta(
-    SettingsPageId.systemActions,
-    title: (l) => l.systemActionsTitle,
-    group: _abilities,
-    keywords: (l) => l.searchKwSystemActions,
-    freq: Freq.medium,
-    links: const ['system-actions'],
-    ohosOnly: true,
-  ),
-  SettingsPageMeta(
-    SettingsPageId.linuxEnvironment,
-    title: (l) => l.linuxTitle,
-    group: _abilities,
-    keywords: (l) => l.searchKwLinux,
-    freq: Freq.low,
-    links: const ['linux'],
-    ohosOnly: true,
-  ),
-  SettingsPageMeta(
-    SettingsPageId.phoneAppRules,
-    title: (l) => l.phoneAppRulesTitle,
-    parent: SettingsPageId.phone,
-    keywords: (l) => l.searchKwAppRules,
-  ),
-  SettingsPageMeta(
-    SettingsPageId.phoneAlwaysAllow,
-    title: (l) => l.phoneAlwaysAllowTitle,
-    parent: SettingsPageId.phone,
-    keywords: (l) => l.phoneAlwaysAllowSwitchHint,
-  ),
-  SettingsPageMeta(
-    SettingsPageId.phoneAndroidShell,
-    title: (l) => l.androidShellTitle,
-    parent: SettingsPageId.phone,
-    keywords: (l) => l.androidShellEntryHint,
-  ),
-  SettingsPageMeta(
-    SettingsPageId.phoneDnd,
-    title: (l) => l.phoneDndTitle,
-    parent: SettingsPageId.phone,
-    keywords: (l) => l.searchKwDnd,
-    condition: SpotCondition.phoneControlOn,
-  ),
-  SettingsPageMeta(
-    SettingsPageId.phoneUnlocks,
-    title: (l) => l.phoneUnlockTitle,
-    parent: SettingsPageId.phone,
-    keywords: (l) => l.searchKwPhoneUnlock,
-    // The overlay's 「已解除限制」 tag opens it through this link.
-    links: const ['phone-unlocks'],
-  ),
-  SettingsPageMeta(
-    SettingsPageId.webSearch,
-    title: (l) => l.engineSearchTitle,
-    group: _abilities,
-    keywords: (l) => l.searchKwWebSearch,
-    freq: Freq.medium,
-    links: const ['web-search'],
-  ),
-  SettingsPageMeta(
-    SettingsPageId.media,
-    title: (l) => l.mediaSettingsTitle,
-    group: _abilities,
-    keywords: (l) => l.searchKwMediaGeneration,
-    freq: Freq.medium,
-    links: const ['media'],
-  ),
-  SettingsPageMeta(
-    SettingsPageId.plugins,
-    title: (l) => l.hubPlugins,
-    group: _abilities,
-    keywords: (l) => l.searchKwPlugins,
-    freq: Freq.medium,
-    links: const ['plugins'],
-  ),
-  // 外观
   SettingsPageMeta(
     SettingsPageId.appearance,
     title: (l) => l.pluginsTheme,
@@ -511,94 +325,6 @@ final _pages = <SettingsPageMeta>[
     keywords: (l) => l.searchKwTheme,
     freq: Freq.medium,
     links: const ['appearance'],
-  ),
-  SettingsPageMeta(
-    SettingsPageId.pets,
-    title: (l) => l.botsPets,
-    group: _look,
-    keywords: (l) => l.searchKwPets,
-    ohosKeywords: (l) => l.harmonyKwPets,
-    freq: Freq.medium,
-    links: const ['pets'],
-  ),
-  // 通用
-  SettingsPageMeta(
-    SettingsPageId.interface,
-    title: (l) => l.hubSettingsInterface,
-    group: _general,
-    keywords: (l) => l.searchKwInterface,
-    links: const ['interface'],
-  ),
-  SettingsPageMeta(
-    SettingsPageId.notifications,
-    title: (l) => l.pluginsNotifications,
-    group: _general,
-    keywords: (l) => l.searchKwNotifications,
-    freq: Freq.medium,
-    links: const ['notifications'],
-  ),
-  SettingsPageMeta(
-    SettingsPageId.voice,
-    title: (l) => l.voiceSettingsTitle,
-    group: _general,
-    keywords: (l) => l.searchKwVoice,
-    ohosKeywords: (l) => l.harmonyKwVoice,
-    links: const ['voice'],
-  ),
-  SettingsPageMeta(
-    SettingsPageId.voiceReading,
-    title: (l) => l.speechVoiceTitle,
-    parent: SettingsPageId.voice,
-    keywords: (l) => l.searchKwVoiceReading,
-    links: const ['voice-reading'],
-  ),
-  SettingsPageMeta(
-    SettingsPageId.performance,
-    title: (l) => l.performanceTitle,
-    group: _general,
-    keywords: (l) => l.searchKwPerformance,
-    links: const ['performance'],
-  ),
-  SettingsPageMeta(
-    SettingsPageId.background,
-    title: (l) => l.phoneEngineKeepAlive,
-    group: _general,
-    keywords: (l) => l.searchKwBackground,
-    ohosKeywords: (l) => l.harmonyKwBackground,
-    freq: Freq.medium,
-    links: const ['background'],
-  ),
-  SettingsPageMeta(
-    SettingsPageId.systemAccess,
-    title: (l) => l.accessPageTitle,
-    group: _general,
-    keywords: (l) => l.searchKwSystemAccess,
-    ohosKeywords: (l) => l.harmonyKwSystemAccess,
-    freq: Freq.medium,
-    links: const ['system-permissions'],
-  ),
-  SettingsPageMeta(
-    SettingsPageId.privacy,
-    title: (l) => l.hubPrivacy,
-    group: _general,
-    keywords: (l) => l.searchKwPrivacy,
-    links: const ['privacy'],
-  ),
-  SettingsPageMeta(
-    SettingsPageId.sharedLinks,
-    title: (l) => l.remoteHostedMyLinks,
-    parent: SettingsPageId.privacy,
-    keywords: (l) => l.searchKwSharedLinks,
-    links: const ['shared-links'],
-  ),
-  // 主机
-  SettingsPageMeta(
-    SettingsPageId.engine,
-    title: (l) => l.hubSettingsEngine,
-    group: _hosts,
-    keywords: (l) => l.searchKwEngine,
-    freq: Freq.medium,
-    links: const ['engine'],
   ),
   SettingsPageMeta(
     SettingsPageId.remote,
@@ -609,77 +335,17 @@ final _pages = <SettingsPageMeta>[
     links: const ['remote'],
   ),
   SettingsPageMeta(
-    SettingsPageId.engineParams,
-    title: (l) => l.engineSettingsTitle,
-    group: _hosts,
-    keywords: (l) => l.searchKwEngineParams,
-    links: const ['engine-settings'],
-  ),
-  SettingsPageMeta(
-    SettingsPageId.subagent,
-    title: (l) => l.engineSubagentTitle,
-    parent: SettingsPageId.engineParams,
-    keywords: (l) => l.searchKwSubagent,
-    links: const ['subagent-settings'],
-  ),
-  SettingsPageMeta(
-    SettingsPageId.agentLoop,
-    title: (l) => l.engineAgentLoopTitle,
-    parent: SettingsPageId.engineParams,
-    keywords: (l) => l.searchKwAgentLoop,
-    links: const ['agent-loop'],
-  ),
-  SettingsPageMeta(
-    SettingsPageId.shell,
-    title: (l) => l.engineShellTitle,
-    parent: SettingsPageId.engineParams,
-    keywords: (l) => l.searchKwShell,
-    links: const ['shell-settings'],
-  ),
-  SettingsPageMeta(
-    SettingsPageId.pluginInventory,
-    title: (l) => l.engineSettingsPluginInventory,
-    parent: SettingsPageId.engineParams,
-    keywords: (l) => l.searchKwPluginInventory,
-    links: const ['plugin-inventory'],
-  ),
-  SettingsPageMeta(
-    SettingsPageId.allFeatures,
-    title: (l) => l.hubSettingsAllFeatures,
-    keywords: (l) => l.searchKwAllFeatures,
-    links: const ['all-features'],
-    row: false,
-  ),
-  // 帮助与关于
-  SettingsPageMeta(
-    SettingsPageId.diagnostics,
-    title: (l) => l.phoneEngineDiagnostics,
-    group: _help,
-    keywords: (l) => l.searchKwDiagnostics,
-    links: const ['diagnostics'],
-  ),
-  SettingsPageMeta(
     SettingsPageId.about,
     title: (l) => l.hubAbout,
     group: _help,
     keywords: (l) => l.searchKwAbout,
     links: const ['about'],
   ),
-  // The overview card.
-  SettingsPageMeta(
-    SettingsPageId.account,
-    title: (l) => l.engineAccountTitle,
-    keywords: (l) => l.searchKwAccount,
-    freq: Freq.medium,
-    links: const ['account'],
-  ),
 ];
 
 // ── Rows ─────────────────────────────────────────────────────────────────────
 
-/// Rows by name, for the pages that draw them.
 abstract final class Spots {
-  // 设置 (the hub).
   static final chatTextSize = SettingSpot(
     'chat-text-size',
     page: SettingsPageId.hub,
@@ -703,31 +369,6 @@ abstract final class Spots {
     title: (l) => l.localeTitle,
     keywords: (l) => l.searchKwLanguage,
   );
-  static final askAi = SettingSpot(
-    'ask-ai',
-    page: SettingsPageId.hub,
-    group: _help,
-    title: (l) => l.askAiHelpTitle,
-    keywords: (l) => l.searchKwHelp,
-    condition: SpotCondition.nativeUi,
-  );
-  static final community = SettingSpot(
-    'community',
-    page: SettingsPageId.hub,
-    group: _help,
-    title: (l) => l.hubSettingsCommunity,
-    keywords: (l) => l.searchKwCommunity,
-  );
-
-  // 模型.
-  static final addProvider = SettingSpot(
-    'add-provider',
-    page: SettingsPageId.models,
-    title: (l) => l.engineProviderAdd,
-    keywords: (l) => l.searchKwAddProvider,
-  );
-
-  // 权限.
   static final permissionCurrent = SettingSpot(
     'permission-current',
     page: SettingsPageId.permission,
@@ -743,90 +384,6 @@ abstract final class Spots {
     freq: Freq.medium,
     link: 'permission-default',
   );
-  static final phoneFiles = SettingSpot(
-    'phone-files',
-    page: SettingsPageId.permission,
-    title: (l) => l.hubSettingsPhoneFiles,
-    keywords: (l) => l.searchKwPhoneFiles,
-    link: 'phone-files',
-    condition: SpotCondition.localHost,
-    androidOnly: true,
-  );
-  static final permissionPhoneConfirm = SettingSpot(
-    'permission-phone-confirm',
-    page: SettingsPageId.permission,
-    title: (l) => l.hubPermissionPhoneConfirm,
-    keywords: (l) => l.searchKwPhoneConfirmEntry,
-    androidOnly: true,
-  );
-
-  // 个性化.
-  static final visualReplies = SettingSpot(
-    'visual-replies',
-    page: SettingsPageId.personalization,
-    title: (l) => l.hubSettingsVisualReplies,
-    keywords: (l) => l.searchKwVisualReplies,
-    condition: SpotCondition.localHost,
-  );
-
-  // 手机操控.
-  static final phoneA11yRestore = SettingSpot(
-    'phone-a11y-restore',
-    page: SettingsPageId.phone,
-    title: (l) => l.a11yRestoreTitle,
-    keywords: (l) => l.searchKwA11yRestore,
-    condition: SpotCondition.phoneControlOn,
-  );
-  static final phoneConfirm = SettingSpot(
-    'phone-confirm',
-    page: SettingsPageId.phone,
-    title: (l) => l.phoneConfirmTitle,
-    keywords: (l) => l.searchKwPhoneConfirm,
-    freq: Freq.medium,
-    link: 'phone-confirm',
-  );
-  static final phoneAutoCollapse = SettingSpot(
-    'phone-auto-collapse',
-    page: SettingsPageId.phone,
-    title: (l) => l.phoneAutoCollapse,
-    keywords: (l) => l.searchKwPhoneAutoCollapse,
-    condition: SpotCondition.phoneControlOn,
-  );
-  static final phoneReturn = SettingSpot(
-    'phone-return',
-    page: SettingsPageId.phone,
-    title: (l) => l.phoneReturnAfterDone,
-    keywords: (l) => l.searchKwPhoneReturn,
-    condition: SpotCondition.phoneControlOn,
-    iosToo: true,
-  );
-  static final phoneBackgroundGuide = SettingSpot(
-    'phone-background-guide',
-    page: SettingsPageId.phone,
-    title: (l) => l.phoneBackgroundGuideTitle,
-    keywords: (l) => l.searchKwPhoneBackgroundGuide,
-    condition: SpotCondition.phoneControlOn,
-  );
-
-  // 插件 (its 插件市场 tab; the page opens on its first tab).
-  static final pluginsMarket = SettingSpot(
-    'plugins-market',
-    page: SettingsPageId.plugins,
-    title: (l) => l.pluginsMarketTitle,
-    keywords: (l) => l.searchKwPluginsMarket,
-  );
-
-  // 联网搜索 (drawn from the engine's schema).
-  static final webSearchKey = SettingSpot(
-    'web-search-key',
-    page: SettingsPageId.webSearch,
-    title: (l) => l.searchApiKey,
-    keywords: (l) => l.searchKwWebSearchKey,
-    field: const SpotField(['web-search-deepseek', 'web-deepseek-api'], 'apiKey'),
-    condition: SpotCondition.engineField,
-  );
-
-  // 主题.
   static final darkMode = SettingSpot(
     'dark-mode',
     page: SettingsPageId.appearance,
@@ -842,382 +399,17 @@ abstract final class Spots {
     keywords: (l) => l.searchKwAccent,
     ohosKeywords: (l) => l.harmonyKwAccent,
   );
-  static final tileStyle = SettingSpot(
-    'tile-style',
-    page: SettingsPageId.appearance,
-    title: (l) => l.pluginsFeatureIcons,
-    keywords: (l) => l.searchKwTileStyle,
-  );
-  static final appIcon = SettingSpot(
-    'app-icon',
-    page: SettingsPageId.appearance,
-    title: (l) => l.pluginsAppIcon,
-    keywords: (l) => l.searchKwAppIcon,
-  );
-  static final iconShortcut = SettingSpot(
-    'icon-shortcut',
-    page: SettingsPageId.appearance,
-    title: (l) => l.iconShortcutRow,
-    keywords: (l) => l.searchKwIconShortcut,
-    iosLacks: true,
-  );
-  static final launchScreen = SettingSpot(
-    'launch-screen',
-    page: SettingsPageId.appearance,
-    title: (l) => l.launchScreenTitle,
-    keywords: (l) => l.searchKwLaunchScreen,
-  );
   static final wallpaper = SettingSpot(
     'wallpaper',
     page: SettingsPageId.appearance,
     title: (l) => l.wallpaperTitle,
     keywords: (l) => l.searchKwWallpaper,
   );
-
-  // 宠物.
-  static final petSize = SettingSpot(
-    'pet-size',
-    page: SettingsPageId.pets,
-    title: (l) => l.botsPetSize,
-    keywords: (l) => l.searchKwPetSize,
-  );
-  static final petQuiet = SettingSpot(
-    'pet-quiet',
-    page: SettingsPageId.pets,
-    title: (l) => l.botsPetQuiet,
-    keywords: (l) => l.searchKwPetQuiet,
-  );
-  static final petOutsideApp = SettingSpot(
-    'pet-outside-app',
-    page: SettingsPageId.pets,
-    title: (l) => l.botsPetOutsideApp,
-    keywords: (l) => l.searchKwPetOutside,
-    androidOnly: true,
-    iosToo: true,
-  );
-  static final petDisplayWhen = SettingSpot(
-    'pet-display-when',
-    page: SettingsPageId.pets,
-    title: (l) => l.botsPetDisplayWhen,
-    keywords: (l) => l.searchKwPetDisplayWhen,
-    androidOnly: true,
-    iosToo: true,
-  );
-  static final petOverlayShows = SettingSpot(
-    'pet-overlay-shows',
-    page: SettingsPageId.pets,
-    title: (l) => l.botsPetOverlayShows,
-    keywords: (l) => l.searchKwPetOverlayShows,
-    androidOnly: true,
-  );
-  static final petOverlayFraming = SettingSpot(
-    'pet-overlay-framing',
-    page: SettingsPageId.pets,
-    title: (l) => l.botsPetOverlayFraming,
-    keywords: (l) => l.searchKwPetOverlayFraming,
-    androidOnly: true,
-  );
-  static final petMake = SettingSpot(
-    'pet-make',
-    page: SettingsPageId.pets,
-    title: (l) => l.botsPetMake,
-    keywords: (l) => l.searchKwPets,
-  );
-  static final workshop = SettingSpot(
-    'workshop',
-    page: SettingsPageId.pets,
-    title: (l) => l.workshopTitle,
-    keywords: (l) => l.searchKwWorkshop,
-    condition: SpotCondition.workshopBuilt,
-  );
-
-  // 界面.
-  static final uiMode = SettingSpot(
-    'ui-mode',
-    page: SettingsPageId.interface,
-    title: (l) => l.hubInterfaceHome,
-    keywords: (l) => l.searchKwUiMode,
-  );
-  static final hardwareEnterSends = SettingSpot(
-    'hardware-enter-sends',
-    page: SettingsPageId.interface,
-    title: (l) => l.hubHardwareEnterSends,
-    keywords: (l) => l.hubHardwareEnterSendsHint,
-  );
-  static final chatSuggestions = SettingSpot(
-    'chat-suggestions',
-    page: SettingsPageId.interface,
-    title: (l) => l.hubChatSuggestions,
-    keywords: (l) => l.searchKwChatSuggestions,
-  );
-  static final quickPanel = SettingSpot(
-    'quick-panel',
-    page: SettingsPageId.interface,
-    title: (l) => l.hubQuickPanel,
-    keywords: (l) => l.searchKwQuickPanel,
-  );
-  static final tableTint = SettingSpot(
-    'table-tint',
-    page: SettingsPageId.interface,
-    title: (l) => l.hubTableTint,
-    keywords: (l) => l.searchKwTableTint,
-  );
-  static final webApp = SettingSpot(
-    'web-app',
-    page: SettingsPageId.interface,
-    title: (l) => l.commonWeb,
-    keywords: (l) => l.searchKwGeneral,
-    // 通用设置 (gone: its web app fields live here now).
-    link: 'general',
-  );
-  static final openWeb = SettingSpot(
-    'open-web',
-    page: SettingsPageId.interface,
-    title: (l) => l.hubInterfaceOpenWeb,
-    keywords: (l) => l.searchKwOpenWeb,
-  );
-  static final webPhoneLayout = SettingSpot(
-    'web-phone-layout',
-    page: SettingsPageId.interface,
-    title: (l) => l.hubInterfacePhoneLayout,
-    keywords: (l) => l.searchKwWebPhoneLayout,
-  );
-  static final webCodingView = SettingSpot(
-    'web-coding-view',
-    page: SettingsPageId.interface,
-    title: (l) => l.engineGeneralShowCodingView,
-    keywords: (l) => l.searchKwWebCodingView,
-    field: const SpotField(['ui-settings'], 'enabled'),
-    condition: SpotCondition.engineField,
-  );
-  static final webCollapse = SettingSpot(
-    'web-collapse',
-    page: SettingsPageId.interface,
-    title: (l) => l.engineGeneralCollapseTiming,
-    keywords: (l) => l.searchKwWebCollapse,
-    field: const SpotField(['ui-chat'], 'collapseTiming'),
-    condition: SpotCondition.engineField,
-  );
-  static final webBusySend = SettingSpot(
-    'web-busy-send',
-    page: SettingsPageId.interface,
-    title: (l) => l.engineGeneralBusySend,
-    keywords: (l) => l.searchKwWebBusySend,
-    field: const SpotField(['ui-conversation'], 'busyEnter'),
-    condition: SpotCondition.engineField,
-  );
-
-  // 性能.
-  static final refreshRate = SettingSpot(
-    'refresh-rate',
-    page: SettingsPageId.performance,
-    title: (l) => l.performanceRefresh,
-    keywords: (l) => l.searchKwRefreshRate,
-    iosLacks: true,
-  );
-  static final blur = SettingSpot(
-    'blur',
-    page: SettingsPageId.performance,
-    title: (l) => l.performanceBlur,
-    keywords: (l) => l.searchKwBlur,
-  );
-  static final animations = SettingSpot(
-    'animations',
-    page: SettingsPageId.performance,
-    title: (l) => l.performanceAnimations,
-    keywords: (l) => l.searchKwAnimations,
-  );
-  static final fluidMotion = SettingSpot(
-    'fluid-motion',
-    page: SettingsPageId.performance,
-    title: (l) => l.performanceFluid,
-    keywords: (l) => l.searchKwFluidMotion,
-    condition: SpotCondition.animationsOn,
-  );
-
-  // 通知.
-  static final notifyEnabled = SettingSpot(
-    'notify-enabled',
-    page: SettingsPageId.notifications,
-    title: (l) => l.pluginsAllowNotifications,
-    keywords: (l) => l.searchKwNotifyEnabled,
-  );
-  static final notifyDone = SettingSpot(
-    'notify-done',
-    page: SettingsPageId.notifications,
-    title: (l) => l.pluginsTurnComplete,
-    keywords: (l) => l.searchKwNotifyDone,
-  );
-  static final notifyFailed = SettingSpot(
-    'notify-failed',
-    page: SettingsPageId.notifications,
-    title: (l) => l.pluginsErrorOrStopped,
-    keywords: (l) => l.searchKwNotifyFailed,
-  );
-  static final notifyApproval = SettingSpot(
-    'notify-approval',
-    page: SettingsPageId.notifications,
-    title: (l) => l.commonWaitingApproval,
-    keywords: (l) => l.searchKwNotifyApproval,
-  );
-  static final notifyQuestion = SettingSpot(
-    'notify-question',
-    page: SettingsPageId.notifications,
-    title: (l) => l.pluginsQuestions,
-    keywords: (l) => l.searchKwNotifyQuestion,
-  );
-  static final notifyLive = SettingSpot(
-    'notify-live',
-    page: SettingsPageId.notifications,
-    title: (l) => l.liveSettingsSwitch,
-    ohosTitle: (l) => l.harmonyLiveSwitch,
-    keywords: (l) => l.searchKwNotifyLive,
-    ohosKeywords: (l) => l.harmonyKwNotifyLive,
-  );
-  static final notifySystem = SettingSpot(
-    'notify-system',
-    page: SettingsPageId.notifications,
-    title: (l) => l.pluginsSoundBannerLockScreen,
-    keywords: (l) => l.searchKwNotifySystem,
-  );
-
-  // 隐私与分享.
-  static final shareConfig = SettingSpot(
-    'share-config',
-    page: SettingsPageId.privacy,
-    title: (l) => l.hubSettingsShareConfig,
-    keywords: (l) => l.searchKwShareConfig,
-  );
-  static final usageStats = SettingSpot(
-    'usage-stats',
-    page: SettingsPageId.privacy,
-    title: (l) => l.usageStatsTitle,
-    keywords: (l) => l.searchKwUsageStats,
-    link: 'usage-stats',
-  );
-  static final chatLogUpload = SettingSpot(
-    'chat-log-upload',
-    page: SettingsPageId.privacy,
-    title: (l) => l.engineChatLogUpload,
-    keywords: (l) => l.searchKwChatLogUpload,
-    field: const SpotField(['session-log-deepseek'], 'enabled'),
-    condition: SpotCondition.engineField,
-  );
-
-  // 本机引擎.
-  static final autoStart = SettingSpot(
-    'auto-start',
-    page: SettingsPageId.engine,
-    title: (l) => l.phoneEngineAutoStart,
-    keywords: (l) => l.searchKwAutoStart,
-  );
-  static final autoSafe = SettingSpot(
-    'auto-safe',
-    page: SettingsPageId.engine,
-    title: (l) => l.phoneSafeAutoSettings,
-    keywords: (l) => l.searchKwAutoSafe,
-    androidOnly: true,
-  );
-  static final safeMode = SettingSpot(
-    'safe-mode',
-    page: SettingsPageId.engine,
-    title: (l) => l.phoneSafeStartSettings,
-    altTitle: (l) => l.phoneSafeLeave,
-    keywords: (l) => l.searchKwSafeMode,
-    iosLacks: true,
-  );
-  static final workspaceRecovery = SettingSpot(
-    'workspace-recovery',
-    page: SettingsPageId.engine,
-    title: (l) => l.workspaceRecoveryEnable,
-    altTitle: (l) => l.workspaceRecoveryDisable,
-    keywords: (l) => l.searchKwWorkspaceRecovery,
-  );
-  static final engineReset = SettingSpot(
-    'engine-reset',
-    page: SettingsPageId.engine,
-    title: (l) => l.phoneEngineReset,
-    keywords: (l) => l.searchKwEngineReset,
-  );
-  static final engineUninstall = SettingSpot(
-    'engine-uninstall',
-    page: SettingsPageId.engine,
-    title: (l) => l.localEnvUninstall,
-    keywords: (l) => l.searchKwEngineUninstall,
-    ohosKeywords: (l) => l.harmonyKwEngineUninstall,
-  );
-
-  // 远程主机.
-  static final addSshHost = SettingSpot(
-    'add-ssh-host',
-    page: SettingsPageId.remote,
-    title: (l) => l.remoteAddSshHost,
-    keywords: (l) => l.searchKwAddSshHost,
-  );
-  static final remoteAutoConnect = SettingSpot(
-    'remote-auto-connect',
-    page: SettingsPageId.remote,
-    title: (l) => l.remoteAutoConnectOnStartup,
-    keywords: (l) => l.searchKwRemoteAutoConnect,
-  );
-
-  static final remoteCompactHistory = SettingSpot(
-    'remote-compact-history',
-    page: SettingsPageId.remote,
-    title: (l) => l.remoteCompactHistory,
-    keywords: (l) => l.searchKwRemoteCompactHistory,
-  );
-
-  // 引擎参数 and its pages (drawn from the engine's schema).
-  static final subagentDepth = SettingSpot(
-    'subagent-depth',
-    page: SettingsPageId.subagent,
-    title: (l) => l.engineSubagentMaxDepth,
-    keywords: (l) => l.searchKwSubagentDepth,
-    field: const SpotField(['subagent'], 'maxDepth'),
-    condition: SpotCondition.engineField,
-  );
-  static final parallelCalls = SettingSpot(
-    'parallel-calls',
-    page: SettingsPageId.agentLoop,
-    title: (l) => l.engineAgentMaxParallelCalls,
-    keywords: (l) => l.searchKwParallelCalls,
-    field: const SpotField(['agent-loop'], 'maxParallelToolCalls'),
-    condition: SpotCondition.engineField,
-  );
-  static final commandTimeout = SettingSpot(
-    'command-timeout',
-    page: SettingsPageId.shell,
-    title: (l) => l.engineFieldCommandTimeout,
-    keywords: (l) => l.searchKwCommandTimeout,
-    field: const SpotField(['bash-sandbox', 'pwsh-sandbox'], 'timeoutMs'),
-    condition: SpotCondition.engineField,
-  );
-
-  // 关于 dsh-go.
   static final version = SettingSpot(
     'version',
     page: SettingsPageId.about,
     title: (l) => l.commonVersion,
     keywords: (l) => l.searchKwVersion,
-  );
-  static final updateCheck = SettingSpot(
-    'update-check',
-    page: SettingsPageId.about,
-    title: (l) => l.updateCheck,
-    keywords: (l) => l.searchKwUpdate,
-  );
-  static final updateAuto = SettingSpot(
-    'update-auto',
-    page: SettingsPageId.about,
-    title: (l) => l.updateAutoCheck,
-    keywords: (l) => l.searchKwUpdateAuto,
-  );
-  static final star = SettingSpot(
-    'star',
-    page: SettingsPageId.about,
-    title: (l) => l.starSettingsTitle,
-    keywords: (l) => l.searchKwStar,
   );
   static final licenses = SettingSpot(
     'licenses',
@@ -1228,79 +420,14 @@ abstract final class Spots {
 }
 
 final _rows = <SettingSpot>[
+  Spots.language,
   Spots.chatTextSize,
   Spots.foldTurns,
-  Spots.language,
-  Spots.askAi,
-  Spots.community,
-  Spots.addProvider,
-  Spots.permissionCurrent,
-  Spots.permissionDefault,
-  Spots.phoneFiles,
-  Spots.permissionPhoneConfirm,
-  Spots.visualReplies,
-  Spots.phoneA11yRestore,
-  Spots.phoneConfirm,
-  Spots.phoneAutoCollapse,
-  Spots.phoneReturn,
-  Spots.phoneBackgroundGuide,
-  Spots.pluginsMarket,
-  Spots.webSearchKey,
   Spots.darkMode,
   Spots.accent,
-  Spots.tileStyle,
-  Spots.appIcon,
-  Spots.iconShortcut,
-  Spots.launchScreen,
   Spots.wallpaper,
-  Spots.petSize,
-  Spots.petQuiet,
-  Spots.petOutsideApp,
-  Spots.petDisplayWhen,
-  Spots.petOverlayShows,
-  Spots.petOverlayFraming,
-  Spots.petMake,
-  Spots.workshop,
-  Spots.uiMode,
-  Spots.hardwareEnterSends,
-  Spots.chatSuggestions,
-  Spots.quickPanel,
-  Spots.tableTint,
-  Spots.webApp,
-  Spots.openWeb,
-  Spots.webPhoneLayout,
-  Spots.webCodingView,
-  Spots.webCollapse,
-  Spots.webBusySend,
-  Spots.refreshRate,
-  Spots.blur,
-  Spots.animations,
-  Spots.fluidMotion,
-  Spots.notifyEnabled,
-  Spots.notifyDone,
-  Spots.notifyFailed,
-  Spots.notifyApproval,
-  Spots.notifyQuestion,
-  Spots.notifyLive,
-  Spots.notifySystem,
-  Spots.shareConfig,
-  Spots.usageStats,
-  Spots.chatLogUpload,
-  Spots.autoStart,
-  Spots.autoSafe,
-  Spots.safeMode,
-  Spots.workspaceRecovery,
-  Spots.engineReset,
-  Spots.engineUninstall,
-  Spots.addSshHost,
-  Spots.remoteAutoConnect,
-  Spots.remoteCompactHistory,
-  Spots.subagentDepth,
-  Spots.parallelCalls,
-  Spots.commandTimeout,
   Spots.version,
-  Spots.updateCheck,
-  Spots.updateAuto,
-  Spots.star,
   Spots.licenses,
+  Spots.permissionCurrent,
+  Spots.permissionDefault,
 ];

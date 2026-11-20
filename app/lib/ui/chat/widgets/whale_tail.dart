@@ -1,4 +1,3 @@
-
 import 'package:flutter/widgets.dart';
 
 const deepSeekBlue = Color(0xFF4D6BFE);
@@ -14,6 +13,7 @@ class WhaleTail extends StatefulWidget {
   @override
   State<WhaleTail> createState() => WhaleTailState();
 }
+
 class WhaleTailState extends State<WhaleTail> with SingleTickerProviderStateMixin {
   late final _pulse = AnimationController(vsync: this, duration: const Duration(milliseconds: 900));
   @override
@@ -21,11 +21,13 @@ class WhaleTailState extends State<WhaleTail> with SingleTickerProviderStateMixi
     super.didChangeDependencies();
     _update();
   }
+
   @override
   void didUpdateWidget(WhaleTail oldWidget) {
     super.didUpdateWidget(oldWidget);
     _update();
   }
+
   void _update() {
     if (widget.still || MediaQuery.disableAnimationsOf(context)) {
       _pulse.stop();
@@ -34,13 +36,24 @@ class WhaleTailState extends State<WhaleTail> with SingleTickerProviderStateMixi
       _pulse.repeat(reverse: true);
     }
   }
+
   @override
-  void dispose() { _pulse.dispose(); super.dispose(); }
+  void dispose() {
+    _pulse.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) => FadeTransition(
     opacity: _pulse.drive(Tween(begin: 0.55, end: 1.0)),
-    child: ClipRRect(borderRadius: BorderRadius.circular(widget.height * 0.22),
-      child: Image.asset('assets/yuremote/logo.png', width: widget.height, height: widget.height,
-        excludeFromSemantics: true)),
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(widget.height * 0.22),
+      child: Image.asset(
+        'assets/yuremote/logo.png',
+        width: widget.height,
+        height: widget.height,
+        excludeFromSemantics: true,
+      ),
+    ),
   );
 }

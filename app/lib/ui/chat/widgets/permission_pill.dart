@@ -108,15 +108,14 @@ class StripRiskChip extends StatefulWidget {
   });
 
   /// 「自动允许中 ×」: a tap switches auto-approve off.
-  factory StripRiskChip.autoApprove(BuildContext context, {Key? key, required VoidCallback onDisable}) =>
-      StripRiskChip(
-        key: key,
-        icon: AppIcons.autoApprove,
-        label: context.l10n.chatAutoApproving,
-        semanticsLabel: context.l10n.chatAutoApproveCommands,
-        onTap: onDisable,
-        closes: true,
-      );
+  factory StripRiskChip.autoApprove(BuildContext context, {Key? key, required VoidCallback onDisable}) => StripRiskChip(
+    key: key,
+    icon: AppIcons.autoApprove,
+    label: context.l10n.chatAutoApproving,
+    semanticsLabel: context.l10n.chatAutoApproveCommands,
+    onTap: onDisable,
+    closes: true,
+  );
 
   /// 「⚠ 完全权限」: a tap opens the conversation's permissions.
   factory StripRiskChip.permission(

@@ -29,8 +29,7 @@ class MediaChannel {
 
   /// Streams an already materialized local video into the gallery.
   Future<String> saveVideoFile(String path, {required String name}) async =>
-      await channel.invokeMethod<String>('saveVideoFile', {'path': path, 'name': name}) ??
-      'Movies/DSH Go/$name';
+      await channel.invokeMethod<String>('saveVideoFile', {'path': path, 'name': name}) ?? 'Movies/DSH Go/$name';
 
   /// The app's page in system settings (storage was refused for good).
   Future<bool> openSettings() async => await channel.invokeMethod<bool>('openSettings') ?? false;

@@ -102,14 +102,20 @@ void main() {
   });
 
   for (final cookies in <String?>[null, 'not-json']) {
-    test('missing or corrupt cookies require login before opening mux: ${cookies == null ? 'missing' : 'corrupt'}', () async {
-      final secrets = MemorySecretStore({first.cookieKey: ?cookies});
-      final link = PortalHostLink(first, secrets);
-      addTearDown(link.close);
-      await expectLater(link.open(), throwsA(isA<HostLinkError>().having((e) => e.kind, 'kind', HostLinkErrorKind.authFailed)));
-      expect(link.status.phase, HostLinkPhase.failed);
-      expect(link.currentClient, isNull);
-      expect(secrets.values, isEmpty);
-    });
+    test(
+      'missing or corrupt cookies require login before opening mux: ${cookies == null ? 'missing' : 'corrupt'}',
+      () async {
+        final secrets = MemorySecretStore({first.cookieKey: ?cookies});
+        final link = PortalHostLink(first, secrets);
+        addTearDown(link.close);
+        await expectLater(
+          link.open(),
+          throwsA(isA<HostLinkError>().having((e) => e.kind, 'kind', HostLinkErrorKind.authFailed)),
+        );
+        expect(link.status.phase, HostLinkPhase.failed);
+        expect(link.currentClient, isNull);
+        expect(secrets.values, isEmpty);
+      },
+    );
   }
 }

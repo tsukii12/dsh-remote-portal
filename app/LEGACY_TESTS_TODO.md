@@ -1,5 +1,16 @@
 # Legacy test quarantine / 旧测试隔离待办
 
+## v0.7.0 update / 更新
+
+The retired feature graphs and their quarantined tests have now been deleted.
+The paths and failed-run inventory below are historical M1 migration notes,
+not files shipped in v0.7.0. The maintained suite is `test/portal/`.
+
+已随退役功能删除隔离的旧测试。下文路径与失败清单仅保留为 M1 迁移历史，
+不代表 v0.7.0 仍包含这些文件。当前维护的测试位于 `test/portal/`。
+
+## Historical M1 notes / M1 历史记录
+
 The milestone-1 deadline intentionally limits the default `flutter test` run
 to `test/portal/`. The 865 imported legacy test files live in
 `legacy_test/`, outside Flutter's default discovery directory. The one

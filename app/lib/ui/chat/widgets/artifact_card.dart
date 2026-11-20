@@ -524,7 +524,6 @@ Future<ArtifactAction?> showArtifactMenu(
   final l10n = context.l10n;
   final harmony = ProviderScope.containerOf(context, listen: false).read(operatingSystemProvider) == 'ohos';
   // HarmonyOS has no /sdcard: a path that reads like one isn't in this phone's Downloads.
-  final inDownloads = !harmony && artifact.inPhoneDownloads;
   HapticFeedback.selectionClick();
   return showAppSheet<ArtifactAction>(
     context,
@@ -535,7 +534,7 @@ Future<ArtifactAction?> showArtifactMenu(
       final actions = [
         if (canFetch && artifactPreviewable(artifact, officeToPdf: officeToPdf)) ArtifactAction.preview,
         if (canFetch) ...[ArtifactAction.open, ArtifactAction.openWith, ArtifactAction.share],
-        if (canFetch && !inDownloads) ArtifactAction.save,
+        if (canFetch) ArtifactAction.save,
         ArtifactAction.copyPath,
       ];
       return SafeArea(
@@ -563,14 +562,6 @@ Future<ArtifactAction?> showArtifactMenu(
                     overflow: TextOverflow.ellipsis,
                     style: AppType.mono(size: 12, height: 1.4, color: dsh.textTertiary),
                   ),
-                  if (inDownloads)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 6),
-                      child: Text(
-                        l10n.chatAlreadyInDownloads,
-                        style: theme.textTheme.bodySmall?.copyWith(color: dsh.textTertiary),
-                      ),
-                    ),
                   if (!canFetch)
                     Padding(
                       padding: const EdgeInsets.only(top: 6),

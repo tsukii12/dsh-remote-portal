@@ -70,14 +70,12 @@ class ArtifactFiles {
     Future<Directory> Function()? cacheRoot,
     String? operatingSystem,
   }) : _share = share ?? _systemShare,
-       _cacheRoot = cacheRoot ?? getTemporaryDirectory,
-       _operatingSystem = operatingSystem ?? Platform.operatingSystem;
+       _cacheRoot = cacheRoot ?? getTemporaryDirectory;
 
   final HostConnection? connection;
   final FilesChannel channel;
   final Future<void> Function(ShareParams params) _share;
   final Future<Directory> Function() _cacheRoot;
-  final String _operatingSystem;
 
   static Future<void> _systemShare(ShareParams params) async {
     await SharePlus.instance.share(params);
@@ -140,14 +138,6 @@ class ArtifactFiles {
   }) async {
     final conn = connection;
     if (conn == null) throw const ArtifactError('offline');
-    // This prefix selects a transport, not authority. The existing Session
-    // file service still resolves the path and checks its workspace grant.
-    final sessionCopy = conn.isLocal && _operatingSystem == 'ohos' && artifact.path.startsWith('/workspaces/');
-    if (conn.isLocal && !sessionCopy) {
-      final host = await channel.resolveGuest(artifact.path);
-      if (host == null) throw const ArtifactError('missing');
-      return File(host);
-    }
     final client = conn.client;
     if (!client.canReadFileBytes) throw const ArtifactError('unsupported');
     final stat = await client.statFile(sessionId, artifact.path);
@@ -183,7 +173,6 @@ class ArtifactFiles {
               ? null
               : (received, total) => onProgress(total == null || total == 0 ? null : received / total),
         );
-        if (sessionCopy) await sink.flush();
       } finally {
         await sink.close();
       }

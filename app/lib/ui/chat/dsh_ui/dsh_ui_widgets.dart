@@ -907,7 +907,8 @@ class _OptionsViewState extends State<_OptionsView> {
     String typed() => _free.text.trim();
     // 点了选项或填了字才能发；单选 + 自己填也走这个按钮。
     final canSend = enabled && (_picked.isNotEmpty || typed().isNotEmpty);
-    final showSend = (node.multi || free) &&
+    final showSend =
+        (node.multi || free) &&
         answering.mode != _Mode.answered &&
         answering.mode != _Mode.expired &&
         answering.mode != _Mode.readOnly;

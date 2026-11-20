@@ -17,23 +17,15 @@ import 'drawer/drawer_destination.dart';
 /// glyph its other ways in use.
 extension DrawerDestinationLook on DrawerDestination {
   IconData get icon => switch (this) {
-    DrawerDestination.web => AppIcons.webApp,
     DrawerDestination.remote => AppIcons.remoteHosts,
-    DrawerDestination.plugins => AppIcons.plugin,
-    DrawerDestination.engine => AppIcons.engine,
     DrawerDestination.settings => AppIcons.settings,
     DrawerDestination.settingsSearch => AppIcons.search,
-    DrawerDestination.features => AppIcons.allFeatures,
   };
 
   String label(L10n l10n) => switch (this) {
-    DrawerDestination.web => l10n.commonWeb,
     DrawerDestination.remote => l10n.commonRemoteHost,
-    DrawerDestination.plugins => l10n.hubPlugins,
-    DrawerDestination.engine => l10n.hubSettingsEngine,
     DrawerDestination.settings => l10n.commonSettings,
     DrawerDestination.settingsSearch => l10n.searchSettingsHint,
-    DrawerDestination.features => l10n.hubSettingsAllFeatures,
   };
 }
 

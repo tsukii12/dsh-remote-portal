@@ -30,8 +30,6 @@
     <string>Connect to your dsh portal on the local network. / 连接局域网中的 dsh 门户。</string>
     <key>NSCameraUsageDescription</key>
     <string>Scan server and pairing QR codes. / 扫描服务器和配对二维码。</string>
-    <key>NSMicrophoneUsageDescription</key>
-    <string>Record a voice message. / 录制语音消息。</string>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>Choose an attachment. / 选择附件。</string>
     <key>NSPhotoLibraryAddUsageDescription</key>

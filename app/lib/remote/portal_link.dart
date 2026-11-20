@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 import 'package:dsh_client/dsh_client.dart';
@@ -39,8 +38,13 @@ class PortalHostLink extends HostLink {
     _status = value;
     _statuses.add(value);
   }
-  void _expired() => _set(const HostLinkStatus(HostLinkPhase.failed,
-    error: HostLinkError(HostLinkErrorKind.authFailed, 'Sign in again. / 请重新登录。')));
+
+  void _expired() => _set(
+    const HostLinkStatus(
+      HostLinkPhase.failed,
+      error: HostLinkError(HostLinkErrorKind.authFailed, 'Sign in again. / 请重新登录。'),
+    ),
+  );
 
   @override
   Future<DshClient> open() => _opening ??= _open();
@@ -48,11 +52,18 @@ class PortalHostLink extends HostLink {
     RemoteBenchmark.start('connect');
     _set(const HostLinkStatus(HostLinkPhase.connecting, step: HostLinkStep.connect));
     try {
-      final session = _session = PortalSession(config.base,
-        saveCookies: (value) => value == null ? secrets.delete(config.cookieKey) : secrets.write(config.cookieKey, value));
+      final session = _session = PortalSession(
+        config.base,
+        saveCookies: (value) =>
+            value == null ? secrets.delete(config.cookieKey) : secrets.write(config.cookieKey, value),
+      );
       final stored = await secrets.read(config.cookieKey);
       if (_closed) throw const DshClosedException();
-      try { session.restoreCookies(stored); } on FormatException { await secrets.delete(config.cookieKey); }
+      try {
+        session.restoreCookies(stored);
+      } on FormatException {
+        await secrets.delete(config.cookieKey);
+      }
       if (!session.hasCookies) {
         _expired();
         throw const HostLinkError(HostLinkErrorKind.authFailed, 'Sign in again. / 请重新登录。');
@@ -67,7 +78,8 @@ class PortalHostLink extends HostLink {
             session.unauthorized();
           case DshConnectionState.reconnecting:
             _set(const HostLinkStatus(HostLinkPhase.reconnecting));
-          default: break;
+          default:
+            break;
         }
       });
       await client.mux.ready();
@@ -79,16 +91,22 @@ class PortalHostLink extends HostLink {
       RemoteBenchmark.cancel('connect');
       if (error is DshHttpException && error.statusCode == 401) _expired();
       if (_status.phase != HostLinkPhase.failed) {
-        _set(const HostLinkStatus(HostLinkPhase.failed,
-          error: HostLinkError(HostLinkErrorKind.unreachable, 'Connection failed. Retry. / 连接失败，请重试。')));
+        _set(
+          const HostLinkStatus(
+            HostLinkPhase.failed,
+            error: HostLinkError(HostLinkErrorKind.unreachable, 'Connection failed. Retry. / 连接失败，请重试。'),
+          ),
+        );
       }
       rethrow;
     }
   }
+
   @override
   void kick() {
     if (!_closed && _status.phase == HostLinkPhase.reconnecting) _client?.mux.reconnect();
   }
+
   @override
   void retry() => _client?.mux.reconnect();
   @override

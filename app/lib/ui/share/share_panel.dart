@@ -29,7 +29,6 @@ import '../../state/artifacts.dart';
 import '../../state/chat_state.dart';
 import '../../state/regenerate.dart' show sessionImageBytes;
 import '../../state/sessions_state.dart';
-import '../../usage/usage_stats.dart';
 import '../chat/dsh_ui/dsh_ui.dart' show dshUiPlainText;
 import '../common/app_sheet.dart';
 import '../common/sheet_navigator.dart';
@@ -621,9 +620,7 @@ class SharePanelModel extends ChangeNotifier {
   }
 
   /// Something went out (usage statistics). The panel may be gone by then.
-  void _shared() {
-    if (!_disposed) _ref.read(usageStatsProvider.notifier).count(UsageCount.share);
-  }
+  void _shared() {}
 
   Future<void> shareText() => _busy(ShareWork.text, () async {
     try {

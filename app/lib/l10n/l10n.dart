@@ -67,5 +67,5 @@ extension L10nContext on BuildContext {
 
 extension L10nFormat on L10n {
   /// 「3月5日」/「Mar 5」.
-  String monthDay(DateTime d) => commonMonthDay('${d.month}', d.day);
+  String monthDay(DateTime d) => commonMonthDay(d.month, d.day);
 }

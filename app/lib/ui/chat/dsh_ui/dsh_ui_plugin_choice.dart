@@ -47,9 +47,9 @@ class _DshUiPressableState extends State<DshUiPressable> {
   );
 }
 
-TextStyle? _optionStyle(BuildContext context, {required bool selected, required Color color}) => Theme.of(
-  context,
-).textTheme.labelLarge?.copyWith(fontSize: 15, fontWeight: selected ? FontWeight.w600 : FontWeight.w500, color: color);
+TextStyle? _optionStyle(BuildContext context, {required bool selected, required Color color}) =>
+    Theme.of(context).textTheme.labelLarge
+        ?.copyWith(fontSize: 15, fontWeight: selected ? FontWeight.w600 : FontWeight.w500, color: color);
 
 /// Single choice as a segmented control: options sit in one recessed track,
 /// the chosen one is a raised tonal segment. Columns shrink before a label

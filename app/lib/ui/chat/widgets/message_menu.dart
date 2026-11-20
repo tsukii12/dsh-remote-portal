@@ -23,7 +23,6 @@ enum MessageAction {
   selectText(AppIcons.selectText),
   quote(AppIcons.quote),
   share(AppIcons.share),
-  readAloud(AppIcons.readAloud),
   regenerate(AppIcons.regenerate),
   branch(AppIcons.fork),
   edit(AppIcons.edit);
@@ -36,7 +35,6 @@ enum MessageAction {
     MessageAction.selectText => appL10n.chatSelectText,
     MessageAction.quote => appL10n.chatQuote,
     MessageAction.share => appL10n.commonShare,
-    MessageAction.readAloud => appL10n.speechReadAloud,
     MessageAction.regenerate => appL10n.chatRegenerate,
     MessageAction.branch => appL10n.chatBranchFromHere,
     MessageAction.edit => appL10n.chatEditAndResend,

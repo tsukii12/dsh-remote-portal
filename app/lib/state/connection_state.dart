@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 import 'package:dsh_client/dsh_client.dart';
@@ -11,8 +10,15 @@ import '../remote/portal_link.dart';
 import 'hosts_state.dart';
 
 class HostConnection {
-  const HostConnection({required this.client, this.name, this.hostId, this.workingDirectory,
-    this.isLocal = false, this.kind = HostKind.portal, String? label}) : _label = label ?? name;
+  const HostConnection({
+    required this.client,
+    this.name,
+    this.hostId,
+    this.workingDirectory,
+    this.isLocal = false,
+    this.kind = HostKind.portal,
+    String? label,
+  }) : _label = label ?? name;
   final DshClient client;
   final String? name;
   final String? hostId;
@@ -37,7 +43,8 @@ final hostLinkStatusProvider = StreamProvider.autoDispose.family<HostLinkStatus,
   return currentStream(() => link.status, link.statuses);
 });
 final hostNameProvider = Provider.autoDispose.family<String?, HostRef>(
-  (ref, host) => ref.watch(hostsProvider).portalById(host.id)?.name ?? host.name);
+  (ref, host) => ref.watch(hostsProvider).portalById(host.id)?.name ?? host.name,
+);
 
 class RemoteConnectionController extends AsyncNotifier<HostConnection?> {
   RemoteConnectionController(this.host);
@@ -55,17 +62,21 @@ class RemoteConnectionController extends AsyncNotifier<HostConnection?> {
     final client = await link.open();
     return HostConnection(client: client, name: ref.read(hostNameProvider(host)), hostId: host.id);
   }
+
   void retry() => ref.invalidate(hostLinkProvider(host));
 }
+
 final remoteConnectionProvider = AsyncNotifierProvider.autoDispose
-  .family<RemoteConnectionController, HostConnection?, HostRef>(RemoteConnectionController.new);
+    .family<RemoteConnectionController, HostConnection?, HostRef>(RemoteConnectionController.new);
 final activeConnectionProvider = Provider<AsyncValue<HostConnection?>>(
-  (ref) => ref.watch(remoteConnectionProvider(ref.watch(activeHostProvider))));
+  (ref) => ref.watch(remoteConnectionProvider(ref.watch(activeHostProvider))),
+);
 
 class ConnectionDiagnostics {
   Map<String, Object?> get snapshot => const {'transport': 'portal'};
   Stream<void> get changes => const Stream.empty();
 }
+
 final connectionDiagnosticsProvider = Provider((ref) => ConnectionDiagnostics());
 
 final localConnectionProvider = Provider<AsyncValue<HostConnection?>>((ref) => const AsyncData(null));

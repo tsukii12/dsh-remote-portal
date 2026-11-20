@@ -152,9 +152,7 @@ Future<void> deleteSessionsFlow(
           ),
           content: SingleChildScrollView(
             child: Text(
-              current
-                  ? [context.l10n.shellDeleteWarning, ?reason].join('\n\n')
-                  : context.l10n.shellDeleteOwnerChanged,
+              current ? [context.l10n.shellDeleteWarning, ?reason].join('\n\n') : context.l10n.shellDeleteOwnerChanged,
             ),
           ),
           actions: [

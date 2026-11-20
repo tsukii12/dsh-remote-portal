@@ -11,11 +11,9 @@ import 'package:dsh_client/dsh_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../l10n/l10n.dart';
-import '../runtime/runtime_state.dart';
 import 'time_zones.dart';
 import 'connection_state.dart';
 import 'sessions_state.dart';
-import 'settings_state.dart';
 
 /// The phone's IANA time zone (the default for new rules).
 final deviceTimeZoneProvider = FutureProvider<String>((ref) => detectDeviceTimeZone());
@@ -59,14 +57,6 @@ Future<String> startConversation(WidgetRef ref, ConversationPlan plan) async {
     id = await ref.read(sessionsProvider.notifier).create();
   } else {
     id = (await conn.client.createSession(workspaceId: plan.workspaceId)).sessionId;
-    final safeMode = ref.read(localRuntimeProvider).status.inSafeMode;
-    if (conn.isLocal && !safeMode && ref.read(settingsProvider).autoApproveCommands) {
-      try {
-        await conn.client.setPermissionPreset(id, 'danger-full-access');
-      } on Object {
-        // Keep the default preset if the command is unavailable.
-      }
-    }
     unawaited(ref.read(sessionsProvider.notifier).refresh());
   }
   if (plan.model case final model?) {

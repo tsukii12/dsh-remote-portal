@@ -11,7 +11,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 
 import '../../../l10n/l10n.dart';
-import '../../../plugins/native/native_icons.dart' show nativeIcon;
+import '../../theme/remote_icons.dart' show remoteIcon;
 import '../../common/pressable.dart';
 import '../../theme/app_icons.dart';
 import '../../theme/theme.dart';
@@ -261,7 +261,7 @@ class _DshUiListBlockState extends State<DshUiListBlock> with _Invoking {
                 child: item.icon == null
                     ? null
                     : Icon(
-                        nativeIcon(item.icon!) ?? AppIcons.running,
+                        remoteIcon(item.icon!) ?? AppIcons.running,
                         size: 20,
                         color: tone ?? colors.onSurfaceVariant,
                       ),
@@ -564,7 +564,7 @@ class _DshUiActionsBlockState extends State<DshUiActionsBlock> with _Invoking {
       final item = items[i];
       return DshUiActionButton(
         label: item.label,
-        icon: item.icon == null ? null : nativeIcon(item.icon!) ?? AppIcons.running,
+        icon: item.icon == null ? null : remoteIcon(item.icon!) ?? AppIcons.running,
         primary: item.primary,
         busy: busy(i),
         enabled: interactive && !busy(i),
@@ -1069,7 +1069,7 @@ class DshUiEmptyStateBlock extends StatelessWidget {
                 decoration: BoxDecoration(color: badge, shape: BoxShape.circle),
                 alignment: Alignment.center,
                 child: Icon(
-                  (node.icon == null ? null : nativeIcon(node.icon)) ?? AppIcons.empty,
+                  (node.icon == null ? null : remoteIcon(node.icon)) ?? AppIcons.empty,
                   size: DshUiGalleryMetrics.emptyIcon,
                   color: colors.primary,
                 ),
@@ -1120,7 +1120,7 @@ class _EmptyStateButtonState extends State<_EmptyStateButton> with _Invoking {
       child: IntrinsicWidth(
         child: DshUiActionButton(
           label: item.label,
-          icon: item.icon == null ? null : nativeIcon(item.icon!) ?? AppIcons.running,
+          icon: item.icon == null ? null : remoteIcon(item.icon!) ?? AppIcons.running,
           busy: busy(0),
           enabled: interactive && !busy(0),
           onTap: () => unawaited(

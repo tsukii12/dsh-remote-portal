@@ -4,25 +4,15 @@
 import 'package:dsh_client/dsh_client.dart';
 
 import '../../l10n/l10n.dart';
-import '../../runtime/local_paths.dart';
 
 /// Where the phone's shared storage appears inside the engine
 /// (`PhoneStorage.GUEST_PATH`).
 const phoneStorageRoot = '/sdcard';
 
-/// Home of the engine's user on the phone.
-String get localHome => LocalPaths.home;
-
 /// [path] for display: the phone's storage as 「手机存储」, the home folder as
 /// `~` (the engine's `/root` on the phone, [home] elsewhere when known).
 String displayPath(String path, {required bool local, String? home}) {
-  if (local) {
-    if (path == phoneStorageRoot) return appL10n.remoteDirectoryPhoneStorage;
-    if (path.startsWith('$phoneStorageRoot/')) {
-      return appL10n.remoteDirectoryPhonePath(path.substring(phoneStorageRoot.length + 1));
-    }
-  }
-  final base = local ? localHome : home;
+  final base = home;
   if (base != null && base.length > 1) {
     if (path == base) return '~';
     if (path.startsWith('$base/')) return '~/${path.substring(base.length + 1)}';
@@ -57,7 +47,11 @@ String workspaceErrorText(Object error, {String? fallback}) {
   if (error is DshRemoteException) {
     return switch (error.code) {
       WorkspaceErrors.nameConflict => appL10n.remoteWorkspaceErrNameConflict,
-      WorkspaceErrors.invalidPath || 'bad-path' || 'bad-name' || 'not-a-directory' || 'bad-request' => appL10n.remoteWorkspaceErrInvalidPath,
+      WorkspaceErrors.invalidPath ||
+      'bad-path' ||
+      'bad-name' ||
+      'not-a-directory' ||
+      'bad-request' => appL10n.remoteWorkspaceErrInvalidPath,
       WorkspaceErrors.notFound || 'not-found' => appL10n.remoteWorkspaceErrNotFound,
       WorkspaceErrors.unreadable => appL10n.remoteDirectoryErrUnreadable,
       WorkspaceErrors.exists || 'exists' => appL10n.remoteDirectoryErrExists,

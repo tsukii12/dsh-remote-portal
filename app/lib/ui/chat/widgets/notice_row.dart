@@ -2,34 +2,11 @@ import 'package:dsh_client/dsh_client.dart';
 import 'package:flutter/material.dart';
 
 import '../../../l10n/l10n.dart';
-import '../../../state/subscriptions_state.dart' show subscriptionLabel;
 import '../../common/expand_reveal.dart';
-import '../../onboarding/api_key_page.dart';
-import '../../providers/providers_page.dart';
-import '../../providers/subscription_sheet.dart';
 import '../../theme/app_icons.dart';
 import '../../theme/theme.dart';
 import 'stream_row.dart';
 import 'turn_failure_text.dart';
-
-/// pi-ai's wording when a subscription's stored grant can't be refreshed
-/// (revoked, expired, signed out elsewhere) or is gone from its route.
-final _grantLost = RegExp(
-  r'OAuth (?:refresh failed|refresh returned a token that expires too soon'
-  r'|auth derivation failed) for ([\w.-]+)'
-  r'|no credential for provider route "([\w.-]+)"',
-);
-
-/// The subscription (ChatGPT, Claude) whose sign-in a turn [failure] says
-/// has lapsed; null for any other failure.
-Subscription? lapsedSubscription(LlmFailure? failure, [String text = '']) {
-  for (final source in [?failure?.message, text]) {
-    final m = _grantLost.firstMatch(source);
-    if (m == null) continue;
-    return Subscription.fromWire(m.group(1) ?? m.group(2));
-  }
-  return null;
-}
 
 /// 说明行行尾的一个键(「重试」「继续」)。
 typedef NoticeAction = ({String label, VoidCallback onPressed});
@@ -55,13 +32,10 @@ class _NoticeRowState extends State<NoticeRow> {
 
   static final _retryCount = RegExp(r'\((\d+)(?:/(\d+))?\)');
 
-  (IconData, String) _content(Subscription? lapsed) {
+  (IconData, String) _content() {
     final failure = item.failure;
     switch (item.kind) {
       case 'error':
-        if (lapsed != null) {
-          return (AppIcons.noApiKey, appL10n.chatSubscriptionExpired(subscriptionLabel(lapsed)));
-        }
         if (failure?.code == 'MISSING_CREDENTIAL') {
           // pi-ai routes are the 模型渠道; the bare one is DeepSeek's key.
           if (failure!.message.startsWith('llm-pi-ai')) {
@@ -93,28 +67,13 @@ class _NoticeRowState extends State<NoticeRow> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
     final dsh = DshColors.of(context);
     final isError = item.kind == 'error';
-    final lapsed = isError ? lapsedSubscription(item.failure, item.text) : null;
-    final (icon, text) = _content(lapsed);
+    final (icon, text) = _content();
     final style = StreamRow.detail(context)?.copyWith(height: 1.45, color: isError ? dsh.danger : null);
 
     // 一行最多一个键:登录失效、缺 Key 有自己的去处,其余用列表给的。
-    final NoticeAction? action;
-    if (lapsed != null) {
-      action = (label: l10n.chatSignInAgain, onPressed: () => showSubscriptionLogin(context, lapsed));
-    } else if (isError && item.failure?.code == 'MISSING_CREDENTIAL') {
-      final pi = item.failure!.message.startsWith('llm-pi-ai');
-      action = (
-        label: l10n.chatGoToSettings,
-        onPressed: () => Navigator.of(context).push(
-          MaterialPageRoute<void>(builder: (_) => pi ? const ProvidersPage() : const ApiKeyPage(onboarding: false)),
-        ),
-      );
-    } else {
-      action = widget.action;
-    }
+    final action = widget.action;
     final failure = item.failure;
     final details = failure == null ? null : '${failure.code}\n${failure.message}'.trim();
 

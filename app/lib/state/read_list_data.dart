@@ -4,7 +4,6 @@ import 'dart:convert';
 
 import 'package:dsh_client/dsh_client.dart';
 
-import 'plugins_state.dart' show BundleGroup, bundleGroup;
 import 'providers_state.dart' show ProvidersSnapshot, ProviderHealth;
 
 /// Only these closed projections can be admitted to the display cache. A
@@ -164,69 +163,6 @@ final class CachedProviders extends ReadListData {
   @override
   Map<String, Object?> toJson() => {
     'supported': supported,
-    'rows': [for (final row in rows) row.toJson()],
-  };
-}
-
-class CachedPlugin {
-  const CachedPlugin(this.bundle, this.group);
-  // A display-only copy: no source, rows, overrides, install target or error.
-  final PluginBundle bundle;
-  final BundleGroup group;
-  Map<String, Object?> toJson() => {
-    'name': bundle.name,
-    'group': group.name,
-    'version': bundle.version,
-    'official': bundle.official,
-    'enabled': bundle.enabled,
-    'installed': bundle.installed,
-    'optional': bundle.optional,
-    'title': bundle.meta?.title?.toJson(),
-    'summary': bundle.meta?.description?.toJson(),
-    'description': bundle.description,
-  };
-}
-
-final class CachedPlugins extends ReadListData {
-  CachedPlugins(List<PluginBundle> source) : rows = _copy(source);
-  final List<CachedPlugin> rows;
-
-  static LocalizedText? _text(_DisplayBudget budget, LocalizedText? source) {
-    if (source == null) return null;
-    ReadListData.rows(source.values.length, 16);
-    return LocalizedText(
-      Map.unmodifiable({for (final e in source.values.entries) budget.text(e.key, 32): budget.text(e.value)}),
-    );
-  }
-
-  static List<CachedPlugin> _copy(List<PluginBundle> source) {
-    final budget = _DisplayBudget();
-    ReadListData.rows(source.length, 512);
-    return List.unmodifiable([
-      for (final b in source)
-        CachedPlugin(
-          PluginBundle(
-            name: budget.text(b.name, 256),
-            official: b.official,
-            enabled: b.enabled,
-            installed: b.installed,
-            optional: b.optional,
-            version: budget.optional(b.version, 128),
-            description: budget.optional(b.description),
-            meta: PluginDisplayMeta(
-              title: _text(budget, b.meta?.title),
-              description: _text(budget, b.meta?.description),
-            ),
-            readOnlyReason: 'display-snapshot',
-            removable: false,
-          ),
-          bundleGroup(b),
-        ),
-    ]);
-  }
-
-  @override
-  Map<String, Object?> toJson() => {
     'rows': [for (final row in rows) row.toJson()],
   };
 }

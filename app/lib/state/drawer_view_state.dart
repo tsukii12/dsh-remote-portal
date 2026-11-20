@@ -17,7 +17,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../l10n/l10n.dart';
-import 'bots_state.dart';
 import 'hosts_state.dart';
 import 'read_list_cache.dart';
 import 'read_list_identity.dart';
@@ -551,8 +550,8 @@ final drawerScopeProvider = Provider<DrawerScope?>((ref) {
       return null;
     }
     return DrawerScope(
-      sessions: cached.sessions,
-      bots: cached.bots,
+      sessions: [...cached.sessions, ...cached.bots],
+      bots: const [],
       scoped: cached.scoped,
       readOnly: true,
       status: status,
@@ -567,16 +566,9 @@ final drawerScopeProvider = Provider<DrawerScope?>((ref) {
     for (final s in all)
       if (!archived.contains(s.sessionId) && (members == null || members.contains(s.sessionId))) s,
   ];
-  final botOwned = ref.watch(dsBotOwnedSessionsProvider);
   final result = DrawerScope(
-    sessions: [
-      for (final s in inScope)
-        if (!botOwned.contains(s.sessionId)) s,
-    ],
-    bots: [
-      for (final s in inScope)
-        if (botOwned.contains(s.sessionId)) s,
-    ],
+    sessions: inScope,
+    bots: const [],
     scoped: workspace != null,
     readOnly: readOnly,
     status: readOnly ? status : ReadListStatus.current,

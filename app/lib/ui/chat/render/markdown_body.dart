@@ -18,7 +18,7 @@ import '../../../state/workspace_state.dart';
 import '../../common/edge_fade.dart';
 import '../../common/streaming_cursor.dart';
 import '../../theme/app_icons.dart';
-import '../../plugins/native/native_taps.dart' show openConfirmedLink;
+import '../../common/external_link.dart';
 import '../../theme/theme.dart';
 import '../artifact_preview.dart';
 import '../dsh_ui/dsh_ui.dart';

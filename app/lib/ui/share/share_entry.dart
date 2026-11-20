@@ -8,13 +8,10 @@ import 'package:dsh_client/dsh_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../l10n/l10n.dart';
 import '../../share_code/conversation_redact.dart' show redactText;
-import '../../share_code/plugin_share.dart' show marketPluginShareWebLink;
 import '../../state/artifact_files.dart';
 import '../../state/artifacts.dart';
 import '../../state/chat_state.dart';
-import '../../state/plugins_state.dart' show MarketEntry;
 import '../../state/sessions_state.dart';
 import '../chat/render/code_block.dart' show languageForPath;
 import '../replay/replay_scope.dart';
@@ -121,54 +118,4 @@ Future<ShareContent?> _artifactExtras(
   } catch (_) {
     return null;
   }
-}
-
-/// A market plugin as a card: what the plugin share sheet's 「图片」 draws.
-ShareContent pluginCardContent(BuildContext context, MarketEntry entry, {String? webLink}) {
-  final plugin = entry.plugin;
-  final stars = plugin.sortKeys['stars'];
-  final published = plugin.latest.published.toLocal();
-  return ShareContent(
-    title: null,
-    // The share-code landing link when it can travel. It carries the whole
-    // plugin, usually too long to scan at the card's size: the card then goes
-    // without a QR code (ShareCard.qrFor); the text shared with it carries the
-    // install command and the plugin page.
-    link: webLink ?? marketPluginShareWebLink(plugin) ?? dshGoProjectUrl,
-    blocks: [
-      SharePlugin(
-        name: plugin.name,
-        title: entry.title(Localizations.localeOf(context).languageCode),
-        author: plugin.author,
-        description: entry.summary(Localizations.localeOf(context).languageCode),
-        icon: plugin.icon,
-        facts: [
-          if (stars != null) ('${stars.round()}', context.l10n.viewShareStars),
-          (plugin.latest.version, context.l10n.commonVersion),
-          ('${published.year}.${published.month}.${published.day}', context.l10n.commonUpdate),
-        ],
-      ),
-    ],
-  );
-}
-
-/// What goes with a plugin card: name, one line, the install command and
-/// where to read more.
-String pluginShareText(MarketEntry entry, {String? webLink}) {
-  final plugin = entry.plugin;
-  final page =
-      webLink ??
-      plugin.homepage ??
-      plugin.repositoryUrl ??
-      (plugin.latest.source is MarketNpmSource ? 'https://www.npmjs.com/package/${plugin.name}' : null);
-  final description = entry.summary(AppLocale.current.languageCode)?.trim();
-  return [
-    appL10n.viewSharePluginTitle(entry.title(AppLocale.current.languageCode)),
-    if (description != null && description.isNotEmpty) description,
-    appL10n.viewShareInstallCommand(
-      entry.listing == null ? plugin.name : plugin.latest.installTarget(plugin.name).spec,
-    ),
-    ?page,
-    appL10n.viewSharePhoneInstall(dshGoProjectUrl),
-  ].join('\n');
 }

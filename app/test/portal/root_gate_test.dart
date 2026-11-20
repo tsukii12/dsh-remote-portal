@@ -27,22 +27,26 @@ void main() {
   final config = PortalHostConfig(id: 'one', name: 'Relay', base: Uri.parse('https://example.test/__t/one/'));
 
   Future<void> pump(WidgetTester tester, {bool saved = true, bool expired = false}) async {
-    await tester.pumpWidget(ProviderScope(
-      overrides: [
-        hostsProvider.overrideWith(() => _Hosts(HostsState(loaded: true, portals: saved ? [config] : []))),
-        activeHostProvider.overrideWith(() => _ActiveHost(saved ? const HostRef.portal('one') : HostRef.none)),
-        secretStoreProvider.overrideWithValue(MemorySecretStore()),
-        activeConnectionProvider.overrideWithValue(expired
-            ? AsyncError(const HostLinkError(HostLinkErrorKind.authFailed, 'Sign in again'), StackTrace.current)
-            : const AsyncData<HostConnection?>(null)),
-      ],
-      child: MaterialApp(
-        theme: buildLightTheme(),
-        localizationsDelegates: GlobalMaterialLocalizations.delegates,
-        supportedLocales: const [Locale('en'), Locale('zh', 'CN')],
-        home: const RootGate(home: Scaffold(body: Text('chat-home'))),
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          hostsProvider.overrideWith(() => _Hosts(HostsState(loaded: true, portals: saved ? [config] : []))),
+          activeHostProvider.overrideWith(() => _ActiveHost(saved ? const HostRef.portal('one') : HostRef.none)),
+          secretStoreProvider.overrideWithValue(MemorySecretStore()),
+          activeConnectionProvider.overrideWithValue(
+            expired
+                ? AsyncError(const HostLinkError(HostLinkErrorKind.authFailed, 'Sign in again'), StackTrace.current)
+                : const AsyncData<HostConnection?>(null),
+          ),
+        ],
+        child: MaterialApp(
+          theme: buildLightTheme(),
+          localizationsDelegates: GlobalMaterialLocalizations.delegates,
+          supportedLocales: const [Locale('en'), Locale('zh', 'CN')],
+          home: const RootGate(home: Scaffold(body: Text('chat-home'))),
+        ),
       ),
-    ));
+    );
     await tester.pump();
   }
 

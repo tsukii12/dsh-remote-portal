@@ -9,12 +9,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
 import '../../state/usage_state.dart';
-import '../../state/subscriptions_state.dart';
-import '../../state/providers_state.dart';
 import '../common/app_sheet.dart';
 import '../common/sheet_title_bar.dart';
 import '../theme/theme.dart';
-import 'balance_widgets.dart';
 
 /// `999` / `1K` / `43K` / `500K` / `1.05M` / `100M`: K is a thousand and M a
 /// million in every UI language (no 万/亿), the same units model context
@@ -186,147 +183,10 @@ class UsageSheet extends ConsumerWidget {
           children: [
             SheetTitleBar(l10n.activityUsage),
             SessionUsageSections(usage: usage, pricing: pricing, sheet: true, margin: _margin),
-            const SizedBox(height: 16),
-            if (Subscription.fromWire(model?.provider) case final subscription?)
-              _SubscriptionQuota(subscription: subscription, margin: _margin)
-            else
-              BalanceCard(title: l10n.activityUsageBalance, margin: _margin),
           ],
         ),
       ),
     );
-  }
-}
-
-class _SubscriptionQuota extends ConsumerWidget {
-  const _SubscriptionQuota({required this.subscription, required this.margin});
-  final Subscription subscription;
-  final EdgeInsets margin;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = context.l10n;
-    final profile = ref.watch(subscriptionProfileProvider(subscription));
-    final currentProfile = profile.isLoading || profile.hasError ? null : profile.value;
-    if (currentProfile != null && !isSubscriptionRoute(currentProfile)) {
-      return BalanceCard(title: l10n.activityUsageBalance, margin: margin);
-    }
-    Widget message(String text) => SheetGroup(
-      margin: margin,
-      children: [Padding(padding: const EdgeInsets.all(16), child: Text(text))],
-    );
-    final body = profile.when(
-      skipLoadingOnRefresh: false,
-      skipLoadingOnReload: false,
-      loading: () => message(l10n.activityQuotaLoading),
-      error: (_, _) => message(l10n.activityQuotaUnavailable),
-      data: (profile) {
-        // A route with an API key is not a subscription, even if named anthropic.
-        if (profile == null) return message(l10n.activityQuotaUnavailable);
-        if (!isSubscriptionRoute(profile)) return const SizedBox.shrink();
-        return ref
-            .watch(subscriptionUsageProvider(subscription))
-            .when(
-              skipLoadingOnRefresh: false,
-              skipLoadingOnReload: false,
-              loading: () => message(l10n.activityQuotaLoading),
-              error: (error, _) => message(
-                error is DshRemoteException &&
-                        (error.code == 'gateway/method-not-found' ||
-                            error.code == 'gateway/not-found' ||
-                            error.code == 'gateway/invocation-unavailable')
-                    ? l10n.activityQuotaUnsupported
-                    : l10n.activityQuotaUnavailable,
-              ),
-              data: (usage) {
-                if (usage == null) return message(l10n.activityQuotaUnavailable);
-                if (usage.status == SubscriptionUsageStatus.unavailable) {
-                  return message(switch (usage.reason) {
-                    'expired' || 'auth_required' => l10n.activityQuotaAuthError,
-                    'permission_denied' => l10n.activityQuotaPermissionDenied,
-                    'network' => l10n.activityQuotaNetworkError,
-                    'rate_limited' => l10n.activityQuotaRateLimited,
-                    _ => l10n.activityQuotaUnavailable,
-                  });
-                }
-                if (usage.status == SubscriptionUsageStatus.unsupported) return message(l10n.activityQuotaUnsupported);
-                if (usage.status == SubscriptionUsageStatus.notSignedIn) return message(l10n.activityQuotaSignedOut);
-                return SheetGroup(
-                  margin: margin,
-                  children: [
-                    for (final window in usage.windows)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(_windowLabel(context, window)),
-                            Text(l10n.activityQuotaUsed(formatPercent(window.usedPercent / 100))),
-                            if (window.resetAt case final reset?) Text(_resetLabel(context, reset)),
-                          ],
-                        ),
-                      ),
-                  ],
-                );
-              },
-            );
-      },
-    );
-    final quota = currentProfile == null ? null : ref.watch(subscriptionUsageProvider(subscription));
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        SheetSectionLabel(
-          '${subscription == Subscription.chatgpt ? 'Codex' : subscriptionLabel(subscription)} · ${l10n.activityQuotaTitle}',
-          inset: margin.left,
-        ),
-        body,
-        Align(
-          alignment: Alignment.centerRight,
-          child: Padding(
-            padding: margin,
-            child: TextButton(
-              onPressed: profile.isLoading || (quota?.isLoading ?? false)
-                  ? null
-                  : () {
-                      if (currentProfile == null) {
-                        ref.invalidate(subscriptionProfileProvider(subscription));
-                      } else {
-                        ref.invalidate(subscriptionUsageProvider(subscription));
-                      }
-                    },
-              child: Text(l10n.activityQuotaRefresh),
-            ),
-          ),
-        ),
-        const SizedBox(height: 16),
-      ],
-    );
-  }
-
-  String _resetLabel(BuildContext context, DateTime reset) {
-    final local = reset.toLocal();
-    final material = MaterialLocalizations.of(context);
-    return context.l10n.activityQuotaReset(
-      '${material.formatFullDate(local)} ${material.formatTimeOfDay(TimeOfDay.fromDateTime(local))}',
-    );
-  }
-
-  String _windowLabel(BuildContext context, SubscriptionUsageWindow window) {
-    final l10n = context.l10n;
-    if (window.id == 'primary' || window.id == 'secondary') {
-      if (window.windowSeconds == 18000) return l10n.activityQuotaFiveHour;
-      if (window.windowSeconds == 604800) return l10n.activityQuotaSevenDay;
-    }
-    return switch (window.id) {
-      'primary' => l10n.activityQuotaPrimary,
-      'secondary' => l10n.activityQuotaSecondary,
-      'five_hour' => l10n.activityQuotaFiveHour,
-      'seven_day' => l10n.activityQuotaSevenDay,
-      'seven_day_sonnet' => l10n.activityQuotaSevenDaySonnet,
-      'seven_day_opus' => l10n.activityQuotaSevenDayOpus,
-      _ => window.id,
-    };
   }
 }
 

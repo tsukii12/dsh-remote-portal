@@ -10,7 +10,6 @@
     }
   },
   "nearbySetAsDefault": "设为新对话默认",
-  "nearbyManageModels": "管理模型",
   "nearbyPermissionPill": "本对话的权限：{name}",
   "@nearbyPermissionPill": {
     "placeholders": {
@@ -18,6 +17,5 @@
         "type": "String"
       }
     }
-  },
-  "nearbyChange": "更换"
+  }
 }

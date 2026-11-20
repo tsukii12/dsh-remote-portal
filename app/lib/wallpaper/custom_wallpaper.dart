@@ -9,8 +9,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../runtime/container_paths.dart';
+import 'package:path_provider/path_provider.dart';
 
 /// The user's wallpaper and how it sits.
 class CustomWallpaper {
@@ -169,24 +168,14 @@ class CustomWallpaper {
       final raw = store.getString(prefsKey);
       if (raw == null) return null;
       var json = Map<String, Object?>.from(jsonDecode(raw) as Map);
-      final paths = ContainerPaths.enabled ? await ContainerPaths.load() : null;
-      if (paths != null) {
-        final relocated = await paths.decodeOwned(json, 'wallpaper');
-        if (relocated == null) return null;
-        json = relocated;
-      }
+      final name = json['path'];
+      if (name is! String || name.isEmpty) return null;
+      final base = (await getApplicationSupportDirectory()).path;
+      final leaf = Uri.file(name).pathSegments.last;
+      if (leaf == '.' || leaf == '..') return null;
+      json['path'] = '$base/wallpaper/$leaf';
       final wallpaper = fromJson(json);
       if (wallpaper == null || !File(wallpaper.path).existsSync()) return null;
-      if (paths != null) {
-        final saved = jsonEncode(await paths.encodeOwned(wallpaper.toJson(), 'wallpaper'));
-        if (saved != raw) {
-          try {
-            await store.setString(prefsKey, saved);
-          } catch (_) {
-            // A migrated in-memory value remains usable if preferences cannot be written.
-          }
-        }
-      }
       return wallpaper;
     } catch (_) {
       return null;
@@ -195,9 +184,7 @@ class CustomWallpaper {
 
   static Future<void> save(CustomWallpaper wallpaper) async {
     final prefs = await SharedPreferences.getInstance();
-    final json = ContainerPaths.enabled
-        ? await (await ContainerPaths.load()).encodeOwned(wallpaper.toJson(), 'wallpaper')
-        : wallpaper.toJson();
+    final json = wallpaper.toJson()..['path'] = Uri.file(wallpaper.path).pathSegments.last;
     await prefs.setString(prefsKey, jsonEncode(json));
   }
 

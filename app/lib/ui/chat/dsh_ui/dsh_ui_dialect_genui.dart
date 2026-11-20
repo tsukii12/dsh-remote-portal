@@ -61,7 +61,7 @@ final class GenuiMapping {
 }
 
 /// Maps a genui fence ([json], already decoded) to a v2 plugin view.
-GenuiMapping genuiToPluginView(Object? json) {
+GenuiMapping genuiToRemoteView(Object? json) {
   final m = _Mapper();
   String? title;
   List<Object?> items;

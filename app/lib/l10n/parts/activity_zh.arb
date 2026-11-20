@@ -328,10 +328,8 @@
   "activityUsageInputIncludesCache": "输入含缓存命中",
   "activityCacheHit": "缓存命中",
   "activitySummaryTodo": "更新了待办",
-  "activityUsageBalance": "DeepSeek 余额",
   "activityUsageContext": "上下文",
   "activityUsageChat": "本对话",
-  "activityUsageAfterMessage": "发送消息后显示",
   "activityUsageWaiting": "等待上下文用量数据",
   "activityUsageProjected": "预计下次请求",
   "activityUsageLastRequest": "上次请求",
@@ -340,22 +338,6 @@
   "activityUsageContextFull": "上下文将满，发送 /compact 可压缩",
   "activitySpanZero": "0 秒",
   "activitySpanTiny": "<0.1 秒",
-  "activityTokensTenThousands": "{value} 万",
-  "@activityTokensTenThousands": {
-    "placeholders": {
-      "value": {
-        "type": "String"
-      }
-    }
-  },
-  "activityTokensHundredMillions": "{value} 亿",
-  "@activityTokensHundredMillions": {
-    "placeholders": {
-      "value": {
-        "type": "String"
-      }
-    }
-  },
   "activityUsageContextSemantics": "上下文已用 {percent}，查看用量",
   "@activityUsageContextSemantics": {
     "placeholders": {
@@ -794,25 +776,5 @@
       }
     }
   },
-  "activityQuotaTitle": "订阅额度",
-  "activityQuotaRefresh": "刷新额度",
-  "activityQuotaPermissionDenied": "订阅没有权限查询额度",
-  "activityQuotaAuthError": "登录已过期或无权查询，请检查订阅登录",
-  "activityQuotaNetworkError": "网络连接失败，请稍后重试",
-  "activityQuotaRateLimited": "查询过于频繁，请稍后重试",
-  "activityQuotaLoading": "正在查询订阅额度…",
-  "activityQuotaUnavailable": "暂时无法查询订阅额度，请稍后重试",
-  "activityQuotaUnsupported": "此主机暂不支持查询订阅额度",
-  "activityQuotaSignedOut": "订阅未登录",
-  "activityQuotaPrimary": "主要额度",
-  "activityQuotaSecondary": "次要额度",
-  "activityQuotaFiveHour": "5 小时",
-  "activityQuotaSevenDay": "7 天",
-  "activityQuotaSevenDaySonnet": "7 天 · Sonnet",
-  "activityQuotaSevenDayOpus": "7 天 · Opus",
-  "activityQuotaUsed": "已使用 {value}",
-  "@activityQuotaUsed": {"placeholders": {"value": {"type": "String"}}},
-  "activityQuotaReset": "重置时间：{time}",
-  "@activityQuotaReset": {"placeholders": {"time": {"type": "String"}}},
   "activityToolListSeparator": "、"
 }

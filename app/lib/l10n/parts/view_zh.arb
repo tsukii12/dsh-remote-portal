@@ -65,58 +65,6 @@
       }
     }
   },
-  "viewBalanceInvalidKey": "Key 无效，查不到余额",
-  "viewBalancePrefix": "余额 ",
-  "viewBalanceLowSuffix": " · 余额不足",
-  "viewBalanceUnavailableSuffix": " · 已不能调用",
-  "viewBalanceTopUp": "充值",
-  "viewBalanceTitle": "DeepSeek 余额",
-  "viewBalanceKeyRequired": "填写 API Key 后可查询余额",
-  "viewBalanceKeyInvalid": "API Key 无效，无法查询余额",
-  "viewBalancePaid": "充值 {value}",
-  "@viewBalancePaid": {
-    "placeholders": {
-      "value": {
-        "type": "String"
-      }
-    }
-  },
-  "viewBalanceGranted": "赠送 {value}",
-  "@viewBalanceGranted": {
-    "placeholders": {
-      "value": {
-        "type": "String"
-      }
-    }
-  },
-  "viewBalanceLow": "余额不足",
-  "viewBalanceUnavailable": "已无法调用",
-  "viewBalanceChecking": "正在查询余额…",
-  "viewBalanceCheckFailed": "暂时无法查询余额",
-  "viewBalanceNoAlert": "不提醒",
-  "viewBalanceBannerHidden": "本次运行不再显示余额提醒",
-  "viewBalanceTurnOff": "不再提醒",
-  "viewBalanceBelow": "低于 {value}",
-  "@viewBalanceBelow": {
-    "placeholders": {
-      "value": {
-        "type": "String"
-      }
-    }
-  },
-  "viewBalanceAlert": "低余额提醒",
-  "viewBalanceThreshold": "提醒线",
-  "viewBalanceGoTopUp": "去充值",
-  "viewBalanceRemaining": "余额仅剩 {value}",
-  "@viewBalanceRemaining": {
-    "placeholders": {
-      "value": {
-        "type": "String"
-      }
-    }
-  },
-  "viewBalanceModelDisabled": "余额不足，模型已停用",
-  "viewBalanceRestore": "充值后恢复",
   "viewUiIncomplete": "视图没有生成完",
   "viewUiInvalid": "这个视图格式有误",
   "viewUiResend": "让它重发",
@@ -825,13 +773,10 @@
   "viewModelDisconnected": "未连接引擎",
   "viewModelConnectHint": "连接后即可选择模型",
   "viewModelEffort": "思考深度",
-  "viewModelKeyRequired": "需要 API Key",
-  "viewModelProvidersHint": "支持 DeepSeek 和其他模型渠道",
-  "viewModelEnterKey": "填写 API Key",
-  "viewModelAddProvider": "添加其他渠道",
+  "viewModelKeyRequired": "主机尚未配置模型",
+  "viewModelProvidersHint": "请在主机配置模型后重新打开此列表。",
   "viewModelNone": "暂无可用模型",
-  "viewModelKeyHint": "Key 可能尚未生效或已失效",
-  "viewModelManageProviders": "管理渠道",
+  "viewModelKeyHint": "请检查主机上的模型配置与凭据。",
   "viewContinuePrompt": "接着附件里这段对话聊：",
   "viewContinueRange": "第 {first}–{second} 轮，共 {third} 轮",
   "@viewContinueRange": {
@@ -1015,31 +960,6 @@
   "viewSharePresentFiles": "交付文件",
   "viewShareWorkflow": "工作流",
   "viewSharePlugin": "调用插件",
-  "viewShareStars": "星标",
-  "viewSharePluginTitle": "DSH 插件「{value}」",
-  "@viewSharePluginTitle": {
-    "placeholders": {
-      "value": {
-        "type": "String"
-      }
-    }
-  },
-  "viewShareInstallCommand": "安装：dsh plugin add {value}",
-  "@viewShareInstallCommand": {
-    "placeholders": {
-      "value": {
-        "type": "String"
-      }
-    }
-  },
-  "viewSharePhoneInstall": "手机上一键安装：{value}",
-  "@viewSharePhoneInstall": {
-    "placeholders": {
-      "value": {
-        "type": "String"
-      }
-    }
-  },
   "viewShareImages": "图片",
   "viewSharePickMessages": "选择消息",
   "viewShareDoneCount": "完成（{count}）",

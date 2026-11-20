@@ -13,7 +13,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../l10n/l10n.dart';
 import '../../../state/appearance_state.dart';
 import '../../../state/settings_state.dart';
-import '../../../ui_config/ui_config.dart';
 import '../../common/expand_reveal.dart';
 import '../../common/pressable.dart';
 import '../../shell/page_frame.dart';
@@ -35,7 +34,7 @@ class AppearanceEntryTile extends ConsumerWidget {
     final l10n = context.l10n;
     final accent = ref.watch(accentProvider);
     final seed = accent.seedFor(Theme.of(context).brightness);
-    final mode = switch (ref.watch(uiThemeModeProvider.select((s) => s.value))) {
+    final mode = switch (ref.watch(settingsProvider.select((s) => s.themeMode))) {
       ThemeMode.light => l10n.commonLight,
       ThemeMode.dark => l10n.commonDark,
       ThemeMode.system => l10n.commonFollowSystem,
@@ -86,10 +85,6 @@ class AppearancePage extends ConsumerWidget {
           ],
         ),
         SettingsSection(
-          title: l10n.pluginsFeatureIcons,
-          children: [SpotAnchor(spot: Spots.tileStyle, child: const TileStylePicker())],
-        ),
-        SettingsSection(
           title: l10n.wallpaperTitle,
           footer: Text(l10n.wallpaperFooter),
           children: [SpotAnchor(spot: Spots.wallpaper, child: const WallpaperSection())],
@@ -132,7 +127,7 @@ class ThemeModePicker extends ConsumerWidget {
       (ThemeMode.dark, l10n.commonDark),
       (ThemeMode.system, l10n.commonFollowSystem),
     ];
-    final mode = ref.watch(uiThemeModeProvider);
+    final mode = ref.watch(settingsProvider.select((s) => s.themeMode));
     final (light, dark) = _themesFor(ref.watch(accentProvider));
     // The ring sits outside each preview, in [_ModeTile.room]: the padding
     // and gap leave room for it, so previews land 16 from the card and 12
@@ -148,11 +143,6 @@ class ThemeModePicker extends ConsumerWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (mode.fromUiJson)
-            const Padding(
-              padding: EdgeInsets.only(left: room, right: room, bottom: 8),
-              child: Align(alignment: Alignment.centerLeft, child: FromUiJsonBadge(UiSettingKey.themeMode)),
-            ),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -161,8 +151,8 @@ class ThemeModePicker extends ConsumerWidget {
                 Expanded(
                   child: _ModeTile(
                     label: label,
-                    selected: mode.value == m,
-                    enabled: !mode.fromUiJson,
+                    selected: mode == m,
+                    enabled: true,
                     light: m == ThemeMode.dark ? null : light,
                     dark: m == ThemeMode.light ? null : dark,
                     onTap: () => unawaited(

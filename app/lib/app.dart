@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
@@ -7,17 +6,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'l10n/l10n.dart';
 import 'performance/performance_state.dart';
-import 'performance/refresh_rate.dart';
 import 'state/app_info.dart';
 import 'state/appearance_state.dart';
 import 'state/locale_state.dart';
-import 'state/tile_style_state.dart';
+import 'state/foreground_state.dart';
 import 'ui/chat/dsh_ui/dsh_ui_model.dart' show DshUiAppAccent;
 import 'ui/common/keyboard_motion.dart';
 import 'ui/common/side_insets.dart';
 import 'ui/shell/root_gate.dart';
 import 'ui/theme/theme.dart';
-import 'ui_config/ui_config_state.dart';
+import 'state/settings_state.dart';
 
 class DshApp extends ConsumerStatefulWidget {
   const DshApp({super.key, this.home});
@@ -62,13 +60,9 @@ class _DshAppState extends ConsumerState<DshApp> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    // Start loading the stored tile style now, so 全部功能 opens in it rather
-    // than flashing the default first.
-    ref.read(tileStyleProvider);
     // 刷新率: some systems cap third-party apps at 60 Hz and then show their per-app
     // switch as an in-app setting; the app answers frames to run at the fastest rate
     // while it is actually drawing (see RefreshRateService).
-    RefreshRateService.instance.start();
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -88,6 +82,11 @@ class _DshAppState extends ConsumerState<DshApp> with WidgetsBindingObserver {
   /// transitions are chosen in [build], so they would keep the old answer.
   @override
   void didChangeAccessibilityFeatures() => setState(() {});
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) => ref
+      .read(appForegroundProvider.notifier)
+      .set(state == AppLifecycleState.resumed || state == AppLifecycleState.inactive);
 
   void _themesFor(AppAccent accent, bool english, bool glassBlur, bool instantPages, bool fluid) {
     if (accent == _accent &&
@@ -148,8 +147,7 @@ class _DshAppState extends ConsumerState<DshApp> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     // 刷新率设置改动时告诉原生;setMode 对同一个值不做任何事。
-    unawaited(RefreshRateService.instance.setMode(ref.watch(performancePrefsProvider.select((p) => p.refreshRate))));
-    final themeMode = ref.watch(uiThemeModeProvider.select((s) => s.value));
+    final themeMode = ref.watch(settingsProvider.select((s) => s.themeMode));
     final appearance = ref.watch(appearanceProvider);
     final waiting =
         !appearance.loaded ||

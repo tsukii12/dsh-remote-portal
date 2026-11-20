@@ -108,11 +108,11 @@ abstract final class DshGlyphs {
   static const flag = IconData(0xe0a5, fontFamily: family);
   static const flowArrow = IconData(0xe0a4, fontFamily: family);
   static const folder = IconData(0xe089, fontFamily: family);
-  static const folderArrowRight = IconData(0xe041, fontFamily: family);  // drawn
+  static const folderArrowRight = IconData(0xe041, fontFamily: family); // drawn
   static const folderFill = IconData(0xe08a, fontFamily: family);
   static const folderOpen = IconData(0xe01c, fontFamily: family);
   static const folderPlus = IconData(0xe040, fontFamily: family);
-  static const folderSlash = IconData(0xe071, fontFamily: family);  // drawn
+  static const folderSlash = IconData(0xe071, fontFamily: family); // drawn
   static const folderStar = IconData(0xe08c, fontFamily: family);
   static const folderUser = IconData(0xe08d, fontFamily: family);
   static const folders = IconData(0xe08b, fontFamily: family);
@@ -140,7 +140,7 @@ abstract final class DshGlyphs {
   static const images = IconData(0xe01b, fontFamily: family);
   static const info = IconData(0xe062, fontFamily: family);
   static const key = IconData(0xe087, fontFamily: family);
-  static const keySlash = IconData(0xe088, fontFamily: family);  // drawn
+  static const keySlash = IconData(0xe088, fontFamily: family); // drawn
   static const laptop = IconData(0xe079, fontFamily: family);
   static const lightbulb = IconData(0xe0b5, fontFamily: family);
   static const lightning = IconData(0xe06b, fontFamily: family);
@@ -155,7 +155,7 @@ abstract final class DshGlyphs {
   static const lockSimpleOpen = IconData(0xe080, fontFamily: family);
   static const magicWand = IconData(0xe0d4, fontFamily: family);
   static const magnifyingGlass = IconData(0xe03a, fontFamily: family);
-  static const magnifyingGlassX = IconData(0xe06f, fontFamily: family);  // drawn
+  static const magnifyingGlassX = IconData(0xe06f, fontFamily: family); // drawn
   static const mapTrifold = IconData(0xe0a6, fontFamily: family);
   static const medal = IconData(0xe0d9, fontFamily: family);
   static const megaphone = IconData(0xe0cb, fontFamily: family);
@@ -187,7 +187,7 @@ abstract final class DshGlyphs {
   static const pushPin = IconData(0xe045, fontFamily: family);
   static const pushPinFill = IconData(0xe046, fontFamily: family);
   static const puzzlePiece = IconData(0xe0a0, fontFamily: family);
-  static const puzzlePieceSlash = IconData(0xe072, fontFamily: family);  // drawn
+  static const puzzlePieceSlash = IconData(0xe072, fontFamily: family); // drawn
   static const qrCode = IconData(0xe021, fontFamily: family);
   static const question = IconData(0xe063, fontFamily: family);
   static const quotes = IconData(0xe01f, fontFamily: family);
@@ -201,7 +201,7 @@ abstract final class DshGlyphs {
   static const shieldCheck = IconData(0xe085, fontFamily: family);
   static const shieldPlus = IconData(0xe084, fontFamily: family);
   static const shieldWarning = IconData(0xe082, fontFamily: family);
-  static const sidebarSimpleRight = IconData(0xe0e4, fontFamily: family);  // drawn
+  static const sidebarSimpleRight = IconData(0xe0e4, fontFamily: family); // drawn
   static const signOut = IconData(0xe047, fontFamily: family);
   static const slidersHorizontal = IconData(0xe03b, fontFamily: family);
   static const slideshow = IconData(0xe098, fontFamily: family);
@@ -223,7 +223,7 @@ abstract final class DshGlyphs {
   static const textAa = IconData(0xe0b8, fontFamily: family);
   static const textAlignLeft = IconData(0xe06d, fontFamily: family, matchTextDirection: true);
   static const textT = IconData(0xe022, fontFamily: family);
-  static const textWrap = IconData(0xe02c, fontFamily: family, matchTextDirection: true);  // drawn
+  static const textWrap = IconData(0xe02c, fontFamily: family, matchTextDirection: true); // drawn
   static const timer = IconData(0xe0aa, fontFamily: family);
   static const translate = IconData(0xe0ad, fontFamily: family);
   static const trash = IconData(0xe035, fontFamily: family);

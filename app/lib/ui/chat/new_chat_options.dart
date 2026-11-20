@@ -12,13 +12,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
-import '../../runtime/runtime_state.dart';
-import '../../state/connection_state.dart';
 import '../../state/features_state.dart';
 import '../../state/models_state.dart' show modelSelectionScopeProvider;
 import '../../state/new_chat_modes.dart';
 import '../../state/sessions_state.dart' show currentSessionProvider;
-import '../../state/settings_state.dart';
 import '../common/app_sheet.dart';
 import '../common/list_page_row.dart';
 import '../common/sheet_title_bar.dart';
@@ -79,20 +76,10 @@ IconData presetIcon(String id) => switch (id) {
 /// 自动批准命令 on (and outside safe mode) session creation switches to full
 /// access (sessions_state.dart `createForConnection`); elsewhere the Host's
 /// default for new sessions.
-String effectiveNewChatPermission(
-  PermissionState state, {
-  required bool local,
-  required bool autoApprove,
-  required bool safeMode,
-}) => local && autoApprove && !safeMode ? 'danger-full-access' : state.hostDefault;
+String effectiveNewChatPermission(PermissionState state) => state.hostDefault;
 
 /// [effectiveNewChatPermission] for this screen, read once (callbacks).
-String _readEffectivePermission(WidgetRef ref, PermissionState state) => effectiveNewChatPermission(
-  state,
-  local: ref.read(activeConnectionProvider).value?.isLocal ?? false,
-  autoApprove: ref.read(settingsProvider).autoApproveCommands,
-  safeMode: ref.read(localRuntimeProvider).status.inSafeMode,
-);
+String _readEffectivePermission(WidgetRef ref, PermissionState state) => effectiveNewChatPermission(state);
 
 /// The options row: the agent preset, the permissions and (with folders) the
 /// drawer folder this new chat starts with — light items in one centred line.
@@ -119,13 +106,7 @@ class NewChatOptions extends ConsumerWidget {
 
     final permissions = ref.watch(permissionStateProvider(null)).value;
     final hasPermissions = permissions != null && permissions.options.isNotEmpty;
-    final local = ref.watch(activeConnectionProvider.select((c) => c.value?.isLocal ?? false));
-    final autoApprove = ref.watch(settingsProvider.select((s) => s.autoApproveCommands));
-    final safeMode = ref.watch(localRuntimeProvider.select((s) => s.status.inSafeMode));
-    final permission = hasPermissions
-        ? pending.permission ??
-              effectiveNewChatPermission(permissions, local: local, autoApprove: autoApprove, safeMode: safeMode)
-        : null;
+    final permission = hasPermissions ? pending.permission ?? effectiveNewChatPermission(permissions) : null;
     String? permissionLabel;
     if (permissions != null && permission != null) {
       String? hostName;

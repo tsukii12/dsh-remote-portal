@@ -9,16 +9,13 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io' show FileSystemEntityType;
 import 'dart:math' as math;
 
 import 'package:dsh_client/dsh_client.dart';
 import 'package:flutter/services.dart' show TextEditingValue;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../share_code/guest_fs.dart';
 import 'connection_state.dart';
-import 'hosts_state.dart';
 import 'sessions_state.dart';
 
 /// One Host content hit: the session and a plain-text excerpt around the match.
@@ -705,20 +702,12 @@ class HostContentSearch implements SessionContentSearch {
   }
 }
 
-class _CachedCheckpointFile {
-  const _CachedCheckpointFile(this.modified, this.length, this.entry);
-  final DateTime modified;
-  final int length;
-  final SessionSearchCorpusEntry entry;
-}
-
 class _CachedRemoteProjection {
   const _CachedRemoteProjection(this.updatedAt, this.entry);
   final DateTime updatedAt;
   final SessionSearchCorpusEntry entry;
 }
 
-final _localCheckpointCache = <String, _CachedCheckpointFile>{};
 final _remoteProjectionCache = Expando<Map<String, _CachedRemoteProjection>>('remoteProjectionSearchCache');
 
 /// Builds the user-message corpus for the active host's sessions from local
@@ -732,42 +721,13 @@ Future<({List<ContentHit> items, bool hasMore})?> _searchHostUserCorpus(Ref ref,
   final all = <SessionSummary>[...?sessions, ...archived];
   if (all.isEmpty) return null;
 
-  GuestFs? guestFs;
-  if (ref.read(activeHostProvider).isLocal) {
-    try {
-      guestFs = await ref.read(guestFsProvider.future);
-    } catch (_) {
-      guestFs = null;
-    }
-  }
-
   final corpus = <String, SessionSearchCorpusEntry>{};
   final missingProjections = <SessionSummary>[];
 
   for (final s in all) {
     if (s.blank || s.isSubagent) continue;
     var entry = extractProjectionSearchCorpus(s.projections);
-    if (guestFs != null) {
-      final file = guestFs.file('${GuestFs.dshHome}/storages/session_projcache/sessions/${s.sessionId}.json');
-      try {
-        final stat = file.statSync();
-        if (stat.type == FileSystemEntityType.file) {
-          final key = file.path;
-          final cached = _localCheckpointCache[key];
-          SessionSearchCorpusEntry diskEntry;
-          if (cached != null && cached.length == stat.size && cached.modified == stat.modified) {
-            diskEntry = cached.entry;
-          } else {
-            diskEntry = extractCheckpointJsonSearchCorpus(file.readAsStringSync());
-            if (_localCheckpointCache.length >= 512) {
-              _localCheckpointCache.remove(_localCheckpointCache.keys.first);
-            }
-            _localCheckpointCache[key] = _CachedCheckpointFile(stat.modified, stat.size, diskEntry);
-          }
-          entry = entry.merge(diskEntry);
-        }
-      } catch (_) {}
-    }
+
     if (!entry.isEmpty) {
       corpus[s.sessionId] = entry;
     } else {
@@ -806,7 +766,7 @@ Future<({List<ContentHit> items, bool hasMore})?> _searchHostUserCorpus(Ref ref,
     }
   }
 
-  if (guestFs == null && corpus.isEmpty) return null;
+  if (corpus.isEmpty) return null;
   return searchSessionCorpus(query, all, corpus);
 }
 

@@ -6,6 +6,5 @@
   "portalPassword": "密码",
   "portalScan": "扫描服务器或配对链接",
   "portalPairingReady": "配对链接已就绪",
-  "portalOnly": "此功能需要本机引擎，鱼鱼远程不提供此功能。",
   "portalWebRemoved": "鱼鱼远程不提供内嵌网页功能。"
 }

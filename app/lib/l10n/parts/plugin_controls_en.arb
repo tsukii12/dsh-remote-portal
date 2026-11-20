@@ -27,6 +27,5 @@
   "plugInputFormula": "Invalid formula or formula limit exceeded",
   "plugInputDatePicker": "Plugin date",
   "plugInputTimePicker": "Plugin time",
-  "plugInputChoices": "Plugin choices",
-  "plugInputGestureRequired": "This effect requires a user tap"
+  "plugInputChoices": "Plugin choices"
 }

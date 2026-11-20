@@ -103,7 +103,7 @@ ImageSource imageSourceOf(String url) {
 /// without a known working directory the path stays relative: the Host
 /// resolves it against the session's own.
 String workspaceImagePath(String path, {String? baseDir, String? cwd, bool local = false}) {
-  final base = baseDir ?? cwd ?? (local ? localWorkspaceDir : null);
+  final base = baseDir ?? cwd;
   return resolveSessionPath(path, cwd: base);
 }
 
@@ -315,8 +315,8 @@ final engineImageReaderProvider = Provider<CachedImageReader>(
     EngineImageReader(ref.watch(artifactFilesProvider).connection?.client),
     capacity: 32,
     keeps: (image) => switch (image) {
-      RasterImage(provider: MemoryImage(:final bytes)) || SvgImageBytes(:final bytes) =>
-        bytes.length <= maxHeldEngineImageBytes,
+      RasterImage(provider: MemoryImage(:final bytes)) ||
+      SvgImageBytes(:final bytes) => bytes.length <= maxHeldEngineImageBytes,
       _ => true,
     },
   ),

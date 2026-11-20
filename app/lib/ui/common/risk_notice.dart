@@ -34,11 +34,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
-import '../../state/ask_ai.dart';
 import '../../state/risk_notice_store.dart';
 import '../theme/theme.dart';
 import 'app_sheet.dart';
-import 'ask_ai.dart';
 
 enum RiskLevel {
   /// 每次确认.
@@ -57,7 +55,6 @@ class RiskNotice {
     required this.title,
     required this.body,
     required this.action,
-    this.ask,
   });
 
   /// Stable: 「不再提示」 is stored under it.
@@ -72,34 +69,11 @@ class RiskNotice {
 
   /// The main key: the action itself (「允许读写」), never 「确定」.
   final String action;
-
-  /// The question 「不确定？问 AI」 asks; none where the guide is silent.
-  final AskAiTopic? ask;
 }
 
 /// Every notice in one place, so the ids stay stable and the copy is read
 /// together.
 abstract final class RiskNotices {
-  /// 手机操控 › 确认方式 › 始终免确认.
-  static RiskNotice get phoneConfirmAlways => RiskNotice(
-    id: 'phone.confirm-always',
-    level: RiskLevel.high,
-    title: appL10n.phoneConfirmAlwaysTitle,
-    body: appL10n.phoneConfirmAlwaysBody,
-    action: appL10n.riskConfirmAlwaysAction,
-    ask: AskAiTopic.phoneAlways,
-  );
-
-  /// 应用名单: 不碰 → 照常 ([fromDeny]) or 每一步都确认 → 照常.
-  static RiskNotice appRule(String app, {required bool fromDeny}) => RiskNotice(
-    id: fromDeny ? 'phone.app-rule.allow' : 'phone.app-rule.skip-steps',
-    level: RiskLevel.high,
-    title: fromDeny ? appL10n.phoneAppRulesLoosenTitle(app) : appL10n.phoneAppRulesSkipStepsTitle(app),
-    body: fromDeny ? appL10n.phoneAppRulesLoosenBody : appL10n.phoneAppRulesSkipStepsBody,
-    action: appL10n.phoneAppRulesAcceptRisk,
-    ask: AskAiTopic.appRules,
-  );
-
   /// 设置 › 自动执行命令, and the 完全权限 preset.
   static RiskNotice get fullAccess => RiskNotice(
     id: 'permission.full-access',
@@ -107,7 +81,6 @@ abstract final class RiskNotices {
     title: appL10n.hubSettingsFullAccessTitle,
     body: appL10n.hubSettingsFullAccessBody,
     action: appL10n.riskFullAccessAction,
-    ask: AskAiTopic.fullAccess,
   );
 
   /// The 自动审查 preset: the model still checks each action.
@@ -119,26 +92,6 @@ abstract final class RiskNotices {
     action: appL10n.riskAutoReviewAction,
   );
 
-  /// 设置 › 访问手机文件.
-  static RiskNotice get phoneFiles => RiskNotice(
-    id: 'settings.phone-files',
-    level: RiskLevel.high,
-    title: appL10n.hubSettingsStorageTitle,
-    body: appL10n.hubSettingsStorageBody,
-    action: appL10n.hubSettingsStorageAllow,
-    ask: AskAiTopic.phoneFiles,
-  );
-
-  /// The same, picked on first run: no engine runs yet, nothing restarts.
-  static RiskNotice get phoneFilesFirstRun => RiskNotice(
-    id: 'settings.phone-files',
-    level: RiskLevel.high,
-    title: appL10n.hubSettingsStorageTitle,
-    body: appL10n.accessFilesRiskBody,
-    action: appL10n.hubSettingsStorageAllow,
-    ask: AskAiTopic.phoneFiles,
-  );
-
   /// The approval card's 本对话都允许: this conversation only, until restart.
   static RiskNotice get allowForChat => RiskNotice(
     id: 'chat.allow-for-chat',
@@ -146,26 +99,6 @@ abstract final class RiskNotices {
     title: appL10n.riskAllowForChatTitle,
     body: appL10n.riskAllowForChatBody,
     action: appL10n.riskAllowForChatAction,
-    ask: AskAiTopic.allowForChat,
-  );
-
-  /// 不打扰模式 › Root and 自动恢复无障碍's 申请 root 授权: the root manager's
-  /// own prompt comes next.
-  static RiskNotice get rootChannel => RiskNotice(
-    id: 'phone.root',
-    level: RiskLevel.medium,
-    title: appL10n.phonePrivilegedRootRiskTitle,
-    body: appL10n.phonePrivilegedRootRiskBody,
-    action: appL10n.phonePrivilegedRootPrepare,
-  );
-
-  /// 宠物 › App 外显示, before the trip to 「显示在其他应用上层」.
-  static RiskNotice get petOverlay => RiskNotice(
-    id: 'pets.overlay-permission',
-    level: RiskLevel.medium,
-    title: appL10n.riskPetOverlayTitle,
-    body: appL10n.riskPetOverlayBody,
-    action: appL10n.riskPetOverlayAction,
   );
 }
 
@@ -176,9 +109,6 @@ enum RiskChoice {
 
   /// The main key with 「不再提示」 ticked.
   proceedSilenced,
-
-  /// 「不确定？问 AI」.
-  ask,
 }
 
 /// Shows [notice] (a medium one only until it was confirmed with 「不再提示」)
@@ -189,12 +119,11 @@ Future<bool> confirmRisk(BuildContext context, RiskNotice notice) async {
   final store = container.read(riskNoticeStoreProvider);
   if (notice.level == RiskLevel.medium && await store.silenced(notice.id)) return true;
   if (!context.mounted) return false;
-  final ask = container.read(askAiAvailableProvider) ? notice.ask : null;
   final choice = await showAppSheet<RiskChoice>(
     context,
     dismissal: SheetDismissal.button,
     isScrollControlled: true,
-    builder: (_) => RiskNoticeSheet(notice: notice, canAsk: ask != null),
+    builder: (_) => RiskNoticeSheet(notice: notice),
   );
   switch (choice) {
     case RiskChoice.proceed:
@@ -202,9 +131,6 @@ Future<bool> confirmRisk(BuildContext context, RiskNotice notice) async {
     case RiskChoice.proceedSilenced:
       await store.silence(notice.id);
       return true;
-    case RiskChoice.ask:
-      if (context.mounted) unawaited(askAi(context, ask!));
-      return false;
     case null:
       return false;
   }
@@ -212,12 +138,11 @@ Future<bool> confirmRisk(BuildContext context, RiskNotice notice) async {
 
 /// The notice's sheet; pops a [RiskChoice].
 class RiskNoticeSheet extends StatefulWidget {
-  const RiskNoticeSheet({super.key, required this.notice, this.canAsk = false});
+  const RiskNoticeSheet({super.key, required this.notice});
 
   final RiskNotice notice;
 
   /// Shows 「不确定？问 AI」 (the notice has a question and 问 AI is available).
-  final bool canAsk;
 
   /// The main key's height at 1× text (it grows with larger text).
   static const buttonHeight = 48.0;
@@ -278,12 +203,7 @@ class _RiskNoticeSheetState extends State<RiskNoticeSheet> {
               child: Text(notice.action, textAlign: TextAlign.center),
             ),
           ),
-          if (widget.canAsk)
-            Padding(
-              padding: const EdgeInsets.only(top: 6),
-              child: Center(child: AskAiLink(onPressed: () => Navigator.pop(context, RiskChoice.ask))),
-            ),
-          SizedBox(height: widget.canAsk ? 6 : 16),
+          const SizedBox(height: 16),
         ],
       ),
     );

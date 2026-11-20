@@ -11,7 +11,6 @@ import 'read_list_epoch.dart';
 import 'engine_error_text.dart';
 import 'models_state.dart';
 import 'provider_backend.dart';
-import 'settings_state.dart';
 
 export 'package:dsh_client/dsh_client.dart'
     show
@@ -634,13 +633,6 @@ class ProviderActions {
       } catch (error) {
         throw ProviderFailure(appL10n.stateProviderKeySaveFailed(describeProviderError(error)), savedId: id);
       }
-      if (backend.isLocal) {
-        try {
-          await _ref.read(settingsProvider.notifier).saveProviderKey(id, draft.apiKey);
-        } catch (_) {
-          // Only the self-heal copy is missing; the engine has the key.
-        }
-      }
     }
     _ref
       ..invalidate(customProvidersProvider)
@@ -683,11 +675,7 @@ class ProviderActions {
         // The route is gone; a leftover credential is harmless.
       }
     }
-    if (backend.isLocal) {
-      try {
-        await _ref.read(settingsProvider.notifier).removeProviderKey(provider.id);
-      } catch (_) {}
-    }
+
     _ref
       ..invalidate(customProvidersProvider)
       ..invalidate(modelCatalogProvider);

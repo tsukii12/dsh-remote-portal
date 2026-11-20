@@ -1,4 +1,3 @@
 {
-  "hostDetailsConnectionType": "Connection type",
-  "hostDetailsSshNetworkHint": "Uses an SSH tunnel. LAN / P2P route inspection and latency measurements are not available for this connection."
+  "hostDetailsConnectionType": "Connection type"
 }

@@ -8,7 +8,7 @@ import 'read_list_identity.dart';
 
 export 'read_list_data.dart';
 
-enum ReadListKind { models, providers, plugins, sessions }
+enum ReadListKind { models, providers, sessions }
 
 typedef ReadListKey = ({ReadListIdentity identity, ReadListKind kind, String workspace});
 

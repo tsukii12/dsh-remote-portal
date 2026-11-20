@@ -41,7 +41,14 @@ import '../../wallpaper/wallpaper_editor_page.dart';
 import '../../wallpaper/wallpaper_preview_page.dart';
 import '../settings_widgets.dart';
 import 'appearance_page.dart' show PickerGrid;
-import 'launch_screen_section.dart' show LaunchScreenPicker;
+
+class WallpaperPickerMetrics {
+  static const ring = 2.0;
+  static const room = 5.0;
+  static const radius = 14.0;
+  static double aspectFor(Size screen) =>
+      screen.height <= 0 ? 0.5 : (screen.width / screen.height).clamp(0.45, 0.62).toDouble();
+}
 
 /// The card's rows.
 class WallpaperSection extends ConsumerStatefulWidget {
@@ -110,7 +117,7 @@ class _WallpaperSectionState extends ConsumerState<WallpaperSection> {
     final l10n = context.l10n;
     final messenger = ScaffoldMessenger.maybeOf(context);
     setState(() => _busy = true);
-    LaunchImportProblem? problem;
+    WallpaperImportProblem? problem;
     try {
       problem = await ref.read(customWallpaperProvider.notifier).choose();
     } finally {
@@ -118,12 +125,12 @@ class _WallpaperSectionState extends ConsumerState<WallpaperSection> {
     }
     final text = switch (problem) {
       null => l10n.wallpaperChanged,
-      LaunchImportProblem.cancelled => null,
-      LaunchImportProblem.unavailable => l10n.wallpaperUnavailable,
+      WallpaperImportProblem.cancelled => null,
+      WallpaperImportProblem.unavailable => l10n.wallpaperUnavailable,
       // overLimit is the launch screen's (next to clips); a photos-only import says tooLarge.
-      LaunchImportProblem.tooLarge || LaunchImportProblem.overLimit => l10n.wallpaperTooLarge,
-      LaunchImportProblem.unsupported => l10n.wallpaperUnsupported,
-      LaunchImportProblem.unreadable => l10n.wallpaperUnreadable,
+      WallpaperImportProblem.tooLarge || WallpaperImportProblem.overLimit => l10n.wallpaperTooLarge,
+      WallpaperImportProblem.unsupported => l10n.wallpaperUnsupported,
+      WallpaperImportProblem.unreadable => l10n.wallpaperUnreadable,
     };
     if (text != null) messenger?.showBriefNotice(text);
   }
@@ -272,7 +279,7 @@ class WallpaperSliderRow extends StatelessWidget {
 }
 
 /// 默认 and 自定义 as two small phones, centred as a pair: the launch screen card's geometry
-/// ([LaunchScreenPicker]'s ring, radius and shape).
+/// ([WallpaperPickerMetrics]'s ring, radius and shape).
 class WallpaperPicker extends StatelessWidget {
   const WallpaperPicker({
     super.key,
@@ -301,8 +308,8 @@ class WallpaperPicker extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final on = custom != null && custom!.on;
-    final aspect = LaunchScreenPicker.aspectFor(MediaQuery.sizeOf(context));
-    const room = LaunchScreenPicker.room;
+    final aspect = WallpaperPickerMetrics.aspectFor(MediaQuery.sizeOf(context));
+    const room = WallpaperPickerMetrics.room;
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         PickerGrid.inset - room,
@@ -369,8 +376,8 @@ class WallpaperPhone extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    const room = LaunchScreenPicker.room;
-    const radius = BorderRadius.all(Radius.circular(LaunchScreenPicker.radius));
+    const room = WallpaperPickerMetrics.room;
+    const radius = BorderRadius.all(Radius.circular(WallpaperPickerMetrics.radius));
     final quick = AppMotion.of(context, AppMotion.quick);
     return Semantics(
       button: true,
@@ -442,12 +449,12 @@ class _Ring extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     if (color.a == 0) return;
-    const w = LaunchScreenPicker.ring;
+    const w = WallpaperPickerMetrics.ring;
     final rect = (Offset.zero & size).deflate(w / 2);
     canvas.drawRSuperellipse(
       RSuperellipse.fromRectAndRadius(
         rect,
-        const Radius.circular(LaunchScreenPicker.radius + LaunchScreenPicker.room - w / 2),
+        const Radius.circular(WallpaperPickerMetrics.radius + WallpaperPickerMetrics.room - w / 2),
       ),
       Paint()
         ..style = PaintingStyle.stroke

@@ -13,7 +13,7 @@ import '../../common/fluid_bits.dart';
 import '../../common/smooth_size.dart';
 import '../../common/tool_glyph.dart';
 import '../../fx/orbs/thinking_orb.dart';
-import '../../plugins/view/plugin_view.dart' show DshUiParsed, PluginToolCard;
+import '../tool_card_view.dart' show DshUiParsed, RemoteToolCard;
 import '../../theme/app_icons.dart';
 import '../../theme/theme.dart';
 import '../render/code_block.dart';
@@ -120,7 +120,7 @@ class _ToolRowState extends State<ToolRow> {
       return switch (v.pluginView) {
         final DshUiParsed parse => Padding(
           padding: const EdgeInsets.symmetric(vertical: 4),
-          child: PluginToolCard(parse: parse, fallback: const SizedBox.shrink(), details: false),
+          child: RemoteToolCard(parse: parse, fallback: const SizedBox.shrink(), details: false),
         ),
         _ => const SizedBox.shrink(),
       };
@@ -156,7 +156,7 @@ class _ToolRowState extends State<ToolRow> {
               _ when v.media != null && widget.card == ToolCardPlacement.inline => MediaCard(meta: v.media!),
               // 插件工具带了原生卡片(meta["dsh-go/view"]);折进过程里的
               // 那一行不再画卡片(卡片在外面)。
-              final parse? when widget.card == ToolCardPlacement.inline => PluginToolCard(
+              final parse? when widget.card == ToolCardPlacement.inline => RemoteToolCard(
                 parse: parse,
                 fallback: ToolDetail(view: v),
               ),

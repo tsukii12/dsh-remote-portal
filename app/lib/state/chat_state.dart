@@ -7,13 +7,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../diagnostics/app_error_log.dart';
 import '../l10n/l10n.dart';
-import '../usage/usage_stats.dart';
 import 'attachments.dart';
 import 'chat_error_text.dart';
 import 'connection_state.dart';
 import 'hosts_state.dart';
 import 'models_state.dart';
-import 'notify_state.dart' show appForegroundProvider;
+import 'foreground_state.dart' show appForegroundProvider;
 import 'run_pulse.dart';
 import 'sessions_state.dart';
 
@@ -843,7 +842,7 @@ class ChatController extends Notifier<ChatState> {
             pulse.observe(event, skew: _sameClock ? Duration.zero : _skew);
             _trackModel(event);
             _trackCommands(event);
-            _countTokens(event);
+
             final reconcile =
                 (event is InboxSplicedEvent && event.seq > _transcript.cursor) ||
                 (event is SessionSnapshotEvent && event.isResync);
@@ -1403,7 +1402,7 @@ class ChatController extends Notifier<ChatState> {
         mode: promptMode,
         deliveryAllowed: deliveryAllowed,
       );
-      _sent();
+
       // Delivered: sent, even if the watch moved on meanwhile (its echo comes on the new one).
       if (!_currentOperation(operation)) return true;
       state = state.copyWith(error: stopFailed, notice: notice);
@@ -1418,7 +1417,6 @@ class ChatController extends Notifier<ChatState> {
               _claimedAt.containsKey(requestId) ||
               _withdrawn.contains(requestId) ||
               _inboxIds().contains(requestId))) {
-        _sent();
         return true;
       }
       if (!_currentOperation(operation)) return retire(uncertain: _outcomeUnknown(e));
@@ -1492,26 +1490,6 @@ class ChatController extends Notifier<ChatState> {
     _pending = List.unmodifiable(_pending.where((p) => !gone.contains(p.requestId)));
     state = state.copyWith(pending: _placePending());
     return List.unmodifiable(prompts);
-  }
-
-  /// A message went out: one more turn in the usage statistics (only how
-  /// many).
-  void _sent() {
-    if (ref.mounted) ref.read(usageStatsProvider.notifier).count(UsageCount.turns);
-  }
-
-  /// A model call finished on the host: the tokens its provider reported go
-  /// to the usage statistics. Only a new log record (after the cursor, before
-  /// [Transcript.apply] moves it), never a snapshot's history, so a
-  /// reconnect replays nothing twice. A call that reported no usage adds
-  /// nothing.
-  void _countTokens(DshEvent event) {
-    if (event is! AssistantMessageEvent || event.seq <= _transcript.cursor || !ref.mounted) return;
-    final usage = event.usage;
-    if (usage == null) return;
-    ref
-        .read(usageStatsProvider.notifier)
-        .tokens(usage.inputTokens + (usage.cacheReadTokens ?? 0) + (usage.cacheWriteTokens ?? 0), usage.outputTokens);
   }
 
   /// Retry the same text and attachment selections. Picking again is a new

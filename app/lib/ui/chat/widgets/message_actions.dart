@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../l10n/l10n.dart';
-import '../../../speech/read_aloud.dart';
 import '../../common/bleed.dart';
 import '../../common/fluid_bits.dart';
 import '../../theme/app_icons.dart';
@@ -37,8 +36,7 @@ class ReplyActionRow extends StatefulWidget {
     super.key,
     required this.text,
     this.onShare,
-    this.onReadAloud,
-    this.reading = ReadAloudPhase.idle,
+
     this.onBranch,
     this.branching = false,
     this.onRegenerate,
@@ -53,11 +51,6 @@ class ReplyActionRow extends StatefulWidget {
   /// 「分享」: the share panel for this reply.
   final VoidCallback? onShare;
 
-  /// 「朗读」: reads this reply aloud, or stops it while [reading].
-  final VoidCallback? onReadAloud;
-
-  /// Where reading this reply aloud is: asking for the voice (转圈), or playing (停止键).
-  final ReadAloudPhase reading;
   final VoidCallback? onBranch;
 
   /// 正在分叉:分叉键转圈,不能再点。
@@ -134,8 +127,7 @@ class _ReplyActionRowState extends State<ReplyActionRow> {
     );
     final onShare = widget.onShare;
     final onBranch = widget.onBranch;
-    final onReadAloud = widget.onReadAloud;
-    final reading = widget.reading;
+
     final onRegenerate = widget.onRegenerate;
     final onMore = widget.onMore;
     final icons = Row(
@@ -162,27 +154,7 @@ class _ReplyActionRowState extends State<ReplyActionRow> {
             style: style,
             icon: const Icon(AppIcons.share),
           ),
-        if (onReadAloud != null)
-          IconButton(
-            key: const ValueKey('reply-read-aloud'),
-            tooltip: reading == ReadAloudPhase.idle ? l10n.speechReadAloud : l10n.speechReadAloudStop,
-            onPressed: () {
-              HapticFeedback.lightImpact();
-              onReadAloud();
-            },
-            style: style.copyWith(
-              foregroundColor: WidgetStatePropertyAll(reading == ReadAloudPhase.idle ? muted : colors.primary),
-            ),
-            icon: swap(switch (reading) {
-              ReadAloudPhase.idle => const Icon(AppIcons.readAloud, key: ValueKey('read-idle')),
-              ReadAloudPhase.loading => SizedBox.square(
-                key: const ValueKey('read-loading'),
-                dimension: 16,
-                child: CircularProgressIndicator(strokeWidth: 2, color: colors.primary),
-              ),
-              ReadAloudPhase.playing => const Icon(AppIcons.stop, key: ValueKey('read-playing')),
-            }),
-          ),
+
         if (onBranch != null) busyKey(MessageAction.branch, onBranch, widget.branching),
         if (onRegenerate != null) busyKey(MessageAction.regenerate, onRegenerate, widget.regenerating),
         if (onMore != null)

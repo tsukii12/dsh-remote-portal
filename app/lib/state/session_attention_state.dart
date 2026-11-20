@@ -23,7 +23,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../l10n/l10n.dart';
 import 'connection_state.dart';
 import 'hosts_state.dart';
-import 'notify_state.dart' show viewedChatProvider;
+import 'foreground_state.dart' show viewedChatProvider;
 import 'sessions_state.dart';
 
 // ── Pending requests ─────────────────────────────────────────────────────────

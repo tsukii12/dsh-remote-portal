@@ -9,7 +9,6 @@ import '../../remote/remote_screen.dart';
 import '../../shell/page_frame.dart';
 import '../about_page.dart';
 import '../appearance/appearance_page.dart';
-import '../performance_page.dart';
 import '../settings_screen.dart';
 import 'spot_anchor.dart';
 import 'spots.dart';
@@ -22,7 +21,6 @@ const remoteSettingsPages = {
   SettingsPageId.permission,
   SettingsPageId.agentPresets,
   SettingsPageId.appearance,
-  SettingsPageId.performance,
   SettingsPageId.remote,
   SettingsPageId.about,
 };
@@ -33,10 +31,8 @@ Widget settingsPage(SettingsPageId id, {String? sessionId}) => switch (id) {
   SettingsPageId.permission => PermissionPage(sessionId: sessionId),
   SettingsPageId.agentPresets => const AgentPresetsPage(),
   SettingsPageId.appearance => const AppearancePage(),
-  SettingsPageId.performance => const PerformancePage(),
   SettingsPageId.remote => const RemoteScreen(),
   SettingsPageId.about => const AboutPage(),
-  _ => throw ArgumentError.value(id, 'id', 'Not a remote setting'),
 };
 
 class RemoteModelSettingsPage extends ConsumerWidget {

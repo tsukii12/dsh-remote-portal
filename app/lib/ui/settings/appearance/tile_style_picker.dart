@@ -39,7 +39,7 @@ class TileStylePicker extends ConsumerWidget {
   static const ring = 2.0;
 
   /// The four features each preview shows.
-  static const sample = [FeatureKind.terminal, FeatureKind.automation, FeatureKind.models, FeatureKind.community];
+  static const sample = [FeatureKind.terminal, FeatureKind.automation, FeatureKind.models, FeatureKind.files];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

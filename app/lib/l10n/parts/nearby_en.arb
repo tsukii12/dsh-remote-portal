@@ -10,7 +10,6 @@
     }
   },
   "nearbySetAsDefault": "Use for new chats",
-  "nearbyManageModels": "Manage models",
   "nearbyPermissionPill": "Permissions for this chat: {name}",
   "@nearbyPermissionPill": {
     "placeholders": {
@@ -18,6 +17,5 @@
         "type": "String"
       }
     }
-  },
-  "nearbyChange": "Change"
+  }
 }

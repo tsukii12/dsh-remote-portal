@@ -680,10 +680,7 @@ class _RenderStatusLine extends RenderBox
     final (status, detail) = _measure(constraints, ChildLayoutHelper.layoutChild);
     size = _sizeOf(constraints, status, detail);
     (firstChild!.parentData! as _StatusLineParentData).offset = Offset(0, (size.height - status.height) / 2);
-    (lastChild!.parentData! as _StatusLineParentData).offset = Offset(
-      status.width,
-      (size.height - detail.height) / 2,
-    );
+    (lastChild!.parentData! as _StatusLineParentData).offset = Offset(status.width, (size.height - detail.height) / 2);
   }
 
   @override

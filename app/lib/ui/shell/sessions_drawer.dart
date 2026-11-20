@@ -12,7 +12,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
-import '../../state/bots_state.dart';
 import '../../state/connection_state.dart';
 import '../../state/hosts_state.dart';
 import '../../state/drawer_view_state.dart';
@@ -21,7 +20,6 @@ import '../../state/session_deletion_state.dart';
 import '../../state/sessions_state.dart';
 import '../../state/read_list_identity.dart';
 import '../../state/workspaces_state.dart';
-import '../bots/bots_page.dart' show BotsPage, UnreadBadge;
 import '../chat/media/media_format.dart' show chatTitleShown;
 import '../common/app_sheet.dart';
 import '../common/empty_view.dart';
@@ -29,11 +27,9 @@ import '../common/pressable.dart';
 import '../common/smooth_size.dart';
 import '../common/read_list_status.dart';
 import '../common/status_dot.dart';
-import '../modes/mode_switch.dart';
 import '../remote/host_status.dart';
 import '../remote/host_switcher.dart' show showHostSheet;
 import '../remote/network_details_sheet.dart' show showRemoteNetworkDetails;
-import '../safe_mode/safe_mode_banner.dart';
 import '../share/share_entry.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
@@ -160,9 +156,6 @@ class SessionsDrawer extends ConsumerWidget {
                           child: FittedBox(fit: BoxFit.scaleDown, child: BrandLockup(height: 19)),
                         ),
                       ),
-                      // 模式 and 网页模式, quietly: the one solid element stays 新对话.
-                      const ModeKey(),
-                      const SizedBox(width: 8),
                       const SizedBox(width: 8),
                       // When even the lockup's room is not enough, 新对话
                       // keeps its glyph and lets its words go.
@@ -174,10 +167,6 @@ class SessionsDrawer extends ConsumerWidget {
                   ),
                 ),
               ),
-      ),
-      SafeModeBanner(
-        padding: const EdgeInsets.fromLTRB(10, 0, 10, 8),
-        onDetails: () => onOpen(DrawerDestination.remote),
       ),
       SessionSearchBar(onClose: onClose),
       // The workspace switcher (once the host's workspace list has
@@ -242,8 +231,6 @@ class SessionsDrawer extends ConsumerWidget {
                         excluding: selecting,
                         child: IdentityBar(
                           onHost: () => showHostSheet(context, onManage: () => onOpen(DrawerDestination.remote)),
-                          onLocalDetails: () => onOpen(DrawerDestination.engine),
-                          onFeatures: () => onOpen(DrawerDestination.features),
                           onSettings: () => onOpen(DrawerDestination.settings),
                           onSettingsHold: () => onOpen(DrawerDestination.settingsSearch),
                         ),
@@ -482,9 +469,7 @@ class _SessionList extends ConsumerWidget {
     }
     // DS Bot's conversations (its Bots' chats, groups, members' sessions)
     // fold into one row that opens the Bot pages.
-    final botReady = ref.watch(dsBotProvider.select((s) => s.ready));
-    final showBots = scope.bots.isNotEmpty || (workspace == null && botReady);
-    if (scope.sessions.isEmpty && !showBots && ref.watch(drawerViewProvider).folders.isEmpty) {
+    if (scope.sessions.isEmpty && ref.watch(drawerViewProvider).folders.isEmpty) {
       if (scope.readOnly) return _Centered(child: Text(readListStatusText(scope.status)));
       return workspace == null ? const _EmptyState() : const _WorkspaceEmptyState();
     }
@@ -492,16 +477,6 @@ class _SessionList extends ConsumerWidget {
       now: now,
       onNewChat: onClose,
       readOnly: scope.readOnly,
-      leading: showBots
-          ? DsBotDrawerRow(
-              running: scope.bots.any((s) => s.running),
-              onTap: () {
-                Navigator.of(context).push(BotsPage.route());
-                // Close once the page covers us, so "back" lands on the chat.
-                Future<void>.delayed(AppMotion.slow, onClose);
-              },
-            )
-          : null,
       onOpen: (id) {
         if (ref.read(readListIdentityProvider) != identity ||
             ref.read(drawerScopeProvider)?.sessions.any((s) => s.sessionId == id) != true) {
@@ -650,69 +625,6 @@ class _SessionList extends ConsumerWidget {
       initial: initial,
       hint: context.l10n.shellChatTitle,
       maxLength: 80,
-    );
-  }
-}
-
-/// DS Bot's conversations as one row above the list: the glyph on the 20
-/// text line, 「DS Bot」, then a breathing dot while a Bot works and the
-/// unread count. Opens the Bot pages.
-class DsBotDrawerRow extends ConsumerWidget {
-  const DsBotDrawerRow({super.key, required this.running, required this.onTap});
-
-  final bool running;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = context.l10n;
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    final unread = ref.watch(dsBotInboxProvider.select((i) => i.total));
-    final shape = Squircle.border(AppShape.md);
-    return Semantics(
-      button: true,
-      label: [
-        'DS Bot',
-        if (running) l10n.shellCurrentlyRunning,
-        if (unread > 0) l10n.shellUnreadCount(unread),
-      ].join(l10n.shellSemanticsSeparator),
-      onTap: onTap,
-      excludeSemantics: true,
-      child: Material(
-        type: MaterialType.transparency,
-        child: InkWell(
-          onTap: onTap,
-          customBorder: shape,
-          child: SizedBox(
-            height: 44,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Row(
-                children: [
-                  Icon(AppIcons.bot, size: 20, color: scheme.onSurfaceVariant),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      'DS Bot',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        fontSize: 15,
-                        height: 1.4,
-                        color: scheme.onSurface,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  if (running) ...[const SizedBox(width: 10), const StatusDot(tone: StatusTone.busy, size: 7)],
-                  if (unread > 0) ...[const SizedBox(width: 10), UnreadBadge(unread)],
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 }
@@ -891,23 +803,14 @@ class _RemoteEmptyState extends ConsumerWidget {
 /// The drawer's footer: the host icon opens its details; the name and dropdown
 /// switch hosts. 全部功能 and 设置 follow as two equal round buttons.
 class IdentityBar extends ConsumerWidget {
-  const IdentityBar({
-    super.key,
-    required this.onHost,
-    required this.onFeatures,
-    required this.onSettings,
-    this.onSettingsHold,
-    this.onLocalDetails,
-  });
+  const IdentityBar({super.key, required this.onHost, required this.onSettings, this.onSettingsHold});
 
   final VoidCallback onHost;
 
   /// Local hosts have engine details, not a remote network path.
-  final VoidCallback? onLocalDetails;
 
   /// 全部功能: what there is to do now. (网页版 is in 全部功能, in 设置 ›
   /// 界面 and on the brand row's switch.)
-  final VoidCallback onFeatures;
   final VoidCallback onSettings;
 
   /// ⚙ held down: straight to settings search.
@@ -944,7 +847,7 @@ class IdentityBar extends ConsumerWidget {
                 IconButton(
                   key: const ValueKey('identity-host-details'),
                   tooltip: host.isLocal ? l10n.phoneEngineTitle : l10n.remoteNetworkDetails,
-                  onPressed: host.isLocal ? onLocalDetails : () => showRemoteNetworkDetails(context, host),
+                  onPressed: () => showRemoteNetworkDetails(context, host),
                   padding: const EdgeInsets.all(4),
                   constraints: const BoxConstraints.tightFor(width: keySize, height: keySize),
                   style: IconButton.styleFrom(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
@@ -1024,7 +927,6 @@ class IdentityBar extends ConsumerWidget {
             ),
           ),
           const SizedBox(width: 8),
-          _RoundButton(icon: AppIcons.allFeatures, tooltip: l10n.hubSettingsAllFeatures, onTap: onFeatures),
           const SizedBox(width: 8),
           _RoundButton(
             icon: AppIcons.settings,

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -20,7 +19,8 @@ class HostStatusView {
     HostLinkPhase.failed => HostStatusView(StatusTone.error, appL10n.commonConnectionFailed),
   };
 }
+
 HostStatusView watchHostStatus(WidgetRef ref, HostRef host) =>
-  HostStatusView.ofLink(ref.watch(hostLinkStatusProvider(host)).value ?? HostLinkStatus.idle);
+    HostStatusView.ofLink(ref.watch(hostLinkStatusProvider(host)).value ?? HostLinkStatus.idle);
 IconData hostKindIcon(HostKind kind) => AppIcons.computer;
 int hostKindTint(HostKind kind) => 1;

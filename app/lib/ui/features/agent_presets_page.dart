@@ -16,7 +16,7 @@ import '../../state/features_state.dart';
 import '../../state/preset_editor_state.dart';
 import '../common/app_dialog.dart';
 import '../common/app_sheet.dart';
-import '../plugins/plugin_widgets.dart';
+import '../common/status_badge.dart';
 import '../common/list_page_row.dart';
 import '../common/smooth_size.dart';
 import '../shell/page_frame.dart';
@@ -249,9 +249,9 @@ class AgentPresetsPage extends ConsumerWidget {
                     },
                     title: agentPresetName(preset),
                     badge: preset.broken != null
-                        ? PluginBadge(l10n.featuresLoadFailed, tone: PluginBadgeTone.danger)
+                        ? StatusBadge(l10n.featuresLoadFailed, tone: StatusBadgeTone.danger)
                         : preset.isDefault
-                        ? PluginBadge(l10n.featuresNewChatDefault, tone: PluginBadgeTone.official)
+                        ? StatusBadge(l10n.featuresNewChatDefault, tone: StatusBadgeTone.official)
                         : null,
                     subtitle: agentPresetDescription(preset),
                     subtitleMaxLines: 2,

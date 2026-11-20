@@ -6,10 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
-import '../../runtime/local_paths.dart';
 import '../../state/connection_state.dart';
-import '../../state/sessions_state.dart' show localWorkspaceDir;
-import '../../state/settings_state.dart';
 import '../../state/workspaces_state.dart';
 import '../common/app_sheet.dart';
 import '../common/fade_in.dart';
@@ -52,34 +49,7 @@ class DirectoryShortcut {
 
 /// Where to start: the home folder and the engine's default folder; on the
 /// phone also its shared storage (when the engine can see it).
-List<DirectoryShortcut> directoryShortcuts({required bool local, required bool phoneStorage, String? workingDir}) {
-  if (local) {
-    return [
-      DirectoryShortcut(
-        AppIcons.defaultFolder,
-        appL10n.remoteDirectoryDefault,
-        localWorkspaceDir,
-        subtitle: displayPath(localWorkspaceDir, local: true),
-      ),
-      // HarmonyOS: the sandbox lets the engine at its default folder and no further.
-      if (!LocalPaths.noGuest) DirectoryShortcut(AppIcons.home, appL10n.remoteDirectoryHome, localHome, subtitle: '~'),
-      if (phoneStorage) ...[
-        DirectoryShortcut(AppIcons.phoneStorage, appL10n.remoteDirectoryPhoneStorage, phoneStorageRoot),
-        DirectoryShortcut(
-          AppIcons.downloads,
-          appL10n.remoteDirectoryDownloads,
-          '$phoneStorageRoot/Download',
-          subtitle: appL10n.remoteDirectoryDownloadsPath,
-        ),
-        DirectoryShortcut(
-          AppIcons.document,
-          appL10n.remoteDirectoryDocuments,
-          '$phoneStorageRoot/Documents',
-          subtitle: appL10n.remoteDirectoryDocumentsPath,
-        ),
-      ],
-    ];
-  }
+List<DirectoryShortcut> directoryShortcuts({required bool local, String? workingDir}) {
   return [
     DirectoryShortcut(AppIcons.home, appL10n.remoteDirectoryHome, null, subtitle: '~'),
     if (workingDir != null && workingDir.isNotEmpty)
@@ -100,9 +70,8 @@ class DirectoryLocationsSheet extends ConsumerWidget {
     final l10n = context.l10n;
     final conn = ref.watch(activeConnectionProvider).value;
     const local = false;
-    final phoneStorage = ref.watch(settingsProvider.select((s) => s.phoneStorage));
     final recent = ref.watch(workspacePrefsProvider.select((p) => p.recent));
-    final shortcuts = directoryShortcuts(local: local, phoneStorage: phoneStorage, workingDir: conn?.workingDirectory);
+    final shortcuts = directoryShortcuts(local: local, workingDir: conn?.workingDirectory);
     final canBrowse = conn?.client.carrier is DshHttpCarrier;
     final known = {for (final s in shortcuts) ?s.path};
     final places = [
@@ -199,7 +168,7 @@ Future<String?> askFolderPath(BuildContext context) async {
   final path = await showTextPrompt(
     context,
     title: l10n.remoteDirectoryEnterPath,
-    hint: localWorkspaceDir,
+    hint: '/',
     confirm: l10n.remoteDirectoryGo,
     mono: true,
     keyboardType: TextInputType.url,
@@ -228,7 +197,7 @@ typedef Crumb = ({String label, String path});
 /// 「手机存储」, inside the home folder from 「主目录」, else from the root.
 List<Crumb> displayCrumbs(DirectoryLevel level, {required bool local}) {
   final crumbs = level.crumbs;
-  final storage = local ? crumbs.indexWhere((c) => c.path == phoneStorageRoot) : -1;
+  final storage = -1;
   final home = crumbs.indexWhere((c) => c.path == level.home);
   final (start, label) = storage >= 0
       ? (storage, appL10n.remoteDirectoryPhoneStorage)
@@ -368,20 +337,33 @@ class _DirectoryBrowserPageState extends ConsumerState<DirectoryBrowserPage> {
       title: title,
       actions: [
         if (canCreate && level != null)
-          GlassIconButton(icon: AppIcons.newFolder, tooltip: l10n.remoteDirectoryNewFolder, onPressed: _busy ? null : _newFolder),
+          GlassIconButton(
+            icon: AppIcons.newFolder,
+            tooltip: l10n.remoteDirectoryNewFolder,
+            onPressed: _busy ? null : _newFolder,
+          ),
       ],
       slivers: [
         SliverList.list(
           children: [
             FeatureNote(l10n.portalDirectoryHostHint),
             if (level != null && level.parent != null)
-              ListPageRow(icon: AppIcons.scrollToTop, title: l10n.portalDirectoryParent,
-                onTap: _busy ? null : () => unawaited(_open(level.parent!.path))),
+              ListPageRow(
+                icon: AppIcons.scrollToTop,
+                title: l10n.portalDirectoryParent,
+                onTap: _busy ? null : () => unawaited(_open(level.parent!.path)),
+              ),
             if (level != null && level.roots.isNotEmpty)
-              ListPageCard(children: [for (final root in level.roots)
-                ListPageRow(icon: AppIcons.folder, title: root.name,
-                  onTap: _busy ? null : () => unawaited(_open(root.path))),
-              ]),
+              ListPageCard(
+                children: [
+                  for (final root in level.roots)
+                    ListPageRow(
+                      icon: AppIcons.folder,
+                      title: root.name,
+                      onTap: _busy ? null : () => unawaited(_open(root.path)),
+                    ),
+                ],
+              ),
             if (level != null) FeatureNote(level.path),
             AbsorbPointer(absorbing: _busy, child: body),
             const SizedBox(height: FormBottomBar.height),

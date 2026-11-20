@@ -93,8 +93,7 @@ Future<void> scheduleArchiveNotice(BuildContext context, WidgetRef ref, List<Str
           : l10n.shellChatsArchivedPartial(result.archived.length, result.failed.length);
     }
     // The same Host's screen, even across a reconnect: its rows came back.
-    bool owned() =>
-        messenger.mounted && (route?.isCurrent ?? true) && container.read(activeHostProvider) == selected;
+    bool owned() => messenger.mounted && (route?.isCurrent ?? true) && container.read(activeHostProvider) == selected;
     await publishAfterUndoNotice(messenger, owned, () {
       messenger.clearSnackBars();
       messenger.removeCurrentSnackBar();

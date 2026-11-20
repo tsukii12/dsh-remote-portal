@@ -65,30 +65,6 @@ final class ShareFile extends ShareBlock {
   final String? excerptLanguage;
 }
 
-/// A plugin from the market.
-final class SharePlugin extends ShareBlock {
-  const SharePlugin({
-    required this.name,
-    required this.title,
-    this.author,
-    this.description,
-    this.icon,
-    this.facts = const [],
-  });
-
-  /// Package name (also picks the avatar tint).
-  final String name;
-  final String title;
-  final String? author;
-  final String? description;
-
-  /// `https://` or `data:` image, as in the market index.
-  final String? icon;
-
-  /// Up to three `(value, label)` pairs: version, stars, update date.
-  final List<(String, String)> facts;
-}
-
 // ── Pictures ────────────────────────────────────────────────────────────────
 
 /// Where a picture on a card comes from. The card fetches it the way the chat
@@ -490,7 +466,7 @@ ShareLayout layoutShareBlocks(
         if (kept.isNotEmpty) out.add(ShareAnswer(kept));
         left -= used;
         if (cut) return ShareLayout(out, truncated: true);
-      case ShareFile() || SharePlugin():
+      case ShareFile():
         out.add(block);
         left -= 240;
     }

@@ -1,6 +1,0 @@
-{
-  "version": 1,
-  "density": "compact",
-  "theme": { "mode": "dark", "mode": "light", "accent": "#123456", "accentPreset": "amber" },
-  "density": "comfortable"
-}

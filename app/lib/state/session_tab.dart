@@ -10,10 +10,7 @@ enum SessionTab {
   files,
   progress,
   context,
-  subagents,
-
-  /// The host's plugin tabs for the conversation; only while it has some.
-  plugins;
+  subagents;
 
   String get label => switch (this) {
     SessionTab.trajectory => appL10n.hubTabTrajectory,
@@ -22,6 +19,5 @@ enum SessionTab {
     SessionTab.progress => appL10n.hubTabProgress,
     SessionTab.context => appL10n.hubTabContext,
     SessionTab.subagents => appL10n.hubTabSubagents,
-    SessionTab.plugins => appL10n.hubPlugins,
   };
 }

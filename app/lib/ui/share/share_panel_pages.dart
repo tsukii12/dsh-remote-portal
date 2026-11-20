@@ -24,7 +24,7 @@ import '../common/sheet_navigator.dart';
 import '../replay/conversation_out.dart';
 import '../replay/replay_page.dart' show openConversationReplay;
 import '../session/workspace_files.dart' show formatBytes;
-import '../share_code/share_code_panel.dart' show ShareQrPage;
+import 'share_qr_page.dart';
 import '../share_code/share_code_widgets.dart';
 import '../share_hosted/hosted_links_page.dart' show linkExpiryText;
 import '../theme/app_icons.dart';
@@ -191,7 +191,11 @@ class _Placeholder extends StatelessWidget {
               )
             : SizedBox.square(
                 dimension: 22,
-                child: CircularProgressIndicator(strokeWidth: 2, strokeCap: StrokeCap.round, color: colors.textTertiary),
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  strokeCap: StrokeCap.round,
+                  color: colors.textTertiary,
+                ),
               ),
       ),
     );
@@ -608,8 +612,7 @@ class _ShareFilePageState extends State<ShareFilePage> {
     final idle = ready && !model.fileTooLarge;
     final progress = model.progress;
     final String? error =
-        model.error ??
-        (model.fileTooLarge ? l10n.viewShareTooLarge(maxConversationFileBytes ~/ (1024 * 1024)) : null);
+        model.error ?? (model.fileTooLarge ? l10n.viewShareTooLarge(maxConversationFileBytes ~/ (1024 * 1024)) : null);
     return SharePageLayout(
       title: l10n.viewShareAsFile,
       top: top,

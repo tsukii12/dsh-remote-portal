@@ -159,11 +159,8 @@ class _DockStackState extends ConsumerState<DockStack> with TickerProviderStateM
     _turnTo(target);
   }
 
-  void _turnTo(double target) => _turn.animateTo(
-    target,
-    duration: AppMotion.of(context, AppMotion.standard),
-    curve: AppMotion.glide,
-  );
+  void _turnTo(double target) =>
+      _turn.animateTo(target, duration: AppMotion.of(context, AppMotion.standard), curve: AppMotion.glide);
 
   @override
   Widget build(BuildContext context) {
@@ -328,7 +325,9 @@ typedef _Place = ({double y, double scale, double opacity, double clip, double d
 /// rising to the front slides over the one it replaces instead of the deck
 /// jumping.
 class RenderDockStack extends RenderBox
-    with ContainerRenderObjectMixin<RenderBox, DockStackParentData>, RenderBoxContainerDefaultsMixin<RenderBox, DockStackParentData> {
+    with
+        ContainerRenderObjectMixin<RenderBox, DockStackParentData>,
+        RenderBoxContainerDefaultsMixin<RenderBox, DockStackParentData> {
   RenderDockStack({required this._spread, required this._turn, required this._hasAccessory, required this.onShown});
 
   double get spread => _spread;
@@ -469,9 +468,7 @@ class RenderDockStack extends RenderBox
     }
     if (accessory != null && side != null) {
       final data = accessory.parentData! as DockStackParentData;
-      final top = spreadFront == null
-          ? 0.0
-          : mix(mix(a.frontTop, b.frontTop, f), spreadY[spreadFront], t);
+      final top = spreadFront == null ? 0.0 : mix(mix(a.frontTop, b.frontTop, f), spreadY[spreadFront], t);
       data
         ..offset = Offset(width - side.width, top)
         ..scale = 1
@@ -531,9 +528,7 @@ class RenderDockStack extends RenderBox
     }
     final deckHeight = rise + base;
     final frontTop = deckHeight - height(front);
-    final places = <int, _Place>{
-      front: (y: frontTop, scale: 1.0, opacity: 1.0, clip: height(front), depth: 0.0),
-    };
+    final places = <int, _Place>{front: (y: frontTop, scale: 1.0, opacity: 1.0, clip: height(front), depth: 0.0)};
     for (final (k, i) in behind.indexed) {
       final step = (k + 1).clamp(0, DockStackMetrics.peeks) * frontWeight;
       final cardY = rise - rises[k];

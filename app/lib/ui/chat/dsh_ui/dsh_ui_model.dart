@@ -11,7 +11,7 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 
 import '../../../l10n/l10n.dart';
-import '../../../plugins/native/native_icons.dart' show nativeIcon;
+import '../../theme/remote_icons.dart' show remoteIcon;
 import 'dsh_ui_bind.dart';
 import 'dsh_ui_dialect_genui.dart';
 import 'dsh_ui_plugin_formula.dart';
@@ -433,7 +433,7 @@ DshUiParse parseDshUiUncached(String source) {
 /// A genui block (docs/design/plugin-ui-v3.md §3.2): mapped to a read-only
 /// plugin view under the panel budget. Never offers a resend.
 DshUiParse _parseGenui(Object? json) {
-  final mapping = genuiToPluginView(json);
+  final mapping = genuiToRemoteView(json);
   final notes = [for (final path in mapping.notes) DshUiIssue(path, appL10n.viewUiDialectNote)];
   final view = mapping.view;
   if (view == null) {

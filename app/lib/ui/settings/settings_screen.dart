@@ -10,7 +10,6 @@ import '../shell/page_frame.dart';
 import '../theme/app_icons.dart';
 import 'appearance/appearance_page.dart';
 import 'language_tile.dart';
-import 'performance_page.dart';
 import 'search/settings_search_page.dart';
 import 'settings_widgets.dart';
 import 'index/settings_pages.dart';
@@ -63,7 +62,7 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ],
         ),
-        const SettingsSection(children: [LanguageSettingsTile(), PerformanceSettingsTile()]),
+        const SettingsSection(children: [LanguageSettingsTile()]),
         SettingsSection(children: [entry(SettingsPageId.remote), entry(SettingsPageId.about)]),
       ],
     );

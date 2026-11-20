@@ -87,14 +87,10 @@
   "chatReconnecting": "重新连接中",
   "chatGenerating": "生成中",
   "chatGoToSettings": "去设置",
-  "chatListeningEllipsis": "正在聆听…",
-  "chatTranscribingEllipsis": "正在转写…",
   "chatConnectToSend": "连接引擎后即可发送",
   "chatGeneratingSteerHint": "生成中 · 可直接插话",
   "chatComposerHint": "给 DSH 发消息…",
   "chatStopGenerating": "停止生成",
-  "chatVoiceInput": "语音输入",
-  "chatStopVoiceInput": "停止语音输入",
   "chatGoal": "目标",
   "chatGoalActions": "目标操作",
   "chatGoalBlocked": "受阻",
@@ -237,25 +233,6 @@
   "chatImageTapToView": "轻点查看",
   "chatImageTapToRetry": "轻点重试",
   "chatImageUnsupportedAddress": "不支持的地址",
-  "chatMermaidNeedsNetwork": "需要联网",
-  "chatMermaidSyntaxError": "图表语法有误",
-  "chatChartPreview": "图表预览",
-  "chatCopyCode": "复制代码",
-  "chatChartClosed": "图表已关闭",
-  "chatVoiceMicrophoneFailed": "没能打开麦克风",
-  "chatVoicePermissionOff": "麦克风权限已关闭",
-  "chatVoicePermissionNeeded": "需要麦克风权限才能语音输入",
-  "chatVoiceUnavailable": "这台手机没有可用的语音识别",
-  "chatVoiceNotHeard": "没有听清，再说一次",
-  "chatVoiceTranscriptionFailed": "没能转写这段语音",
-  "chatVoiceNetworkFailed": "网络不太好，没能识别",
-  "chatVoiceLanguageUnsupported": "暂不支持这种语言",
-  "chatVoiceMicrophoneBusy": "麦克风正被占用",
-  "chatVoiceBusy": "语音识别正忙，稍后再试",
-  "chatVoiceRecognitionFailed": "语音识别出错了",
-  "chatListening": "正在聆听",
-  "chatTranscribing": "正在转写",
-  "chatCancelVoiceInput": "取消语音输入",
   "chatViewTurnTrace": "查看本轮轨迹",
   "chatTokensPerSecond": "约 {count} tokens/秒",
   "@chatTokensPerSecond": {
@@ -550,20 +527,11 @@
       }
     }
   },
-  "chatSubscriptionExpired": "{name} 登录已失效",
-  "@chatSubscriptionExpired": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
   "chatProviderKeyMissing": "这个模型渠道还没有密钥",
   "chatDeepSeekKeyMissing": "还没有 DeepSeek API Key",
   "chatOutputLimitReached": "已达单次输出上限",
   "chatTurnBlocked": "本轮已被拦截",
   "chatTurnEngineRestarted": "引擎重启过，本轮已中断",
-  "chatSignInAgain": "重新登录",
   "chatQuestionsTitle": "有 {count} 个问题想问你",
   "@chatQuestionsTitle": {
     "placeholders": {
@@ -719,7 +687,6 @@
       }
     }
   },
-  "chatMe": "我",
   "chatGoalSemantics": "目标，{objective}",
   "@chatGoalSemantics": {
     "placeholders": {

@@ -25,11 +25,19 @@ void main() {
   });
 
   test('removed settings reject direct routes and deep links', () {
-    for (final id in SettingsPageId.values.where((id) => !remoteSettingsPages.contains(id))) {
-      expect(() => settingsPage(id), throwsArgumentError);
-      for (final link in SettingsIndex.page(id).links) {
-        expect(settingsPageForLink(link), isNull, reason: link);
-      }
+    for (final link in [
+      'phone',
+      'web-search',
+      'pets',
+      'voice',
+      'engine',
+      'diagnostics',
+      'account',
+      'plugins',
+      'all-features',
+    ]) {
+      expect(SettingsIndex.pageForLink(link), isNull, reason: link);
+      expect(settingsPageForLink(link), isNull, reason: link);
     }
     expect(settingsPageForLink('not-a-settings-page'), isNull);
     expect(settingsPageForLink(''), isNull);
@@ -45,17 +53,17 @@ void main() {
     for (final id in [SettingsPageId.models, SettingsPageId.permission, SettingsPageId.agentPresets]) {
       expect(find.text(SettingsIndex.page(id).title(appL10n)), findsOneWidget);
     }
-    for (final id in [
-      SettingsPageId.phone,
-      SettingsPageId.webSearch,
-      SettingsPageId.pets,
-      SettingsPageId.voice,
-      SettingsPageId.engine,
-      SettingsPageId.diagnostics,
-      SettingsPageId.account,
-      SettingsPageId.plugins,
+    for (final title in [
+      'Phone control',
+      'Web search',
+      'Pets',
+      'Voice',
+      'Local engine',
+      'Diagnostics',
+      'DS account',
+      'Plugins',
     ]) {
-      expect(find.text(SettingsIndex.page(id).title(appL10n)), findsNothing);
+      expect(find.text(title), findsNothing);
     }
   });
 

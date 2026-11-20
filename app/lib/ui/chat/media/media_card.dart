@@ -35,7 +35,6 @@ import '../../common/app_sheet.dart';
 import '../../common/bleed.dart';
 import '../../common/brief_notice.dart';
 import '../../fx/image_gen/image_generation.dart';
-import '../../settings/media_settings_page.dart' show MediaSettingsPage;
 import '../../theme/app_icons.dart';
 import '../../theme/theme.dart';
 import '../artifact_preview.dart' show ArtifactPreviewPage;
@@ -589,44 +588,10 @@ class _StateBox extends StatelessWidget {
                   const SizedBox(height: 8),
                 ],
                 label,
-                if (failed && !cancelled) ?_failureAction(context),
               ],
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  /// The way on from a failure (§5.3): 修改 for a refused description,
-  /// 去设置 for a key or a limit. Elsewhere ↻ below the card is the way.
-  Widget? _failureAction(BuildContext context) {
-    final l10n = context.l10n;
-    final (String label, VoidCallback onPressed) action;
-    switch (meta.error?.code) {
-      case 'policy' || 'policy-input' || 'policy-output':
-        final revise = MediaCardActions.maybeOf(context)?.revise;
-        if (revise == null || (meta.prompt?.trim() ?? '').isEmpty) return null;
-        action = (l10n.mediaRevise, () => revise(meta));
-      case 'auth' || 'unauthorized' || 'quota' || 'daily-limit':
-        action = (
-          l10n.chatGoToSettings,
-          () =>
-              unawaited(Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const MediaSettingsPage()))),
-        );
-      default:
-        return null;
-    }
-    return Padding(
-      padding: const EdgeInsets.only(top: 4),
-      child: TextButton(
-        onPressed: action.$2,
-        style: TextButton.styleFrom(
-          minimumSize: const Size(0, 32),
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          visualDensity: VisualDensity.compact,
-        ),
-        child: Text(action.$1),
       ),
     );
   }

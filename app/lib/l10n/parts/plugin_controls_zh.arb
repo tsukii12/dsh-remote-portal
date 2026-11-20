@@ -74,6 +74,5 @@
   "plugInputFormula": "公式无效或超出上限",
   "plugInputDatePicker": "插件日期",
   "plugInputTimePicker": "插件时间",
-  "plugInputChoices": "插件选项",
-  "plugInputGestureRequired": "该效果需要用户点按"
+  "plugInputChoices": "插件选项"
 }

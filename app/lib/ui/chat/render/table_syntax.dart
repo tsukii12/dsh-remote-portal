@@ -116,8 +116,7 @@ bool _needsBreakAbove(String? previous, String line) {
 
 /// The `>` markers a blank line inside the same quote carries: `>` for
 /// `> | a |`, so the table stays in the quote.
-String _quotePrefix(String line) =>
-    RegExp(r'^[ \t]*(?:>[ \t]?)+').firstMatch(line)?.group(0)?.trimRight() ?? '';
+String _quotePrefix(String line) => RegExp(r'^[ \t]*(?:>[ \t]?)+').firstMatch(line)?.group(0)?.trimRight() ?? '';
 
 final _blockLine = RegExp(
   r'^(?:#{1,6}(?:[ \t]|$)'

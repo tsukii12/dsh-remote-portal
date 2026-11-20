@@ -11,7 +11,7 @@ import 'dsh_ui_model.dart';
 const toolCardViewKey = 'dsh-go/view';
 
 /// 三档上限（规格 §5）。
-enum PluginViewBudget {
+enum RemoteViewBudget {
   /// 工具卡：8 KiB、40 个节点、6 层；写进对话记录。
   toolCard(DshUiProfile.toolCard),
 
@@ -21,7 +21,7 @@ enum PluginViewBudget {
   /// 状态条：2 KiB、8 个节点、3 层，只画一行。
   strip(DshUiProfile.strip);
 
-  const PluginViewBudget(this.profile);
+  const RemoteViewBudget(this.profile);
 
   final DshUiProfile profile;
 }
@@ -100,7 +100,7 @@ typedef PluginImageResolver = ImageProvider? Function(String src);
 /// 解析 + 求值 + 校验一份插件视图，按 [view] / [data] 的对象身份缓存
 /// （字符串按内容）：数据变了要传新对象，不要原地改。解析结果里的 issues
 /// 是带路径的问题列表。
-DshUiParse parsePluginView(Object? view, {Object? data, PluginViewBudget budget = PluginViewBudget.panel}) =>
+DshUiParse parseRemoteView(Object? view, {Object? data, RemoteViewBudget budget = RemoteViewBudget.panel}) =>
     _cache.get(view, data, budget.profile);
 
 final _cache = _PluginParseCache(64);

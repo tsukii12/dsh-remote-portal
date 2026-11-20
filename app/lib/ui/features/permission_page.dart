@@ -9,7 +9,6 @@ import '../../state/connection_state.dart';
 import '../../state/engine_settings_state.dart' show describeSettingsError;
 import '../../state/features_state.dart';
 import '../../state/hosts_state.dart';
-import '../common/ask_ai.dart';
 import '../common/list_page_row.dart';
 import '../common/risk_notice.dart';
 import '../settings/index/spots.dart';
@@ -130,7 +129,6 @@ class _PermissionPageState extends ConsumerState<PermissionPage> {
     return AppPage.list(
       title: l10n.featuresPermissions,
       subtitle: Text(l10n.featuresPermissionsSubtitle),
-      actions: const [AskAiButton(AskAiTopic.fullAccess)],
       children: [
         if (!connected)
           const FeatureOffline()

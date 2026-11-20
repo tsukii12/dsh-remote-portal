@@ -15,48 +15,29 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../dev/remote_benchmark.dart';
 import '../../l10n/l10n.dart';
-import '../../notify/chat_alerts.dart' show approvalText, questionText;
-import '../../speech/read_aloud.dart';
-import '../../speech/voice_cloud.dart';
-import '../../state/android_features.dart';
-import '../../state/account_state.dart';
-import '../speech/voice_call_page.dart';
-import '../../state/streaming_asr_state.dart';
-import '../../state/streaming_pcm_state.dart';
-import '../../voice/live_words.dart';
-import '../../voice/live_words_model.dart';
-import '../../voice/streaming_pcm.dart';
+import '../../state/chat_request_text.dart';
 import '../../state/agents_state.dart' show subagentParentProvider;
 import '../../state/attachments.dart';
-import '../../state/balance_state.dart';
 import '../../state/chat_error_text.dart';
 import '../../state/chat_state.dart';
 import '../../state/commands_state.dart';
 import '../../state/compose_inbox.dart';
 import '../../state/composer_insert.dart';
-import '../../state/phone_skill_use.dart';
 import '../../state/composer_quote.dart';
 import '../../state/connection_state.dart';
 import '../../state/draft_store.dart';
 import '../../state/drawer_view_state.dart';
-import '../../state/engine_settings_state.dart' show engineSettingsProvider;
 import '../../state/features_state.dart' show agentPresetsProvider, permissionStateProvider;
 import '../../state/hosts_state.dart' show HostRef, activeHostProvider;
-import '../../state/media_generation.dart';
 import '../../state/mention_state.dart';
 import '../../state/models_state.dart';
 import '../../state/new_chat_modes.dart';
 import '../../state/session_search.dart' show folderLabel;
-import '../../state/safe_mode_state.dart';
 import '../../state/session_modes.dart';
 import '../../state/sessions_state.dart';
 import '../../state/settings_state.dart';
 import '../../state/usage_state.dart';
-import '../../state/voice_state.dart';
-import '../../state/voice_model_state.dart';
-import '../../state/voice_settings.dart';
 import '../../state/workspaces_state.dart' show selectedWorkspaceProvider, workspaceTitle;
-import '../../usage/usage_stats.dart';
 import '../common/app_sheet.dart';
 import '../common/brief_notice.dart';
 import '../common/fluid_bits.dart';
@@ -64,16 +45,8 @@ import '../common/ui_trace.dart';
 import '../common/sheet_title_bar.dart';
 import '../common/smooth_size.dart';
 import '../common/status_dot.dart';
-import '../features/all_features_page.dart';
 import '../features/session_export_page.dart';
-import '../pets/pet_perch.dart';
-import '../pets/pet_stage.dart';
-import '../plugins/native/composer_strip.dart' show ComposerStripSlot;
-import '../plugins/native/native_composer_bar.dart';
-import '../plugins/native/native_taps.dart' show NativeComposerHost, NativeComposerScope, runNativeAction;
-import '../plugins/seats/plugin_overlay_layer.dart';
 import '../session/session_detail_page.dart';
-import '../settings/media_settings_page.dart' show MediaSettingsPage, showMediaInstallSheet, showMediaUnavailableSheet;
 import '../settings/settings_widgets.dart' show SettingsTile;
 import '../shell/adaptive/adaptive_layout.dart' show WindowClass;
 import '../shell/drawer/folder_sheets.dart';
@@ -82,7 +55,6 @@ import '../theme/theme.dart';
 import '../wallpaper/wallpaper_backdrop.dart';
 import '../workspace/workspace_switcher.dart' show showWorkspaceSheet;
 import '../workspace/workspaces_page.dart';
-import 'balance_widgets.dart';
 import 'chat_header.dart';
 import 'chat_list.dart';
 import 'composer.dart';
@@ -91,9 +63,6 @@ import 'dock/chat_dock.dart';
 import 'dock/dock_stack.dart';
 import 'empty_state.dart';
 import 'new_chat_options.dart';
-import 'media/generate_mode.dart';
-import 'media/generate_sheet.dart';
-import 'media/media_card.dart' show MediaCardActions, mediaItemBytes;
 import 'media/media_format.dart' show chatTitleShown;
 import 'mention/mention_controller.dart';
 import 'mention/mention_picker.dart';
@@ -102,7 +71,6 @@ import 'model_sheet.dart';
 import 'slash_palette.dart';
 import 'trajectory_sheet.dart';
 import 'usage_sheet.dart';
-import 'voice/voice_controller.dart';
 import 'widgets/activity_strip.dart';
 import 'widgets/attachments.dart';
 import 'widgets/notice_row.dart';
@@ -185,9 +153,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
 
   final _input = MentionTextController();
 
-  /// The composer as plugin controls and ui.json capsules see it.
-  late final _nativeHost = _ChatComposerHost(this);
-
   /// The `@` picker over [_input].
   late final _mentions = MentionPickerController(
     input: _input,
@@ -197,13 +162,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     recents: ref.read(mentionRecentsProvider),
   );
 
-  /// Dictation into [_input]. Made in [initState], not on first use: a
-  /// read-only conversation never builds the composer, and [dispose] must not
-  /// create it from an unmounted ref.
-  late final VoiceInputController _voice;
-
-  /// Where [_voice] says it is on, for what waits for a quiet moment.
-  late final VoiceInputActiveController _voiceFlag;
   final _focus = FocusNode();
 
   // Keep this slash draft closed until it leaves slash input or starts again at "/".
@@ -274,51 +232,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
   /// The open conversation's id, or `new`.
   late String _draftKey;
 
-  PreparedPhoneSkill? _preparedPhoneSkill;
-  PreparedPhoneSkill? _sendingPhoneSkill;
-  bool get _phoneSkillSending => _sendingPhoneSkill != null;
-
-  void _dropPreparedPhoneSkill() {
-    final prepared = _preparedPhoneSkill;
-    _preparedPhoneSkill = null;
-    // If send is waiting, its final source predicate will reject. If it already
-    // dispatched, only its own completion can report what was accepted.
-    if (prepared != null && !identical(prepared, _sendingPhoneSkill)) unawaited(prepared.discard());
-  }
-
-  bool _phoneSkillCurrent(PreparedPhoneSkill prepared) =>
-      mounted &&
-      identical(_preparedPhoneSkill, prepared) &&
-      prepared.origin.current(ProviderScope.containerOf(context, listen: false));
-
-  Future<void> _sendPhoneSkill() async {
-    final prepared = _preparedPhoneSkill;
-    if (prepared == null || _phoneSkillSending) return;
-    if (!_phoneSkillCurrent(prepared)) {
-      setState(_dropPreparedPhoneSkill);
-      _composerToast(appL10n.phoneSkillReplaySourceChanged);
-      return;
-    }
-    setState(() => _sendingPhoneSkill = prepared);
-    final chat = ref.read(chatProvider(prepared.origin.sessionId).notifier);
-    bool ok = false;
-    try {
-      // No ordinary input, quote or attachments are consumed. Queue rather than
-      // steer an existing turn; the final predicate runs beside client.prompt.
-      ok = await chat.send(prepared.text, mode: SendMode.queue, deliveryAllowed: () => _phoneSkillCurrent(prepared));
-    } finally {
-      if (!ok) unawaited(prepared.discard());
-      if (mounted) {
-        final showReceipt = _phoneSkillCurrent(prepared);
-        setState(() {
-          if (identical(_preparedPhoneSkill, prepared)) _preparedPhoneSkill = null;
-          if (identical(_sendingPhoneSkill, prepared)) _sendingPhoneSkill = null;
-        });
-        if (showReceipt) _composerToast(ok ? appL10n.phoneSkillReplayQueued : appL10n.phoneSkillReplaySendUncertain);
-      }
-    }
-  }
-
   void _saveDraft() => _draftStore.save(_draftKey, _input.text, _drafts);
 
   /// Attachments first: setting the text saves both.
@@ -331,23 +244,21 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     );
   }
 
-  void _reportVoice() => _voiceFlag.set(_voice.active);
-
   void _switchDraft(String? sessionId) {
     final key = sessionId ?? 'new';
     if (key == _draftKey) return;
-    _dropPreparedPhoneSkill();
+
     _draftScope = Object();
     _creating = null;
     _syncWait = null;
     _composerToastWait?.cancel();
-    if (_voice.active) unawaited(_voice.cancel());
+
     _mentions.dismiss();
     _dismissedSlashText = null;
     _saveDraft();
     _draftKey = key;
     _spoken = null;
-    _editing = false;
+
     setState(() => _showDraft(ref.read(draftStoreProvider).drafts[key]));
   }
 
@@ -360,51 +271,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     WidgetsBinding.instance.addObserver(this);
     _scheduleInteraction();
     ref.listenManual(currentSessionProvider, (_, _) => _scheduleInteraction());
-    _voice = VoiceInputController(
-      input: _input,
-      bridge: ref.read(voiceBridgeProvider),
-      mode: () async {
-        final mode = await ref.read(voiceSettingsProvider.notifier).ready();
-        return mounted && ref.read(harmonyLocalVoiceProvider) ? voiceModeOnHarmonyLocal(mode) : mode;
-      },
-      harmony: () => ref.read(operatingSystemProvider) == 'ohos',
-      cloud: (mode) => ref.read(voiceCloudProvider)(mode),
-      cloudLikely: () => ref.read(voiceCloudLikelyProvider)(),
-      signedIn: () => ref.read(accountProvider).signedIn,
-      liveWords: (onWords) async {
-        final pcm = ref.read(streamingPcmCaptureProvider);
-        final asr = ref.read(streamingAsrProvider);
-        try {
-          final chosen = await liveWordsModel(ref);
-          if (chosen == null || !mounted) return null;
-          final live = LiveWords(pcm, asr, chosen.model, StreamingPcmSource.dictation, onWords, trial: chosen.trial);
-          await live.start();
-          return live;
-        } on Object {
-          // Without live words dictation works as before.
-          return null;
-        }
-      },
-      // The voice model lives in the on-device engine: it counts for that host only.
-      modelReady: () =>
-          mounted &&
-          (ref.read(activeConnectionProvider).value?.isLocal ?? false) &&
-          ref.read(voiceModelProvider).status == VoiceModelStatus.ready,
-      // The capability probe is async and can finish after this page is gone.
-      client: () => mounted ? ref.read(activeConnectionProvider).value?.client : null,
-      inputOwner: () => mounted ? ref.read(activeHostProvider) : null,
-      onRecognized: () {
-        if (mounted) ref.read(usageStatsProvider.notifier).count(UsageCount.voice);
-      },
-    );
+
     // A download or deletion changes capabilities without replacing the host.
-    ref.listenManual(voiceModelProvider.select((s) => s.status == VoiceModelStatus.ready), (_, _) {
-      if (mounted && (ref.read(activeConnectionProvider).value?.isLocal ?? false)) {
-        unawaited(_voice.refreshAfterModelChange());
-      }
-    });
-    _voiceFlag = ref.read(voiceInputActiveProvider.notifier);
-    _voice.addListener(_reportVoice);
+
     _draftKey = ref.read(currentSessionProvider) ?? 'new';
     _draftStore = ref.read(draftStoreProvider.notifier);
     // Start reading what earlier sessions still owe before the first send.
@@ -414,11 +283,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     _input.addListener(_saveDraft);
     ref.listenManual(currentSessionProvider, (_, next) {
       // Another conversation: nothing of this one is read aloud any more.
-      ref.read(readAloudProvider.notifier).stop();
+
       _switchDraft(next);
     });
     ref.listenManual(activeConnectionProvider.select((c) => c.value?.client), (_, _) {
-      _dropPreparedPhoneSkill();
       _draftScope = Object();
       if (_creating != null || _syncWait != null) {
         setState(() {
@@ -435,25 +303,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     });
     // Opening the chat counts as "open" for the balance (throttled to 1/min).
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) ref.read(balanceProvider.notifier).refresh();
       // Asked for from another page before this one was built.
-      if (mounted && ref.read(repairDraftProvider) != null) _takeRepairDraft();
       if (mounted && ref.read(composerInsertProvider) != null) {
         _takeComposerInsert();
       }
       if (mounted && ref.read(readyComposeProvider) != null) _takeCompose();
     });
-  }
-
-  void _takeRepairDraft() {
-    final text = ref.read(repairDraftProvider.notifier).take();
-    if (text == null || !mounted) return;
-    ref.read(currentSessionProvider.notifier).select(null);
-    _input.value = TextEditingValue(
-      text: text,
-      selection: TextSelection.collapsed(offset: text.length),
-    );
-    _focus.requestFocus();
   }
 
   /// Skills handed over from 技能: `/name` alone is then a message, never a
@@ -466,19 +321,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
   void _takeComposerInsert() {
     final insert = ref.read(composerInsertProvider.notifier).take();
     if (insert == null || !mounted) return;
-    if (insert.phoneSkill case final prepared?) {
-      if (!prepared.origin.current(ProviderScope.containerOf(context, listen: false)) ||
-          insert.sessionId != prepared.origin.sessionId) {
-        unawaited(prepared.discard());
-        _composerToast(appL10n.phoneSkillReplaySourceChanged);
-        return;
-      }
-      setState(() {
-        _dropPreparedPhoneSkill();
-        _preparedPhoneSkill = prepared;
-      });
-      return;
-    }
+
     if (ref.read(currentSessionProvider) != insert.sessionId) {
       ref.read(currentSessionProvider.notifier).select(insert.sessionId);
     }
@@ -527,7 +370,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
   @override
   void dispose() {
     _toTop?.dispose();
-    _dropPreparedPhoneSkill();
+
     WidgetsBinding.instance.removeObserver(this);
     _endInteraction?.call();
     _endInteraction = null;
@@ -538,11 +381,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     _input.removeListener(_resetSlashDismissal);
     _input.removeListener(_saveDraft);
     _mentions.dispose();
-    _voice.removeListener(_reportVoice);
-    _voice.dispose();
+
     // The page is gone, and its dictation with it.
-    final flag = _voiceFlag;
-    scheduleMicrotask(() => flag.set(false));
+
     _input.dispose();
     _focus.dispose();
     _scrolledUnder.dispose();
@@ -612,7 +453,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
       ref.read(currentSessionProvider.notifier).select(sessionId);
       if (!ownsCreation() || _draftKey != sessionId || ref.read(currentSessionProvider) != sessionId) return null;
       ref.read(composerQuoteProvider.notifier).move('new', sessionId);
-      ref.read(generateModeProvider.notifier).move('new', sessionId);
+
       if (!ownsCreation() || _draftKey != sessionId) return null;
       _draftStore.clear('new');
       if (!setup.isEmpty) {
@@ -689,8 +530,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     if ((typed.isEmpty && drafts.isEmpty) || _creating != null || _syncWait != null) return;
     // Generation mode: an ordinary message whose first line is the
     // parameter header (media-generation §8, revision of 2026-10-28).
-    final generate = ref.read(generateModeProvider).byKey[_draftKey];
-    if (generate != null && !_generateReady(generate, typed, drafts)) return;
+
     final client = ref.read(activeConnectionProvider).value?.client;
     if (client == null) return;
     final generation = client.mux.generation;
@@ -700,20 +540,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     final quote = ref.read(composerQuoteProvider)[_draftKey];
     final asked = quote == null ? typed : withQuote(quote, typed);
     // The header grammar refuses what it can't carry (§4.6.4): nothing goes.
-    final written = generate?.tryMessage(asked);
-    if (written != null && written.text == null) {
-      _toast(switch (written.code) {
-        GenerateHeaderCode.missingPrompt => appL10n.mediaNoDescription,
-        GenerateHeaderCode.tooLong => appL10n.mediaDescriptionTooLong,
-        _ => appL10n.mediaErrorGeneric,
-      });
-      return;
-    }
-    final text = written?.text ?? asked;
+
+    final text = asked;
 
     // With attachments or a quote the line is a message, even if it starts
     // with "/".
-    if (drafts.isEmpty && quote == null && generate == null) {
+    if (drafts.isEmpty && quote == null) {
       final input = parseSlashInput(text);
       // A bare "/": the palette is open, the person picks a row.
       if (input != null && !input.hasArgs && input.token.isEmpty) return;
@@ -765,7 +597,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
       }
       setState(() => _drafts = const []);
       // A new message: the reply being read aloud is old news.
-      ref.read(readAloudProvider.notifier).stop();
+
       _input.clear();
       ref.read(composerQuoteProvider.notifier).clear(sessionId);
 
@@ -774,16 +606,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
       final current = ref.read(chatProvider(sessionId));
       final bool ok;
       if (current.singleQuestion case final request?
-          when drafts.isEmpty &&
-              quote == null &&
-              generate == null &&
-              mode == SendMode.now &&
-              current.openApproval == null) {
+          when drafts.isEmpty && quote == null && mode == SendMode.now && current.openApproval == null) {
         ok = await chat.answer(request, [QuestionAnswer(request.questions.single.id, custom: text)]);
       } else {
         ok = await chat.send(text, attachments: drafts, mode: mode);
         // A generation request, counted on top of its turn.
-        if (ok && generate != null && mounted) ref.read(usageStatsProvider.notifier).count(UsageCount.gen);
       }
       if (ok) RemoteBenchmark.finish('first_send_ack');
       if (!ok && _sameHost(client)) _giveBack(sessionId, typed, drafts, quote: quote);
@@ -855,12 +682,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     // A valid generation request, where this host can generate: its header
     // becomes the mode again, the description (as it was) the text. Anywhere
     // else the whole message stays as it was, header and all (§4.6.6).
-    if (quoteChip && restoreMode && _generationOn) {
-      if (GenerateHeader.parse(text) case (:final header, :final description)) {
-        _restoreGenerate(header);
-        text = description;
-      }
-    }
+
     final (:quote, :body) = quoteChip ? splitQuote(text) : (quote: null, body: text);
     if (quote != null) {
       ref.read(composerQuoteProvider.notifier).set(_draftKey, quote);
@@ -899,12 +721,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
           filesAllowed: canStageFiles(ref.read(activeConnectionProvider).value, ref.read(activeHostProvider)),
         );
         setState(() => _drafts = merged.attachments);
-        _compose(merged.text, quoteChip: false, focus: !request.voice);
+        _compose(merged.text, quoteChip: false, focus: true);
         _saveDraft();
-        if (request.voice) {
-          _focus.unfocus();
-          unawaited(_voice.start());
-        }
+
         if (merged.problem ?? request.note case final line?) {
           showComposerToast(context, line, composerHeight: _veilHeight.value + _ChatLayout.overlap);
         }
@@ -1065,24 +884,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
         context,
         files: canStageFiles(ref.read(activeConnectionProvider).value, ref.read(activeHostProvider)),
         sessionId: ref.read(currentSessionProvider),
-        generate: ref.read(mediaPluginProvider) != MediaPluginState.absent,
-        call: true,
       );
-      if (choice is CallChoice) {
-        if (ownsDraft() && mounted) await _startCall(ownsDraft);
-        return;
-      }
-      if (choice is GenerateChoice) {
-        if (ownsDraft()) _enterGenerate();
-        return;
-      }
-      if (choice is NativeToolChoice) {
-        if (ownsDraft() && mounted) {
-          final scope = DshGoScope(sessionId: ref.read(currentSessionProvider));
-          unawaited(runNativeAction(context, ref, choice.action, scope: scope, composer: _nativeHost));
-        }
-        return;
-      }
+
       if (choice is! AttachChoice || !ownsDraft()) return;
       if (room <= 0) {
         _toast(appL10n.chatAttachmentLimit(maxAttachments));
@@ -1171,177 +974,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
 
   // ---------------------------------------------------------------------------
   // 生成模式 (docs/design/media-generation.md §4.2)
-
-  /// The last mode came from 编辑: the hint asks how to change it.
-  bool _editing = false;
-
-  /// This host can generate now: the plugin runs, its catalogue reads, and a
-  /// configured service with its key offers a model (media-generation §4.3).
-  bool get _generationOn =>
-      ref.read(mediaPluginProvider) == MediaPluginState.ready && ref.read(mediaCatalogProvider).configured;
-
-  /// Into generation mode for this conversation: its own mode if it has one,
-  /// else the kind used last ([kind] picks one). A host that only offers the
-  /// plugin gets 「在此主机上安装」; a catalogue that is missing, damaged or
-  /// of an unknown version, 「生成模式不可用」 (chat goes on as usual).
-  void _enterGenerate({GenerateKind? kind, bool edit = false}) {
-    if (ref.read(mediaPluginProvider) != MediaPluginState.ready) {
-      unawaited(showMediaInstallSheet(context));
-      return;
-    }
-    final catalog = ref.read(mediaCatalogProvider);
-    if (catalog.status == MediaCatalogStatus.loading) {
-      _whenSettingsRead(() => _enterGenerate(kind: kind, edit: edit));
-      return;
-    }
-    if (!catalog.usable) {
-      unawaited(showMediaUnavailableSheet(context));
-      return;
-    }
-    if (!catalog.configured) {
-      unawaited(_configureMedia(kind: kind, edit: edit));
-      return;
-    }
-    final modes = ref.read(generateModeProvider);
-    // This conversation's own mode keeps its model even when the host no
-    // longer has it (the sheet then asks); a fresh one starts on this host's.
-    final own = modes.byKey[_draftKey];
-    var params = own ?? (kind == null ? modes.start : modes.startOf(kind)).startOn(catalog);
-    if (kind != null && params.kind != kind) params = modes.startOf(kind).startOn(catalog);
-    // A kind the host has no model for: the one it has.
-    final kinds = catalog.kinds;
-    if (!kinds.contains(params.kind)) params = modes.startOf(kinds.first).startOn(catalog);
-    ref.read(generateModeProvider.notifier).set(_draftKey, params.fitTo(catalog));
-    setState(() => _editing = edit);
-    _focus.requestFocus();
-  }
-
-  /// [then] once the engine settings (and with them the catalogue) are read,
-  /// if this draft is still the one on screen.
-  void _whenSettingsRead(VoidCallback then) {
-    final key = _draftKey;
-    unawaited(
-      ref.read(engineSettingsProvider.future).then<void>((_) {}, onError: (Object _) {}).whenComplete(() {
-        if (!mounted || _draftKey != key) return;
-        if (ref.read(mediaCatalogProvider).status == MediaCatalogStatus.loading) return;
-        then();
-      }),
-    );
-  }
-
-  /// The plugin is there with no service yet: 图像与视频 first, then the
-  /// mode once a service is set up.
-  Future<void> _configureMedia({GenerateKind? kind, bool edit = false}) async {
-    final key = _draftKey;
-    await Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const MediaSettingsPage()));
-    if (!mounted || _draftKey != key || !ref.read(mediaCatalogProvider).configured) return;
-    _enterGenerate(kind: kind, edit: edit);
-  }
-
-  /// A generation request back in the composer (编辑后重发): exactly its
-  /// values become this conversation's mode, its model by marker or by a
-  /// name only one choice has; otherwise the sheet asks (§4.6.5).
-  void _restoreGenerate(GenerateHeader header) {
-    ref
-        .read(generateModeProvider.notifier)
-        .set(_draftKey, GenerateParams.fromHeader(header, ref.read(mediaCatalogProvider)));
-    setState(() => _editing = false);
-  }
-
-  /// × on the capsule: out of the mode; the text stays.
-  void _exitGenerate() {
-    ref.read(generateModeProvider.notifier).set(_draftKey, null);
-    setState(() => _editing = false);
-  }
-
-  void _openGenerateSheet(GenerateParams params) {
-    final key = _draftKey;
-    unawaited(
-      showGenerateSheet(
-        context,
-        params: params,
-        onChanged: (next) {
-          if (ref.read(generateModeProvider).byKey[key] != null) {
-            ref.read(generateModeProvider.notifier).set(key, next);
-          }
-        },
-      ),
-    );
-  }
-
-  /// Whether [params] can go with [typed] and [drafts]; says why not.
-  bool _generateReady(GenerateParams params, String typed, List<DraftAttachment> drafts) {
-    if (typed.isEmpty) {
-      _toast(appL10n.mediaNoDescription);
-      return false;
-    }
-    // A model this host can't pin to one service is never guessed (§4.6.5).
-    final model = ref.read(mediaCatalogProvider).resolve(params.model, params.kind)?.model;
-    if (model == null) {
-      _toast(appL10n.mediaPickModelFirst);
-      return false;
-    }
-    final pictures = drafts.where((d) => d.isImage).length;
-    if (pictures > 0 && model.maxRefs == 0) {
-      _toast(appL10n.mediaNoRefs);
-      return false;
-    }
-    if (params.isVideo && pictures >= 2 && !model.lastFrame) {
-      _toast(appL10n.mediaNoLastFrame);
-      return false;
-    }
-    if (pictures > model.maxRefs) {
-      _toast(appL10n.mediaRefLimit(model.maxRefs));
-      return false;
-    }
-    return true;
-  }
-
-  /// ↻ on a card: the same request again, as a new generation message — when
-  /// the card's model pins one of this host's choices. Otherwise it is 修改:
-  /// the person sees the values and picks.
-  Future<void> _regenerateMedia(String sessionId, MediaMeta meta) async {
-    final prompt = meta.prompt ?? '';
-    if (prompt.trim().isEmpty) return;
-    if (_generationOn) {
-      final catalog = ref.read(mediaCatalogProvider);
-      final params = GenerateParams.fromMeta(meta, catalog);
-      final text = catalog.resolve(params.model, params.kind) == null ? null : params.tryMessage(prompt).text;
-      if (text != null) {
-        HapticFeedback.selectionClick();
-        await ref.read(chatProvider(sessionId).notifier).send(text);
-        return;
-      }
-    }
-    _reviseMedia(meta);
-  }
-
-  /// 修改: the card's description back in the composer as it was, in
-  /// generation mode with the card's values where this host can generate.
-  void _reviseMedia(MediaMeta meta) {
-    final prompt = meta.prompt ?? '';
-    if (prompt.trim().isEmpty) return;
-    if (_generationOn) {
-      ref
-          .read(generateModeProvider.notifier)
-          .set(_draftKey, GenerateParams.fromMeta(meta, ref.read(mediaCatalogProvider)));
-      setState(() => _editing = false);
-    }
-    _compose(prompt, restoreMode: false);
-  }
-
-  /// ⋯ › 编辑 / 做成视频: the picture into the tray, generation mode on.
-  Future<void> _reuseMedia(String sessionId, MediaMeta meta, MediaItem item, {required bool video}) async {
-    final scope = _draftScope;
-    try {
-      final bytes = await mediaItemBytes(ref, sessionId, item);
-      if (!mounted || !identical(scope, _draftScope)) return;
-      _addDrafts([DraftAttachment.sniff(item.name, bytes)]);
-      _enterGenerate(kind: video ? GenerateKind.video : GenerateKind.image, edit: !video);
-    } catch (e) {
-      if (mounted) _toast(chatErrorText(e, action: appL10n.chatReadImageFailed));
-    }
-  }
 
   Future<void> _pickNewChatFolder() async {
     final scope = _draftScope;
@@ -1434,8 +1066,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
             ref.read(currentSessionProvider.notifier).select(null);
           case 'model':
             await _showModelSheet();
-          case 'features':
-            await Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const AllFeaturesPage()));
           case 'export':
             final sessionId = ref.read(currentSessionProvider);
             if (sessionId == null) {
@@ -1472,36 +1102,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
 
   void _openUsage(String sessionId, ModelSelection? model) {
     showUsageSheet(context, sessionId: sessionId, model: model);
-  }
-
-  /// 「语音通话」 with this conversation (a new chat gets its conversation
-  /// with the first thing said); [ownsDraft]: still the conversation it was asked from.
-  Future<void> _startCall(bool Function() ownsDraft) async {
-    // Dictation gives the microphone back first (what it heard so far goes, as on a draft switch).
-    await _voice.cancel();
-    if (!mounted || !ownsDraft()) return;
-    final host = ref.read(activeHostProvider);
-    final sessionId = ref.read(currentSessionProvider);
-    final listed = sessionId == null ? null : ref.read(chatProvider(sessionId)).title;
-    final title = listed != null && listed.trim().isNotEmpty ? chatTitleShown(listed.trim()) : appL10n.commonNewChat;
-    // The call stays with the conversation it began in, whatever is opened meanwhile.
-    var pinned = sessionId;
-    unawaited(
-      openChatCall(
-        context,
-        title: title,
-        session: () async {
-          // Another host now: its conversation of the same id is not this call's.
-          if (!mounted || ref.read(activeHostProvider) != host) return null;
-          final id = pinned;
-          if (id == null) return pinned = await _ensureSession(isCurrent: () => mounted);
-          // Picks it still owes (a failed apply on the new-chat screen) are settled before it is spoken to.
-          final owed = ref.read(owedSetupsProvider.notifier).of(host, id);
-          if (owed != null && !await _applyOwedSetup(host, id, owed, () => mounted)) return null;
-          return id;
-        },
-      ),
-    );
   }
 
   /// The stop key; what waits in the inbox goes right away (see
@@ -1632,9 +1232,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
         : ref.watch(sessionUsageProvider(sessionId).select((u) => u.contextFraction));
     // 「帮我修复」: a fresh chat with the repair prompt in the composer,
     // not sent — the person reads it first.
-    ref.listen(repairDraftProvider, (_, next) {
-      if (next != null) _takeRepairDraft();
-    });
     ref.listen(composerInsertProvider, (_, next) {
       if (next != null) _takeComposerInsert();
     });
@@ -1655,7 +1252,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
             null || 'completed' || 'max-tokens' => l10n.chatTurnCompleted,
             _ => l10n.chatTurnError,
           };
-          ref.read(balanceProvider.notifier).refresh();
         }
       });
     }
@@ -1704,31 +1300,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     // the 新对话 key would have nothing to mirror.
     final isChild = sessionId != null && ref.watch(subagentParentProvider(sessionId).select((p) => p != null));
     // 生成模式: this conversation's, and what the host can do.
-    final generate = ref.watch(generateModeProvider.select((m) => m.byKey[_draftKey]));
-    final mediaReady = ref.watch(mediaPluginProvider) == MediaPluginState.ready;
+
     // What the catalogue really offers here (§4.3): a picture can go in as a
     // reference, or as a video's first frame, only where a model takes one.
-    final mediaEdit =
-        mediaReady &&
-        ref.watch(
-          mediaCatalogProvider.select((c) => c.of(GenerateKind.image).any((e) => e.model.edit || e.model.maxRefs > 0)),
-        );
-    final mediaVideo =
-        mediaReady &&
-        ref.watch(
-          mediaCatalogProvider.select(
-            (c) => c.of(GenerateKind.video).any((e) => e.model.firstFrame || e.model.maxRefs > 0),
-          ),
-        );
-    final generateModel = generate == null
-        ? null
-        : ref.watch(mediaCatalogProvider.select((c) => c.resolve(generate.model, generate.kind)?.model));
+
     // 引用追问: the passage waiting above this conversation's composer.
     final quote = ref.watch(composerQuoteProvider.select((quotes) => quotes[_draftKey]));
     // Mirror _send for ordinary text; attachments, quotes and generation
     // stay messages even while a question is waiting.
-    final answerInComposer =
-        (chat?.singleQuestion ?? false) && approval == null && _drafts.isEmpty && quote == null && generate == null;
+    final answerInComposer = (chat?.singleQuestion ?? false) && approval == null && _drafts.isEmpty && quote == null;
     final modelDefaultWarning = sessionId != null && chat?.error == null && (chat?.defaultModelSaveFailed ?? false);
     final error = sessionId == null
         ? _localError
@@ -1746,13 +1326,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     // shows (read only; a phone on its side typing folds both away).
     final running = chat?.running ?? false;
     final pillsBesideStrip = sessionId != null && running && !typing;
-    final pillsInCapsules = !readOnly && !running && !typing;
-    final composerPills = _composerPills(
-      sessionId,
-      autoApprove: chat?.autoApprove ?? false,
-      generate: readOnly ? null : generate,
-      risk: !pillsBesideStrip,
-    );
+
+    final composerPills = _composerPills(sessionId, autoApprove: chat?.autoApprove ?? false, risk: !pillsBesideStrip);
     final headerHeight = typing ? MediaQuery.paddingOf(context).top + AppSpace.sm : ChatHeader.heightOf(context);
 
     Widget backdrop(Widget child) {
@@ -1768,476 +1343,332 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
           resizeToAvoidBottomInset: true,
           // The pet stands over the page on the capsules above the
           // composer (they report themselves with PetPerch).
-          body: NativeComposerScope(
-            host: _nativeHost,
-            ref: ref,
-            child: PetStage(
-              sessionId: sessionId,
-              aside: typing,
-              child: CustomMultiChildLayout(
-                delegate: _ChatLayout(_veilHeight),
-                children: [
-                  LayoutId(
-                    id: _Slot.body,
-                    child: sessionId == null || idleBlank
-                        ? Padding(
-                            padding: EdgeInsets.only(top: headerHeight, bottom: _ChatLayout.overlap),
-                            child: Align(
-                              alignment: const Alignment(0, -0.25),
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    ChatEmptyState(
-                                      connected: connected,
-                                      suggestions: ref.watch(settingsProvider.select((s) => s.chatSuggestions))
-                                          ? defaultSuggestions
-                                          : const [],
-                                      connecting: connAsync.isLoading,
-                                      starting: starting,
-                                      tidying: tidying,
-                                      idle: idle,
-                                      onReconnect: connAsync.hasError && !connAsync.isLoading && !failureCard
-                                          ? _reconnect
-                                          : null,
-                                      onSuggestion: _onSuggestion,
-                                      options: NewChatOptions(
-                                        folderLabel: !hasFolders
-                                            ? null
-                                            : newFolder == null
-                                            ? context.l10n.shellFolders
-                                            : context.l10n.shellFolderLabel(newFolder.name),
-                                        onFolder: hasFolders ? _pickNewChatFolder : null,
-                                      ),
-                                      workspace: workspace != null
-                                          ? workspaceTitle(workspace)
-                                          : inHostDefault
-                                          ? context.l10n.viewEmptyHostDefaultDirectory
-                                          : null,
-                                      onWorkspace: () => showWorkspaceSheet(
-                                        context,
-                                        onManage: () =>
-                                            Navigator.of(context)
-                                                .push(MaterialPageRoute<void>(builder: (_) => const WorkspacesPage())),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          )
-                        : _ChatTextScale(
-                            child: MediaCardActions(
-                              regenerate: readOnly ? null : (meta) => unawaited(_regenerateMedia(sessionId, meta)),
-                              revise: readOnly || !mediaReady ? null : _reviseMedia,
-                              edit: readOnly || !mediaEdit
-                                  ? null
-                                  : (meta, item) => unawaited(_reuseMedia(sessionId, meta, item, video: false)),
-                              makeVideo: readOnly || !mediaVideo
-                                  ? null
-                                  : (meta, item) => unawaited(_reuseMedia(sessionId, meta, item, video: true)),
-                              // Keyed by conversation: opening another one fades it in.
-                              child: FluidFadeIn(
-                                key: ValueKey(sessionId),
-                                child: ChatList(
-                                  key: ValueKey(sessionId),
-                                  sessionId: sessionId,
-                                  toTop: _toTop,
-                                  topInset: headerHeight,
-                                  bottomInset: _ChatLayout.overlap,
-                                  scrolledUnder: _scrolledUnder,
-                                  onWithdraw: _withdraw,
-                                  onSendNow: _sendNow,
-                                  onEditPrompt: _compose,
-                                  onResend: _resend,
-                                  onQuote: readOnly ? null : (passage) => _quote(sessionId, passage),
-                                  onToast: _composerToast,
-                                  onSwitchModel: readOnly ? null : _switchModel,
-                                ),
-                              ),
-                            ),
-                          ),
-                  ),
-                  LayoutId(
-                    id: _Slot.pluginOverlay,
-                    child: ClipRect(
-                      child: MediaQuery(
-                        // The layout already reserves the native chrome and keyboard.
-                        data: MediaQuery.of(context).copyWith(padding: EdgeInsets.zero, viewInsets: EdgeInsets.zero),
-                        child: PluginOverlayLayer(sessionId: sessionId),
-                      ),
-                    ),
-                  ),
-                  // The page's own backdrop again under the composer area: content
-                  // scrolled behind the composer and strip fades into it, so the
-                  // gaps between them show the background, never a sliver of text.
-                  // Solid from 6 below the column's top; the fade above stays inside
-                  // the list's 8dp bottom padding, so the last message is untouched.
-                  LayoutId(
-                    id: _Slot.veil,
-                    child: BackdropVeil(solidHeight: _veilHeight),
-                  ),
-                  LayoutId(
-                    id: _Slot.header,
-                    child: _HeaderAside(
-                      aside: typing,
-                      child: ChatHeader(
-                        scrolledUnder: sessionId == null ? null : _scrolledUnder,
-                        title: title,
-                        status: status,
-                        detail: !narrow || isChild
-                            ? null
-                            : folderLabel(
-                                ref.watch(
-                                  sessionsProvider.select(
-                                    (s) => s.value?.where((session) => session.sessionId == sessionId).firstOrNull?.cwd,
-                                  ),
-                                ),
-                              ),
-                        onOpenDrawer: widget.onOpenDrawer,
-                        onNewChat: sessionId == null || isChild
-                            ? null
-                            : () {
-                                HapticFeedback.selectionClick();
-                                ref.read(currentSessionProvider.notifier).select(null);
-                              },
-                        // The title pill opens the whole session's details (on a
-                        // wide window it folds and unfolds the panel beside us).
-                        onTitleTap: sessionId == null
-                            ? null
-                            : () => SessionDetailPage.open(context, sessionId, toggle: true),
-                        // A phone's conversation has no room for it beside its title: the
-                        // model is shown and picked at the composer's foot while typing.
-                        // A new chat's title is only 「新对话」, so the model takes the
-                        // header's right like on a wide window — picked before typing,
-                        // once there is an engine to send to.
-                        trailing: narrow && (sessionId != null || !connected)
-                            ? null
-                            : ModelChip(
-                                selection: sessionId == null ? pendingModel : chat?.model,
-                                onSelected: _modelTarget(),
-                                grouped: true,
-                              ),
-                      ),
-                    ),
-                  ),
-                  LayoutId(
-                    id: _Slot.palette,
-                    child: Center(
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: AppSpace.floatingWidth),
-                        child: ListenableBuilder(
-                          listenable: Listenable.merge([_input, _mentions]),
-                          builder: (context, _) {
-                            // The `@` word at the caret wins over a "/" line.
-                            final live = connected && !readOnly;
-                            final mention = live && _mentions.isOpen;
-                            final content = live && !mention ? _slashContent(commands) : null;
-                            // The pet steps aside while a panel is up.
-                            return PopScope<Object?>(
-                              canPop: content == null,
-                              onPopInvokedWithResult: (didPop, _) {
-                                if (!didPop) _dismissSlashPalette();
-                              },
-                              child: PetCover(
-                                active: mention || content != null,
-                                child: AnimatedSwitcher(
-                                  duration: AppMotion.of(context, AppMotion.quick),
-                                  switchInCurve: AppMotion.enter,
-                                  switchOutCurve: AppMotion.exit,
-                                  transitionBuilder: (child, animation) => FadeTransition(
-                                    opacity: animation,
-                                    child: ScaleTransition(
-                                      alignment: Alignment.bottomCenter,
-                                      scale: Tween(begin: 0.96, end: 1.0).animate(animation),
-                                      child: child,
-                                    ),
-                                  ),
-                                  child: mention
-                                      ? MentionPicker(key: const ValueKey('mention'), controller: _mentions)
-                                      : content == null
-                                      ? const SizedBox(key: ValueKey('none'), width: double.infinity)
-                                      : TextFieldTapRegion(
-                                          key: ValueKey(content is PaletteHint),
-                                          groupId: _composerGroup,
-                                          onTapOutside: (_) => _dismissSlashPalette(),
-                                          child: SlashPalette(content: content, onPick: _pick),
-                                        ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-                  LayoutId(
-                    id: _Slot.composer,
-                    child: SafeArea(
-                      top: false,
-                      minimum: const EdgeInsets.only(bottom: 8),
-                      child: Padding(
-                        // A little air above the (transparent) gesture bar;
-                        // 12 at the sides like the header's keys above.
-                        padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
-                        child: Center(
-                          child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: AppSpace.floatingWidth),
+          body: CustomMultiChildLayout(
+            delegate: _ChatLayout(_veilHeight),
+            children: [
+              LayoutId(
+                id: _Slot.body,
+                child: sessionId == null || idleBlank
+                    ? Padding(
+                        padding: EdgeInsets.only(top: headerHeight, bottom: _ChatLayout.overlap),
+                        child: Align(
+                          alignment: const Alignment(0, -0.25),
+                          child: SingleChildScrollView(
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                // Banners are capsules too: the pet stands on
-                                // the topmost one (an empty slot is 0 high).
-                                PetPerch(
-                                  kind: PerchKind.banner,
-                                  child: SmoothSize(
-                                    duration: AppMotion.of(context, AppMotion.standard),
-                                    curve: AppMotion.std,
-                                    alignment: Alignment.bottomCenter,
-                                    child: connected && sessionId != null && !(chat?.controlReady ?? true)
-                                        ? Padding(
-                                            padding: const EdgeInsets.only(bottom: 8),
-                                            child: ErrorBanner(
-                                              maxLines: null,
-                                              info: !(chat?.streamLost ?? false),
-                                              message: chat?.streamLost ?? false
-                                                  ? chat?.syncError ?? l10n.stateChatSyncInterrupted
-                                                  : l10n.stateChatSynchronizing,
-                                              action: chat?.resyncing ?? false
-                                                  ? null
-                                                  : (
-                                                      label: l10n.stateChatSyncRetry,
-                                                      onPressed: () {
-                                                        unawaited(ref.read(chatProvider(sessionId).notifier).resync());
-                                                      },
-                                                    ),
-                                            ),
-                                          )
-                                        : error == null && notice == null
-                                        ? const SizedBox(width: double.infinity)
-                                        : notice != null
-                                        ? Padding(
-                                            padding: const EdgeInsets.only(bottom: 8),
-                                            child: ErrorBanner(
-                                              info: true,
-                                              message: notice,
-                                              onDismiss: () =>
-                                                  ref.read(chatProvider(sessionId!).notifier).dismissNotice(),
-                                            ),
-                                          )
-                                        : Padding(
-                                            padding: const EdgeInsets.only(bottom: 8),
-                                            child: ErrorBanner(
-                                              message: error!,
-                                              onDismiss: () {
-                                                if (sessionId == null) {
-                                                  setState(() => _localError = null);
-                                                } else if (modelDefaultWarning) {
-                                                  ref
-                                                      .read(chatProvider(sessionId).notifier)
-                                                      .dismissDefaultModelSaveWarning();
-                                                } else {
-                                                  ref.read(chatProvider(sessionId).notifier).dismissError();
-                                                }
-                                              },
-                                            ),
-                                          ),
+                                ChatEmptyState(
+                                  connected: connected,
+                                  suggestions: ref.watch(settingsProvider.select((s) => s.chatSuggestions))
+                                      ? defaultSuggestions
+                                      : const [],
+                                  connecting: connAsync.isLoading,
+                                  starting: starting,
+                                  tidying: tidying,
+                                  idle: idle,
+                                  onReconnect: connAsync.hasError && !connAsync.isLoading && !failureCard
+                                      ? _reconnect
+                                      : null,
+                                  onSuggestion: _onSuggestion,
+                                  options: NewChatOptions(
+                                    folderLabel: !hasFolders
+                                        ? null
+                                        : newFolder == null
+                                        ? context.l10n.shellFolders
+                                        : context.l10n.shellFolderLabel(newFolder.name),
+                                    onFolder: hasFolders ? _pickNewChatFolder : null,
+                                  ),
+                                  workspace: workspace != null
+                                      ? workspaceTitle(workspace)
+                                      : inHostDefault
+                                      ? context.l10n.viewEmptyHostDefaultDirectory
+                                      : null,
+                                  onWorkspace: () => showWorkspaceSheet(
+                                    context,
+                                    onManage: () =>
+                                        Navigator.of(context)
+                                            .push(MaterialPageRoute<void>(builder: (_) => const WorkspacesPage())),
                                   ),
                                 ),
-                                PetPerch(
-                                  kind: PerchKind.banner,
-                                  child: SmoothSize(
-                                    duration: AppMotion.of(context, AppMotion.standard),
-                                    curve: AppMotion.std,
-                                    alignment: Alignment.bottomCenter,
-                                    child: connected
-                                        ? const _BalanceBannerSlot()
-                                        : const SizedBox(width: double.infinity),
-                                  ),
-                                ),
-                                if (connected && sessionId != null)
-                                  PetPerch(
-                                    kind: PerchKind.banner,
-                                    child: UnknownResultsBanner(
-                                      sessionId: sessionId,
-                                      padding: const EdgeInsets.only(bottom: 8),
-                                    ),
-                                  ),
-                                SmoothSize(
-                                  duration: AppMotion.of(context, AppMotion.standard),
-                                  curve: AppMotion.std,
-                                  alignment: Alignment.bottomLeft,
-                                  child: switch (pillsInCapsules ? null : composerPills) {
-                                    final pill? => Padding(
-                                      padding: const EdgeInsets.only(bottom: 8),
-                                      child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: PetPerch(kind: PerchKind.banner, child: pill),
-                                      ),
-                                    ),
-                                    null => const SizedBox(width: double.infinity),
-                                  },
-                                ),
-                                // The status bars as one deck: the todo and
-                                // goal bars (official input dock), the
-                                // activity strip, a plugin's status line;
-                                // each zero high when empty. Folded, they take
-                                // one row (dock_stack.dart). They fold away
-                                // while a phone on its side types.
-                                _DockAside(
-                                  aside: typing,
-                                  child: BackdropGroup(
-                                    child: DockStack(
-                                      cards: [
-                                        if (sessionId != null) ...[
-                                          TodoDockSlot(sessionId: sessionId),
-                                          GoalDockSlot(sessionId: sessionId),
-                                          ActivityStripSlot(
-                                            sessionId: sessionId,
-                                            onTap: () => _openRunningTrajectory(sessionId),
-                                            // The todo bar shows it, unless it is folded behind the strip.
-                                            todoProgress: ref.watch(dockFoldedProvider),
-                                          ),
-                                        ],
-                                        // It gives the activity strip its place while a reply generates.
-                                        if (!readOnly) ComposerStripSlot(sessionId: sessionId, visible: !running),
-                                      ],
-                                      accessory: pillsBesideStrip
-                                          ? _stripRisk(sessionId, autoApprove: chat?.autoApprove ?? false)
-                                          : null,
-                                    ),
-                                  ),
-                                ),
-                                // The capsules (ui.json's and plugins'), led
-                                // by the chat's pills; they step aside while a
-                                // reply generates; nothing at all without any.
-                                if (!readOnly)
-                                  _DockAside(
-                                    aside: typing,
-                                    child: NativeComposerBar(
-                                      sessionId: sessionId,
-                                      visible: !running,
-                                      leading: pillsInCapsules ? composerPills : null,
-                                      strip: false,
-                                    ),
-                                  ),
-                                if (_preparedPhoneSkill case final prepared?)
-                                  Card(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(12),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(l10n.phoneSkillReplayReview),
-                                          SelectableText(prepared.text),
-                                          Row(
-                                            children: [
-                                              TextButton(
-                                                onPressed: _phoneSkillSending
-                                                    ? null
-                                                    : () => setState(_dropPreparedPhoneSkill),
-                                                child: Text(l10n.commonClose),
-                                              ),
-                                              FilledButton(
-                                                onPressed: _phoneSkillSending || readOnly || !connected
-                                                    ? null
-                                                    : _sendPhoneSkill,
-                                                child: Text(l10n.phoneSkillReplayQueue),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                if (readOnly)
-                                  const ReadOnlyBar()
-                                else
-                                  Composer(
-                                    hardwareEnterSends: ref.watch(settingsProvider.select((s) => s.hardwareEnterSends)),
-                                    controller: _input,
-                                    groupId: _composerGroup,
-                                    // The page's context: Scaffold drops the keyboard inset below.
-                                    maxLines: Composer.linesFor(context),
-                                    focusNode: _focus,
-                                    connected: connected,
-                                    running: chat?.running ?? false,
-                                    stopping: chat?.stopping ?? false,
-                                    sessionReady: chat?.controlReady ?? true,
-                                    busy: _creating != null || _syncWait != null,
-                                    // The header, the tool row and the strip
-                                    // already say an approval waits: the hint
-                                    // stays the plain one.
-                                    waiting: approval != null || question != null,
-                                    modeLabel: question == null
-                                        ? null
-                                        : answerInComposer
-                                        ? l10n.chatAnswerMode
-                                        : l10n.chatMessageMode,
-                                    waitHint: approval != null
-                                        ? null
-                                        : answerInComposer
-                                        ? l10n.chatAnswerHint
-                                        : question != null
-                                        ? l10n.commonWaitingAnswer
-                                        : null,
-                                    placeholder: generate == null
-                                        ? null
-                                        : _editing && !generate.isVideo
-                                        ? l10n.mediaHintEdit
-                                        : generate.isVideo
-                                        ? l10n.mediaHintVideo
-                                        : l10n.mediaHintImage,
-                                    onSend: _send,
-                                    onSendOptions: chat?.controlReady ?? true ? _sendOptions : null,
-                                    voice: _voice,
-                                    onKeyEvent: _composerKey,
-                                    onContentInserted: connected ? _pasteContent : null,
-                                    onStop: _stop,
-                                    hasAttachments: _drafts.isNotEmpty,
-                                    leading: AttachButton(onPressed: connected ? _attach : null),
-                                    keyboardInset: MediaQuery.viewInsetsOf(context).bottom,
-                                    footer: _composerOpens(context) && !isChild
-                                        ? ComposerModelPill(
-                                            selection: sessionId == null ? pendingModel : chat?.model,
-                                            onSelected: _modelTarget(),
-                                          )
-                                        : null,
-                                    tray: ComposerTrayStack.maybe(
-                                      quote: switch (quote) {
-                                        final quote? => QuoteChip(
-                                          quote: quote,
-                                          onRemove: () => ref.read(composerQuoteProvider.notifier).clear(_draftKey),
-                                        ),
-                                        null => null,
-                                      },
-                                      attachments: _drafts.isEmpty
-                                          ? null
-                                          : ComposerTray(
-                                              items: _drafts,
-                                              onRemove: _removeDraft,
-                                              labels: frameLabels(generate, generateModel, _drafts.length),
-                                            ),
-                                    ),
-                                    accessory: sessionId == null || contextFraction == null
-                                        ? null
-                                        : ContextRing(
-                                            fraction: contextFraction,
-                                            onTap: () => _openUsage(sessionId, chat?.model),
-                                          ),
-                                  ),
                               ],
                             ),
                           ),
                         ),
+                      )
+                    : _ChatTextScale(
+                        child: FluidFadeIn(
+                          key: ValueKey(sessionId),
+                          child: ChatList(
+                            key: ValueKey(sessionId),
+                            sessionId: sessionId,
+                            toTop: _toTop,
+                            topInset: headerHeight,
+                            bottomInset: _ChatLayout.overlap,
+                            scrolledUnder: _scrolledUnder,
+                            onWithdraw: _withdraw,
+                            onSendNow: _sendNow,
+                            onEditPrompt: _compose,
+                            onResend: _resend,
+                            onQuote: readOnly ? null : (passage) => _quote(sessionId, passage),
+                            onToast: _composerToast,
+                            onSwitchModel: readOnly ? null : _switchModel,
+                          ),
+                        ),
+                      ),
+              ),
+              LayoutId(
+                id: _Slot.veil,
+                child: BackdropVeil(solidHeight: _veilHeight),
+              ),
+              LayoutId(
+                id: _Slot.header,
+                child: _HeaderAside(
+                  aside: typing,
+                  child: ChatHeader(
+                    scrolledUnder: sessionId == null ? null : _scrolledUnder,
+                    title: title,
+                    status: status,
+                    detail: !narrow || isChild
+                        ? null
+                        : folderLabel(
+                            ref.watch(
+                              sessionsProvider.select(
+                                (s) => s.value?.where((session) => session.sessionId == sessionId).firstOrNull?.cwd,
+                              ),
+                            ),
+                          ),
+                    onOpenDrawer: widget.onOpenDrawer,
+                    onNewChat: sessionId == null || isChild
+                        ? null
+                        : () {
+                            HapticFeedback.selectionClick();
+                            ref.read(currentSessionProvider.notifier).select(null);
+                          },
+                    onTitleTap: sessionId == null
+                        ? null
+                        : () => SessionDetailPage.open(context, sessionId, toggle: true),
+                    trailing: narrow && (sessionId != null || !connected)
+                        ? null
+                        : ModelChip(
+                            selection: sessionId == null ? pendingModel : chat?.model,
+                            onSelected: _modelTarget(),
+                            grouped: true,
+                          ),
+                  ),
+                ),
+              ),
+              LayoutId(
+                id: _Slot.palette,
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: AppSpace.floatingWidth),
+                    child: ListenableBuilder(
+                      listenable: Listenable.merge([_input, _mentions]),
+                      builder: (context, _) {
+                        final live = connected && !readOnly;
+                        final mention = live && _mentions.isOpen;
+                        final content = live && !mention ? _slashContent(commands) : null;
+                        return PopScope<Object?>(
+                          canPop: content == null,
+                          onPopInvokedWithResult: (didPop, _) {
+                            if (!didPop) _dismissSlashPalette();
+                          },
+                          child: AnimatedSwitcher(
+                            duration: AppMotion.of(context, AppMotion.quick),
+                            switchInCurve: AppMotion.enter,
+                            switchOutCurve: AppMotion.exit,
+                            transitionBuilder: (child, animation) => FadeTransition(
+                              opacity: animation,
+                              child: ScaleTransition(
+                                alignment: Alignment.bottomCenter,
+                                scale: Tween(begin: 0.96, end: 1.0).animate(animation),
+                                child: child,
+                              ),
+                            ),
+                            child: mention
+                                ? MentionPicker(key: const ValueKey('mention'), controller: _mentions)
+                                : content == null
+                                ? const SizedBox(key: ValueKey('none'), width: double.infinity)
+                                : TextFieldTapRegion(
+                                    key: ValueKey(content is PaletteHint),
+                                    groupId: _composerGroup,
+                                    onTapOutside: (_) => _dismissSlashPalette(),
+                                    child: SlashPalette(content: content, onPick: _pick),
+                                  ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+              LayoutId(
+                id: _Slot.composer,
+                child: SafeArea(
+                  top: false,
+                  minimum: const EdgeInsets.only(bottom: 8),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: AppSpace.floatingWidth),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            SmoothSize(
+                              duration: AppMotion.of(context, AppMotion.standard),
+                              curve: AppMotion.std,
+                              alignment: Alignment.bottomCenter,
+                              child: connected && sessionId != null && !(chat?.controlReady ?? true)
+                                  ? Padding(
+                                      padding: const EdgeInsets.only(bottom: 8),
+                                      child: ErrorBanner(
+                                        maxLines: null,
+                                        info: !(chat?.streamLost ?? false),
+                                        message: chat?.streamLost ?? false
+                                            ? chat?.syncError ?? l10n.stateChatSyncInterrupted
+                                            : l10n.stateChatSynchronizing,
+                                        action: chat?.resyncing ?? false
+                                            ? null
+                                            : (
+                                                label: l10n.stateChatSyncRetry,
+                                                onPressed: () {
+                                                  unawaited(ref.read(chatProvider(sessionId).notifier).resync());
+                                                },
+                                              ),
+                                      ),
+                                    )
+                                  : error == null && notice == null
+                                  ? const SizedBox(width: double.infinity)
+                                  : notice != null
+                                  ? Padding(
+                                      padding: const EdgeInsets.only(bottom: 8),
+                                      child: ErrorBanner(
+                                        info: true,
+                                        message: notice,
+                                        onDismiss: () => ref.read(chatProvider(sessionId!).notifier).dismissNotice(),
+                                      ),
+                                    )
+                                  : Padding(
+                                      padding: const EdgeInsets.only(bottom: 8),
+                                      child: ErrorBanner(
+                                        message: error!,
+                                        onDismiss: () {
+                                          if (sessionId == null) {
+                                            setState(() => _localError = null);
+                                          } else if (modelDefaultWarning) {
+                                            ref.read(chatProvider(sessionId).notifier).dismissDefaultModelSaveWarning();
+                                          } else {
+                                            ref.read(chatProvider(sessionId).notifier).dismissError();
+                                          }
+                                        },
+                                      ),
+                                    ),
+                            ),
+                            if (connected && sessionId != null)
+                              UnknownResultsBanner(sessionId: sessionId, padding: const EdgeInsets.only(bottom: 8)),
+                            SmoothSize(
+                              duration: AppMotion.of(context, AppMotion.standard),
+                              curve: AppMotion.std,
+                              alignment: Alignment.bottomLeft,
+                              child: switch (composerPills) {
+                                final pill? => Padding(
+                                  padding: const EdgeInsets.only(bottom: 8),
+                                  child: Align(alignment: Alignment.centerLeft, child: pill),
+                                ),
+                                null => const SizedBox(width: double.infinity),
+                              },
+                            ),
+                            _DockAside(
+                              aside: typing,
+                              child: BackdropGroup(
+                                child: DockStack(
+                                  cards: [
+                                    if (sessionId != null) ...[
+                                      TodoDockSlot(sessionId: sessionId),
+                                      GoalDockSlot(sessionId: sessionId),
+                                      ActivityStripSlot(
+                                        sessionId: sessionId,
+                                        onTap: () => _openRunningTrajectory(sessionId),
+                                        todoProgress: ref.watch(dockFoldedProvider),
+                                      ),
+                                    ],
+                                  ],
+                                  accessory: pillsBesideStrip
+                                      ? _stripRisk(sessionId, autoApprove: chat?.autoApprove ?? false)
+                                      : null,
+                                ),
+                              ),
+                            ),
+                            if (readOnly)
+                              const ReadOnlyBar()
+                            else
+                              Composer(
+                                hardwareEnterSends: ref.watch(settingsProvider.select((s) => s.hardwareEnterSends)),
+                                controller: _input,
+                                groupId: _composerGroup,
+                                maxLines: Composer.linesFor(context),
+                                focusNode: _focus,
+                                connected: connected,
+                                running: chat?.running ?? false,
+                                stopping: chat?.stopping ?? false,
+                                sessionReady: chat?.controlReady ?? true,
+                                busy: _creating != null || _syncWait != null,
+                                waiting: approval != null || question != null,
+                                modeLabel: question == null
+                                    ? null
+                                    : answerInComposer
+                                    ? l10n.chatAnswerMode
+                                    : l10n.chatMessageMode,
+                                waitHint: approval != null
+                                    ? null
+                                    : answerInComposer
+                                    ? l10n.chatAnswerHint
+                                    : question != null
+                                    ? l10n.commonWaitingAnswer
+                                    : null,
+                                onSend: _send,
+                                onSendOptions: chat?.controlReady ?? true ? _sendOptions : null,
+                                onKeyEvent: _composerKey,
+                                onContentInserted: connected ? _pasteContent : null,
+                                onStop: _stop,
+                                hasAttachments: _drafts.isNotEmpty,
+                                leading: AttachButton(onPressed: connected ? _attach : null),
+                                keyboardInset: MediaQuery.viewInsetsOf(context).bottom,
+                                footer: _composerOpens(context) && !isChild
+                                    ? ComposerModelPill(
+                                        selection: sessionId == null ? pendingModel : chat?.model,
+                                        onSelected: _modelTarget(),
+                                      )
+                                    : null,
+                                tray: ComposerTrayStack.maybe(
+                                  quote: switch (quote) {
+                                    final quote? => QuoteChip(
+                                      quote: quote,
+                                      onRemove: () => ref.read(composerQuoteProvider.notifier).clear(_draftKey),
+                                    ),
+                                    null => null,
+                                  },
+                                  attachments: _drafts.isEmpty
+                                      ? null
+                                      : ComposerTray(items: _drafts, onRemove: _removeDraft),
+                                ),
+                                accessory: sessionId == null || contextFraction == null
+                                    ? null
+                                    : ContextRing(
+                                        fraction: contextFraction,
+                                        onTap: () => _openUsage(sessionId, chat?.model),
+                                      ),
+                              ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ),
@@ -2245,40 +1676,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
     return UiTrace(scope: 'chat', child: screen);
   }
 
-  /// What sits on the composer's top-left edge: 「自动允许中 ×」 while this
-  /// client allows everything, else 「⚠ 完全权限 ›」 for a conversation looser
-  /// than 工作区内修改 (unless [risk] is false: they are beside the activity
-  /// strip), then the generation mode's capsule; nothing otherwise.
-  Widget? _composerPills(String? sessionId, {required bool autoApprove, GenerateParams? generate, bool risk = true}) {
-    final capsule = generate == null
-        ? null
-        : GenerateCapsule(params: generate, onTap: () => _openGenerateSheet(generate), onExit: _exitGenerate);
-    Widget? pill;
-    if (!risk) {
-      // Beside the activity strip ([_stripRisk]).
-    } else if (sessionId != null && autoApprove) {
-      pill = AutoApprovePill(onDisable: () => ref.read(chatProvider(sessionId).notifier).setAutoApprove(false));
-    } else if (sessionId != null) {
-      final risky = ref.watch(sessionModesProvider(sessionId).select((m) => m.risky ? m.preset : null));
-      if (risky != null) {
-        // Beside the mode capsule it shrinks to its ⚠ (§4.2).
-        pill = PermissionPill(
-          preset: risky,
-          compact: capsule != null,
-          onTap: () => unawaited(showPermissionSheet(context, sessionId)),
-        );
-      }
+  Widget? _composerPills(String? sessionId, {required bool autoApprove, bool risk = true}) {
+    if (!risk || sessionId == null) return null;
+    if (autoApprove) {
+      return AutoApprovePill(onDisable: () => ref.read(chatProvider(sessionId).notifier).setAutoApprove(false));
     }
-    if (capsule == null) return pill;
-    if (pill == null) return capsule;
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        pill,
-        const SizedBox(width: GenerateCapsuleMetrics.gap),
-        Flexible(child: capsule),
-      ],
-    );
+    final preset = ref.watch(sessionModesProvider(sessionId).select((m) => m.risky ? m.preset : null));
+    return preset == null
+        ? null
+        : PermissionPill(preset: preset, onTap: () => unawaited(showPermissionSheet(context, sessionId)));
   }
 
   /// 「自动允许中」/「完全权限」 beside the activity strip while a reply generates.
@@ -2296,13 +1702,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
       preset: risky,
       onTap: () => unawaited(showPermissionSheet(context, sessionId)),
     );
-  }
-
-  /// A capsule or a plugin's `insert`: into the composer at the caret as a
-  /// word of its own, focused. Never sent.
-  void _insertText(String text) {
-    _input.value = insertComposerToken(_input.value, text);
-    _focus.requestFocus();
   }
 
   /// The activity strip: the running turn's trajectory.
@@ -2352,40 +1751,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
       return HeaderStatus(StatusTone.busy, appL10n.chatGenerating, spoken: spoken);
     }
     return HeaderStatus(StatusTone.ok, label, spoken: spoken);
-  }
-}
-
-/// The chat screen's composer, lent to plugin controls and capsules.
-class _ChatComposerHost implements NativeComposerHost {
-  _ChatComposerHost(this._state);
-
-  final _ChatScreenState _state;
-
-  @override
-  String? get sessionId => _state.ref.read(currentSessionProvider);
-
-  @override
-  Object get draftOwner => _state._draftScope;
-
-  @override
-  String get draft => _state._input.text;
-
-  @override
-  void insert(String text) => _state._insertText(text);
-
-  @override
-  BuildContext? get context => _state.mounted ? _state.context : null;
-}
-
-/// 低余额横幅的位置:没有要说的时候是零高。
-class _BalanceBannerSlot extends ConsumerWidget {
-  const _BalanceBannerSlot();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final show = ref.watch(balanceProvider.select((b) => b.showBanner));
-    if (!show) return const SizedBox(width: double.infinity);
-    return const Padding(padding: EdgeInsets.only(bottom: 8), child: LowBalanceBanner());
   }
 }
 

@@ -12,9 +12,7 @@ import '../../state/connection_state.dart';
 import '../../state/models_state.dart';
 import '../../state/session_search.dart' show folderLabel;
 import '../../state/sessions_state.dart';
-import '../../plugins/native/native_state.dart';
 import '../chat/model_sheet.dart';
-import '../plugins/native/native_taps.dart' show runNativeAction;
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
 import 'session_detail_page.dart';
@@ -81,15 +79,6 @@ class ConversationOverview extends ConsumerWidget {
           onTap: readOnly ? null : () => _pickModel(context, ref, effective),
         ),
         _Row(icon: AppIcons.remoteHosts, label: l10n.shellPanelHost, value: host ?? l10n.commonThisPhone),
-        // What plugins can do to this conversation, each signed with whose it is.
-        for (final action in ref.watch(nativeSessionActionsProvider))
-          _Row(
-            key: ValueKey('overview-action|${action.package}|${action.id}'),
-            icon: action.icon ?? AppIcons.plugin,
-            label: action.label,
-            value: ref.watch(nativePluginTitleProvider(action.package)),
-            onTap: () => runNativeAction(context, ref, action, scope: DshGoScope(sessionId: sessionId)),
-          ),
       ],
     );
   }

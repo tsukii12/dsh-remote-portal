@@ -12,7 +12,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../l10n/l10n.dart';
 import '../../../state/chat_state.dart';
 import '../../../state/run_pulse.dart';
-import '../../pets/pet_perch.dart';
 import '../../theme/theme.dart';
 import '../activity_copy.dart';
 import '../run_info.dart';
@@ -115,26 +114,19 @@ class _ActivityStripSlotState extends ConsumerState<ActivityStripSlot> with Sing
         if (strip == null) return const SizedBox(width: double.infinity);
         // The chat page's pet stands on the strip: one mascot a screen, so
         // the whale tail steps aside while it does.
-        final perches = PetPerchScope.maybeOf(context);
+
         return AnimatedBuilder(
           animation: _height,
           builder: (context, child) => Align(alignment: Alignment.topCenter, heightFactor: _height.value, child: child),
           child: Padding(
             padding: const EdgeInsets.only(bottom: 6),
-            child: PetPerch(
-              kind: PerchKind.strip,
-              active: shown != null,
-              child: ValueListenableBuilder<PerchKind?>(
-                valueListenable: perches?.occupied ?? _noPet,
-                builder: (context, occupied, _) => ActivityStrip(
-                  activity: strip,
-                  speedLevel: _lastLevel,
-                  tokensPerSecond: () => pulse.tokensPerSecond,
-                  onTap: shown == null ? null : widget.onTap,
-                  todoProgress: widget.todoProgress,
-                  whale: occupied != PerchKind.strip,
-                ),
-              ),
+            child: ActivityStrip(
+              activity: strip,
+              speedLevel: _lastLevel,
+              tokensPerSecond: () => pulse.tokensPerSecond,
+              onTap: shown == null ? null : widget.onTap,
+              todoProgress: widget.todoProgress,
+              whale: true,
             ),
           ),
         );
@@ -142,9 +134,6 @@ class _ActivityStripSlotState extends ConsumerState<ActivityStripSlot> with Sing
     );
   }
 }
-
-/// Outside a pet stage nothing ever stands on the strip.
-final _noPet = ValueNotifier<PerchKind?>(null);
 
 class ActivityStrip extends StatefulWidget {
   const ActivityStrip({

@@ -9,10 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../l10n/l10n.dart';
-import '../runtime/local_paths.dart';
 import 'chat_state.dart';
-import 'connection_state.dart';
-import 'settings_state.dart';
 
 /// What sort of file an artifact is (icon, label, preview, MIME type).
 enum ArtifactKind {
@@ -163,12 +160,6 @@ bool isArtifactPath(String path) {
   };
 }
 
-/// Where the phone's shared storage shows up in the local engine.
-const phoneStorageGuestPath = '/sdcard';
-
-/// The folder the local engine's instructions send output files to.
-const phoneOutputDir = '$phoneStorageGuestPath/Download/DSH-Go';
-
 /// How an artifact was found.
 enum ArtifactOrigin {
   /// Declared with the `present` tool (the official deliverables).
@@ -179,9 +170,6 @@ enum ArtifactOrigin {
 
   /// Linked from the turn's final reply, and named by its tool calls.
   linked,
-
-  /// Appeared in `/sdcard/Download/DSH-Go` (or the old `DSH`) while the turn ran (local engine).
-  phoneOutput,
 }
 
 /// One file the agent made for the user.
@@ -215,9 +203,6 @@ class Artifact {
   String get mimeType => mimeTypeOf(path);
   bool get delivered => origin == ArtifactOrigin.delivered;
 
-  /// Already in the phone's public Downloads (nothing to save).
-  bool get inPhoneDownloads => path.startsWith('$phoneStorageGuestPath/Download/');
-
   /// `PDF`, `表格 · XLSX`: the kind, plus the extension when it adds something.
   String get typeLabel {
     final ext = _extension(path).toUpperCase();
@@ -242,16 +227,6 @@ class TurnArtifacts {
   final List<Artifact> files;
 
   bool get delivered => files.isNotEmpty && files.first.delivered;
-}
-
-/// A file in the phone's output folder (`listOutputs`).
-class PhoneOutput {
-  const PhoneOutput({required this.path, required this.modified, this.bytes});
-
-  /// Guest path (`/sdcard/Download/DSH-Go/…`).
-  final String path;
-  final DateTime modified;
-  final int? bytes;
 }
 
 /// Markdown link destinations: `](<path with spaces>)` or `](path "title")`.
@@ -355,7 +330,6 @@ List<TurnArtifacts> deriveArtifacts({
   required Iterable<SessionLogEvent> events,
   required List<TurnTrace> turns,
   String? cwd,
-  List<PhoneOutput> phoneOutputs = const [],
 }) {
   final finished = <int, TurnTrace>{
     for (final trace in turns)
@@ -387,7 +361,6 @@ List<TurnArtifacts> deriveArtifacts({
     }
   }
   final delivered = presentedByTurn(events);
-  final outputs = [...phoneOutputs]..sort((a, b) => a.modified.compareTo(b.modified));
 
   final out = <TurnArtifacts>[];
   for (final trace in finished.values) {
@@ -421,17 +394,6 @@ List<TurnArtifacts> deriveArtifacts({
             files.putIfAbsent(path, () => Artifact(path: path, origin: ArtifactOrigin.linked, turn: turn));
           }
         }
-      }
-      final from = trace.start.subtract(const Duration(seconds: 1));
-      final to = (trace.end ?? trace.start).add(const Duration(seconds: 2));
-      for (final output in outputs) {
-        if (output.modified.isBefore(from) || output.modified.isAfter(to)) {
-          continue;
-        }
-        files.putIfAbsent(
-          output.path,
-          () => Artifact(path: output.path, origin: ArtifactOrigin.phoneOutput, turn: turn, bytes: output.bytes),
-        );
       }
     }
     if (files.isEmpty) continue;
@@ -474,24 +436,6 @@ class FilesChannel {
   const FilesChannel([this.channel = const MethodChannel('dsh/files')]);
 
   final MethodChannel channel;
-
-  /// Android path of a local-engine file; null when it is not there.
-  Future<String?> resolveGuest(String path) => channel.invokeMethod<String>('resolveGuest', {'path': path});
-
-  /// Files under [phoneOutputDir] and the old `Download/DSH` (empty without phone
-  /// storage access).
-  Future<List<PhoneOutput>> listOutputs({int depth = 3}) async {
-    final raw = await channel.invokeListMethod<Object?>('listOutputs', {'depth': depth}) ?? const [];
-    return [
-      for (final entry in raw)
-        if (entry is Map && entry['path'] is String)
-          PhoneOutput(
-            path: entry['path'] as String,
-            bytes: (entry['bytes'] as num?)?.toInt(),
-            modified: DateTime.fromMillisecondsSinceEpoch((entry['modified'] as num?)?.toInt() ?? 0),
-          ),
-    ];
-  }
 
   /// Opens an Android file with the app that handles [mime] ([chooser]: let
   /// the person pick one).
@@ -536,56 +480,9 @@ bool savedInChosenPlace(String where) => where.contains('://');
 /// so nothing to say. Android has no such window and never answers this.
 bool saveWindowDismissed(Object error) => error is PlatformException && error.code == 'cancelled';
 
-/// The local engine's output folder ([phoneOutputDir]); empty unless the
-/// engine is on this phone with "访问手机文件" on (on HarmonyOS the folder is in
-/// the app's own files and needs no such access). Scanned when first needed and
-/// again whenever a turn ends ([refresh]).
-class PhoneOutputsController extends Notifier<List<PhoneOutput>> {
-  bool _enabled = false;
-
-  @override
-  List<PhoneOutput> build() {
-    final local = ref.watch(activeConnectionProvider.select((c) => c.value?.isLocal ?? false));
-    final storage = ref.watch(settingsProvider.select((s) => s.phoneStorage));
-    _enabled = local && (storage || LocalPaths.noGuest);
-    if (_enabled) unawaited(refresh());
-    return const [];
-  }
-
-  Future<void> refresh() async {
-    if (!_enabled) return;
-    try {
-      final files = await ref.read(filesChannelProvider).listOutputs();
-      if (!ref.mounted || !_enabled) return;
-      if (_same(files, state)) return;
-      state = List.unmodifiable(files);
-    } catch (_) {
-      // No channel (tests) or no access: nothing to add.
-    }
-  }
-
-  static bool _same(List<PhoneOutput> a, List<PhoneOutput> b) {
-    if (a.length != b.length) return false;
-    for (var i = 0; i < a.length; i++) {
-      if (a[i].path != b[i].path || a[i].modified != b[i].modified || a[i].bytes != b[i].bytes) {
-        return false;
-      }
-    }
-    return true;
-  }
-}
-
-final phoneOutputsProvider = NotifierProvider<PhoneOutputsController, List<PhoneOutput>>(PhoneOutputsController.new);
-
 /// Every finished turn's artifacts in one session ([deriveArtifacts]).
 final sessionArtifactsProvider = Provider.autoDispose.family<List<TurnArtifacts>, String>((ref, sessionId) {
   final turns = ref.watch(chatProvider(sessionId).select((s) => s.turns));
-  ref.listen(chatProvider(sessionId).select((s) => s.running), (was, running) {
-    if (was == true && !running) {
-      unawaited(ref.read(phoneOutputsProvider.notifier).refresh());
-    }
-  });
-  final outputs = ref.watch(phoneOutputsProvider);
   final chat = ref.read(chatProvider(sessionId).notifier);
-  return deriveArtifacts(events: chat.events, turns: turns, cwd: chat.header?.cwd, phoneOutputs: outputs);
+  return deriveArtifacts(events: chat.events, turns: turns, cwd: chat.header?.cwd);
 });

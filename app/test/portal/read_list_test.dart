@@ -34,10 +34,12 @@ void main() {
     test('portal read authority follows upstream mux state: ${state.name}', () {
       final client = _StateClient(state);
       final connection = HostConnection(client: client, hostId: 'one');
-      final container = ProviderContainer(overrides: [
-        activeHostProvider.overrideWith(_Selected.new),
-        activeConnectionProvider.overrideWithValue(AsyncData(connection)),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          activeHostProvider.overrideWith(_Selected.new),
+          activeConnectionProvider.overrideWithValue(AsyncData(connection)),
+        ],
+      );
       addTearDown(() async {
         container.dispose();
         await client.close();

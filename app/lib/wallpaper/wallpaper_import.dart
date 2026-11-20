@@ -1,73 +1,94 @@
-// 自定义壁纸的导入：就是启动画面那条链路（lib/launch/launch_import.dart：系统选择器 → 按字节
-// 上限流式拷进私有目录 → 看文件头认类型 → 解码一遍确认能读、取边缘色），换成壁纸的预算：
-// 只要照片、15 MB 以内、放 `<support>/wallpaper/`。动图只用第一帧（渲染时只取首帧）。
-
-import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 
+import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../launch/custom_launch.dart' show CustomLaunch;
-import '../launch/launch_import.dart';
-import '../plugins/native/native_file_platform.dart';
 import 'custom_wallpaper.dart';
 
-export '../launch/launch_import.dart' show LaunchImportProblem;
+enum WallpaperImportProblem { cancelled, unavailable, tooLarge, overLimit, unsupported, unreadable }
 
-/// Picks a photo and keeps a copy as the wallpaper.
 class WallpaperImport {
-  WallpaperImport({NativeFilePlatform? platform, Future<Directory> Function()? directory, DateTime Function()? now})
-    : directory = directory ?? wallpaperDirectory,
-      _launch = LaunchImport(
-        platform: platform,
-        directory: directory ?? wallpaperDirectory,
-        now: now,
-        maxBytes: CustomWallpaper.maxBytes,
-        videos: false,
-        action: 'wallpaper',
-      );
-
+  WallpaperImport({
+    Future<XFile?> Function()? picker,
+    Future<Directory> Function()? directory,
+    DateTime Function()? now,
+  }) : _picker = picker ?? (() => ImagePicker().pickImage(source: ImageSource.gallery)),
+       directory = directory ?? wallpaperDirectory,
+       _now = now ?? DateTime.now;
+  final Future<XFile?> Function() _picker;
   final Future<Directory> Function() directory;
-  final LaunchImport _launch;
+  final DateTime Function() _now;
 
-  /// `<app support>/wallpaper`: the app's own storage, not backed up, not visible to other apps.
-  static Future<Directory> wallpaperDirectory() async {
-    final base = await getApplicationSupportDirectory();
-    return Directory('${base.path}/wallpaper').create(recursive: true);
+  static Future<Directory> wallpaperDirectory() async =>
+      Directory('${(await getApplicationSupportDirectory()).path}/wallpaper').create(recursive: true);
+
+  Future<(CustomWallpaper?, WallpaperImportProblem?)> pick({CustomWallpaper? previous}) async {
+    try {
+      final file = await _picker();
+      if (file == null) return (null, WallpaperImportProblem.cancelled);
+      if (await file.length() > CustomWallpaper.maxBytes) return (null, WallpaperImportProblem.tooLarge);
+      return await keep(file.openRead(), previous: previous);
+    } catch (_) {
+      return (null, WallpaperImportProblem.unavailable);
+    }
   }
 
-  /// The system picker (photos), then [keep].
-  Future<(CustomWallpaper?, LaunchImportProblem?)> pick({CustomWallpaper? previous}) async {
-    final (launch, problem) = await _launch.pick();
-    return _adopt(launch, problem, previous);
-  }
-
-  /// Copies [bytes] into the wallpaper folder and checks them; [previous]'s look comes along, its
-  /// framing doesn't (its file stays until the new one is saved).
-  Future<(CustomWallpaper?, LaunchImportProblem?)> keep(Stream<List<int>> bytes, {CustomWallpaper? previous}) async {
-    final (launch, problem) = await _launch.keep(bytes);
-    return _adopt(launch, problem, previous);
-  }
-
-  /// The launch import's result (a still or the first frame of an animation, read and checked)
-  /// as the wallpaper.
-  Future<(CustomWallpaper?, LaunchImportProblem?)> _adopt(
-    CustomLaunch? launch,
-    LaunchImportProblem? problem,
+  Future<(CustomWallpaper?, WallpaperImportProblem?)> keep(
+    Stream<List<int>> stream, {
     CustomWallpaper? previous,
-  ) async {
-    if (launch == null) return (null, problem ?? LaunchImportProblem.unreadable);
-    final wallpaper =
-        previous?.replacedBy(path: launch.path, width: launch.width, height: launch.height, edge: launch.edge) ??
-        CustomWallpaper(path: launch.path, width: launch.width, height: launch.height, edge: launch.edge);
-    return (wallpaper, null);
+  }) async {
+    File? saved;
+    try {
+      final bytes = BytesBuilder(copy: false);
+      await for (final chunk in stream) {
+        if (bytes.length + chunk.length > CustomWallpaper.maxBytes) return (null, WallpaperImportProblem.tooLarge);
+        bytes.add(chunk);
+      }
+      if (bytes.isEmpty) return (null, WallpaperImportProblem.unreadable);
+      final data = bytes.takeBytes();
+      final buffer = await ui.ImmutableBuffer.fromUint8List(data);
+      ui.ImageDescriptor? descriptor;
+      ui.Codec? codec;
+      late final int width, height;
+      try {
+        descriptor = await ui.ImageDescriptor.encoded(buffer);
+        width = descriptor.width;
+        height = descriptor.height;
+        if (width <= 0 || height <= 0 || width * height > 64 * 1024 * 1024) {
+          return (null, WallpaperImportProblem.overLimit);
+        }
+        codec = await descriptor.instantiateCodec(targetWidth: 64, targetHeight: 64);
+        (await codec.getNextFrame()).image.dispose();
+        saved = File('${(await directory()).path}/${_now().microsecondsSinceEpoch}.image');
+        await saved.writeAsBytes(data, flush: true);
+      } finally {
+        codec?.dispose();
+        descriptor?.dispose();
+        buffer.dispose();
+      }
+      final path = saved.path;
+      return (
+        previous?.replacedBy(path: path, width: width, height: height) ??
+            CustomWallpaper(path: path, width: width, height: height),
+        null,
+      );
+    } catch (_) {
+      if (saved != null) {
+        try {
+          await saved.delete();
+        } catch (_) {}
+      }
+      return (null, WallpaperImportProblem.unreadable);
+    }
   }
 
-  /// Deletes a wallpaper file; nothing if it's already gone.
   static Future<void> removeFile(String path) async {
     try {
-      final f = File(path);
-      if (f.existsSync()) await f.delete();
+      final root = await (await wallpaperDirectory()).resolveSymbolicLinks();
+      final file = File(path);
+      if ((await file.resolveSymbolicLinks()).startsWith('$root/')) await file.delete();
     } catch (_) {}
   }
 }

@@ -9,14 +9,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.2"
-  archive:
-    dependency: "direct main"
-    description:
-      name: archive
-      sha256: de5ac590b8155e4e676088d714bd41ea620449a6adc0f7950c5073874b287ddb
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.6.0"
   args:
     dependency: transitive
     description:
@@ -121,14 +113,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.9.0"
-  csslib:
-    dependency: transitive
-    description:
-      name: csslib
-      sha256: "09bad715f418841f976c77db72d5398dc1253c21fb9c0c7f0b0b985860b2d58e"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.2"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -164,13 +148,6 @@ packages:
     dependency: "direct main"
     description:
       path: "../packages/dsh_portal"
-      relative: true
-    source: path
-    version: "0.1.0"
-  dsh_tavern:
-    dependency: "direct main"
-    description:
-      path: "../packages/dsh_tavern"
       relative: true
     source: path
     version: "0.1.0"
@@ -394,14 +371,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  glob:
-    dependency: transitive
-    description:
-      name: glob
-      sha256: "218aeb56050c714f62a3182775320dfa04602b55074873e24e31bbd39bda96fb"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.2.0"
   gpt_markdown:
     dependency: "direct main"
     description:
@@ -418,14 +387,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.0"
-  html:
-    dependency: "direct main"
-    description:
-      name: html
-      sha256: "43b67b8f43321ab066817dfac5619596c98bb1b61624e77203bb4351785f9699"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.15.7"
   http:
     dependency: "direct main"
     description:
@@ -442,14 +403,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.2"
-  image:
-    dependency: "direct main"
-    description:
-      name: image
-      sha256: "89ed75b2f8231fe676808c5564f9590d728024ded7ac782a7ed8474f1c95b72a"
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.12.0"
   image_picker:
     dependency: "direct main"
     description:
@@ -546,14 +499,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
-  json5:
-    dependency: transitive
-    description:
-      name: json5
-      sha256: b67d6e06c9e225c8277d3c43f796677af7975a2a2b0669ff12ba38ff466a31f4
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.8.2"
   leak_tracker:
     dependency: transitive
     description:
@@ -626,14 +571,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.9.0"
-  math_expressions:
-    dependency: transitive
-    description:
-      name: math_expressions
-      sha256: "22aca3a24e445be5f42ecf186cbded1f9951bf9ec5eb48fcddbd55e102bb11f5"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.2.0"
   meta:
     dependency: transitive
     description:
@@ -658,14 +595,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.5.0"
-  native_toolchain_c:
-    dependency: transitive
-    description:
-      name: native_toolchain_c
-      sha256: "90eaad8059ebc2004a63810a4696ea9acdb02473e47ed3b6b3bafb100ac77e31"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.19.5"
   nm:
     dependency: transitive
     description:
@@ -778,30 +707,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.8"
-  pointycastle:
-    dependency: "direct main"
-    description:
-      name: pointycastle
-      sha256: "92aa3841d083cc4b0f4709b5c74fd6409a3e6ba833ffc7dc6a8fee096366acf5"
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.0.0"
-  posix:
-    dependency: transitive
-    description:
-      name: posix
-      sha256: "613646d076944f3acc125830af935b48d4b8a57a388691547bbfd25b434f4d63"
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.5.4"
-  process:
-    dependency: transitive
-    description:
-      name: process
-      sha256: "4242ba3508d37e01808bdf71ad1d5bb93a8d671bf2e7450e6b1b353fb0808891"
-      url: "https://pub.dev"
-    source: hosted
-    version: "5.0.6"
   pub_semver:
     dependency: transitive
     description:
@@ -922,78 +827,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.4.1"
-  sherpa_onnx:
-    dependency: "direct main"
-    description:
-      name: sherpa_onnx
-      sha256: "889c03cf7a8788795e3a6d35bf9f20b66d1862ea7a73a1b6aaf6e450715c870a"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.13.4"
-  sherpa_onnx_android_arm64:
-    dependency: "direct main"
-    description:
-      name: sherpa_onnx_android_arm64
-      sha256: "0337650bc2357f39b751f1b9ced37770de3b60026effe66473b557346b4e3f97"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.13.4"
-  sherpa_onnx_android_armeabi:
-    dependency: "direct main"
-    description:
-      name: sherpa_onnx_android_armeabi
-      sha256: "9e96729d99567c3f64fc6f4c232ef04b57ae4ef3bf1b21364ee6e461103cb7cf"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.13.4"
-  sherpa_onnx_android_x86:
-    dependency: "direct main"
-    description:
-      name: sherpa_onnx_android_x86
-      sha256: "6eaa462a24bf881c8ee2b3ab5b9fad3d310b714fc9d3ac4b9f650d0a90c9d0ab"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.13.4"
-  sherpa_onnx_android_x86_64:
-    dependency: "direct main"
-    description:
-      name: sherpa_onnx_android_x86_64
-      sha256: "181aa0f0968adf2cf2dcb369c879ea372653864538b82772877e22748a80254f"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.13.4"
-  sherpa_onnx_ios:
-    dependency: transitive
-    description:
-      name: sherpa_onnx_ios
-      sha256: "044e3a614d1847c0ff9b6475201c6e5d023cd6ca6cd17f14c16332081c01e1d2"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.13.8"
-  sherpa_onnx_linux:
-    dependency: transitive
-    description:
-      name: sherpa_onnx_linux
-      sha256: "22fb91a1c50b7bc24d93d0b67c87cf2a3a38f7564d7f14343d704a1201848960"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.13.8"
-  sherpa_onnx_macos:
-    dependency: transitive
-    description:
-      name: sherpa_onnx_macos
-      sha256: bdedc34ac0acccee7ae73a5599f66e0081137c00467c565a92f72b67428837bb
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.13.8"
-  sherpa_onnx_windows:
-    dependency: transitive
-    description:
-      name: sherpa_onnx_windows
-      sha256: d91fb9c4baac2594cf1ae6955f5e9f51113d354de8c75543ea8481d431040a71
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.13.8"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -1007,14 +840,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.2"
-  sqlite3:
-    dependency: transitive
-    description:
-      name: sqlite3
-      sha256: "8765980411f9b6733534efe9d014fad0750fa649590598772c04692deb34886b"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.9.1"
   stack_trace:
     dependency: transitive
     description:
@@ -1279,14 +1104,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.4"
-  yaml_edit:
-    dependency: transitive
-    description:
-      name: yaml_edit
-      sha256: "07c9e63ba42519745182b88ca12264a7ba2484d8239958778dfe4d44fe760488"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.2.4"
   zmodem:
     dependency: transitive
     description:

@@ -40,7 +40,6 @@ import '../common/sheet_title_bar.dart';
 import '../common/side_insets.dart';
 import '../common/status_chip.dart';
 import '../common/tool_glyph.dart';
-import '../plugins/seats/session_plugins_tab.dart';
 import '../shell/adaptive/detail_panel_keys.dart';
 import '../shell/adaptive/detail_sheet.dart';
 import '../shell/adaptive/open_detail.dart';
@@ -158,11 +157,9 @@ class _SessionDetailPageState extends ConsumerState<SessionDetailPage> with Tick
         (_mode == SessionDetailMode.page ? SessionTab.trajectory : ref.read(sessionDetailTabProvider));
     _baseTabs = [
       for (final tab in SessionTab.values)
-        if (tab != SessionTab.plugins && (tab != SessionTab.subagents || delegated || initial == SessionTab.subagents))
-          tab,
+        if (tab != SessionTab.subagents || delegated || initial == SessionTab.subagents) tab,
     ];
-    final plugins = !ref.read(sessionPluginPlanProvider(widget.sessionId)).isEmpty;
-    _tabs = [..._baseTabs, if (plugins) SessionTab.plugins];
+    _tabs = _baseTabs;
     _controller = TabController(
       length: _tabs.length,
       vsync: this,
@@ -176,22 +173,6 @@ class _SessionDetailPageState extends ConsumerState<SessionDetailPage> with Tick
   void _onTab() {
     if (!mounted) return;
     ref.read(sessionDetailTabProvider.notifier).select(_tabs[_controller.index]);
-  }
-
-  /// 插件 comes and goes with the host's plugin tabs for the conversation;
-  /// the tab on screen stays where it is.
-  void _syncPluginsTab(bool plugins) {
-    if (plugins == _tabs.contains(SessionTab.plugins)) return;
-    final current = _tabs[_controller.index];
-    final next = [..._baseTabs, if (plugins) SessionTab.plugins];
-    final old = _controller..removeListener(_onTab);
-    _tabs = next;
-    _controller = TabController(
-      length: next.length,
-      vsync: this,
-      initialIndex: next.contains(current) ? next.indexOf(current) : 0,
-    )..addListener(_onTab);
-    WidgetsBinding.instance.addPostFrameCallback((_) => old.dispose());
   }
 
   @override
@@ -300,7 +281,6 @@ class _SessionDetailPageState extends ConsumerState<SessionDetailPage> with Tick
         if (i >= 0 && i != _controller.index) _controller.animateTo(i);
       });
     }
-    _syncPluginsTab(!ref.watch(sessionPluginPlanProvider(widget.sessionId)).isEmpty);
     final theme = Theme.of(context);
     final surfaces = DshSurfaces.of(context);
     final padding = MediaQuery.paddingOf(context);
