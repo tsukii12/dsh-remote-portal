@@ -20,7 +20,7 @@ set -euo pipefail
 if [ ! -x "$0" ] && [ -f "$0" ]; then chmod +x "$0" 2>/dev/null || true; fi
 
 SELF_VERSION="0.6.2"
-INSTALLER_REVISION=3
+INSTALLER_REVISION=4
 
 RELAY_DIR=/opt/yuremote-relay
 STATE_DIR=/var/lib/yuremote-relay
@@ -579,6 +579,13 @@ apply_relay_config() {
     die "$(t "Could not read the relay unit's overrides." "无法读取中转服务的覆盖配置。")"
   [ -z "$live" ] ||
     die "$(t "Change the listener in the systemd override instead." "请在 systemd 覆盖配置中更改监听端口。")"
+  if [ "$port" -lt 1024 ]; then
+    live=$(systemctl show -p AmbientCapabilities -p CapabilityBoundingSet "$SERVICE.service") || live=
+    if ! grep -Eiq '^AmbientCapabilities=([^[:space:]]+[[:space:]]+)*cap_net_bind_service([[:space:]]|$)' <<< "$live" ||
+       ! grep -Eiq '^CapabilityBoundingSet=([^[:space:]]+[[:space:]]+)*cap_net_bind_service([[:space:]]|$)' <<< "$live"; then
+      die "$(t "Port $port requires CAP_NET_BIND_SERVICE. Run $rerun." "端口 $port 需要 CAP_NET_BIND_SERVICE。请运行 $rerun。")"
+    fi
+  fi
   live=$(ss -tln 2>/dev/null || netstat -tln 2>/dev/null) ||
     die "$(t "Cannot check port availability; install ss or netstat before changing settings." "无法检查端口是否可用；请先安装 ss 或 netstat 再更改设置。")"
   tmp=$(mktemp -d)
@@ -608,7 +615,7 @@ if (!ports.has(flag) || !ports.has("agent") || !ports.has("http")) process.exit(
 if ([...ports].some(([name, { current }]) => name !== flag && current === Number(port))) process.exit(3);
 const { arg, current } = ports.get(flag);
 if (current === Number(port)) process.exit(4);
-if (flag === "http" && !ports.has("tls")) process.exit(5);
+if (flag === "http" && !ports.get("tls")?.current) process.exit(5);
 const start = lines[0].index + line.length - command.length + arg.index;
 const replacement = arg[0].replace(/[0-9]+(?=['"]?$)/, port);
 process.stdout.write(unit.slice(0, start) + replacement + unit.slice(start + arg[0].length));

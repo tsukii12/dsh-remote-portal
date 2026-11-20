@@ -171,7 +171,15 @@ test("migrated manager only edits an independent listener and refuses transport 
     .replace("command -v caddy >/dev/null 2>&1", "false")
     .replace('as_root() { [ "$(id -u)" = "0" ]; }', "as_root() { :; }")
     .replace("set -euo pipefail", `set -euo pipefail
-systemctl() { case "$1" in show|is-active) : ;; *) printf '%s\\n' "$*" >> "${log}" ;; esac; }
+systemctl() {
+  case "$1" in
+    show) if [ "$3" = AmbientCapabilities ]; then
+        sed -n '/^AmbientCapabilities=/p; /^CapabilityBoundingSet=/p' "${unit}"
+      fi ;;
+    is-active) : ;;
+    *) printf '%s\\n' "$*" >> "${log}" ;;
+  esac
+}
 ss() { printf 'header\\na b c 0.0.0.0:8090 d\\n'; }
 sleep() { :; }`);
   writeFileSync(installer, fixture);
@@ -197,6 +205,13 @@ sleep() { :; }`);
     .replace("AGENT_TLS=1", "AGENT_TLS=0").replace("CERT_SOURCE=user", "CERT_SOURCE=none");
   reject("VISIT_MODE=https", /无法使用 yuremote config 更改 VISIT_MODE.*--reconfigure --lang zh/,
     plain, line.replace(/ --tls-port[^\n]+/, ""));
+  for (const tls of ["", " --tls-port 0", " --tls-port 0.0.0.0:0"]) {
+    reject("HTTP_PORT=8081", /更改此 HTTP 端口还需调整公网地址.*--reconfigure --lang zh/,
+      plain, line.replace(/ --tls-port[^\n]+/, tls));
+  }
+  reject("AGENT_PORT=443", /端口 443 需要 CAP_NET_BIND_SERVICE.*--reconfigure --lang zh/);
+  reject("AGENT_PORT=443", /端口 443 需要 CAP_NET_BIND_SERVICE/,
+    initial, line + "AmbientCapabilities=CAP_NET_BIND_SERVICE\nCapabilityBoundingSet=CAP_CHOWN\n");
   reject("HOST=other.test", /无法使用 yuremote config 更改 HOST.*--reconfigure --lang zh/,
     initial.replace("CERT_SOURCE=user", "CERT_SOURCE=acme"));
   for (const setting of ["CERT_SOURCE=acme", "TLS_CERT=/other", "TLS_KEY=/other", "AGENT_TLS=0", "SCHEME=http"]) {
@@ -213,6 +228,12 @@ sleep() { :; }`);
   assert.equal(readFileSync(unit, "utf8"), line.replace("127.0.0.1:8080", "127.0.0.1:8081"));
   assert.equal(readFileSync(conf, "utf8"), initial.replace("HTTP_PORT=8080\n", "") + "HTTP_PORT=8081\n");
   assert.equal(readFileSync(log, "utf8"), "daemon-reload\nrestart yuremote-relay\n");
+  const capable = readFileSync(unit, "utf8") +
+    "AmbientCapabilities=CAP_CHOWN CAP_NET_BIND_SERVICE\nCapabilityBoundingSet=CAP_CHOWN CAP_NET_BIND_SERVICE\n";
+  writeFileSync(unit, capable);
+  const privileged = runConfig("AGENT_PORT=443");
+  assert.equal(privileged.status, 0, privileged.stderr);
+  assert.equal(readFileSync(unit, "utf8"), capable.replace("--agent-port 9443", "--agent-port 443"));
 });
 
 test("a migrated relay can be reinstalled after uninstall without reverting its unit", { skip }, (t) => {
