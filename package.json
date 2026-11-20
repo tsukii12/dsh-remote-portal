@@ -32,7 +32,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "test": "node --test",
+    "test": "node --test test/*.test.mjs",
     "test:host": "node --test test/host.test.mjs",
     "test:relay": "node --test test/relay.test.mjs",
     "relay": "node tools/relay.mjs"
@@ -73,6 +73,5 @@
     "url": "https://github.com/tsukii12/dsh-YuRemote/issues"
   }
 }
-
 
 
