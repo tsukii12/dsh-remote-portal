@@ -8,6 +8,13 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const skip = process.platform === "win32" ? "install.sh is for Linux / macOS" : false;
+const deploy = readFileSync(join(ROOT, "tools", "deploy-relay.sh"), "utf8");
+
+function shellFunction(name) {
+  const body = new RegExp(`^${name}\\(\\) \\{[\\s\\S]*?^\\}`, "m").exec(deploy)?.[0];
+  assert.ok(body, `missing installer function ${name}`);
+  return body;
+}
 
 function home(profiles) {
   const dir = mkdtempSync(join(tmpdir(), "yuremote-install-"));
@@ -93,6 +100,43 @@ test("install.sh migrates the legacy profile and preserves state on repeated run
   assert.equal(readFileSync(pkg + ".bak-yuremote", "utf8"), "\uFEFF" + previous);
 });
 
+test("legacy drp revokes a token from the active migrated relay, and works after rollback", { skip }, (t) => {
+  const sandbox = home([]);
+  t.after(() => rmSync(sandbox, { recursive: true, force: true }));
+  const legacy = join(sandbox, "drp");
+  const legacyUnit = join(sandbox, "dsh-relay.service");
+  const unit = join(sandbox, "yuremote-relay.service");
+  const tokenFile = join(sandbox, "token");
+  const legacyToken = join(sandbox, "legacy-token");
+  const tokens = "first-fixture-token\nsecond-fixture-token\n";
+  const log = join(sandbox, "systemctl.log");
+  writeFileSync(legacy, "#!/bin/sh\necho legacy-manager\n", { mode: 0o755 });
+  writeFileSync(join(sandbox, "systemctl"), `#!/bin/sh\nprintf '%s\\n' "$*" >> "${log}"\n`, { mode: 0o755 });
+  writeFileSync(tokenFile, tokens);
+  writeFileSync(legacyToken, tokens);
+  writeFileSync(unit, `ExecStart=relay.mjs --token-file ${tokenFile}\n`);
+  symlinkSync(unit, legacyUnit);
+  const setup = [
+    'set -euo pipefail', 'BIN=$1/yuremote LEGACY_BIN=$1/drp LEGACY_UNIT=$1/dsh-relay.service UNIT=$1/yuremote-relay.service',
+    'ok() { :; }', 't() { printf "%s" "$1"; }',
+    shellFunction("install_yuremote").replaceAll("/var/lib/yuremote-relay", sandbox),
+    shellFunction("install_legacy_command"), 'install_yuremote; install_legacy_command',
+  ].join("\n");
+  const prepared = spawnSync("bash", ["-s", "--", sandbox], { input: setup, encoding: "utf8" });
+  assert.equal(prepared.status, 0, prepared.stderr);
+  const env = { ...process.env, PATH: `${sandbox}:${process.env.PATH}` };
+  const revoked = spawnSync(legacy, ["token", "remove", "2"], { env, encoding: "utf8" });
+  assert.equal(revoked.status, 0, revoked.stderr);
+  assert.equal(readFileSync(tokenFile, "utf8"), "first-fixture-token\n");
+  assert.equal(readFileSync(legacyToken, "utf8"), tokens);
+  assert.equal(readFileSync(log, "utf8"), "restart yuremote-relay\n");
+  rmSync(legacyUnit);
+  writeFileSync(legacyUnit, "[Service]\n");
+  const rolledBack = spawnSync(legacy, ["status"], { env, encoding: "utf8" });
+  assert.equal(rolledBack.status, 0, rolledBack.stderr);
+  assert.equal(rolledBack.stdout, "legacy-manager\n");
+});
+
 for (const healthy of ["yes", "no"]) {
   test(`deploy-relay.sh migrates the unit and ${healthy === "yes" ? "keeps it when healthy" : "restores it on failure"}`, { skip }, (t) => {
     const sandbox = home([]);
@@ -112,9 +156,7 @@ for (const healthy of ["yes", "no"]) {
     writeFileSync(join(oldDir, "relay.mjs"), "legacy code");
     writeFileSync(join(oldState, "token"), token, { mode: 0o600 });
     writeFileSync(oldUnit, legacy);
-    const script = readFileSync(join(ROOT, "tools", "deploy-relay.sh"), "utf8");
-    const migrate = /^migrate_relay\(\) \{[\s\S]*?^\}/m.exec(script)?.[0];
-    assert.ok(migrate, "migration function exists");
+    const migrate = shellFunction("migrate_relay");
     const setup = `
 set -euo pipefail
 LEGACY_RELAY_DIR=$1 LEGACY_STATE_DIR=$2 RELAY_DIR=$3 STATE_DIR=$4 LEGACY_UNIT=$5 UNIT=$6
@@ -123,6 +165,7 @@ CONF_FILE=$STATE_DIR/deploy.conf
 LEGACY_SERVICE=dsh-relay SERVICE=yuremote-relay
 install_brand() { :; }
 install_yuremote() { :; }
+install_legacy_command() { :; }
 systemctl() { [ "$1" = show ] || printf '%s\\n' "$*" >&2; }
 curl() { [ "$HEALTHY" = yes ]; }
 sleep() { :; }

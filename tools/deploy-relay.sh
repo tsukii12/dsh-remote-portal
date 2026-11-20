@@ -31,6 +31,7 @@ LEGACY_STATE_DIR=/var/lib/dsh-relay
 LEGACY_SERVICE=dsh-relay
 LEGACY_UNIT=/etc/systemd/system/$LEGACY_SERVICE.service
 LEGACY_BACKUP=$LEGACY_UNIT.bak-yuremote
+LEGACY_BIN=/usr/local/bin/drp
 PORTAL_DIR="$(cd "$(dirname "$0")" 2>/dev/null && pwd || echo .)"
 
 HOST=""; AGENT_PORT=9443; HTTP_PORT=8080; PUBLIC_PORT=80
@@ -542,6 +543,27 @@ YUREMOTE_EOF
   ok "$(t "installed the management command: yuremote" "已安装管理命令：yuremote")"
 }
 
+install_legacy_command() {
+  local backup="$LEGACY_BIN.bak-yuremote" stage
+  [ -e "$LEGACY_BIN" ] || [ -L "$LEGACY_BIN" ] || return 0
+  if [ ! -e "$backup" ] && [ ! -L "$backup" ]; then
+    cp -a -- "$LEGACY_BIN" "$backup"
+  fi
+  stage=$(mktemp "$LEGACY_BIN.XXXXXX")
+  cat > "$stage" <<LEGACY_COMMAND
+#!/bin/sh
+if [ -L "$LEGACY_UNIT" ] && [ "\$(readlink "$LEGACY_UNIT")" = "$UNIT" ]; then
+  exec "$BIN" "\$@"
+fi
+if [ -f "$LEGACY_UNIT" ] && [ ! -L "$LEGACY_UNIT" ]; then
+  exec "$backup" "\$@"
+fi
+exit 1
+LEGACY_COMMAND
+  chmod 755 "$stage"
+  mv -f -- "$stage" "$LEGACY_BIN"
+}
+
 # ── uninstall ───────────────────────────────────────────────────────────────
 if [ "$UNINSTALL" = 1 ]; then
   say "$(t "Removing the relay" "卸载公网中转")"
@@ -801,6 +823,7 @@ migrate_relay() {
       if systemctl is-active --quiet "$SERVICE.service" &&
           curl -fsS --max-time 2 "http://$health_addr/__relay/health" >/dev/null 2>&1; then
         install_yuremote
+        install_legacy_command
         ok "Migrated to $SERVICE; kept the legacy code and the certificate renewal path."
         info "Rollback: sudo sh -c 'systemctl disable --now $SERVICE.service && rm $LEGACY_UNIT && mv $LEGACY_BACKUP $LEGACY_UNIT && systemctl daemon-reload && systemctl enable --now $LEGACY_SERVICE.service && mv $UNIT $UNIT.rolled-back'"
         return 0
@@ -832,6 +855,8 @@ if [ "$HAVE_SYSTEMD" = 1 ] && [ -L "$LEGACY_UNIT" ] && [ "$(readlink "$LEGACY_UN
     if [ "$PORTAL_DIR" != "$STATE_DIR" ]; then install -m 0644 "$PORTAL_DIR/relay.mjs" "$STATE_DIR/relay.mjs"; fi
     systemctl restart "$SERVICE.service"
   fi
+  install_yuremote
+  install_legacy_command
   ok "$SERVICE is already migrated."
   exit 0
 fi
