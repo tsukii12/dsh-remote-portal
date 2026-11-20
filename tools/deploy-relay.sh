@@ -578,10 +578,15 @@ LEGACY_COMMAND
   mv -f -- "$stage" "$LEGACY_BIN"
 }
 
+has_migrated_alias() {
+  [ -L "$LEGACY_UNIT" ] && [ "$(readlink "$LEGACY_UNIT")" = "$UNIT" ] && [ -f "$LEGACY_BACKUP" ]
+}
+
 # ── uninstall ───────────────────────────────────────────────────────────────
 if [ "$UNINSTALL" = 1 ]; then
   say "$(t "Removing the relay" "卸载公网中转")"
   if as_root && [ -f "$UNIT" ]; then
+    if has_migrated_alias; then install -m 0600 "$UNIT" "$UNIT.uninstalled"; fi
     systemctl disable --now "$SERVICE" 2>/dev/null || true
     rm -f "$UNIT"; systemctl daemon-reload || true
     ok "$(t "service removed" "服务已移除")"
@@ -809,8 +814,20 @@ if [ "$HAVE_SYSTEMD" = 1 ] && ! as_root; then
 fi
 if [ "$HAVE_SYSTEMD" = 1 ]; then ok "systemd"; else warn "$(t "no systemd: the relay will run unmanaged" "没有 systemd：relay 不会被托管")"; fi
 
+write_migrated_unit() {
+  local unit_stage
+  unit_stage=$(mktemp)
+  sed -e "s#$LEGACY_RELAY_DIR/relay.mjs#$RELAY_DIR/relay.mjs#g" \
+      -e "s#--token-file $LEGACY_STATE_DIR/token#--token-file $STATE_DIR/token#g" \
+      -e "s#^ReadOnlyPaths=$LEGACY_RELAY_DIR\$#ReadOnlyPaths=$RELAY_DIR#" \
+      -e "s#^ReadWritePaths=$LEGACY_STATE_DIR\$#ReadWritePaths=$STATE_DIR#" \
+      -e 's/^Description=.*/Description=YuRemote relay/' "$1" > "$unit_stage"
+  install -m 0644 "$unit_stage" "$UNIT"
+  rm -f -- "$unit_stage"
+}
+
 migrate_relay() {
-  local attempt drop_ins health_addr unit_stage was_active=0 was_enabled=0
+  local attempt drop_ins health_addr was_active=0 was_enabled=0
   [ -f "$LEGACY_UNIT" ] && [ ! -L "$LEGACY_UNIT" ] || die "Expected a regular unit at $LEGACY_UNIT"
   [ ! -e "$UNIT" ] && [ ! -e "$LEGACY_BACKUP" ] && [ ! -e "$STATE_DIR" ] && [ ! -e "$RELAY_DIR" ] ||
     die "Migration targets already exist; resolve the previous install before retrying."
@@ -840,14 +857,7 @@ migrate_relay() {
     sed -i '/^SCRIPT=/d' "$CONF_FILE"
   fi
   printf 'SCRIPT=%s/deploy-relay.sh\n' "$STATE_DIR" >> "$CONF_FILE"
-  unit_stage=$(mktemp)
-  sed -e "s#$LEGACY_RELAY_DIR/relay.mjs#$RELAY_DIR/relay.mjs#g" \
-      -e "s#--token-file $LEGACY_STATE_DIR/token#--token-file $STATE_DIR/token#g" \
-      -e "s#^ReadOnlyPaths=$LEGACY_RELAY_DIR\$#ReadOnlyPaths=$RELAY_DIR#" \
-      -e "s#^ReadWritePaths=$LEGACY_STATE_DIR\$#ReadWritePaths=$STATE_DIR#" \
-      -e 's/^Description=.*/Description=YuRemote relay/' "$LEGACY_UNIT" > "$unit_stage"
-  install -m 0644 "$unit_stage" "$UNIT"
-  rm -f -- "$unit_stage"
+  write_migrated_unit "$LEGACY_UNIT"
   systemctl is-active --quiet "$LEGACY_SERVICE.service" && was_active=1
   systemctl is-enabled --quiet "$LEGACY_SERVICE.service" && was_enabled=1
   if systemctl disable --now "$LEGACY_SERVICE.service" &&
@@ -895,19 +905,30 @@ if [ "$HAVE_SYSTEMD" = 1 ] && [ -f "$LEGACY_UNIT" ] && [ ! -L "$LEGACY_UNIT" ]; 
   exit 0
 fi
 is_migrated_relay() {
-  [ "$HAVE_SYSTEMD" = 1 ] && [ -L "$LEGACY_UNIT" ] && [ "$(readlink "$LEGACY_UNIT")" = "$UNIT" ] && [ -f "$LEGACY_BACKUP" ]
+  [ "$HAVE_SYSTEMD" = 1 ] && has_migrated_alias
 }
 if is_migrated_relay && [ "$CONFIG_HTTP_ONLY" = 1 ]; then
   apply_migrated_http_port
   exit 0
 fi
 if is_migrated_relay && [ "$APPLY_CONFIG" = 0 ]; then
+  install -d -m 0755 "$RELAY_DIR"
   install_brand
   if ! cmp -s "$PORTAL_DIR/relay.mjs" "$RELAY_DIR/relay.mjs"; then
     node --check "$PORTAL_DIR/relay.mjs"
     install -m 0644 "$PORTAL_DIR/relay.mjs" "$RELAY_DIR/relay.mjs"
     if [ "$PORTAL_DIR" != "$STATE_DIR" ]; then install -m 0644 "$PORTAL_DIR/relay.mjs" "$STATE_DIR/relay.mjs"; fi
-    systemctl restart "$SERVICE.service"
+    if [ -f "$UNIT" ]; then systemctl restart "$SERVICE.service"; fi
+  fi
+  if [ ! -f "$UNIT" ]; then
+    if [ -f "$UNIT.uninstalled" ]; then
+      install -m 0644 "$UNIT.uninstalled" "$UNIT"
+    else
+      write_migrated_unit "$LEGACY_BACKUP"
+    fi
+    systemctl daemon-reload
+    systemctl enable --now "$SERVICE.service"
+    rm -f -- "$UNIT.uninstalled"
   fi
   install_yuremote
   install_legacy_command

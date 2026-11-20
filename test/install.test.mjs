@@ -159,7 +159,7 @@ test("migrated manager applies HTTP_PORT without changing TLS or the other liste
     'APPLY_CONFIG=0; CONFIG_HTTP_ONLY=0; [ "$2" != --apply-http-port ] || { APPLY_CONFIG=1; CONFIG_HTTP_ONLY=1; }',
     't() { printf "%s" "$1"; }', 'die() { echo "$*" >&2; exit 1; }',
     `systemctl() { printf '%s\\n' "$*" >> "${log}"; }`,
-    shellFunction("apply_migrated_http_port"), dispatch, "exit 99",
+    shellFunction("has_migrated_alias"), shellFunction("apply_migrated_http_port"), dispatch, "exit 99",
   ].join("\n"));
   const prepared = spawnSync("bash", ["-s"], {
     input: `BIN=${manager}\nok() { :; }\nt() { :; }\n${shellFunction("install_yuremote").replaceAll("/var/lib/yuremote-relay", sandbox)}\ninstall_yuremote\n`,
@@ -170,6 +170,58 @@ test("migrated manager applies HTTP_PORT without changing TLS or the other liste
   assert.equal(result.status, 0, result.stderr);
   assert.equal(readFileSync(unit, "utf8"), line.replace("8080", "8081"));
   assert.equal(readFileSync(log, "utf8"), "daemon-reload\nrestart yuremote-relay.service\n");
+});
+
+test("a migrated relay can be reinstalled after uninstall without reverting its unit", { skip }, (t) => {
+  const sandbox = home([]);
+  t.after(() => rmSync(sandbox, { recursive: true, force: true }));
+  const state = join(sandbox, "state");
+  const relay = join(sandbox, "relay");
+  const unit = join(sandbox, "yuremote-relay.service");
+  const oldUnit = join(sandbox, "dsh-relay.service");
+  const backup = `${oldUnit}.bak-yuremote`;
+  const bin = join(sandbox, "yuremote");
+  mkdirSync(state);
+  mkdirSync(relay);
+  const line = `ExecStart=/usr/bin/env node ${relay}/relay.mjs --token-file ${state}/token --http-port 127.0.0.1:8081\n`;
+  writeFileSync(unit, line);
+  writeFileSync(backup, "legacy unit\n");
+  symlinkSync(unit, oldUnit);
+  writeFileSync(join(state, "token"), "fixture-token\n");
+  writeFileSync(join(state, "relay.mjs"), "export {};\n");
+  const setup = `
+set -euo pipefail
+UNINSTALL=$1 HAVE_SYSTEMD=1 APPLY_CONFIG=0 CONFIG_HTTP_ONLY=0
+UNIT=${unit} LEGACY_UNIT=${oldUnit} LEGACY_BACKUP=${backup}
+RELAY_DIR=${relay} STATE_DIR=${state} PORTAL_DIR=${state} BIN=${bin} SERVICE=yuremote-relay
+as_root() { :; }
+t() { printf '%s' "$1"; }
+say() { :; }
+ok() { :; }
+warn() { :; }
+install_brand() { :; }
+install_yuremote() { touch "$BIN"; }
+install_legacy_command() { :; }
+systemctl() { printf '%s\\n' "$*"; }
+${shellFunction("has_migrated_alias")}
+`;
+  const uninstall = deploy.slice(deploy.indexOf('if [ "$UNINSTALL" = 1 ]; then'), deploy.indexOf("# ── 1. environment"))
+    .replaceAll("/opt/1panel", `${sandbox}/1panel`).replaceAll("/etc/nginx", `${sandbox}/nginx`).replaceAll("/etc/caddy", `${sandbox}/caddy`)
+    .replace("command -v docker", "false");
+  const removed = spawnSync("bash", ["-s", "--", "1"], { input: setup + uninstall, encoding: "utf8" });
+  assert.equal(removed.status, 0, removed.stderr);
+  assert.equal(existsSync(unit), false);
+  assert.equal(existsSync(relay), false);
+  const dispatch = deploy.slice(deploy.indexOf('if [ "$HAVE_SYSTEMD" = 1 ] && [ -f "$LEGACY_UNIT" ]'), deploy.indexOf("# ── 2. detection"));
+  const restored = spawnSync("bash", ["-s", "--", "0"], { input: setup + dispatch + "\nexit 99", encoding: "utf8" });
+  assert.equal(restored.status, 0, restored.stderr);
+  assert.equal(readFileSync(unit, "utf8"), line);
+  assert.equal(readFileSync(backup, "utf8"), "legacy unit\n");
+  assert.equal(readFileSync(join(state, "token"), "utf8"), "fixture-token\n");
+  assert.equal(readFileSync(join(relay, "relay.mjs"), "utf8"), "export {};\n");
+  assert.ok(lstatSync(oldUnit).isSymbolicLink());
+  assert.ok(existsSync(bin));
+  assert.equal(restored.stdout, "daemon-reload\nenable --now yuremote-relay.service\n");
 });
 
 for (const healthy of ["yes", "no"]) {
@@ -220,7 +272,7 @@ info() { printf '%s\\n' "$*"; }
 die() { printf '%s\\n' "$*" >&2; exit 1; }
 `;
     const result = spawnSync("bash", ["-s", "--", oldDir, oldState, newDir, newState, oldUnit, newUnit, join(ROOT, "tools"), healthy], {
-      input: setup + shellFunction("prepare_installer") + "\n" + migrate + "\nmigrate_relay\n",
+      input: [setup, shellFunction("prepare_installer"), shellFunction("write_migrated_unit"), migrate, "migrate_relay\n"].join("\n"),
       encoding: "utf8",
     });
     assert.equal(readFileSync(join(oldDir, "relay.mjs"), "utf8"), "legacy code");
