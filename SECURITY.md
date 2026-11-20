@@ -1,63 +1,13 @@
-# Security policy
+# Security policy · 安全政策
 
 ## Reporting a vulnerability
 
-Please **do not open a public issue** for a security problem.
+**Do not open a public issue.** Use GitHub **Security → Advisories → Report a vulnerability**, or contact the maintainer privately if that option is unavailable. Include the affected YuRemote version, platform, LAN or relay setup, the impact and a minimal reproduction. Remove credentials, pairing links and private data. Please allow time for a fix before public disclosure.
 
-Open a private security advisory on the repository (GitHub → *Security* →
-*Advisories* → *Report a vulnerability*), or contact the maintainer directly if
-the advisory flow is unavailable. Include:
+The project handles reports about the YuRemote gateway, browser UI, relay, installers and mobile app. Report dsh and other third-party issues upstream. See [architecture and security model](ARCHITECTURE.md#3-authentication) and [safe relay deployment](docs/DEPLOY-SERVER.md) for the trust model.
 
-* what you can do that you should not be able to do,
-* the version (`status()` in the panel shows it) and the platform,
-* whether the portal was reachable over LAN, through a relay, or both,
-* a minimal reproduction (curl transcript is ideal).
+## 漏洞报告
 
-You can expect an acknowledgement within a few days. Please give a reasonable
-window before public disclosure; credit is given in the changelog if you want it.
+**不要公开创建 Issue。** 请使用 GitHub **Security → Advisories → Report a vulnerability**，若入口不可用，请私下联系维护者。请说明受影响的鱼鱼远程版本、平台、局域网或中转配置、影响及最小复现步骤；请删除凭据、配对链接和私有数据。公开披露之前，请留出修复时间。
 
-## Scope
-
-In scope:
-
-* the portal gateway (`lib/gateway.mjs`, `lib/proxy.mjs`, `lib/auth.mjs`,
-  `lib/mint.mjs`) — authentication bypass, cookie forgery, request smuggling,
-  open-proxy behaviour, header-injection, information disclosure;
-* the login page (`lib/login-page.mjs`) — XSS, clickjacking, form-action abuse;
-* the relay and tunnel (`tools/relay.mjs`, `lib/tunnel.mjs`) — stream
-  confusion, token bypass, cross-tunnel data leakage;
-* the browser half (`client.js`, `assets/`) — XSS against the Harness origin,
-  slot-registration tricks that survive a host update.
-
-Out of scope:
-
-* anything that requires an attacker who can already read `state.json` or
-  `.credentials.yaml` (that is game over by definition);
-* the fact that plain-HTTP LAN mode is sniffable — documented, and TLS is
-  supported;
-* `dsh` itself and third-party plugins; report those upstream.
-
-## Design notes that are *not* bugs
-
-* **The public URL is not a credential.** `/__t/<id>/` is a stable address
-  derived from the tunnel token; anyone who has it still needs the portal
-  password or a one-time pairing code.
-* **Devices share one dsh identity.** Revoking a device rejects its portal
-  cookie; it cannot revoke the underlying dsh browser cookie, which never leaves
-  the host.
-* **Sessions are bound to the browser's User-Agent hash.** Copying a cookie to a
-  different browser invalidates it on purpose.
-* **A non-loopback bind without a password is refused** rather than warned
-  about; that is the intended failure mode (`needs-password`).
-
-## Hardening checklist for operators
-
-1. Set a password before enabling the portal (the panel enforces this).
-2. Use `tls:` when the portal is reachable from an untrusted network, or route
-   it through the relay so the public hop is HTTPS.
-3. Rotate the tunnel token if it was ever pasted somewhere you do not control
-   (panel → 公网访问 → 断开, change the token on the server, reconnect).
-4. Keep `~/.dsh/yuremote/state.json` at `0600`; it holds the password
-   hash, session signing secret and the tunnel token.
-5. Watch the panel's 最近访问 card and 已授权设备 list; remove what you do not
-   recognise.
+项目处理鱼鱼远程网关、网页界面、中转、安装脚本及移动应用的问题。dsh 和其他第三方组件的问题请报告给对应上游。信任模型见[架构与安全模型](docs/ARCHITECTURE.zh-CN.md#3-身份认证)和[安全部署中转](docs/DEPLOY-SERVER.zh-CN.md)。

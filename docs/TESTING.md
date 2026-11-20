@@ -1,38 +1,35 @@
-# Testing
+# Development and testing
 
-[Documentation index](README.md)
+[简体中文](TESTING.zh-CN.md) · [Documentation](README.md#english)
 
-Use Node.js 20 or later. No runtime dependencies need to be installed.
+Use Node.js 20+ for the plugin and relay. See the [repository map](../ARCHITECTURE.md#4-repository-map) before editing. Keep changes focused; add coverage to the suite for the component you change.
 
 ```sh
-node --test                       # all suites
-node --test test/host.test.mjs    # gateway and host integration
-node --test test/relay.test.mjs   # relay and tunnel integration
+npm test                          # YuRemote Node suites (same command as CI)
+node --test test/host.test.mjs     # Gateway and host integration
+node --test test/relay.test.mjs    # Relay and tunnel integration
 ```
 
-Gateway and tunnel tests use real listeners. The QR suite verifies codes with an
-independent decoder. The mobile suite includes both unit tests and live browser
-checks; only the latter skip when Chrome or a reachable dsh Web instance is missing.
+The mobile suite includes live Chrome checks. Start `dsh web --port 3080 --no-open` with YuRemote installed in a separate terminal. Use the loopback base URL without a query string and the token from the launch URL. Do not share it.
 
-## Run the live mobile checks
+```sh
+CHROME_PATH=/path/to/chrome \
+DSH_WEB_TEST_URL=http://127.0.0.1:3080 \
+DSH_WEB_TEST_TOKEN='<local launch token>' \
+npm test
+```
 
-1. In another terminal, start a local dsh Web instance:
+On Windows, the suite can auto-start dsh if it finds `dsh.cmd`. If Chrome or a live instance is unavailable, the live cases skip. Check the skip count before reporting browser coverage.
 
-   ```sh
-   dsh web --port 3080 --no-open
-   ```
+A bare `node --test` also discovers the vendored Tavern differential tests. The Tavern browser adapter tests require Node's `--experimental-vm-modules` flag; they are not part of the YuRemote gateway workflow.
 
-2. Set the base URL without query parameters, the token from the printed launch URL,
-   and the path to an executable Chrome or Chromium. Keep the token local.
-   Example for a POSIX shell:
+For Flutter, see [build from source](APP.md#build-from-source). The app workflow uses the following active checks; the inherited legacy suite is not the app's CI gate.
 
-   ```sh
-   CHROME_PATH=/path/to/chrome \
-   DSH_WEB_TEST_URL=http://127.0.0.1:3080 \
-   DSH_WEB_TEST_TOKEN='<local launch token>' \
-   node --test
-   ```
+```sh
+cd app
+flutter pub get
+flutter analyze lib
+flutter test test/portal
+```
 
-   Use `node --test test/mobile.test.mjs` to run only the mobile suite. On Windows,
-   the suite can also launch dsh automatically if it finds `dsh.cmd`; the explicit
-   URL and token work on all platforms. Check that the live cases did not skip.
+On Linux, CI installs Noto CJK fonts and sets `DSH_TEST_FONT_DIR=/usr/share/fonts/opentype/noto`. The same workflow runs `dart pub get`, `dart analyze` and `dart test` in each of `packages/dsh_client` and `packages/dsh_portal`.
