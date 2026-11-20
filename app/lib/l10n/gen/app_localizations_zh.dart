@@ -15234,6 +15234,18 @@ class L10nZh extends L10n {
   String get portalWebRemoved => '鱼鱼远程不提供内嵌网页功能。';
 
   @override
+  String get portalProjectRepository => '项目仓库';
+
+  @override
+  String get portalUpstreamCredit => '上游来源';
+
+  @override
+  String get portalLicenseSplit => '鱼鱼远程及导入的 Dart 包采用 AGPL-3.0 许可。独立的服务端网关采用 MIT 许可。';
+
+  @override
+  String get portalArtworkCredit => '鱼鱼远程插画由 Tsuki 提供。未包含上游受保护的品牌与吉祥物。';
+
+  @override
   String get portalDirectoryParent => '上一级文件夹';
 
   @override

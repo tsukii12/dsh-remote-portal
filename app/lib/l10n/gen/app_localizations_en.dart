@@ -16012,6 +16012,20 @@ class L10nEn extends L10n {
   String get portalWebRemoved => 'Embedded web features are not available in YuRemote.';
 
   @override
+  String get portalProjectRepository => 'Project repository';
+
+  @override
+  String get portalUpstreamCredit => 'Upstream credit';
+
+  @override
+  String get portalLicenseSplit =>
+      'YuRemote and its imported Dart packages are licensed under AGPL-3.0. The separate server gateway is MIT licensed.';
+
+  @override
+  String get portalArtworkCredit =>
+      'YuRemote artwork supplied by Tsuki. Upstream protected branding and mascots are not included.';
+
+  @override
   String get portalDirectoryParent => 'Parent folder';
 
   @override

@@ -21,6 +21,7 @@ abstract final class AppInfo {
   /// The in-app wordmark: the drawer's lockup, the welcome page and the brand mark's
   /// spoken label.
   static const wordmark = 'YuRemote';
+  static const repositoryUrl = 'https://github.com/tsukii12/dsh-YuRemote';
 
   /// Required wording: the app is built on DSH but is not an official DeepSeek product.
   /// Shown on the About and licence pages.

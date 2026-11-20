@@ -13,6 +13,12 @@ import 'package:flutter/services.dart';
 /// THIRD_PARTY_NOTICES.md at the repository root; each package appears in exactly one entry.
 void registerThirdPartyLicenses({String? os}) {
   final harmony = (os ?? Platform.operatingSystem) == 'ohos';
+  LicenseRegistry.addLicense(() async* {
+    yield LicenseEntryWithLineBreaks(
+      const ['YuRemote', 'dsh-Go v1.2.0'],
+      await rootBundle.loadString('assets/licenses/yuremote-AGPL-3.0.txt'),
+    );
+  });
   LicenseRegistry.addLicense(
     () => Stream<LicenseEntry>.fromIterable([..._copiedCode, ...harmony ? _inTheHap : _inTheApk, ..._iconsAndData]),
   );

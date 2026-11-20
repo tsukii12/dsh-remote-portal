@@ -1,0 +1,6 @@
+{
+  "portalProjectRepository": "项目仓库",
+  "portalUpstreamCredit": "上游来源",
+  "portalLicenseSplit": "鱼鱼远程及导入的 Dart 包采用 AGPL-3.0 许可。独立的服务端网关采用 MIT 许可。",
+  "portalArtworkCredit": "鱼鱼远程插画由 Tsuki 提供。未包含上游受保护的品牌与吉祥物。"
+}

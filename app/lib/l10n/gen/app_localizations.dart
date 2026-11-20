@@ -28016,6 +28016,30 @@ abstract class L10n {
   /// **'鱼鱼远程不提供内嵌网页功能。'**
   String get portalWebRemoved;
 
+  /// No description provided for @portalProjectRepository.
+  ///
+  /// In zh, this message translates to:
+  /// **'项目仓库'**
+  String get portalProjectRepository;
+
+  /// No description provided for @portalUpstreamCredit.
+  ///
+  /// In zh, this message translates to:
+  /// **'上游来源'**
+  String get portalUpstreamCredit;
+
+  /// No description provided for @portalLicenseSplit.
+  ///
+  /// In zh, this message translates to:
+  /// **'鱼鱼远程及导入的 Dart 包采用 AGPL-3.0 许可。独立的服务端网关采用 MIT 许可。'**
+  String get portalLicenseSplit;
+
+  /// No description provided for @portalArtworkCredit.
+  ///
+  /// In zh, this message translates to:
+  /// **'鱼鱼远程插画由 Tsuki 提供。未包含上游受保护的品牌与吉祥物。'**
+  String get portalArtworkCredit;
+
   /// No description provided for @portalDirectoryParent.
   ///
   /// In zh, this message translates to:
