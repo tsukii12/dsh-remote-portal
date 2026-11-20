@@ -37,11 +37,14 @@ PORTAL_DIR="$(cd "$(dirname "$0")" 2>/dev/null && pwd || echo .)"
 HOST=""; AGENT_PORT=9443; HTTP_PORT=8080; PUBLIC_PORT=80
 PROXY_MODE=""; ASSUME_YES=0; UNINSTALL=0; LANG_MODE=en
 VISIT_MODE=""; SCHEME=http; VISITOR_TLS=0; AGENT_TLS=1; CERT_SOURCE=none
+APPLY_CONFIG=0; CONFIG_HTTP_ONLY=0
 
 while [ $# -gt 0 ]; do
   case "$1" in
     --lang) LANG_MODE=$2; shift 2 ;;
     --yes|-y) ASSUME_YES=1; shift ;;
+    --apply-config) APPLY_CONFIG=1; shift ;;
+    --apply-http-port) APPLY_CONFIG=1; CONFIG_HTTP_ONLY=1; shift ;;
     --uninstall) UNINSTALL=1; shift ;;
     -h|--help) sed -n '2,19p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *) echo "unknown option: $1 (try --help)" >&2; exit 1 ;;
@@ -493,6 +496,17 @@ case "${1:-status}" in
       exit 0
     fi
     load
+    apply=--apply-config
+    if [ "$#" = 1 ]; then
+      case "$1" in
+        HTTP_PORT=*)
+          v=${1#*=}
+          case "$v" in ''|*[!0-9]*|??????*) echo "invalid HTTP port" >&2; exit 2 ;; esac
+          if [ "$v" -lt 1 ] || [ "$v" -gt 65535 ]; then echo "invalid HTTP port" >&2; exit 2; fi
+          apply=--apply-http-port
+          ;;
+      esac
+    fi
     changed=0
     for pair in "$@"; do
       k=${pair%%=*}; v=${pair#*=}
@@ -514,7 +528,7 @@ case "${1:-status}" in
     # not enough: reinstall from the saved answers.
     if [ -n "${SCRIPT:-}" ] && [ -r "$SCRIPT" ]; then
       echo "reinstalling with the new settings"
-      bash "$SCRIPT" --yes
+      bash "$SCRIPT" --yes "$apply"
     else
       echo "re-run the installer to apply these (the saved answers are now defaults)"
     fi
@@ -864,11 +878,30 @@ migrate_relay() {
   die "New relay did not become healthy; restored the legacy unit. Staged files remain in $RELAY_DIR and $STATE_DIR."
 }
 
+apply_migrated_http_port() {
+  local pattern='(^ExecStart=.*--http-port ([^ ]*:)?)[0-9]+( |$)'
+  grep -Eq "$pattern" "$UNIT" || die "$(t "Cannot read the migrated HTTP listener." "无法读取迁移后的 HTTP 监听地址。")"
+  case "$HTTP_PORT" in ''|*[!0-9]*|??????*) die "$(t "Invalid HTTP port." "HTTP 端口无效。")" ;; esac
+  [ "$HTTP_PORT" -ge 1 ] && [ "$HTTP_PORT" -le 65535 ] || die "$(t "Invalid HTTP port." "HTTP 端口无效。")"
+  [ "$HTTP_PORT" -ge 1024 ] || grep -q '^AmbientCapabilities=.*CAP_NET_BIND_SERVICE' "$UNIT" ||
+    die "$(t "Reconfigure the service before using a privileged HTTP port." "使用特权 HTTP 端口前请重新配置服务。")"
+  sed -i -E "s/$pattern/\1$HTTP_PORT\3/" "$UNIT"
+  systemctl daemon-reload
+  systemctl restart "$SERVICE.service"
+}
+
 if [ "$HAVE_SYSTEMD" = 1 ] && [ -f "$LEGACY_UNIT" ] && [ ! -L "$LEGACY_UNIT" ]; then
   migrate_relay
   exit 0
 fi
-if [ "$HAVE_SYSTEMD" = 1 ] && [ -L "$LEGACY_UNIT" ] && [ "$(readlink "$LEGACY_UNIT")" = "$UNIT" ] && [ -f "$LEGACY_BACKUP" ]; then
+is_migrated_relay() {
+  [ "$HAVE_SYSTEMD" = 1 ] && [ -L "$LEGACY_UNIT" ] && [ "$(readlink "$LEGACY_UNIT")" = "$UNIT" ] && [ -f "$LEGACY_BACKUP" ]
+}
+if is_migrated_relay && [ "$CONFIG_HTTP_ONLY" = 1 ]; then
+  apply_migrated_http_port
+  exit 0
+fi
+if is_migrated_relay && [ "$APPLY_CONFIG" = 0 ]; then
   install_brand
   if ! cmp -s "$PORTAL_DIR/relay.mjs" "$RELAY_DIR/relay.mjs"; then
     node --check "$PORTAL_DIR/relay.mjs"

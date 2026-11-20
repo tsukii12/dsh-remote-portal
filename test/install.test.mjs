@@ -137,6 +137,41 @@ test("legacy drp revokes a token from the active migrated relay, and works after
   assert.equal(rolledBack.stdout, "legacy-manager\n");
 });
 
+test("migrated manager applies HTTP_PORT without changing TLS or the other listeners", { skip }, (t) => {
+  const sandbox = home([]);
+  t.after(() => rmSync(sandbox, { recursive: true, force: true }));
+  const unit = join(sandbox, "yuremote-relay.service");
+  const legacyUnit = join(sandbox, "dsh-relay.service");
+  const installer = join(sandbox, "deploy-relay.sh");
+  const manager = join(sandbox, "yuremote");
+  const log = join(sandbox, "systemctl.log");
+  const line = "ExecStart=/usr/bin/env node relay.mjs --http-port 127.0.0.1:8080 --agent-port 9443 --tls-port 0.0.0.0:8443 --tls-cert /legacy/cert --tls-key /legacy/key\n";
+  writeFileSync(unit, line);
+  symlinkSync(unit, legacyUnit);
+  writeFileSync(`${legacyUnit}.bak-yuremote`, "[Service]\n");
+  writeFileSync(join(sandbox, "deploy.conf"), `HTTP_PORT=8080\nSCRIPT=${installer}\n`);
+  const dispatch = deploy.slice(deploy.indexOf("if [ \"$HAVE_SYSTEMD\" = 1 ] && [ -f \"$LEGACY_UNIT\" ]"), deploy.indexOf("# ── 2. detection"));
+  assert.match(dispatch, /is_migrated_relay/);
+  writeFileSync(installer, [
+    "set -euo pipefail",
+    `HAVE_SYSTEMD=1 UNIT=${unit} LEGACY_UNIT=${legacyUnit} LEGACY_BACKUP=${legacyUnit}.bak-yuremote SERVICE=yuremote-relay`,
+    `. "${sandbox}/deploy.conf"`,
+    'APPLY_CONFIG=0; CONFIG_HTTP_ONLY=0; [ "$2" != --apply-http-port ] || { APPLY_CONFIG=1; CONFIG_HTTP_ONLY=1; }',
+    't() { printf "%s" "$1"; }', 'die() { echo "$*" >&2; exit 1; }',
+    `systemctl() { printf '%s\\n' "$*" >> "${log}"; }`,
+    shellFunction("apply_migrated_http_port"), dispatch, "exit 99",
+  ].join("\n"));
+  const prepared = spawnSync("bash", ["-s"], {
+    input: `BIN=${manager}\nok() { :; }\nt() { :; }\n${shellFunction("install_yuremote").replaceAll("/var/lib/yuremote-relay", sandbox)}\ninstall_yuremote\n`,
+    encoding: "utf8",
+  });
+  assert.equal(prepared.status, 0, prepared.stderr);
+  const result = spawnSync(manager, ["config", "HTTP_PORT=8081"], { encoding: "utf8" });
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(readFileSync(unit, "utf8"), line.replace("8080", "8081"));
+  assert.equal(readFileSync(log, "utf8"), "daemon-reload\nrestart yuremote-relay.service\n");
+});
+
 for (const healthy of ["yes", "no"]) {
   test(`deploy-relay.sh migrates the unit and ${healthy === "yes" ? "keeps it when healthy" : "restores it on failure"}`, { skip }, (t) => {
     const sandbox = home([]);
