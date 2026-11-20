@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../dev/remote_benchmark.dart';
 import '../../l10n/l10n.dart';
 import '../../notify/chat_alerts.dart' show approvalText, questionText;
 import '../../speech/read_aloud.dart';
@@ -728,61 +729,67 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
       }
     }
 
-    final sessionId = await _ensureSession(isCurrent: ownsDraft);
-    if (sessionId == null || !ownsDraft() || _draftKey != sessionId) return;
-    final chat = ref.read(chatProvider(sessionId).notifier);
-    if (!ref.read(chatProvider(sessionId)).controlReady) {
-      if (mode == SendMode.interrupt) return;
-      // session/create can finish before its first follow snapshot. Keep
-      // the draft visible while waiting; a timeout must not eat the message.
-      final wait = Object();
-      bool current() => identical(_syncWait, wait) && _draftKey == sessionId && ownsDraft();
-      setState(() => _syncWait = wait);
-      try {
-        final ready = await chat.waitForSync(isCurrent: current);
-        if (!ready ||
-            !current() ||
-            _input.text.trim() != typed ||
-            !identical(_drafts, drafts) ||
-            ref.read(composerQuoteProvider)[sessionId] != quote) {
-          return;
+    RemoteBenchmark.start('first_send_ack');
+    try {
+      final sessionId = await _ensureSession(isCurrent: ownsDraft);
+      if (sessionId == null || !ownsDraft() || _draftKey != sessionId) return;
+      final chat = ref.read(chatProvider(sessionId).notifier);
+      if (!ref.read(chatProvider(sessionId)).controlReady) {
+        if (mode == SendMode.interrupt) return;
+        // session/create can finish before its first follow snapshot. Keep
+        // the draft visible while waiting; a timeout must not eat the message.
+        final wait = Object();
+        bool current() => identical(_syncWait, wait) && _draftKey == sessionId && ownsDraft();
+        setState(() => _syncWait = wait);
+        try {
+          final ready = await chat.waitForSync(isCurrent: current);
+          if (!ready ||
+              !current() ||
+              _input.text.trim() != typed ||
+              !identical(_drafts, drafts) ||
+              ref.read(composerQuoteProvider)[sessionId] != quote) {
+            return;
+          }
+        } finally {
+          if (mounted && identical(_syncWait, wait)) setState(() => _syncWait = null);
         }
-      } finally {
-        if (mounted && identical(_syncWait, wait)) setState(() => _syncWait = null);
       }
-    }
-    // Creation/model application can also await while the composer is edited,
-    // even when the session's baseline is already available on return.
-    if (!ownsDraft() ||
-        _draftKey != sessionId ||
-        _input.text.trim() != typed ||
-        !identical(_drafts, drafts) ||
-        ref.read(composerQuoteProvider)[sessionId] != quote) {
-      return;
-    }
-    setState(() => _drafts = const []);
-    // A new message: the reply being read aloud is old news.
-    ref.read(readAloudProvider.notifier).stop();
-    _input.clear();
-    ref.read(composerQuoteProvider.notifier).clear(sessionId);
+      // Creation/model application can also await while the composer is edited,
+      // even when the session's baseline is already available on return.
+      if (!ownsDraft() ||
+          _draftKey != sessionId ||
+          _input.text.trim() != typed ||
+          !identical(_drafts, drafts) ||
+          ref.read(composerQuoteProvider)[sessionId] != quote) {
+        return;
+      }
+      setState(() => _drafts = const []);
+      // A new message: the reply being read aloud is old news.
+      ref.read(readAloudProvider.notifier).stop();
+      _input.clear();
+      ref.read(composerQuoteProvider.notifier).clear(sessionId);
 
-    // One open question and nothing else waiting: the text is its answer
-    // (a steer would wait behind the question).
-    final current = ref.read(chatProvider(sessionId));
-    final bool ok;
-    if (current.singleQuestion case final request?
-        when drafts.isEmpty &&
-            quote == null &&
-            generate == null &&
-            mode == SendMode.now &&
-            current.openApproval == null) {
-      ok = await chat.answer(request, [QuestionAnswer(request.questions.single.id, custom: text)]);
-    } else {
-      ok = await chat.send(text, attachments: drafts, mode: mode);
-      // A generation request, counted on top of its turn.
-      if (ok && generate != null && mounted) ref.read(usageStatsProvider.notifier).count(UsageCount.gen);
+      // One open question and nothing else waiting: the text is its answer
+      // (a steer would wait behind the question).
+      final current = ref.read(chatProvider(sessionId));
+      final bool ok;
+      if (current.singleQuestion case final request?
+          when drafts.isEmpty &&
+              quote == null &&
+              generate == null &&
+              mode == SendMode.now &&
+              current.openApproval == null) {
+        ok = await chat.answer(request, [QuestionAnswer(request.questions.single.id, custom: text)]);
+      } else {
+        ok = await chat.send(text, attachments: drafts, mode: mode);
+        // A generation request, counted on top of its turn.
+        if (ok && generate != null && mounted) ref.read(usageStatsProvider.notifier).count(UsageCount.gen);
+      }
+      if (ok) RemoteBenchmark.finish('first_send_ack');
+      if (!ok && _sameHost(client)) _giveBack(sessionId, typed, drafts, quote: quote);
+    } finally {
+      RemoteBenchmark.cancel('first_send_ack');
     }
-    if (!ok && _sameHost(client)) _giveBack(sessionId, typed, drafts, quote: quote);
   }
 
   // A failed send belongs to the Host that accepted it. The controller may

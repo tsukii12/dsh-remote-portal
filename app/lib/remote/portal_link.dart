@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:dsh_client/dsh_client.dart';
 import 'package:dsh_portal/dsh_portal.dart';
 
+import '../dev/remote_benchmark.dart';
 import '../state/hosts_state.dart';
 import 'link_status.dart';
 import 'secret_store.dart';
@@ -44,6 +45,7 @@ class PortalHostLink extends HostLink {
   @override
   Future<DshClient> open() => _opening ??= _open();
   Future<DshClient> _open() async {
+    RemoteBenchmark.start('connect');
     _set(const HostLinkStatus(HostLinkPhase.connecting, step: HostLinkStep.connect));
     try {
       final session = _session = PortalSession(config.base,
@@ -69,10 +71,12 @@ class PortalHostLink extends HostLink {
         }
       });
       await client.mux.ready();
+      RemoteBenchmark.finish('connect');
       if (_closed) throw const DshClosedException();
       _set(const HostLinkStatus(HostLinkPhase.connected));
       return client;
     } on Object catch (error) {
+      RemoteBenchmark.cancel('connect');
       if (error is DshHttpException && error.statusCode == 401) _expired();
       if (_status.phase != HostLinkPhase.failed) {
         _set(const HostLinkStatus(HostLinkPhase.failed,

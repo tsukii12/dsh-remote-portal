@@ -15,7 +15,6 @@ import 'state/tile_style_state.dart';
 import 'ui/chat/dsh_ui/dsh_ui_model.dart' show DshUiAppAccent;
 import 'ui/common/keyboard_motion.dart';
 import 'ui/common/side_insets.dart';
-import 'ui/launch/launch_overlay.dart';
 import 'ui/shell/root_gate.dart';
 import 'ui/theme/theme.dart';
 import 'ui_config/ui_config_state.dart';
@@ -196,17 +195,9 @@ class _DshAppState extends ConsumerState<DshApp> with WidgetsBindingObserver {
           child: AppMotionScope(
             fluid: fluid,
             child: ThemeRevealHost(
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  LaunchUnder(
-                    child: Platform.operatingSystem == 'ohos'
-                        ? EasedKeyboardInset(child: MirroredSideInsets(child: child!))
-                        : MirroredSideInsets(child: child!),
-                  ),
-                  const LaunchLayer(),
-                ],
-              ),
+              child: Platform.operatingSystem == 'ohos'
+                  ? EasedKeyboardInset(child: MirroredSideInsets(child: child!))
+                  : MirroredSideInsets(child: child!),
             ),
           ),
         );

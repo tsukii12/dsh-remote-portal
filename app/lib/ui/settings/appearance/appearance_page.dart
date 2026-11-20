@@ -1,6 +1,5 @@
 // 设置 › 主题: light / dark, the palette (six presets,
-// a custom hue, the wallpaper), the feature tile style, the launcher icon (and a
-// picture shortcut) and the launch screen (those two on Android only).
+// a custom hue, the wallpaper) and the feature tile style.
 //
 // Every picker on the page shares one grid: previews start 16 from the card's
 // edges and sit 12 apart, labels 8 under them (TileStylePicker, AppIconPicker).
@@ -12,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/l10n.dart';
-import '../../../state/android_features.dart';
 import '../../../state/appearance_state.dart';
 import '../../../state/settings_state.dart';
 import '../../../ui_config/ui_config.dart';
@@ -22,9 +20,6 @@ import '../../shell/page_frame.dart';
 import '../../theme/app_icons.dart';
 import '../../theme/theme.dart';
 import '../settings_widgets.dart';
-import 'app_icon_picker.dart';
-import 'icon_shortcut_sheet.dart';
-import 'launch_screen_section.dart';
 import 'tile_style_picker.dart';
 import 'wallpaper_section.dart';
 
@@ -75,8 +70,6 @@ class AppearancePage extends ConsumerWidget {
     final l10n = context.l10n;
     final appearance = ref.watch(appearanceProvider);
     final wallpaper = ref.watch(wallpaperAccentProvider).value;
-    // A picture as a launcher shortcut: Android and HarmonyOS, not iOS.
-    final pictureShortcut = ref.watch(operatingSystemProvider) != 'ios';
     return AppPage.list(
       title: l10n.pluginsTheme,
       children: [
@@ -95,18 +88,6 @@ class AppearancePage extends ConsumerWidget {
         SettingsSection(
           title: l10n.pluginsFeatureIcons,
           children: [SpotAnchor(spot: Spots.tileStyle, child: const TileStylePicker())],
-        ),
-        SettingsSection(
-          title: l10n.pluginsAppIcon,
-          children: [
-            SpotAnchor(spot: Spots.appIcon, child: const AppIconPicker()),
-            if (pictureShortcut) const IconShortcutTile(),
-          ],
-        ),
-        SettingsSection(
-          title: l10n.launchScreenTitle,
-          footer: Text(l10n.launchFooter),
-          children: [SpotAnchor(spot: Spots.launchScreen, child: const LaunchScreenSection())],
         ),
         SettingsSection(
           title: l10n.wallpaperTitle,
