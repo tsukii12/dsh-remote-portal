@@ -1,2 +1,2 @@
 "NSLocalNetworkUsageDescription" = "连接到本地网络中的 DeepSeek Harness。";
-"NSCameraUsageDescription" = "拍摄照片并添加到 DeepSeek Harness 消息中。";
+"NSCameraUsageDescription" = "扫描门户配对二维码，或拍摄照片并添加到 DeepSeek Harness 消息中。";

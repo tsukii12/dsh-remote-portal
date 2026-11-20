@@ -87,6 +87,120 @@ private final class HTTPListener {
 
 @MainActor
 final class ListenerTests: XCTestCase {
+    func testLazyDraftCreatesOnlyOnSendAndDefersUploadsOverHTTP() async throws {
+        var calls: [String] = []; var failPrompt = true; var promptIDs: [String] = []
+        let server = try HTTPListener { request in
+            if request.path.hasPrefix("/api/session/uploadFileBinary") {
+                calls.append("upload")
+                XCTAssertTrue(request.path.contains("sessionId=lazy")); XCTAssertEqual(request.body, Data("file".utf8))
+                return .init(body: "{\"ok\":true,\"value\":{\"receiptId\":\"receipt\",\"file\":{\"attachmentId\":\"file\"}}}")
+            }
+            let body = try! JSONDecoder().decode(JSON.self, from: request.body)
+            let method = body["method"].text, args = body["payload"]["args"]
+            calls.append(method)
+            switch method {
+            case "session/create": XCTAssertEqual(args["request"]["workspaceId"], "ws"); return self.reply(["sessionId": "lazy"])
+            case "session/list": return self.reply(["items": [["sessionId": "lazy", "blank": true]]])
+            case "session/modelCatalog": return self.reply(["groups": []])
+            case "permissionPresets/catalog": return self.reply(["options": []])
+            case "agentPresets/list": return self.reply(["presets": []])
+            case "agentPresets/select": return self.reply([:])
+            case "commands/list": return self.reply([])
+            case "session/projections": return self.reply(["asOfSeq": 1, "values": [:]])
+            case "session/selectModel": return self.reply(["selected": args["request"]])
+            case "commands/execute": return self.reply(["result": ["kind": "text", "text": ""]])
+            case "session/prompt":
+                promptIDs.append(args["request"]["requestId"].text)
+                XCTAssertEqual(args["request"]["content"]["invalid"], .null)
+                XCTAssertEqual(args["request"]["content"].array.first?["text"], "Keep my text")
+                XCTAssertEqual(args["request"]["content"].array.last?["receiptId"], "receipt")
+                return failPrompt ? .init(status: 503) : self.reply(["requestId": args["request"]["requestId"]])
+            default: XCTFail("Unexpected RPC " + method); return .init(status: 404)
+            }
+        }
+        let base = try await server.start(); let directory = root(); let client = client(directory)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        let api = PortalAPI(base: base, client: client)
+        defer { server.stop(); client.session.invalidateAndCancel(); try? FileManager.default.removeItem(at: directory) }
+        let draft = NewChatDraft(api: api, sidebar: SidebarStore(api: api), workspaceID: "ws")
+        await draft.load(); XCTAssertNil(draft.error); XCTAssertNil(draft.sessionID)
+        do { _ = try await draft.submit(""); XCTFail("Empty draft sent") } catch {}
+        try await draft.chat.selectModel(provider: "p", model: "m", reasoningEffort: "off")
+        try await draft.chat.selectPermission("workspace-write"); try await draft.chat.selectPreset("standard")
+        let file = directory.appendingPathComponent("file.txt"); try Data("file".utf8).write(to: file)
+        try draft.attachments.add(file: file, limits: [:])
+        XCTAssertFalse(calls.contains("session/create")); XCTAssertFalse(calls.contains("upload")); XCTAssertFalse(calls.contains("session/selectModel"))
+        do { _ = try await draft.submit("Keep my text"); XCTFail("Prompt failure swallowed") } catch {}
+        XCTAssertEqual(draft.sessionID, "lazy"); XCTAssertFalse(draft.sending)
+        failPrompt = false
+        let id = try await draft.submit("Keep my text")
+        XCTAssertEqual(id, "lazy"); XCTAssertEqual(calls.filter { $0 == "session/create" }.count, 1)
+        XCTAssertEqual(calls.filter { $0 == "upload" }.count, 1); XCTAssertEqual(Set(promptIDs).count, 1)
+        await draft.abandon(); XCTAssertFalse(calls.contains("workspace/archiveSession"))
+        draft.attachments.clear()
+    }
+    func testLANHealthProbeUsesRealListenerAndIsolatedCookies() async throws {
+        let server = try HTTPListener { request in
+            XCTAssertEqual(request.path, "/__portal/health")
+            return .init(headers: ["Set-Cookie": "probe=local; Path=/; HttpOnly"], body: "ok")
+        }
+        let base = try await server.start(); let directory = root(); let client = client(directory)
+        defer { server.stop(); client.session.invalidateAndCancel(); try? FileManager.default.removeItem(at: directory) }
+        let result = try await client.connect([base])
+        XCTAssertEqual(result.base, base); XCTAssertTrue(PortalRoute.isLAN(result.base))
+        XCTAssertEqual(client.cookies.cookies(for: base, at: base).first?.value, "local")
+        let relay = URL(string: "https://relay.example/__t/host/")!
+        XCTAssertTrue(client.cookies.cookies(for: relay, at: relay).isEmpty)
+    }
+    func testEmptyCleanupAndIdleReconciliationOverRealHTTP() async throws {
+        var archived: [String] = []
+        var failState = false
+        let records: JSON = [["type": "event", "event": ["seq": 1, "type": "user/message", "data": ["source": ["kind": "user", "rpcId": "R"], "content": [["type": "text", "text": "Short"]]]]]]
+        let server = try HTTPListener { request in
+            let body = try! JSONDecoder().decode(JSON.self, from: request.body)
+            let method = body["method"].text, args = body["payload"]["args"]
+            switch method {
+            case "session/create": return self.reply(["sessionId": "own"])
+            case "session/list": return self.reply(["items": [["sessionId": "own", "blank": true], ["sessionId": "existing", "blank": true], ["sessionId": "full", "blank": false], ["sessionId": "child", "blank": true, "parentSessionId": "full"]]])
+            case "session/state":
+                if failState { return .init(status: 503) }
+                return self.reply(["running": false, "queue": [], "pendingInput": []])
+            case "workspace/archiveSession":
+                archived.append(args["request"]["sessionId"].text)
+                return self.reply(["archivedSessionIds": .array(archived.map(JSON.string))])
+            case "session/events":
+                XCTAssertEqual(args["request"]["address"], ["kind": "session", "sessionId": "full"])
+                return self.reply(["cursor": 1, "records": records, "hasMore": false])
+            default: XCTFail("Unexpected RPC " + method); return .init(status: 404)
+            }
+        }
+        let base = try await server.start(); let directory = root(); let client = client(directory)
+        let api = PortalAPI(base: base, client: client)
+        defer { server.stop(); client.session.invalidateAndCancel(); try? FileManager.default.removeItem(at: directory) }
+        let sidebar = SidebarStore(api: api)
+        _ = try await sidebar.createSession()
+        try await sidebar.abandonEmptyCreated("existing")
+        XCTAssertTrue(archived.isEmpty)
+        try await sidebar.abandonEmptyCreated("own")
+        XCTAssertEqual(archived, ["own"])
+        failState = true
+        do { try await sidebar.cleanEmptySessions(); XCTFail("State failure swallowed") } catch {}
+        XCTAssertEqual(archived, ["own"])
+        failState = false
+        try await sidebar.cleanEmptySessions()
+        XCTAssertEqual(archived, ["own", "existing"])
+        let chat = ChatStore(sessionID: "full", api: api)
+        chat.apply(["type": "snapshot", "records": []])
+        chat.addOptimistic(text: "Short", requestID: "R")
+        chat.applyState(["running": true])
+        try await chat.reconcile()
+        XCTAssertFalse(chat.running)
+        XCTAssertEqual(chat.transcript.filter { $0.role == "user" }.count, 1)
+        XCTAssertFalse(chat.transcript.contains { $0.optimistic })
+        let empty = ChatStore(sessionID: "full", api: api)
+        try await empty.reconcile()
+        XCTAssertTrue(empty.loaded); XCTAssertEqual(empty.transcript.first?.text, "Short")
+    }
     func testHistoricalImagesLoadOnlyInViewportAndUseBoundedThumbnailsOverHTTP() async throws {
         let data = UIGraphicsImageRenderer(size: CGSize(width: 2048, height: 512)).pngData { context in
             UIColor.blue.setFill(); context.fill(CGRect(x: 0, y: 0, width: 2048, height: 512))
@@ -1011,7 +1125,7 @@ final class ListenerTests: XCTestCase {
             let path = try XCTUnwrap(Bundle.main.path(forResource: locale, ofType: "lproj"))
             let bundle = try XCTUnwrap(Bundle(path: path))
             XCTAssertEqual(bundle.localizedString(forKey: "NSLocalNetworkUsageDescription", value: nil, table: "InfoPlist"), expected)
-            XCTAssertEqual(bundle.localizedString(forKey: "NSCameraUsageDescription", value: nil, table: "InfoPlist"), locale == "en" ? "Take a photo to attach to your DeepSeek Harness message." : "拍摄照片并添加到 DeepSeek Harness 消息中。")
+            XCTAssertEqual(bundle.localizedString(forKey: "NSCameraUsageDescription", value: nil, table: "InfoPlist"), locale == "en" ? "Scan a portal pairing QR code or take a photo to attach to your DeepSeek Harness message." : "扫描门户配对二维码，或拍摄照片并添加到 DeepSeek Harness 消息中。")
         }
     }
 }

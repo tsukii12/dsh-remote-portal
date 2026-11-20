@@ -6,6 +6,14 @@ versions are the plugin's own, not dsh's.
 ## Unreleased
 
 ### Added
+- Reference-inspired native glass chat and drawer, blue light/dark backgrounds, pixel whale, responsive two-row composer without voice controls, context ring, turn summaries and Markdown tables. A local new-chat draft creates its session and uploads only on first send; model, mode, access and workspace selections remain local until then.
+- 参考设计的原生玻璃聊天与侧栏、蓝色明暗背景、像素鲸鱼、无语音控件的自适应双行输入框、上下文环、轮次摘要与 Markdown 表格。新对话先保存在本地草稿中，仅在首次发送时创建会话并上传附件；此前模型、模式、权限与工作区选择均不写入主机。
+- Prefer reachable LAN/private addresses with a 400 ms grace period after a relay health reply; re-evaluate on network-path changes and foreground, retaining cookie isolation per base address. The title pill and host card identify the current LAN/remote route.
+- 中继健康检查先响应时，为可达的局域网/私有地址保留 400 毫秒优先窗口；网络路径变化或回到前台时重新选择，各地址的 Cookie 继续独立保存。标题胶囊与主机卡片显示当前局域网/远程路径。
+- Native assistant messages start directly at full width, without the DRP label or sparkle header.
+- 原生助手消息直接全宽显示内容，移除 DRP 标签与星光图标标题。
+- Native iOS pairing QR scanner on add-server and login, safe empty-chat archiving and cleanup, and top-level subagent filtering. Server names label the sidebar/chat; model, access and mode have separate pages with model search.
+- 原生 iOS 在添加服务器和登录页提供配对二维码扫描、安全归档离开的空聊天及清理空聊天，并从顶层过滤子代理会话。侧栏与聊天显示服务器名称；模型、权限与模式分别设置，支持搜索模型。
 - Native iOS keeps composer focus and the keyboard after sending text, slash commands, queued messages and attachments.
 - 原生 iOS 发送文字、斜杠命令、排队消息及附件后保留输入焦点和键盘。
 - Native iOS photo smoke verifies image MIME/byte acknowledgement and one durable history image after a fresh client. dsh 0.2.2-rc.5 omits catalog input modalities: unknown remains allowed; explicit modality gating is unchanged. Visible history images load automatically as bounded thumbnails. Larger touch targets, accessibility labels, keyboard/scroll layout, approval-sheet scrolling and success haptics improve native usability.
@@ -26,6 +34,8 @@ versions are the plugin's own, not dsh's.
 - 新 RPC/HTTP 路由由真实监听器测试覆盖；可选在线冒烟测试验证两个本地模拟模型的切换与明确思考强度、会话权限命令及门户文件夹浏览。
 
 ### Fixed
+- Native chat history remains subscribed when optional startup reads fail; ended subscriptions reopen and idle/running state reconciles with the host, including assistant end frames and admitted-but-not-completed prompts. History loading stays visible. Transcript notices, compact attempts, standalone tool calls/results and unknown event/content types have expandable native fallbacks instead of disappearing.
+- 原生聊天在可选启动读取失败时保留历史订阅，订阅结束后自动重开，并结合助手结束帧及仅代表接收的提示词确认与主机核对运行状态；历史加载有明确提示。对话中的通知、紧凑尝试、独立工具调用/结果及未知事件/内容类型均以可展开的原生形式保留，不再丢失。
 - Keep native chat startup and stream lifetime bound to the selected session, not transient search/navigation detail appearances, so first-open chats load their transcript, model and attachment controls.
 - 原生聊天的启动与流生命周期改由所选会话持有，不再随搜索或导航详情视图的短暂显隐而中断，确保首次打开时正常载入历史、模型与附件控件。
 - Disable native Plan mode with a bilingual explanation when the current preset's command catalog lacks `plan`; refresh availability after preset selection.
@@ -1223,9 +1233,6 @@ real sockets.
 Initial version: authenticated gateway (HTTP + WebSocket reverse proxy), password
 / one-time QR pairing / device registry / lockout, dsh browser-cookie minting,
 login wall, Settings panel, mobile presentation layer, install script, 51 tests.
-
-
-
 
 
 

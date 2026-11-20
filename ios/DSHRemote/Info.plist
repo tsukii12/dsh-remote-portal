@@ -26,7 +26,7 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Take a photo to attach to your DeepSeek Harness message.</string>
+	<string>Scan a portal pairing QR code or take a photo to attach to your DeepSeek Harness message.</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Connect to your DeepSeek Harness on the local network.</string>
 	<key>UILaunchScreen</key>

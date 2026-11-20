@@ -1,0 +1,1494 @@
+{
+  "records": [
+    {
+      "type": "event",
+      "event": {
+        "type": "permission/preset",
+        "seq": 1,
+        "time": 1795137141935,
+        "data": {
+          "preset": "Sanitized content"
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "sandbox/mode",
+        "seq": 2,
+        "time": 1795137141936,
+        "data": {
+          "mode": "Sanitized content"
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "approval/policy",
+        "seq": 3,
+        "time": 1795137141936,
+        "data": {
+          "policy": "Sanitized content"
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "model/selection",
+        "seq": 4,
+        "time": 1795137153080,
+        "data": {
+          "provider": "Sanitized content",
+          "model": "Sanitized content"
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "agent/inbox/spliced",
+        "seq": 5,
+        "time": 1795137182537,
+        "data": {
+          "target": "Sanitized content",
+          "start": 0,
+          "inserted": [
+            {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Sanitized content"
+                }
+              ],
+              "source": {
+                "kind": "user",
+                "rpcId": "fixture-id-0",
+                "clientTimeZone": "Sanitized content"
+              },
+              "role": "user",
+              "id": "fixture-id-1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "turn/start",
+        "seq": 6,
+        "time": 1795137182537,
+        "data": {
+          "turn": 1
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "step/start",
+        "seq": 7,
+        "time": 1795137182720,
+        "data": {
+          "turn": 1,
+          "step": 1
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "system/message",
+        "seq": 8,
+        "time": 1795137182721,
+        "data": {
+          "turn": 1,
+          "step": 1,
+          "message": {
+            "role": "system",
+            "content": [
+              {
+                "type": "text",
+                "text": "Sanitized content"
+              }
+            ],
+            "source": {
+              "kind": "system-prompt"
+            },
+            "id": "fixture-id-2"
+          }
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "user/message",
+        "seq": 9,
+        "time": 1795137182722,
+        "data": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Sanitized content"
+            }
+          ],
+          "source": {
+            "kind": "user",
+            "rpcId": "fixture-id-0",
+            "clientTimeZone": "Sanitized content"
+          },
+          "role": "user",
+          "id": "fixture-id-1"
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "session/title",
+        "seq": 12,
+        "time": 1795137182744,
+        "data": {
+          "title": "Sanitized content",
+          "messageSeqs": [
+            9
+          ],
+          "source": {
+            "kind": "fallback"
+          }
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "session/title-llm-request",
+        "seq": 13,
+        "time": 1795137182748,
+        "data": {
+          "titleProvider": "Sanitized content",
+          "messageSeqs": [
+            9
+          ],
+          "route": {
+            "provider": "Sanitized content",
+            "model": "Sanitized content"
+          },
+          "system": "Sanitized content",
+          "messages": [
+            {
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Sanitized content"
+                }
+              ],
+              "source": {
+                "kind": "dsh-session-title-llm"
+              },
+              "role": "user",
+              "id": "fixture-id-3"
+            }
+          ],
+          "maxTokens": 64,
+          "reasoningEffort": "Sanitized content"
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "assistant/message",
+        "seq": 14,
+        "time": 1795137187829,
+        "data": {
+          "turn": 1,
+          "step": 1,
+          "message": {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "text",
+                "text": "Sanitized content"
+              }
+            ],
+            "source": {
+              "kind": "model",
+              "provider": "Sanitized content",
+              "model": "Sanitized content",
+              "replayState": {
+                "response": {
+                  "kind": "pi-ai",
+                  "version": 2,
+                  "api": "Sanitized content",
+                  "provider": "Sanitized content",
+                  "model": "Sanitized content",
+                  "responseModel": "Sanitized content",
+                  "responseId": "Sanitized content",
+                  "stopReason": "Sanitized content"
+                },
+                "blocks": [
+                  {
+                    "type": "text"
+                  }
+                ]
+              }
+            },
+            "id": "fixture-id-4"
+          }
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "step/end",
+        "seq": 15,
+        "time": 1795137187831,
+        "data": {
+          "turn": 1,
+          "step": 1
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "turn/end",
+        "seq": 16,
+        "time": 1795137187831,
+        "data": {
+          "turn": 1,
+          "reason": {
+            "kind": "completed"
+          }
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "assistant/message",
+        "seq": 17,
+        "time": 1795111366597,
+        "data": {
+          "turn": 52,
+          "step": 11,
+          "message": {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "reasoning",
+                "text": "Sanitized content"
+              },
+              {
+                "type": "text",
+                "text": "Sanitized content"
+              },
+              {
+                "type": "tool-call",
+                "id": "fixture-id-5",
+                "name": "pwsh",
+                "arguments": "{\"command\":\"Sanitized content\",\"description\":\"Sanitized content\",\"timeoutMs\":200000}"
+              }
+            ],
+            "source": {
+              "kind": "model",
+              "provider": "Sanitized content",
+              "model": "Sanitized content",
+              "replayState": {
+                "response": {
+                  "kind": "pi-ai",
+                  "version": 2,
+                  "api": "Sanitized content",
+                  "provider": "Sanitized content",
+                  "model": "Sanitized content",
+                  "responseModel": "Sanitized content",
+                  "responseId": "Sanitized content",
+                  "stopReason": "Sanitized content"
+                },
+                "blocks": [
+                  {
+                    "type": "reasoning",
+                    "thinkingSignature": "Sanitized content"
+                  },
+                  {
+                    "type": "text"
+                  },
+                  {
+                    "type": "tool-call"
+                  }
+                ]
+              }
+            },
+            "id": "fixture-id-6"
+          }
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "tool/result",
+        "seq": 18,
+        "time": 1795111379197,
+        "data": {
+          "turn": 52,
+          "step": 11,
+          "message": {
+            "role": "tool",
+            "source": {
+              "kind": "tool",
+              "callId": "fixture-id-5"
+            },
+            "toolCallId": "fixture-id-5",
+            "content": [
+              {
+                "type": "text",
+                "text": "Sanitized content"
+              }
+            ],
+            "isError": false,
+            "id": "fixture-id-7"
+          },
+          "meta": {
+            "cwd": "Sanitized content"
+          }
+        },
+        "sourceEventSeqs": [
+          1678
+        ]
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "tool/call",
+        "seq": 19,
+        "time": 1795111366599,
+        "data": {
+          "turn": 52,
+          "step": 11,
+          "callId": "fixture-id-5",
+          "name": "pwsh",
+          "arguments": "{\"command\":\"Sanitized content\",\"description\":\"Sanitized content\",\"timeoutMs\":200000}"
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "job/registered",
+        "seq": 20,
+        "time": 1795111366646,
+        "data": {
+          "jobId": "Sanitized content",
+          "owner": "Sanitized content",
+          "kind": "pwsh",
+          "label": "Sanitized content",
+          "startedAt": 1795111366646,
+          "toolCall": {
+            "callId": "fixture-id-5",
+            "rootCallId": "Sanitized content"
+          }
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "job/settled",
+        "seq": 21,
+        "time": 1795111379195,
+        "data": {
+          "jobId": "Sanitized content",
+          "owner": "Sanitized content",
+          "kind": "pwsh",
+          "label": "Sanitized content",
+          "startedAt": 1795111366646,
+          "toolCall": {
+            "callId": "fixture-id-5",
+            "rootCallId": "Sanitized content"
+          },
+          "finishedAt": 1795111379195,
+          "status": "completed",
+          "cause": "Sanitized content",
+          "producerReported": true,
+          "detail": "Sanitized content"
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "tool/result",
+        "seq": 22,
+        "time": 1795111379197,
+        "data": {
+          "turn": 52,
+          "step": 11,
+          "message": {
+            "role": "tool",
+            "source": {
+              "kind": "tool",
+              "callId": "fixture-id-5"
+            },
+            "toolCallId": "fixture-id-5",
+            "content": [
+              {
+                "type": "text",
+                "text": "Sanitized content"
+              }
+            ],
+            "isError": false,
+            "id": "fixture-id-7"
+          },
+          "meta": {
+            "cwd": "Sanitized content"
+          }
+        },
+        "sourceEventSeqs": [
+          1678
+        ]
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "compaction/prune",
+        "seq": 23,
+        "time": 1795111591361,
+        "data": {
+          "shadowedRange": {
+            "start": 47,
+            "end": 47
+          },
+          "shadowedSeqs": [
+            47
+          ],
+          "shadowedTokenCount": 4100
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "assistant/message",
+        "seq": 24,
+        "time": 1795112655875,
+        "data": {
+          "turn": 62,
+          "step": 4,
+          "message": {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "tool-call",
+                "id": "fixture-id-8",
+                "name": "read_image",
+                "arguments": "{\"file_path\":\"Sanitized content\"}"
+              }
+            ],
+            "source": {
+              "kind": "model",
+              "provider": "Sanitized content",
+              "model": "Sanitized content",
+              "replayState": {
+                "response": {
+                  "kind": "pi-ai",
+                  "version": 2,
+                  "api": "Sanitized content",
+                  "provider": "Sanitized content",
+                  "model": "Sanitized content",
+                  "responseModel": "Sanitized content",
+                  "responseId": "Sanitized content",
+                  "stopReason": "Sanitized content"
+                },
+                "blocks": [
+                  {
+                    "type": "tool-call"
+                  }
+                ]
+              }
+            },
+            "id": "fixture-id-9"
+          }
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "tool/result",
+        "seq": 25,
+        "time": 1795112655932,
+        "data": {
+          "turn": 62,
+          "step": 4,
+          "message": {
+            "role": "tool",
+            "source": {
+              "kind": "tool",
+              "callId": "fixture-id-8"
+            },
+            "toolCallId": "fixture-id-8",
+            "content": [
+              {
+                "type": "text",
+                "text": "Sanitized content"
+              },
+              {
+                "type": "image",
+                "attachment": {
+                  "attachmentId": "Sanitized content",
+                  "mediaType": "Sanitized content",
+                  "bytes": 12435,
+                  "width": 1152,
+                  "height": 648,
+                  "name": "wallpaper-red.jpg"
+                }
+              }
+            ],
+            "isError": false,
+            "id": "fixture-id-10"
+          },
+          "meta": {
+            "path": "Sanitized content"
+          }
+        },
+        "sourceEventSeqs": [
+          1990
+        ]
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "assistant/attempt",
+        "seq": 26,
+        "time": 1795113975179,
+        "data": {
+          "turn": 69,
+          "step": 3,
+          "stream": []
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "assistant/message",
+        "seq": 27,
+        "time": 1795022414543,
+        "data": {
+          "turn": 46,
+          "step": 2,
+          "message": {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "reasoning",
+                "text": "Sanitized content"
+              },
+              {
+                "type": "text",
+                "text": "Sanitized content"
+              },
+              {
+                "type": "tool-call",
+                "id": "fixture-id-11",
+                "name": "ask_user_question",
+                "arguments": "{\"questions\":[{\"header\":\"Sanitized content\",\"id\":\"fixture-id-12\",\"options\":[{\"description\":\"Sanitized content\",\"label\":\"Sanitized content\"},{\"description\":\"Sanitized content\",\"label\":\"Sanitized content\"}],\"question\":\"Sanitized content\"}]}"
+              }
+            ],
+            "source": {
+              "kind": "model",
+              "provider": "Sanitized content",
+              "model": "Sanitized content",
+              "replayState": {
+                "response": {
+                  "kind": "pi-ai",
+                  "version": 2,
+                  "api": "Sanitized content",
+                  "provider": "Sanitized content",
+                  "model": "Sanitized content",
+                  "responseModel": "Sanitized content",
+                  "responseId": "Sanitized content",
+                  "stopReason": "Sanitized content"
+                },
+                "blocks": [
+                  {
+                    "type": "reasoning",
+                    "thinkingSignature": "Sanitized content"
+                  },
+                  {
+                    "type": "text"
+                  },
+                  {
+                    "type": "tool-call"
+                  }
+                ]
+              }
+            },
+            "id": "fixture-id-13"
+          }
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "tool/result",
+        "seq": 28,
+        "time": 1795022424829,
+        "data": {
+          "turn": 46,
+          "step": 2,
+          "message": {
+            "role": "tool",
+            "source": {
+              "kind": "tool",
+              "callId": "fixture-id-11"
+            },
+            "toolCallId": "fixture-id-11",
+            "content": [
+              {
+                "type": "text",
+                "text": "Sanitized content"
+              }
+            ],
+            "isError": false,
+            "id": "fixture-id-14"
+          }
+        },
+        "sourceEventSeqs": [
+          1393
+        ]
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "session/end-seed",
+        "seq": 29,
+        "time": 1795054428607,
+        "data": {}
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "developer/message",
+        "seq": 30,
+        "time": 1795109870549,
+        "data": {
+          "turn": 49,
+          "step": 1,
+          "message": {
+            "source": {
+              "kind": "tool-registry"
+            },
+            "content": [
+              {
+                "type": "tool-addition",
+                "toolName": "Sanitized content"
+              },
+              {
+                "type": "tool-addition",
+                "toolName": "Sanitized content"
+              },
+              {
+                "type": "tool-addition",
+                "toolName": "Sanitized content"
+              },
+              {
+                "type": "tool-addition",
+                "toolName": "Sanitized content"
+              },
+              {
+                "type": "tool-addition",
+                "toolName": "Sanitized content"
+              },
+              {
+                "type": "tool-addition",
+                "toolName": "Sanitized content"
+              },
+              {
+                "type": "tool-addition",
+                "toolName": "Sanitized content"
+              },
+              {
+                "type": "tool-addition",
+                "toolName": "Sanitized content"
+              },
+              {
+                "type": "tool-addition",
+                "toolName": "Sanitized content"
+              },
+              {
+                "type": "tool-addition",
+                "toolName": "Sanitized content"
+              },
+              {
+                "type": "tool-addition",
+                "toolName": "Sanitized content"
+              },
+              {
+                "type": "tool-removal",
+                "toolName": "Sanitized content"
+              },
+              {
+                "type": "tool-removal",
+                "toolName": "Sanitized content"
+              },
+              {
+                "type": "tool-removal",
+                "toolName": "Sanitized content"
+              }
+            ],
+            "role": "developer",
+            "id": "fixture-id-15"
+          },
+          "headerSeq": 1461
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "team/mode",
+        "seq": 31,
+        "time": 1795109874051,
+        "data": {
+          "enabled": true
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "assistant/message",
+        "seq": 32,
+        "time": 1795112346197,
+        "data": {
+          "turn": 50,
+          "step": 1,
+          "message": {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "reasoning",
+                "text": "Sanitized content"
+              },
+              {
+                "type": "text",
+                "text": "Sanitized content"
+              },
+              {
+                "type": "tool-call",
+                "id": "fixture-id-16",
+                "name": "write",
+                "arguments": "{\"file_path\":\"Sanitized content\",\"content\":\"Sanitized content\"}"
+              }
+            ],
+            "source": {
+              "kind": "model",
+              "provider": "Sanitized content",
+              "model": "Sanitized content",
+              "replayState": {
+                "response": {
+                  "kind": "pi-ai",
+                  "version": 2,
+                  "api": "Sanitized content",
+                  "provider": "Sanitized content",
+                  "model": "Sanitized content",
+                  "responseModel": "Sanitized content",
+                  "responseId": "Sanitized content",
+                  "stopReason": "Sanitized content"
+                },
+                "blocks": [
+                  {
+                    "type": "reasoning",
+                    "thinkingSignature": "Sanitized content"
+                  },
+                  {
+                    "type": "text"
+                  },
+                  {
+                    "type": "tool-call"
+                  }
+                ]
+              }
+            },
+            "id": "fixture-id-17"
+          }
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "tool/result",
+        "seq": 33,
+        "time": 1795112346241,
+        "data": {
+          "turn": 50,
+          "step": 1,
+          "message": {
+            "role": "tool",
+            "source": {
+              "kind": "tool",
+              "callId": "fixture-id-16"
+            },
+            "toolCallId": "fixture-id-16",
+            "content": [
+              {
+                "type": "text",
+                "text": "Sanitized content"
+              }
+            ],
+            "isError": false,
+            "id": "fixture-id-18"
+          },
+          "meta": {
+            "operation": "Sanitized content",
+            "path": "Sanitized content",
+            "diffs": []
+          }
+        },
+        "sourceEventSeqs": [
+          1555
+        ]
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "workspace/changes",
+        "seq": 34,
+        "time": 1795112587015,
+        "data": {
+          "turn": 50
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "assistant/message",
+        "seq": 35,
+        "time": 1795112878401,
+        "data": {
+          "turn": 51,
+          "step": 7,
+          "message": {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "reasoning",
+                "text": "Sanitized content"
+              },
+              {
+                "type": "text",
+                "text": "Sanitized content"
+              },
+              {
+                "type": "tool-call",
+                "id": "fixture-id-19",
+                "name": "edit",
+                "arguments": "{\"file_path\":\"Sanitized content\",\"old_string\":\"Sanitized content\",\"new_string\":\"Sanitized content\"}"
+              }
+            ],
+            "source": {
+              "kind": "model",
+              "provider": "Sanitized content",
+              "model": "Sanitized content",
+              "replayState": {
+                "response": {
+                  "kind": "pi-ai",
+                  "version": 2,
+                  "api": "Sanitized content",
+                  "provider": "Sanitized content",
+                  "model": "Sanitized content",
+                  "responseModel": "Sanitized content",
+                  "responseId": "Sanitized content",
+                  "stopReason": "Sanitized content"
+                },
+                "blocks": [
+                  {
+                    "type": "reasoning",
+                    "thinkingSignature": "Sanitized content"
+                  },
+                  {
+                    "type": "text"
+                  },
+                  {
+                    "type": "tool-call"
+                  }
+                ]
+              }
+            },
+            "id": "fixture-id-20"
+          }
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "tool/result",
+        "seq": 36,
+        "time": 1795112878460,
+        "data": {
+          "turn": 51,
+          "step": 7,
+          "message": {
+            "role": "tool",
+            "source": {
+              "kind": "tool",
+              "callId": "fixture-id-19"
+            },
+            "toolCallId": "fixture-id-19",
+            "content": [
+              {
+                "type": "text",
+                "text": "Sanitized content"
+              }
+            ],
+            "isError": false,
+            "id": "fixture-id-21"
+          },
+          "meta": {
+            "path": "Sanitized content",
+            "diffs": [
+              {
+                "path": "Sanitized content",
+                "oldText": "Sanitized content",
+                "newText": "Sanitized content"
+              }
+            ]
+          }
+        },
+        "sourceEventSeqs": [
+          1649
+        ]
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "assistant/message",
+        "seq": 37,
+        "time": 1795112916432,
+        "data": {
+          "turn": 51,
+          "step": 9,
+          "message": {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "reasoning",
+                "text": "Sanitized content"
+              },
+              {
+                "type": "text",
+                "text": "Sanitized content"
+              },
+              {
+                "type": "tool-call",
+                "id": "fixture-id-22",
+                "name": "read",
+                "arguments": "{\"file_path\":\"Sanitized content\",\"offset\":108,\"limit\":70}"
+              }
+            ],
+            "source": {
+              "kind": "model",
+              "provider": "Sanitized content",
+              "model": "Sanitized content",
+              "replayState": {
+                "response": {
+                  "kind": "pi-ai",
+                  "version": 2,
+                  "api": "Sanitized content",
+                  "provider": "Sanitized content",
+                  "model": "Sanitized content",
+                  "responseModel": "Sanitized content",
+                  "responseId": "Sanitized content",
+                  "stopReason": "Sanitized content"
+                },
+                "blocks": [
+                  {
+                    "type": "reasoning",
+                    "thinkingSignature": "Sanitized content"
+                  },
+                  {
+                    "type": "text"
+                  },
+                  {
+                    "type": "tool-call"
+                  }
+                ]
+              }
+            },
+            "id": "fixture-id-23"
+          }
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "tool/result",
+        "seq": 38,
+        "time": 1795112916459,
+        "data": {
+          "turn": 51,
+          "step": 9,
+          "message": {
+            "role": "tool",
+            "source": {
+              "kind": "tool",
+              "callId": "fixture-id-22"
+            },
+            "toolCallId": "fixture-id-22",
+            "content": [
+              {
+                "type": "text",
+                "text": "Sanitized content"
+              }
+            ],
+            "isError": false,
+            "id": "fixture-id-24"
+          },
+          "meta": {
+            "path": "Sanitized content",
+            "offset": 108,
+            "lines": [
+              {
+                "number": 108,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 109,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 110,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 111,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 112,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 113,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 114,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 115,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 116,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 117,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 118,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 119,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 120,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 121,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 122,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 123,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 124,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 125,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 126,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 127,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 128,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 129,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 130,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 131,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 132,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 133,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 134,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 135,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 136,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 137,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 138,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 139,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 140,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 141,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 142,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 143,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 144,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 145,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 146,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 147,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 148,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 149,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 150,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 151,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 152,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 153,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 154,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 155,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 156,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 157,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 158,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 159,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 160,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 161,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 162,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 163,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 164,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 165,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 166,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 167,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 168,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 169,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 170,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 171,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 172,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 173,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 174,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 175,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 176,
+                "text": "Sanitized content"
+              },
+              {
+                "number": 177,
+                "text": "Sanitized content"
+              }
+            ],
+            "totalLines": 204,
+            "lang": "Sanitized content"
+          }
+        },
+        "sourceEventSeqs": [
+          1661
+        ]
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "assistant/message",
+        "seq": 39,
+        "time": 1795098822310,
+        "data": {
+          "turn": 1,
+          "step": 2,
+          "message": {
+            "role": "assistant",
+            "content": [
+              {
+                "type": "tool-call",
+                "id": "fixture-id-25",
+                "name": "working_directory",
+                "arguments": "{\"cd\":\"Sanitized content\"}"
+              },
+              {
+                "type": "tool-call",
+                "id": "fixture-id-26",
+                "name": "write",
+                "arguments": "{\"file_path\":\"Sanitized content\",\"content\":\"Sanitized content\"}"
+              }
+            ],
+            "source": {
+              "kind": "model",
+              "provider": "Sanitized content",
+              "model": "Sanitized content",
+              "replayState": {
+                "response": {
+                  "kind": "pi-ai",
+                  "version": 2,
+                  "api": "Sanitized content",
+                  "provider": "Sanitized content",
+                  "model": "Sanitized content",
+                  "responseId": "Sanitized content",
+                  "stopReason": "Sanitized content",
+                  "prefixDigest": "Sanitized content"
+                },
+                "blocks": [
+                  {
+                    "type": "tool-call"
+                  },
+                  {
+                    "type": "tool-call"
+                  }
+                ]
+              }
+            },
+            "id": "fixture-id-27"
+          }
+        }
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "tool/result",
+        "seq": 40,
+        "time": 1795098822336,
+        "data": {
+          "turn": 1,
+          "step": 2,
+          "message": {
+            "role": "tool",
+            "source": {
+              "kind": "tool",
+              "callId": "fixture-id-25"
+            },
+            "toolCallId": "fixture-id-25",
+            "content": [
+              {
+                "type": "text",
+                "text": "Sanitized content"
+              }
+            ],
+            "isError": false,
+            "id": "fixture-id-28"
+          }
+        },
+        "sourceEventSeqs": [
+          31
+        ]
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "tool/result",
+        "seq": 41,
+        "time": 1795098822361,
+        "data": {
+          "turn": 1,
+          "step": 2,
+          "message": {
+            "role": "tool",
+            "source": {
+              "kind": "tool",
+              "callId": "fixture-id-26"
+            },
+            "toolCallId": "fixture-id-26",
+            "content": [
+              {
+                "type": "text",
+                "text": "Sanitized content"
+              }
+            ],
+            "isError": false,
+            "id": "fixture-id-29"
+          },
+          "meta": {
+            "operation": "Sanitized content",
+            "path": "Sanitized content",
+            "diffs": []
+          }
+        },
+        "sourceEventSeqs": [
+          35
+        ]
+      }
+    },
+    {
+      "type": "event",
+      "event": {
+        "type": "working-directory/change",
+        "seq": 42,
+        "time": 1795098822334,
+        "data": {
+          "cwd": "Sanitized content"
+        }
+      }
+    }
+  ]
+}

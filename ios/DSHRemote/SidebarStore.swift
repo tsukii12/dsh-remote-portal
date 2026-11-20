@@ -15,12 +15,18 @@ struct SessionRow: Identifiable, Equatable {
     var running: Bool
     var updatedAt: JSON
     var projections: JSON
+    var blank: Bool
+    var topLevel: Bool
+    var parentID: String?
     init(_ json: JSON) {
         id = json["sessionId"].text
         projections = json["projections"]["values"]
         title = projections["title"].string ?? L("New conversation", "新对话")
         running = json["running"].boolean
         updatedAt = json["updatedAt"]
+        blank = json["blank"] == true
+        topLevel = json["parentSessionId"].string == nil && json["origin"] != "subagent"
+        parentID = json["parentSessionId"].string
     }
 }
 
@@ -43,13 +49,14 @@ final class SidebarStore: ObservableObject {
     @Published private(set) var searchResults: [JSON] = []
     private let api: RPCServing
     private var tasks: [Task<Void, Never>] = []
+    private var createdIDs = Set<String>()
     init(api: RPCServing) { self.api = api }
     var groups: [SessionGroup] {
         guard loaded else { return [] }
         let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
         let foundIDs = Set(searchResults.compactMap { $0["sessionId"].string })
         let visible = sessions.values.filter {
-            archivedIDs.contains($0.id) == archivedOnly && (query.isEmpty || $0.title.localizedCaseInsensitiveContains(query) || foundIDs.contains($0.id))
+            $0.topLevel && archivedIDs.contains($0.id) == archivedOnly && (query.isEmpty || $0.title.localizedCaseInsensitiveContains(query) || foundIDs.contains($0.id))
         }
         let pinned = pinnedIDs.compactMap { id in visible.first { $0.id == id } }
         let assigned = Set(workspaces.flatMap(\.sessionIDs) + pinnedIDs)
@@ -130,8 +137,27 @@ final class SidebarStore: ObservableObject {
         if let workspaceID { request["workspaceId"] = .string(workspaceID) }
         else if let cwd { request["cwd"] = .string(cwd) }
         let value = try await api.rpc("session/create", args: ["request": request])
+        if let id = value["sessionId"].string { createdIDs.insert(id) }
         try await refresh()
         return value["sessionId"].text
+    }
+    func abandonEmptyCreated(_ id: String) async throws {
+        guard createdIDs.remove(id) != nil else { return }
+        do { try await archiveEmpty(ids: [id]) }
+        catch { createdIDs.insert(id); throw error }
+    }
+    func cleanEmptySessions() async throws {
+        try await refresh()
+        try await archiveEmpty(ids: sessions.values.filter { $0.topLevel && $0.blank && !$0.running && !archivedIDs.contains($0.id) }.map(\.id))
+    }
+    private func archiveEmpty(ids: [String]) async throws {
+        try await refresh()
+        for id in ids {
+            guard let row = sessions[id], row.topLevel, row.blank, !row.running, !archivedIDs.contains(id) else { continue }
+            let state = try await api.rpc("session/state", args: ["request": ["sessionId": .string(id)]])
+            guard state["running"] == false, state["queue"].array.isEmpty, state["pendingInput"].array.isEmpty else { continue }
+            try await archive(id)
+        }
     }
     func rename(_ id: String, title: String) async throws {
         let value = try await api.rpc("session/rename", args: ["request": ["sessionId": .string(id), "title": .string(title)]])

@@ -20,6 +20,13 @@ struct ChatView: View {
     @StateObject private var attachments: AttachmentsStore
     @StateObject private var mentions: FileMentions
     let title: String
+    let serverName: String
+    let workspaceName: String
+    let agents: [SessionRow]
+    let onMenu: () -> Void
+    let onNew: () -> Void
+    let onAgent: (String) -> Void
+    let focusOnOpen: Bool
     @State private var draft = ""
     @State private var sending = false
     @State private var followingBottom = true
@@ -27,16 +34,18 @@ struct ChatView: View {
     @State private var loadingOlder = false
     @State private var actionError: String?
     @State private var dismissedError: String?
-    @State private var showingOptions = false
+    @State private var optionsPage: ChatOptionsPage?
     @State private var showingFiles = false
     @State private var showingTerminals = false
+    @State private var showingUsage = false
     @State private var editingQueue: String?
     @State private var queuedText = ""
     @State private var steer = false
     @State private var sendFeedback = 0
     @FocusState private var composerFocused: Bool
-    init(chat: ChatStore, title: String) {
-        self.chat = chat; self.title = title
+    init(chat: ChatStore, title: String, serverName: String = "DRP", workspaceName: String = "", agents: [SessionRow] = [], focusOnOpen: Bool = false, onMenu: @escaping () -> Void = {}, onNew: @escaping () -> Void = {}, onAgent: @escaping (String) -> Void = { _ in }) {
+        self.chat = chat; self.title = title; self.serverName = serverName
+        self.workspaceName = workspaceName; self.agents = agents; self.focusOnOpen = focusOnOpen; self.onMenu = onMenu; self.onNew = onNew; self.onAgent = onAgent
         _attachments = StateObject(wrappedValue: AttachmentsStore(api: chat.api, sessionID: chat.sessionID))
         _mentions = StateObject(wrappedValue: FileMentions(api: chat.api, sessionID: chat.sessionID))
     }
@@ -45,21 +54,21 @@ struct ChatView: View {
             if let error = actionError ?? chat.error, error != dismissedError { StatusBanner(message: error, dismiss: { dismissedError = error; actionError = nil }) }
             transcript
         }
-        .background(Color(uiColor: .systemBackground))
+        .background { ChatBackdrop() }
         .sensoryFeedback(.impact(weight: .light), trigger: sendFeedback)
         .safeAreaInset(edge: .bottom, spacing: 0) { composer }
-        .navigationTitle("DRP").navigationBarTitleDisplayMode(.inline)
-        .toolbar { ToolbarItem(placement: .principal) { VStack(spacing: 2) { Text("DRP").font(.headline); Text(title).font(.caption).foregroundStyle(.secondary).lineLimit(1) } } }
-        .toolbar { ToolbarItem(placement: .primaryAction) { Button { showingFiles = true } label: { Image(systemName: "folder") }.accessibilityLabel(L("Workspace files", "工作区文件")).accessibilityIdentifier("workspaceFiles") } }
-        .sheet(isPresented: $showingOptions) { ChatOptionsView(chat: chat) }
+        .toolbar(.hidden, for: .navigationBar)
+        .safeAreaInset(edge: .top) { header }
+        .sheet(item: $optionsPage) { page in ChatOptionsView(chat: chat, page: page) }
         .sheet(isPresented: $showingFiles) {
             WorkspaceFilesView(api: chat.api, sessionID: chat.sessionID) { path in
                 guard let text = FileMentionToken.insertingFile(path, into: draft) else { return }
                 draft = text; showingFiles = false; composerFocused = true
             }
         }
-        .toolbar { ToolbarItem(placement: .primaryAction) { if chat.api is PortalAPI { Button { showingTerminals = true } label: { Image(systemName: "terminal") }.accessibilityLabel(L("Terminals", "终端")).accessibilityIdentifier("terminals") } } }
         .sheet(isPresented: $showingTerminals) { if let api = chat.api as? PortalAPI { TerminalsView(api: api, sessionID: chat.sessionID) } }
+        .sheet(isPresented: $showingUsage) { NavigationStack { Form { UsageView(usage: chat.projections["tokenUsage"], pressure: chat.projections["contextPressure"]) }.navigationTitle(L("Usage", "用量")) } }
+        .onAppear { if focusOnOpen { composerFocused = true } }
         .task(id: draft) { await mentions.load(draft) }
         .alert(L("Edit queued message", "编辑排队消息"), isPresented: Binding(get: { editingQueue != nil }, set: { if !$0 { editingQueue = nil } })) {
             TextField(L("Message", "消息"), text: $queuedText)
@@ -69,6 +78,26 @@ struct ChatView: View {
                 editingQueue = nil
             }.disabled(queuedText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
         }
+    }
+    private var header: some View {
+        HStack(spacing: 8) {
+            GlassCircle(symbol: "line.3.horizontal", label: L("Conversations", "对话列表"), action: onMenu)
+            ChatTitlePill(title: title, subtitle: [serverName, (chat.api as? PortalAPI).map { PortalRoute.label($0.base) }, workspaceName.isEmpty ? nil : workspaceName].compactMap { $0 }.joined(separator: " · "))
+            Menu {
+                Section(L("Agents", "代理")) {
+                    if agents.isEmpty { Text(L("No subagents", "暂无子代理")) }
+                    ForEach(agents) { agent in Button(agent.title) { onAgent(agent.id) } }
+                }
+                Section(L("Conversation tools", "对话工具")) {
+                    Button { showingFiles = true } label: { Label(L("Workspace files", "工作区文件"), systemImage: "folder") }
+                    if chat.api is PortalAPI { Button { showingTerminals = true } label: { Label(L("Terminals", "终端"), systemImage: "terminal") } }
+                    Button(L("Model & thinking", "模型与思考")) { optionsPage = .model }
+                    Button(L("Access mode", "访问模式")) { optionsPage = .access }
+                    Button(L("Mode & preset", "模式与预设")) { optionsPage = .mode }
+                }
+            } label: { Image(systemName: "person.2").font(.title3).frame(width: 44, height: 44).background(.regularMaterial, in: Circle()) }.accessibilityLabel(L("Agents & tools", "代理与工具"))
+            GlassCircle(symbol: "square.and.pencil", label: L("New chat", "新对话"), action: onNew)
+        }.buttonStyle(.plain).padding(.horizontal, 12).padding(.vertical, 8).background { ChatBackdrop().ignoresSafeArea(edges: .top) }
     }
     private var transcript: some View {
         GeometryReader { viewport in
@@ -95,11 +124,11 @@ struct ChatView: View {
                                 Text(L("Send a message to start this conversation.", "发送消息，开始这段对话。")).font(.subheadline).foregroundStyle(.secondary)
                             }.frame(maxWidth: .infinity).padding(.vertical, 80)
                         }
-                        ForEach(chat.transcript) { item in MessageView(item: item, api: chat.api, sessionID: chat.sessionID, usage: chat.usage(for: item)).id(item.id) }
+                        ForEach(TranscriptTurn.group(chat.transcript)) { turn in TurnView(turn: turn, chat: chat).id(turn.id) }
                         if let message = chat.inProgress { MessageView(item: message, api: chat.api, sessionID: chat.sessionID).id(message.id) }
                         Color.clear.frame(height: 1)
                             .id("bottom")
-                    }.padding(20).frame(maxWidth: 780).frame(maxWidth: .infinity)
+                    }.padding(.horizontal, 16).padding(.vertical, 20).frame(maxWidth: 900).frame(maxWidth: .infinity)
                         .background(GeometryReader { geometry in Color.clear.preference(key: ChatContentFrame.self, value: geometry.frame(in: .named("chatScroll"))) })
                 }
                 .coordinateSpace(name: "chatScroll")
@@ -126,43 +155,22 @@ struct ChatView: View {
     }
     private var composer: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Divider()
             if !chat.queue.isEmpty { queueDock }
             if let notice = chat.commandNotice { Text(notice).font(.caption).foregroundStyle(.secondary).lineLimit(3).textSelection(.enabled) }
             if let file = chat.exportedFile { ShareLink(item: file) { Label(L("Share session log", "分享会话日志"), systemImage: "square.and.arrow.up") }.font(.caption) }
             if draft.hasPrefix("/") { commandSuggestions }
             if FileMentionToken.active(in: draft) != nil { mentionSuggestions }
-            ComposerAttachmentsView(store: attachments, limits: chat.projections["imageLimits"], disabled: sending || !chat.loaded, imageInputError: chat.imageInputError, onError: { actionError = $0; dismissedError = nil })
-            UsageView(usage: chat.projections["tokenUsage"], pressure: chat.projections["contextPressure"])
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    Button { showingOptions = true } label: {
-                        Label(L("Model: ", "模型：") + chat.modelName + " · " + chat.effortName, systemImage: "cpu").frame(minHeight: 44)
-                    }.accessibilityIdentifier("modelOptions")
-                    Button { showingOptions = true } label: { Label(ChatLabels.permission(chat.projections["permissions"]["currentValue"].text), systemImage: "lock.shield").frame(minHeight: 44) }
-                    Button { showingOptions = true } label: { Text(chat.planEnabled ? L("Plan mode", "计划模式") : ChatLabels.preset(chat.projections["agentPreset"].string ?? "standard")).frame(minHeight: 44) }
-                }.font(.caption.weight(.medium)).buttonStyle(.bordered).tint(DRPStyle.accent)
+            VStack(alignment: .leading, spacing: 0) {
+                PixelWhale().padding(.leading, 16)
+                Button { optionsPage = .access } label: {
+                    Label(ChatLabels.permission(chat.projections["permissions"]["currentValue"].text) + " ›", systemImage: "exclamationmark.shield")
+                        .font(.subheadline).padding(.horizontal, 14).frame(minHeight: 44).background(.yellow.opacity(0.16), in: Capsule()).overlay(Capsule().stroke(.orange.opacity(0.25), lineWidth: 1))
+                }.buttonStyle(.plain)
             }
-            HStack(alignment: .bottom, spacing: 12) {
-                TextField(L("Message DRP…", "发送消息给 DRP…"), text: $draft, axis: .vertical)
-                    .lineLimit(1...6).focused($composerFocused).padding(.vertical, 12).padding(.leading, 14)
-                    .textInputAutocapitalization(.never).autocorrectionDisabled()
-                    .accessibilityIdentifier("chatComposer")
-                if chat.running {
-                    Button { perform { try await chat.cancel() } } label: { Image(systemName: "stop.fill").frame(minWidth: 44, minHeight: 44) }.accessibilityLabel(L("Stop", "停止"))
-                }
-                Button {
-                    send()
-                } label: {
-                    Image(systemName: chat.running ? (steer ? "bolt.fill" : "text.badge.plus") : "arrow.up").font(.system(size: 15, weight: .bold)).foregroundStyle(.white)
-                        .frame(width: 44, height: 44).background(canSend ? DRPStyle.accent : Color.gray.opacity(0.4), in: Circle())
-                }
-                .disabled(!canSend).padding(6)
-                .accessibilityLabel(chat.running ? (steer ? L("Steer", "立即引导") : L("Queue message", "消息排队")) : L("Send", "发送")).accessibilityIdentifier("sendMessage")
-            }.background(DRPStyle.sidebar, in: RoundedRectangle(cornerRadius: 22))
+            GlassComposer(chat: chat, attachments: attachments, text: $draft, focused: $composerFocused, sending: sending, canSend: canSend, onSend: send, onError: { actionError = $0; dismissedError = nil }, onModel: { optionsPage = .model }, onMode: { optionsPage = .mode }, onUsage: { showingUsage = true }, onCancel: { perform { try await chat.cancel() } })
             if chat.running { Toggle(L("Steer immediately instead of queue", "立即引导而不是排队"), isOn: $steer).font(.caption).frame(minHeight: 44) }
         }
-        .padding(.horizontal, 16).padding(.bottom, 10).frame(maxWidth: 800).frame(maxWidth: .infinity).background(.bar)
+        .padding(.horizontal, 12).padding(.bottom, 12).frame(maxWidth: 800).frame(maxWidth: .infinity)
     }
     private var canSend: Bool { !sending && attachments.ready && (!draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !attachments.items.isEmpty) }
     private var mentionSuggestions: some View {
@@ -186,7 +194,7 @@ struct ChatView: View {
             VStack(alignment: .leading, spacing: 10) {
                 ForEach(Array(suggestions.enumerated()), id: \.offset) { _, command in
                     Button {
-                        if command["name"] == "model" { draft = ""; showingOptions = true }
+                        if command["name"] == "model" { draft = ""; optionsPage = .model }
                         else { draft = "/" + command["name"].text + (command["input"] == .null ? "" : " "); composerFocused = true }
                     } label: {
                         VStack(alignment: .leading, spacing: 3) {
@@ -227,7 +235,7 @@ struct ChatView: View {
         Task {
             do {
                 if text.trimmingCharacters(in: .whitespacesAndNewlines) != "/model" { try chat.validateImageInput(attachments.items) }
-                if text.trimmingCharacters(in: .whitespacesAndNewlines) == "/model" { showingOptions = true }
+                if text.trimmingCharacters(in: .whitespacesAndNewlines) == "/model" { optionsPage = .model }
                 else if text.hasPrefix("/") {
                     let parts: [JSON] = try attachments.items.map { item in
                         if let type = item.mediaType { return ["type": "image", "mediaType": .string(type), "data": .string(try Data(contentsOf: item.file).base64EncodedString()), "name": .string(item.name)] }
@@ -247,11 +255,48 @@ struct ChatView: View {
     private func perform(_ action: @escaping () async throws -> Void) { Task { do { try await action() } catch { actionError = error.localizedDescription; dismissedError = nil } } }
 }
 
+private struct TurnView: View {
+    let turn: TranscriptTurn
+    @ObservedObject var chat: ChatStore
+    @State private var expanded = false
+    var body: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            ForEach(turn.items.filter { $0.role == "user" }) { item in MessageView(item: item, api: chat.api, sessionID: chat.sessionID).id(item.id) }
+            if turn.final != nil || turn.toolCount > 0 {
+                DisclosureGroup(isExpanded: $expanded) {
+                    VStack(alignment: .leading, spacing: 18) {
+                        ForEach(turn.detailItems) { item in MessageView(item: item, api: chat.api, sessionID: chat.sessionID).id(item.id) }
+                        if let final = turn.final {
+                            MessageView(item: final, api: chat.api, sessionID: chat.sessionID, detailsOnly: true)
+                            if let usage = chat.usage(for: final) { TurnUsageView(usage: usage) }
+                        }
+                    }.padding(.top, 12)
+                } label: {
+                    let active = chat.running && turn.outcome == nil && turn.id == TranscriptTurn.group(chat.transcript).last?.id
+                    let label = active ? L("Running", "运行中") : turn.outcome != nil ? L("Stopped", "已停止") : L("Completed", "已完成")
+                    Label(label + L(" · \(turn.toolCount) tool calls · \(turn.messageCount) messages", " · \(turn.toolCount) 次工具调用 · \(turn.messageCount) 条消息"), systemImage: active ? "ellipsis.circle" : turn.outcome != nil ? "exclamationmark.circle" : "checkmark.circle").font(.subheadline).foregroundStyle(.secondary).frame(minHeight: 44)
+                }.tint(.secondary)
+                if let final = turn.final { MessageView(item: final, api: chat.api, sessionID: chat.sessionID, hideDetails: true).id(final.id) }
+            } else {
+                ForEach(turn.items.filter { $0.role != "user" }) { item in MessageView(item: item, api: chat.api, sessionID: chat.sessionID).id(item.id) }
+            }
+        }.frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
 private struct MessageView: View {
     let item: TranscriptItem
     let api: RPCServing
     let sessionID: String
     var usage: JSON?
+    var detailsOnly = false
+    var hideDetails = false
+    private var visibleBlocks: [TranscriptBlock] {
+        item.blocks.filter { block in
+            let main = ["text", "image", "file"].contains(block.kind)
+            return detailsOnly ? !main : hideDetails ? main : true
+        }
+    }
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             if item.role == "user" {
@@ -265,24 +310,41 @@ private struct MessageView: View {
                             Text(item.text).textSelection(.enabled).padding(.horizontal, 16).padding(.vertical, 12)
                                 .background(DRPStyle.accent.opacity(0.09), in: RoundedRectangle(cornerRadius: 18))
                         }
+                        ForEach(Array(item.blocks.enumerated()), id: \.offset) { _, block in
+                            if !["text", "image", "file"].contains(block.kind) { GenericTranscriptBlock(block: block) }
+                        }
                         if let error = item.deliveryError { Label(error, systemImage: "exclamationmark.circle").font(.caption).foregroundStyle(.red) }
                         else if item.optimistic { Text(L("Sending…", "正在发送…")).font(.caption2).foregroundStyle(.secondary) }
                     }
                 }
+            } else if item.role == "notice" {
+                ForEach(Array(item.blocks.enumerated()), id: \.offset) { _, block in GenericTranscriptBlock(block: block) }
             } else {
-                HStack(spacing: 6) { Image(systemName: "sparkle").foregroundStyle(DRPStyle.accent); Text("DRP").font(.caption.weight(.semibold)); if item.inProgress { ProgressView().controlSize(.mini) } }
-                ForEach(Array(item.blocks.enumerated()), id: \.offset) { _, block in
+                ForEach(Array(visibleBlocks.enumerated()), id: \.offset) { _, block in
                     switch block.kind {
                     case "text": MarkdownView(text: block.text).textSelection(.enabled)
                     case "reasoning": ThinkingView(text: block.text)
-                    case "tool-call": ToolCard(block: block)
+                    case "tool-call": ToolCard(block: block, api: api, sessionID: sessionID)
                     case "image", "file": HistoricalAttachmentView(block: block, api: api, sessionID: sessionID)
-                    default: EmptyView()
+                    default: GenericTranscriptBlock(block: block)
                     }
                 }
                 if let usage { TurnUsageView(usage: usage) }
             }
         }.frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+private struct GenericTranscriptBlock: View {
+    let block: TranscriptBlock
+    var body: some View {
+        DisclosureGroup {
+            ScrollView([.horizontal, .vertical]) {
+                Text(block.text.isEmpty ? block.raw.formatted : block.text).font(.system(.caption, design: .monospaced)).textSelection(.enabled).padding(.top, 8)
+            }.frame(maxHeight: 240)
+        } label: {
+            Label(block.kind, systemImage: "info.circle").font(.caption).foregroundStyle(.secondary).lineLimit(1)
+        }
     }
 }
 

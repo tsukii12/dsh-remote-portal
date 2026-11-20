@@ -1,4 +1,6 @@
 import Foundation
+import Combine
+import Network
 
 struct Server: Identifiable, Codable {
     var id = UUID()
@@ -7,6 +9,11 @@ struct Server: Identifiable, Codable {
 }
 
 enum PortalURL {
+    static func scannedPairing(_ input: String, matching base: URL? = nil) throws -> (URL, String) {
+        guard let pair = try pairing(input) else { throw PortalError.message(L("Scan a portal pairing QR code.", "请扫描门户配对二维码。")) }
+        if let base, pair.0 != base { throw PortalError.message(L("This QR belongs to another server. Add it from Servers instead.", "此二维码属于其他服务器，请从服务器列表添加。")) }
+        return pair
+    }
     static func normalize(_ input: String) throws -> URL {
         guard var c = URLComponents(string: input.trimmingCharacters(in: .whitespacesAndNewlines)),
               ["http", "https"].contains(c.scheme?.lowercased() ?? ""),
@@ -57,10 +64,35 @@ struct HealthResult {
     let base: URL
     let milliseconds: Int
     var label: String {
-        let host = base.host ?? ""
-        let lan = host == "localhost" || host == "::1" || host.hasPrefix("192.168.") || host.hasPrefix("10.") || host.hasPrefix("127.") || host.hasSuffix(".local") || (host.hasPrefix("172.") && (16...31).contains(Int(host.split(separator: ".").dropFirst().first ?? "") ?? 0))
-        return "\(lan ? "LAN" : L("Public", "公网")) · \(milliseconds) ms · \(base.absoluteString)"
+        "\(PortalRoute.label(base)) · \(milliseconds) ms · \(base.absoluteString)"
     }
+}
+
+enum PortalRoute {
+    static func isLAN(_ base: URL) -> Bool {
+        let host = (base.host ?? "").lowercased().trimmingCharacters(in: CharacterSet(charactersIn: "[]"))
+        if host == "localhost" || host.hasSuffix(".local") { return true }
+        if host.contains(":") { return host == "::1" || host.hasPrefix("fc") || host.hasPrefix("fd") || host.hasPrefix("fe80:") }
+        let bytes = host.split(separator: ".").compactMap { UInt8($0) }
+        guard bytes.count == 4 else { return false }
+        return bytes[0] == 10 || bytes[0] == 127 || (bytes[0] == 192 && bytes[1] == 168) || (bytes[0] == 172 && (16...31).contains(bytes[1])) || (bytes[0] == 169 && bytes[1] == 254)
+    }
+    static func label(_ base: URL) -> String { isLAN(base) ? L("LAN", "局域网") : L("Remote", "远程") }
+}
+
+@MainActor
+final class PortalPathMonitor: ObservableObject {
+    @Published private(set) var revision = 0
+    private let monitor = NWPathMonitor()
+    init() {
+        monitor.pathUpdateHandler = { [weak self] _ in Task { @MainActor [weak self] in self?.revision += 1 } }
+        monitor.start(queue: DispatchQueue(label: "DRP.networkPath"))
+    }
+    deinit { monitor.cancel() }
+}
+
+private enum HealthRaceEvent {
+    case probe(URL, Int?), deadline
 }
 
 final class PortalClient: NSObject, URLSessionTaskDelegate {
@@ -84,16 +116,35 @@ final class PortalClient: NSObject, URLSessionTaskDelegate {
         completionHandler(nil)
     }
 
-    static func race(_ addresses: [URL], probe: @escaping (URL) async throws -> Int) async throws -> HealthResult {
-        try await withThrowingTaskGroup(of: HealthResult?.self) { group in
+    static func race(_ addresses: [URL], lanGraceNanoseconds: UInt64 = 400_000_000, probe: @escaping (URL) async throws -> Int) async throws -> HealthResult {
+        try await withThrowingTaskGroup(of: HealthRaceEvent.self) { group in
+            var pendingLAN = addresses.filter(PortalRoute.isLAN).count
+            var fallback: HealthResult?
             for base in addresses {
                 group.addTask {
-                    do { return HealthResult(base: base, milliseconds: try await probe(base)) }
-                    catch { return nil }
+                    do { return .probe(base, try await probe(base)) }
+                    catch { return .probe(base, nil) }
                 }
             }
-            for try await result in group {
-                if let result { group.cancelAll(); return result }
+            for try await event in group {
+                try Task.checkCancellation()
+                switch event {
+                case .deadline:
+                    if let fallback { group.cancelAll(); return fallback }
+                case .probe(let base, let latency):
+                    let lan = PortalRoute.isLAN(base)
+                    if lan { pendingLAN -= 1 }
+                    if let latency {
+                        let result = HealthResult(base: base, milliseconds: latency)
+                        if lan { group.cancelAll(); return result }
+                        if pendingLAN == 0 { group.cancelAll(); return fallback ?? result }
+                        if fallback == nil {
+                            fallback = result
+                            group.addTask { try await Task.sleep(nanoseconds: lanGraceNanoseconds); return .deadline }
+                        }
+                    }
+                    if pendingLAN == 0, let fallback { group.cancelAll(); return fallback }
+                }
             }
             throw PortalError.message(L("No address responded. Check your server and network.", "所有地址均无法连接，请检查服务器和网络。"))
         }

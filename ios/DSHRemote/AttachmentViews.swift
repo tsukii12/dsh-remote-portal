@@ -10,13 +10,14 @@ struct ComposerAttachmentsView: View {
     let disabled: Bool
     let imageInputError: String?
     let onError: (String) -> Void
+    var compact = false
     @State private var showingPhotos = false
     @State private var showingCamera = false
     @State private var showingFiles = false
     @State private var photo: PhotosPickerItem?
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            if !store.items.isEmpty {
+            if !store.items.isEmpty && !compact {
                 ScrollView(.horizontal) {
                     HStack(spacing: 8) {
                         ForEach(store.items) { item in
@@ -31,7 +32,7 @@ struct ComposerAttachmentsView: View {
                                     Text(error).foregroundStyle(.red).lineLimit(2)
                                     Button(L("Retry upload", "重试上传")) { store.retry(item.id) }
                                 } else {
-                                    Text(item.uploading ? L("Uploading · ", "正在上传 · ") + "\(item.sentBytes) / \(item.bytes) " + L("bytes", "字节") : L("Ready · ", "就绪 · ") + ByteCountFormatter.string(fromByteCount: Int64(item.bytes), countStyle: .file)).foregroundStyle(.secondary)
+                                    Text(item.uploading ? L("Uploading · ", "正在上传 · ") + "\(item.sentBytes) / \(item.bytes) " + L("bytes", "字节") : (item.ready ? L("Ready · ", "就绪 · ") : L("Upload on send · ", "发送时上传 · ")) + ByteCountFormatter.string(fromByteCount: Int64(item.bytes), countStyle: .file)).foregroundStyle(.secondary)
                                 }
                             }.font(.caption).frame(maxWidth: 240, alignment: .leading).padding(8).background(DRPStyle.sidebar, in: RoundedRectangle(cornerRadius: 10))
                         }
@@ -42,9 +43,11 @@ struct ComposerAttachmentsView: View {
                 Button { showingPhotos = true } label: { Label(L("Photos", "照片"), systemImage: "photo.on.rectangle") }.disabled(imageInputError != nil)
                 Button { showingCamera = true } label: { Label(L("Camera", "相机"), systemImage: "camera") }.disabled(imageInputError != nil || !UIImagePickerController.isSourceTypeAvailable(.camera))
                 Button { showingFiles = true } label: { Label(L("Files", "文件"), systemImage: "folder") }
-            } label: { Label(L("Attach", "添加附件"), systemImage: "paperclip").font(.subheadline.weight(.medium)).frame(minHeight: 44) }
-                .disabled(disabled).accessibilityIdentifier("attachFiles")
-            if let imageInputError { Text(imageInputError).font(.caption2).foregroundStyle(.secondary) }
+            } label: {
+                if compact { Image(systemName: "plus").font(.title2).frame(width: 44, height: 44).background(.secondary.opacity(0.08), in: Circle()) }
+                else { Label(L("Attach", "添加附件"), systemImage: "paperclip").font(.subheadline.weight(.medium)).frame(minHeight: 44) }
+            }.disabled(disabled).accessibilityIdentifier("attachFiles").accessibilityLabel(L("Add attachment", "添加附件"))
+            if let imageInputError, !compact { Text(imageInputError).font(.caption2).foregroundStyle(.secondary) }
         }
         .photosPicker(isPresented: $showingPhotos, selection: $photo, matching: .images, preferredItemEncoding: .compatible)
         .onChange(of: photo) { _, item in
@@ -61,7 +64,7 @@ struct ComposerAttachmentsView: View {
             do {
                 for url in try result.get() {
                     let type = UTType(filenameExtension: url.pathExtension)?.preferredMIMEType
-                    let mediaType = limits["mediaTypes"].array.contains(.string(type ?? "")) ? type : nil
+                    let mediaType = (limits["mediaTypes"] == .null && type?.hasPrefix("image/") == true) || limits["mediaTypes"].array.contains(.string(type ?? "")) ? type : nil
                     if type?.hasPrefix("image/") == true, let imageInputError { throw PortalError.message(imageInputError) }
                     try store.add(file: url, mediaType: mediaType, limits: limits)
                 }

@@ -39,5 +39,9 @@ enum JSON: Codable, Equatable, ExpressibleByDictionaryLiteral, ExpressibleByArra
     var text: String { string ?? "" }
     var int: Int? { if case .number(let v) = self { return Int(exactly: v) }; return nil }
     var boolean: Bool { self == .bool(true) }
+    var formatted: String {
+        let encoder = JSONEncoder(); encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+        return (try? String(decoding: encoder.encode(self), as: UTF8.self)) ?? ""
+    }
     static func int(_ value: Int) -> JSON { .number(Double(value)) }
 }

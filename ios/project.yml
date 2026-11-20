@@ -38,7 +38,7 @@ targets:
         NSAppTransportSecurity:
           NSAllowsArbitraryLoads: true
         NSLocalNetworkUsageDescription: Connect to your DeepSeek Harness on the local network.
-        NSCameraUsageDescription: Take a photo to attach to your DeepSeek Harness message.
+        NSCameraUsageDescription: Scan a portal pairing QR code or take a photo to attach to your DeepSeek Harness message.
   DSHRemoteTests:
     type: bundle.unit-test
     platform: iOS

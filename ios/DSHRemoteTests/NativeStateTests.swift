@@ -497,7 +497,7 @@ final class NativeStateTests: XCTestCase {
             XCTAssertEqual(output, captured["message"]["content"].array.first?["text"].text)
             if name == "empty" { XCTAssertEqual(output, "(no output)") }
             else { XCTAssertTrue(output.contains("README.md\n")) }
-            XCTAssertEqual(chat.transcript.count, 1)
+            XCTAssertEqual(chat.transcript.filter { $0.role == "assistant" }.count, 1)
             XCTAssertFalse(chat.transcript.contains { $0.role == "tool" })
         }
     }
@@ -516,7 +516,7 @@ final class NativeStateTests: XCTestCase {
         XCTAssertEqual(chat.transcript.filter { $0.role == "user" }.count, 1)
         XCTAssertEqual(chat.transcript.filter { $0.role == "assistant" }.count, 1)
         XCTAssertFalse(chat.transcript.contains { $0.optimistic })
-        XCTAssertTrue(chat.transcript.last!.text.contains("```sh"))
+        XCTAssertTrue(chat.transcript.last { $0.role == "assistant" }!.text.contains("```sh"))
         let transcript = chat.transcript
         for frame in frames where frame["streamId"] == "follow" { chat.apply(frame["value"]) }
         XCTAssertEqual(chat.transcript, transcript)
@@ -542,9 +542,10 @@ final class NativeStateTests: XCTestCase {
         chat.apply(user(1, "one")); chat.apply(user(2, "two")); chat.apply(user(3, "three"))
         chat.apply(user(4, "replacement", op: ["op": "replace", "startSeq": 1, "endSeq": 2]))
         chat.apply(["type": "event", "event": ["seq": 5, "type": "future/plugin", "data": [:]]])
-        XCTAssertEqual(chat.transcript.map(\.text), ["replacement", "three"])
+        XCTAssertEqual(chat.transcript.filter { $0.role == "user" }.map(\.text), ["replacement", "three"])
+        XCTAssertEqual(chat.transcript.last?.blocks.first?.kind, "future/plugin")
         chat.apply(user(6, "replacement again", op: ["op": "replace", "startSeq": 4, "endSeq": 3]))
-        XCTAssertEqual(chat.transcript.map(\.text), ["replacement again"])
+        XCTAssertEqual(chat.transcript.filter { $0.role == "user" }.map(\.text), ["replacement again"])
     }
     func testInteractionsFromLiveEventsAndGenerationReset() async throws {
         let api = StubAPI()

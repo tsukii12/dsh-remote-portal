@@ -36,14 +36,15 @@ private final class DraftUploadFiles {
 final class AttachmentsStore: ObservableObject {
     @Published private(set) var items: [DraftAttachment] = []
     private let api: RPCServing
-    private let sessionID: String
+    private var sessionID: String
+    private var deferred: Bool
     private let directory: URL
     private var tasks: [UUID: Task<Void, Never>] = [:]
     private var attempts: [UUID: UUID] = [:]
     private let storage = DraftUploadFiles()
     var ready: Bool { items.allSatisfy(\.ready) }
-    init(api: RPCServing, sessionID: String, directory: URL? = nil) {
-        self.api = api; self.sessionID = sessionID
+    init(api: RPCServing, sessionID: String, directory: URL? = nil, deferred: Bool = false) {
+        self.api = api; self.sessionID = sessionID; self.deferred = deferred
         self.directory = directory ?? FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0].appendingPathComponent("ComposerUploads", isDirectory: true)
     }
     func add(file source: URL, name: String? = nil, mediaType: String? = nil, limits: JSON) throws {
@@ -69,15 +70,30 @@ final class AttachmentsStore: ObservableObject {
         catch { try? FileManager.default.removeItem(at: folder); throw error }
         storage.folders.insert(folder)
         items.append(DraftAttachment(id: id, file: file, name: displayName, mediaType: mediaType, bytes: bytes))
-        retry(id)
+        if deferred { items[items.count - 1].uploading = false } else { retry(id) }
     }
-    func validate(bytes: Int, mediaType: String?, limits: JSON) throws {
+    func validate(bytes: Int, mediaType: String?, limits: JSON, adding: Bool = true) throws {
         guard let mediaType else { return }
-        guard limits["mediaTypes"].array.contains(.string(mediaType)) else { throw PortalError.message(L("This image format is not supported by the host.", "主机不支持此图片格式。")) }
+        guard (adding && deferred && limits["mediaTypes"] == .null) || limits["mediaTypes"].array.contains(.string(mediaType)) else { throw PortalError.message(L("This image format is not supported by the host.", "主机不支持此图片格式。")) }
         let images = items.filter { $0.mediaType != nil }
-        if let count = limits["maxImagesPerMessage"].int, images.count + 1 > count { throw PortalError.message(L("Too many images for one message.", "单条消息中的图片过多。")) }
+        if let count = limits["maxImagesPerMessage"].int, images.count + (adding ? 1 : 0) > count { throw PortalError.message(L("Too many images for one message.", "单条消息中的图片过多。")) }
         if let cap = limits["maxImageBytes"].int, bytes > cap { throw PortalError.message(L("Image exceeds the host's per-image limit: ", "图片超出主机单张大小限制：") + ByteCountFormatter.string(fromByteCount: Int64(cap), countStyle: .file)) }
-        if let cap = limits["maxMessageImageBytes"].int, images.reduce(bytes, { $0 + $1.bytes }) > cap { throw PortalError.message(L("Images exceed the host's total message limit.", "图片总大小超出主机单条消息限制。")) }
+        if let cap = limits["maxMessageImageBytes"].int, images.reduce(adding ? bytes : 0, { $0 + $1.bytes }) > cap { throw PortalError.message(L("Images exceed the host's total message limit.", "图片总大小超出主机单条消息限制。")) }
+    }
+    func prepare(sessionID: String, limits: JSON) async throws {
+        for item in items {
+            try validate(bytes: item.bytes, mediaType: item.mediaType, limits: limits, adding: false)
+            if item.mediaType != nil, let source = CGImageSourceCreateWithURL(item.file as CFURL, nil), let p = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any], let width = p[kCGImagePropertyPixelWidth] as? Int, let height = p[kCGImagePropertyPixelHeight] as? Int {
+                if let cap = limits["maxImageDimension"].int, max(width, height) > cap { throw PortalError.message(L("Image dimensions exceed the host limit.", "图片尺寸超出主机限制。")) }
+                if let cap = limits["maxImagePixels"].int, Double(width) * Double(height) > Double(cap) { throw PortalError.message(L("Image resolution exceeds the host limit.", "图片分辨率超出主机限制。")) }
+            }
+        }
+        let changed = self.sessionID != sessionID
+        self.sessionID = sessionID; deferred = false
+        for item in items where changed || !item.ready { retry(item.id) }
+        for task in Array(tasks.values) { await task.value }
+        try Task.checkCancellation()
+        guard ready else { throw PortalError.message(items.compactMap(\.error).first ?? L("Upload did not finish.", "上传未完成。")) }
     }
     func retry(_ id: UUID) {
         guard let index = items.firstIndex(where: { $0.id == id }) else { return }

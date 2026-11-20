@@ -4,6 +4,33 @@ import UIKit
 
 @MainActor
 final class LiveSmokeTests: XCTestCase {
+    func testLazyNewChatAndSettledReply() async throws {
+        guard ProcessInfo.processInfo.environment["DSH_LIVE_SMOKE"] == "1" else { throw XCTSkip("Opt in with DSH_LIVE_SMOKE=1") }
+        let api = PortalAPI(base: URL(string: "http://127.0.0.1:3081/")!, client: PortalClient())
+        let connection = NativeConnection(api: api)
+        defer { connection.stop(); api.client.session.invalidateAndCancel() }
+        try await api.login(secret: "demo-pass-123", pairing: false)
+        try await connection.start()
+        try await eventually("workspace for lazy draft") { !connection.sidebar.workspaces.isEmpty }
+        let before = try await api.rpc("session/list", args: ["_request": [:]])["items"].array.compactMap { $0["sessionId"].string }
+        let draft = NewChatDraft(api: api, sidebar: connection.sidebar, workspaceID: connection.sidebar.workspaces.first?.id)
+        await draft.load(); XCTAssertNil(draft.error); XCTAssertNil(draft.sessionID)
+        await draft.abandon()
+        let after = try await api.rpc("session/list", args: ["_request": [:]])["items"].array.compactMap { $0["sessionId"].string }
+        XCTAssertEqual(Set(before), Set(after))
+        let id = try await draft.submit("hello")
+        let chat = connection.chat(id)
+        defer { chat.stop() }
+        do {
+            try await chat.start()
+            try await eventually("lazy first reply settles") { chat.loaded && !chat.running && chat.inProgress == nil && chat.transcript.contains { $0.role == "assistant" && !$0.text.isEmpty } }
+            XCTAssertEqual(chat.transcript.filter { $0.role == "user" }.count, 1)
+            let state = try await api.rpc("session/state", args: ["request": ["sessionId": .string(id)]])
+            XCTAssertEqual(state["running"], false)
+            print("LIVE PASS lazy draft: opening/leaving creates nothing; first send creates once; populated history and host/client idle state agree")
+        } catch { try? await connection.sidebar.archive(id); throw error }
+        try await connection.sidebar.archive(id)
+    }
     func testNativeTerminalLiveMuxRecovery() async throws {
         guard ProcessInfo.processInfo.environment["DSH_LIVE_SMOKE"] == "1" else { throw XCTSkip("Opt in with DSH_LIVE_SMOKE=1") }
         let api = PortalAPI(base: URL(string: "http://127.0.0.1:3081/")!, client: PortalClient())

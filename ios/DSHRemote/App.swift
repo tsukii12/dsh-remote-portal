@@ -59,6 +59,7 @@ struct ServerEditor: View {
     @Environment(\.dismiss) private var dismiss
     @State private var name = ""
     @State private var addresses = ""
+    @State private var scanning = false
     @State private var error = ""
     var body: some View {
         NavigationStack {
@@ -66,11 +67,16 @@ struct ServerEditor: View {
                 TextField(L("Name", "名称"), text: $name)
                 Section(L("Addresses (one per line) or pairing link", "地址（每行一个）或配对链接")) {
                     TextEditor(text: $addresses).frame(minHeight: 140).textInputAutocapitalization(.never).autocorrectionDisabled().keyboardType(.URL)
+                    Button { scanning = true } label: { Label(L("Scan pairing QR", "扫描配对二维码"), systemImage: "qrcode.viewfinder") }
                     Text(L("Keep relay path prefixes, e.g. https://relay.example/__t/id/", "保留中继路径前缀，例如 https://relay.example/__t/id/")).font(.caption)
                 }
                 if !error.isEmpty { Text(error).foregroundStyle(.red) }
             }
             .navigationTitle(L("Server", "服务器"))
+            .sheet(isPresented: $scanning) { PairingScanner { value in
+                _ = try PortalURL.scannedPairing(value)
+                addresses = value
+            } }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button(L("Cancel", "取消")) { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) { Button(L("Save", "保存")) {
@@ -96,17 +102,21 @@ struct ConnectionView: View {
     let server: Server
     let initialToken: String
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
+    @StateObject private var network = PortalPathMonitor()
+    @State private var foregroundRevision = 0
+    @State private var gateToken: String?
     @State private var result: HealthResult?
     @State private var api: PortalAPI?
     @State private var busy = false
     @State private var error = ""
     var body: some View {
         Group {
-            if let api { NativeConnectionGate(api: api, initialToken: initialToken, serverName: server.name, addressLabel: result?.label ?? "", onSwitch: { dismiss() }) }
+            if let api { NativeConnectionGate(api: api, initialToken: gateToken ?? "", serverName: server.name, addressLabel: result?.label ?? "", onSwitch: { dismiss() }).id(api.base.absoluteString) }
             else {
                 NavigationStack {
                     VStack(spacing: 20) {
-                        if busy { ProgressView(L("Finding fastest address…", "正在寻找最快地址…")) }
+                        if busy { ProgressView(L("Finding best address…", "正在寻找最佳地址…")) }
                         if !error.isEmpty { Text(error); Button(L("Retry", "重试")) { Task { await connect() } } }
                     }
                     .navigationTitle("DRP")
@@ -115,12 +125,22 @@ struct ConnectionView: View {
             }
         }
         .tint(DRPStyle.accent)
-        .task { await connect() }
+        .task(id: "\(network.revision):\(foregroundRevision)") { await connect() }
+        .onChange(of: scenePhase) { _, phase in if phase == .active { foregroundRevision += 1 } }
     }
     private func connect() async {
         busy = true; error = ""
-        do { let winner = try await PortalClient.shared.connect(server.addresses); result = winner; api = PortalAPI(base: winner.base) }
-        catch { self.error = error.localizedDescription }
+        do {
+            let winner = try await PortalClient.shared.connect(server.addresses)
+            try Task.checkCancellation()
+            if api?.base != winner.base {
+                gateToken = api == nil ? initialToken : ""
+                api = PortalAPI(base: winner.base)
+            }
+            result = winner
+        }
+        catch { if !Task.isCancelled { self.error = error.localizedDescription } }
+        guard !Task.isCancelled else { return }
         busy = false
     }
 }
@@ -132,6 +152,7 @@ struct NativeConnectionGate: View {
     @State private var signedIn = false
     @State private var secret: String
     @State private var pairing: Bool
+    @State private var scanning = false
     @State private var error = ""
     @State private var busy = false
     let serverName: String
@@ -165,6 +186,7 @@ struct NativeConnectionGate: View {
                             Text(L("Pairing code", "配对码")).tag(true)
                         }.pickerStyle(.segmented)
                         SecureField(pairing ? L("Pairing code", "配对码") : L("Access password", "访问密码"), text: $secret).textContentType(.password).textInputAutocapitalization(.never).autocorrectionDisabled().padding().background(.quaternary, in: RoundedRectangle(cornerRadius: 12))
+                        Button { scanning = true } label: { Label(L("Scan pairing QR", "扫描配对二维码"), systemImage: "qrcode.viewfinder") }.disabled(busy)
                         if !error.isEmpty { Text(error).foregroundStyle(.red).font(.callout) }
                         Button { Task { await login() } } label: {
                             HStack { Spacer(); if busy { ProgressView() }; Text(L("Continue", "继续")); Spacer() }.padding(10)
@@ -177,6 +199,10 @@ struct NativeConnectionGate: View {
             }
         }
         .task { if secret.isEmpty { await resume() } }
+        .sheet(isPresented: $scanning) { PairingScanner { value in
+            let pair = try PortalURL.scannedPairing(value, matching: api.base)
+            secret = pair.1; pairing = true
+        } }
         .onChange(of: api.sessionExpired) { _, expired in if expired { signedIn = false; connection.stop() } }
         .onDisappear { connection.stop() }
     }

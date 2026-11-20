@@ -111,5 +111,9 @@ final class NativeConnection: ObservableObject {
         events.start()
     }
     func stop() { sidebar.stop(); events.stop(); if let observer { events.removeObserver(observer) }; observer = nil; api.mux.close() }
-    func chat(_ sessionID: String) -> ChatStore { ChatStore(sessionID: sessionID, api: api, events: events) }
+    func chat(_ sessionID: String) -> ChatStore {
+        let parent = sidebar.sessions[sessionID]?.parentID
+        let address: JSON? = parent.map { ["kind": "subagent", "parentSessionId": .string($0), "childSessionId": .string(sessionID), "mode": "unknown"] }
+        return ChatStore(sessionID: sessionID, api: api, events: events, address: address)
+    }
 }
